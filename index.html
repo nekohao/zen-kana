@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
+    <!-- PWA 核心设置 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
     <meta name="format-detection" content="telephone=no">
     <title>禅 · 全功能版</title>
 
+    <!-- 图标调用 -->
     <link rel="apple-touch-icon" href="./icon.png?v=8.2">
     <link rel="icon" type="image/png" href="./icon.png?v=8.2">
     <link rel="shortcut icon" href="./icon.png?v=8.2">
@@ -18,6 +20,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 引入高级衬线字体：Shippori Mincho, Zen Old Mincho, Noto Serif SC -->
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Old+Mincho:wght@400;700;900&family=Klee+One:wght@400;600&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
@@ -331,23 +334,10 @@ def; } catch { return def; } },
         }
 
         function ChartMode() {
-            const [type, setType] = useState('h');
+            const [focusedChar, setFocusedChar] = useState(null);
+
             return (
                 <div className="safe-pb animate-page-enter">
-                    {/* 🔴 修改：优化顶部横幅样式，修复不连续缝隙 */}
-                    <div className="sticky top-0 z-20 pb-4 flex justify-center border-b border-stone-200/50" 
-                        style={{
-                            background: 'rgba(249, 248, 244, 0.85)', /* 增加透明度以匹配毛玻璃 */
-                            backdropFilter: 'blur(20px)', /* 增强模糊 */
-                            WebkitBackdropFilter: 'blur(20px)',
-                            marginTop: '-24px', /* 负边距拉高，消除缝隙 */
-                            paddingTop: '24px'  /* 补偿内边距 */
-                        }}>
-                         <div className="glass-panel rounded-full p-1 inline-flex scale-95 shadow-sm">
-                            <button onClick={() => setType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${type === 'h' ? 'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
-                            <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${type === 'k' ? 'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
-                        </div>
-                    </div>
                     <div className="grid gap-4 px-5 mt-6">
                         {CONSONANTS.map(row => (
                             <div key={row.id} className="flex gap-3 items-center">
@@ -356,17 +346,31 @@ def; } catch { return def; } },
                                 </div>
                                 <div className="grid grid-cols-5 gap-2 flex-1">
                                     {VOWELS.map(col => {
-                                        const map = type === 'h' ? KANA_MAP : KATA_MAP;
-                                        const char = map[row.id]?.[col.id];
-                                        if (!char && row.id !== 'n_special') return <div key={col.id} />;
-                                        if (row.id === 'n_special' && col.id !== 'a') return <div key={col.id} />;
-                                        const displayChar = row.id === 'n_special' ? map['n_special'].a : char;
+                                        let hChar = KANA_MAP[row.id]?.[col.id];
+                                        let kChar = KATA_MAP[row.id]?.[col.id];
+                                        
+                                        if (row.id === 'n_special') {
+                                            if (col.id === 'a') {
+                                                hChar = KANA_MAP['n_special'].a;
+                                                kChar = KATA_MAP['n_special'].a;
+                                            } else {
+                                                hChar = null;
+                                                kChar = null;
+                                            }
+                                        }
+
+                                        if (!hChar) return <div key={col.id} />;
+                                        
+                                        const romaji = row.id === 'n_special' ? 'n' : (row.id + col.id);
+
                                         return (
-                                            <button key={col.id} onClick={() => speak(displayChar)} className="glass-panel aspect-square rounded-2xl flex flex-col items-center justify-center active-press active:bg-white transition-colors group">
-                                                <span className="text-2xl font-hand text-stone-700 group-hover:text-[#B83B40] transition-colors">{displayChar}</span>
-                                                {/* 🔴 修改：移除 opacity-0，常驻显示罗马音 */}
-                                                <span className="text-[10px] text-stone-400 font-sans-sys font-bold mt-0.5 uppercase">
-                                                    {row.id === 'n_special' ? 'n' : (row.id + col.id)}
+                                            <button key={col.id} onClick={() => { setFocusedChar({ h: hChar, k: kChar, r: romaji }); speak(hChar); }} className="glass-panel aspect-square rounded-2xl flex flex-col items-center justify-center active-press active:bg-white transition-colors group relative">
+                                                <div className="flex items-end gap-1 mb-1">
+                                                    <span className="text-xl font-hand text-stone-700 group-hover:text-[#B83B40] transition-colors leading-none">{hChar}</span>
+                                                    <span className="text-xs font-hand text-stone-400 group-hover:text-[#B83B40]/70 transition-colors leading-none mb-0.5">{kChar}</span>
+                                                </div>
+                                                <span className="text-[9px] text-stone-400 font-sans-sys font-bold uppercase tracking-wide">
+                                                    {romaji}
                                                 </span>
                                             </button>
                                         )
@@ -375,6 +379,29 @@ def; } catch { return def; } },
                             </div>
                         ))}
                     </div>
+
+                    {focusedChar && (
+                        <div className="fixed inset-0 z-[100] bg-stone-900/20 backdrop-blur-[4px] flex items-center justify-center p-6" onClick={() => setFocusedChar(null)}>
+                            <div className="w-full max-w-sm glass-panel rounded-[32px] p-8 modal-enter relative flex flex-col items-center shadow-2xl" onClick={e => e.stopPropagation()}>
+                                <button className="absolute top-6 right-6 p-2 bg-stone-100 rounded-full text-stone-500 active-press" onClick={() => setFocusedChar(null)}>
+                                    <X size={20} />
+                                </button>
+                                
+                                <div className="text-[10px] font-bold text-[#B83B40] tracking-[0.2em] uppercase mb-8 opacity-60 font-sans-sys">Kana Detail</div>
+                                
+                                <div className="flex items-end gap-6 mb-6">
+                                    <div className="text-8xl font-hand text-stone-800 leading-none">{focusedChar.h}</div>
+                                    <div className="text-6xl font-hand text-stone-400 leading-none pb-2">{focusedChar.k}</div>
+                                </div>
+                                
+                                <div className="text-3xl font-mincho font-bold text-stone-700 mb-8">{focusedChar.r}</div>
+                                
+                                <button onClick={() => speak(focusedChar.h)} className="w-16 h-16 rounded-full bg-[#B83B40] text-white flex items-center justify-center shadow-lg shadow-red-900/20 active-press">
+                                    <Volume2 size={32} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
