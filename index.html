@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- PWA 核心设置 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
     <meta name="format-detection" content="telephone=no">
     <title>禅 · 全功能版</title>
 
-    <!-- 图标调用 -->
     <link rel="apple-touch-icon" href="./icon.png?v=8.2">
     <link rel="icon" type="image/png" href="./icon.png?v=8.2">
     <link rel="shortcut icon" href="./icon.png?v=8.2">
@@ -20,7 +18,6 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- 引入高级衬线字体：Shippori Mincho, Zen Old Mincho, Noto Serif SC -->
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;800&family=Zen+Old+Mincho:wght@400;700;900&family=Klee+One:wght@400;600&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
@@ -31,19 +28,18 @@
             /* 🔴🔴🔴 【布局控制台 V8.2】 🔴🔴🔴 */
             
             /* 1. 底部贴合程度： */
-            --bottom-gap: 14px; 
-
+            --bottom-gap: 14px;
             /* 2. 底部栏内部高度压缩： */
             --bar-inner-padding: 2px;
-
             /* 3. 顶部 Header 额外下移修正： */
             --header-offset: 0px;
-
-
             /* --- 视觉系统 --- */
-            --zen-bg: #F9F8F4; /* 暖调纸白 */
-            --zen-ink: #2C2C2C; /* 墨色 */
-            --zen-red: #B83B40; /* 茜色 */
+            --zen-bg: #F9F8F4;
+            /* 暖调纸白 */
+            --zen-ink: #2C2C2C;
+            /* 墨色 */
+            --zen-red: #B83B40;
+            /* 茜色 */
             --glass-bg: rgba(249, 248, 244, 0.85);
             --glass-border: rgba(255, 255, 255, 0.6);
             --ios-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -60,21 +56,26 @@
             color: var(--zen-ink);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         /* 纸质纹理噪点 */
         .bg-noise {
-            position: fixed; inset: 0; pointer-events: none; z-index: -1;
+            position: fixed;
+            inset: 0; pointer-events: none; z-index: -1;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
             opacity: 0.8;
         }
 
         /* 字体工具类 */
-        .font-sans-sys { font-family: -apple-system, "PingFang SC", sans-serif; }
-        .font-hand { font-family: 'Klee One', cursive; }
-        .font-mincho { font-family: "Zen Old Mincho", serif; }
-        .font-sc-serif { font-family: "Noto Serif SC", "Songti SC", serif; }
+        .font-sans-sys { font-family: -apple-system, "PingFang SC", sans-serif;
+        }
+        .font-hand { font-family: 'Klee One', cursive;
+        }
+        .font-mincho { font-family: "Zen Old Mincho", serif;
+        }
+        .font-sc-serif { font-family: "Noto Serif SC", "Songti SC", serif;
+        }
         
         /* 玻璃拟态面板 */
         .glass-panel {
@@ -88,7 +89,8 @@
 
         /* --- 顶部栏 --- */
         .fixed-header {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            position: fixed;
+            top: 0; left: 0; right: 0; z-index: 50;
             background: rgba(249, 248, 244, 0.94);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -104,7 +106,8 @@
 
         /* --- 底部栏 --- */
         .fixed-tabbar {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            position: fixed;
+            bottom: 0; left: 0; right: 0; z-index: 50;
             background: rgba(249, 248, 244, 0.94);
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
@@ -117,24 +120,33 @@
         
         /* 滚动容器 */
         .app-container {
-            height: 100vh; width: 100vw;
+            height: 100vh;
+            width: 100vw;
             overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
             padding-top: calc(max(env(safe-area-inset-top), 20px) + 64px); 
-            padding-bottom: calc(70px + var(--bottom-gap)); 
+            padding-bottom: calc(70px + var(--bottom-gap));
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none;
+        }
 
         /* 动画与交互 */
-        .animate-page-enter { animation: pageEnter 0.5s var(--ios-easing) forwards; opacity: 0; transform: translateY(4px); }
-        @keyframes pageEnter { to { opacity: 1; transform: translateY(0); } }
+        .animate-page-enter { animation: pageEnter 0.5s var(--ios-easing) forwards;
+            opacity: 0; transform: translateY(4px); }
+        @keyframes pageEnter { to { opacity: 1;
+            transform: translateY(0); } }
         
-        .active-press { transition: transform 0.15s ease; }
-        .active-press:active { transform: scale(0.94); opacity: 0.8; }
+        .active-press { transition: transform 0.15s ease;
+        }
+        .active-press:active { transform: scale(0.94); opacity: 0.8;
+        }
         
-        .progress-bar { transition: width 0.6s var(--ios-easing); }
-        .modal-enter { animation: modalSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards; }
-        @keyframes modalSpring { from { transform: translateY(100%) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        .progress-bar { transition: width 0.6s var(--ios-easing);
+        }
+        .modal-enter { animation: modalSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+        }
+        @keyframes modalSpring { from { transform: translateY(100%) scale(0.95); opacity: 0;
+        } to { transform: translateY(0) scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -148,13 +160,13 @@
             BookOpen, PenTool, Brain, Volume2, Check, ChevronRight, User,
             RotateCcw, Eraser, Grid, Flame, Settings2, X, Trophy, Sparkles, Filter, Activity, Zap, Download, Upload, Github
         } from 'https://esm.sh/lucide-react@0.292.0';
-
         // --- 全功能数据层 ---
+        // 🔴 修改：将行标改为 a行, k行, s行...
         const CONSONANTS = [
-            { id: '', label: 'あ行' }, { id: 'k', label: 'か行' }, { id: 's', label: 'さ行' },
-            { id: 't', label: 'た行' }, { id: 'n', label: 'な行' }, { id: 'h', label: 'は行' },
-            { id: 'm', label: 'ま行' }, { id: 'y', label: 'や行' }, { id: 'r', label: 'ら行' },
-            { id: 'w', label: 'わ行' }, { id: 'n_special', label: 'ん' },
+            { id: '', label: 'a 行' }, { id: 'k', label: 'k 行' }, { id: 's', label: 's 行' },
+            { id: 't', label: 't 行' }, { id: 'n', label: 'n 行' }, { id: 'h', label: 'h 行' },
+            { id: 'm', label: 'm 行' }, { id: 'y', label: 'y 行' }, { id: 'r', label: 'r 行' },
+            { id: 'w', label: 'w 行' }, { id: 'n_special', label: 'n' },
         ];
         const VOWELS = [
             { id: 'a', label: 'あ' }, { id: 'i', label: 'い' }, { id: 'u', label: 'う' },
@@ -176,16 +188,15 @@
             'r': { a: 'ラ', i: 'リ', u: 'ル', e: 'レ', o: 'ロ' }, 'w': { a: 'ワ', i: null, u: null, e: null, o: 'ヲ' },
             'n_special': { a: 'ン', i: null, u: null, e: null, o: null },
         };
-        
         const BACKUP_DB = [
             { w: 'あい', m: '爱 (愛)', r: 'ai' }, { w: 'いえ', m: '家 (家)', r: 'ie' },
             { w: 'うえ', m: '上面 (上)', r: 'ue' }, { w: 'かお', m: '脸 (顔)', r: 'kao' },
             { w: 'あか', m: '红色 (赤)', r: 'aka' }, { w: 'えき', m: '车站 (駅)', r: 'eki' }
         ];
-
         // --- 核心业务逻辑 ---
         const Storage = {
-            get: (key, def) => { try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; } },
+            get: (key, def) => { try { return JSON.parse(localStorage.getItem(key)) ||
+def; } catch { return def; } },
             set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
             export: () => {
                 const data = {
@@ -201,10 +212,10 @@
                     localStorage.setItem('zen_srs_data', JSON.stringify(data.srs));
                     localStorage.setItem('zen_heatmap', JSON.stringify(data.heatmap));
                     return true;
-                } catch (e) { return false; }
+                } catch (e) { return false;
+                }
             }
         };
-
         const SRS = {
             updateItem: (itemId, quality) => { 
                 const data = Storage.get('zen_srs_data', {});
@@ -217,9 +228,10 @@
                     item.ef = item.ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
                     if (item.ef < 1.3) item.ef = 1.3;
                 } else {
-                    item.repetitions = 0; item.interval = 1;
+                    item.repetitions = 0;
+                    item.interval = 1;
                 }
-                item.nextReview = Date.now() + (item.interval * 24 * 60 * 60 * 1000); 
+                item.nextReview = Date.now() + (item.interval * 24 * 60 * 60 * 1000);
                 data[itemId] = item;
                 Storage.set('zen_srs_data', data);
                 ZenStreak.addActivity();
@@ -232,7 +244,6 @@
             },
             getAll: () => Storage.get('zen_srs_data', {})
         };
-
         const ZenStreak = {
             addActivity: () => {
                 const today = new Date().toISOString().split('T')[0];
@@ -243,7 +254,6 @@
             getData: () => Storage.get('zen_heatmap', {}),
             getTotalDays: () => Object.keys(Storage.get('zen_heatmap', {})).length
         };
-
         const speak = (text) => {
             if (!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
@@ -251,7 +261,6 @@
             u.lang = 'ja-JP'; u.rate = 0.85;
             window.speechSynthesis.speak(u);
         };
-
         // --- UI 组件 ---
 
         function SettingsModal({ onClose }) {
@@ -268,7 +277,6 @@
                             <h3 className="text-xl font-mincho font-bold text-stone-800 tracking-tight">设置与关于</h3>
                             <button onClick={onClose} className="p-2 bg-stone-200/50 rounded-full text-stone-600 active-press"><X size={18}/></button>
                         </div>
-                        
                         <div className="space-y-4">
                             <div className="glass-panel p-4 rounded-2xl flex items-center gap-4">
                                 <div className="w-12 h-12 bg-[#B83B40] rounded-xl flex items-center justify-center text-white font-sc-serif font-bold text-2xl shadow-lg ring-1 ring-white/30">禅</div>
@@ -277,7 +285,6 @@
                                     <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v8.2 Full Logic Remaster</div>
                                 </div>
                             </div>
-
                             <div className="space-y-2">
                                 <button onClick={() => window.open('https://github.com/your-username/your-repo', '_blank')} className="w-full p-4 rounded-2xl bg-white flex items-center justify-between text-stone-700 active-press shadow-sm border border-stone-100">
                                     <span className="flex items-center gap-3 font-medium"><Github size={18}/> GitHub 仓库</span>
@@ -327,7 +334,15 @@
             const [type, setType] = useState('h');
             return (
                 <div className="safe-pb animate-page-enter">
-                    <div className="sticky top-0 z-20 pb-4 flex justify-center border-b border-stone-200/50" style={{background: 'rgba(249, 248, 244, 0.96)', backdropFilter: 'blur(10px)', marginTop: '-10px', paddingTop: '10px'}}>
+                    {/* 🔴 修改：优化顶部横幅样式，修复不连续缝隙 */}
+                    <div className="sticky top-0 z-20 pb-4 flex justify-center border-b border-stone-200/50" 
+                        style={{
+                            background: 'rgba(249, 248, 244, 0.85)', /* 增加透明度以匹配毛玻璃 */
+                            backdropFilter: 'blur(20px)', /* 增强模糊 */
+                            WebkitBackdropFilter: 'blur(20px)',
+                            marginTop: '-24px', /* 负边距拉高，消除缝隙 */
+                            paddingTop: '24px'  /* 补偿内边距 */
+                        }}>
                          <div className="glass-panel rounded-full p-1 inline-flex scale-95 shadow-sm">
                             <button onClick={() => setType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${type === 'h' ? 'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
                             <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${type === 'k' ? 'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
@@ -337,7 +352,7 @@
                         {CONSONANTS.map(row => (
                             <div key={row.id} className="flex gap-3 items-center">
                                 <div className="w-6 flex flex-col items-center justify-center text-xs font-bold text-stone-300 gap-1 font-mincho opacity-60">
-                                    {row.label.split('').map((c,i) => <span key={i}>{c}</span>)}
+                                    {row.label.split(' ').map((c,i) => <span key={i} className="block">{c}</span>)}
                                 </div>
                                 <div className="grid grid-cols-5 gap-2 flex-1">
                                     {VOWELS.map(col => {
@@ -349,7 +364,10 @@
                                         return (
                                             <button key={col.id} onClick={() => speak(displayChar)} className="glass-panel aspect-square rounded-2xl flex flex-col items-center justify-center active-press active:bg-white transition-colors group">
                                                 <span className="text-2xl font-hand text-stone-700 group-hover:text-[#B83B40] transition-colors">{displayChar}</span>
-                                                <span className="text-[9px] text-stone-300 font-sans-sys font-bold mt-0.5 uppercase opacity-0 group-hover:opacity-100 transition-opacity">{row.id === 'n_special' ? 'n' : (row.id + col.id)}</span>
+                                                {/* 🔴 修改：移除 opacity-0，常驻显示罗马音 */}
+                                                <span className="text-[10px] text-stone-400 font-sans-sys font-bold mt-0.5 uppercase">
+                                                    {row.id === 'n_special' ? 'n' : (row.id + col.id)}
+                                                </span>
                                             </button>
                                         )
                                     })}
@@ -368,12 +386,13 @@
                 if(!canvas) return; const ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 // 绘制优雅的米字格
-                ctx.save(); 
+                ctx.save();
                 ctx.strokeStyle = 'rgba(184, 59, 64, 0.1)'; 
                 ctx.lineWidth = 1;
                 ctx.setLineDash([8, 8]);
                 ctx.beginPath(); ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(canvas.width/2, 0);
+                ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
                 ctx.restore();
             };
             const draw = (e) => {
@@ -414,7 +433,8 @@
                             {/* 核心修正：大幅增加字体大小 */}
                             <span className="text-[18rem] font-hand leading-none text-[#B83B40]/15">{char}</span>
                         </div>
-                        <canvas ref={canvasRef} className="w-full h-full relative z-10 touch-none" onTouchStart={draw} onTouchMove={draw} onTouchEnd={draw} />
+                        <canvas ref={canvasRef} className="w-full h-full relative z-10 touch-none" onTouchStart={draw} onTouchMove={draw} 
+onTouchEnd={draw} />
                     </div>
                 </div>
             );
@@ -424,7 +444,6 @@
             const [char, setChar] = useState({ h: 'あ', k: 'ア', r: 'a' });
             const [practiceType, setPracticeType] = useState('h'); 
             const [isOpen, setIsOpen] = useState(false);
-            
             const allChars = useMemo(() => {
                 const list = [];
                 CONSONANTS.forEach(row => {
@@ -436,7 +455,6 @@
                 });
                 return list;
             }, []);
-
             return (
                 <div className="safe-pb animate-page-enter">
                     <div className="px-5 space-y-6 mt-4">
@@ -449,8 +467,10 @@
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 pr-2">
-                                <span className="text-3xl font-hand text-stone-700">{practiceType === 'h' ? char.h : char.k}</span>
-                                <ChevronRight className={`ml-2 transition-transform duration-300 text-stone-300 ${isOpen ? 'rotate-90' : ''}`} size={20} />
+                                <span className="text-3xl font-hand text-stone-700">{practiceType === 'h' ?
+char.h : char.k}</span>
+                                <ChevronRight className={`ml-2 transition-transform duration-300 text-stone-300 ${isOpen ?
+'rotate-90' : ''}`} size={20} />
                             </div>
                         </button>
                         
@@ -460,7 +480,8 @@
                                     <div className="grid grid-cols-6 gap-3 max-h-[50vh] overflow-y-auto no-scrollbar">
                                         {allChars.map((c, i) => (
                                             <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-all ${c.h === char.h ? 'bg-[#B83B40] text-white shadow-lg scale-105' : 'bg-white/50 text-stone-600'}`}>
-                                                <div className="font-hand text-xl">{practiceType === 'h' ? c.h : c.k}</div>
+                                                <div className="font-hand text-xl">{practiceType === 'h' ?
+c.h : c.k}</div>
                                             </button>
                                         ))}
                                     </div>
@@ -470,13 +491,16 @@
                         
                          <div className="flex justify-center mb-2">
                              <div className="glass-panel rounded-full p-1 inline-flex scale-95 shadow-sm">
-                                <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${practiceType === 'h' ? 'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
-                                <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${practiceType === 'k' ? 'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
+                                 <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${practiceType === 'h' ?
+'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
+                                <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 font-mincho ${practiceType === 'k' ?
+'bg-white shadow text-[#B83B40]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 gap-6">
-                            <WritingCard char={practiceType === 'h' ? char.h : char.k} label={practiceType === 'h' ? 'Hiragana' : 'Katakana'} />
+                            <WritingCard char={practiceType === 'h' ?
+char.h : char.k} label={practiceType === 'h' ? 'Hiragana' : 'Katakana'} />
                         </div>
                     </div>
                 </div>
@@ -491,7 +515,6 @@
                 setStats({ days: ZenStreak.getTotalDays(), srsCount: Object.keys(SRS.getAll()).length });
                 setMatrix(SRS.getAll());
             }, []);
-
             const handleExport = () => {
                 const str = Storage.export();
                 navigator.clipboard.writeText(str).then(() => {
@@ -505,7 +528,6 @@
                     setTimeout(() => location.reload(), 1500);
                 }
             };
-
             return (
                 <div className="safe-pb animate-page-enter px-5 space-y-6 pt-6">
                     <HeatmapWidget />
@@ -534,9 +556,10 @@
                         <div className="grid grid-cols-5 gap-1.5">
                             {['a','i','u','e','o'].map(col => (
                                 CONSONANTS.map(row => {
-                                    const char = KANA_MAP[row.id]?.[col] || (row.id==='n_special'&&col==='a'?'ん':null);
+                                    const char = KANA_MAP[row.id]?.[col] ||
+(row.id==='n_special'&&col==='a'?'ん':null);
                                     if(!char) return null;
-                                    const item = Object.values(matrix).find(v => v && v.key === char) || matrix[char]; 
+                                    const item = Object.values(matrix).find(v => v && v.key === char) || matrix[char];
                                     let colorClass = 'bg-stone-100/50 text-stone-300';
                                     if (item) {
                                         const now = Date.now();
@@ -575,14 +598,12 @@
             const [progress, setProgress] = useState(0);
             const [isCorrect, setIsCorrect] = useState(null);
             const [dueCount, setDueCount] = useState(0);
-            const [weakQueue, setWeakQueue] = useState([]); 
-
+            const [weakQueue, setWeakQueue] = useState([]);
             useEffect(() => {
                 const due = SRS.getDueItems();
                 setDueCount(due.length);
                 if (startMode === 'weak') initWeakMode();
             }, [startMode]);
-
             const initWeakMode = () => {
                 const allData = SRS.getAll();
                 const now = Date.now();
@@ -602,7 +623,6 @@
             };
 
             const toggleRow = (id) => setSelRows(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-            
             const getQuestionPool = () => {
                 if (mode === 'srs') return vocabList;
                 if (mode === 'custom') {
@@ -623,13 +643,15 @@
 
             const nextQuestion = (overrideQueue = null) => {
                 if (mode === 'weak') {
-                    const queue = overrideQueue || weakQueue;
+                    const queue = overrideQueue ||
+weakQueue;
                     if (queue.length === 0) { setStep('result'); return; }
                     const target = queue[0];
                     generateOptions(target);
                     return;
                 }
-                if (progress >= 10) { setStep('result'); return; }
+                if (progress >= 10) { setStep('result');
+return; }
                 const pool = getQuestionPool();
                 if (pool.length === 0) { alert("范围太小或无词汇"); setStep('config'); return; }
                 const target = pool[Math.floor(Math.random() * pool.length)];
@@ -646,7 +668,6 @@
                 setCurrentQ({ word: target.r, mean: target.m, answer: target.w, options: options, raw: target });
                 setIsCorrect(null);
             };
-
             const handleAnswer = (selected) => {
                 if (isCorrect !== null) return;
                 const correct = selected === currentQ.answer;
@@ -656,14 +677,14 @@
                 if (mode === 'weak') {
                     const newQueue = [...weakQueue];
                     if (correct) newQueue.shift();
-                    else { const item = newQueue.shift(); newQueue.push(item); }
+                    else { const item = newQueue.shift(); newQueue.push(item);
+}
                     setWeakQueue(newQueue);
                     setTimeout(() => nextQuestion(newQueue), 1200);
                 } else {
                     setTimeout(() => { setProgress(p => p + 1); nextQuestion(); }, 1200);
                 }
             };
-
             if (step === 'lobby') {
                 return (
                     <div className="safe-pb animate-page-enter px-6 flex flex-col items-center justify-center h-[80vh]">
@@ -671,12 +692,14 @@
                             <Brain size={48} />
                         </div>
                         <h2 className="text-3xl font-bold text-stone-800 mb-2 font-mincho">试炼之间</h2>
-                        <p className="text-stone-400 mb-8 text-center text-sm px-4 leading-relaxed">
+                        <p className="text-stone-400 mb-8 text-center text-sm px-4 
+leading-relaxed">
                             总词汇量: {vocabList.length} 词<br/>
                             {dueCount > 0 ? `今日待复习: ${dueCount} 个` : "今日记忆任务已完成"}
                         </p>
                         <div className="w-full space-y-4">
-                            <button onClick={() => { setMode('srs'); setProgress(0); setStep('quiz'); setTimeout(nextQuestion, 0); }} className="w-full h-20 bg-[#B83B40] text-white rounded-[24px] font-bold shadow-xl shadow-red-900/20 flex items-center px-6 gap-4 active-press relative overflow-hidden group">
+                            <button onClick={() => { setMode('srs'); setProgress(0); setStep('quiz'); setTimeout(nextQuestion, 0);
+}} className="w-full h-20 bg-[#B83B40] text-white rounded-[24px] font-bold shadow-xl shadow-red-900/20 flex items-center px-6 gap-4 active-press relative overflow-hidden group">
                                 <div className="p-3 bg-white/20 rounded-full"><Sparkles size={24} /></div>
                                 <div className="text-left flex-1">
                                     <div className="text-lg">智能复习</div>
@@ -710,7 +733,8 @@
                                     </button>
                                 ))}
                             </div>
-                            <button onClick={() => { if(selRows.length===0) return; setProgress(0); nextQuestion(); setStep('quiz'); }} disabled={selRows.length === 0} className="w-full h-14 bg-[#2c2c2c] text-white rounded-xl font-bold flex items-center justify-center gap-2 active-press">
+                            <button onClick={() => { if(selRows.length===0) return; setProgress(0); nextQuestion(); setStep('quiz');
+}} disabled={selRows.length === 0} className="w-full h-14 bg-[#2c2c2c] text-white rounded-xl font-bold flex items-center justify-center gap-2 active-press">
                                 开始 <ChevronRight size={18} />
                             </button>
                         </div>
@@ -744,7 +768,8 @@
                         <h2 className="text-5xl font-mincho font-bold text-stone-800 mb-3 tracking-wide">{currentQ.word}</h2>
                         <div className="text-lg text-stone-500 font-medium">{currentQ.mean}</div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="grid grid-cols-2 gap-3 
+mb-4">
                         {currentQ.options.map((opt, i) => {
                             let stateClass = 'bg-white/60 text-stone-600 hover:bg-white';
                             if (isCorrect !== null) {
@@ -764,7 +789,6 @@
             const [vocabList, setVocabList] = useState(BACKUP_DB);
             const [startWeakMode, setStartWeakMode] = useState(false);
             const [showSettings, setShowSettings] = useState(false);
-
             useEffect(() => {
                 setFadeIn(true);
                 fetch('./vocab.json')
@@ -772,7 +796,6 @@
                     .then(data => setVocabList(data))
                     .catch(() => {});
             }, []);
-
             return (
                 <div className={`h-full flex flex-col transition-opacity duration-1000 ease-in ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
                     {/* Header 重构：安全区+内容区结构 */}
@@ -780,7 +803,8 @@
                         <div className="header-content">
                             <div className="flex items-center gap-3">
                                 {/* 修复 Logo 字体 */}
-                                <div className="w-9 h-9 bg-[#B83B40] rounded-xl text-white flex items-center justify-center font-sc-serif font-bold text-lg shadow-lg shadow-red-900/20 ring-1 ring-white/50">禅</div>
+                                <div className="w-9 h-9 bg-[#B83B40] 
+rounded-xl text-white flex items-center justify-center font-sc-serif font-bold text-lg shadow-lg shadow-red-900/20 ring-1 ring-white/50">禅</div>
                                 <div className="flex flex-col justify-center h-9">
                                     <span className="font-mincho font-bold text-stone-800 text-base leading-none tracking-widest">GOJUON</span>
                                 </div>
@@ -797,7 +821,8 @@
                             {activeTab === 'chart' && <ChartMode />}
                             {activeTab === 'practice' && <PracticeMode />}
                             {activeTab === 'quiz' && <QuizMode vocabList={vocabList} startMode={startWeakMode} onExit={() => setStartWeakMode(false)} />}
-                            {activeTab === 'profile' && <ProfileMode onStartWeakMode={() => { setActiveTab('quiz'); setStartWeakMode('weak'); }} />}
+                            {activeTab === 'profile' && 
+<ProfileMode onStartWeakMode={() => { setActiveTab('quiz'); setStartWeakMode('weak'); }} />}
                         </div>
                     </div>
 
@@ -814,17 +839,22 @@
                                 <button 
                                     key={tab.id} 
                                     onClick={() => { setActiveTab(tab.id); setStartWeakMode(false); }} 
-                                    className={`flex flex-col items-center justify-end w-full relative group active:scale-95 transition-transform duration-200 ease-out`}
+                                    className={`flex flex-col 
+items-center justify-end w-full relative group active:scale-95 transition-transform duration-200 ease-out`}
                                     style={{ WebkitTapHighlightColor: 'transparent', height: '48px', paddingBottom: 'var(--bar-inner-padding)' }}
                                 >
-                                    <div className={`relative transition-all duration-300 ${isActive ? '-translate-y-1' : 'translate-y-0'}`}>
+                                    <div className={`relative transition-all duration-300 ${isActive ?
+'-translate-y-1' : 'translate-y-0'}`}>
                                         <Icon 
                                             size={26} 
-                                            strokeWidth={isActive ? 2.5 : 1.5} 
-                                            className={`transition-colors duration-300 ${isActive ? 'text-[#B83B40] drop-shadow-sm' : 'text-stone-400'}`} 
+                                            strokeWidth={isActive ?
+2.5 : 1.5} 
+                                            className={`transition-colors duration-300 ${isActive ?
+'text-[#B83B40] drop-shadow-sm' : 'text-stone-400'}`} 
                                         />
                                     </div>
-                                    <span className={`text-[9px] font-bold font-sans-sys mt-0.5 transition-colors duration-300 ${isActive ? 'text-[#B83B40] opacity-100' : 'text-stone-300'}`}>
+                                    <span className={`text-[9px] font-bold font-sans-sys mt-0.5 transition-colors duration-300 ${isActive ?
+'text-[#B83B40] opacity-100' : 'text-stone-300'}`}>
                                         {tab.label}
                                     </span>
                                 </button>
