@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 关键优化 1：Viewport 适配 iOS 全屏和刘海屏 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- 关键优化 2：iOS PWA 设置 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>五十音之禅</title>
+
+    <!-- 1. 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. 引入 Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- 3. 引入手写字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+
+    <!-- 4. 内置 App 图标 (SVG Base64) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background-color:%23cd4631'%3E%3Ctext x='50%25' y='50%25' font-family='serif' font-weight='bold' font-size='300' fill='white' dominant-baseline='central' text-anchor='middle'%3E禅%3C/text%3E%3C/svg%3E">
+
+    <style>
+        /* 禁止 iOS 默认的长按选中和高亮，像原生 App 一样 */
+        body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 字体定义 */
+        .font-zen { font-family: 'Zen Kurenaido', sans-serif; }
+        .font-hand { font-family: 'Klee One', cursive; }
+        
+        /* 动画 */
+        .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .writing-vertical-lr { writing-mode: vertical-lr; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .bg-paper-texture {
+            background-color: #f8f7f2;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        /* 专门针对 iOS 底部安全区域的处理 */
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .safe-area-top {
+            padding-top: max(env(safe-area-inset-top), 20px);
+        }
+    </style>
+</head>
+<body class="bg-[#fcfbf9] text-[#2c2c2c] font-zen overflow-hidden fixed inset-0">
+    <div id="root" class="h-full"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef, useMemo } from 'https://esm.sh/react@18.2.0';
+        import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
+        import { 
+            BookOpen, PenTool, Brain, Volume2, Check, X, ChevronRight, 
+            RotateCcw, Eraser, Eye, Grid, Filter
+        } from 'https://esm.sh/lucide-react@0.292.0';
+
+        const CONSONANTS = [
+            { id: '', label: 'あ行' }, { id: 'k', label: 'か行' }, { id: 's', label: 'さ行' },
+            { id: 't', label: 'た行' }, { id: 'n', label: 'な行' }, { id: 'h', label: 'は行' },
+            { id: 'm', label: 'ま行' }, { id: 'y', label: 'や行' }, { id: 'r', label: 'ら行' },
+            { id: 'w', label: 'わ行' }, { id: 'n_special', label: 'ん' },
+        ];
+
+        const VOWELS = [
+            { id: 'a', label: 'あ' }, { id: 'i', label: 'い' }, { id: 'u', label: 'う' },
+            { id: 'e', label: 'え' }, { id: 'o', label: 'お' },
+        ];
+
+        const KANA_MAP = {
+            '':  { a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お' },
+            'k': { a: 'か', i: 'き', u: 'く', e: 'け', o: 'こ' },
+            's': { a: 'さ', i: 'し', u: 'す', e: 'せ', o: 'そ' },
+            't': { a: 'た', i: 'ち', u: 'つ', e: 'て', o: 'と' },
+            'n': { a: 'な', i: 'に', u: 'ぬ', e: 'ね', o: 'の' },
+            'h': { a: 'は', i: 'ひ', u: 'ふ', e: 'へ', o: 'ほ' },
+            'm': { a: 'ま', i: 'み', u: 'む', e: 'め', o: 'も' },
+            'y': { a: 'や', i: null, u: 'ゆ', e: null, o: 'よ' },
+            'r': { a: 'ら', i: 'り', u: 'る', e: 'れ', o: 'ろ' },
+            'w': { a: 'わ', i: null, u: null, e: null, o: 'を' },
+            'n_special': { a: 'ん', i: null, u: null, e: null, o: null }, 
+        };
+
+        const KATA_MAP = {
+            '':  { a: 'ア', i: 'イ', u: 'ウ', e: 'エ', o: 'オ' },
+            'k': { a: 'カ', i: 'キ', u: 'ク', e: 'ケ', o: 'コ' },
+            's': { a: 'サ', i: 'シ', u: 'ス', e: 'セ', o: 'ソ' },
+            't': { a: 'タ', i: 'チ', u: 'ツ', e: 'テ', o: 'ト' },
+            'n': { a: 'ナ', i: 'ニ', u: 'ヌ', e: 'ネ', o: 'ノ' },
+            'h': { a: 'ハ', i: 'ヒ', u: 'フ', e: 'ヘ', o: 'ホ' },
+            'm': { a: 'マ', i: 'ミ', u: 'ム', e: 'メ', o: 'モ' },
+            'y': { a: 'ヤ', i: null, u: 'ユ', e: null, o: 'ヨ' },
+            'r': { a: 'ラ', i: 'リ', u: 'ル', e: 'レ', o: 'ロ' },
+            'w': { a: 'ワ', i: null, u: null, e: null, o: 'ヲ' },
+            'n_special': { a: 'ン', i: null, u: null, e: null, o: null },
+        };
+
+        const VOCAB_FULL_DB = [
+            { w: 'あい', m: '爱', r: 'ai' }, { w: 'いえ', m: '家', r: 'ie' }, { w: 'あお', m: '蓝色', r: 'ao' }, { w: 'うえ', m: '上面', r: 'ue' },
+            { w: 'かお', m: '脸', r: 'kao' }, { w: 'あか', m: '红色', r: 'aka' }, { w: 'えき', m: '车站', r: 'eki' }, { w: 'きく', m: '听', r: 'kiku' },
+            { w: 'あさ', m: '早晨', r: 'asa' }, { w: 'いす', m: '椅子', r: 'isu' }, { w: 'すし', m: '寿司', r: 'sushi' }, { w: 'せかい', m: '世界', r: 'sekai' },
+            { w: 'ちち', m: '父亲', r: 'chichi' }, { w: 'した', m: '下面', r: 'shita' }, { w: 'くつ', m: '鞋子', r: 'kutsu' }, { w: 'て', m: '手', r: 'te' },
+            { w: 'なに', m: '什么', r: 'nani' }, { w: 'いぬ', m: '狗', r: 'inu' }, { w: 'ねこ', m: '猫', r: 'neko' }, { w: 'はな', m: '花', r: 'hana' },
+            { w: 'ひと', m: '人', r: 'hito' }, { w: 'ふね', m: '船', r: 'fune' }, { w: 'ほし', m: '星', r: 'hoshi' }, { w: 'はは', m: '母亲', r: 'haha' },
+            { w: 'みみ', m: '耳朵', r: 'mimi' }, { w: 'むし', m: '虫', r: 'mushi' }, { w: 'め', m: '眼', r: 'me' }, { w: 'やま', m: '山', r: 'yama' },
+            { w: 'ゆき', m: '雪', r: 'yuki' }, { w: 'よる', m: '夜', r: 'yoru' }, { w: 'ゆめ', m: '梦', r: 'yume' }, { w: 'へや', m: '房间', r: 'heya' },
+            { w: 'さくら', m: '樱花', r: 'sakura' }, { w: 'とり', m: '鸟', r: 'tori' }, { w: 'はる', m: '春', r: 'haru' }, { w: 'そら', m: '空', r: 'sora' },
+            { w: 'かわ', m: '河', r: 'kawa' }, { w: 'ほん', m: '书', r: 'hon' }, { w: 'わたし', m: '我', r: 'watashi' }, { w: 'にほん', m: '日本', r: 'nihon' }
+        ];
+
+        const speak = (text) => {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            const jaVoice = voices.find(v => v.lang.includes('ja'));
+            if (jaVoice) utterance.voice = jaVoice;
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.9; 
+            window.speechSynthesis.speak(utterance);
+        };
+
+        // --- iOS 风格底部导航栏 ---
+        function TabBar({ active, onChange }) {
+            const tabs = [
+                { id: 'chart', icon: <BookOpen size={24} />, label: '阅览' },
+                { id: 'practice', icon: <PenTool size={24} />, label: '临摹' },
+                { id: 'quiz', icon: <Brain size={24} />, label: '测验' },
+            ];
+
+            return (
+                <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-stone-200 z-50 safe-area-bottom">
+                    <div className="flex justify-around items-center pt-2 pb-1">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => onChange(tab.id)}
+                                className={`flex flex-col items-center gap-1 w-full py-2 transition-all active:scale-95 ${
+                                    active === tab.id ? 'text-[#cd4631]' : 'text-stone-400 hover:text-stone-600'
+                                }`}
+                            >
+                                {tab.icon}
+                                <span className="text-[10px] font-bold tracking-widest">{tab.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // --- 阅览模式 ---
+        function ChartMode() {
+            const [type, setType] = useState('h');
+            return (
+                <div className="animate-fade-in pb-32">
+                    <div className="sticky top-[env(safe-area-inset-top)] bg-[#fcfbf9]/95 backdrop-blur z-20 py-2 border-b border-stone-200/50 mb-4 flex justify-center">
+                         <div className="bg-stone-100 p-1 rounded-lg inline-flex">
+                            <button onClick={() => setType('h')} className={`px-6 py-1.5 rounded-md text-sm transition-all ${type === 'h' ? 'bg-white shadow text-[#cd4631] font-bold' : 'text-stone-400'}`}>平仮名</button>
+                            <button onClick={() => setType('k')} className={`px-6 py-1.5 rounded-md text-sm transition-all ${type === 'k' ? 'bg-white shadow text-[#cd4631] font-bold' : 'text-stone-400'}`}>片仮名</button>
+                        </div>
+                    </div>
+                    
+                    <div className="grid gap-3 px-4">
+                        {CONSONANTS.map(row => (
+                            <div key={row.id} className="flex gap-2">
+                                <div className="w-8 flex items-center justify-center text-xs font-bold text-stone-400 bg-stone-100 rounded-lg writing-vertical-lr tracking-widest py-2">{row.label}</div>
+                                <div className="grid grid-cols-5 gap-2 flex-1">
+                                    {VOWELS.map(col => {
+                                        const map = type === 'h' ? KANA_MAP : KATA_MAP;
+                                        const char = map[row.id]?.[col.id];
+                                        if (!char && row.id !== 'n_special') return <div key={col.id} className="bg-stone-50/50 rounded-lg" />;
+                                        if (row.id === 'n_special' && col.id !== 'a') return <div key={col.id} />;
+                                        
+                                        const displayChar = row.id === 'n_special' ? map['n_special'].a : char;
+
+                                        return (
+                                            <button 
+                                                key={col.id} 
+                                                onClick={() => speak(displayChar)}
+                                                className="aspect-square bg-white border border-stone-200 rounded-xl flex flex-col items-center justify-center active:bg-stone-50 active:scale-95 transition-all shadow-sm"
+                                            >
+                                                <span className="text-2xl font-hand text-stone-700">{displayChar}</span>
+                                                <span className="text-[9px] text-stone-300 font-mono mt-0.5 uppercase">
+                                                    {row.id === 'n_special' ? 'n' : (row.id + col.id)}
+                                                </span>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // --- 临摹模式 ---
+        function WritingCard({ char, label, romaji }) {
+            const canvasRef = useRef(null);
+            
+            const clear = () => {
+                const canvas = canvasRef.current;
+                if(!canvas) return;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 辅助线
+                ctx.save();
+                ctx.strokeStyle = '#f0ebe5';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath(); ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
+                ctx.restore();
+            };
+
+            const handleDraw = (e) => {
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+                
+                if (e.type === 'mousedown' || e.type === 'touchstart') {
+                    ctx.beginPath(); ctx.moveTo(x, y); canvas.isDrawing = true;
+                } else if (e.type === 'mouseup' || e.type === 'touchend' || e.type === 'mouseleave') {
+                    canvas.isDrawing = false;
+                } else if (canvas.isDrawing) {
+                    ctx.lineTo(x, y); ctx.stroke();
+                }
+            };
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if(canvas) {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                    clear();
+                }
+            }, [char]);
+
+            return (
+                <div className="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden relative">
+                    <div className="px-4 py-2 bg-stone-50 border-b border-stone-100 flex justify-between items-center">
+                        <span className="text-xs font-bold text-stone-400">{label}</span>
+                        <div className="flex gap-2">
+                            <button onClick={() => speak(char)} className="p-1.5 active:bg-stone-200 rounded-full"><Volume2 size={16} className="text-stone-500"/></button>
+                            <button onClick={clear} className="p-1.5 active:bg-stone-200 rounded-full"><Eraser size={16} className="text-stone-500"/></button>
+                        </div>
+                    </div>
+                    <div className="relative aspect-square">
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 select-none">
+                            <span className="text-8xl font-hand leading-none text-stone-800">{char}</span>
+                        </div>
+                        <canvas ref={canvasRef} className="w-full h-full relative z-10 touch-none"
+                            onMouseDown={handleDraw} onMouseMove={handleDraw} onMouseUp={handleDraw} onMouseLeave={handleDraw}
+                            onTouchStart={handleDraw} onTouchMove={handleDraw} onTouchEnd={handleDraw}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        function PracticeMode() {
+            const [char, setChar] = useState({ h: 'あ', k: 'ア', r: 'a' });
+            const [isOpen, setIsOpen] = useState(false);
+            const allChars = useMemo(() => {
+                const list = [];
+                CONSONANTS.forEach(row => {
+                    VOWELS.forEach(col => {
+                        const h = KANA_MAP[row.id]?.[col.id];
+                        const k = KATA_MAP[row.id]?.[col.id];
+                        if (h) list.push({ h, k, r: row.id + col.id });
+                    });
+                    if(row.id === 'n_special') list.push({ h: 'ん', k: 'ン', r: 'n' });
+                });
+                return list;
+            }, []);
+
+            return (
+                <div className="animate-fade-in px-4 space-y-4 pb-32">
+                    <button onClick={() => setIsOpen(!isOpen)} className="w-full bg-white border border-stone-200 p-4 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition-transform">
+                        <div className="flex items-center gap-3">
+                            <Grid size={20} className="text-[#cd4631]" />
+                            <span className="font-bold text-stone-700 text-lg">当前: <span className="font-hand">{char.h}</span> / <span className="font-hand">{char.k}</span></span>
+                        </div>
+                        <ChevronRight className={`transition-transform text-stone-400 ${isOpen ? 'rotate-90' : ''}`} size={20} />
+                    </button>
+                    {isOpen && (
+                        <div className="bg-white border border-stone-200 rounded-2xl shadow-inner p-3 grid grid-cols-6 gap-2 max-h-60 overflow-y-auto z-30">
+                            {allChars.map((c, i) => (
+                                <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`p-2 rounded-lg text-center ${c.h === char.h ? 'bg-[#cd4631] text-white' : 'bg-stone-50'}`}>
+                                    <div className="font-hand text-lg">{c.h}</div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                    <WritingCard char={char.h} label="平仮名" romaji={char.r} />
+                    <WritingCard char={char.k} label="片仮名" romaji={char.r} />
+                </div>
+            );
+        }
+
+        // --- 测验模式 ---
+        function QuizMode() {
+            const [step, setStep] = useState('config');
+            const [quizData, setQuizData] = useState([]);
+            const [currentIdx, setCurrentIdx] = useState(0);
+            const [revealed, setRevealed] = useState(false);
+            const canvasRef = useRef(null);
+
+            const startQuiz = () => {
+                // 简单随机选10个
+                const shuffled = [...VOCAB_FULL_DB].sort(() => 0.5 - Math.random());
+                setQuizData(shuffled.slice(0, 10));
+                setCurrentIdx(0);
+                setRevealed(false);
+                setStep('quiz');
+            };
+
+            const handleDraw = (e) => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+                if (e.type === 'touchstart' || e.type === 'mousedown') {
+                    ctx.beginPath(); ctx.moveTo(x, y); canvas.isDrawing = true;
+                } else if (e.type === 'touchend' || e.type === 'mouseup') {
+                    canvas.isDrawing = false;
+                } else if (canvas.isDrawing) {
+                    ctx.lineTo(x, y); ctx.stroke();
+                }
+            };
+
+            useEffect(() => {
+                 if(step === 'quiz' && canvasRef.current) {
+                    const canvas = canvasRef.current;
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = canvas.parentElement.clientHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.strokeStyle = '#2d3436';
+                 }
+            }, [step, currentIdx]);
+
+            if (step === 'config') {
+                return (
+                    <div className="animate-fade-in px-6 flex flex-col items-center justify-center h-[70vh]">
+                        <div className="w-24 h-24 bg-[#cd4631] rounded-2xl rotate-3 flex items-center justify-center text-white mb-8 shadow-xl">
+                            <Brain size={48} />
+                        </div>
+                        <h2 className="text-2xl font-bold text-stone-800 mb-2">准备好了吗？</h2>
+                        <p className="text-stone-500 mb-10 text-center">随机抽取 10 个单词<br/>请写出对应的假名</p>
+                        <button onClick={startQuiz} className="w-full py-4 bg-[#cd4631] text-white rounded-2xl font-bold shadow-lg text-lg active:scale-95 transition-transform">
+                            开始测验
+                        </button>
+                    </div>
+                );
+            }
+
+            if (step === 'result') {
+                return (
+                    <div className="animate-fade-in px-6 flex flex-col items-center justify-center h-[70vh]">
+                        <Check size={60} className="text-[#cd4631] mb-6" />
+                        <h2 className="text-3xl font-bold text-stone-800 mb-8">完成！</h2>
+                        <button onClick={() => setStep('config')} className="w-full py-4 bg-white border-2 border-stone-200 text-stone-700 rounded-2xl font-bold text-lg active:bg-stone-50">
+                            再来一次
+                        </button>
+                    </div>
+                )
+            }
+
+            const question = quizData[currentIdx];
+
+            return (
+                <div className="animate-fade-in px-4 pb-32 pt-2 h-full flex flex-col">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="text-xs font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded">Q{currentIdx + 1}/10</span>
+                        <button onClick={() => setStep('config')} className="text-xs text-stone-400 p-2">退出</button>
+                    </div>
+
+                    <div className="bg-white rounded-3xl shadow-xl border border-stone-100 flex-1 flex flex-col overflow-hidden">
+                        <div className="p-8 text-center bg-[#fcfbf9] border-b border-dashed border-stone-200">
+                            <div className="text-4xl font-bold text-stone-800 mb-1 tracking-wider">{question.r}</div>
+                            <div className="text-sm text-stone-400">{question.m}</div>
+                        </div>
+
+                        <div className="flex-1 relative bg-white touch-none">
+                            <canvas ref={canvasRef} className="w-full h-full cursor-crosshair"
+                                onMouseDown={handleDraw} onMouseMove={handleDraw} onMouseUp={handleDraw}
+                                onTouchStart={handleDraw} onTouchMove={handleDraw} onTouchEnd={handleDraw}
+                            />
+                            
+                            {/* 答案遮罩 */}
+                            <div className={`absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur transition-all duration-300 border-t border-stone-100 ${revealed ? 'h-32' : 'h-12'}`}>
+                                {!revealed ? (
+                                    <div onClick={() => {setRevealed(true); speak(question.w)}} className="h-full flex items-center justify-center gap-2 text-stone-400 cursor-pointer active:bg-stone-50">
+                                        <Eye size={18} /> <span className="text-sm font-bold">点击看答案</span>
+                                    </div>
+                                ) : (
+                                    <div className="p-4 h-full flex flex-col justify-between">
+                                        <div className="flex items-center justify-between px-2">
+                                            <span className="text-4xl font-hand text-[#cd4631]">{question.w}</span>
+                                            <button onClick={() => speak(question.w)} className="p-2 bg-stone-100 rounded-full"><Volume2 size={20} className="text-stone-600"/></button>
+                                        </div>
+                                        <button onClick={() => {
+                                            if(currentIdx < 9) { setRevealed(false); setCurrentIdx(p => p+1); }
+                                            else { setStep('result'); }
+                                        }} className="w-full py-3 bg-[#2d3436] text-white rounded-xl font-bold flex items-center justify-center gap-2 active:scale-[0.98]">
+                                            下一题 <ChevronRight size={18}/>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function JapaneseZenApp() {
+            const [activeTab, setActiveTab] = useState('chart');
+            const [fadeIn, setFadeIn] = useState(false);
+
+            useEffect(() => {
+                setFadeIn(true);
+                if (window.speechSynthesis) window.speechSynthesis.getVoices();
+            }, []);
+
+            return (
+                <div className={`h-screen flex flex-col bg-paper-texture transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+                    <header className="safe-area-top px-6 pb-2 bg-[#fcfbf9]/80 backdrop-blur sticky top-0 z-30 flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-[#cd4631] rounded-lg text-white flex items-center justify-center font-bold font-zen shadow-sm">禅</div>
+                            <span className="font-bold text-stone-800 text-lg tracking-widest font-zen">GOJUON</span>
+                        </div>
+                    </header>
+
+                    <main className="flex-1 overflow-y-auto no-scrollbar relative z-10 w-full max-w-lg mx-auto">
+                        {activeTab === 'chart' && <ChartMode />}
+                        {activeTab === 'practice' && <PracticeMode />}
+                        {activeTab === 'quiz' && <QuizMode />}
+                    </main>
+
+                    <TabBar active={activeTab} onChange={setActiveTab} />
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<JapaneseZenApp />);
+    </script>
+</body>
+</html>
