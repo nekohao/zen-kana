@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- PWA 核心设置 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
     <meta name="format-detection" content="telephone=no">
     <title>禅</title>
 
-    <!-- 图标调用 -->
     <link rel="apple-touch-icon" href="./icon.png?v=3.0">
     <link rel="icon" type="image/png" href="./icon.png?v=3.0">
     <link rel="shortcut icon" href="./icon.png?v=3.0">
@@ -27,12 +25,14 @@
 
     <style>
         :root {
-            --glass-surface: rgba(255, 255, 255, 0.96); /* 接近不透明，像微信一样 */
-            --glass-border: rgba(0, 0, 0, 0.05); /* 极细分割线 */
+            --glass-surface: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.6);
             --ink-color: #1a1a1a;
             --zen-red: #a73136;
-            --zen-bg: #f2f2f2; /* 微信风背景灰 */
+            --zen-bg: #f5f4f0;
             --ios-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            /* 定义安全区变量，如果浏览器不支持则默认为 20px */
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
         body {
@@ -56,43 +56,57 @@
         
         /* 玻璃拟态组件 */
         .glass-panel {
-            background: rgba(255,255,255,0.85);
+            background: var(--glass-surface);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.5);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
             transform: translateZ(0);
         }
 
-        /* 底部导航栏 - 微信级复刻 */
-        .wechat-tabbar {
-            background: rgba(249, 249, 249, 0.94); /* 微信底部经典色 */
-            backdrop-filter: blur(50px);
-            -webkit-backdrop-filter: blur(50px);
-            border-top: 0.5px solid rgba(0,0,0,0.1); /* 经典的极细顶部分割线 */
+        /* 极致紧凑的底部导航栏 */
+        .compact-tabbar {
             position: fixed;
             bottom: 0; left: 0; right: 0;
             z-index: 50;
-            /* 关键：padding-bottom 设为安全区高度，把内容顶上去 */
-            padding-bottom: env(safe-area-inset-bottom); 
+            background: rgba(245, 244, 240, 0.94); /* 极高质感的米白 */
+            backdrop-filter: blur(80px); /* 强力磨砂 */
+            -webkit-backdrop-filter: blur(80px);
+            /* 顶部发丝线 */
+            border-top: 0.5px solid rgba(0,0,0,0.06); 
+            /* 关键：使用 padding-bottom 撑开安全区，内容紧贴 */
+            padding-bottom: calc(var(--safe-bottom) + 2px); 
+            padding-top: 6px; 
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.02); /* 极淡的上浮阴影 */
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* 布局适配：底部留白 = TabBar高度(50px) + 安全区 */
-        .safe-pb { padding-bottom: calc(50px + env(safe-area-inset-bottom) + 20px); } 
+        /* 布局适配：底部留白减小，因为 Tabbar 变矮了 */
+        .safe-pb { padding-bottom: calc(var(--safe-bottom) + 60px); } 
         .safe-pt { padding-top: max(env(safe-area-inset-top), 10px); }
 
+        .bg-noise {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            position: fixed; inset: 0; pointer-events: none; z-index: -1;
+        }
+        
         .progress-bar { transition: width 0.6s var(--ios-easing); }
-        .animate-page-enter { animation: pageEnter 0.4s var(--ios-easing) forwards; opacity: 0; transform: scale(0.99); }
+        .animate-page-enter { animation: pageEnter 0.5s var(--ios-easing) forwards; opacity: 0; transform: scale(0.995); }
         @keyframes pageEnter { to { opacity: 1; transform: scale(1); } }
+        
         .modal-enter { animation: modalSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards; }
-        @keyframes modalSpring { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes modalSpring { from { transform: translateY(100%) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        
         .active-press { transition: transform 0.1s ease-out; }
-        .active-press:active { transform: scale(0.9); }
+        .active-press:active { transform: scale(0.92); }
     </style>
 </head>
 <body class="overflow-hidden fixed inset-0">
+    <div class="bg-noise"></div>
     <div id="root" class="h-full w-full"></div>
 
     <script type="text/babel" data-type="module">
@@ -130,22 +144,18 @@
             'r': { a: 'ラ', i: 'リ', u: 'ル', e: 'レ', o: 'ロ' }, 'w': { a: 'ワ', i: null, u: null, e: null, o: 'ヲ' },
             'n_special': { a: 'ン', i: null, u: null, e: null, o: null },
         };
-        
         const BACKUP_DB = [
             { w: 'あい', m: '爱 (愛)', r: 'ai' }, { w: 'いえ', m: '家 (家)', r: 'ie' },
             { w: 'うえ', m: '上面 (上)', r: 'ue' }, { w: 'かお', m: '脸 (顔)', r: 'kao' },
             { w: 'あか', m: '红色 (赤)', r: 'aka' }, { w: 'えき', m: '车站 (駅)', r: 'eki' }
         ];
-
+        
+        // --- 逻辑层 (Storage, SRS, ZenStreak) ---
         const Storage = {
             get: (key, def) => { try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; } },
             set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
             export: () => {
-                const data = {
-                    srs: JSON.parse(localStorage.getItem('zen_srs_data') || '{}'),
-                    heatmap: JSON.parse(localStorage.getItem('zen_heatmap') || '{}'),
-                    ver: 1
-                };
+                const data = { srs: JSON.parse(localStorage.getItem('zen_srs_data') || '{}'), heatmap: JSON.parse(localStorage.getItem('zen_heatmap') || '{}'), ver: 1 };
                 return btoa(JSON.stringify(data));
             },
             import: (str) => {
@@ -157,7 +167,6 @@
                 } catch (e) { return false; }
             }
         };
-
         const SRS = {
             updateItem: (itemId, quality) => { 
                 const data = Storage.get('zen_srs_data', {});
@@ -170,9 +179,10 @@
                     item.ef = item.ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
                     if (item.ef < 1.3) item.ef = 1.3;
                 } else {
-                    item.repetitions = 0; item.interval = 1;
+                    item.repetitions = 0;
+                    item.interval = 1;
                 }
-                item.nextReview = Date.now() + (item.interval * 24 * 60 * 60 * 1000); 
+                item.nextReview = Date.now() + (item.interval * 24 * 60 * 60 * 1000);
                 data[itemId] = item;
                 Storage.set('zen_srs_data', data);
                 ZenStreak.addActivity();
@@ -185,7 +195,6 @@
             },
             getAll: () => Storage.get('zen_srs_data', {})
         };
-
         const ZenStreak = {
             addActivity: () => {
                 const today = new Date().toISOString().split('T')[0];
@@ -196,7 +205,6 @@
             getData: () => Storage.get('zen_heatmap', {}),
             getTotalDays: () => Object.keys(Storage.get('zen_heatmap', {})).length
         };
-
         const speak = (text) => {
             if (!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
@@ -215,21 +223,19 @@
             };
             return (
                 <div className="fixed inset-0 z-[100] bg-stone-900/10 backdrop-blur-[4px] flex items-end sm:items-center justify-center" onClick={onClose}>
-                    <div className="w-full max-w-sm bg-[#f9f9f9] sm:rounded-3xl rounded-t-3xl p-6 shadow-2xl modal-enter border border-white/60 ring-1 ring-black/5" onClick={e => e.stopPropagation()}>
+                    <div className="w-full max-w-sm bg-[#f5f4f0] sm:rounded-3xl rounded-t-3xl p-6 shadow-2xl modal-enter border border-white/60 ring-1 ring-black/5" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-xl font-serif-bold text-stone-800 tracking-tight">设置与关于</h3>
                             <button onClick={onClose} className="p-2 bg-stone-200/50 rounded-full text-stone-600 active-press"><X size={18}/></button>
                         </div>
-                        
                         <div className="space-y-4">
-                            <div className="glass-panel p-4 rounded-2xl flex items-center gap-4 bg-white">
+                            <div className="glass-panel p-4 rounded-2xl flex items-center gap-4">
                                 <div className="w-12 h-12 bg-[#a73136] rounded-xl flex items-center justify-center text-white font-serif-bold text-2xl shadow-lg ring-1 ring-white/30">禅</div>
                                 <div>
                                     <div className="font-bold text-stone-800 text-lg">Zen Gojuon</div>
-                                    <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v7.0.0 WeChat Style</div>
+                                    <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v6.1.0 Pure Aesthetic</div>
                                 </div>
                             </div>
-
                             <div className="space-y-2">
                                 <button onClick={() => window.open('https://github.com/your-username/your-repo', '_blank')} className="w-full p-4 rounded-2xl bg-white flex items-center justify-between text-stone-700 active-press shadow-sm border border-stone-100">
                                     <span className="flex items-center gap-3 font-medium"><Github size={18}/> GitHub 仓库</span>
@@ -240,7 +246,6 @@
                                     <ChevronRight size={16} className="text-red-200"/>
                                 </button>
                             </div>
-
                             <div className="text-center text-[10px] text-stone-400 font-sans-sys pt-4 tracking-widest uppercase">
                                 Designed for iOS · Wabi-sabi Style
                             </div>
@@ -258,7 +263,7 @@
                 return d.toISOString().split('T')[0];
             });
             return (
-                <div className={`glass-panel p-5 rounded-[24px] relative overflow-hidden ${className}`}>
+                <div className={`glass-panel p-5 rounded-[28px] relative overflow-hidden ${className}`}>
                     <div className="flex justify-between items-center mb-3 relative z-10">
                         <div className="flex items-center gap-2">
                             <Flame size={18} className="text-[#a73136]" fill="#a73136" />
@@ -283,10 +288,10 @@
             const [type, setType] = useState('h');
             return (
                 <div className="safe-pb animate-page-enter">
-                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center border-b border-stone-200/30 shadow-sm bg-[#f2f2f2]/90 backdrop-blur-md">
-                         <div className="glass-panel rounded-full p-1 inline-flex scale-95 bg-white/50">
-                            <button onClick={() => setType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'h' ? 'bg-white shadow-sm text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
-                            <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'k' ? 'bg-white shadow-sm text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
+                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center border-b border-stone-200/50 shadow-sm" style={{background: 'rgba(245, 244, 240, 0.96)', backdropFilter: 'blur(40px)'}}>
+                         <div className="glass-panel rounded-full p-1 inline-flex scale-95">
+                            <button onClick={() => setType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'h' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
+                            <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'k' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
                         </div>
                     </div>
                     <div className="grid gap-4 px-5 mt-6">
@@ -303,8 +308,8 @@
                                         if (row.id === 'n_special' && col.id !== 'a') return <div key={col.id} />;
                                         const displayChar = row.id === 'n_special' ? map['n_special'].a : char;
                                         return (
-                                            <button key={col.id} onClick={() => speak(displayChar)} className="glass-panel aspect-square rounded-2xl flex flex-col items-center justify-center active-press active:bg-white/90 transition-colors bg-white/70 border-white/60">
-                                                <span className="text-2xl font-hand text-stone-800">{displayChar}</span>
+                                            <button key={col.id} onClick={() => speak(displayChar)} className="glass-panel aspect-square rounded-2xl flex flex-col items-center justify-center active-press active:bg-white/80 transition-colors">
+                                                <span className="text-2xl font-hand text-stone-700">{displayChar}</span>
                                                 <span className="text-[9px] text-stone-300 font-sans-sys font-bold mt-0.5 uppercase opacity-60">{row.id === 'n_special' ? 'n' : (row.id + col.id)}</span>
                                             </button>
                                         )
@@ -353,12 +358,12 @@
                 }
             }, [char]);
             return (
-                <div className="glass-panel rounded-[28px] relative overflow-hidden transition-all duration-300 bg-white/80 border-white/60">
+                <div className="glass-panel rounded-[32px] relative overflow-hidden transition-all duration-300">
                     <div className="absolute top-4 left-5 right-5 flex justify-between items-center z-20 pointer-events-none">
                         <span className="text-[10px] font-bold font-sans-sys text-stone-400 tracking-widest uppercase">{label}</span>
                         <div className="flex gap-2 pointer-events-auto">
-                            <button onClick={() => speak(char)} className="p-2 rounded-full bg-stone-100/50 backdrop-blur active-press text-stone-600"><Volume2 size={18}/></button>
-                            <button onClick={clear} className="p-2 rounded-full bg-stone-100/50 backdrop-blur active-press text-stone-600"><Eraser size={18}/></button>
+                            <button onClick={() => speak(char)} className="p-2 rounded-full bg-white/40 backdrop-blur active-press text-stone-600"><Volume2 size={18}/></button>
+                            <button onClick={clear} className="p-2 rounded-full bg-white/40 backdrop-blur active-press text-stone-600"><Eraser size={18}/></button>
                         </div>
                     </div>
                     <div className="relative aspect-square">
@@ -375,7 +380,6 @@
             const [char, setChar] = useState({ h: 'あ', k: 'ア', r: 'a' });
             const [practiceType, setPracticeType] = useState('h'); 
             const [isOpen, setIsOpen] = useState(false);
-            
             const allChars = useMemo(() => {
                 const list = [];
                 CONSONANTS.forEach(row => {
@@ -387,18 +391,17 @@
                 });
                 return list;
             }, []);
-
             return (
                 <div className="safe-pb animate-page-enter">
-                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center border-b border-stone-200/30 shadow-sm bg-[#f2f2f2]/90 backdrop-blur-md">
-                         <div className="glass-panel rounded-full p-1 inline-flex scale-95 bg-white/50">
-                            <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'h' ? 'bg-white shadow-sm text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
-                            <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'k' ? 'bg-white shadow-sm text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
+                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center border-b border-stone-200/50 shadow-sm" style={{background: 'rgba(245, 244, 240, 0.96)', backdropFilter: 'blur(40px)'}}>
+                         <div className="glass-panel rounded-full p-1 inline-flex scale-95">
+                            <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'h' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
+                            <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'k' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
                         </div>
                     </div>
 
                     <div className="px-5 space-y-6 mt-6">
-                        <button onClick={() => setIsOpen(!isOpen)} className="w-full glass-panel p-5 rounded-[24px] flex items-center justify-between active-press relative z-20 bg-white/80 border-white/60">
+                        <button onClick={() => setIsOpen(!isOpen)} className="w-full glass-panel p-5 rounded-[28px] flex items-center justify-between active-press relative z-20">
                             <div className="flex items-center gap-4">
                                 <div className="bg-[#a73136] text-white p-2.5 rounded-xl shadow-lg shadow-red-900/10"><Grid size={20} /></div>
                                 <div className="text-left">
@@ -414,10 +417,10 @@
                         
                         {isOpen && (
                             <div className="fixed inset-0 z-50 bg-stone-900/10 backdrop-blur-[2px]" onClick={() => setIsOpen(false)}>
-                                <div className="absolute bottom-0 left-0 right-0 glass-panel rounded-t-[32px] p-6 safe-pb modal-enter border-t border-white/50 bg-[#f9f9f9]" onClick={e => e.stopPropagation()}>
+                                <div className="absolute bottom-0 left-0 right-0 glass-panel rounded-t-[32px] p-6 safe-pb modal-enter border-t border-white/50" onClick={e => e.stopPropagation()}>
                                     <div className="grid grid-cols-6 gap-3 max-h-[50vh] overflow-y-auto no-scrollbar">
                                         {allChars.map((c, i) => (
-                                            <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-all ${c.h === char.h ? 'bg-[#a73136] text-white shadow-lg scale-105' : 'bg-white text-stone-600 border border-stone-100'}`}>
+                                            <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-all ${c.h === char.h ? 'bg-[#a73136] text-white shadow-lg scale-105' : 'bg-white/50 text-stone-600'}`}>
                                                 <div className="font-hand text-xl">{practiceType === 'h' ? c.h : c.k}</div>
                                             </button>
                                         ))}
@@ -441,7 +444,6 @@
                 setStats({ days: ZenStreak.getTotalDays(), srsCount: Object.keys(SRS.getAll()).length });
                 setMatrix(SRS.getAll());
             }, []);
-
             const handleExport = () => {
                 const str = Storage.export();
                 navigator.clipboard.writeText(str).then(() => {
@@ -455,22 +457,21 @@
                     setTimeout(() => location.reload(), 1500);
                 }
             };
-
             return (
                 <div className="safe-pb animate-page-enter px-5 space-y-6 pt-6">
                     <HeatmapWidget />
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-1 bg-white/80 border-white/60">
+                        <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-1">
                             <span className="text-3xl font-serif-bold text-stone-700">{stats.days}</span>
                             <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">打卡天数</span>
                         </div>
-                        <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-1 bg-white/80 border-white/60">
+                        <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-1">
                             <span className="text-3xl font-serif-bold text-stone-700">{stats.srsCount}</span>
                             <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">掌握词汇</span>
                         </div>
                     </div>
 
-                    <div className="glass-panel p-5 rounded-[28px] bg-white/80 border-white/60">
+                    <div className="glass-panel p-5 rounded-[28px]">
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-2">
                                 <Activity size={18} className="text-[#a73136]" />
@@ -482,11 +483,11 @@
                         </div>
                         
                         <div className="grid grid-cols-5 gap-1.5">
-                            {['a','i','u','e','o'].map(col => (
+                             {['a','i','u','e','o'].map(col => (
                                 CONSONANTS.map(row => {
                                     const char = KANA_MAP[row.id]?.[col] || (row.id==='n_special'&&col==='a'?'ん':null);
                                     if(!char) return null;
-                                    const item = Object.values(matrix).find(v => v && v.key === char) || matrix[char]; 
+                                    const item = Object.values(matrix).find(v => v && v.key === char) || matrix[char];
                                     let colorClass = 'bg-stone-100/50 text-stone-300';
                                     if (item) {
                                         const now = Date.now();
@@ -505,7 +506,7 @@
                         </div>
                     </div>
 
-                    <div className="glass-panel p-4 rounded-2xl flex gap-2 bg-white/80 border-white/60">
+                    <div className="glass-panel p-4 rounded-2xl flex gap-2">
                         <button onClick={handleExport} className="flex-1 py-3 rounded-xl bg-stone-50 text-stone-600 text-xs font-bold flex flex-col items-center gap-1 active-press">
                             <Download size={16} /> 备份数据
                         </button>
@@ -525,14 +526,12 @@
             const [progress, setProgress] = useState(0);
             const [isCorrect, setIsCorrect] = useState(null);
             const [dueCount, setDueCount] = useState(0);
-            const [weakQueue, setWeakQueue] = useState([]); 
-
+            const [weakQueue, setWeakQueue] = useState([]);
             useEffect(() => {
                 const due = SRS.getDueItems();
                 setDueCount(due.length);
                 if (startMode === 'weak') initWeakMode();
             }, [startMode]);
-
             const initWeakMode = () => {
                 const allData = SRS.getAll();
                 const now = Date.now();
@@ -552,7 +551,6 @@
             };
 
             const toggleRow = (id) => setSelRows(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-            
             const getQuestionPool = () => {
                 if (mode === 'srs') return vocabList;
                 if (mode === 'custom') {
@@ -596,7 +594,6 @@
                 setCurrentQ({ word: target.r, mean: target.m, answer: target.w, options: options, raw: target });
                 setIsCorrect(null);
             };
-
             const handleAnswer = (selected) => {
                 if (isCorrect !== null) return;
                 const correct = selected === currentQ.answer;
@@ -613,7 +610,6 @@
                     setTimeout(() => { setProgress(p => p + 1); nextQuestion(); }, 1200);
                 }
             };
-
             if (step === 'lobby') {
                 return (
                     <div className="safe-pb animate-page-enter px-6 flex flex-col items-center justify-center h-[80vh]">
@@ -633,7 +629,7 @@
                                     <div className="text-[10px] opacity-80 font-sans-sys font-normal">基于遗忘曲线 · 全库随机</div>
                                 </div>
                             </button>
-                            <button onClick={() => setStep('config')} className="w-full h-20 glass-panel text-stone-700 rounded-[24px] font-bold shadow-sm flex items-center px-6 gap-4 active-press bg-white/80 border-white/60">
+                            <button onClick={() => setStep('config')} className="w-full h-20 glass-panel text-stone-700 rounded-[24px] font-bold shadow-sm flex items-center px-6 gap-4 active-press">
                                 <div className="p-3 bg-stone-100 rounded-full text-stone-500"><Filter size={24} /></div>
                                 <div className="text-left">
                                     <div className="text-lg">专项特训</div>
@@ -648,7 +644,7 @@
             if (step === 'config') {
                 return (
                     <div className="safe-pb animate-page-enter px-5 pt-6">
-                        <div className="glass-panel p-6 rounded-[32px] mb-6 bg-white/90">
+                        <div className="glass-panel p-6 rounded-[32px] mb-6">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="font-bold text-lg text-stone-800">选择范围</h3>
                                 <button onClick={() => setStep('lobby')} className="p-2 bg-stone-100 rounded-full active-press"><X size={18} className="text-stone-500"/></button>
@@ -675,7 +671,7 @@
                             <Trophy size={48} />
                         </div>
                         <h2 className="text-2xl font-serif-bold text-stone-800 mb-2">修行结束</h2>
-                        <button onClick={() => { if(onExit) onExit(); else setStep('lobby'); }} className="w-full h-14 glass-panel text-stone-600 rounded-2xl font-bold mt-8 flex items-center justify-center gap-2 active-press bg-white/80">
+                        <button onClick={() => { if(onExit) onExit(); else setStep('lobby'); }} className="w-full h-14 glass-panel text-stone-600 rounded-2xl font-bold mt-8 flex items-center justify-center gap-2 active-press">
                             <RotateCcw size={20} /> 返回
                         </button>
                     </div>
@@ -689,19 +685,19 @@
                         <div className={`h-full progress-bar ${mode === 'weak' ? 'bg-red-500' : 'bg-[#a73136]'}`} style={{width: mode==='weak' ? '100%' : `${(progress / 10) * 100}%`}}></div>
                     </div>
                     
-                    <div className="glass-panel rounded-[32px] p-8 text-center mb-6 flex-1 flex flex-col justify-center items-center relative overflow-hidden bg-white/90 shadow-lg">
+                    <div className="glass-panel rounded-[32px] p-8 text-center mb-6 flex-1 flex flex-col justify-center items-center relative overflow-hidden">
                         <div className="text-xs font-bold text-[#a73136] tracking-[0.3em] uppercase opacity-60 mb-4 font-sans-sys">Translate</div>
                         <h2 className="text-5xl font-serif-bold text-stone-800 mb-3 tracking-wide">{currentQ.word}</h2>
                         <div className="text-lg text-stone-500 font-medium">{currentQ.mean}</div>
                     </div>
                     <div className="grid grid-cols-2 gap-3 mb-4">
                         {currentQ.options.map((opt, i) => {
-                            let stateClass = 'bg-white/70 text-stone-600 hover:bg-white border-white/50';
+                            let stateClass = 'bg-white/60 text-stone-600 hover:bg-white';
                             if (isCorrect !== null) {
                                 if (opt === currentQ.answer) stateClass = 'bg-[#a73136] text-white border-[#a73136]';
                                 else if (opt !== currentQ.answer && isCorrect === false) stateClass = 'opacity-40';
                             }
-                            return <button key={i} onClick={() => handleAnswer(opt)} disabled={isCorrect !== null} className={`h-16 rounded-2xl font-bold text-xl font-hand transition-all duration-300 border shadow-sm active-press ${stateClass}`}>{opt}</button>
+                            return <button key={i} onClick={() => handleAnswer(opt)} disabled={isCorrect !== null} className={`h-16 rounded-2xl font-bold text-xl font-hand transition-all duration-300 border border-transparent shadow-sm active-press ${stateClass}`}>{opt}</button>
                         })}
                     </div>
                 </div>
@@ -714,18 +710,15 @@
             const [vocabList, setVocabList] = useState(BACKUP_DB);
             const [startWeakMode, setStartWeakMode] = useState(false);
             const [showSettings, setShowSettings] = useState(false);
-
             useEffect(() => {
                 setFadeIn(true);
                 fetch('./vocab.json')
                     .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-                    .then(data => setVocabList(data))
                     .catch(() => {});
             }, []);
-
             return (
                 <div className={`h-full flex flex-col transition-opacity duration-1000 ease-in ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-                    <header className="safe-pt px-6 pb-2 sticky top-0 z-40 flex justify-between items-center h-[54px]" style={{background: 'rgba(249, 249, 249, 0.94)', backdropFilter: 'blur(40px)', borderBottom: '0.5px solid rgba(0,0,0,0.1)'}}>
+                    <header className="safe-pt px-6 pb-2 sticky top-0 z-40 flex justify-between items-center h-[54px]" style={{background: 'rgba(245, 244, 240, 0.96)', backdropFilter: 'blur(40px)', borderBottom: '1px solid rgba(0,0,0,0.05)'}}>
                         <div className="flex items-center gap-3">
                             <div className="w-9 h-9 bg-[#a73136] rounded-xl text-white flex items-center justify-center font-serif-bold text-lg shadow-lg shadow-red-900/20 ring-1 ring-white/50">禅</div>
                             <div className="flex flex-col justify-center h-9">
@@ -737,7 +730,7 @@
                         </button>
                     </header>
 
-                    <main className="flex-1 overflow-y-auto no-scrollbar relative w-full mx-auto max-w-xl pb-10">
+                    <main className="flex-1 overflow-y-auto no-scrollbar relative w-full mx-auto max-w-xl">
                         <div key={activeTab}>
                             {activeTab === 'chart' && <ChartMode />}
                             {activeTab === 'practice' && <PracticeMode />}
@@ -746,35 +739,33 @@
                         </div>
                     </main>
 
-                    {/* V7.0 WeChat Style TabBar */}
-                    <div className="wechat-tabbar">
-                        <div className="flex justify-around items-center h-[50px]">
-                            {[
-                                { id: 'chart', icon: BookOpen, label: '阅览' },
-                                { id: 'practice', icon: PenTool, label: '临摹' },
-                                { id: 'quiz', icon: Brain, label: '试炼' },
-                                { id: 'profile', icon: User, label: '我的' },
-                            ].map(tab => {
-                                const Icon = tab.icon; const isActive = activeTab === tab.id;
-                                return (
-                                    <button 
-                                        key={tab.id} 
-                                        onClick={() => { setActiveTab(tab.id); setStartWeakMode(false); }} 
-                                        className="flex flex-col items-center justify-center w-full h-full relative group active-press"
-                                        style={{ WebkitTapHighlightColor: 'transparent' }}
-                                    >
-                                        <Icon 
-                                            size={26} 
-                                            strokeWidth={isActive ? 2.5 : 1.5} 
-                                            className={`transition-colors duration-200 ${isActive ? 'text-[#a73136]' : 'text-stone-400'}`} 
-                                        />
-                                        <span className={`text-[10px] font-sans-sys font-medium mt-[2px] transition-colors duration-200 ${isActive ? 'text-[#a73136]' : 'text-stone-400'}`}>
-                                            {tab.label}
-                                        </span>
-                                    </button>
-                                )
-                            })}
-                        </div>
+                    {/* V6.1 极致紧凑 TabBar */}
+                    <div className="compact-tabbar">
+                        {[
+                            { id: 'chart', icon: BookOpen, label: '阅览' },
+                            { id: 'practice', icon: PenTool, label: '临摹' },
+                            { id: 'quiz', icon: Brain, label: '试炼' },
+                            { id: 'profile', icon: User, label: '我的' },
+                        ].map(tab => {
+                            const Icon = tab.icon; const isActive = activeTab === tab.id;
+                            return (
+                                <button 
+                                    key={tab.id} 
+                                    onClick={() => { setActiveTab(tab.id); setStartWeakMode(false); }} 
+                                    className={`flex flex-col items-center justify-end w-full relative group active:scale-95 transition-transform duration-200 ease-out`}
+                                    style={{ WebkitTapHighlightColor: 'transparent', height: '48px', paddingBottom: '4px' }}
+                                >
+                                    <Icon 
+                                        size={26} 
+                                        strokeWidth={isActive ? 2.5 : 1.5} 
+                                        className={`transition-all duration-300 ${isActive ? 'text-[#a73136] -translate-y-0.5' : 'text-stone-400'}`} 
+                                    />
+                                    <span className={`text-[9px] font-bold font-sans-sys mt-0.5 transition-colors duration-300 ${isActive ? 'text-[#a73136]' : 'text-stone-300'}`}>
+                                        {tab.label}
+                                    </span>
+                                </button>
+                            )
+                        })}
                     </div>
 
                     {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
