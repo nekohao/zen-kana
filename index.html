@@ -2,14 +2,14 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 关键优化 1：Viewport 适配 iOS 全屏和刘海屏 -->
+    <!-- 核心适配：禁止缩放，适配刘海屏和圆角 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- 关键优化 2：iOS PWA 设置 -->
+    <!-- PWA 配置：像原生 App 一样运行 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
-    <title>五十音之禅</title>
+    <title>五十音之禅 Pro</title>
 
     <!-- 1. 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,110 +17,92 @@
     <!-- 2. 引入 Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 3. 引入手写字体 -->
+    <!-- 3. 引入字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Kurenaido&display=swap" rel="stylesheet">
 
-    <!-- 4. 内置 App 图标 (SVG Base64) -->
+    <!-- 4. App 图标 -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background-color:%23cd4631'%3E%3Ctext x='50%25' y='50%25' font-family='serif' font-weight='bold' font-size='300' fill='white' dominant-baseline='central' text-anchor='middle'%3E禅%3C/text%3E%3C/svg%3E">
 
     <style>
-        /* 禁止 iOS 默认的长按选中和高亮，像原生 App 一样 */
+        /* iOS 专属优化 */
         body {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
+            -webkit-touch-callout: none; /* 禁止长按菜单 */
+            -webkit-user-select: none; /* 禁止选中文本 */
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* 移除点击高亮 */
+            overscroll-behavior-y: none; /* 禁止橡皮筋效果 */
         }
 
         /* 字体定义 */
         .font-zen { font-family: 'Zen Kurenaido', sans-serif; }
         .font-hand { font-family: 'Klee One', cursive; }
         
-        /* 动画 */
-        .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .writing-vertical-lr { writing-mode: vertical-lr; }
+        /* 隐藏滚动条 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        .bg-paper-texture {
-            background-color: #f8f7f2;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-        }
-
-        /* 专门针对 iOS 底部安全区域的处理 */
-        .safe-area-bottom {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .safe-area-top {
-            padding-top: max(env(safe-area-inset-top), 20px);
+        /* 安全区域 padding 变量 */
+        .safe-pb { padding-bottom: calc(env(safe-area-inset-bottom) + 80px); } /* 底部导航栏高度 */
+        .safe-pt { padding-top: max(env(safe-area-inset-top), 20px); }
+        
+        /* 纹理背景 */
+        .bg-texture {
+            background-color: #fcfbf9;
+            background-image: radial-gradient(#dcdcdc 1px, transparent 1px);
+            background-size: 20px 20px;
         }
     </style>
 </head>
-<body class="bg-[#fcfbf9] text-[#2c2c2c] font-zen overflow-hidden fixed inset-0">
-    <div id="root" class="h-full"></div>
+<body class="bg-texture text-[#2c2c2c] font-zen overflow-hidden fixed inset-0">
+    <div id="root" class="h-full w-full"></div>
 
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect, useRef, useMemo } from 'https://esm.sh/react@18.2.0';
         import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
         import { 
-            BookOpen, PenTool, Brain, Volume2, Check, X, ChevronRight, 
-            RotateCcw, Eraser, Eye, Grid, Filter
+            BookOpen, PenTool, Brain, Volume2, Check, ChevronRight, 
+            RotateCcw, Eraser, Eye, Grid, Filter, Settings2, Sparkles
         } from 'https://esm.sh/lucide-react@0.292.0';
 
+        // --- 数据保持不变 ---
         const CONSONANTS = [
             { id: '', label: 'あ行' }, { id: 'k', label: 'か行' }, { id: 's', label: 'さ行' },
             { id: 't', label: 'た行' }, { id: 'n', label: 'な行' }, { id: 'h', label: 'は行' },
             { id: 'm', label: 'ま行' }, { id: 'y', label: 'や行' }, { id: 'r', label: 'ら行' },
             { id: 'w', label: 'わ行' }, { id: 'n_special', label: 'ん' },
         ];
-
         const VOWELS = [
             { id: 'a', label: 'あ' }, { id: 'i', label: 'い' }, { id: 'u', label: 'う' },
             { id: 'e', label: 'え' }, { id: 'o', label: 'お' },
         ];
-
         const KANA_MAP = {
-            '':  { a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お' },
-            'k': { a: 'か', i: 'き', u: 'く', e: 'け', o: 'こ' },
-            's': { a: 'さ', i: 'し', u: 'す', e: 'せ', o: 'そ' },
-            't': { a: 'た', i: 'ち', u: 'つ', e: 'て', o: 'と' },
-            'n': { a: 'な', i: 'に', u: 'ぬ', e: 'ね', o: 'の' },
-            'h': { a: 'は', i: 'ひ', u: 'ふ', e: 'へ', o: 'ほ' },
-            'm': { a: 'ま', i: 'み', u: 'む', e: 'め', o: 'も' },
-            'y': { a: 'や', i: null, u: 'ゆ', e: null, o: 'よ' },
-            'r': { a: 'ら', i: 'り', u: 'る', e: 'れ', o: 'ろ' },
-            'w': { a: 'わ', i: null, u: null, e: null, o: 'を' },
+            '':  { a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お' }, 'k': { a: 'か', i: 'き', u: 'く', e: 'け', o: 'こ' },
+            's': { a: 'さ', i: 'し', u: 'す', e: 'せ', o: 'そ' }, 't': { a: 'た', i: 'ち', u: 'つ', e: 'て', o: 'と' },
+            'n': { a: 'な', i: 'に', u: 'ぬ', e: 'ね', o: 'の' }, 'h': { a: 'は', i: 'ひ', u: 'ふ', e: 'へ', o: 'ほ' },
+            'm': { a: 'ま', i: 'み', u: 'む', e: 'め', o: 'も' }, 'y': { a: 'や', i: null, u: 'ゆ', e: null, o: 'よ' },
+            'r': { a: 'ら', i: 'り', u: 'る', e: 'れ', o: 'ろ' }, 'w': { a: 'わ', i: null, u: null, e: null, o: 'を' },
             'n_special': { a: 'ん', i: null, u: null, e: null, o: null }, 
         };
-
         const KATA_MAP = {
-            '':  { a: 'ア', i: 'イ', u: 'ウ', e: 'エ', o: 'オ' },
-            'k': { a: 'カ', i: 'キ', u: 'ク', e: 'ケ', o: 'コ' },
-            's': { a: 'サ', i: 'シ', u: 'ス', e: 'セ', o: 'ソ' },
-            't': { a: 'タ', i: 'チ', u: 'ツ', e: 'テ', o: 'ト' },
-            'n': { a: 'ナ', i: 'ニ', u: 'ヌ', e: 'ネ', o: 'ノ' },
-            'h': { a: 'ハ', i: 'ヒ', u: 'フ', e: 'ヘ', o: 'ホ' },
-            'm': { a: 'マ', i: 'ミ', u: 'ム', e: 'メ', o: 'モ' },
-            'y': { a: 'ヤ', i: null, u: 'ユ', e: null, o: 'ヨ' },
-            'r': { a: 'ラ', i: 'リ', u: 'ル', e: 'レ', o: 'ロ' },
-            'w': { a: 'ワ', i: null, u: null, e: null, o: 'ヲ' },
+            '':  { a: 'ア', i: 'イ', u: 'ウ', e: 'エ', o: 'オ' }, 'k': { a: 'カ', i: 'キ', u: 'ク', e: 'ケ', o: 'コ' },
+            's': { a: 'サ', i: 'シ', u: 'ス', e: 'セ', o: 'ソ' }, 't': { a: 'タ', i: 'チ', u: 'ツ', e: 'テ', o: 'ト' },
+            'n': { a: 'ナ', i: 'ニ', u: 'ヌ', e: 'ネ', o: 'ノ' }, 'h': { a: 'ハ', i: 'ヒ', u: 'フ', e: 'ヘ', o: 'ホ' },
+            'm': { a: 'マ', i: 'ミ', u: 'ム', e: 'メ', o: 'モ' }, 'y': { a: 'ヤ', i: null, u: 'ユ', e: null, o: 'ヨ' },
+            'r': { a: 'ラ', i: 'リ', u: 'ル', e: 'レ', o: 'ロ' }, 'w': { a: 'ワ', i: null, u: null, e: null, o: 'ヲ' },
             'n_special': { a: 'ン', i: null, u: null, e: null, o: null },
         };
-
         const VOCAB_FULL_DB = [
-            { w: 'あい', m: '爱', r: 'ai' }, { w: 'いえ', m: '家', r: 'ie' }, { w: 'あお', m: '蓝色', r: 'ao' }, { w: 'うえ', m: '上面', r: 'ue' },
-            { w: 'かお', m: '脸', r: 'kao' }, { w: 'あか', m: '红色', r: 'aka' }, { w: 'えき', m: '车站', r: 'eki' }, { w: 'きく', m: '听', r: 'kiku' },
-            { w: 'あさ', m: '早晨', r: 'asa' }, { w: 'いす', m: '椅子', r: 'isu' }, { w: 'すし', m: '寿司', r: 'sushi' }, { w: 'せかい', m: '世界', r: 'sekai' },
-            { w: 'ちち', m: '父亲', r: 'chichi' }, { w: 'した', m: '下面', r: 'shita' }, { w: 'くつ', m: '鞋子', r: 'kutsu' }, { w: 'て', m: '手', r: 'te' },
-            { w: 'なに', m: '什么', r: 'nani' }, { w: 'いぬ', m: '狗', r: 'inu' }, { w: 'ねこ', m: '猫', r: 'neko' }, { w: 'はな', m: '花', r: 'hana' },
-            { w: 'ひと', m: '人', r: 'hito' }, { w: 'ふね', m: '船', r: 'fune' }, { w: 'ほし', m: '星', r: 'hoshi' }, { w: 'はは', m: '母亲', r: 'haha' },
-            { w: 'みみ', m: '耳朵', r: 'mimi' }, { w: 'むし', m: '虫', r: 'mushi' }, { w: 'め', m: '眼', r: 'me' }, { w: 'やま', m: '山', r: 'yama' },
-            { w: 'ゆき', m: '雪', r: 'yuki' }, { w: 'よる', m: '夜', r: 'yoru' }, { w: 'ゆめ', m: '梦', r: 'yume' }, { w: 'へや', m: '房间', r: 'heya' },
-            { w: 'さくら', m: '樱花', r: 'sakura' }, { w: 'とり', m: '鸟', r: 'tori' }, { w: 'はる', m: '春', r: 'haru' }, { w: 'そら', m: '空', r: 'sora' },
-            { w: 'かわ', m: '河', r: 'kawa' }, { w: 'ほん', m: '书', r: 'hon' }, { w: 'わたし', m: '我', r: 'watashi' }, { w: 'にほん', m: '日本', r: 'nihon' }
+            { w: 'あい', m: '爱', r: 'ai' }, { w: 'いえ', m: '家', r: 'ie' }, { w: 'あお', m: '蓝色', r: 'ao' }, { w: 'うえ', m: '上面', r: 'ue' }, { w: 'いい', m: '好的', r: 'ii' }, { w: 'おい', m: '侄子', r: 'oi' },
+            { w: 'かお', m: '脸', r: 'kao' }, { w: 'あか', m: '红色', r: 'aka' }, { w: 'えき', m: '车站', r: 'eki' }, { w: 'きく', m: '听', r: 'kiku' }, { w: 'いけ', m: '池塘', r: 'ike' }, { w: 'こえ', m: '声音', r: 'koe' }, { w: 'かき', m: '柿子', r: 'kaki' },
+            { w: 'あさ', m: '早晨', r: 'asa' }, { w: 'いす', m: '椅子', r: 'isu' }, { w: 'すし', m: '寿司', r: 'sushi' }, { w: 'せかい', m: '世界', r: 'sekai' }, { w: 'うそ', m: '谎言', r: 'uso' }, { w: 'さけ', m: '酒', r: 'sake' }, { w: 'あせ', m: '汗', r: 'ase' }, { w: 'かさ', m: '伞', r: 'kasa' },
+            { w: 'ちち', m: '父亲', r: 'chichi' }, { w: 'した', m: '下面', r: 'shita' }, { w: 'くつ', m: '鞋子', r: 'kutsu' }, { w: 'て', m: '手', r: 'te' }, { w: 'とけい', m: '钟表', r: 'tokei' }, { w: 'ちかてつ', m: '地铁', r: 'chikatetsu' }, { w: 'つくえ', m: '桌子', r: 'tsukue' },
+            { w: 'なに', m: '什么', r: 'nani' }, { w: 'いぬ', m: '狗', r: 'inu' }, { w: 'ねこ', m: '猫', r: 'neko' }, { w: 'はな', m: '花', r: 'hana' }, { w: 'おかね', m: '钱', r: 'okane' }, { w: 'くに', m: '国家', r: 'kuni' },
+            { w: 'ひと', m: '人', r: 'hito' }, { w: 'ふね', m: '船', r: 'fune' }, { w: 'ほし', m: '星', r: 'hoshi' }, { w: 'ひふ', m: '皮肤', r: 'hifu' }, { w: 'へた', m: '笨拙', r: 'heta' }, { w: 'はは', m: '母亲', r: 'haha' },
+            { w: 'みみ', m: '耳朵', r: 'mimi' }, { w: 'むし', m: '虫', r: 'mushi' }, { w: 'め', m: '眼', r: 'me' }, { w: 'もも', m: '桃', r: 'momo' }, { w: 'やま', m: '山', r: 'yama' }, { w: 'かみ', m: '纸/发', r: 'kami' }, { w: 'あめ', m: '雨', r: 'ame' },
+            { w: 'ゆき', m: '雪', r: 'yuki' }, { w: 'よる', m: '夜', r: 'yoru' }, { w: 'ゆめ', m: '梦', r: 'yume' }, { w: 'へや', m: '房间', r: 'heya' }, { w: 'おゆ', m: '热水', r: 'oyu' },
+            { w: 'さくら', m: '樱花', r: 'sakura' }, { w: 'とり', m: '鸟', r: 'tori' }, { w: 'はる', m: '春', r: 'haru' }, { w: 'くるま', m: '车', r: 'kuruma' }, { w: 'そら', m: '空', r: 'sora' }, { w: 'くすり', m: '药', r: 'kusuri' },
+            { w: 'かわ', m: '河', r: 'kawa' }, { w: 'ほん', m: '书', r: 'hon' }, { w: 'てんき', m: '天气', r: 'tenki' }, { w: 'せんせい', m: '老师', r: 'sensei' }, { w: 'わたし', m: '我', r: 'watashi' }, { w: 'にほん', m: '日本', r: 'nihon' }, { w: 'さん', m: '三', r: 'san' }
         ];
 
         const speak = (text) => {
@@ -135,27 +117,25 @@
             window.speechSynthesis.speak(utterance);
         };
 
-        // --- iOS 风格底部导航栏 ---
+        // --- 底部导航栏 (iOS Style) ---
         function TabBar({ active, onChange }) {
-            const tabs = [
-                { id: 'chart', icon: <BookOpen size={24} />, label: '阅览' },
-                { id: 'practice', icon: <PenTool size={24} />, label: '临摹' },
-                { id: 'quiz', icon: <Brain size={24} />, label: '测验' },
-            ];
-
             return (
-                <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-stone-200 z-50 safe-area-bottom">
-                    <div className="flex justify-around items-center pt-2 pb-1">
-                        {tabs.map(tab => (
+                <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-stone-200 z-50 pb-[env(safe-area-inset-bottom)]">
+                    <div className="flex justify-around items-center h-16">
+                        {[
+                            { id: 'chart', icon: <BookOpen size={24} strokeWidth={active === 'chart' ? 2.5 : 2} />, label: '阅览' },
+                            { id: 'practice', icon: <PenTool size={24} strokeWidth={active === 'practice' ? 2.5 : 2} />, label: '临摹' },
+                            { id: 'quiz', icon: <Brain size={24} strokeWidth={active === 'quiz' ? 2.5 : 2} />, label: '测验' },
+                        ].map(tab => (
                             <button
                                 key={tab.id}
                                 onClick={() => onChange(tab.id)}
-                                className={`flex flex-col items-center gap-1 w-full py-2 transition-all active:scale-95 ${
-                                    active === tab.id ? 'text-[#cd4631]' : 'text-stone-400 hover:text-stone-600'
+                                className={`flex flex-col items-center justify-center w-full h-full transition-all active:scale-95 ${
+                                    active === tab.id ? 'text-[#cd4631]' : 'text-stone-400'
                                 }`}
                             >
                                 {tab.icon}
-                                <span className="text-[10px] font-bold tracking-widest">{tab.label}</span>
+                                <span className="text-[10px] font-bold mt-1 tracking-wider">{tab.label}</span>
                             </button>
                         ))}
                     </div>
@@ -163,27 +143,28 @@
             );
         }
 
-        // --- 阅览模式 ---
+        // --- 1. 阅览模式 ---
         function ChartMode() {
             const [type, setType] = useState('h');
             return (
-                <div className="animate-fade-in pb-32">
-                    <div className="sticky top-[env(safe-area-inset-top)] bg-[#fcfbf9]/95 backdrop-blur z-20 py-2 border-b border-stone-200/50 mb-4 flex justify-center">
-                         <div className="bg-stone-100 p-1 rounded-lg inline-flex">
-                            <button onClick={() => setType('h')} className={`px-6 py-1.5 rounded-md text-sm transition-all ${type === 'h' ? 'bg-white shadow text-[#cd4631] font-bold' : 'text-stone-400'}`}>平仮名</button>
-                            <button onClick={() => setType('k')} className={`px-6 py-1.5 rounded-md text-sm transition-all ${type === 'k' ? 'bg-white shadow text-[#cd4631] font-bold' : 'text-stone-400'}`}>片仮名</button>
+                <div className="safe-pb animate-fade-in">
+                    {/* 顶部固定切换栏 */}
+                    <div className="sticky top-[env(safe-area-inset-top)] pt-2 bg-[#fcfbf9]/95 backdrop-blur z-20 pb-3 border-b border-stone-200/50 flex justify-center">
+                         <div className="bg-stone-200/50 p-1 rounded-xl inline-flex shadow-inner">
+                            <button onClick={() => setType('h')} className={`px-8 py-2 rounded-lg text-sm transition-all ${type === 'h' ? 'bg-white shadow text-[#cd4631] font-bold' : 'text-stone-500'}`}>平仮名</button>
+                            <button onClick={() => setType('k')} className={`px-8 py-2 rounded-lg text-sm transition-all ${type === 'k' ? 'bg-white shadow text-[#cd4631] font-bold' : 'text-stone-500'}`}>片仮名</button>
                         </div>
                     </div>
                     
-                    <div className="grid gap-3 px-4">
+                    <div className="grid gap-3 px-4 mt-4">
                         {CONSONANTS.map(row => (
                             <div key={row.id} className="flex gap-2">
-                                <div className="w-8 flex items-center justify-center text-xs font-bold text-stone-400 bg-stone-100 rounded-lg writing-vertical-lr tracking-widest py-2">{row.label}</div>
+                                <div className="w-8 flex items-center justify-center text-xs font-bold text-stone-400 bg-stone-100 rounded-lg writing-vertical-lr tracking-widest py-2 shadow-sm">{row.label}</div>
                                 <div className="grid grid-cols-5 gap-2 flex-1">
                                     {VOWELS.map(col => {
                                         const map = type === 'h' ? KANA_MAP : KATA_MAP;
                                         const char = map[row.id]?.[col.id];
-                                        if (!char && row.id !== 'n_special') return <div key={col.id} className="bg-stone-50/50 rounded-lg" />;
+                                        if (!char && row.id !== 'n_special') return <div key={col.id} className="bg-stone-50/50 rounded-lg border border-transparent" />;
                                         if (row.id === 'n_special' && col.id !== 'a') return <div key={col.id} />;
                                         
                                         const displayChar = row.id === 'n_special' ? map['n_special'].a : char;
@@ -192,10 +173,10 @@
                                             <button 
                                                 key={col.id} 
                                                 onClick={() => speak(displayChar)}
-                                                className="aspect-square bg-white border border-stone-200 rounded-xl flex flex-col items-center justify-center active:bg-stone-50 active:scale-95 transition-all shadow-sm"
+                                                className="aspect-square bg-white border border-stone-100 rounded-xl flex flex-col items-center justify-center active:bg-stone-50 active:scale-95 transition-all shadow-sm active:border-[#cd4631]"
                                             >
-                                                <span className="text-2xl font-hand text-stone-700">{displayChar}</span>
-                                                <span className="text-[9px] text-stone-300 font-mono mt-0.5 uppercase">
+                                                <span className="text-2xl font-hand text-stone-700 font-semibold">{displayChar}</span>
+                                                <span className="text-[8px] text-stone-300 font-mono -mt-1 uppercase transform scale-75">
                                                     {row.id === 'n_special' ? 'n' : (row.id + col.id)}
                                                 </span>
                                             </button>
@@ -209,7 +190,7 @@
             );
         }
 
-        // --- 临摹模式 ---
+        // --- 2. 临摹模式 ---
         function WritingCard({ char, label, romaji }) {
             const canvasRef = useRef(null);
             
@@ -218,12 +199,9 @@
                 if(!canvas) return;
                 const ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // 辅助线
+                // 米字格
                 ctx.save();
-                ctx.strokeStyle = '#f0ebe5';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = '#f0ebe5'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
                 ctx.beginPath(); ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
                 ctx.restore();
@@ -236,9 +214,9 @@
                 const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
                 const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
                 
-                if (e.type === 'mousedown' || e.type === 'touchstart') {
+                if (e.type === 'touchstart') {
                     ctx.beginPath(); ctx.moveTo(x, y); canvas.isDrawing = true;
-                } else if (e.type === 'mouseup' || e.type === 'touchend' || e.type === 'mouseleave') {
+                } else if (e.type === 'touchend') {
                     canvas.isDrawing = false;
                 } else if (canvas.isDrawing) {
                     ctx.lineTo(x, y); ctx.stroke();
@@ -251,26 +229,25 @@
                     canvas.width = canvas.offsetWidth;
                     canvas.height = canvas.offsetHeight;
                     const ctx = canvas.getContext('2d');
-                    ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                    ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
                     clear();
                 }
             }, [char]);
 
             return (
                 <div className="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden relative">
-                    <div className="px-4 py-2 bg-stone-50 border-b border-stone-100 flex justify-between items-center">
-                        <span className="text-xs font-bold text-stone-400">{label}</span>
+                    <div className="px-3 py-2 bg-stone-50 border-b border-stone-100 flex justify-between items-center">
+                        <span className="text-xs font-bold text-stone-400 tracking-wider">{label}</span>
                         <div className="flex gap-2">
-                            <button onClick={() => speak(char)} className="p-1.5 active:bg-stone-200 rounded-full"><Volume2 size={16} className="text-stone-500"/></button>
-                            <button onClick={clear} className="p-1.5 active:bg-stone-200 rounded-full"><Eraser size={16} className="text-stone-500"/></button>
+                            <button onClick={() => speak(char)} className="p-2 active:bg-stone-200 rounded-full"><Volume2 size={16} className="text-stone-500"/></button>
+                            <button onClick={clear} className="p-2 active:bg-stone-200 rounded-full"><Eraser size={16} className="text-stone-500"/></button>
                         </div>
                     </div>
                     <div className="relative aspect-square">
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 select-none">
-                            <span className="text-8xl font-hand leading-none text-stone-800">{char}</span>
+                            <span className="text-[7rem] font-hand leading-none text-stone-800">{char}</span>
                         </div>
                         <canvas ref={canvasRef} className="w-full h-full relative z-10 touch-none"
-                            onMouseDown={handleDraw} onMouseMove={handleDraw} onMouseUp={handleDraw} onMouseLeave={handleDraw}
                             onTouchStart={handleDraw} onTouchMove={handleDraw} onTouchEnd={handleDraw}
                         />
                     </div>
@@ -295,41 +272,86 @@
             }, []);
 
             return (
-                <div className="animate-fade-in px-4 space-y-4 pb-32">
-                    <button onClick={() => setIsOpen(!isOpen)} className="w-full bg-white border border-stone-200 p-4 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition-transform">
+                <div className="safe-pb animate-fade-in px-4 space-y-4 pt-4">
+                    <button onClick={() => setIsOpen(!isOpen)} className="w-full bg-white border border-stone-200 p-4 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition-transform z-20 relative">
                         <div className="flex items-center gap-3">
-                            <Grid size={20} className="text-[#cd4631]" />
-                            <span className="font-bold text-stone-700 text-lg">当前: <span className="font-hand">{char.h}</span> / <span className="font-hand">{char.k}</span></span>
+                            <div className="bg-[#cd4631] text-white p-1.5 rounded-lg"><Grid size={18} /></div>
+                            <span className="font-bold text-stone-700 text-lg">当前练习</span>
                         </div>
-                        <ChevronRight className={`transition-transform text-stone-400 ${isOpen ? 'rotate-90' : ''}`} size={20} />
+                        <div className="flex items-center gap-2">
+                            <span className="text-xl font-hand">{char.h}</span>
+                            <span className="text-stone-300">/</span>
+                            <span className="text-xl font-hand">{char.k}</span>
+                            <ChevronRight className={`ml-2 transition-transform text-stone-400 ${isOpen ? 'rotate-90' : ''}`} size={20} />
+                        </div>
                     </button>
+                    
                     {isOpen && (
-                        <div className="bg-white border border-stone-200 rounded-2xl shadow-inner p-3 grid grid-cols-6 gap-2 max-h-60 overflow-y-auto z-30">
+                        <div className="bg-white border border-stone-200 rounded-2xl shadow-xl p-3 grid grid-cols-6 gap-2 max-h-[50vh] overflow-y-auto no-scrollbar z-10 animate-fade-in">
                             {allChars.map((c, i) => (
-                                <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`p-2 rounded-lg text-center ${c.h === char.h ? 'bg-[#cd4631] text-white' : 'bg-stone-50'}`}>
-                                    <div className="font-hand text-lg">{c.h}</div>
+                                <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`p-2 rounded-xl text-center flex flex-col items-center justify-center ${c.h === char.h ? 'bg-[#cd4631] text-white' : 'bg-stone-50'}`}>
+                                    <div className="font-hand text-xl">{c.h}</div>
+                                    <div className="text-[8px] uppercase opacity-60">{c.r}</div>
                                 </button>
                             ))}
                         </div>
                     )}
-                    <WritingCard char={char.h} label="平仮名" romaji={char.r} />
-                    <WritingCard char={char.k} label="片仮名" romaji={char.r} />
+                    
+                    <div className="grid grid-cols-1 gap-4">
+                        <WritingCard char={char.h} label="Hiragana (平仮名)" romaji={char.r} />
+                        <WritingCard char={char.k} label="Katakana (片仮名)" romaji={char.r} />
+                    </div>
                 </div>
             );
         }
 
-        // --- 测验模式 ---
+        // --- 3. 测验模式 (功能完全保留，UI 优雅化) ---
         function QuizMode() {
-            const [step, setStep] = useState('config');
+            const [step, setStep] = useState('config'); // 'config' | 'quiz' | 'result'
+            const [selRows, setSelRows] = useState(['']); // 默认只选元音行
+            const [selCols, setSelCols] = useState(['a','i','u','e','o']);
             const [quizData, setQuizData] = useState([]);
             const [currentIdx, setCurrentIdx] = useState(0);
             const [revealed, setRevealed] = useState(false);
             const canvasRef = useRef(null);
 
-            const startQuiz = () => {
-                // 简单随机选10个
-                const shuffled = [...VOCAB_FULL_DB].sort(() => 0.5 - Math.random());
-                setQuizData(shuffled.slice(0, 10));
+            // 逻辑保持不变
+            const toggleRow = (id) => setSelRows(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+            const toggleCol = (id) => setSelCols(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+            const selectAllRows = () => setSelRows(CONSONANTS.map(c => c.id));
+            const clearRows = () => setSelRows([]);
+
+            const generateQuestions = () => {
+                const allowedChars = new Set();
+                CONSONANTS.forEach(row => {
+                    if (selRows.includes(row.id)) {
+                        VOWELS.forEach(col => {
+                            if (selCols.includes(col.id)) {
+                                const char = KANA_MAP[row.id]?.[col.id];
+                                if (char) allowedChars.add(char);
+                            }
+                        });
+                        if(row.id === 'n_special') allowedChars.add('ん');
+                    }
+                });
+
+                const candidates = VOCAB_FULL_DB.filter(word => {
+                    const chars = word.w.split('');
+                    return chars.every(c => allowedChars.has(c));
+                });
+
+                if (candidates.length < 5) {
+                    alert(`单词太少啦！只有 ${candidates.length} 个。再多选几行吧！`);
+                    return;
+                }
+
+                const questions = [];
+                for (let i = 0; i < 10; i++) {
+                    const random = candidates[Math.floor(Math.random() * candidates.length)];
+                    questions.push(random);
+                }
+                
+                setQuizData(questions);
                 setCurrentIdx(0);
                 setRevealed(false);
                 setStep('quiz');
@@ -343,9 +365,9 @@
                 const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
                 const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-                if (e.type === 'touchstart' || e.type === 'mousedown') {
+                if (e.type === 'touchstart') {
                     ctx.beginPath(); ctx.moveTo(x, y); canvas.isDrawing = true;
-                } else if (e.type === 'touchend' || e.type === 'mouseup') {
+                } else if (e.type === 'touchend') {
                     canvas.isDrawing = false;
                 } else if (canvas.isDrawing) {
                     ctx.lineTo(x, y); ctx.stroke();
@@ -362,70 +384,140 @@
                  }
             }, [step, currentIdx]);
 
+            // --- 3.1 测验配置页 (UI 重构：适合手指点击的大按钮网格) ---
             if (step === 'config') {
                 return (
-                    <div className="animate-fade-in px-6 flex flex-col items-center justify-center h-[70vh]">
-                        <div className="w-24 h-24 bg-[#cd4631] rounded-2xl rotate-3 flex items-center justify-center text-white mb-8 shadow-xl">
-                            <Brain size={48} />
+                    <div className="safe-pb animate-fade-in px-4 pt-4">
+                        <div className="bg-white p-5 rounded-3xl shadow-sm border border-stone-200 mb-6">
+                            <div className="flex items-center gap-3 mb-6 border-b border-stone-100 pb-4">
+                                <div className="p-2 bg-[#cd4631] text-white rounded-xl shadow-md rotate-3"><Settings2 size={20} /></div>
+                                <div>
+                                    <h2 className="font-bold text-xl leading-none">测验范围</h2>
+                                    <span className="text-xs text-stone-400">选择要练习的行与段</span>
+                                </div>
+                            </div>
+                            
+                            {/* 行选择 - 网格布局，大触控区 */}
+                            <div className="mb-6">
+                                <div className="flex justify-between items-center mb-3">
+                                    <label className="text-sm font-bold text-stone-500">按行 (Rows)</label>
+                                    <div className="flex gap-4 text-xs font-bold">
+                                        <button onClick={selectAllRows} className="text-[#cd4631] px-2 py-1 bg-red-50 rounded-md">全选</button>
+                                        <button onClick={clearRows} className="text-stone-400 px-2 py-1 bg-stone-100 rounded-md">清空</button>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {CONSONANTS.map(row => (
+                                        <button 
+                                            key={row.id}
+                                            onClick={() => toggleRow(row.id)}
+                                            className={`h-12 rounded-xl text-sm font-bold transition-all border-2 flex flex-col items-center justify-center ${
+                                                selRows.includes(row.id) 
+                                                ? 'bg-[#cd4631] border-[#cd4631] text-white shadow-md' 
+                                                : 'bg-stone-50 border-stone-100 text-stone-400'
+                                            }`}
+                                        >
+                                            <span className="leading-none text-base">{row.label.split(' ')[0]}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* 段选择 - 横向排布 */}
+                            <div>
+                                <label className="text-sm font-bold text-stone-500 block mb-3">按段 (Vowels)</label>
+                                <div className="flex justify-between gap-2">
+                                    {VOWELS.map(col => (
+                                        <button 
+                                            key={col.id}
+                                            onClick={() => toggleCol(col.id)}
+                                            className={`flex-1 h-10 rounded-full text-sm font-bold transition-all border-2 ${
+                                                selCols.includes(col.id) 
+                                                ? 'bg-[#2c2c2c] border-[#2c2c2c] text-white shadow' 
+                                                : 'bg-white border-stone-200 text-stone-400'
+                                            }`}
+                                        >
+                                            {col.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
-                        <h2 className="text-2xl font-bold text-stone-800 mb-2">准备好了吗？</h2>
-                        <p className="text-stone-500 mb-10 text-center">随机抽取 10 个单词<br/>请写出对应的假名</p>
-                        <button onClick={startQuiz} className="w-full py-4 bg-[#cd4631] text-white rounded-2xl font-bold shadow-lg text-lg active:scale-95 transition-transform">
-                            开始测验
+
+                        <button 
+                            onClick={generateQuestions}
+                            disabled={selRows.length === 0 || selCols.length === 0}
+                            className="w-full h-14 bg-[#cd4631] text-white rounded-2xl font-bold shadow-lg shadow-red-200 text-lg flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100"
+                        >
+                            <Sparkles size={20} />
+                            生成试卷 (Start)
                         </button>
+                        <div className="h-10"></div>
                     </div>
                 );
             }
 
+            // --- 3.3 结果页 ---
             if (step === 'result') {
                 return (
-                    <div className="animate-fade-in px-6 flex flex-col items-center justify-center h-[70vh]">
-                        <Check size={60} className="text-[#cd4631] mb-6" />
-                        <h2 className="text-3xl font-bold text-stone-800 mb-8">完成！</h2>
-                        <button onClick={() => setStep('config')} className="w-full py-4 bg-white border-2 border-stone-200 text-stone-700 rounded-2xl font-bold text-lg active:bg-stone-50">
-                            再来一次
+                    <div className="safe-pb flex flex-col items-center justify-center h-[80vh] px-6 animate-fade-in">
+                        <div className="w-24 h-24 bg-[#cd4631] rounded-3xl flex items-center justify-center text-white mb-6 shadow-xl shadow-red-200 rotate-6">
+                            <Check size={48} />
+                        </div>
+                        <h2 className="text-3xl font-bold text-stone-800 mb-2">练习完成！</h2>
+                        <p className="text-stone-400 mb-10 text-center">只要坚持，就会有奇迹。</p>
+                        <button onClick={() => setStep('config')} className="w-full py-4 bg-white border-2 border-stone-200 text-stone-700 rounded-2xl font-bold shadow-sm active:bg-stone-50 flex items-center justify-center gap-2">
+                            <RotateCcw size={20} />
+                            调整范围并重来
                         </button>
                     </div>
                 )
             }
 
+            // --- 3.2 测验进行中 ---
             const question = quizData[currentIdx];
-
             return (
-                <div className="animate-fade-in px-4 pb-32 pt-2 h-full flex flex-col">
+                <div className="animate-fade-in px-4 pt-2 h-full flex flex-col relative pb-[calc(env(safe-area-inset-bottom)+80px)]">
                     <div className="flex justify-between items-center mb-4">
-                        <span className="text-xs font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded">Q{currentIdx + 1}/10</span>
-                        <button onClick={() => setStep('config')} className="text-xs text-stone-400 p-2">退出</button>
+                        <span className="text-xs font-bold text-stone-500 bg-white border border-stone-200 px-3 py-1 rounded-full shadow-sm">
+                            Question {currentIdx + 1} <span className="text-stone-300">/</span> 10
+                        </span>
+                        <button onClick={() => setStep('config')} className="text-xs font-bold text-stone-400 px-2 py-2">退出</button>
                     </div>
 
-                    <div className="bg-white rounded-3xl shadow-xl border border-stone-100 flex-1 flex flex-col overflow-hidden">
-                        <div className="p-8 text-center bg-[#fcfbf9] border-b border-dashed border-stone-200">
-                            <div className="text-4xl font-bold text-stone-800 mb-1 tracking-wider">{question.r}</div>
-                            <div className="text-sm text-stone-400">{question.m}</div>
+                    <div className="bg-white rounded-[32px] shadow-2xl shadow-stone-200/50 border border-stone-100 flex-1 flex flex-col overflow-hidden relative">
+                        {/* 题目区域 */}
+                        <div className="p-6 text-center bg-[#fcfbf9] border-b border-dashed border-stone-200 relative">
+                             <div className="text-xs font-bold text-[#cd4631] mb-2 tracking-widest">ROMAJI</div>
+                             <div className="text-5xl font-bold text-stone-800 font-serif">{question.r}</div>
+                             <div className="text-sm text-stone-400 mt-2 font-bold">{question.m}</div>
                         </div>
 
+                        {/* 画布区域 */}
                         <div className="flex-1 relative bg-white touch-none">
                             <canvas ref={canvasRef} className="w-full h-full cursor-crosshair"
-                                onMouseDown={handleDraw} onMouseMove={handleDraw} onMouseUp={handleDraw}
                                 onTouchStart={handleDraw} onTouchMove={handleDraw} onTouchEnd={handleDraw}
                             />
                             
-                            {/* 答案遮罩 */}
-                            <div className={`absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur transition-all duration-300 border-t border-stone-100 ${revealed ? 'h-32' : 'h-12'}`}>
+                            {/* 答案卡片 (可展开) */}
+                            <div className={`absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md transition-all duration-500 ease-in-out border-t border-stone-100 ${revealed ? 'h-48 rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.1)]' : 'h-14'}`}>
                                 {!revealed ? (
-                                    <div onClick={() => {setRevealed(true); speak(question.w)}} className="h-full flex items-center justify-center gap-2 text-stone-400 cursor-pointer active:bg-stone-50">
-                                        <Eye size={18} /> <span className="text-sm font-bold">点击看答案</span>
+                                    <div onClick={() => {setRevealed(true); speak(question.w)}} className="h-full flex items-center justify-center gap-2 text-stone-500 cursor-pointer active:bg-stone-50">
+                                        <Eye size={18} /> <span className="text-sm font-bold tracking-widest">点击揭晓答案</span>
                                     </div>
                                 ) : (
-                                    <div className="p-4 h-full flex flex-col justify-between">
-                                        <div className="flex items-center justify-between px-2">
-                                            <span className="text-4xl font-hand text-[#cd4631]">{question.w}</span>
-                                            <button onClick={() => speak(question.w)} className="p-2 bg-stone-100 rounded-full"><Volume2 size={20} className="text-stone-600"/></button>
+                                    <div className="p-6 h-full flex flex-col justify-between">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <div className="text-xs font-bold text-stone-400 uppercase">Answer</div>
+                                                <span className="text-5xl font-hand text-[#cd4631]">{question.w}</span>
+                                            </div>
+                                            <button onClick={() => speak(question.w)} className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center text-stone-600 active:scale-90 transition-transform"><Volume2 size={24} /></button>
                                         </div>
                                         <button onClick={() => {
                                             if(currentIdx < 9) { setRevealed(false); setCurrentIdx(p => p+1); }
                                             else { setStep('result'); }
-                                        }} className="w-full py-3 bg-[#2d3436] text-white rounded-xl font-bold flex items-center justify-center gap-2 active:scale-[0.98]">
+                                        }} className="w-full py-3.5 bg-[#2d3436] text-white rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg">
                                             下一题 <ChevronRight size={18}/>
                                         </button>
                                     </div>
@@ -437,6 +529,7 @@
             );
         }
 
+        // --- 主程序 ---
         function JapaneseZenApp() {
             const [activeTab, setActiveTab] = useState('chart');
             const [fadeIn, setFadeIn] = useState(false);
@@ -447,15 +540,18 @@
             }, []);
 
             return (
-                <div className={`h-screen flex flex-col bg-paper-texture transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-                    <header className="safe-area-top px-6 pb-2 bg-[#fcfbf9]/80 backdrop-blur sticky top-0 z-30 flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-[#cd4631] rounded-lg text-white flex items-center justify-center font-bold font-zen shadow-sm">禅</div>
-                            <span className="font-bold text-stone-800 text-lg tracking-widest font-zen">GOJUON</span>
+                <div className={`h-full flex flex-col transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+                    <header className="safe-pt px-6 pb-2 bg-[#fcfbf9]/50 backdrop-blur sticky top-0 z-30 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 bg-[#cd4631] rounded-xl text-white flex items-center justify-center font-bold font-zen shadow-sm border-2 border-transparent">禅</div>
+                            <div className="flex flex-col">
+                                <span className="font-bold text-stone-800 text-lg leading-none tracking-widest">GOJUON</span>
+                                <span className="text-[9px] text-stone-400 font-bold tracking-[0.2em] uppercase">Pro Mobile</span>
+                            </div>
                         </div>
                     </header>
 
-                    <main className="flex-1 overflow-y-auto no-scrollbar relative z-10 w-full max-w-lg mx-auto">
+                    <main className="flex-1 overflow-y-auto no-scrollbar relative w-full mx-auto">
                         {activeTab === 'chart' && <ChartMode />}
                         {activeTab === 'practice' && <PracticeMode />}
                         {activeTab === 'quiz' && <QuizMode />}
