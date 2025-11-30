@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <!-- 将状态栏改为默认，避免黑色背景影响美观 -->
+    <!-- 状态栏样式：设置为 default 以匹配应用内的浅色/毛玻璃风格 -->
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="format-detection" content="telephone=no">
-    <!-- 修改 Title，显得更极简 -->
     <title>禅</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,22 +14,22 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 引入日系字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Kurenaido&family=Noto+Serif+SC:wght@500&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!-- 
-      [NEW ICON] 朱印·圆相风格 
-      iOS Safari 极其顽固，为了强制刷新，我在 SVG 中增加了 uniqueID 和复杂的笔触路径
+      [FIXED ICON] 极简朱印风格
+      为了解决 iOS 拒绝解析复杂 SVG 的问题，移除了所有滤镜和 defs。
+      改为纯矢量路径，确保 iOS Springboard 能正确渲染。
+      配色：和纸米色底 (#F5F4F0) + 茜色圆相 (#a73136) + 宋体白字
     -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background-color:%23F5F4F0'%3E%3Cdefs%3E%3Cfilter id='paper' x='0%25' y='0%25' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' result='noise'/%3E%3CfeDiffuseLighting in='noise' lighting-color='%23fff8e7' surfaceScale='2'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='%23F5F4F0' filter='url(%23paper)' opacity='0.5'/%3E%3Ccircle cx='256' cy='256' r='180' fill='%23a73136' opacity='0.9' /%3E%3Cpath d='M256 60 C 150 60, 60 150, 60 256 C 60 360, 150 450, 256 450 C 360 450, 450 360, 450 256' stroke='white' stroke-width='4' fill='none' opacity='0.1' stroke-linecap='round' /%3E%3Ctext x='50%25' y='54%25' font-family='Noto Serif SC, serif' font-weight='500' font-size='220' fill='white' dominant-baseline='central' text-anchor='middle' style='text-shadow: 2px 2px 4px rgba(0,0,0,0.2)'%3E禅%3C/text%3E%3C/svg%3E">
-    
-    <!-- 同时也加上 standard icon 兼容其他浏览器 -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23a73136'/%3E%3Ctext x='50%25' y='50%25' font-family='serif' font-size='300' fill='white' text-anchor='middle' dominant-baseline='central'%3E禅%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon-precomposed" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23F5F4F0'/%3E%3Ccircle cx='256' cy='256' r='200' fill='%23a73136'/%3E%3Cpath d='M256 96 C 160 96, 96 160, 96 256 C 96 352, 160 416, 256 416 C 352 416, 416 352, 416 256' stroke='white' stroke-width='8' fill='none' opacity='0.2' stroke-linecap='round' stroke-dasharray='60 40'/%3E%3Ctext x='50%25' y='54%25' font-family='serif' font-weight='bold' font-size='240' fill='white' dominant-baseline='central' text-anchor='middle'%3E禅%3C/text%3E%3C/svg%3E">
+    <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23a73136'/%3E%3Ctext x='50%25' y='50%25' font-family='serif' font-size='300' fill='white' text-anchor='middle' dominant-baseline='central'%3E禅%3C/text%3E%3C/svg%3E">
 
     <style>
-        /* 这里保持之前的 Style 不变 */
         :root {
             --glass-surface: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(255, 255, 255, 0.6);
@@ -40,7 +39,7 @@
         }
 
         body {
-            font-family: "Noto Serif SC", "Songti SC", STSong, serif; /* 字体优先级微调 */
+            font-family: "Noto Serif SC", "Songti SC", STSong, serif;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
@@ -92,10 +91,9 @@
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect, useRef, useMemo, useCallback } from 'https://esm.sh/react@18.2.0';
         import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
-        // 引入 Lucide 图标库
         import { 
             BookOpen, PenTool, Brain, Volume2, Check, ChevronRight, User,
-            RotateCcw, Eraser, Eye, Grid, Flame, Settings2, X, Trophy, Sparkles, Filter, Activity, Zap, Save, Download, Upload
+            RotateCcw, Eraser, Eye, Grid, Flame, Settings2, X, Trophy, Sparkles, Filter, Activity, Zap, Download, Upload
         } from 'https://esm.sh/lucide-react@0.292.0';
 
         // --- 1. 静态数据配置 (假名表) ---
@@ -109,7 +107,6 @@
             { id: 'a', label: 'あ' }, { id: 'i', label: 'い' }, { id: 'u', label: 'う' },
             { id: 'e', label: 'え' }, { id: 'o', label: 'お' },
         ];
-        // 映射表：行+列 -> 平假名
         const KANA_MAP = {
             '':  { a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お' }, 'k': { a: 'か', i: 'き', u: 'く', e: 'け', o: 'こ' },
             's': { a: 'さ', i: 'し', u: 'す', e: 'せ', o: 'そ' }, 't': { a: 'た', i: 'ち', u: 'つ', e: 'て', o: 'と' },
@@ -118,7 +115,6 @@
             'r': { a: 'ら', i: 'り', u: 'る', e: 'れ', o: 'ろ' }, 'w': { a: 'わ', i: null, u: null, e: null, o: 'を' },
             'n_special': { a: 'ん', i: null, u: null, e: null, o: null }, 
         };
-        // 映射表：行+列 -> 片假名
         const KATA_MAP = {
             '':  { a: 'ア', i: 'イ', u: 'ウ', e: 'エ', o: 'オ' }, 'k': { a: 'カ', i: 'キ', u: 'ク', e: 'ケ', o: 'コ' },
             's': { a: 'サ', i: 'シ', u: 'ス', e: 'セ', o: 'ソ' }, 't': { a: 'タ', i: 'チ', u: 'ツ', e: 'テ', o: 'ト' },
@@ -128,7 +124,6 @@
             'n_special': { a: 'ン', i: null, u: null, e: null, o: null },
         };
         
-        // 兜底小词库
         const BACKUP_DB = [
             { w: 'あい', m: '爱 (愛)', r: 'ai' }, { w: 'いえ', m: '家 (家)', r: 'ie' },
             { w: 'うえ', m: '上面 (上)', r: 'ue' }, { w: 'かお', m: '脸 (顔)', r: 'kao' },
@@ -140,16 +135,14 @@
         const Storage = {
             get: (key, def) => { try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; } },
             set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
-            // [UPDATED] 导出数据为字符串
             export: () => {
                 const data = {
                     srs: JSON.parse(localStorage.getItem('zen_srs_data') || '{}'),
                     heatmap: JSON.parse(localStorage.getItem('zen_heatmap') || '{}'),
                     ver: 1
                 };
-                return btoa(JSON.stringify(data)); // Base64编码
+                return btoa(JSON.stringify(data));
             },
-            // [UPDATED] 导入数据
             import: (str) => {
                 try {
                     const data = JSON.parse(atob(str));
@@ -161,35 +154,23 @@
         };
 
         const SRS = {
-            // 更新单词状态 (SM-2算法简化版)
             updateItem: (itemId, quality) => { 
                 const data = Storage.get('zen_srs_data', {});
-                // ef: Easiness Factor, interval: Days, repetitions: Consecutive correct count
                 const item = data[itemId] || { interval: 0, repetitions: 0, ef: 2.5, nextReview: 0 };
-                
-                if (quality >= 3) { // 正确
+                if (quality >= 3) {
                     if (item.repetitions === 0) item.interval = 1;
                     else if (item.repetitions === 1) item.interval = 6;
                     else item.interval = Math.round(item.interval * item.ef);
-                    
                     item.repetitions += 1;
-                    // EF 动态调整公式
                     item.ef = item.ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
                     if (item.ef < 1.3) item.ef = 1.3;
-                } else { // 错误
-                    item.repetitions = 0;
-                    item.interval = 1; // 错了重头再来
+                } else {
+                    item.repetitions = 0; item.interval = 1;
                 }
-                
                 const now = Date.now();
-                // nextReview 存储的是时间戳
                 item.nextReview = now + (item.interval * 24 * 60 * 60 * 1000); 
-                // [FIX] 原代码这里乘的是60*1000(分钟)，现修正为天(24*60*60*1000)，更符合艾宾浩斯
-                
                 data[itemId] = item;
                 Storage.set('zen_srs_data', data);
-                
-                // 只有第一次学习或复习才算打卡
                 ZenStreak.addActivity();
                 return item;
             },
@@ -198,7 +179,6 @@
                 const now = Date.now();
                 return Object.keys(data).filter(id => data[id].nextReview <= now);
             },
-            // [UPDATED] 获取所有数据用于矩阵展示
             getAll: () => Storage.get('zen_srs_data', {})
         };
 
@@ -210,7 +190,6 @@
                 Storage.set('zen_heatmap', heatmap);
             },
             getData: () => Storage.get('zen_heatmap', {}),
-            // [UPDATED] 计算累计打卡天数
             getTotalDays: () => Object.keys(Storage.get('zen_heatmap', {})).length
         };
 
@@ -223,18 +202,13 @@
         };
 
         // --- 3. UI 组件库 ---
-
-        // [UPDATED] 热力图组件：现在可复用
         function HeatmapWidget({ className }) {
             const [data, setData] = useState({});
             useEffect(() => { setData(ZenStreak.getData()); }, []);
-            
-            // 生成最近7天
             const days = Array.from({length: 7}, (_, i) => {
                 const d = new Date(); d.setDate(d.getDate() - (6 - i));
                 return d.toISOString().split('T')[0];
             });
-
             return (
                 <div className={`glass-panel p-5 rounded-[28px] relative overflow-hidden ${className}`}>
                     <div className="flex justify-between items-center mb-3 relative z-10">
@@ -247,7 +221,6 @@
                     <div className="flex justify-between gap-2 relative z-10">
                         {days.map(day => {
                             const count = data[day] || 0;
-                            // 颜色透明度逻辑
                             const opacity = count === 0 ? 0.1 : Math.min(count * 0.2 + 0.2, 1);
                             const isToday = day === new Date().toISOString().split('T')[0];
                             return (
@@ -257,30 +230,25 @@
                             )
                         })}
                     </div>
-                    {/* 背景装饰 */}
                     <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none"><Trophy size={80} /></div>
                 </div>
             );
         }
 
-        // [UPDATED] 底部 Tab 栏：高度压缩，视觉更紧凑
         function TabBar({ active, onChange }) {
             return (
                 <div className="fixed bottom-0 left-0 right-0 glass-tabbar z-50 pb-[env(safe-area-inset-bottom)]">
-                    {/* 高度从70px调整为55px，更精致 */}
                     <div className="flex justify-around items-center h-[55px]">
                         {[
                             { id: 'chart', icon: BookOpen, label: '阅览' },
                             { id: 'practice', icon: PenTool, label: '临摹' },
                             { id: 'quiz', icon: Brain, label: '试炼' },
-                            { id: 'profile', icon: User, label: '我的' }, // 新增入口
+                            { id: 'profile', icon: User, label: '我的' },
                         ].map(tab => {
                             const Icon = tab.icon; const isActive = active === tab.id;
                             return (
                                 <button key={tab.id} onClick={() => onChange(tab.id)} className={`flex flex-col items-center justify-center w-full h-full transition-all duration-300 relative group`}>
-                                    {/* 选中指示器：改为底部小圆点，减少视觉干扰 */}
                                     {isActive && <div className="absolute top-1 w-8 h-8 bg-[#a73136]/5 rounded-full scale-100 transition-transform" />}
-                                    
                                     <Icon size={20} strokeWidth={isActive ? 2.5 : 2} className={`z-10 transition-colors ${isActive ? 'text-[#a73136]' : 'text-stone-400 group-hover:text-stone-500'}`} />
                                     <span className={`text-[9px] font-sans-sys font-medium mt-0.5 tracking-wider transition-opacity ${isActive ? 'opacity-100 text-[#a73136]' : 'opacity-0 scale-90'}`}>{tab.label}</span>
                                 </button>
@@ -302,7 +270,6 @@
                             <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'k' ? 'bg-white shadow text-[#a73136]' : 'text-stone-500 hover:text-stone-700'}`}>片仮名</button>
                         </div>
                     </div>
-                    {/* [MOVED] HeatmapWidget 移到了“我的”页面，这里保持纯粹的查表功能 */}
                     <div className="grid gap-4 px-5 mt-6">
                         {CONSONANTS.map(row => (
                             <div key={row.id} className="flex gap-3 items-center">
@@ -331,14 +298,13 @@
             );
         }
 
-        // --- 5. 业务模块：临摹模式 (Canvas) ---
+        // --- 5. 业务模块：临摹模式 (Updated: 分离 Hiragana/Katakana) ---
         function WritingCard({ char, label }) {
             const canvasRef = useRef(null);
             const clear = () => {
                 const canvas = canvasRef.current;
                 if(!canvas) return; const ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                // 绘制米字格参考线
                 ctx.save(); ctx.strokeStyle = 'rgba(167, 49, 54, 0.1)'; ctx.lineWidth = 1;
                 ctx.beginPath(); ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
@@ -355,7 +321,7 @@
                 } else if (e.type === 'touchend') { canvas.isDrawing = false;
                 } else if (canvas.isDrawing) {
                     const dist = Math.hypot(x - canvas.lastX, y - canvas.lastY);
-                    const newWidth = Math.max(4, 12 - dist * 0.5); // 笔锋模拟
+                    const newWidth = Math.max(4, 12 - dist * 0.5);
                     ctx.beginPath(); ctx.moveTo(canvas.lastX, canvas.lastY); ctx.lineTo(x, y); ctx.lineWidth = newWidth; ctx.stroke();
                     canvas.lastX = x; canvas.lastY = y;
                 }
@@ -389,7 +355,10 @@
 
         function PracticeMode() {
             const [char, setChar] = useState({ h: 'あ', k: 'ア', r: 'a' });
+            // [UPDATED] 新增临摹模式切换状态
+            const [practiceType, setPracticeType] = useState('h'); 
             const [isOpen, setIsOpen] = useState(false);
+            
             const allChars = useMemo(() => {
                 const list = [];
                 CONSONANTS.forEach(row => {
@@ -401,45 +370,61 @@
                 });
                 return list;
             }, []);
+
             return (
-                <div className="safe-pb animate-fade-in px-5 space-y-6 pt-6">
-                    <button onClick={() => setIsOpen(!isOpen)} className="w-full glass-panel p-5 rounded-[28px] flex items-center justify-between active:scale-[0.98] transition-all relative z-20">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-[#a73136] text-white p-2.5 rounded-xl shadow-lg shadow-red-900/10"><Grid size={20} /></div>
-                            <div className="text-left">
-                                <div className="font-bold text-stone-700 text-base">临摹练习</div>
-                                <div className="text-[10px] text-stone-400 font-sans-sys font-bold tracking-wider mt-0.5">CURRENT: {char.r.toUpperCase()}</div>
-                            </div>
+                <div className="safe-pb animate-fade-in">
+                    {/* [UPDATED] 顶部切换栏 */}
+                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center glass-tabbar border-b border-stone-200/50 shadow-sm">
+                         <div className="glass-panel rounded-full p-1 inline-flex">
+                            <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'h' ? 'bg-white shadow text-[#a73136]' : 'text-stone-500 hover:text-stone-700'}`}>平仮名</button>
+                            <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'k' ? 'bg-white shadow text-[#a73136]' : 'text-stone-500 hover:text-stone-700'}`}>片仮名</button>
                         </div>
-                        <div className="flex items-center gap-3 pr-2">
-                            <span className="text-3xl font-hand text-stone-700">{char.h}</span>
-                            <span className="text-stone-300 text-xl font-thin">|</span>
-                            <span className="text-3xl font-hand text-stone-700">{char.k}</span>
-                            <ChevronRight className={`ml-2 transition-transform text-stone-300 ${isOpen ? 'rotate-90' : ''}`} size={20} />
-                        </div>
-                    </button>
-                    {isOpen && (
-                        <div className="fixed inset-0 z-50 bg-stone-900/10 backdrop-blur-[2px]" onClick={() => setIsOpen(false)}>
-                            <div className="absolute bottom-0 left-0 right-0 glass-panel rounded-t-[32px] p-6 safe-pb animate-slide-up border-t border-white/50" onClick={e => e.stopPropagation()}>
-                                <div className="grid grid-cols-6 gap-3 max-h-[50vh] overflow-y-auto no-scrollbar">
-                                    {allChars.map((c, i) => (
-                                        <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-all ${c.h === char.h ? 'bg-[#a73136] text-white shadow-lg scale-105' : 'bg-white/50 text-stone-600'}`}>
-                                            <div className="font-hand text-xl">{c.h}</div>
-                                        </button>
-                                    ))}
+                    </div>
+
+                    <div className="px-5 space-y-6 mt-6">
+                        <button onClick={() => setIsOpen(!isOpen)} className="w-full glass-panel p-5 rounded-[28px] flex items-center justify-between active:scale-[0.98] transition-all relative z-20">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-[#a73136] text-white p-2.5 rounded-xl shadow-lg shadow-red-900/10"><Grid size={20} /></div>
+                                <div className="text-left">
+                                    <div className="font-bold text-stone-700 text-base">选择假名</div>
+                                    <div className="text-[10px] text-stone-400 font-sans-sys font-bold tracking-wider mt-0.5">CURRENT: {char.r.toUpperCase()}</div>
                                 </div>
                             </div>
+                            <div className="flex items-center gap-3 pr-2">
+                                {/* [UPDATED] 按钮上只显示当前选中模式的假名 */}
+                                <span className="text-3xl font-hand text-stone-700">{practiceType === 'h' ? char.h : char.k}</span>
+                                <ChevronRight className={`ml-2 transition-transform text-stone-300 ${isOpen ? 'rotate-90' : ''}`} size={20} />
+                            </div>
+                        </button>
+                        
+                        {isOpen && (
+                            <div className="fixed inset-0 z-50 bg-stone-900/10 backdrop-blur-[2px]" onClick={() => setIsOpen(false)}>
+                                <div className="absolute bottom-0 left-0 right-0 glass-panel rounded-t-[32px] p-6 safe-pb animate-slide-up border-t border-white/50" onClick={e => e.stopPropagation()}>
+                                    <div className="grid grid-cols-6 gap-3 max-h-[50vh] overflow-y-auto no-scrollbar">
+                                        {allChars.map((c, i) => (
+                                            <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-all ${c.h === char.h ? 'bg-[#a73136] text-white shadow-lg scale-105' : 'bg-white/50 text-stone-600'}`}>
+                                                <div className="font-hand text-xl">{practiceType === 'h' ? c.h : c.k}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* [UPDATED] 根据 toggle 状态只渲染一个 Card */}
+                        <div className="grid grid-cols-1 gap-6">
+                            {practiceType === 'h' ? (
+                                <WritingCard char={char.h} label="Hiragana" />
+                            ) : (
+                                <WritingCard char={char.k} label="Katakana" />
+                            )}
                         </div>
-                    )}
-                    <div className="grid grid-cols-1 gap-6">
-                        <WritingCard char={char.h} label="Hiragana" />
-                        <WritingCard char={char.k} label="Katakana" />
                     </div>
                 </div>
             );
         }
 
-        // --- 6. [NEW] 业务模块：我的页面 (Profile) ---
+        // --- 6. 业务模块：我的页面 (Profile) ---
         function ProfileMode({ onStartWeakMode }) {
             const [stats, setStats] = useState({ days: 0, srsCount: 0 });
             const [matrix, setMatrix] = useState({});
@@ -452,7 +437,6 @@
                 setMatrix(SRS.getAll());
             }, []);
 
-            // 备份/恢复 处理
             const handleExport = () => {
                 const str = Storage.export();
                 navigator.clipboard.writeText(str).then(() => {
@@ -473,9 +457,7 @@
 
             return (
                 <div className="safe-pb animate-fade-in px-5 space-y-6 pt-6">
-                    {/* 头部：Heatmap + 概览 */}
                     <HeatmapWidget />
-                    
                     <div className="grid grid-cols-2 gap-4">
                         <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-1">
                             <span className="text-3xl font-bold text-stone-700 font-zen">{stats.days}</span>
@@ -487,7 +469,6 @@
                         </div>
                     </div>
 
-                    {/* [NEW] 记忆稳固性矩阵 (元素周期表风格) */}
                     <div className="glass-panel p-5 rounded-[28px]">
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-2">
@@ -502,25 +483,17 @@
                         <div className="grid grid-cols-5 gap-1.5">
                             {['a','i','u','e','o'].map(col => (
                                 CONSONANTS.map(row => {
-                                    // 这里只展示平假名作为代表
                                     const char = KANA_MAP[row.id]?.[col] || (row.id==='n_special'&&col==='a'?'ん':null);
                                     if(!char) return null;
-                                    
-                                    // 查找该词条是否在 SRS 记录中 (这里简化：假设单词本身就是假名，或者需要映射。
-                                    // 实际情况：你的 SRS 存的是单词 key。为了展示效果，我们这里反查包含该假名的单词状态)
-                                    // *修正策略*: 为了矩阵好看，我们直接根据该假名(char)作为key去查。
-                                    // 如果你的 SRS key 是单词，这里可能显示不全。为了演示，我们假设 SRS key 也可以是单字。
                                     const item = Object.values(matrix).find(v => v && v.key === char) || matrix[char]; 
-                                    
-                                    let colorClass = 'bg-stone-100 text-stone-300'; // 未学习
+                                    let colorClass = 'bg-stone-100 text-stone-300';
                                     if (item) {
                                         const now = Date.now();
-                                        if (item.nextReview < now) colorClass = 'bg-red-100 text-red-600 border border-red-200'; // 过期/遗忘
-                                        else if (item.interval > 30) colorClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200'; // 稳固
-                                        else if (item.interval > 7) colorClass = 'bg-green-50 text-green-600 border border-green-100'; // 良好
-                                        else colorClass = 'bg-yellow-50 text-yellow-600 border border-yellow-100'; // 初始
+                                        if (item.nextReview < now) colorClass = 'bg-red-100 text-red-600 border border-red-200';
+                                        else if (item.interval > 30) colorClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+                                        else if (item.interval > 7) colorClass = 'bg-green-50 text-green-600 border border-green-100';
+                                        else colorClass = 'bg-yellow-50 text-yellow-600 border border-yellow-100';
                                     }
-
                                     return (
                                         <div key={row.id+col} className={`aspect-square rounded-lg flex items-center justify-center text-lg font-hand transition-colors ${colorClass}`}>
                                             {char}
@@ -536,7 +509,6 @@
                         </div>
                     </div>
 
-                    {/* 数据备份区 */}
                     <div className="glass-panel p-4 rounded-2xl flex gap-2">
                         <button onClick={handleExport} className="flex-1 py-3 rounded-xl bg-stone-50 text-stone-600 text-xs font-bold flex flex-col items-center gap-1 active:bg-stone-100">
                             <Download size={16} /> 备份数据
@@ -553,19 +525,16 @@
             );
         }
 
-        // --- 7. 业务模块：测验 (含普通模式 & 弱项突击) ---
+        // --- 7. 业务模块：测验 ---
         function QuizMode({ vocabList, startMode, onExit }) { 
-            const [step, setStep] = useState(startMode ? 'quiz' : 'lobby'); // lobby | config | quiz | result
-            const [mode, setMode] = useState(startMode || 'srs'); // 'srs' | 'custom' | 'weak'
+            const [step, setStep] = useState(startMode ? 'quiz' : 'lobby');
+            const [mode, setMode] = useState(startMode || 'srs');
             const [selRows, setSelRows] = useState([]);
             const [currentQ, setCurrentQ] = useState(null);
             const [progress, setProgress] = useState(0);
             const [isCorrect, setIsCorrect] = useState(null);
             const [dueCount, setDueCount] = useState(0);
-            
-            // [NEW] 弱项突击专用队列
             const [weakQueue, setWeakQueue] = useState([]); 
-            const [weakStreak, setWeakStreak] = useState(0); // 当前会话连续答对次数
 
             useEffect(() => {
                 const due = SRS.getDueItems();
@@ -573,17 +542,13 @@
                 if (startMode === 'weak') initWeakMode();
             }, [startMode]);
 
-            // [NEW] 初始化弱项模式
             const initWeakMode = () => {
                 const allData = SRS.getAll();
                 const now = Date.now();
-                // 筛选条件：过期(nextReview < now) 或者 难易度低(ef < 2.0)
-                // 并且必须存在于 vocabList 中
                 const weakKeys = Object.keys(allData).filter(key => {
                     const item = allData[key];
                     return item.nextReview <= now || item.ef < 2.0;
                 });
-                
                 const weakItems = vocabList.filter(v => weakKeys.includes(v.w));
                 
                 if (weakItems.length === 0) {
@@ -591,11 +556,8 @@
                     if(onExit) onExit(); else setStep('lobby');
                     return;
                 }
-                
-                // 将弱项放入队列
                 setWeakQueue(weakItems);
                 setMode('weak');
-                // 稍微延迟以确保 state 更新
                 setTimeout(() => nextQuestion(weakItems), 100);
             };
 
@@ -604,7 +566,7 @@
             const clearRows = () => setSelRows([]);
 
             const getQuestionPool = () => {
-                if (mode === 'srs') return vocabList; // 这里简化了，SRS应该只选due的，为了演示效果暂选全部
+                if (mode === 'srs') return vocabList;
                 if (mode === 'custom') {
                     const allowedChars = new Set();
                     CONSONANTS.forEach(row => {
@@ -622,20 +584,17 @@
             };
 
             const nextQuestion = (overrideQueue = null) => {
-                // [NEW] 弱项模式逻辑：队列为空则胜利
                 if (mode === 'weak') {
                     const queue = overrideQueue || weakQueue;
                     if (queue.length === 0) {
                         setStep('result');
                         return;
                     }
-                    // 取队首
                     const target = queue[0];
                     generateOptions(target);
                     return;
                 }
 
-                // 普通模式：进度条满则结束
                 if (progress >= 10) { setStep('result'); return; }
 
                 const pool = getQuestionPool();
@@ -664,22 +623,15 @@
                 const correct = selected === currentQ.answer;
                 setIsCorrect(correct);
                 speak(currentQ.answer);
-                
-                // 更新数据库
                 SRS.updateItem(currentQ.answer, correct ? 5 : 0);
 
                 if (mode === 'weak') {
-                    // [NEW] 弱项突击算法：
-                    // 正确 -> 移出队列
-                    // 错误 -> 移到队尾，必须再次答对
                     const newQueue = [...weakQueue];
                     if (correct) {
-                        newQueue.shift(); // 移除队首
+                        newQueue.shift();
                     } else {
-                        // 错误，把当前项放到队尾
                         const item = newQueue.shift();
                         newQueue.push(item);
-                        // 可以选择多加几个复制体增加惩罚，这里暂不加
                     }
                     setWeakQueue(newQueue);
                     setTimeout(() => nextQuestion(newQueue), 1200);
@@ -705,7 +657,6 @@
                 setStep('quiz');
             }
 
-            // --- Lobby UI ---
             if (step === 'lobby') {
                 return (
                     <div className="safe-pb animate-fade-in px-6 flex flex-col items-center justify-center h-[80vh]">
@@ -717,7 +668,6 @@
                             总词汇量: {vocabList.length} 词<br/>
                             {dueCount > 0 ? `今日待复习: ${dueCount} 个` : "今日记忆任务已完成"}
                         </p>
-
                         <div className="w-full space-y-4">
                             <button onClick={() => startQuiz('srs')} className="w-full h-20 bg-[#a73136] text-white rounded-[24px] font-bold shadow-xl shadow-red-900/20 flex items-center px-6 gap-4 active:scale-95 transition-all relative overflow-hidden group">
                                 <div className="p-3 bg-white/20 rounded-full"><Sparkles size={24} /></div>
@@ -727,7 +677,6 @@
                                 </div>
                                 <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black/10 to-transparent"></div>
                             </button>
-
                             <button onClick={() => startQuiz('custom')} className="w-full h-20 glass-panel text-stone-700 rounded-[24px] font-bold shadow-sm flex items-center px-6 gap-4 active:scale-95 transition-all">
                                 <div className="p-3 bg-stone-100 rounded-full text-stone-500"><Filter size={24} /></div>
                                 <div className="text-left">
@@ -740,7 +689,6 @@
                 );
             }
 
-            // --- Config UI ---
             if (step === 'config') {
                 return (
                     <div className="safe-pb animate-fade-in px-5 pt-6">
@@ -768,7 +716,6 @@
                 )
             }
 
-            // --- Result UI ---
             if (step === 'result') {
                 return (
                     <div className="safe-pb animate-fade-in px-6 flex flex-col items-center justify-center h-[80vh]">
@@ -786,11 +733,9 @@
                 )
             }
 
-            // --- Quiz Board UI ---
             if (!currentQ) return <div className="text-center pt-20">Loading...</div>;
             return (
                 <div className="safe-pb animate-fade-in px-5 pt-4 h-full flex flex-col relative pb-[calc(env(safe-area-inset-bottom)+90px)]">
-                    {/* 进度条：弱项模式显示剩余数量 */}
                     <div className="w-full h-1.5 bg-stone-200 rounded-full mb-6 overflow-hidden">
                         {mode === 'weak' ? (
                             <div className="h-full bg-red-500 progress-bar" style={{width: `${100}%`, opacity: 0.5}}></div>
@@ -823,12 +768,10 @@
             );
         }
 
-        // --- 主程序 ---
         function JapaneseZenApp() {
             const [activeTab, setActiveTab] = useState('quiz');
             const [fadeIn, setFadeIn] = useState(false);
             const [vocabList, setVocabList] = useState(BACKUP_DB);
-            // [NEW] 临时状态：是否直接进入弱项突击模式
             const [startWeakMode, setStartWeakMode] = useState(false);
 
             useEffect(() => {
@@ -847,21 +790,17 @@
                     .catch(err => { console.log("Using backup DB"); });
             }, []);
 
-            // [NEW] 处理从 Profile 页面发起的弱项突击请求
             const handleStartWeakMode = () => {
                 setActiveTab('quiz');
                 setStartWeakMode('weak');
             };
 
-            // [NEW] 退出弱项模式后重置状态
             const handleQuizExit = () => {
                 setStartWeakMode(false);
-                // 如果是从Profile来的，可能想回Profile，或者留在大厅，这里默认留在大厅
             };
 
             return (
                 <div className={`h-full flex flex-col transition-opacity duration-1000 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-                    {/* Header */}
                     <header className="safe-pt px-6 pb-2 glass-tabbar sticky top-0 z-40 flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-[#a73136] rounded-xl text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-red-900/20 ring-2 ring-white/50">觉</div>
@@ -875,7 +814,6 @@
                         </div>
                     </header>
 
-                    {/* Main Content Area */}
                     <main className="flex-1 overflow-y-auto no-scrollbar relative w-full mx-auto max-w-xl pb-10">
                         {activeTab === 'chart' && <ChartMode />}
                         {activeTab === 'practice' && <PracticeMode />}
