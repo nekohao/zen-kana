@@ -6,34 +6,33 @@
     
     <!-- PWA 核心设置 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <!-- 状态栏样式：设置为 black-translucent 让背景通透到状态栏 -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
     <meta name="format-detection" content="telephone=no">
     <title>禅</title>
 
-    <!-- [关键] 图标调用区域 -->
-    <link rel="apple-touch-icon" href="./icon.png?v=2.0">
-    <link rel="icon" type="image/png" href="./icon.png?v=2.0">
-    <link rel="shortcut icon" href="./icon.png?v=2.0">
+    <!-- 图标调用 -->
+    <link rel="apple-touch-icon" href="./icon.png?v=3.0">
+    <link rel="icon" type="image/png" href="./icon.png?v=3.0">
+    <link rel="shortcut icon" href="./icon.png?v=3.0">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- 引入思源宋体 (Noto Serif SC) 和其他装饰字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Kurenaido&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Kurenaido&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <style>
         :root {
-            --glass-surface: rgba(255, 255, 255, 0.90); /* 稍微增加不透明度，提升质感 */
+            --glass-surface: rgba(255, 255, 255, 0.92);
             --glass-border: rgba(255, 255, 255, 0.6);
-            --ink-color: #2c2c2c;
+            --ink-color: #1a1a1a;
             --zen-red: #a73136;
-            --zen-bg: #f5f4f0; /* 和纸色 */
+            --zen-bg: #f5f4f0;
+            --ios-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* iOS 标准缓动曲线 */
         }
 
         body {
@@ -45,6 +44,9 @@
             overscroll-behavior-y: none;
             background-color: var(--zen-bg);
             color: var(--ink-color);
+            /* 字体抗锯齿优化 */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* 字体工具类 */
@@ -53,41 +55,59 @@
         .font-zen { font-family: 'Zen Kurenaido', sans-serif; }
         .font-serif-bold { font-family: 'Noto Serif SC', serif; font-weight: 900; }
         
-        /* 玻璃拟态组件 */
+        /* 玻璃拟态组件 - 性能优化版 */
         .glass-panel {
             background: var(--glass-surface);
-            backdrop-filter: blur(24px) saturate(120%);
-            -webkit-backdrop-filter: blur(24px) saturate(120%);
+            backdrop-filter: blur(20px); /* 降低一点 blur 半径以提升滚动帧率 */
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+            transform: translateZ(0); /* 开启 GPU 加速 */
         }
 
-        /* 底部导航栏样式优化：更薄，更通透 */
+        /* 底部导航栏 - 极致通透 */
         .glass-tabbar {
-            background: rgba(245, 244, 240, 0.92);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-top: 0.5px solid rgba(0,0,0,0.05); /* 加深一点边框，增加分割感 */
+            background: rgba(245, 244, 240, 0.96); /* 增加不透明度防止杂乱背景干扰 */
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-top: 0.5px solid rgba(0,0,0,0.06);
+            transform: translateZ(0);
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* 布局优化：减少底部留白，增加可视区域 */
-        .safe-pb { padding-bottom: calc(env(safe-area-inset-bottom) + 70px); } 
-        .safe-pt { padding-top: max(env(safe-area-inset-top), 12px); }
+        /* 布局优化：更紧凑的底部安全区适配 */
+        .safe-pb { padding-bottom: calc(env(safe-area-inset-bottom) + 60px); } 
+        .safe-pt { padding-top: max(env(safe-area-inset-top), 10px); }
 
-        /* 噪点纹理背景 */
+        /* 噪点纹理 */
         .bg-noise {
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             position: fixed; inset: 0; pointer-events: none; z-index: -1;
         }
         
-        .progress-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .progress-bar { transition: width 0.6s var(--ios-easing); }
         
-        .modal-enter { animation: modalUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes modalUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* 页面切换动画：缩放淡入 */
+        .animate-page-enter { 
+            animation: pageEnter 0.5s var(--ios-easing) forwards; 
+            opacity: 0; 
+            transform: scale(0.98);
+        }
+        @keyframes pageEnter { 
+            to { opacity: 1; transform: scale(1); } 
+        }
+
+        /* 弹窗动画：弹簧效果 */
+        .modal-enter { animation: modalSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards; }
+        @keyframes modalSpring { 
+            from { transform: translateY(100%) scale(0.9); opacity: 0; } 
+            to { transform: translateY(0) scale(1); opacity: 1; } 
+        }
+
+        /* 按钮点击微反馈 */
+        .active-press { transition: transform 0.1s ease-out; }
+        .active-press:active { transform: scale(0.92); }
     </style>
 </head>
 <body class="overflow-hidden fixed inset-0">
@@ -102,7 +122,7 @@
             RotateCcw, Eraser, Grid, Flame, Settings2, X, Trophy, Sparkles, Filter, Activity, Zap, Download, Upload, Github
         } from 'https://esm.sh/lucide-react@0.292.0';
 
-        // --- 数据常量 ---
+        // --- 常量数据 ---
         const CONSONANTS = [
             { id: '', label: 'あ行' }, { id: 'k', label: 'か行' }, { id: 's', label: 'さ行' },
             { id: 't', label: 'た行' }, { id: 'n', label: 'な行' }, { id: 'h', label: 'は行' },
@@ -133,11 +153,9 @@
         const BACKUP_DB = [
             { w: 'あい', m: '爱 (愛)', r: 'ai' }, { w: 'いえ', m: '家 (家)', r: 'ie' },
             { w: 'うえ', m: '上面 (上)', r: 'ue' }, { w: 'かお', m: '脸 (顔)', r: 'kao' },
-            { w: 'あか', m: '红色 (赤)', r: 'aka' }, { w: 'えき', m: '车站 (駅)', r: 'eki' },
-            { w: 'きく', m: '听 (聞く)', r: 'kiku' }, { w: 'あさ', m: '早晨 (朝)', r: 'asa' }
+            { w: 'あか', m: '红色 (赤)', r: 'aka' }, { w: 'えき', m: '车站 (駅)', r: 'eki' }
         ];
 
-        // --- 核心服务 ---
         const Storage = {
             get: (key, def) => { try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; } },
             set: (key, val) => localStorage.setItem(key, JSON.stringify(val)),
@@ -206,44 +224,43 @@
             window.speechSynthesis.speak(u);
         };
 
-        // --- 设置弹窗组件 ---
+        // --- 组件 ---
         function SettingsModal({ onClose }) {
             const handleClear = () => {
                 if(confirm('确定要清除所有学习记录吗？此操作无法撤销。')) {
                     localStorage.clear();
-                    alert('已重置，将重新加载');
                     location.reload();
                 }
             };
             return (
-                <div className="fixed inset-0 z-[100] bg-stone-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={onClose}>
-                    <div className="w-full max-w-sm bg-[#f5f4f0] sm:rounded-3xl rounded-t-3xl p-6 shadow-2xl modal-enter border border-white/50" onClick={e => e.stopPropagation()}>
+                <div className="fixed inset-0 z-[100] bg-stone-900/10 backdrop-blur-[4px] flex items-end sm:items-center justify-center" onClick={onClose}>
+                    <div className="w-full max-w-sm bg-[#f5f4f0] sm:rounded-3xl rounded-t-3xl p-6 shadow-2xl modal-enter border border-white/60 ring-1 ring-black/5" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-xl font-serif-bold text-stone-800">设置与关于</h3>
-                            <button onClick={onClose} className="p-2 bg-stone-200 rounded-full text-stone-600"><X size={18}/></button>
+                            <h3 className="text-xl font-serif-bold text-stone-800 tracking-tight">设置与关于</h3>
+                            <button onClick={onClose} className="p-2 bg-stone-200/50 rounded-full text-stone-600 active-press"><X size={18}/></button>
                         </div>
                         
                         <div className="space-y-4">
                             <div className="glass-panel p-4 rounded-2xl flex items-center gap-4">
-                                <div className="w-12 h-12 bg-[#a73136] rounded-xl flex items-center justify-center text-white font-serif-bold text-2xl shadow-lg">禅</div>
+                                <div className="w-12 h-12 bg-[#a73136] rounded-xl flex items-center justify-center text-white font-serif-bold text-2xl shadow-lg ring-1 ring-white/30">禅</div>
                                 <div>
-                                    <div className="font-bold text-stone-700">Zen Gojuon</div>
-                                    <div className="text-xs text-stone-400 font-sans-sys">v3.0.0 (Elegant Edition)</div>
+                                    <div className="font-bold text-stone-800 text-lg">Zen Gojuon</div>
+                                    <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v4.0.0 ProMotion</div>
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <button onClick={() => window.open('https://github.com/your-username/your-repo', '_blank')} className="w-full p-4 rounded-2xl bg-white flex items-center justify-between text-stone-700 active:bg-stone-100 transition-colors">
-                                    <span className="flex items-center gap-3"><Github size={18}/> GitHub 仓库</span>
+                                <button onClick={() => window.open('https://github.com/your-username/your-repo', '_blank')} className="w-full p-4 rounded-2xl bg-white flex items-center justify-between text-stone-700 active-press shadow-sm border border-stone-100">
+                                    <span className="flex items-center gap-3 font-medium"><Github size={18}/> GitHub 仓库</span>
                                     <ChevronRight size={16} className="text-stone-300"/>
                                 </button>
-                                <button onClick={handleClear} className="w-full p-4 rounded-2xl bg-white flex items-center justify-between text-red-600 active:bg-red-50 transition-colors">
-                                    <span className="flex items-center gap-3"><Eraser size={18}/> 重置所有数据</span>
+                                <button onClick={handleClear} className="w-full p-4 rounded-2xl bg-white flex items-center justify-between text-red-600 active-press shadow-sm border border-stone-100">
+                                    <span className="flex items-center gap-3 font-medium"><Eraser size={18}/> 重置数据</span>
                                     <ChevronRight size={16} className="text-red-200"/>
                                 </button>
                             </div>
 
-                            <div className="text-center text-xs text-stone-400 font-sans-sys pt-4">
+                            <div className="text-center text-[10px] text-stone-400 font-sans-sys pt-4 tracking-widest uppercase">
                                 Designed for iOS · Wabi-sabi Style
                             </div>
                         </div>
@@ -252,7 +269,6 @@
             )
         }
 
-        // --- 业务组件 ---
         function HeatmapWidget({ className }) {
             const [data, setData] = useState({});
             useEffect(() => { setData(ZenStreak.getData()); }, []);
@@ -267,14 +283,14 @@
                             <Flame size={18} className="text-[#a73136]" fill="#a73136" />
                             <span className="text-xs font-bold font-sans-sys text-stone-500 tracking-wider">修行足迹</span>
                         </div>
-                        <span className="text-[10px] font-bold text-[#a73136] bg-red-50 px-2 py-1 rounded-md font-sans-sys">近七日</span>
+                        <span className="text-[10px] font-bold text-[#a73136] bg-red-50/80 px-2 py-1 rounded-md font-sans-sys">近七日</span>
                     </div>
                     <div className="flex justify-between gap-2 relative z-10">
                         {days.map(day => {
                             const count = data[day] || 0;
-                            const opacity = count === 0 ? 0.1 : Math.min(count * 0.2 + 0.2, 1);
+                            const opacity = count === 0 ? 0.08 : Math.min(count * 0.2 + 0.2, 1);
                             return (
-                                <div key={day} className="flex-1 aspect-[3/4] rounded-lg transition-all duration-500" style={{ backgroundColor: `rgba(167, 49, 54, ${opacity})` }}></div>
+                                <div key={day} className="flex-1 aspect-[3/4] rounded-lg transition-colors duration-500" style={{ backgroundColor: `rgba(167, 49, 54, ${opacity})` }}></div>
                             )
                         })}
                     </div>
@@ -285,17 +301,17 @@
         function ChartMode() {
             const [type, setType] = useState('h');
             return (
-                <div className="safe-pb animate-fade-in">
+                <div className="safe-pb animate-page-enter">
                     <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center glass-tabbar border-b border-stone-200/50 shadow-sm">
-                         <div className="glass-panel rounded-full p-1 inline-flex">
-                            <button onClick={() => setType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'h' ? 'bg-white shadow text-[#a73136]' : 'text-stone-500 hover:text-stone-700'}`}>平仮名</button>
-                            <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'k' ? 'bg-white shadow text-[#a73136]' : 'text-stone-500 hover:text-stone-700'}`}>片仮名</button>
+                         <div className="glass-panel rounded-full p-1 inline-flex scale-95">
+                            <button onClick={() => setType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'h' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
+                            <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'k' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
                         </div>
                     </div>
                     <div className="grid gap-4 px-5 mt-6">
                         {CONSONANTS.map(row => (
                             <div key={row.id} className="flex gap-3 items-center">
-                                <div className="w-6 flex flex-col items-center justify-center text-xs font-bold text-stone-300 gap-1 font-serif-bold">
+                                <div className="w-6 flex flex-col items-center justify-center text-xs font-bold text-stone-300 gap-1 font-serif-bold opacity-60">
                                     {row.label.split('').map((c,i) => <span key={i}>{c}</span>)}
                                 </div>
                                 <div className="grid grid-cols-5 gap-2 flex-1">
@@ -306,7 +322,7 @@
                                         if (row.id === 'n_special' && col.id !== 'a') return <div key={col.id} />;
                                         const displayChar = row.id === 'n_special' ? map['n_special'].a : char;
                                         return (
-                                            <button key={col.id} onClick={() => speak(displayChar)} className="glass-panel aspect-square rounded-2xl flex flex-col items-center justify-center active:scale-95 transition-all active:bg-white/80">
+                                            <button key={col.id} onClick={() => speak(displayChar)} className="glass-panel aspect-square rounded-2xl flex flex-col items-center justify-center active-press active:bg-white/80 transition-colors">
                                                 <span className="text-2xl font-hand text-stone-700">{displayChar}</span>
                                                 <span className="text-[9px] text-stone-300 font-sans-sys font-bold mt-0.5 uppercase opacity-60">{row.id === 'n_special' ? 'n' : (row.id + col.id)}</span>
                                             </button>
@@ -326,7 +342,7 @@
                 const canvas = canvasRef.current;
                 if(!canvas) return; const ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.save(); ctx.strokeStyle = 'rgba(167, 49, 54, 0.1)'; ctx.lineWidth = 1;
+                ctx.save(); ctx.strokeStyle = 'rgba(167, 49, 54, 0.08)'; ctx.lineWidth = 1;
                 ctx.beginPath(); ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
                 ctx.restore();
@@ -360,8 +376,8 @@
                     <div className="absolute top-4 left-5 right-5 flex justify-between items-center z-20 pointer-events-none">
                         <span className="text-[10px] font-bold font-sans-sys text-stone-400 tracking-widest uppercase">{label}</span>
                         <div className="flex gap-2 pointer-events-auto">
-                            <button onClick={() => speak(char)} className="p-2 rounded-full bg-white/40 backdrop-blur active:bg-white text-stone-500"><Volume2 size={18}/></button>
-                            <button onClick={clear} className="p-2 rounded-full bg-white/40 backdrop-blur active:bg-white text-stone-500"><Eraser size={18}/></button>
+                            <button onClick={() => speak(char)} className="p-2 rounded-full bg-white/40 backdrop-blur active-press text-stone-600"><Volume2 size={18}/></button>
+                            <button onClick={clear} className="p-2 rounded-full bg-white/40 backdrop-blur active-press text-stone-600"><Eraser size={18}/></button>
                         </div>
                     </div>
                     <div className="relative aspect-square">
@@ -392,16 +408,16 @@
             }, []);
 
             return (
-                <div className="safe-pb animate-fade-in">
+                <div className="safe-pb animate-page-enter">
                     <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center glass-tabbar border-b border-stone-200/50 shadow-sm">
-                         <div className="glass-panel rounded-full p-1 inline-flex">
-                            <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'h' ? 'bg-white shadow text-[#a73136]' : 'text-stone-500 hover:text-stone-700'}`}>平仮名</button>
-                            <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'k' ? 'bg-white shadow text-[#a73136]' : 'text-stone-500 hover:text-stone-700'}`}>片仮名</button>
+                         <div className="glass-panel rounded-full p-1 inline-flex scale-95">
+                            <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'h' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
+                            <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'k' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
                         </div>
                     </div>
 
                     <div className="px-5 space-y-6 mt-6">
-                        <button onClick={() => setIsOpen(!isOpen)} className="w-full glass-panel p-5 rounded-[28px] flex items-center justify-between active:scale-[0.98] transition-all relative z-20">
+                        <button onClick={() => setIsOpen(!isOpen)} className="w-full glass-panel p-5 rounded-[28px] flex items-center justify-between active-press relative z-20">
                             <div className="flex items-center gap-4">
                                 <div className="bg-[#a73136] text-white p-2.5 rounded-xl shadow-lg shadow-red-900/10"><Grid size={20} /></div>
                                 <div className="text-left">
@@ -411,13 +427,13 @@
                             </div>
                             <div className="flex items-center gap-3 pr-2">
                                 <span className="text-3xl font-hand text-stone-700">{practiceType === 'h' ? char.h : char.k}</span>
-                                <ChevronRight className={`ml-2 transition-transform text-stone-300 ${isOpen ? 'rotate-90' : ''}`} size={20} />
+                                <ChevronRight className={`ml-2 transition-transform duration-300 text-stone-300 ${isOpen ? 'rotate-90' : ''}`} size={20} />
                             </div>
                         </button>
                         
                         {isOpen && (
                             <div className="fixed inset-0 z-50 bg-stone-900/10 backdrop-blur-[2px]" onClick={() => setIsOpen(false)}>
-                                <div className="absolute bottom-0 left-0 right-0 glass-panel rounded-t-[32px] p-6 safe-pb animate-slide-up border-t border-white/50" onClick={e => e.stopPropagation()}>
+                                <div className="absolute bottom-0 left-0 right-0 glass-panel rounded-t-[32px] p-6 safe-pb modal-enter border-t border-white/50" onClick={e => e.stopPropagation()}>
                                     <div className="grid grid-cols-6 gap-3 max-h-[50vh] overflow-y-auto no-scrollbar">
                                         {allChars.map((c, i) => (
                                             <button key={i} onClick={() => { setChar(c); setIsOpen(false); }} className={`aspect-square rounded-2xl flex flex-col items-center justify-center transition-all ${c.h === char.h ? 'bg-[#a73136] text-white shadow-lg scale-105' : 'bg-white/50 text-stone-600'}`}>
@@ -460,7 +476,7 @@
             };
 
             return (
-                <div className="safe-pb animate-fade-in px-5 space-y-6 pt-6">
+                <div className="safe-pb animate-page-enter px-5 space-y-6 pt-6">
                     <HeatmapWidget />
                     <div className="grid grid-cols-2 gap-4">
                         <div className="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-1">
@@ -479,7 +495,7 @@
                                 <Activity size={18} className="text-[#a73136]" />
                                 <span className="font-bold text-stone-700 text-sm">记忆矩阵</span>
                             </div>
-                            <button onClick={onStartWeakMode} className="text-xs bg-[#a73136] text-white px-3 py-1.5 rounded-lg shadow-lg shadow-red-900/20 active:scale-95 transition-transform flex items-center gap-1">
+                            <button onClick={onStartWeakMode} className="text-xs bg-[#a73136] text-white px-3 py-1.5 rounded-lg shadow-lg shadow-red-900/20 active-press flex items-center gap-1">
                                 <Zap size={12} fill="white"/> 弱项突击
                             </button>
                         </div>
@@ -490,7 +506,7 @@
                                     const char = KANA_MAP[row.id]?.[col] || (row.id==='n_special'&&col==='a'?'ん':null);
                                     if(!char) return null;
                                     const item = Object.values(matrix).find(v => v && v.key === char) || matrix[char]; 
-                                    let colorClass = 'bg-stone-100 text-stone-300';
+                                    let colorClass = 'bg-stone-100/50 text-stone-300';
                                     if (item) {
                                         const now = Date.now();
                                         if (item.nextReview < now) colorClass = 'bg-red-100 text-red-600 border border-red-200';
@@ -509,10 +525,10 @@
                     </div>
 
                     <div className="glass-panel p-4 rounded-2xl flex gap-2">
-                        <button onClick={handleExport} className="flex-1 py-3 rounded-xl bg-stone-50 text-stone-600 text-xs font-bold flex flex-col items-center gap-1 active:bg-stone-100">
+                        <button onClick={handleExport} className="flex-1 py-3 rounded-xl bg-stone-50 text-stone-600 text-xs font-bold flex flex-col items-center gap-1 active-press">
                             <Download size={16} /> 备份数据
                         </button>
-                        <button onClick={handleImport} className="flex-1 py-3 rounded-xl bg-stone-50 text-stone-600 text-xs font-bold flex flex-col items-center gap-1 active:bg-stone-100">
+                        <button onClick={handleImport} className="flex-1 py-3 rounded-xl bg-stone-50 text-stone-600 text-xs font-bold flex flex-col items-center gap-1 active-press">
                             <Upload size={16} /> 恢复数据
                         </button>
                     </div>
@@ -619,7 +635,7 @@
 
             if (step === 'lobby') {
                 return (
-                    <div className="safe-pb animate-fade-in px-6 flex flex-col items-center justify-center h-[80vh]">
+                    <div className="safe-pb animate-page-enter px-6 flex flex-col items-center justify-center h-[80vh]">
                         <div className="w-24 h-24 bg-[#a73136] rounded-[32px] flex items-center justify-center text-white mb-6 shadow-2xl shadow-red-900/20 rotate-6 ring-4 ring-white/50">
                             <Brain size={48} />
                         </div>
@@ -629,14 +645,14 @@
                             {dueCount > 0 ? `今日待复习: ${dueCount} 个` : "今日记忆任务已完成"}
                         </p>
                         <div className="w-full space-y-4">
-                            <button onClick={() => { setMode('srs'); setProgress(0); setStep('quiz'); setTimeout(nextQuestion, 0); }} className="w-full h-20 bg-[#a73136] text-white rounded-[24px] font-bold shadow-xl shadow-red-900/20 flex items-center px-6 gap-4 active:scale-95 transition-all relative overflow-hidden group">
+                            <button onClick={() => { setMode('srs'); setProgress(0); setStep('quiz'); setTimeout(nextQuestion, 0); }} className="w-full h-20 bg-[#a73136] text-white rounded-[24px] font-bold shadow-xl shadow-red-900/20 flex items-center px-6 gap-4 active-press relative overflow-hidden group">
                                 <div className="p-3 bg-white/20 rounded-full"><Sparkles size={24} /></div>
                                 <div className="text-left flex-1">
                                     <div className="text-lg">智能复习</div>
                                     <div className="text-[10px] opacity-80 font-sans-sys font-normal">基于遗忘曲线 · 全库随机</div>
                                 </div>
                             </button>
-                            <button onClick={() => setStep('config')} className="w-full h-20 glass-panel text-stone-700 rounded-[24px] font-bold shadow-sm flex items-center px-6 gap-4 active:scale-95 transition-all">
+                            <button onClick={() => setStep('config')} className="w-full h-20 glass-panel text-stone-700 rounded-[24px] font-bold shadow-sm flex items-center px-6 gap-4 active-press">
                                 <div className="p-3 bg-stone-100 rounded-full text-stone-500"><Filter size={24} /></div>
                                 <div className="text-left">
                                     <div className="text-lg">专项特训</div>
@@ -650,20 +666,20 @@
 
             if (step === 'config') {
                 return (
-                    <div className="safe-pb animate-fade-in px-5 pt-6">
+                    <div className="safe-pb animate-page-enter px-5 pt-6">
                         <div className="glass-panel p-6 rounded-[32px] mb-6">
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="font-bold text-lg text-stone-800">选择范围</h3>
-                                <button onClick={() => setStep('lobby')} className="p-2 bg-stone-100 rounded-full"><X size={18} className="text-stone-500"/></button>
+                                <button onClick={() => setStep('lobby')} className="p-2 bg-stone-100 rounded-full active-press"><X size={18} className="text-stone-500"/></button>
                             </div>
                             <div className="grid grid-cols-4 gap-2 mb-6">
                                 {CONSONANTS.map(row => (
-                                    <button key={row.id} onClick={() => toggleRow(row.id)} className={`h-12 rounded-xl text-sm font-bold transition-all border ${selRows.includes(row.id) ? 'bg-[#a73136] border-[#a73136] text-white shadow-md' : 'bg-white/50 border-stone-200 text-stone-400'}`}>
+                                    <button key={row.id} onClick={() => toggleRow(row.id)} className={`h-12 rounded-xl text-sm font-bold transition-all duration-200 border ${selRows.includes(row.id) ? 'bg-[#a73136] border-[#a73136] text-white shadow-md' : 'bg-white/50 border-stone-200 text-stone-400'}`}>
                                         {row.label.split(' ')[0]}
                                     </button>
                                 ))}
                             </div>
-                            <button onClick={() => { if(selRows.length===0) return; setProgress(0); nextQuestion(); setStep('quiz'); }} disabled={selRows.length === 0} className="w-full h-14 bg-[#2c2c2c] text-white rounded-xl font-bold flex items-center justify-center gap-2">
+                            <button onClick={() => { if(selRows.length===0) return; setProgress(0); nextQuestion(); setStep('quiz'); }} disabled={selRows.length === 0} className="w-full h-14 bg-[#2c2c2c] text-white rounded-xl font-bold flex items-center justify-center gap-2 active-press">
                                 开始 <ChevronRight size={18} />
                             </button>
                         </div>
@@ -673,12 +689,12 @@
 
             if (step === 'result') {
                 return (
-                    <div className="safe-pb animate-fade-in px-6 flex flex-col items-center justify-center h-[80vh]">
+                    <div className="safe-pb animate-page-enter px-6 flex flex-col items-center justify-center h-[80vh]">
                         <div className="w-24 h-24 bg-white border border-stone-200 rounded-[32px] flex items-center justify-center text-[#a73136] mb-8 shadow-xl">
                             <Trophy size={48} />
                         </div>
                         <h2 className="text-2xl font-serif-bold text-stone-800 mb-2">修行结束</h2>
-                        <button onClick={() => { if(onExit) onExit(); else setStep('lobby'); }} className="w-full h-14 glass-panel text-stone-600 rounded-2xl font-bold mt-8 flex items-center justify-center gap-2">
+                        <button onClick={() => { if(onExit) onExit(); else setStep('lobby'); }} className="w-full h-14 glass-panel text-stone-600 rounded-2xl font-bold mt-8 flex items-center justify-center gap-2 active-press">
                             <RotateCcw size={20} /> 返回
                         </button>
                     </div>
@@ -687,7 +703,7 @@
 
             if (!currentQ) return <div className="text-center pt-20">Loading...</div>;
             return (
-                <div className="safe-pb animate-fade-in px-5 pt-4 h-full flex flex-col relative pb-[calc(env(safe-area-inset-bottom)+90px)]">
+                <div className="safe-pb animate-page-enter px-5 pt-4 h-full flex flex-col relative pb-[calc(env(safe-area-inset-bottom)+90px)]">
                     <div className="w-full h-1.5 bg-stone-200 rounded-full mb-6 overflow-hidden">
                         <div className={`h-full progress-bar ${mode === 'weak' ? 'bg-red-500' : 'bg-[#a73136]'}`} style={{width: mode==='weak' ? '100%' : `${(progress / 10) * 100}%`}}></div>
                     </div>
@@ -704,7 +720,7 @@
                                 if (opt === currentQ.answer) stateClass = 'bg-[#a73136] text-white border-[#a73136]';
                                 else if (opt !== currentQ.answer && isCorrect === false) stateClass = 'opacity-40';
                             }
-                            return <button key={i} onClick={() => handleAnswer(opt)} disabled={isCorrect !== null} className={`h-16 rounded-2xl font-bold text-xl font-hand transition-all duration-300 border border-transparent shadow-sm ${stateClass}`}>{opt}</button>
+                            return <button key={i} onClick={() => handleAnswer(opt)} disabled={isCorrect !== null} className={`h-16 rounded-2xl font-bold text-xl font-hand transition-all duration-300 border border-transparent shadow-sm active-press ${stateClass}`}>{opt}</button>
                         })}
                     </div>
                 </div>
@@ -727,29 +743,32 @@
             }, []);
 
             return (
-                <div className={`h-full flex flex-col transition-opacity duration-1000 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+                <div className={`h-full flex flex-col transition-opacity duration-1000 ease-in ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
                     <header className="safe-pt px-6 pb-2 glass-tabbar sticky top-0 z-40 flex justify-between items-center h-[54px]">
                         <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 bg-[#a73136] rounded-xl text-white flex items-center justify-center font-serif-bold text-lg shadow-lg shadow-red-900/20 ring-2 ring-white/50">禅</div>
+                            <div className="w-9 h-9 bg-[#a73136] rounded-xl text-white flex items-center justify-center font-serif-bold text-lg shadow-lg shadow-red-900/20 ring-1 ring-white/50">禅</div>
                             <div className="flex flex-col justify-center h-9">
                                 <span className="font-serif-bold text-stone-800 text-base leading-none tracking-widest">GOJUON</span>
                             </div>
                         </div>
-                        <button onClick={() => setShowSettings(true)} className="w-8 h-8 rounded-full bg-stone-200/50 flex items-center justify-center active:bg-stone-300 transition-colors">
+                        <button onClick={() => setShowSettings(true)} className="w-8 h-8 rounded-full bg-stone-200/50 flex items-center justify-center active-press transition-colors">
                             <Settings2 size={16} className="text-stone-600" />
                         </button>
                     </header>
 
                     <main className="flex-1 overflow-y-auto no-scrollbar relative w-full mx-auto max-w-xl pb-10">
-                        {activeTab === 'chart' && <ChartMode />}
-                        {activeTab === 'practice' && <PracticeMode />}
-                        {activeTab === 'quiz' && <QuizMode vocabList={vocabList} startMode={startWeakMode} onExit={() => setStartWeakMode(false)} />}
-                        {activeTab === 'profile' && <ProfileMode onStartWeakMode={() => { setActiveTab('quiz'); setStartWeakMode('weak'); }} />}
+                        {/* 页面切换 key 变化触发动画 */}
+                        <div key={activeTab}>
+                            {activeTab === 'chart' && <ChartMode />}
+                            {activeTab === 'practice' && <PracticeMode />}
+                            {activeTab === 'quiz' && <QuizMode vocabList={vocabList} startMode={startWeakMode} onExit={() => setStartWeakMode(false)} />}
+                            {activeTab === 'profile' && <ProfileMode onStartWeakMode={() => { setActiveTab('quiz'); setStartWeakMode('weak'); }} />}
+                        </div>
                     </main>
 
-                    {/* 底部导航栏优化：更紧凑，图标更大，无背景选中态 */}
+                    {/* 底部导航栏 V4.0: 极致紧凑，原生高度 (49px) */}
                     <div className="fixed bottom-0 left-0 right-0 glass-tabbar z-50 pb-[env(safe-area-inset-bottom)]">
-                        <div className="flex justify-around items-center h-[55px]">
+                        <div className="flex justify-around items-center h-[49px]"> {/* 标准 iOS TabBar 高度 */}
                             {[
                                 { id: 'chart', icon: BookOpen, label: '阅览' },
                                 { id: 'practice', icon: PenTool, label: '临摹' },
@@ -758,10 +777,15 @@
                             ].map(tab => {
                                 const Icon = tab.icon; const isActive = activeTab === tab.id;
                                 return (
-                                    <button key={tab.id} onClick={() => { setActiveTab(tab.id); setStartWeakMode(false); }} className={`flex flex-col items-center justify-center w-full h-full transition-all duration-300 relative group`}>
-                                        <div className={`relative transition-all duration-300 ${isActive ? '-translate-y-1' : ''}`}>
+                                    <button 
+                                        key={tab.id} 
+                                        onClick={() => { setActiveTab(tab.id); setStartWeakMode(false); }} 
+                                        className={`flex flex-col items-center justify-center w-full h-full relative group active:scale-95 transition-transform duration-200 ease-out`}
+                                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                                    >
+                                        <div className={`relative transition-all duration-500 cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isActive ? '-translate-y-0.5' : 'translate-y-1'}`}>
                                             <Icon 
-                                                size={26} 
+                                                size={28} 
                                                 strokeWidth={isActive ? 2.5 : 1.5} 
                                                 className={`transition-colors duration-300 ${isActive ? 'text-[#a73136] drop-shadow-sm' : 'text-stone-400'}`} 
                                             />
