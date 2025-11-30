@@ -64,13 +64,13 @@
             transform: translateZ(0);
         }
 
-        /* 底部导航栏 - 极致沉浸版 */
-        .glass-tabbar {
-            background: rgba(245, 244, 240, 0.94); /* 略微降低透明度，增强实体感 */
-            backdrop-filter: blur(50px);
-            -webkit-backdrop-filter: blur(50px);
-            /* 移除普通边框，改用高级渐变边框 */
-            border-top: none; 
+        /* 底部导航栏背景 - 强制铺满底部 */
+        .glass-tabbar-bg {
+            background: rgba(245, 244, 240, 0.96); /* 高级灰白 */
+            backdrop-filter: blur(60px);
+            -webkit-backdrop-filter: blur(60px);
+            position: absolute;
+            bottom: 0; left: 0; right: 0; top: 0;
             transform: translateZ(0);
         }
         
@@ -78,12 +78,13 @@
         .tabbar-border {
             position: absolute; top: 0; left: 0; right: 0; height: 1px;
             background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08), transparent);
+            z-index: 10;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* 布局适配：根据新的 TabBar 高度调整 */
-        .safe-pb { padding-bottom: calc(env(safe-area-inset-bottom) + 50px); } 
+        /* 布局适配：内容区域底部留白，防止被 TabBar 遮挡 */
+        .safe-pb { padding-bottom: 90px; } 
         .safe-pt { padding-top: max(env(safe-area-inset-top), 10px); }
 
         .bg-noise {
@@ -235,7 +236,7 @@
                                 <div className="w-12 h-12 bg-[#a73136] rounded-xl flex items-center justify-center text-white font-serif-bold text-2xl shadow-lg ring-1 ring-white/30">禅</div>
                                 <div>
                                     <div className="font-bold text-stone-800 text-lg">Zen Gojuon</div>
-                                    <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v5.1.0 Final</div>
+                                    <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v6.0.0 Ultimate Aesthetic</div>
                                 </div>
                             </div>
 
@@ -292,7 +293,7 @@
             const [type, setType] = useState('h');
             return (
                 <div className="safe-pb animate-page-enter">
-                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center glass-tabbar border-b border-stone-200/50 shadow-sm">
+                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center border-b border-stone-200/50 shadow-sm" style={{background: 'rgba(245, 244, 240, 0.96)', backdropFilter: 'blur(40px)'}}>
                          <div className="glass-panel rounded-full p-1 inline-flex scale-95">
                             <button onClick={() => setType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'h' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
                             <button onClick={() => setType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${type === 'k' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
@@ -399,7 +400,7 @@
 
             return (
                 <div className="safe-pb animate-page-enter">
-                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center glass-tabbar border-b border-stone-200/50 shadow-sm">
+                    <div className="sticky top-0 safe-pt z-20 pb-4 flex justify-center border-b border-stone-200/50 shadow-sm" style={{background: 'rgba(245, 244, 240, 0.96)', backdropFilter: 'blur(40px)'}}>
                          <div className="glass-panel rounded-full p-1 inline-flex scale-95">
                             <button onClick={() => setPracticeType('h')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'h' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>平仮名</button>
                             <button onClick={() => setPracticeType('k')} className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${practiceType === 'k' ? 'bg-white shadow-md text-[#a73136]' : 'text-stone-400 hover:text-stone-600'}`}>片仮名</button>
@@ -734,7 +735,7 @@
 
             return (
                 <div className={`h-full flex flex-col transition-opacity duration-1000 ease-in ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-                    <header className="safe-pt px-6 pb-2 glass-tabbar sticky top-0 z-40 flex justify-between items-center h-[54px]">
+                    <header className="safe-pt px-6 pb-2 sticky top-0 z-40 flex justify-between items-center h-[54px]" style={{background: 'rgba(245, 244, 240, 0.96)', backdropFilter: 'blur(40px)', borderBottom: '1px solid rgba(0,0,0,0.05)'}}>
                         <div className="flex items-center gap-3">
                             <div className="w-9 h-9 bg-[#a73136] rounded-xl text-white flex items-center justify-center font-serif-bold text-lg shadow-lg shadow-red-900/20 ring-1 ring-white/50">禅</div>
                             <div className="flex flex-col justify-center h-9">
@@ -744,8 +745,6 @@
                         <button onClick={() => setShowSettings(true)} className="w-8 h-8 rounded-full bg-stone-200/50 flex items-center justify-center active-press transition-colors">
                             <Settings2 size={16} className="text-stone-600" />
                         </button>
-                        {/* 顶部分割线 */}
-                        <div className="tabbar-border bottom-0"></div>
                     </header>
 
                     <main className="flex-1 overflow-y-auto no-scrollbar relative w-full mx-auto max-w-xl pb-10">
@@ -758,10 +757,14 @@
                         </div>
                     </main>
 
-                    {/* 底部导航栏 V5.0: 极致沉浸，手动压榨 Safe Area */}
-                    <div className="fixed bottom-0 left-0 right-0 glass-tabbar z-50" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) / 2.5)' }}>
+                    {/* 底部导航栏 V6.0: 强制下沉，打破安全区 */}
+                    <div className="fixed bottom-0 left-0 right-0 z-50">
+                        {/* 背景层：毛玻璃，铺满底部，忽略安全区 */}
+                        <div className="glass-tabbar-bg"></div>
                         <div className="tabbar-border"></div> {/* 顶部分割线 */}
-                        <div className="flex justify-around items-center h-[49px]">
+                        
+                        {/* 内容层：手动控制高度和边距 */}
+                        <div className="relative flex justify-around items-end pb-[12px] pt-[10px] h-[75px]"> 
                             {[
                                 { id: 'chart', icon: BookOpen, label: '阅览' },
                                 { id: 'practice', icon: PenTool, label: '临摹' },
@@ -773,10 +776,10 @@
                                     <button 
                                         key={tab.id} 
                                         onClick={() => { setActiveTab(tab.id); setStartWeakMode(false); }} 
-                                        className={`flex flex-col items-center justify-center w-full h-full relative group active:scale-95 transition-transform duration-200 ease-out`}
-                                        style={{ WebkitTapHighlightColor: 'transparent' }}
+                                        className={`flex flex-col items-center justify-center w-full relative group active:scale-95 transition-transform duration-200 ease-out`}
+                                        style={{ WebkitTapHighlightColor: 'transparent', height: 'auto' }}
                                     >
-                                        <div className={`relative transition-all duration-500 cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isActive ? '-translate-y-0.5' : 'translate-y-0.5'}`}>
+                                        <div className={`relative transition-all duration-500 cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isActive ? '-translate-y-1' : 'translate-y-0'}`}>
                                             <Icon 
                                                 size={28} 
                                                 strokeWidth={isActive ? 2.5 : 1.5} 
