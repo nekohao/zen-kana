@@ -32,7 +32,7 @@
             --ink-color: #1a1a1a;
             --zen-red: #a73136;
             --zen-bg: #f5f4f0;
-            --ios-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* iOS 标准缓动曲线 */
+            --ios-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         body {
@@ -44,7 +44,6 @@
             overscroll-behavior-y: none;
             background-color: var(--zen-bg);
             color: var(--ink-color);
-            /* 字体抗锯齿优化 */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -55,57 +54,48 @@
         .font-zen { font-family: 'Zen Kurenaido', sans-serif; }
         .font-serif-bold { font-family: 'Noto Serif SC', serif; font-weight: 900; }
         
-        /* 玻璃拟态组件 - 性能优化版 */
+        /* 玻璃拟态组件 */
         .glass-panel {
             background: var(--glass-surface);
-            backdrop-filter: blur(20px); /* 降低一点 blur 半径以提升滚动帧率 */
+            backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
-            transform: translateZ(0); /* 开启 GPU 加速 */
+            transform: translateZ(0);
         }
 
-        /* 底部导航栏 - 极致通透 */
+        /* 底部导航栏 - 极致沉浸版 */
         .glass-tabbar {
-            background: rgba(245, 244, 240, 0.96); /* 增加不透明度防止杂乱背景干扰 */
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border-top: 0.5px solid rgba(0,0,0,0.06);
+            background: rgba(245, 244, 240, 0.94); /* 略微降低透明度，增强实体感 */
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+            /* 移除普通边框，改用高级渐变边框 */
+            border-top: none; 
             transform: translateZ(0);
+        }
+        
+        /* 顶部分割线 - 渐变光束 */
+        .tabbar-border {
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08), transparent);
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* 布局优化：更紧凑的底部安全区适配 */
-        .safe-pb { padding-bottom: calc(env(safe-area-inset-bottom) + 60px); } 
+        /* 布局适配：根据新的 TabBar 高度调整 */
+        .safe-pb { padding-bottom: calc(env(safe-area-inset-bottom) + 50px); } 
         .safe-pt { padding-top: max(env(safe-area-inset-top), 10px); }
 
-        /* 噪点纹理 */
         .bg-noise {
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             position: fixed; inset: 0; pointer-events: none; z-index: -1;
         }
         
         .progress-bar { transition: width 0.6s var(--ios-easing); }
-        
-        /* 页面切换动画：缩放淡入 */
-        .animate-page-enter { 
-            animation: pageEnter 0.5s var(--ios-easing) forwards; 
-            opacity: 0; 
-            transform: scale(0.98);
-        }
-        @keyframes pageEnter { 
-            to { opacity: 1; transform: scale(1); } 
-        }
-
-        /* 弹窗动画：弹簧效果 */
+        .animate-page-enter { animation: pageEnter 0.5s var(--ios-easing) forwards; opacity: 0; transform: scale(0.98); }
+        @keyframes pageEnter { to { opacity: 1; transform: scale(1); } }
         .modal-enter { animation: modalSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards; }
-        @keyframes modalSpring { 
-            from { transform: translateY(100%) scale(0.9); opacity: 0; } 
-            to { transform: translateY(0) scale(1); opacity: 1; } 
-        }
-
-        /* 按钮点击微反馈 */
+        @keyframes modalSpring { from { transform: translateY(100%) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .active-press { transition: transform 0.1s ease-out; }
         .active-press:active { transform: scale(0.92); }
     </style>
@@ -122,7 +112,7 @@
             RotateCcw, Eraser, Grid, Flame, Settings2, X, Trophy, Sparkles, Filter, Activity, Zap, Download, Upload, Github
         } from 'https://esm.sh/lucide-react@0.292.0';
 
-        // --- 常量数据 ---
+        // --- 常量数据 (保持不变) ---
         const CONSONANTS = [
             { id: '', label: 'あ行' }, { id: 'k', label: 'か行' }, { id: 's', label: 'さ行' },
             { id: 't', label: 'た行' }, { id: 'n', label: 'な行' }, { id: 'h', label: 'は行' },
@@ -245,7 +235,7 @@
                                 <div className="w-12 h-12 bg-[#a73136] rounded-xl flex items-center justify-center text-white font-serif-bold text-2xl shadow-lg ring-1 ring-white/30">禅</div>
                                 <div>
                                     <div className="font-bold text-stone-800 text-lg">Zen Gojuon</div>
-                                    <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v4.0.0 ProMotion</div>
+                                    <div className="text-xs text-stone-500 font-sans-sys tracking-wide">v5.1.0 Final</div>
                                 </div>
                             </div>
 
@@ -754,6 +744,8 @@
                         <button onClick={() => setShowSettings(true)} className="w-8 h-8 rounded-full bg-stone-200/50 flex items-center justify-center active-press transition-colors">
                             <Settings2 size={16} className="text-stone-600" />
                         </button>
+                        {/* 顶部分割线 */}
+                        <div className="tabbar-border bottom-0"></div>
                     </header>
 
                     <main className="flex-1 overflow-y-auto no-scrollbar relative w-full mx-auto max-w-xl pb-10">
@@ -766,9 +758,10 @@
                         </div>
                     </main>
 
-                    {/* 底部导航栏 V4.0: 极致紧凑，原生高度 (49px) */}
-                    <div className="fixed bottom-0 left-0 right-0 glass-tabbar z-50 pb-[env(safe-area-inset-bottom)]">
-                        <div className="flex justify-around items-center h-[49px]"> {/* 标准 iOS TabBar 高度 */}
+                    {/* 底部导航栏 V5.0: 极致沉浸，手动压榨 Safe Area */}
+                    <div className="fixed bottom-0 left-0 right-0 glass-tabbar z-50" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) / 2.5)' }}>
+                        <div className="tabbar-border"></div> {/* 顶部分割线 */}
+                        <div className="flex justify-around items-center h-[49px]">
                             {[
                                 { id: 'chart', icon: BookOpen, label: '阅览' },
                                 { id: 'practice', icon: PenTool, label: '临摹' },
@@ -783,16 +776,13 @@
                                         className={`flex flex-col items-center justify-center w-full h-full relative group active:scale-95 transition-transform duration-200 ease-out`}
                                         style={{ WebkitTapHighlightColor: 'transparent' }}
                                     >
-                                        <div className={`relative transition-all duration-500 cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isActive ? '-translate-y-0.5' : 'translate-y-1'}`}>
+                                        <div className={`relative transition-all duration-500 cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isActive ? '-translate-y-0.5' : 'translate-y-0.5'}`}>
                                             <Icon 
                                                 size={28} 
                                                 strokeWidth={isActive ? 2.5 : 1.5} 
                                                 className={`transition-colors duration-300 ${isActive ? 'text-[#a73136] drop-shadow-sm' : 'text-stone-400'}`} 
                                             />
                                         </div>
-                                        <span className={`text-[9px] font-sans-sys font-bold mt-0.5 tracking-widest transition-all duration-300 uppercase ${isActive ? 'opacity-100 text-[#a73136] translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                                            {tab.label}
-                                        </span>
                                     </button>
                                 )
                             })}
