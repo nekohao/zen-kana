@@ -155,7 +155,7 @@
         );
 
         // --- 1. 数据模型与存储 ---
-        const STORAGE_KEY = 'iron_app_data_v9_preset'; // 更新版本号以加载新默认值
+        const STORAGE_KEY = 'iron_app_data_v9_preset'; 
         const initialData = {
             templates: [
                 {
@@ -184,7 +184,7 @@
                 { id: 'ex_bench_press', name: '平板杠铃卧推', category: 'CHEST' },
                 { id: 'ex_incline_hammer', name: '上斜悍马卧推', category: 'CHEST' },
                 { id: 'ex_machine_fly', name: '器械飞鸟', category: 'CHEST' },
-                { id: 'ex_dips', name: '双杠臂屈伸', category: 'ARMS' }, // 双杠通常也可以算胸或三头，这里方便复用
+                { id: 'ex_dips', name: '双杠臂屈伸', category: 'ARMS' }, 
                 
                 // 背
                 { id: 'ex_lat_pulldown', name: '高位下拉', category: 'BACK' },
@@ -270,7 +270,6 @@
                 if (ex.category) {
                     const base = BASE_RECOVERY[ex.category] || 24;
                     // 算法: (有效负荷 / 1000) * 基础时间 + 基础底数
-                    // 这里的逻辑是：只要练了，至少需要12小时，然后根据容量线性增加
                     const calculatedHours = 12 + (exStress / 1000) * (base / 2);
                     
                     // 取最大值 (如果同一个部位练了多个动作)
@@ -281,6 +280,11 @@
                     }
                 }
             });
+
+            // 修正：如果总容量为0，则不计算恢复（不累加疲劳）
+            if (totalVolume === 0) {
+                return { volume: 0, recoveryMap: {} };
+            }
 
             // 封顶 96 小时 (4天)
             Object.keys(recoveryUpdates).forEach(k => {
@@ -500,15 +504,37 @@
             const [activeWorkoutData, setActiveWorkoutData] = useState({ exercises: [], startTime: null });
             const [durationStr, setDurationStr] = useState("00:00:00");
             const [summaryData, setSummaryData] = useState(null);
+            // 新增：展开的计划卡片ID
+            const [expandedTemplate, setExpandedTemplate] = useState(null);
 
             const fullLibrary = useMemo(() => [...appData.importedLibrary, ...appData.customExercises], [appData]);
 
             // --- 业务逻辑 ---
-            // 新增：删除历史记录功能
+            // 新增：删除历史记录功能 (修改：重置被删除记录的肌肉恢复状态)
             const handleDeleteHistory = (id) => {
+                const itemToDelete = appData.history.find(h => h.id === id);
+                const newHistory = appData.history.filter(h => h.id !== id);
+                
+                // 尝试恢复该记录造成的疲劳
+                let newMuscleRecovery = { ...appData.userStats.muscleRecovery };
+                if (itemToDelete && itemToDelete.muscles) {
+                     itemToDelete.muscles.forEach(m => {
+                         // 简单逻辑：如果删除了记录，就将该肌肉的恢复状态移除（视为Ready），
+                         // 除非还有其他记录覆盖（这里简化处理，直接移除，用户体验更好）
+                         delete newMuscleRecovery[m];
+                     });
+                }
+
                 setAppData(prev => ({
                     ...prev,
-                    history: prev.history.filter(h => h.id !== id)
+                    history: newHistory,
+                    userStats: {
+                        ...prev.userStats,
+                        // 扣除次数和容量
+                        totalWorkouts: Math.max(0, (prev.userStats.totalWorkouts || 1) - 1),
+                        totalVolume: Math.max(0, (prev.userStats.totalVolume || 0) - (itemToDelete?.volume || 0)),
+                        muscleRecovery: newMuscleRecovery
+                    }
                 }));
             };
 
@@ -559,18 +585,17 @@
                 const recoveryResult = calculateRecovery(activeWorkoutData.exercises);
                 const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
                 
-                // 计算新的恢复时间戳
+                // 计算新的恢复时间戳 (修改：只有当容量>0时才计算)
                 const newMuscleRecovery = { ...appData.userStats.muscleRecovery };
                 const now = Date.now();
                 
-                Object.keys(recoveryResult.recoveryMap).forEach(muscle => {
-                    const hoursNeeded = recoveryResult.recoveryMap[muscle];
-                    const recoveryEndTime = now + (hoursNeeded * 3600 * 1000);
-                    // 如果旧的恢复时间比现在还晚，就从旧的时间叠加，或者取最大值？
-                    // 简化策略：取 (当前时间+新疲劳) 和 (旧恢复时间+少量叠加) 的较晚者，防止疲劳无限叠加不合理
-                    // 这里采用简单的：重置为当前+所需时间
-                    newMuscleRecovery[muscle] = new Date(recoveryEndTime).toISOString();
-                });
+                if (recoveryResult.volume > 0) {
+                    Object.keys(recoveryResult.recoveryMap).forEach(muscle => {
+                        const hoursNeeded = recoveryResult.recoveryMap[muscle];
+                        const recoveryEndTime = now + (hoursNeeded * 3600 * 1000);
+                        newMuscleRecovery[muscle] = new Date(recoveryEndTime).toISOString();
+                    });
+                }
 
                 const record = {
                     id: Date.now(),
@@ -1008,12 +1033,27 @@
                             </div>
                         ) : (
                             appData.templates.map(t => (
-                                <div key={t.id} onClick={() => startWorkout(t.exercises, t.name)} className="group bg-card-gradient backdrop-blur-sm border border-white/5 rounded-2xl p-5 flex justify-between items-center active:scale-[0.99] transition-all cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-800 to-black flex items-center justify-center border border-white/5 text-primary group-hover:text-white transition-colors"><span className="font-mono font-bold text-lg">{t.name.charAt(0).toUpperCase()}</span></div>
-                                        <div><h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">{t.name}</h3><p className="text-xs text-zinc-500 mt-1 font-mono">{t.exercises.length} MOVES</p></div>
+                                // 修改：卡片点击现在只展开详情，只有点击播放按钮才开始训练
+                                <div key={t.id} onClick={() => setExpandedTemplate(expandedTemplate === t.id ? null : t.id)} className={`group bg-card-gradient backdrop-blur-sm border border-white/5 rounded-2xl p-5 active:scale-[0.99] transition-all cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] ${expandedTemplate===t.id ? 'mb-2' : ''}`}>
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-800 to-black flex items-center justify-center border border-white/5 text-primary group-hover:text-white transition-colors"><span className="font-mono font-bold text-lg">{t.name.charAt(0).toUpperCase()}</span></div>
+                                            <div><h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">{t.name}</h3><p className="text-xs text-zinc-500 mt-1 font-mono">{t.exercises.length} MOVES</p></div>
+                                        </div>
+                                        <div onClick={(e) => { e.stopPropagation(); startWorkout(t.exercises, t.name); }} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-zinc-500 hover:bg-primary hover:text-white transition-all"><Icon name="play" size={14} className="ml-0.5" fill="currentColor" /></div>
                                     </div>
-                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-zinc-500 group-hover:bg-primary group-hover:text-white transition-all"><Icon name="play" size={14} className="ml-0.5" fill="currentColor" /></div>
+                                    {/* 展开的动作列表 */}
+                                    {expandedTemplate === t.id && (
+                                        <div className="mt-4 pt-4 border-t border-white/5 animate-fade-in">
+                                            <div className="text-xs font-bold text-zinc-500 mb-2 uppercase">Exercises</div>
+                                            <div className="flex flex-wrap gap-2">
+                                                {t.exercises.map(eid => {
+                                                    const ex = fullLibrary.find(e => e.id === eid);
+                                                    return ex ? <span key={eid} className="px-2 py-1 bg-white/5 rounded-md text-xs text-zinc-300 border border-white/5">{ex.name}</span> : null;
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         )}
