@@ -420,10 +420,11 @@
                         <h3 className="text-white font-bold text-lg flex items-center gap-2">
                              <Icon name="calendar" size={18} className="text-primary"/> 训练日历
                         </h3>
+                        {/* 修改：优化月份切换按钮的可见性 */}
                         <div className="flex gap-4 text-zinc-400 items-center">
-                            <button onClick={()=>changeMonth(-1)} className="p-2 hover:bg-white/5 rounded-full transition-colors hover:text-white"><Icon name="chevron-left" size={20}/></button>
+                            <button onClick={()=>changeMonth(-1)} className="p-2 bg-white/10 text-white rounded-full hover:bg-primary hover:text-white transition-all shadow-sm"><Icon name="chevron-left" size={20}/></button>
                             <span className="font-mono font-bold text-white text-base w-32 text-center">{monthNames[month]} <span className="text-zinc-500 text-sm">{year}</span></span>
-                            <button onClick={()=>changeMonth(1)} className="p-2 hover:bg-white/5 rounded-full transition-colors hover:text-white"><Icon name="chevron-right" size={20}/></button>
+                            <button onClick={()=>changeMonth(1)} className="p-2 bg-white/10 text-white rounded-full hover:bg-primary hover:text-white transition-all shadow-sm"><Icon name="chevron-right" size={20}/></button>
                         </div>
                     </div>
 
@@ -510,32 +511,32 @@
             const fullLibrary = useMemo(() => [...appData.importedLibrary, ...appData.customExercises], [appData]);
 
             // --- 业务逻辑 ---
-            // 新增：删除历史记录功能 (修改：重置被删除记录的肌肉恢复状态)
+            // 修改：删除历史记录功能，修正总次数统计和恢复状态重置问题
             const handleDeleteHistory = (id) => {
-                const itemToDelete = appData.history.find(h => h.id === id);
-                const newHistory = appData.history.filter(h => h.id !== id);
-                
-                // 尝试恢复该记录造成的疲劳
-                let newMuscleRecovery = { ...appData.userStats.muscleRecovery };
-                if (itemToDelete && itemToDelete.muscles) {
-                     itemToDelete.muscles.forEach(m => {
-                         // 简单逻辑：如果删除了记录，就将该肌肉的恢复状态移除（视为Ready），
-                         // 除非还有其他记录覆盖（这里简化处理，直接移除，用户体验更好）
-                         delete newMuscleRecovery[m];
-                     });
-                }
-
-                setAppData(prev => ({
-                    ...prev,
-                    history: newHistory,
-                    userStats: {
-                        ...prev.userStats,
-                        // 扣除次数和容量
-                        totalWorkouts: Math.max(0, (prev.userStats.totalWorkouts || 1) - 1),
-                        totalVolume: Math.max(0, (prev.userStats.totalVolume || 0) - (itemToDelete?.volume || 0)),
-                        muscleRecovery: newMuscleRecovery
+                setAppData(prev => {
+                    const itemToDelete = prev.history.find(h => h.id === id);
+                    const newHistory = prev.history.filter(h => h.id !== id);
+                    
+                    // 修复恢复计时器：如果删除了记录，该记录涉及的肌肉恢复时间应被移除
+                    let newMuscleRecovery = { ...prev.userStats.muscleRecovery };
+                    if (itemToDelete && itemToDelete.muscles) {
+                         itemToDelete.muscles.forEach(m => {
+                             delete newMuscleRecovery[m];
+                         });
                     }
-                }));
+
+                    return {
+                        ...prev,
+                        history: newHistory,
+                        userStats: {
+                            ...prev.userStats,
+                            // 修复 Total Workouts 统计：直接使用新历史记录的长度，确保绝对准确
+                            totalWorkouts: newHistory.length,
+                            totalVolume: Math.max(0, (prev.userStats.totalVolume || 0) - (itemToDelete?.volume || 0)),
+                            muscleRecovery: newMuscleRecovery
+                        }
+                    };
+                });
             };
 
             const handleExport = () => { 
