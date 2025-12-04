@@ -377,8 +377,8 @@
             return <i ref={iconRef} data-lucide={name} onClick={onClick}></i>;
         };
 
-        // --- 新增: 日历组件 ---
-        const CalendarWidget = ({ history }) => {
+        // --- 新增: 日历组件 (修改: 增加删除回调) ---
+        const CalendarWidget = ({ history, onDelete }) => {
             const [currentDate, setCurrentDate] = useState(new Date());
             const [selectedDateStr, setSelectedDateStr] = useState(new Date().toDateString());
 
@@ -456,8 +456,8 @@
 
                     <div className="mt-4 space-y-3 min-h-[50px]">
                         {selectedLogs.length > 0 ? selectedLogs.map(log => (
-                            <div key={log.id} className="bg-card-gradient border border-white/5 rounded-2xl p-4 flex justify-between items-center animate-fade-in">
-                                <div>
+                            <div key={log.id} className="bg-card-gradient border border-white/5 rounded-2xl p-4 flex justify-between items-center animate-fade-in group relative">
+                                <div className="flex-1">
                                     <div className="text-white font-bold text-sm mb-1">{log.name || (log.type === 'cardio' ? 'Cardio Session' : 'Training Session')}</div>
                                     <div className="flex gap-3 text-[10px] text-zinc-500 font-mono uppercase">
                                         {log.type === 'strength' ? (
@@ -468,7 +468,11 @@
                                         <span>{Math.floor(log.duration / 60)} min</span>
                                     </div>
                                 </div>
-                                <div className={`w-1.5 h-8 rounded-full ${log.type==='strength'?'bg-primary':'bg-orange'}`}></div>
+                                <div className={`w-1.5 h-8 rounded-full ${log.type==='strength'?'bg-primary':'bg-orange'} mr-3`}></div>
+                                {/* 修改：添加删除按钮 */}
+                                <button onClick={(e) => { e.stopPropagation(); if(confirm('确认删除这条记录吗?')) onDelete(log.id); }} className="p-2 text-zinc-600 hover:text-danger transition-colors bg-white/5 rounded-full">
+                                    <Icon name="trash-2" size={16} />
+                                </button>
                             </div>
                         )) : (
                             <div className="text-center py-4 text-zinc-700 text-xs font-mono uppercase tracking-widest">No Activity on this day</div>
@@ -500,6 +504,14 @@
             const fullLibrary = useMemo(() => [...appData.importedLibrary, ...appData.customExercises], [appData]);
 
             // --- 业务逻辑 ---
+            // 新增：删除历史记录功能
+            const handleDeleteHistory = (id) => {
+                setAppData(prev => ({
+                    ...prev,
+                    history: prev.history.filter(h => h.id !== id)
+                }));
+            };
+
             const handleExport = () => { 
                 /* ... (保留原有逻辑) ... */ 
                 const dataStr = JSON.stringify(appData);
@@ -839,15 +851,17 @@
                                         <h3 className="text-xl font-black text-white flex gap-2 items-center italic">{ex.name} {ex.instructions && <button onClick={()=>setExerciseDetails(ex)} className="text-primary/80"><Icon name="info" size={18}/></button>}</h3>
                                     </div>
                                     <div className="space-y-3 relative z-10">
-                                        <div className="grid grid-cols-[30px_1fr_1fr_1fr_30px_30px] gap-2 text-[10px] text-zinc-500 font-bold uppercase tracking-wider text-center mb-2 px-1"><div>Set</div><div>KG</div><div>Reps</div><div>RPE</div><div></div><div></div></div>
+                                        {/* 修改: 汉化表头并调整对齐 */}
+                                        <div className="grid grid-cols-[30px_1fr_1fr_1fr_30px_30px] gap-2 text-[10px] text-zinc-500 font-bold uppercase tracking-wider text-center mb-2 px-1 items-center"><div>组</div><div>重量</div><div>次数</div><div>强度</div><div></div><div></div></div>
                                         {ex.sets.map((set, sIdx) => (
                                             <div key={set.id} className={`grid grid-cols-[30px_1fr_1fr_1fr_30px_30px] gap-2 items-center transition-all duration-300 ${set.completed ? 'opacity-40 grayscale' : ''}`}>
                                                 <div className="text-zinc-500 text-sm font-mono font-bold text-center">{sIdx+1}</div>
-                                                <input value={set.weight} onChange={(e) => {const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].weight=e.target.value;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} placeholder="-" className="bg-black/40 rounded-lg py-2 text-center text-white font-bold text-lg border border-white/5 outline-none focus:border-primary/50 focus:bg-white/5 transition-all" type="number" inputMode="decimal" />
-                                                <input value={set.reps} onChange={(e) => {const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].reps=e.target.value;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} placeholder="-" className="bg-black/40 rounded-lg py-2 text-center text-white font-bold text-lg border border-white/5 outline-none focus:border-primary/50 focus:bg-white/5 transition-all" type="number" inputMode="decimal" />
-                                                <input value={set.rpe} onChange={(e) => {const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].rpe=e.target.value;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} placeholder="-" className="bg-black/40 rounded-lg py-2 text-center text-zinc-400 font-bold text-lg border border-white/5 outline-none focus:border-primary/50 focus:bg-white/5 transition-all" type="number" inputMode="decimal" />
-                                                <button onClick={()=>{const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].completed=!newExs[exIndex].sets[sIdx].completed;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} className={`h-10 w-full rounded-lg flex items-center justify-center transition-all ${set.completed ? 'bg-primary text-white shadow-glow' : 'bg-white/5 text-zinc-600'}`}><Icon name="check" size={16} strokeWidth={4} /></button>
-                                                <button onClick={()=>{const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets=newExs[exIndex].sets.filter((_,idx)=>idx!==sIdx);setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} className="h-10 w-full flex items-center justify-center text-zinc-700 hover:text-danger transition-colors"><Icon name="trash-2" size={16} /></button>
+                                                {/* 修改: 缩小输入框样式, py-2->py-1, text-lg->text-sm */}
+                                                <input value={set.weight} onChange={(e) => {const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].weight=e.target.value;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} placeholder="-" className="bg-black/40 rounded-lg py-1 h-8 text-center text-white font-bold text-sm border border-white/5 outline-none focus:border-primary/50 focus:bg-white/5 transition-all" type="number" inputMode="decimal" />
+                                                <input value={set.reps} onChange={(e) => {const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].reps=e.target.value;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} placeholder="-" className="bg-black/40 rounded-lg py-1 h-8 text-center text-white font-bold text-sm border border-white/5 outline-none focus:border-primary/50 focus:bg-white/5 transition-all" type="number" inputMode="decimal" />
+                                                <input value={set.rpe} onChange={(e) => {const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].rpe=e.target.value;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} placeholder="-" className="bg-black/40 rounded-lg py-1 h-8 text-center text-zinc-400 font-bold text-sm border border-white/5 outline-none focus:border-primary/50 focus:bg-white/5 transition-all" type="number" inputMode="decimal" />
+                                                <button onClick={()=>{const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets[sIdx].completed=!newExs[exIndex].sets[sIdx].completed;setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} className={`h-8 w-full rounded-lg flex items-center justify-center transition-all ${set.completed ? 'bg-primary text-white shadow-glow' : 'bg-white/5 text-zinc-600'}`}><Icon name="check" size={14} strokeWidth={4} /></button>
+                                                <button onClick={()=>{const newExs=[...activeWorkoutData.exercises];newExs[exIndex].sets=newExs[exIndex].sets.filter((_,idx)=>idx!==sIdx);setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} className="h-8 w-full flex items-center justify-center text-zinc-700 hover:text-danger transition-colors"><Icon name="trash-2" size={14} /></button>
                                             </div>
                                         ))}
                                         <button onClick={() => {const newExs=[...activeWorkoutData.exercises];const prev=newExs[exIndex].sets[newExs[exIndex].sets.length-1];newExs[exIndex].sets.push({id:Date.now(),weight:prev?prev.weight:'',reps:prev?prev.reps:'',rpe:'',completed:false});setActiveWorkoutData({...activeWorkoutData,exercises:newExs})}} className="w-full py-3 mt-4 rounded-xl border border-dashed border-white/10 text-zinc-500 text-sm font-bold hover:text-white hover:border-white/20 transition-all flex items-center justify-center gap-2"><Icon name="plus" size={14} /> 加一组</button>
@@ -949,7 +963,8 @@
                                 </div>
                             </div>
 
-                            <CalendarWidget history={appData.history} />
+                            {/* 修改：传递删除函数给日历组件 */}
+                            <CalendarWidget history={appData.history} onDelete={handleDeleteHistory} />
                         </div>
                         <BottomNav />
                     </div>
