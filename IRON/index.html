@@ -349,8 +349,38 @@
             const fullLibrary = useMemo(() => [...appData.importedLibrary, ...appData.customExercises], [appData]);
 
             // --- 业务逻辑 ---
-            const handleExport = () => { /* ... (保留原有逻辑) ... */ };
-            const handleImport = (event) => { /* ... (保留原有逻辑) ... */ };
+            const handleExport = () => { 
+                /* ... (保留原有逻辑) ... */ 
+                const dataStr = JSON.stringify(appData);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                const exportFileDefaultName = 'iron_backup_' + new Date().toISOString().slice(0,10) + '.json';
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            };
+            const handleImport = (event) => { 
+                /* ... (保留原有逻辑) ... */ 
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (imported.templates || imported.history) {
+                            setAppData(imported);
+                            alert('数据恢复成功');
+                            setIsSettingsOpen(false);
+                        } else {
+                            alert('文件格式不正确');
+                        }
+                    } catch (err) {
+                        alert('导入失败，请检查文件');
+                    }
+                };
+                reader.readAsText(file);
+            };
 
             const startWorkout = (exercises = []) => {
                 const exObjects = exercises.map(exId => {
@@ -474,6 +504,27 @@
                     */
                 };
 
+                const saveRecord = () => {
+                    const record = { 
+                        id: Date.now(), 
+                        type: 'cardio', 
+                        date: new Date().toISOString(), 
+                        duration: parseFloat(duration)*60, 
+                        calories: result, 
+                        details: {type, speed, incline} 
+                    };
+                    setAppData(prev => ({
+                        ...prev, 
+                        history: [record, ...prev.history],
+                        userStats: {
+                            ...prev.userStats,
+                            totalWorkouts: (prev.userStats.totalWorkouts || 0) + 1
+                        }
+                    }));
+                    alert("已记录到 我的 页面");
+                    setResult(null); // Reset after save
+                };
+
                 const TYPES = [
                     { id: 'walk', name: '户外/跑步机慢走', icon: 'footprints' },
                     { id: 'uphill', name: '爬坡走 (高坡度)', icon: 'mountain' }, // Changed id to uphill to avoid conflict
@@ -539,6 +590,11 @@
                                         </div>
                                         <div className="text-orange font-bold mt-1">KCAL</div>
                                         <p className="text-xs text-zinc-500 mt-4 px-4">基于 ACSM 权威公式 • 体重 {appData.userStats.weight || 70}kg</p>
+                                        
+                                        {/* 新增记录按钮 */}
+                                        <button onClick={saveRecord} className="mt-6 w-full py-3 bg-accent text-white font-bold rounded-xl text-sm shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+                                            <Icon name="save" size={18} /> 记录
+                                        </button>
                                     </div>
                                 </div>
                             )}
@@ -755,6 +811,10 @@
                                 <div className="space-y-3">
                                     <button onClick={handleExport} className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl flex items-center px-4 gap-3 text-white font-medium active:scale-98 transition-transform"><div className="bg-primary/20 p-2 rounded-xl text-primary"><Icon name="download" size={20} /></div><span className="flex-1 text-left">备份数据</span></button>
                                     <label className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl flex items-center px-4 gap-3 text-white font-medium active:scale-98 transition-transform cursor-pointer"><div className="bg-accent/20 p-2 rounded-xl text-accent"><Icon name="upload" size={20} /></div><span className="flex-1 text-left">恢复数据</span><input type="file" accept=".json" onChange={handleImport} className="hidden" /></label>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-white/5 text-xs text-zinc-500 text-center space-y-1">
+                                    <p>已经链接动作库：{fullLibrary.length} 个动作</p>
+                                    <p>IRON 版本：v8.1</p>
                                 </div>
                             </div>
                         </div>
