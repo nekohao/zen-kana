@@ -8,31 +8,25 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
     
-    <!-- React & ReactDOM -->
+    <!-- 核心依赖库 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Custom Config -->
+    <!-- 样式配置 -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         background: '#000000', 
-                        surface: '#1c1c1e', // iOS System Gray 6 Dark
-                        surfaceHighlight: '#2c2c2e', // iOS System Gray 5 Dark
-                        primary: '#0a84ff', // iOS Blue
-                        accent: '#30d158', // iOS Green 
-                        danger: '#ff453a', // iOS Red
+                        surface: '#1c1c1e', // iOS 深色模式二级背景
+                        surfaceHighlight: '#2c2c2e', // iOS 深色模式三级背景
+                        primary: '#0a84ff', // iOS 蓝
+                        accent: '#30d158', // iOS 绿 
+                        danger: '#ff453a', // iOS 红
                     },
                     fontFamily: {
                         mono: ['SF Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
@@ -57,16 +51,18 @@
         }
     </script>
     <style>
+        /* 全局样式重置 */
         body { 
             background-color: #000000; 
             color: #f2f2f7; 
             -webkit-tap-highlight-color: transparent;
             font-feature-settings: "ss01", "ss02"; 
         }
+        /* 隐藏滚动条但保留滚动功能 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Clean iOS style glass */
+        /* 仿 iOS 毛玻璃效果 */
         .glass {
             background: rgba(28, 28, 30, 0.85);
             backdrop-filter: blur(20px) saturate(180%);
@@ -74,8 +70,10 @@
             border-top: 0.5px solid rgba(255, 255, 255, 0.15);
         }
         
+        /* 移除数字输入框的默认箭头 */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        /* 适配刘海屏安全区域 */
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         .pt-safe { padding-top: env(safe-area-inset-top); }
     </style>
@@ -86,16 +84,18 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
-        // --- 1. Data Models & Storage ---
+        // --- 1. 数据模型与存储 ---
         const STORAGE_KEY = 'iron_app_data_v6_clean';
 
+        // 初始空数据结构
         const initialData = {
-            templates: [], 
-            customExercises: [], 
-            history: {},
-            importedLibrary: [] 
+            templates: [],        // 用户创建的计划模板
+            customExercises: [],  // 用户自定义的动作
+            history: {},          // 训练历史记录 (预留)
+            importedLibrary: []   // 从 JSON 文件导入的动作库
         };
 
+        // Hook: 本地存储管理 (自动保存到 localStorage)
         const useStorage = () => {
             const [data, setData] = useState(() => {
                 try {
@@ -111,51 +111,50 @@
             return [data, setData];
         };
 
-        // --- 2. Advanced Recursive Parser ---
-        // This parser can handle Arrays, Objects, Nested Objects (Arms -> Biceps), basically anything.
+        // --- 2. 外部 JSON 库解析器 ---
+        // 核心功能：自动读取同目录下的 exercise_library.json 并递归解析
         const useExternalLibrary = (setAppData) => {
             useEffect(() => {
                 const fetchLibrary = async () => {
                     try {
                         const response = await fetch('./exercise_library.json');
-                        if (!response.ok) throw new Error('Network response was not ok');
+                        if (!response.ok) throw new Error('网络响应错误，可能文件不存在');
                         
-                        // NOTE: If JSON is still malformed (multiple roots), this line will fail.
-                        // User MUST fix the JSON file first.
                         const json = await response.json();
                         
+                        // 递归解析函数：处理嵌套结构 (例如 Arms -> Biceps)
                         const parseRecursive = (obj, contextKey = '') => {
                             let extracted = [];
                             
-                            // Case A: It's an Array -> These are exercises
+                            // 情况 A: 如果是数组，说明找到了动作列表
                             if (Array.isArray(obj)) {
                                 return obj.map(ex => {
-                                    // Combine all possible muscle fields
+                                    // 合并所有可能的肌肉字段，增加兼容性
                                     const combinedMuscles = [
                                         ...(ex.muscle_group || []),
                                         ...(ex.primary_muscle || []),
                                         ...(ex.secondary_muscle || [])
                                     ];
-                                    // Try to determine category from muscles, or fallback to parent key (e.g. "Back")
+                                    // 尝试从肌肉反推分类，或者使用父级 Key (如 "Back")
                                     const catSource = combinedMuscles.length > 0 ? combinedMuscles : [contextKey];
                                     
                                     return {
+                                        // 生成唯一 ID，避免冲突
                                         id: `ext_${(ex.id || ex.name).replace(/\s+/g, '')}_${Math.random().toString(36).substr(2,5)}`,
                                         name: ex.name,
-                                        category: normalizeCategory(catSource),
-                                        muscles: normalizeMuscles(combinedMuscles),
-                                        rawMuscles: ex.primary_muscle || ex.muscle_group,
+                                        category: normalizeCategory(catSource), // 归一化分类
+                                        muscles: normalizeMuscles(combinedMuscles), // 归一化肌肉ID
+                                        rawMuscles: ex.primary_muscle || ex.muscle_group, // 原始显示文本
                                         instructions: ex.instructions || ex.cues,
                                         mistakes: ex.common_mistakes || ex.common_mistakes
                                     };
                                 });
                             }
                             
-                            // Case B: It's an Object -> Dig deeper
+                            // 情况 B: 如果是对象，继续向下递归
                             if (typeof obj === 'object' && obj !== null) {
                                 Object.keys(obj).forEach(key => {
-                                    if (key === 'version') return; // Skip metadata
-                                    // Recurse down, passing the current key (e.g., "Arms") as context
+                                    if (key === 'version') return; // 跳过版本号
                                     extracted = [...extracted, ...parseRecursive(obj[key], key)];
                                 });
                             }
@@ -166,18 +165,18 @@
                         const exercises = parseRecursive(json);
 
                         if (exercises.length > 0) {
-                            console.log(`Loaded ${exercises.length} external exercises.`);
+                            console.log(`成功加载 ${exercises.length} 个外部动作`);
                             setAppData(prev => ({ ...prev, importedLibrary: exercises }));
                         }
                     } catch (error) {
-                        console.log("Library load error (File missing or JSON syntax error):", error);
+                        console.log("加载外部库失败 (开发模式或文件缺失/格式错误):", error);
                     }
                 };
                 fetchLibrary();
             }, []);
         };
 
-        // Helper: Convert various strings to internal IDs
+        // 辅助函数：将各种中英文分类映射到内部 ID
         const normalizeCategory = (input) => {
             const str = JSON.stringify(input).toLowerCase();
             if (str.includes('chest') || str.includes('胸')) return 'CHEST';
@@ -189,6 +188,7 @@
             return 'CORE';
         };
 
+        // 辅助函数：将各种肌肉名称映射到 SVG 图 ID
         const normalizeMuscles = (input) => {
             const muscleMap = {
                 '胸': 'chest_major', 'chest': 'chest_major', 'pec': 'chest_major',
@@ -207,7 +207,9 @@
             return result.length > 0 ? result : ['body'];
         };
 
-        // --- 3. UI Components ---
+        // --- 3. UI 组件 ---
+        
+        // 通用图标组件 (基于 Lucide)
         const Icon = ({ name, size = 20, className, strokeWidth = 2, onClick }) => {
             const iconRef = useRef(null);
             useEffect(() => {
@@ -221,10 +223,10 @@
             return <i ref={iconRef} data-lucide={name} onClick={onClick}></i>;
         };
 
+        // 人体肌肉高亮图组件
         const BodyMap = ({ activeMuscles = [], className = "" }) => {
             const getStyle = (pathId) => {
                 const isHit = activeMuscles.some(m => pathId.toLowerCase().includes(m.split('_')[0])); 
-                // Cleaner look: No glow blur, just solid highlight colors
                 return isHit ? "fill-primary" : "fill-surfaceHighlight stroke-[#333] stroke-[0.5]";
             };
 
@@ -244,34 +246,42 @@
             );
         };
 
-        // --- 4. Main App ---
+        // --- 4. 主程序入口 ---
         const App = () => {
+            // 数据层
             const [appData, setAppData] = useStorage();
             useExternalLibrary(setAppData); 
 
-            const [view, setView] = useState('templates'); 
-            const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+            // 视图状态
+            const [view, setView] = useState('templates'); // 当前主视图: 'templates' | 'workout'
+            const [isSettingsOpen, setIsSettingsOpen] = useState(false); // 设置弹窗
             
-            // UI State
-            const [isCreatingTemplate, setIsCreatingTemplate] = useState(false);
+            // "新建计划"流程状态
+            const [isCreatingTemplate, setIsCreatingTemplate] = useState(false); // 是否正在创建中
             const [newTemplateName, setNewTemplateName] = useState('');
             const [newTemplateExercises, setNewTemplateExercises] = useState([]);
+            
+            // 动作选择器状态 (共用于新建计划和训练中添加动作)
             const [showExerciseSelector, setShowExerciseSelector] = useState(false);
-            const [exerciseDetails, setExerciseDetails] = useState(null);
+            const [exerciseDetails, setExerciseDetails] = useState(null); // 动作详情弹窗
 
-            // Workout State
+            // 训练中状态
             const [activeWorkoutData, setActiveWorkoutData] = useState({ exercises: [], startTime: null, endTime: null });
             const [durationStr, setDurationStr] = useState("00:00");
 
+            // 计算完整动作库 (合并导入的和自定义的)
             const fullLibrary = useMemo(() => {
                 return [...appData.importedLibrary, ...appData.customExercises];
             }, [appData.importedLibrary, appData.customExercises]);
 
+            // 根据 ID 查找动作详情
             const getExerciseById = useCallback((id) => {
                 return fullLibrary.find(ex => ex.id === id) || { id, name: '未知动作', muscles: [], category: 'CORE' };
             }, [fullLibrary]);
 
-            // --- Actions ---
+            // --- 核心业务逻辑 ---
+
+            // 导出数据
             const handleExport = () => {
                 const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -281,6 +291,7 @@
                 a.click();
             };
 
+            // 导入数据
             const handleImport = (event) => {
                 const file = event.target.files[0];
                 if (!file) return;
@@ -298,15 +309,18 @@
                 reader.readAsText(file);
             };
 
+            // 开始训练 (初始化数据结构)
             const startWorkout = (exercises = []) => {
                 const exObjects = exercises.map(exId => {
                     const ex = getExerciseById(exId);
+                    // 初始化包含 1 组空数据
                     return { ...ex, sets: [{ id: Date.now(), weight: '', reps: '', rpe: '', completed: false }] };
                 });
                 setActiveWorkoutData({ exercises: exObjects, startTime: new Date(), endTime: null });
                 setView('workout');
             };
 
+            // 计时器逻辑
             useEffect(() => {
                 if (!activeWorkoutData.startTime || activeWorkoutData.endTime) return;
                 const timer = setInterval(() => {
@@ -318,16 +332,15 @@
                 return () => clearInterval(timer);
             }, [activeWorkoutData.startTime, activeWorkoutData.endTime]);
 
-            // --- Sub-Components ---
+            // --- 子组件 (为了方便上下文访问，定义在 App 内部) ---
+
+            // 动作选择器弹窗
             const ExerciseSelector = () => {
                 const [filter, setFilter] = useState('CHEST');
                 const categories = [
-                    { id: 'CHEST', name: '胸部' },
-                    { id: 'BACK', name: '背部' },
-                    { id: 'LEGS', name: '腿部' },
-                    { id: 'SHOULDERS', name: '肩部' },
-                    { id: 'ARMS', name: '手臂' },
-                    { id: 'GLUTES', name: '臀部' },
+                    { id: 'CHEST', name: '胸部' }, { id: 'BACK', name: '背部' },
+                    { id: 'LEGS', name: '腿部' }, { id: 'SHOULDERS', name: '肩部' },
+                    { id: 'ARMS', name: '手臂' }, { id: 'GLUTES', name: '臀部' },
                     { id: 'CORE', name: '核心' },
                 ];
 
@@ -339,6 +352,7 @@
                             <h2 className="text-lg font-bold text-white">动作库</h2>
                             <button onClick={() => setShowExerciseSelector(false)} className="text-primary font-medium">关闭</button>
                         </div>
+                        {/* 分类筛选条 */}
                         <div className="p-4 flex gap-2 overflow-x-auto no-scrollbar pb-2">
                             {categories.map(c => (
                                 <button key={c.id} onClick={() => setFilter(c.id)} className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${filter === c.id ? 'bg-white text-black' : 'bg-surfaceHighlight text-zinc-400'}`}>
@@ -346,11 +360,14 @@
                                 </button>
                             ))}
                         </div>
+                        {/* 动作列表 */}
                         <div className="flex-1 overflow-y-auto px-4 pb-safe space-y-3">
                             {list.map(ex => (
                                 <div key={ex.id} className="p-4 bg-surfaceHighlight rounded-xl flex justify-between items-center active:bg-zinc-700 transition-colors" 
                                      onClick={() => {
+                                         // 逻辑分支：如果是新建计划，加入 newTemplateExercises
                                          if(isCreatingTemplate) setNewTemplateExercises(prev => [...prev, ex]);
+                                         // 逻辑分支：如果是训练中，加入 activeWorkoutData
                                          else if(activeWorkoutData.startTime) setActiveWorkoutData(prev => ({...prev, exercises: [...prev.exercises, {...ex, sets:[{id:Date.now(), weight:'', reps:'', completed:false}]}]}));
                                          setShowExerciseSelector(false);
                                      }}>
@@ -374,6 +391,7 @@
                 );
             };
 
+            // 动作详情弹窗
             const ExerciseInfoModal = () => {
                 if (!exerciseDetails) return null;
                 return (
@@ -404,99 +422,14 @@
                 );
             };
 
-            // --- Views ---
-            if (view === 'templates') {
-                return (
-                    <div className="min-h-screen bg-background pb-20">
-                        {/* Header */}
-                        <div className="pt-safe px-6 py-4 flex justify-between items-center bg-surface/80 backdrop-blur-md sticky top-0 z-10 border-b border-white/5">
-                            <h1 className="text-xl font-bold tracking-tight text-white">IRON</h1>
-                            <button onClick={() => setIsSettingsOpen(true)} className="text-primary font-medium text-sm">数据</button>
-                        </div>
+            // --- 5. 视图路由逻辑 (修正点：调整优先级) ---
 
-                        {/* Settings Modal */}
-                        {isSettingsOpen && (
-                            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in" onClick={() => setIsSettingsOpen(false)}>
-                                <div className="bg-surface w-full max-w-md rounded-t-2xl sm:rounded-2xl border-t sm:border border-white/10 p-6 space-y-6 pb-safe" onClick={e=>e.stopPropagation()}>
-                                    <div className="flex justify-between items-center">
-                                        <h2 className="text-xl font-bold text-white">设置</h2>
-                                        <button onClick={() => setIsSettingsOpen(false)} className="text-primary font-bold">完成</button>
-                                    </div>
-                                    <div className="space-y-3">
-                                        <button onClick={handleExport} className="w-full py-4 bg-surfaceHighlight rounded-xl flex items-center px-4 gap-3 text-white font-medium active:scale-98 transition-transform">
-                                            <div className="bg-primary/20 p-2 rounded-lg text-primary"><Icon name="download" size={18} /></div>
-                                            <span className="flex-1 text-left">备份数据 (导出 JSON)</span>
-                                        </button>
-                                        <label className="w-full py-4 bg-surfaceHighlight rounded-xl flex items-center px-4 gap-3 text-white font-medium active:scale-98 transition-transform cursor-pointer">
-                                            <div className="bg-accent/20 p-2 rounded-lg text-accent"><Icon name="upload" size={18} /></div>
-                                            <span className="flex-1 text-left">恢复数据 (导入 JSON)</span>
-                                            <input type="file" accept=".json" onChange={handleImport} className="hidden" />
-                                        </label>
-                                        <div className="p-4 rounded-xl bg-surfaceHighlight/50 border border-white/5">
-                                            <div className="flex justify-between items-center text-sm">
-                                                <span className="text-zinc-400">外部动作库</span>
-                                                {appData.importedLibrary.length > 0 ? 
-                                                    <span className="text-accent flex items-center gap-1"><Icon name="check-circle" size={14}/> 已连接 ({appData.importedLibrary.length})</span> : 
-                                                    <span className="text-zinc-500 flex items-center gap-1"><Icon name="alert-circle" size={14}/> 未检测到</span>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Content */}
-                        <div className="px-4 mt-6 space-y-4">
-                            {appData.templates.length === 0 ? (
-                                <div className="py-20 text-center">
-                                    <div className="w-16 h-16 bg-surfaceHighlight rounded-2xl flex items-center justify-center mx-auto mb-4 text-zinc-500">
-                                        <Icon name="clipboard-list" size={32} />
-                                    </div>
-                                    <h3 className="text-white font-bold text-lg">暂无计划</h3>
-                                    <p className="text-zinc-500 text-sm mt-2 mb-8">创建您的第一个训练计划</p>
-                                    <button onClick={() => setIsCreatingTemplate(true)} className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm active:opacity-80">
-                                        新建计划
-                                    </button>
-                                </div>
-                            ) : (
-                                appData.templates.map(t => (
-                                    <div key={t.id} onClick={() => startWorkout(t.exercises)} className="bg-surfaceHighlight rounded-xl p-4 flex justify-between items-center active:bg-zinc-700 transition-colors cursor-pointer">
-                                        <div>
-                                            <h3 className="text-lg font-bold text-white">{t.name}</h3>
-                                            <p className="text-xs text-zinc-500 mt-1">{t.exercises.length} 个动作</p>
-                                        </div>
-                                        <Icon name="chevron-right" className="text-zinc-600" size={20} />
-                                    </div>
-                                ))
-                            )}
-                            
-                            {appData.templates.length > 0 && (
-                                <button onClick={() => setIsCreatingTemplate(true)} className="w-full py-3.5 bg-primary/10 text-primary font-bold rounded-xl mt-4 active:scale-98 transition-transform">
-                                    + 新建计划
-                                </button>
-                            )}
-                        </div>
-                        
-                        {/* iOS Standard Bottom Tab Bar */}
-                        <div className="fixed bottom-0 left-0 right-0 glass pb-safe pt-2 px-6 flex justify-around border-t border-white/10 z-20">
-                            <button className="flex flex-col items-center p-1 w-16 text-primary">
-                                <Icon name="layout-list" size={26} strokeWidth={2} />
-                                <span className="text-[10px] font-medium mt-1">计划</span>
-                            </button>
-                            <button className="flex flex-col items-center p-1 w-16 text-zinc-500">
-                                <Icon name="bar-chart-2" size={26} strokeWidth={2} />
-                                <span className="text-[10px] font-medium mt-1">历史</span>
-                            </button>
-                        </div>
-                    </div>
-                );
-            }
-
-            // Create Template View
+            // 优先级 1: 新建计划视图
+            // (之前因为放在 view==='templates' 后面导致无法进入，现在提至最前)
             if (isCreatingTemplate) {
                 return (
                     <div className="min-h-screen bg-background pb-safe flex flex-col animate-slide-up">
+                        {/* 导航栏 */}
                         <div className="pt-safe px-4 py-4 border-b border-white/10 flex justify-between items-center bg-surface sticky top-0 z-10">
                             <button onClick={() => setIsCreatingTemplate(false)} className="text-primary text-sm font-medium">取消</button>
                             <span className="font-bold text-white">新计划</span>
@@ -506,6 +439,8 @@
                                 setIsCreatingTemplate(false); setNewTemplateName(''); setNewTemplateExercises([]);
                             }} className="text-primary font-bold text-sm">保存</button>
                         </div>
+                        
+                        {/* 编辑主体 */}
                         <div className="p-4 space-y-6 flex-1 overflow-y-auto">
                             <div className="bg-surfaceHighlight rounded-xl p-4">
                                 <input value={newTemplateName} onChange={e => setNewTemplateName(e.target.value)} placeholder="计划名称 (例如: 胸肌训练 A)" className="w-full bg-transparent text-lg font-medium text-white outline-none placeholder-zinc-600" autoFocus />
@@ -531,7 +466,7 @@
                 );
             }
 
-            // Workout View
+            // 优先级 2: 正在训练视图
             if (view === 'workout') {
                 return (
                     <div className="min-h-screen bg-black pb-safe">
@@ -570,6 +505,96 @@
                             ))}
                         </div>
                         {exerciseDetails && <ExerciseInfoModal />}
+                    </div>
+                );
+            }
+
+            // 优先级 3: 主页 (计划列表)
+            if (view === 'templates') {
+                return (
+                    <div className="min-h-screen bg-background pb-20">
+                        {/* 顶部标题栏 */}
+                        <div className="pt-safe px-6 py-4 flex justify-between items-center bg-surface/80 backdrop-blur-md sticky top-0 z-10 border-b border-white/5">
+                            <h1 className="text-xl font-bold tracking-tight text-white">IRON</h1>
+                            <button onClick={() => setIsSettingsOpen(true)} className="text-primary font-medium text-sm">数据</button>
+                        </div>
+
+                        {/* 设置/导入导出弹窗 */}
+                        {isSettingsOpen && (
+                            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in" onClick={() => setIsSettingsOpen(false)}>
+                                <div className="bg-surface w-full max-w-md rounded-t-2xl sm:rounded-2xl border-t sm:border border-white/10 p-6 space-y-6 pb-safe" onClick={e=>e.stopPropagation()}>
+                                    <div className="flex justify-between items-center">
+                                        <h2 className="text-xl font-bold text-white">设置</h2>
+                                        <button onClick={() => setIsSettingsOpen(false)} className="text-primary font-bold">完成</button>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <button onClick={handleExport} className="w-full py-4 bg-surfaceHighlight rounded-xl flex items-center px-4 gap-3 text-white font-medium active:scale-98 transition-transform">
+                                            <div className="bg-primary/20 p-2 rounded-lg text-primary"><Icon name="download" size={18} /></div>
+                                            <span className="flex-1 text-left">备份数据 (导出 JSON)</span>
+                                        </button>
+                                        <label className="w-full py-4 bg-surfaceHighlight rounded-xl flex items-center px-4 gap-3 text-white font-medium active:scale-98 transition-transform cursor-pointer">
+                                            <div className="bg-accent/20 p-2 rounded-lg text-accent"><Icon name="upload" size={18} /></div>
+                                            <span className="flex-1 text-left">恢复数据 (导入 JSON)</span>
+                                            <input type="file" accept=".json" onChange={handleImport} className="hidden" />
+                                        </label>
+                                        <div className="p-4 rounded-xl bg-surfaceHighlight/50 border border-white/5">
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-zinc-400">外部动作库</span>
+                                                {appData.importedLibrary.length > 0 ? 
+                                                    <span className="text-accent flex items-center gap-1"><Icon name="check-circle" size={14}/> 已连接 ({appData.importedLibrary.length})</span> : 
+                                                    <span className="text-zinc-500 flex items-center gap-1"><Icon name="alert-circle" size={14}/> 未检测到</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 计划列表内容 */}
+                        <div className="px-4 mt-6 space-y-4">
+                            {appData.templates.length === 0 ? (
+                                <div className="py-20 text-center">
+                                    <div className="w-16 h-16 bg-surfaceHighlight rounded-2xl flex items-center justify-center mx-auto mb-4 text-zinc-500">
+                                        <Icon name="clipboard-list" size={32} />
+                                    </div>
+                                    <h3 className="text-white font-bold text-lg">暂无计划</h3>
+                                    <p className="text-zinc-500 text-sm mt-2 mb-8">创建您的第一个训练计划</p>
+                                    <button onClick={() => setIsCreatingTemplate(true)} className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm active:opacity-80">
+                                        新建计划
+                                    </button>
+                                </div>
+                            ) : (
+                                appData.templates.map(t => (
+                                    <div key={t.id} onClick={() => startWorkout(t.exercises)} className="bg-surfaceHighlight rounded-xl p-4 flex justify-between items-center active:bg-zinc-700 transition-colors cursor-pointer">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-white">{t.name}</h3>
+                                            <p className="text-xs text-zinc-500 mt-1">{t.exercises.length} 个动作</p>
+                                        </div>
+                                        <Icon name="chevron-right" className="text-zinc-600" size={20} />
+                                    </div>
+                                ))
+                            )}
+                            
+                            {/* 底部新建按钮 (列表不为空时显示) */}
+                            {appData.templates.length > 0 && (
+                                <button onClick={() => setIsCreatingTemplate(true)} className="w-full py-3.5 bg-primary/10 text-primary font-bold rounded-xl mt-4 active:scale-98 transition-transform">
+                                    + 新建计划
+                                </button>
+                            )}
+                        </div>
+                        
+                        {/* 底部标签栏 */}
+                        <div className="fixed bottom-0 left-0 right-0 glass pb-safe pt-2 px-6 flex justify-around border-t border-white/10 z-20">
+                            <button className="flex flex-col items-center p-1 w-16 text-primary">
+                                <Icon name="layout-list" size={26} strokeWidth={2} />
+                                <span className="text-[10px] font-medium mt-1">计划</span>
+                            </button>
+                            <button className="flex flex-col items-center p-1 w-16 text-zinc-500">
+                                <Icon name="bar-chart-2" size={26} strokeWidth={2} />
+                                <span className="text-[10px] font-medium mt-1">历史</span>
+                            </button>
+                        </div>
                     </div>
                 );
             }
