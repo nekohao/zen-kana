@@ -4,7 +4,11 @@
     {
       "id": "chest_001",
       "name": "杠铃卧推",
-      "muscle_group": ["胸部", "前三角", "三头"],
+      "muscle_group": [
+        "胸部",
+        "前三角",
+        "三头"
+      ],
       "equipment": "杠铃",
       "level": "中级",
       "movement_type": "推",
@@ -25,7 +29,10 @@
     {
       "id": "chest_002",
       "name": "哑铃卧推",
-      "muscle_group": ["胸部", "三头"],
+      "muscle_group": [
+        "胸部",
+        "三头"
+      ],
       "equipment": "哑铃",
       "level": "初级",
       "movement_type": "推",
@@ -44,7 +51,9 @@
     {
       "id": "chest_003",
       "name": "上斜杠铃卧推",
-      "muscle_group": ["上胸"],
+      "muscle_group": [
+        "上胸"
+      ],
       "equipment": "杠铃",
       "level": "中级",
       "movement_type": "推",
@@ -63,7 +72,9 @@
     {
       "id": "chest_004",
       "name": "上斜哑铃卧推",
-      "muscle_group": ["上胸"],
+      "muscle_group": [
+        "上胸"
+      ],
       "equipment": "哑铃",
       "level": "初级",
       "movement_type": "推",
@@ -82,7 +93,9 @@
     {
       "id": "chest_005",
       "name": "史密斯上斜卧推",
-      "muscle_group": ["上胸"],
+      "muscle_group": [
+        "上胸"
+      ],
       "equipment": "史密斯机",
       "level": "初级",
       "movement_type": "推",
@@ -101,7 +114,9 @@
     {
       "id": "chest_006",
       "name": "下斜杠铃卧推",
-      "muscle_group": ["下胸"],
+      "muscle_group": [
+        "下胸"
+      ],
       "equipment": "杠铃",
       "level": "中级",
       "movement_type": "推",
@@ -120,7 +135,9 @@
     {
       "id": "chest_007",
       "name": "器械推胸（悍马机）",
-      "muscle_group": ["胸部"],
+      "muscle_group": [
+        "胸部"
+      ],
       "equipment": "器械",
       "level": "初级",
       "movement_type": "推",
@@ -139,7 +156,9 @@
     {
       "id": "chest_008",
       "name": "蝴蝶机夹胸",
-      "muscle_group": ["胸部"],
+      "muscle_group": [
+        "胸部"
+      ],
       "equipment": "器械",
       "level": "初级",
       "movement_type": "夹",
@@ -156,103 +175,11 @@
       "thumbnail": ""
     },
     {
-      "id": "chest_009",
-      "name": "拉绳夹胸（中位）",
-      "muscle_group": ["胸部"],
-      "equipment": "拉力器",
-      "level": "初级",
-      "movement_type": "夹",
-      "instructions": [
-        "踏弓步稳定身体。",
-        "像抱树一样的弧形轨迹。",
-        "交叉一点点可以增加挤压。"
-      ],
-      "common_mistakes": [
-        "手臂幅度太大导致肩压力。",
-        "动作末端没收缩。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_010",
-      "name": "低位向上飞鸟（上胸）",
-      "muscle_group": ["上胸"],
-      "equipment": "拉力器",
-      "level": "初级",
-      "movement_type": "夹",
-      "instructions": [
-        "拉力器放在最低档。",
-        "动作轨迹是由下往上，像拉拉链。",
-        "顶峰停顿强调上胸收缩。"
-      ],
-      "common_mistakes": [
-        "手臂僵硬导致肩工作。",
-        "动作幅度不够高。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_011",
-      "name": "高位向下飞鸟（下胸）",
-      "muscle_group": ["下胸"],
-      "equipment": "拉力器",
-      "level": "初级",
-      "movement_type": "夹",
-      "instructions": [
-        "从高位往大腿方向拉。",
-        "拉的过程中保持胸线向下的张力。",
-        "尽量走大弧线。"
-      ],
-      "common_mistakes": [
-        "弧度不够导致刺激不足。",
-        "使用过大的重量。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_012",
-      "name": "哑铃飞鸟",
-      "muscle_group": ["胸部"],
-      "equipment": "哑铃",
-      "level": "初级",
-      "movement_type": "夹",
-      "instructions": [
-        "手臂保持微屈。",
-        "尽量拉开胸肌，走大弧线。",
-        "顶峰轻微挤压。"
-      ],
-      "common_mistakes": [
-        "肘锁死导致压力跑肩。",
-        "下放太深造成伤害风险。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_013",
-      "name": "上斜哑铃飞鸟",
-      "muscle_group": ["上胸"],
-      "equipment": "哑铃",
-      "level": "初级",
-      "movement_type": "夹",
-      "instructions": [
-        "板凳 30°。",
-        "弧形轨迹更集中打击上胸。",
-        "顶峰挤压，保持呼吸稳定。"
-      ],
-      "common_mistakes": [
-        "角度过高导致变成肩训练。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
       "id": "chest_014",
       "name": "俯卧撑",
-      "muscle_group": ["胸部"],
+      "muscle_group": [
+        "胸部"
+      ],
       "equipment": "自重",
       "level": "初级",
       "movement_type": "推",
@@ -271,7 +198,10 @@
     {
       "id": "chest_015",
       "name": "双杠臂屈伸（偏胸）",
-      "muscle_group": ["胸部", "三头"],
+      "muscle_group": [
+        "胸部",
+        "三头"
+      ],
       "equipment": "双杠",
       "level": "中级",
       "movement_type": "推",
@@ -288,88 +218,11 @@
       "thumbnail": ""
     },
     {
-      "id": "chest_016",
-      "name": "地板哑铃卧推",
-      "muscle_group": ["胸部"],
-      "equipment": "哑铃",
-      "level": "初级",
-      "movement_type": "推",
-      "instructions": [
-        "适合肩不稳的人练。",
-        "肘触地即反推。",
-        "保持胸部挤压感。"
-      ],
-      "common_mistakes": [
-        "动作幅度不够导致刺激不足。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_017",
-      "name": "斯文德推胸 (Svend Press)",
-      "muscle_group": ["胸部", "中缝"],
-      "equipment": "杠铃片/哑铃",
-      "level": "初级",
-      "movement_type": "挤压",
-      "instructions": [
-        "双手掌心夹住杠铃片于胸前。",
-        "用力向内挤压并向前推出手臂。",
-        "全程保持对杠铃片的挤压力。",
-        "收回时依然保持胸肌紧绷。"
-      ],
-      "common_mistakes": [
-        "手掌没用力挤压导致胸肌没感觉。",
-        "肩膀耸起代偿。",
-        "动作过快丢失张力。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_018",
-      "name": "地雷管推胸",
-      "muscle_group": ["上胸", "中缝"],
-      "equipment": "杠铃/地雷管架",
-      "level": "中级",
-      "movement_type": "推",
-      "instructions": [
-        "单手或双手握住杠铃一端。",
-        "身体微微前倾，向上斜前方推。",
-        "顶峰时用力收缩上胸缝位置。"
-      ],
-      "common_mistakes": [
-        "过度后仰借腰力。",
-        "手臂完全承担重量，没用胸发力。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_019",
-      "name": "哑铃仰卧上拉 (Pullover)",
-      "muscle_group": ["胸部", "背阔肌", "前锯肌"],
-      "equipment": "哑铃",
-      "level": "中级",
-      "movement_type": "拉伸",
-      "instructions": [
-        "上背部靠在凳子上，臀部下沉。",
-        "双手托住哑铃一端，手臂微屈。",
-        "向头后方下放，感受胸廓拉开。",
-        "用胸肌力量将哑铃拉回视线上方。"
-      ],
-      "common_mistakes": [
-        "臀部随哑铃起伏。",
-        "肘关节弯曲变化过大变成臂屈伸。",
-        "下放过深伤肩。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
       "id": "chest_020",
       "name": "器械坐姿推胸 (宽握)",
-      "muscle_group": ["胸部"],
+      "muscle_group": [
+        "胸部"
+      ],
       "equipment": "固定器械",
       "level": "初级",
       "movement_type": "推",
@@ -384,128 +237,19 @@
       ],
       "video_url": "",
       "thumbnail": ""
-    },
-    {
-      "id": "chest_021",
-      "name": "钻石俯卧撑",
-      "muscle_group": ["胸部中缝", "三头"],
-      "equipment": "自重",
-      "level": "中级",
-      "movement_type": "推",
-      "instructions": [
-        "双手食指拇指相对组成钻石形状。",
-        "置于胸口正下方。",
-        "夹紧大臂下放和推起。"
-      ],
-      "common_mistakes": [
-        "核心塌陷。",
-        "手放得太靠前（应在胸下）。",
-        "手肘过度外开。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_022",
-      "name": "单臂绳索推胸",
-      "muscle_group": ["胸部", "核心"],
-      "equipment": "拉力器",
-      "level": "中级",
-      "movement_type": "推",
-      "instructions": [
-        "站姿，单手持握把。",
-        "对侧腿在前，同侧腿在后支撑。",
-        "向身体中线方向推，允许躯干微转以增加挤压。"
-      ],
-      "common_mistakes": [
-        "躯干过度旋转借力。",
-        "没收紧核心导致站不稳。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_023",
-      "name": "负重俯卧撑",
-      "muscle_group": ["胸部", "三头"],
-      "equipment": "杠铃片/负重背心",
-      "level": "中级",
-      "movement_type": "推",
-      "instructions": [
-        "在背部放置杠铃片或穿背心。",
-        "保持标准俯卧撑姿势。",
-        "动作放慢，强调离心过程。"
-      ],
-      "common_mistakes": [
-        "腰部塌陷导致下背痛。",
-        "重量太重导致动作行程缩短。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_024",
-      "name": "下斜哑铃飞鸟",
-      "muscle_group": ["下胸"],
-      "equipment": "哑铃",
-      "level": "中级",
-      "movement_type": "夹",
-      "instructions": [
-        "使用下斜板，腿部固定。",
-        "像抱大树一样打开手臂。",
-        "主要刺激胸大肌下沿和外沿。"
-      ],
-      "common_mistakes": [
-        "血液倒流感不适时应停止。",
-        "哑铃相撞声音太大（失去控制）。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_025",
-      "name": "断头台卧推 (颈前卧推)",
-      "muscle_group": ["上胸", "颈部风险高"],
-      "equipment": "杠铃",
-      "level": "高级",
-      "movement_type": "推",
-      "instructions": [
-        "极宽握距，双腿抬起以平贴背部。",
-        "杠铃下放到颈部与锁骨交界处（需极度小心）。",
-        "极大化拉伸胸肌，重量需减半。"
-      ],
-      "common_mistakes": [
-        "重量过大导致压迫气管风险。",
-        "肩部活动度不足强行做。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
-    },
-    {
-      "id": "chest_026",
-      "name": "弹力带俯卧撑",
-      "muscle_group": ["胸部", "三头"],
-      "equipment": "弹力带",
-      "level": "中级",
-      "movement_type": "推",
-      "instructions": [
-        "弹力带绕过背部，双手按住两端。",
-        "推起时弹力带阻力最大，强调顶峰收缩。",
-        "爆发力推起，慢速下放。"
-      ],
-      "common_mistakes": [
-        "弹力带滑脱。",
-        "顶部没有完全对抗阻力伸直手臂。"
-      ],
-      "video_url": "",
-      "thumbnail": ""
     }
   ],
   "Back": [
     {
       "name": "高位下拉",
-      "primary_muscle": ["Latissimus Dorsi"],
-      "secondary_muscle": ["Teres Major", "Biceps", "Rear Delts"],
+      "primary_muscle": [
+        "Latissimus Dorsi"
+      ],
+      "secondary_muscle": [
+        "Teres Major",
+        "Biceps",
+        "Rear Delts"
+      ],
       "equipment": "Cable Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -521,8 +265,13 @@
     },
     {
       "name": "反手下拉",
-      "primary_muscle": ["Latissimus Dorsi (lower fibers)"],
-      "secondary_muscle": ["Biceps", "Teres Major"],
+      "primary_muscle": [
+        "Latissimus Dorsi (lower fibers)"
+      ],
+      "secondary_muscle": [
+        "Biceps",
+        "Teres Major"
+      ],
       "equipment": "Cable Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -538,8 +287,14 @@
     },
     {
       "name": "坐姿划船",
-      "primary_muscle": ["Middle Back"],
-      "secondary_muscle": ["Biceps", "Rear Delts", "Rhomboids"],
+      "primary_muscle": [
+        "Middle Back"
+      ],
+      "secondary_muscle": [
+        "Biceps",
+        "Rear Delts",
+        "Rhomboids"
+      ],
       "equipment": "Cable Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -555,8 +310,14 @@
     },
     {
       "name": "T杠划船",
-      "primary_muscle": ["Middle Back", "Lower Lats"],
-      "secondary_muscle": ["Biceps", "Rear Delts"],
+      "primary_muscle": [
+        "Middle Back",
+        "Lower Lats"
+      ],
+      "secondary_muscle": [
+        "Biceps",
+        "Rear Delts"
+      ],
       "equipment": "T-Bar Machine",
       "difficulty": "Intermediate",
       "cues": [
@@ -572,8 +333,15 @@
     },
     {
       "name": "杠铃划船",
-      "primary_muscle": ["Middle Back", "Lower Lats"],
-      "secondary_muscle": ["Biceps", "Rear Delts", "Spinal Erectors"],
+      "primary_muscle": [
+        "Middle Back",
+        "Lower Lats"
+      ],
+      "secondary_muscle": [
+        "Biceps",
+        "Rear Delts",
+        "Spinal Erectors"
+      ],
       "equipment": "Barbell",
       "difficulty": "Intermediate",
       "cues": [
@@ -588,26 +356,13 @@
       ]
     },
     {
-      "name": "单臂哑铃划船",
-      "primary_muscle": ["Lats"],
-      "secondary_muscle": ["Rear Delts", "Biceps"],
-      "equipment": "Dumbbell",
-      "difficulty": "Beginner",
-      "cues": [
-        "向屁股方向拉，而不是胸方向",
-        "肘靠近身体轨迹",
-        "背阔肌发力感明显"
-      ],
-      "common_mistakes": [
-        "手臂拉太高",
-        "身体扭动太多",
-        "哑铃靠肩走轨迹"
-      ]
-    },
-    {
       "name": "直臂下拉",
-      "primary_muscle": ["Lats (upper + lower)"],
-      "secondary_muscle": ["Teres Major"],
+      "primary_muscle": [
+        "Lats (upper + lower)"
+      ],
+      "secondary_muscle": [
+        "Teres Major"
+      ],
       "equipment": "Cable Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -623,8 +378,15 @@
     },
     {
       "name": "硬拉",
-      "primary_muscle": ["Glutes", "Hamstrings", "Lower Back"],
-      "secondary_muscle": ["Upper Back", "Forearms"],
+      "primary_muscle": [
+        "Glutes",
+        "Hamstrings",
+        "Lower Back"
+      ],
+      "secondary_muscle": [
+        "Upper Back",
+        "Forearms"
+      ],
       "equipment": "Barbell",
       "difficulty": "Advanced",
       "cues": [
@@ -640,8 +402,13 @@
     },
     {
       "name": "罗马尼亚硬拉",
-      "primary_muscle": ["Hamstrings", "Glutes"],
-      "secondary_muscle": ["Lower Back"],
+      "primary_muscle": [
+        "Hamstrings",
+        "Glutes"
+      ],
+      "secondary_muscle": [
+        "Lower Back"
+      ],
       "equipment": "Barbell",
       "difficulty": "Intermediate",
       "cues": [
@@ -656,26 +423,15 @@
       ]
     },
     {
-      "name": "俯身挺身",
-      "primary_muscle": ["Erector Spinae"],
-      "secondary_muscle": ["Glutes", "Hamstrings"],
-      "equipment": "Back Extension Bench",
-      "difficulty": "Beginner",
-      "cues": [
-        "动作顶点不要后仰过度",
-        "感受下背发力，不是全用臀",
-        "脊柱保持稳定"
-      ],
-      "common_mistakes": [
-        "过度伸展",
-        "动作过快",
-        "乱用惯性"
-      ]
-    },
-    {
       "name": "引体向上 (正手)",
-      "primary_muscle": ["Lats", "Upper Back"],
-      "secondary_muscle": ["Biceps", "Forearms"],
+      "primary_muscle": [
+        "Lats",
+        "Upper Back"
+      ],
+      "secondary_muscle": [
+        "Biceps",
+        "Forearms"
+      ],
       "equipment": "Pull-up Bar",
       "difficulty": "Advanced",
       "cues": [
@@ -690,74 +446,15 @@
       ]
     },
     {
-      "name": "反手引体向上 (Chin-up)",
-      "primary_muscle": ["Lats", "Biceps"],
-      "secondary_muscle": ["Forearms"],
-      "equipment": "Pull-up Bar",
-      "difficulty": "Intermediate",
-      "cues": [
-        "掌心朝向自己",
-        "更强调二头和下背阔",
-        "挺胸拉起"
-      ],
-      "common_mistakes": [
-        "身体过度卷曲",
-        "下放不完全"
-      ]
-    },
-    {
-      "name": "梅多斯划船 (Meadows Row)",
-      "primary_muscle": ["Lats", "Rhomboids", "Rear Delts"],
-      "secondary_muscle": ["Grip"],
-      "equipment": "Landmine/Barbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "站在杠铃外侧，臀部高位",
-        "手肘向外打开拉起",
-        "强调上背部和三角肌后束"
-      ],
-      "common_mistakes": [
-        "腰部转动代偿",
-        "握力不足"
-      ]
-    },
-    {
-      "name": "潘德勒划船 (Pendlay Row)",
-      "primary_muscle": ["Upper Back", "Lats"],
-      "secondary_muscle": ["Core"],
-      "equipment": "Barbell",
-      "difficulty": "Advanced",
-      "cues": [
-        "背部完全平行地面",
-        "每次都从地面启动",
-        "爆发力拉起，触胸即放"
-      ],
-      "common_mistakes": [
-        "背部抬起角度过大",
-        "没有触地重置",
-        "利用腰部惯性"
-      ]
-    },
-    {
-      "name": "克洛克划船 (Kroc Row)",
-      "primary_muscle": ["Upper Back", "Lats"],
-      "secondary_muscle": ["Grip"],
-      "equipment": "Heavy Dumbbell",
-      "difficulty": "Advanced",
-      "cues": [
-        "使用大重量高次数",
-        "允许适度借力但要有控制",
-        "拉伸感最大化"
-      ],
-      "common_mistakes": [
-        "完全失控的甩动",
-        "动作行程太短"
-      ]
-    },
-    {
       "name": "绳索面拉 (Face Pull)",
-      "primary_muscle": ["Rear Delts", "Rotator Cuff", "Rhomboids"],
-      "secondary_muscle": ["Traps"],
+      "primary_muscle": [
+        "Rear Delts",
+        "Rotator Cuff",
+        "Rhomboids"
+      ],
+      "secondary_muscle": [
+        "Traps"
+      ],
       "equipment": "Cable Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -772,41 +469,13 @@
       ]
     },
     {
-      "name": "上斜俯卧哑铃划船",
-      "primary_muscle": ["Middle Back", "Lats"],
-      "secondary_muscle": ["Biceps"],
-      "equipment": "Dumbbell, Bench",
-      "difficulty": "Beginner",
-      "cues": [
-        "胸部贴紧上斜凳",
-        "消除腰部借力，纯背部发力",
-        "手肘拉过躯干平面"
-      ],
-      "common_mistakes": [
-        "头过度抬起",
-        "胸部离开凳面借力"
-      ]
-    },
-    {
-      "name": "高位架上硬拉 (Rack Pull)",
-      "primary_muscle": ["Upper Back", "Traps", "Erector Spinae"],
-      "secondary_muscle": ["Forearms"],
-      "equipment": "Barbell, Rack",
-      "difficulty": "Intermediate",
-      "cues": [
-        "杠铃架在膝盖高度",
-        "专注于背部锁定和斜方肌收缩",
-        "可以用比硬拉更大的重量"
-      ],
-      "common_mistakes": [
-        "膝盖内扣",
-        "过度后仰伤腰"
-      ]
-    },
-    {
       "name": "器械辅助引体向上",
-      "primary_muscle": ["Lats"],
-      "secondary_muscle": ["Biceps"],
+      "primary_muscle": [
+        "Lats"
+      ],
+      "secondary_muscle": [
+        "Biceps"
+      ],
       "equipment": "Assisted Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -821,8 +490,13 @@
     },
     {
       "name": "V把高位下拉 (窄距)",
-      "primary_muscle": ["Lower Lats", "Middle Back"],
-      "secondary_muscle": ["Biceps"],
+      "primary_muscle": [
+        "Lower Lats",
+        "Middle Back"
+      ],
+      "secondary_muscle": [
+        "Biceps"
+      ],
       "equipment": "Cable Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -839,8 +513,14 @@
   "Legs": [
     {
       "name": "深蹲",
-      "primary_muscle": ["Quads", "Glutes"],
-      "secondary_muscle": ["Hamstrings", "Core"],
+      "primary_muscle": [
+        "Quads",
+        "Glutes"
+      ],
+      "secondary_muscle": [
+        "Hamstrings",
+        "Core"
+      ],
       "equipment": "Barbell",
       "difficulty": "Intermediate",
       "cues": [
@@ -855,42 +535,10 @@
       ]
     },
     {
-      "name": "前蹲",
-      "primary_muscle": ["Quads"],
-      "secondary_muscle": ["Core", "Glutes"],
-      "equipment": "Barbell",
-      "difficulty": "Advanced",
-      "cues": [
-        "保持肘高，胸更挺",
-        "更直立的轨迹让股四头更烧",
-        "脚跟稳固发力"
-      ],
-      "common_mistakes": [
-        "杠铃掉落",
-        "上背塌陷",
-        "脚跟抬起"
-      ]
-    },
-    {
-      "name": "腿举",
-      "primary_muscle": ["Quads", "Glutes"],
-      "secondary_muscle": ["Hamstrings"],
-      "equipment": "Leg Press Machine",
-      "difficulty": "Beginner",
-      "cues": [
-        "脚放低偏股四头，脚放高偏腘绳肌",
-        "不要膝内扣",
-        "不要把膝盖完全锁死"
-      ],
-      "common_mistakes": [
-        "落点太深导致圆背",
-        "推太快",
-        "脚宽度不当"
-      ]
-    },
-    {
       "name": "腿屈伸",
-      "primary_muscle": ["Quads"],
+      "primary_muscle": [
+        "Quads"
+      ],
       "secondary_muscle": [],
       "equipment": "Leg Extension Machine",
       "difficulty": "Beginner",
@@ -906,93 +554,10 @@
       ]
     },
     {
-      "name": "俯卧腿弯举",
-      "primary_muscle": ["Hamstrings"],
-      "secondary_muscle": ["Calves"],
-      "equipment": "Leg Curl Machine",
-      "difficulty": "Beginner",
-      "cues": [
-        "脚踝贴住垫子，不要乱晃",
-        "顶峰挤压腘绳肌",
-        "下放要慢"
-      ],
-      "common_mistakes": [
-        "腰乱动",
-        "下放掉重量",
-        "动作幅度不够"
-      ]
-    },
-    {
-      "name": "保加利亚分腿蹲",
-      "primary_muscle": ["Quads", "Glutes"],
-      "secondary_muscle": ["Hamstrings", "Core"],
-      "equipment": "Dumbbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "身体微前倾偏臀，直立偏股四",
-        "前脚发力，后脚只是支撑",
-        "膝盖向脚尖方向走"
-      ],
-      "common_mistakes": [
-        "后脚太高",
-        "前脚站太近",
-        "平衡不稳"
-      ]
-    },
-    {
-      "name": "臀推",
-      "primary_muscle": ["Glutes"],
-      "secondary_muscle": ["Hamstrings", "Quads"],
-      "equipment": "Barbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "骨盆后倾提升臀部激活",
-        "大腿与地面平行处最强",
-        "顶峰挤压臀部 1 秒"
-      ],
-      "common_mistakes": [
-        "腰顶过度",
-        "下放太快",
-        "脚距错误"
-      ]
-    },
-    {
-      "name": "臀桥",
-      "primary_muscle": ["Glutes"],
-      "secondary_muscle": ["Hamstrings"],
-      "equipment": "Bodyweight / Barbell",
-      "difficulty": "Beginner",
-      "cues": [
-        "核心收紧，脊柱保持中立",
-        "脚跟发力",
-        "骨盆后倾锁住臀部"
-      ],
-      "common_mistakes": [
-        "腰过度代偿",
-        "脚放太远",
-        "顶峰不够高"
-      ]
-    },
-    {
-      "name": "行走箭步蹲",
-      "primary_muscle": ["Quads", "Glutes"],
-      "secondary_muscle": ["Hamstrings", "Core"],
-      "equipment": "Dumbbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "步幅大偏臀，小偏股四",
-        "保持45°前倾更偏臀",
-        "每步都稳住，再迈下一步"
-      ],
-      "common_mistakes": [
-        "膝内扣",
-        "步幅不稳定",
-        "上身摇晃"
-      ]
-    },
-    {
       "name": "坐姿腿弯举",
-      "primary_muscle": ["Hamstrings"],
+      "primary_muscle": [
+        "Hamstrings"
+      ],
       "secondary_muscle": [],
       "equipment": "Leg Curl Machine",
       "difficulty": "Beginner",
@@ -1008,43 +573,13 @@
       ]
     },
     {
-      "name": "腿外展机",
-      "primary_muscle": ["Glute Medius"],
-      "secondary_muscle": ["Glute Minimus"],
-      "equipment": "Hip Abduction Machine",
-      "difficulty": "Beginner",
-      "cues": [
-        "上身前倾更偏臀中束",
-        "顶峰保持2秒",
-        "慢慢外开，慢慢回位"
-      ],
-      "common_mistakes": [
-        "幅度不够",
-        "速度过快",
-        "完全不用臀部发力"
-      ]
-    },
-    {
-      "name": "高脚杯深蹲",
-      "primary_muscle": ["Quads", "Core"],
-      "secondary_muscle": ["Glutes"],
-      "equipment": "Dumbbell/Kettlebell",
-      "difficulty": "Beginner",
-      "cues": [
-        "双手托住哑铃一端在胸前",
-        "手肘向下，保持躯干直立",
-        "适合新手学习深蹲模式"
-      ],
-      "common_mistakes": [
-        "哑铃远离身体",
-        "弯腰",
-        "脚跟离地"
-      ]
-    },
-    {
       "name": "哈克深蹲",
-      "primary_muscle": ["Quads"],
-      "secondary_muscle": ["Glutes"],
+      "primary_muscle": [
+        "Quads"
+      ],
+      "secondary_muscle": [
+        "Glutes"
+      ],
       "equipment": "Hack Squat Machine",
       "difficulty": "Intermediate",
       "cues": [
@@ -1059,110 +594,14 @@
       ]
     },
     {
-      "name": "站姿提踵",
-      "primary_muscle": ["Gastrocnemius"],
-      "secondary_muscle": [],
-      "equipment": "Machine/Smith",
-      "difficulty": "Beginner",
-      "cues": [
-        "膝盖微屈但锁住不动",
-        "脚后跟尽可能下沉拉伸",
-        "用力踮起至最高点停顿"
-      ],
-      "common_mistakes": [
-        "利用膝盖弹动借力",
-        "幅度太小",
-        "频率过快"
-      ]
-    },
-    {
-      "name": "坐姿提踵",
-      "primary_muscle": ["Soleus"],
-      "secondary_muscle": [],
-      "equipment": "Seated Calf Machine",
-      "difficulty": "Beginner",
-      "cues": [
-        "膝盖呈90度弯曲",
-        "主要刺激比目鱼肌",
-        "慢起慢落"
-      ],
-      "common_mistakes": [
-        "重量太大拉伤跟腱",
-        "没有顶峰收缩"
-      ]
-    },
-    {
-      "name": "侧弓步 (Cossack Squat)",
-      "primary_muscle": ["Quads", "Adductors", "Glutes"],
-      "secondary_muscle": ["Core"],
-      "equipment": "Bodyweight/Dumbbell",
-      "difficulty": "Advanced",
-      "cues": [
-        "单腿向侧面延伸蹲下",
-        "另一条腿伸直，脚尖朝上",
-        "保持背部平直"
-      ],
-      "common_mistakes": [
-        "蹲腿膝盖内扣",
-        "柔韧性不足导致弯腰",
-        "支撑脚脚跟抬起"
-      ]
-    },
-    {
-      "name": "相扑硬拉",
-      "primary_muscle": ["Glutes", "Hamstrings", "Quads"],
-      "secondary_muscle": ["Adductors", "Back"],
-      "equipment": "Barbell",
-      "difficulty": "Advanced",
-      "cues": [
-        "宽站距，脚尖外展",
-        "手臂垂直于地面",
-        "臀部发力推髋向前"
-      ],
-      "common_mistakes": [
-        "膝盖没有对准脚尖",
-        "臀部起伏过早",
-        "背部圆起"
-      ]
-    },
-    {
-      "name": "泽奇深蹲 (Zercher Squat)",
-      "primary_muscle": ["Quads", "Core", "Upper Back"],
-      "secondary_muscle": ["Glutes"],
-      "equipment": "Barbell",
-      "difficulty": "Advanced",
-      "cues": [
-        "将杠铃抱在肘弯处",
-        "核心极度收紧",
-        "下蹲时保持上身直立"
-      ],
-      "common_mistakes": [
-        "含胸弓背",
-        "重量过大导致手臂疼痛",
-        "身体前倾"
-      ]
-    },
-    {
-      "name": "西斯深蹲 (Sissy Squat)",
-      "primary_muscle": ["Quads (Rectus Femoris)"],
-      "secondary_muscle": ["Core"],
-      "equipment": "Bodyweight/Machine",
-      "difficulty": "Intermediate",
-      "cues": [
-        "身体后倾，膝盖前推",
-        "躯干与大腿成一直线",
-        "感受股四头肌强拉伸"
-      ],
-      "common_mistakes": [
-        "屈髋（屁股坐下）",
-        "膝盖有伤强行做",
-        "没有控制平衡"
-      ]
-    },
-    {
       "name": "直腿硬拉 (SLDL)",
-      "primary_muscle": ["Hamstrings"],
-      "secondary_muscle": ["Glutes", "Lower Back"],
+      "primary_muscle": [
+        "Hamstrings"
+      ],
+      "secondary_muscle": [
+        "Glutes",
+        "Lower Back"
+      ],
       "equipment": "Barbell/Dumbbell",
       "difficulty": "Intermediate",
       "cues": [
@@ -1174,30 +613,19 @@
         "背部弯曲",
         "膝盖弯曲过多变成常规硬拉"
       ]
-    },
-    {
-      "name": "登阶 (Step-up)",
-      "primary_muscle": ["Quads", "Glutes"],
-      "secondary_muscle": ["Calves"],
-      "equipment": "Box/Bench, Dumbbell",
-      "difficulty": "Beginner",
-      "cues": [
-        "单脚踩实箱子",
-        "尽量减少后脚蹬地力量",
-        "身体正直向上"
-      ],
-      "common_mistakes": [
-        "后脚过度借力弹起",
-        "箱子太高导致骨盆歪斜",
-        "膝盖内扣"
-      ]
     }
   ],
   "Shoulders": [
     {
       "name": "哑铃肩推",
-      "primary_muscle": ["Anterior Deltoid", "Medial Deltoid"],
-      "secondary_muscle": ["Triceps", "Upper Chest"],
+      "primary_muscle": [
+        "Anterior Deltoid",
+        "Medial Deltoid"
+      ],
+      "secondary_muscle": [
+        "Triceps",
+        "Upper Chest"
+      ],
       "equipment": "Dumbbell",
       "difficulty": "Beginner",
       "cues": [
@@ -1212,26 +640,14 @@
       ]
     },
     {
-      "name": "杠铃肩推（站姿）",
-      "primary_muscle": ["Anterior Deltoid", "Medial Deltoid"],
-      "secondary_muscle": ["Triceps", "Upper Chest", "Core"],
-      "equipment": "Barbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "吸气收紧核心，避免后仰",
-        "杠铃沿直线上下移动",
-        "顶部保持肩胛自然位置"
-      ],
-      "common_mistakes": [
-        "腰过度后弯",
-        "动作轨迹S形",
-        "推起时肩膀向上耸"
-      ]
-    },
-    {
       "name": "史密斯肩推",
-      "primary_muscle": ["Anterior Deltoid", "Medial Deltoid"],
-      "secondary_muscle": ["Triceps"],
+      "primary_muscle": [
+        "Anterior Deltoid",
+        "Medial Deltoid"
+      ],
+      "secondary_muscle": [
+        "Triceps"
+      ],
       "equipment": "Smith Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -1247,8 +663,12 @@
     },
     {
       "name": "哑铃侧平举",
-      "primary_muscle": ["Medial Deltoid"],
-      "secondary_muscle": ["Upper Traps"],
+      "primary_muscle": [
+        "Medial Deltoid"
+      ],
+      "secondary_muscle": [
+        "Upper Traps"
+      ],
       "equipment": "Dumbbell",
       "difficulty": "Beginner",
       "cues": [
@@ -1264,7 +684,9 @@
     },
     {
       "name": "绳索侧平举",
-      "primary_muscle": ["Medial Deltoid"],
+      "primary_muscle": [
+        "Medial Deltoid"
+      ],
       "secondary_muscle": [],
       "equipment": "Cable Machine",
       "difficulty": "Intermediate",
@@ -1281,8 +703,13 @@
     },
     {
       "name": "反向飞鸟（器械）",
-      "primary_muscle": ["Posterior Deltoid"],
-      "secondary_muscle": ["Rhomboids", "Traps"],
+      "primary_muscle": [
+        "Posterior Deltoid"
+      ],
+      "secondary_muscle": [
+        "Rhomboids",
+        "Traps"
+      ],
       "equipment": "Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -1297,59 +724,10 @@
       ]
     },
     {
-      "name": "后束拉绳飞鸟",
-      "primary_muscle": ["Posterior Deltoid"],
-      "secondary_muscle": ["Traps"],
-      "equipment": "Cable Machine",
-      "difficulty": "Intermediate",
-      "cues": [
-        "交叉握法能更集中后束",
-        "肘保持微弯",
-        "从肩部带动，而不是手臂"
-      ],
-      "common_mistakes": [
-        "手臂用力",
-        "耸肩",
-        "身体扭动"
-      ]
-    },
-    {
-      "name": "直立划船",
-      "primary_muscle": ["Medial Deltoid"],
-      "secondary_muscle": ["Upper Traps", "Biceps"],
-      "equipment": "Barbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "用窄握偏三角，中握偏斜方",
-        "肘带动，手腕跟随",
-        "拉到胸上部即可"
-      ],
-      "common_mistakes": [
-        "重量太大压手腕",
-        "拉太高 impingement 风险大",
-        "耸肩代偿"
-      ]
-    },
-    {
-      "name": "阿诺德推举",
-      "primary_muscle": ["Anterior Deltoid", "Medial Deltoid"],
-      "secondary_muscle": ["Triceps"],
-      "equipment": "Dumbbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "起始掌心朝脸，推起时旋转手腕",
-        "动作行程长，重量不宜过大",
-        "保持流畅的旋转节奏"
-      ],
-      "common_mistakes": [
-        "推起时腰部晃动",
-        "旋转时机不对",
-        "肘部下放过低"
-      ]
-    },
-    {
       "name": "哑铃前平举",
-      "primary_muscle": ["Anterior Deltoid"],
+      "primary_muscle": [
+        "Anterior Deltoid"
+      ],
       "secondary_muscle": [],
       "equipment": "Dumbbell",
       "difficulty": "Beginner",
@@ -1366,8 +744,13 @@
     },
     {
       "name": "绳索面拉 (Face Pull)",
-      "primary_muscle": ["Rear Delts", "Rotator Cuff"],
-      "secondary_muscle": ["Rhomboids"],
+      "primary_muscle": [
+        "Rear Delts",
+        "Rotator Cuff"
+      ],
+      "secondary_muscle": [
+        "Rhomboids"
+      ],
       "equipment": "Cable Machine",
       "difficulty": "Beginner",
       "cues": [
@@ -1380,129 +763,18 @@
         "拉向胸口而非脸部",
         "手肘低于手腕"
       ]
-    },
-    {
-      "name": "地雷管单臂推举",
-      "primary_muscle": ["Anterior Deltoid"],
-      "secondary_muscle": ["Upper Chest", "Core"],
-      "equipment": "Landmine/Barbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "站姿，核心抗旋转",
-        "向斜上方推",
-        "对肩关节非常友好的推举动作"
-      ],
-      "common_mistakes": [
-        "身体过度扭转",
-        "下放失控"
-      ]
-    },
-    {
-      "name": "侧卧哑铃侧平举",
-      "primary_muscle": ["Medial Deltoid"],
-      "secondary_muscle": [],
-      "equipment": "Dumbbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "侧躺在斜凳上",
-        "改变力线，在底部也有最大张力",
-        "只需举到垂直地面即可"
-      ],
-      "common_mistakes": [
-        "举过垂直线导致张力消失",
-        "使用惯性甩起"
-      ]
-    },
-    {
-      "name": "古巴推举 (Cuban Press)",
-      "primary_muscle": ["Rotator Cuff", "Medial Deltoid"],
-      "secondary_muscle": [],
-      "equipment": "Dumbbell/Barbell",
-      "difficulty": "Intermediate",
-      "cues": [
-        "直立划船 -> 外旋 -> 推举",
-        "小重量，专注于肩袖热身或强化",
-        "动作连贯控制"
-      ],
-      "common_mistakes": [
-        "重量过大",
-        "动作分解不清晰",
-        "耸肩严重"
-      ]
-    },
-    {
-      "name": "杠铃片前平举 (驾驶员)",
-      "primary_muscle": ["Anterior Deltoid"],
-      "secondary_muscle": ["Core"],
-      "equipment": "Plate",
-      "difficulty": "Beginner",
-      "cues": [
-        "双手对握杠铃片",
-        "举平后可以像方向盘一样左右转动增加刺激",
-        "保持核心收紧"
-      ],
-      "common_mistakes": [
-        "身体晃动",
-        "杠铃片打到脸",
-        "手臂弯曲太多"
-      ]
-    },
-    {
-      "name": "身后绳索侧平举",
-      "primary_muscle": ["Medial Deltoid"],
-      "secondary_muscle": [],
-      "equipment": "Cable Machine",
-      "difficulty": "Advanced",
-      "cues": [
-        "拉力器在身后，防止借力",
-        "更能拉伸中束",
-        "身体微前倾"
-      ],
-      "common_mistakes": [
-        "身体转动",
-        "拉的角度不对刮到屁股"
-      ]
-    },
-    {
-      "name": "林恩推举 (Lean-Away Lateral Raise)",
-      "primary_muscle": ["Medial Deltoid"],
-      "secondary_muscle": [],
-      "equipment": "Dumbbell, Rack",
-      "difficulty": "Intermediate",
-      "cues": [
-        "单手抓柱子身体倾斜",
-        "增加中束的活动范围和拉伸",
-        "手臂举至水平"
-      ],
-      "common_mistakes": [
-        "手臂举太高",
-        "借力摆动"
-      ]
-    },
-    {
-      "name": "倒立撑 (Handstand Push-up)",
-      "primary_muscle": ["Anterior Deltoid", "Triceps"],
-      "secondary_muscle": ["Core"],
-      "equipment": "Wall/Bodyweight",
-      "difficulty": "Advanced",
-      "cues": [
-        "靠墙保持身体笔直",
-        "头部轻轻触地即起",
-        "肘部微内收保护肩膀"
-      ],
-      "common_mistakes": [
-        "腰部过度塌陷（香蕉背）",
-        "头部撞击地面",
-        "手距过宽"
-      ]
     }
   ],
   "Arms": {
     "Biceps": [
       {
         "name": "杠铃弯举",
-        "primary_muscle": ["Biceps Brachii"],
-        "secondary_muscle": ["Forearms"],
+        "primary_muscle": [
+          "Biceps Brachii"
+        ],
+        "secondary_muscle": [
+          "Forearms"
+        ],
         "equipment": "Barbell",
         "difficulty": "Beginner",
         "cues": [
@@ -1518,8 +790,12 @@
       },
       {
         "name": "哑铃弯举",
-        "primary_muscle": ["Biceps Brachii"],
-        "secondary_muscle": ["Forearms"],
+        "primary_muscle": [
+          "Biceps Brachii"
+        ],
+        "secondary_muscle": [
+          "Forearms"
+        ],
         "equipment": "Dumbbell",
         "difficulty": "Beginner",
         "cues": [
@@ -1535,8 +811,12 @@
       },
       {
         "name": "上斜哑铃弯举",
-        "primary_muscle": ["Long Head of Biceps"],
-        "secondary_muscle": ["Forearms"],
+        "primary_muscle": [
+          "Long Head of Biceps"
+        ],
+        "secondary_muscle": [
+          "Forearms"
+        ],
         "equipment": "Dumbbell",
         "difficulty": "Intermediate",
         "cues": [
@@ -1552,8 +832,12 @@
       },
       {
         "name": "绳索弯举（绳索/直杆）",
-        "primary_muscle": ["Biceps"],
-        "secondary_muscle": ["Forearms"],
+        "primary_muscle": [
+          "Biceps"
+        ],
+        "secondary_muscle": [
+          "Forearms"
+        ],
         "equipment": "Cable Machine",
         "difficulty": "Beginner",
         "cues": [
@@ -1569,7 +853,9 @@
       },
       {
         "name": "牧师凳弯举",
-        "primary_muscle": ["Biceps (Short Head)"],
+        "primary_muscle": [
+          "Biceps (Short Head)"
+        ],
         "secondary_muscle": [],
         "equipment": "Machine/Barbell",
         "difficulty": "Intermediate",
@@ -1586,8 +872,13 @@
       },
       {
         "name": "锤式弯举",
-        "primary_muscle": ["Brachialis", "Brachioradialis"],
-        "secondary_muscle": ["Biceps"],
+        "primary_muscle": [
+          "Brachialis",
+          "Brachioradialis"
+        ],
+        "secondary_muscle": [
+          "Biceps"
+        ],
         "equipment": "Dumbbell",
         "difficulty": "Beginner",
         "cues": [
@@ -1600,77 +891,14 @@
           "手腕弯曲",
           "速度太快"
         ]
-      },
-      {
-        "name": "集中弯举 (Concentration Curl)",
-        "primary_muscle": ["Biceps Brachii"],
-        "secondary_muscle": [],
-        "equipment": "Dumbbell",
-        "difficulty": "Intermediate",
-        "cues": [
-          "坐姿，手肘抵在大腿内侧",
-          "完全孤立二头肌，无法借力",
-          "顶峰收缩非常重要"
-        ],
-        "common_mistakes": [
-          "身体晃动",
-          "手肘滑动",
-          "手腕卷曲"
-        ]
-      },
-      {
-        "name": "佐特曼弯举 (Zottman Curl)",
-        "primary_muscle": ["Biceps", "Forearms"],
-        "secondary_muscle": [],
-        "equipment": "Dumbbell",
-        "difficulty": "Intermediate",
-        "cues": [
-          "正手弯举起，顶峰翻掌，反手下放",
-          "一鱼两吃，同时练二头和前臂",
-          "离心阶段要慢"
-        ],
-        "common_mistakes": [
-          "翻转太快",
-          "协调性差导致动作变形"
-        ]
-      },
-      {
-        "name": "蜘蛛弯举 (Spider Curl)",
-        "primary_muscle": ["Biceps (Short Head)"],
-        "secondary_muscle": [],
-        "equipment": "Barbell/Dumbbell, Incline Bench",
-        "difficulty": "Intermediate",
-        "cues": [
-          "胸部趴在斜凳上，手臂垂直下垂",
-          "完全消除身体借力",
-          "专注于短头刺激"
-        ],
-        "common_mistakes": [
-          "肩膀用力",
-          "上身抬起"
-        ]
-      },
-      {
-        "name": "反手引体 (偏二头)",
-        "primary_muscle": ["Biceps"],
-        "secondary_muscle": ["Lats"],
-        "equipment": "Bar",
-        "difficulty": "Advanced",
-        "cues": [
-          "窄握，反手",
-          "尽量让二头肌主导拉起",
-          "复合动作之王"
-        ],
-        "common_mistakes": [
-          "完全用背发力",
-          "下放不充分"
-        ]
       }
     ],
     "Triceps": [
       {
         "name": "绳索下压",
-        "primary_muscle": ["Triceps (Lateral Head)"],
+        "primary_muscle": [
+          "Triceps (Lateral Head)"
+        ],
         "secondary_muscle": [],
         "equipment": "Cable Machine",
         "difficulty": "Beginner",
@@ -1687,7 +915,9 @@
       },
       {
         "name": "反手绳索下压",
-        "primary_muscle": ["Triceps (Medial Head)"],
+        "primary_muscle": [
+          "Triceps (Medial Head)"
+        ],
         "secondary_muscle": [],
         "equipment": "Cable Machine",
         "difficulty": "Intermediate",
@@ -1703,43 +933,14 @@
         ]
       },
       {
-        "name": "颅骨粉碎者（法式卧推）",
-        "primary_muscle": ["Triceps (Long Head)"],
-        "secondary_muscle": [],
-        "equipment": "Barbell/Dumbbell",
-        "difficulty": "Intermediate",
-        "cues": [
-          "手肘保持朝内，不要外扩",
-          "下放到头顶前方更安全",
-          "全程保持上臂不动"
-        ],
-        "common_mistakes": [
-          "让杠铃落在额头正上方",
-          "肘外展过大",
-          "动作幅度不够"
-        ]
-      },
-      {
-        "name": "头上臂屈伸（绳索/哑铃）",
-        "primary_muscle": ["Triceps (Long Head)"],
-        "secondary_muscle": [],
-        "equipment": "Cable/Dumbbell",
-        "difficulty": "Beginner",
-        "cues": [
-          "长头需要手臂上举才能完全伸展",
-          "肘锁定在耳朵旁",
-          "动作要慢，不要压到脖子"
-        ],
-        "common_mistakes": [
-          "肘乱跑",
-          "耸肩",
-          "腰弯曲过度"
-        ]
-      },
-      {
         "name": "窄距卧推",
-        "primary_muscle": ["Triceps"],
-        "secondary_muscle": ["Chest", "Front Delts"],
+        "primary_muscle": [
+          "Triceps"
+        ],
+        "secondary_muscle": [
+          "Chest",
+          "Front Delts"
+        ],
         "equipment": "Barbell",
         "difficulty": "Intermediate",
         "cues": [
@@ -1752,204 +953,8 @@
           "肘外展",
           "胸代偿过多"
         ]
-      },
-      {
-        "name": "哑铃后撑 (Kickback)",
-        "primary_muscle": ["Triceps"],
-        "secondary_muscle": [],
-        "equipment": "Dumbbell",
-        "difficulty": "Beginner",
-        "cues": [
-          "上身平行地面，肘部抬高固定",
-          "只动前臂，伸直时停顿",
-          "选用较轻重量"
-        ],
-        "common_mistakes": [
-          "肘部掉落",
-          "像荡秋千一样甩",
-          "上臂不固定"
-        ]
-      },
-      {
-        "name": "板凳臂屈伸 (Bench Dip)",
-        "primary_muscle": ["Triceps"],
-        "secondary_muscle": ["Front Delts"],
-        "equipment": "Bench",
-        "difficulty": "Beginner",
-        "cues": [
-          "双手撑在身后凳子上",
-          "背部贴着凳子边缘下落",
-          "主要练三头，不要耸肩"
-        ],
-        "common_mistakes": [
-          "屁股离凳子太远伤肩",
-          "下放过深",
-          "耸肩"
-        ]
-      },
-      {
-        "name": "泰特推举 (Tate Press)",
-        "primary_muscle": ["Triceps"],
-        "secondary_muscle": [],
-        "equipment": "Dumbbell",
-        "difficulty": "Advanced",
-        "cues": [
-          "平躺，双哑铃相对",
-          "肘部向外打开，哑铃触胸",
-          "专注于三头肌外侧头"
-        ],
-        "common_mistakes": [
-          "变成卧推",
-          "控制不稳砸胸"
-        ]
-      },
-      {
-        "name": "单臂反握绳索下压",
-        "primary_muscle": ["Triceps (Medial/Lateral)"],
-        "secondary_muscle": [],
-        "equipment": "Cable",
-        "difficulty": "Intermediate",
-        "cues": [
-          "不要握把手，直接抓绳头球",
-          "单侧孤立训练",
-          "可以自由调整手腕角度"
-        ],
-        "common_mistakes": [
-          "身体侧倾借力",
-          "肘部没有锁死位置"
-        ]
-      },
-      {
-        "name": "杰曼推举 (JM Press)",
-        "primary_muscle": ["Triceps"],
-        "secondary_muscle": ["Chest"],
-        "equipment": "Barbell/Smith",
-        "difficulty": "Advanced",
-        "cues": [
-          "窄距卧推和法式推举的结合体",
-          "杠铃下放到颈部/下巴位置",
-          "力量举选手最爱的三头辅助动作"
-        ],
-        "common_mistakes": [
-          "手腕压力过大",
-          "轨迹模糊不清"
-        ]
       }
     ],
-    "Forearms": [
-      {
-        "name": "腕弯举",
-        "primary_muscle": ["Forearm Flexors"],
-        "secondary_muscle": [],
-        "equipment": "Barbell/Dumbbell",
-        "difficulty": "Beginner",
-        "cues": [
-          "手腕完全下放再卷起",
-          "前臂放在膝盖或凳上",
-          "不要甩"
-        ],
-        "common_mistakes": [
-          "甩动",
-          "幅度不够",
-          "握太紧导致手疼"
-        ]
-      },
-      {
-        "name": "反向腕弯举",
-        "primary_muscle": ["Forearm Extensors"],
-        "secondary_muscle": [],
-        "equipment": "Barbell/Dumbbell",
-        "difficulty": "Beginner",
-        "cues": [
-          "手背向上抬",
-          "用轻重量高次数",
-          "保持前臂贴紧支撑面"
-        ],
-        "common_mistakes": [
-          "重量太大完全带不动",
-          "动作幅度太小"
-        ]
-      },
-      {
-        "name": "农夫行走",
-        "primary_muscle": ["Forearms"],
-        "secondary_muscle": ["Traps", "Core"],
-        "equipment": "Dumbbell/Kettlebell",
-        "difficulty": "Intermediate",
-        "cues": [
-          "手臂自然下垂",
-          "核心收紧稳定身体",
-          "步伐稳，不要急"
-        ],
-        "common_mistakes": [
-          "走路乱晃",
-          "握力不够乱掉哑铃"
-        ]
-      },
-      {
-        "name": "杠铃片捏握",
-        "primary_muscle": ["Finger Flexors", "Thumb"],
-        "secondary_muscle": [],
-        "equipment": "Plates",
-        "difficulty": "Beginner",
-        "cues": [
-          "用手指捏住杠铃片边缘",
-          "坚持尽可能长的时间",
-          "主要锻炼握持力"
-        ],
-        "common_mistakes": [
-          "使用磨砂面借力",
-          "身体抖动"
-        ]
-      },
-      {
-        "name": "手腕卷重器 (Wrist Roller)",
-        "primary_muscle": ["Forearms (Flexors & Extensors)"],
-        "secondary_muscle": ["Shoulders (Stabilizers)"],
-        "equipment": "Wrist Roller/Rope",
-        "difficulty": "Intermediate",
-        "cues": [
-          "手臂平举伸直",
-          "交替卷动绳索将重物拉起",
-          "控制下放速度，这才是最酸的"
-        ],
-        "common_mistakes": [
-          "手臂下垂偷懒",
-          "卷动速度过快"
-        ]
-      },
-      {
-        "name": "单杠悬垂",
-        "primary_muscle": ["Grip Strength"],
-        "secondary_muscle": ["Lats (Stretch)"],
-        "equipment": "Pull-up Bar",
-        "difficulty": "Beginner",
-        "cues": [
-          "握紧单杠，身体自然下垂",
-          "收紧核心，不要像钟摆一样晃",
-          "坚持至力竭"
-        ],
-        "common_mistakes": [
-          "肩膀完全放松导致关节压力",
-          "憋气"
-        ]
-      },
-      {
-        "name": "反手杠铃弯举 (Reverse Curl)",
-        "primary_muscle": ["Brachioradialis", "Forearm Extensors"],
-        "secondary_muscle": ["Biceps"],
-        "equipment": "Barbell",
-        "difficulty": "Intermediate",
-        "cues": [
-          "手背朝上握杠",
-          "主要刺激前臂上侧",
-          "手腕保持锁定中立"
-        ],
-        "common_mistakes": [
-          "手腕向下掉",
-          "借力甩起"
-        ]
-      }
-    ]
+    "Forearms": []
   }
 }
