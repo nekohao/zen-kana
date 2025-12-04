@@ -155,10 +155,60 @@
         );
 
         // --- 1. 数据模型与存储 ---
-        const STORAGE_KEY = 'iron_app_data_v8_ultimate'; 
+        const STORAGE_KEY = 'iron_app_data_v9_preset'; // 更新版本号以加载新默认值
         const initialData = {
-            templates: [],        
-            customExercises: [],  
+            templates: [
+                {
+                    id: 'tpl_chest',
+                    name: '胸部训练',
+                    exercises: ['ex_bench_press', 'ex_incline_hammer', 'ex_machine_fly', 'ex_dips']
+                },
+                {
+                    id: 'tpl_back',
+                    name: '背部训练',
+                    exercises: ['ex_lat_pulldown', 'ex_seated_row', 'ex_wide_row', 'ex_reverse_pulldown']
+                },
+                {
+                    id: 'tpl_legs',
+                    name: '腿部训练',
+                    exercises: ['ex_leg_ext', 'ex_leg_curl', 'ex_hip_add', 'ex_crunch']
+                },
+                {
+                    id: 'tpl_arm_shoulder',
+                    name: '手臂和肩部训练',
+                    exercises: ['ex_cable_curl', 'ex_hammer_curl', 'ex_dips', 'ex_pushdown', 'ex_hammer_shoulder', 'ex_machine_lateral']
+                }
+            ],        
+            customExercises: [
+                // 胸
+                { id: 'ex_bench_press', name: '平板杠铃卧推', category: 'CHEST' },
+                { id: 'ex_incline_hammer', name: '上斜悍马卧推', category: 'CHEST' },
+                { id: 'ex_machine_fly', name: '器械飞鸟', category: 'CHEST' },
+                { id: 'ex_dips', name: '双杠臂屈伸', category: 'ARMS' }, // 双杠通常也可以算胸或三头，这里方便复用
+                
+                // 背
+                { id: 'ex_lat_pulldown', name: '高位下拉', category: 'BACK' },
+                { id: 'ex_seated_row', name: '坐姿划船', category: 'BACK' },
+                { id: 'ex_wide_row', name: '坐姿宽握划船', category: 'BACK' },
+                { id: 'ex_reverse_pulldown', name: '反手下拉', category: 'BACK' },
+
+                // 腿
+                { id: 'ex_leg_ext', name: '坐姿腿屈伸', category: 'LEGS' },
+                { id: 'ex_leg_curl', name: '坐姿腿弯举', category: 'LEGS' },
+                { id: 'ex_hip_add', name: '坐姿髋内收', category: 'LEGS' },
+                
+                // 腹
+                { id: 'ex_crunch', name: '卷腹', category: 'ABS' },
+
+                // 手臂
+                { id: 'ex_cable_curl', name: '绳索弯举', category: 'ARMS' },
+                { id: 'ex_hammer_curl', name: '绳索锤式弯举', category: 'ARMS' },
+                { id: 'ex_pushdown', name: '直杆下压', category: 'ARMS' },
+                
+                // 肩
+                { id: 'ex_hammer_shoulder', name: '悍马机推肩', category: 'SHOULDERS' },
+                { id: 'ex_machine_lateral', name: '器械侧平举', category: 'SHOULDERS' }
+            ],  
             history: [],
             importedLibrary: [],
             userStats: { 
@@ -926,7 +976,7 @@
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-white/5 text-xs text-zinc-500 text-center space-y-1">
                                     <p>已经链接动作库：{fullLibrary.length} 个动作</p>
-                                    <p>IRON 版本：v1.1-12.4</p>
+                                    <p>IRON 版本：v8.1</p>
                                 </div>
                             </div>
                         </div>
