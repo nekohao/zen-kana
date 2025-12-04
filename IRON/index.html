@@ -327,6 +327,107 @@
             return <i ref={iconRef} data-lucide={name} onClick={onClick}></i>;
         };
 
+        // --- 新增: 日历组件 ---
+        const CalendarWidget = ({ history }) => {
+            const [currentDate, setCurrentDate] = useState(new Date());
+            const [selectedDateStr, setSelectedDateStr] = useState(new Date().toDateString());
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDay = new Date(year, month, 1).getDay(); 
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            const days = [];
+            for (let i = 0; i < firstDay; i++) days.push(null);
+            for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
+
+            const logMap = useMemo(() => {
+                const map = {};
+                history.forEach(h => {
+                    const d = new Date(h.date).toDateString();
+                    if (!map[d]) map[d] = [];
+                    map[d].push(h);
+                });
+                return map;
+            }, [history]);
+
+            const selectedLogs = logMap[selectedDateStr] || [];
+            
+            const changeMonth = (offset) => {
+                setCurrentDate(new Date(year, month + offset, 1));
+            };
+
+            return (
+                <div className="mt-8 animate-slide-up pb-safe">
+                    <div className="flex justify-between items-center mb-4 px-2">
+                        <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                             <Icon name="calendar" size={18} className="text-primary"/> 训练日历
+                        </h3>
+                        <div className="flex gap-4 text-zinc-400 items-center">
+                            <button onClick={()=>changeMonth(-1)} className="p-2 hover:bg-white/5 rounded-full transition-colors hover:text-white"><Icon name="chevron-left" size={20}/></button>
+                            <span className="font-mono font-bold text-white text-base w-32 text-center">{monthNames[month]} <span className="text-zinc-500 text-sm">{year}</span></span>
+                            <button onClick={()=>changeMonth(1)} className="p-2 hover:bg-white/5 rounded-full transition-colors hover:text-white"><Icon name="chevron-right" size={20}/></button>
+                        </div>
+                    </div>
+
+                    <div className="bg-surfaceHighlight/30 border border-white/5 rounded-3xl p-4 backdrop-blur-md">
+                        <div className="grid grid-cols-7 mb-3 text-center">
+                            {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-[10px] font-bold text-zinc-600">{d}</div>)}
+                        </div>
+                        <div className="grid grid-cols-7 gap-y-3 gap-x-1">
+                            {days.map((date, i) => {
+                                if (!date) return <div key={i}></div>;
+                                const dateStr = date.toDateString();
+                                const hasLog = logMap[dateStr];
+                                const isSelected = selectedDateStr === dateStr;
+                                const isToday = new Date().toDateString() === dateStr;
+                                
+                                return (
+                                    <div key={i} onClick={() => setSelectedDateStr(dateStr)} className="flex flex-col items-center cursor-pointer relative group">
+                                        <div className={`w-9 h-9 flex items-center justify-center rounded-full text-xs font-bold transition-all relative z-10 
+                                            ${isSelected ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'text-zinc-400 hover:bg-white/5'}
+                                            ${!isSelected && hasLog ? 'text-white font-black' : ''}
+                                            ${isToday && !isSelected ? 'border border-primary text-primary' : ''}
+                                        `}>
+                                            {date.getDate()}
+                                        </div>
+                                        {/* Dot Indicator for Log */}
+                                        {hasLog && (
+                                            <div className={`w-1.5 h-1.5 rounded-full mt-1 ${isSelected ? 'bg-black' : 'bg-primary shadow-glow'}`}></div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="mt-4 space-y-3 min-h-[50px]">
+                        {selectedLogs.length > 0 ? selectedLogs.map(log => (
+                            <div key={log.id} className="bg-card-gradient border border-white/5 rounded-2xl p-4 flex justify-between items-center animate-fade-in">
+                                <div>
+                                    <div className="text-white font-bold text-sm mb-1">{log.name || (log.type === 'cardio' ? 'Cardio Session' : 'Training Session')}</div>
+                                    <div className="flex gap-3 text-[10px] text-zinc-500 font-mono uppercase">
+                                        {log.type === 'strength' ? (
+                                            <span className="text-zinc-300">Vol: <span className="text-white">{log.volume}</span> kg</span>
+                                        ) : (
+                                            <span className="text-zinc-300">Burn: <span className="text-white">{Math.round(log.calories)}</span> kcal</span>
+                                        )}
+                                        <span>{Math.floor(log.duration / 60)} min</span>
+                                    </div>
+                                </div>
+                                <div className={`w-1.5 h-8 rounded-full ${log.type==='strength'?'bg-primary':'bg-orange'}`}></div>
+                            </div>
+                        )) : (
+                            <div className="text-center py-4 text-zinc-700 text-xs font-mono uppercase tracking-widest">No Activity on this day</div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
         // --- 5. 主程序 ---
         const App = () => {
             const [appData, setAppData] = useStorage();
@@ -382,12 +483,12 @@
                 reader.readAsText(file);
             };
 
-            const startWorkout = (exercises = []) => {
+            const startWorkout = (exercises = [], name = '自由训练') => {
                 const exObjects = exercises.map(exId => {
                     const found = fullLibrary.find(e => e.id === exId);
                     return found ? { ...found, sets: [{ id: Date.now(), weight: '', reps: '', rpe: '', completed: false }] } : null;
                 }).filter(Boolean);
-                setActiveWorkoutData({ exercises: exObjects, startTime: new Date() });
+                setActiveWorkoutData({ exercises: exObjects, startTime: new Date(), name: name });
                 setView('workout');
             };
 
@@ -415,7 +516,8 @@
                     date: endTime.toISOString(),
                     duration: Math.floor((endTime - activeWorkoutData.startTime) / 1000),
                     volume: recoveryResult.volume,
-                    muscles: Object.keys(recoveryResult.recoveryMap)
+                    muscles: Object.keys(recoveryResult.recoveryMap),
+                    name: activeWorkoutData.name
                 };
 
                 setAppData(prev => ({
@@ -511,7 +613,8 @@
                         date: new Date().toISOString(), 
                         duration: parseFloat(duration)*60, 
                         calories: result, 
-                        details: {type, speed, incline} 
+                        details: {type, speed, incline},
+                        name: 'Cardio ' + new Date().toLocaleDateString()
                     };
                     setAppData(prev => ({
                         ...prev, 
@@ -630,7 +733,13 @@
                     <div className="min-h-screen pb-safe flex flex-col animate-slide-up bg-background relative">
                         <BackgroundGlow />
                         <div className="header-spacing px-4 border-b border-white/10 flex justify-between items-center nav-glass sticky top-0 z-10">
-                            <button onClick={() => setIsCreatingTemplate(false)} className="text-zinc-400 text-sm font-medium">取消</button>
+                            {/* 修改：取消按钮会重置状态 */}
+                            <button onClick={() => {
+                                setIsCreatingTemplate(false);
+                                setNewTemplateName('');
+                                setNewTemplateExercises([]);
+                            }} className="text-zinc-400 text-sm font-medium">取消</button>
+                            
                             <span className="font-bold text-white flex items-center gap-2">新计划</span>
                             <button onClick={() => {
                                 if(!newTemplateName) return alert('请输入名称');
@@ -648,7 +757,8 @@
                                     {newTemplateExercises.map((ex, i) => (
                                         <div key={i} className="p-4 bg-card-gradient border border-white/5 rounded-2xl flex justify-between items-center">
                                             <span className="text-white font-medium">{ex.name}</span>
-                                            <button onClick={() => setNewTemplateExercises(prev => prev.filter((_, idx) => idx !== i))} className="text-danger/80 hover:text-danger"><Icon name="minus-circle" size={20}/></button>
+                                            {/* 修改：删除按钮 */}
+                                            <button onClick={() => setNewTemplateExercises(prev => prev.filter((_, idx) => idx !== i))} className="w-10 h-10 flex items-center justify-center text-danger/80 hover:text-danger active:scale-95 transition-all bg-white/5 rounded-full"><Icon name="minus-circle" size={20}/></button>
                                         </div>
                                     ))}
                                     <button onClick={() => setShowExerciseSelector(true)} className="w-full py-4 bg-white/5 border border-white/10 border-dashed rounded-2xl text-primary font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all hover:bg-white/10"><Icon name="plus" size={18} /> 添加动作</button>
@@ -788,6 +898,8 @@
                                     <div className="text-[10px] font-bold text-zinc-500 uppercase mt-1">Volume (Ton)</div>
                                 </div>
                             </div>
+
+                            <CalendarWidget history={appData.history} />
                         </div>
                         <BottomNav />
                     </div>
@@ -814,7 +926,7 @@
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-white/5 text-xs text-zinc-500 text-center space-y-1">
                                     <p>已经链接动作库：{fullLibrary.length} 个动作</p>
-                                    <p>IRON 版本：v8.1</p>
+                                    <p>IRON 版本：v1.1-12.4</p>
                                 </div>
                             </div>
                         </div>
@@ -831,7 +943,7 @@
                             </div>
                         ) : (
                             appData.templates.map(t => (
-                                <div key={t.id} onClick={() => startWorkout(t.exercises)} className="group bg-card-gradient backdrop-blur-sm border border-white/5 rounded-2xl p-5 flex justify-between items-center active:scale-[0.99] transition-all cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                                <div key={t.id} onClick={() => startWorkout(t.exercises, t.name)} className="group bg-card-gradient backdrop-blur-sm border border-white/5 rounded-2xl p-5 flex justify-between items-center active:scale-[0.99] transition-all cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-800 to-black flex items-center justify-center border border-white/5 text-primary group-hover:text-white transition-colors"><span className="font-mono font-bold text-lg">{t.name.charAt(0).toUpperCase()}</span></div>
                                         <div><h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">{t.name}</h3><p className="text-xs text-zinc-500 mt-1 font-mono">{t.exercises.length} MOVES</p></div>
