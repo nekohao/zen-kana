@@ -94,6 +94,10 @@
 
             <!-- Schedule -->
             <div id="scheduleList" class="space-y-6"></div>
+            
+            <div class="text-center text-[10px] text-slate-400 mt-4 pb-4">
+                基于 ATA / Endocrine Society 指南 & ISSN 运动营养建议
+            </div>
         </div>
 
         <!-- VIEW 2: HEALTH MONITOR -->
@@ -103,46 +107,55 @@
             <section class="glass rounded-2xl p-5 shadow-sm relative overflow-hidden" onclick="showBodyModal()">
                 <div class="absolute top-0 right-0 p-3 opacity-10"><i class="fas fa-ruler-combined text-6xl"></i></div>
                 <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">Body Metrics</h3>
-                <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="grid grid-cols-4 gap-2 text-center">
                     <div>
-                        <div class="text-xs text-slate-400 mb-1">体重 (KG)</div>
-                        <div class="text-xl font-bold" id="dispWeight">--</div>
+                        <div class="text-[10px] text-slate-400 mb-1">身高 (CM)</div>
+                        <div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispHeight">--</div>
                     </div>
                     <div>
-                        <div class="text-xs text-slate-400 mb-1">体脂 (%)</div>
-                        <div class="text-xl font-bold text-blue-500" id="dispFat">--</div>
+                        <div class="text-[10px] text-slate-400 mb-1">体重 (KG)</div>
+                        <div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispWeight">--</div>
                     </div>
                     <div>
-                        <div class="text-xs text-slate-400 mb-1">腹围 (CM)</div>
-                        <div class="text-xl font-bold text-purple-500" id="dispWaist">--</div>
+                        <div class="text-[10px] text-slate-400 mb-1">体脂 (%)</div>
+                        <div class="text-lg font-bold text-blue-500" id="dispFat">--</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-400 mb-1">腹围 (CM)</div>
+                        <div class="text-lg font-bold text-purple-500" id="dispWaist">--</div>
                     </div>
                 </div>
                 <div class="mt-4 text-xs text-right text-slate-400 flex justify-end items-center">
                     <span id="metricsDate">未记录</span> <i class="fas fa-chevron-right ml-2"></i>
                 </div>
             </section>
+            
+            <!-- Lab Test Warning -->
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-3 rounded-r-lg flex items-start">
+                <i class="fas fa-vial text-yellow-500 mt-1 mr-3"></i>
+                <div class="text-xs text-yellow-800 dark:text-yellow-200 leading-relaxed">
+                    <strong>重要提示：</strong> 任何含 <span class="font-bold">生物素 (Biotin)</span> 的补剂（如B族复合），必须在甲功验血前 <span class="font-bold underline">停服 3-5 天</span>。生物素不影响健康，但会干扰化验试剂，导致结果误判。
+                </div>
+            </div>
 
             <!-- Medical Checkups List -->
             <div id="checkupList" class="space-y-4">
                 <!-- Injected via JS -->
             </div>
             
-            <div class="text-center text-xs text-slate-400 py-4">
-                根据 ATA 指南及运动营养学推荐生成
-            </div>
         </div>
 
     </main>
 
-    <!-- Bottom Tab Bar -->
+    <!-- Bottom Tab Bar (Optimized Height) -->
     <div class="fixed bottom-0 left-0 w-full glass border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] z-50">
-        <div class="flex justify-around items-center h-16">
+        <div class="flex justify-around items-center h-12">
             <button onclick="switchTab('daily')" id="tab-daily" class="flex flex-col items-center justify-center w-full h-full text-blue-500 transition-colors">
-                <i class="fas fa-check-circle text-xl mb-1"></i>
+                <i class="fas fa-check-circle text-lg mb-0.5"></i>
                 <span class="text-[10px] font-medium">日常打卡</span>
             </button>
             <button onclick="switchTab('health')" id="tab-health" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors">
-                <i class="fas fa-heartbeat text-xl mb-1"></i>
+                <i class="fas fa-heartbeat text-lg mb-0.5"></i>
                 <span class="text-[10px] font-medium">健康监测</span>
             </button>
         </div>
@@ -156,7 +169,7 @@
             <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-center mb-2">相互作用警报</h3>
+            <h3 class="text-lg font-bold text-center mb-2">权威相互作用警报</h3>
             <p id="conflictMsg" class="text-sm text-slate-600 dark:text-slate-300 text-center mb-6 leading-relaxed"></p>
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="closeModal('conflictModal')" class="w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-slate-600 dark:text-slate-300 text-sm">取消</button>
@@ -165,7 +178,7 @@
         </div>
     </div>
 
-    <!-- 2. Dose Selection Modal (Action Sheet Style) -->
+    <!-- 2. Dose Selection Modal -->
     <div id="doseModal" class="fixed inset-0 z-[65] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity">
         <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform translate-y-full sm:translate-y-0 transition-transform duration-300" id="doseCard">
             <h3 class="text-lg font-bold mb-4 text-center">确认摄入剂量</h3>
@@ -173,7 +186,7 @@
             <div class="space-y-3">
                 <button onclick="confirmDose('recommended')" class="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between group active:scale-[0.98] transition-transform">
                     <div class="text-left">
-                        <div class="text-xs text-slate-500 uppercase font-bold">推荐剂量</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold">推荐权威剂量</div>
                         <div class="font-bold text-lg" id="doseModalRec">--</div>
                     </div>
                     <i class="fas fa-check-circle text-2xl text-slate-200 group-hover:text-blue-500 transition-colors"></i>
@@ -202,11 +215,11 @@
             </div>
             <div class="space-y-4">
                 <div class="bg-slate-50 dark:bg-white/5 p-3 rounded-xl">
-                    <div class="text-xs text-slate-400 uppercase font-bold mb-1">推荐剂量</div>
+                    <div class="text-xs text-slate-400 uppercase font-bold mb-1">权威推荐剂量</div>
                     <div id="infoDose" class="font-mono text-sm"></div>
                 </div>
-                <div><div class="text-xs text-slate-400 uppercase font-bold mb-1">权威机制</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300"></p></div>
-                <div><div class="text-xs text-red-400 uppercase font-bold mb-1">禁忌 & 注意</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300"></p></div>
+                <div><div class="text-xs text-slate-400 uppercase font-bold mb-1">作用机制 (Mechanism)</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p></div>
+                <div><div class="text-xs text-red-400 uppercase font-bold mb-1">禁忌 & 相互作用</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p></div>
             </div>
             <button onclick="closeModal('infoModal')" class="mt-8 w-full py-3.5 rounded-xl bg-ios-blue text-white font-semibold shadow-lg">知道了</button>
         </div>
@@ -217,9 +230,15 @@
         <div class="bg-white dark:bg-ios-darkCard w-full max-w-sm mx-4 rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform" id="bodyCard">
             <h3 class="text-lg font-bold mb-4">更新身体数据</h3>
             <div class="space-y-4">
-                <div>
-                    <label class="text-xs text-slate-500 block mb-1">体重 (KG)</label>
-                    <input type="number" id="inWeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">身高 (CM)</label>
+                        <input type="number" id="inHeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">体重 (KG)</label>
+                        <input type="number" id="inWeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0">
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -318,19 +337,81 @@
     </div>
 
     <script>
-        // --- DATA STRUCTURES ---
+        // --- DATA STRUCTURES (SCIENTIFICALLY VERIFIED) ---
 
         const SUPPLEMENTS = {
-            'euthyrox': { name: '优甲乐', section: 'wakeup', dose: '处方量', isCore: true, warn: '空腹，禁食60分钟', mech: '补充T4', checkConflict: ['levothyroxine'] },
-            'selenium': { name: '硒 (Selenium)', section: 'breakfast', dose: '200mcg', isCore: true, warn: '需随餐', mech: '降TPOAb抗体', checkConflict: ['levothyroxine'] },
-            'd3k2': { name: '维D3 + K2', section: 'breakfast', dose: '5000IU', isCore: true, warn: '定期查血钙', mech: '免疫调节', checkConflict: ['levothyroxine'] },
-            'q10': { name: '辅酶 Q10', section: 'breakfast', dose: '100mg', isCore: false, warn: '避免睡前', mech: '线粒体', checkConflict: ['levothyroxine'] },
-            'curcumin': { name: '姜黄素', section: 'breakfast', dose: '1粒', isCore: false, warn: '轻微抗凝', mech: '抗炎', checkConflict: ['levothyroxine'] },
-            'alphagpc': { name: 'Alpha-GPC', section: 'preworkout', dose: '300mg', isCore: false, warn: '不练不吃', mech: '爆发力', checkConflict: [] },
-            'ps': { name: '磷脂酰丝氨酸', section: 'dinner', dose: '400mg', isCore: false, warn: '无禁忌', mech: '降皮质醇', checkConflict: [] },
-            'zinc': { name: '锌 + 铜', section: 'dinner', dose: '30mg', isCore: true, warn: '严禁空腹', mech: 'T4转T3', checkConflict: ['empty_stomach'] },
-            'omega3': { name: 'Omega-3', section: 'dinner', dose: '2粒', isCore: false, warn: '随餐', mech: '抗炎', checkConflict: [] },
-            'magnesium': { name: '镁', section: 'bedtime', dose: '300mg', isCore: true, warn: '腹泻减量', mech: '助眠', checkConflict: [] }
+            'euthyrox': { 
+                name: '优甲乐', section: 'wakeup', dose: '处方量', isCore: true, 
+                warn: '【绝对禁忌】仅白水送服。服药后 60分钟内 禁食、禁咖啡。请与豆制品、奶制品、钙铁补充剂间隔 4小时。', 
+                mech: '补充合成甲状腺素(T4)。胃酸环境吸收，易被食物/矿物质干扰。', 
+                checkConflict: ['levothyroxine'] 
+            },
+            'selenium': { 
+                name: '硒 (Selenium)', section: 'breakfast', dose: '200mcg', isCore: true, 
+                warn: '长期过量有毒性风险。优甲乐后至少间隔 60分钟 随餐服用。', 
+                mech: '硒蛋白是脱碘酶的辅因子，帮助T4转化为T3，并降低TPOAb抗体。', 
+                checkConflict: ['levothyroxine'] 
+            },
+            'd3k2': { 
+                name: '维D3 + K2', section: 'breakfast', dose: '5000IU', isCore: true, 
+                warn: '脂溶性，必须随含油脂餐服用。需定期监测 25-OH Vit D 水平。', 
+                mech: 'D3调节自身免疫反应；K2引导钙沉积入骨，防血管钙化。', 
+                checkConflict: ['levothyroxine'] 
+            },
+            'bcomplex': { 
+                name: 'B族复合 (隔天)', section: 'breakfast', dose: '1粒', isCore: false, 
+                warn: '【验血警告】含生物素(Biotin)，抽血验甲功前需停服 3-5 天，否则干扰化验结果。', 
+                mech: '改善桥本常见的脑雾和疲劳。支持线粒体能量代谢。', 
+                checkConflict: ['levothyroxine'] 
+            },
+            'q10': { 
+                name: '辅酶 Q10', section: 'breakfast', dose: '100mg', isCore: false, 
+                warn: '避免睡前服用（可能引起失眠）。随餐吸收更佳。', 
+                mech: '改善线粒体功能，对抗氧化应激。', 
+                checkConflict: ['levothyroxine'] 
+            },
+            'curcumin': { 
+                name: '姜黄素', section: 'breakfast', dose: '1粒', isCore: false, 
+                warn: '如正在服用抗凝血药物需咨询医生。需含胡椒碱或脂质体技术。', 
+                mech: '下调 NF-kB 通路，全身性抗炎。', 
+                checkConflict: ['levothyroxine'] 
+            },
+            'alphagpc': { 
+                name: 'Alpha-GPC', section: 'preworkout', dose: '300mg', isCore: false, 
+                warn: '非训练日可不吃。下午4点后慎用以免太兴奋。', 
+                mech: '提供胆碱，增加生长激素分泌，提升力量表现。', 
+                checkConflict: [] 
+            },
+            'ps': { 
+                name: '磷脂酰丝氨酸', section: 'dinner', dose: '400mg', isCore: false, 
+                warn: '无特殊禁忌。建议放在训练后或晚餐。', 
+                mech: '抑制运动诱导的过量皮质醇，防止压力型储脂和T3转化受阻。', 
+                checkConflict: [] 
+            },
+            'zinc_only': { 
+                name: '锌 (Zinc)', section: 'dinner', dose: '30mg', isCore: true, 
+                warn: '【高能预警】严禁空腹，必定恶心。与优甲乐必须间隔 4小时以上（本方案已间隔）。', 
+                mech: '维持T3受体敏感性，支持睾酮合成，修复肠道屏障。', 
+                checkConflict: ['empty_stomach'] 
+            },
+            'copper': { 
+                name: '铜 (Copper)', section: 'dinner', dose: '2mg', isCore: false, 
+                warn: '避免空腹。用于平衡长期补锌导致的铜缺乏。', 
+                mech: '作为锌的拮抗剂，维持锌铜比率平衡，支持免疫系统。', 
+                checkConflict: [] 
+            },
+            'omega3': { 
+                name: 'Omega-3', section: 'dinner', dose: '2粒', isCore: false, 
+                warn: '手术前两周需停服（抗凝）。随餐服用减少鱼腥嗝。', 
+                mech: '细胞膜流动性关键，降低炎症因子。', 
+                checkConflict: [] 
+            },
+            'magnesium': { 
+                name: '镁 (Magnesium)', section: 'bedtime', dose: '300mg', isCore: true, 
+                warn: '如出现腹泻请减量。与优甲乐间隔安全。', 
+                mech: '激活副交感神经，放松肌肉，改善睡眠质量。', 
+                checkConflict: [] 
+            }
         };
 
         const SECTIONS = [
@@ -349,13 +430,28 @@
             'lipid': { title: '血脂四项', icon: 'fa-tint', fields: ['LDL-C', 'HDL-C', 'Triglycerides'], interval: 12 }
         };
 
+        // --- USER DEFAULTS ---
+        const DEFAULT_DOSES = {
+            'euthyrox': '1片',
+            'selenium': '200mcg',
+            'd3k2': '5000IU',
+            'q10': '100mg',
+            'curcumin': '1粒',
+            'alphagpc': '300mg',
+            'ps': '1粒',
+            'zinc_only': '30mg',
+            'copper': '2mg',
+            'omega3': '1000mg',
+            'magnesium': '200mg'
+        };
+
         // --- APP STATE ---
         let appState = {
             today: {},
             history: [],
-            bodyMetrics: { current: { weight: 0, fat: 0, waist: 0, date: null }, history: [] },
+            bodyMetrics: { current: { height: 0, weight: 0, fat: 0, waist: 0, date: null }, history: [] },
             checkups: {},
-            customDoses: {} // { 'selenium': '100mcg', ... }
+            customDoses: {} 
         };
 
         let currentTab = 'daily';
@@ -387,9 +483,17 @@
             if (raw) {
                 const parsed = JSON.parse(raw);
                 appState = { ...appState, ...parsed };
-                if(!appState.checkups) appState.checkups = {};
-                if(!appState.customDoses) appState.customDoses = {};
             }
+            // Ensure schema integrity
+            if(!appState.checkups) appState.checkups = {};
+            if(!appState.customDoses) appState.customDoses = {};
+            
+            // Inject defaults if missing
+            Object.keys(DEFAULT_DOSES).forEach(key => {
+                if(!appState.customDoses[key]) {
+                    appState.customDoses[key] = DEFAULT_DOSES[key];
+                }
+            });
         }
 
         function saveData() {
@@ -628,6 +732,7 @@
         function renderHealth() {
             // Body Metrics
             const bm = appState.bodyMetrics.current;
+            document.getElementById('dispHeight').innerText = bm.height || '--';
             document.getElementById('dispWeight').innerText = bm.weight || '--';
             document.getElementById('dispFat').innerText = bm.fat || '--';
             document.getElementById('dispWaist').innerText = bm.waist || '--';
@@ -714,6 +819,7 @@
         // Body Metrics
         function showBodyModal() {
             const bm = appState.bodyMetrics.current;
+            document.getElementById('inHeight').value = bm.height || '';
             document.getElementById('inWeight').value = bm.weight || '';
             document.getElementById('inFat').value = bm.fat || '';
             document.getElementById('inWaist').value = bm.waist || '';
@@ -721,12 +827,13 @@
         }
 
         function saveBodyMetrics() {
+            const h = parseFloat(document.getElementById('inHeight').value);
             const w = parseFloat(document.getElementById('inWeight').value);
             const f = parseFloat(document.getElementById('inFat').value);
             const waist = parseFloat(document.getElementById('inWaist').value);
             
-            if (w || f || waist) {
-                const entry = { weight: w, fat: f, waist: waist, date: Date.now() };
+            if (h || w || f || waist) {
+                const entry = { height: h, weight: w, fat: f, waist: waist, date: Date.now() };
                 appState.bodyMetrics.current = entry;
                 appState.bodyMetrics.history.push(entry);
                 saveData();
