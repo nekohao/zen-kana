@@ -63,6 +63,33 @@
         /* Tab Transition */
         .view-section { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
         .view-section.active { display: block; opacity: 1; }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #007AFF;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #E5E5EA;
+            border-radius: 2px;
+        }
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #38383A;
+        }
     </style>
 </head>
 <body class="h-full flex flex-col text-slate-900 dark:text-white transition-colors duration-300 select-none overflow-hidden">
@@ -147,18 +174,22 @@
 
     </main>
 
-    <!-- Bottom Tab Bar (Optimized Height) -->
-    <div class="fixed bottom-0 left-0 w-full glass border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] z-50">
-        <div class="flex justify-around items-center h-12">
-            <button onclick="switchTab('daily')" id="tab-daily" class="flex flex-col items-center justify-center w-full h-full text-blue-500 transition-colors">
-                <i class="fas fa-check-circle text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium">日常打卡</span>
-            </button>
-            <button onclick="switchTab('health')" id="tab-health" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors">
-                <i class="fas fa-heartbeat text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium">健康监测</span>
-            </button>
-        </div>
+    <!-- Bottom Tab Bar (Dynamic Floating Pill) -->
+    <!-- The style attribute is dynamically updated by JS -->
+    <div id="bottomNavBar" class="fixed left-1/2 transform -translate-x-1/2 glass z-50 transition-all duration-300 shadow-2xl overflow-hidden flex justify-around items-center" 
+         style="bottom: 24px; width: 90%; height: 60px; border-radius: 30px;">
+        
+        <button onclick="switchTab('daily')" id="tab-daily" class="flex-1 flex flex-col items-center justify-center h-full text-blue-500 transition-colors active:scale-90 duration-200">
+            <i class="fas fa-check-circle text-xl mb-0.5"></i>
+            <span class="text-[10px] font-medium nav-label">日常打卡</span>
+        </button>
+        
+        <div class="w-[1px] h-6 bg-slate-300 dark:bg-slate-700 opacity-50 rounded-full"></div>
+
+        <button onclick="switchTab('health')" id="tab-health" class="flex-1 flex flex-col items-center justify-center h-full text-slate-400 transition-colors active:scale-90 duration-200">
+            <i class="fas fa-heartbeat text-xl mb-0.5"></i>
+            <span class="text-[10px] font-medium nav-label">健康监测</span>
+        </button>
     </div>
 
     <!-- MODALS -->
@@ -311,10 +342,42 @@
 
     <!-- 6. Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
-        <div class="bg-white dark:bg-ios-darkCard w-4/5 max-w-sm rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform" id="settingsCard">
-            <h3 class="text-lg font-bold mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">设置 & 数据</h3>
+        <div class="bg-white dark:bg-ios-darkCard w-4/5 max-w-sm rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform max-h-[85vh] overflow-y-auto no-scrollbar" id="settingsCard">
+            <h3 class="text-lg font-bold mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">设置 & 个性化</h3>
             
+            <!-- UI Customization -->
+            <div class="mb-6">
+                <div class="text-xs text-slate-500 font-bold uppercase mb-3">界面自定义 (UI Lab)</div>
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl space-y-4">
+                    
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-600 dark:text-slate-300">底部栏宽度 (Width)</span>
+                            <span id="uiWidthVal" class="font-mono text-blue-500">92%</span>
+                        </div>
+                        <input type="range" id="uiWidth" min="40" max="100" value="92" oninput="updateUI()">
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                            <span>极简胶囊</span><span>全屏通栏</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-600 dark:text-slate-300">底部垂直偏移 (Offset)</span>
+                            <span id="uiOffsetVal" class="font-mono text-blue-500">24px</span>
+                        </div>
+                        <input type="range" id="uiOffset" min="0" max="60" value="24" oninput="updateUI()">
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                            <span>贴底</span><span>悬浮</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Data Management -->
             <div class="space-y-3">
+                <div class="text-xs text-slate-500 font-bold uppercase mb-1">数据管理</div>
                 <button onclick="exportData()" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 transition">
                     <span class="font-medium text-sm">导出数据备份 (JSON)</span>
                     <i class="fas fa-file-export text-slate-400"></i>
@@ -332,7 +395,7 @@
                 </button>
             </div>
 
-            <button onclick="closeModal('settingsModal')" class="mt-6 w-full py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-semibold text-sm">关闭</button>
+            <button onclick="closeModal('settingsModal')" class="mt-6 w-full py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-semibold text-sm">保存并关闭</button>
         </div>
     </div>
 
@@ -430,7 +493,7 @@
             'lipid': { title: '血脂四项', icon: 'fa-tint', fields: ['LDL-C', 'HDL-C', 'Triglycerides'], interval: 12 }
         };
 
-        // --- USER DEFAULTS ---
+        // --- USER DEFAULTS (Smart Defaults) ---
         const DEFAULT_DOSES = {
             'euthyrox': '1片',
             'selenium': '200mcg',
@@ -451,7 +514,8 @@
             history: [],
             bodyMetrics: { current: { height: 0, weight: 0, fat: 0, waist: 0, date: null }, history: [] },
             checkups: {},
-            customDoses: {} 
+            customDoses: {},
+            ui: { barWidth: 92, barOffset: 24 } // Defaults
         };
 
         let currentTab = 'daily';
@@ -467,6 +531,7 @@
             // Render
             renderDaily();
             renderHealth();
+            initUI(); // Apply UI settings
             
             // Set Date
             const now = new Date();
@@ -474,6 +539,58 @@
             
             // Listeners
             document.getElementById('cuScore').addEventListener('input', (e) => document.getElementById('scoreVal').innerText = e.target.value);
+        }
+
+        // --- UI CUSTOMIZATION LOGIC ---
+
+        function initUI() {
+            // Set slider values from state
+            document.getElementById('uiWidth').value = appState.ui.barWidth;
+            document.getElementById('uiOffset').value = appState.ui.barOffset;
+            applyUI();
+        }
+
+        function updateUI() {
+            const width = document.getElementById('uiWidth').value;
+            const offset = document.getElementById('uiOffset').value;
+            
+            appState.ui.barWidth = width;
+            appState.ui.barOffset = offset;
+            
+            applyUI();
+            saveData(); // Save instantly for live preview feel
+        }
+
+        function applyUI() {
+            const bar = document.getElementById('bottomNavBar');
+            const wVal = appState.ui.barWidth;
+            const oVal = appState.ui.barOffset;
+            
+            // Update Text Displays
+            document.getElementById('uiWidthVal').innerText = wVal + '%';
+            document.getElementById('uiOffsetVal').innerText = oVal + 'px';
+
+            // Apply Styles
+            bar.style.width = wVal + '%';
+            bar.style.bottom = Math.max(10, oVal) + 'px'; // Prevent hiding completely
+            
+            // Morph Shape based on width
+            if (wVal < 60) {
+                // Minimalist Pill
+                document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'none');
+                bar.style.borderRadius = '30px';
+            } else {
+                document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'block');
+                bar.style.borderRadius = wVal > 95 ? '0px' : '30px'; // Square if full width
+                if(wVal > 95) {
+                    bar.style.bottom = '0px'; 
+                    bar.style.paddingBottom = 'env(safe-area-inset-bottom)';
+                    bar.style.height = 'auto';
+                } else {
+                    bar.style.height = '60px';
+                    bar.style.paddingBottom = '0';
+                }
+            }
         }
 
         // --- DATA PERSISTENCE ---
@@ -484,11 +601,12 @@
                 const parsed = JSON.parse(raw);
                 appState = { ...appState, ...parsed };
             }
-            // Ensure schema integrity
+            // Integrity checks
             if(!appState.checkups) appState.checkups = {};
             if(!appState.customDoses) appState.customDoses = {};
+            if(!appState.ui) appState.ui = { barWidth: 92, barOffset: 24 };
             
-            // Inject defaults if missing
+            // Inject defaults
             Object.keys(DEFAULT_DOSES).forEach(key => {
                 if(!appState.customDoses[key]) {
                     appState.customDoses[key] = DEFAULT_DOSES[key];
@@ -524,8 +642,16 @@
             document.getElementById(`view-${tabId}`).classList.add('active');
             
             // Update Tab Icons
-            document.getElementById('tab-daily').className = tabId === 'daily' ? 'flex flex-col items-center justify-center w-full h-full text-blue-500 transition-colors' : 'flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors';
-            document.getElementById('tab-health').className = tabId === 'health' ? 'flex flex-col items-center justify-center w-full h-full text-blue-500 transition-colors' : 'flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors';
+            const tabD = document.getElementById('tab-daily');
+            const tabH = document.getElementById('tab-health');
+            
+            if(tabId === 'daily') {
+                tabD.className = "flex-1 flex flex-col items-center justify-center h-full text-blue-500 transition-colors active:scale-90 duration-200";
+                tabH.className = "flex-1 flex flex-col items-center justify-center h-full text-slate-400 transition-colors active:scale-90 duration-200";
+            } else {
+                tabD.className = "flex-1 flex flex-col items-center justify-center h-full text-slate-400 transition-colors active:scale-90 duration-200";
+                tabH.className = "flex-1 flex flex-col items-center justify-center h-full text-blue-500 transition-colors active:scale-90 duration-200";
+            }
 
             if(tabId === 'health') renderHealth();
         };
@@ -557,7 +683,6 @@
                         itemEl.id = `row-${key}`;
                         itemEl.className = `glass rounded-xl p-3 flex items-center justify-between transition-all duration-300 ${isDone ? 'opacity-60 grayscale-[0.5]' : ''}`;
                         
-                        // Main Click Area (Triggers Check/Prompt)
                         itemEl.innerHTML = `
                             <div class="flex items-center flex-1 cursor-pointer" onclick="if(!event.target.closest('.no-toggle')) handleItemClick('${key}')">
                                 <div class="relative w-5 h-5 mr-3 flex-shrink-0">
@@ -603,7 +728,6 @@
         }
 
         function handleItemClick(id) {
-            // Uncheck is simple
             if (appState.today[id]?.done) {
                 delete appState.today[id];
                 saveData();
@@ -611,7 +735,6 @@
                 return;
             }
             
-            // Check conflicts first
             const conflict = checkConflicts(id);
             if (conflict) {
                 pendingToggleId = id;
@@ -620,12 +743,11 @@
                 return;
             }
 
-            // Proceed to Dose Selection
             showDoseModal(id);
         }
 
         function showDoseModal(id) {
-            closeModal('conflictModal'); // ensure conflict modal is gone
+            closeModal('conflictModal'); 
             pendingToggleId = id;
             const item = SUPPLEMENTS[id];
             const pers = appState.customDoses[id];
@@ -633,7 +755,6 @@
             document.getElementById('doseModalRec').innerText = item.dose;
             document.getElementById('doseModalPers').innerText = pers ? pers : '点击设定';
             
-            // If no personal dose set, clicking "Personal" button acts as "Set Dose"
             const persBtn = document.querySelector('#doseModal button:nth-child(2)');
             if (!pers) {
                  persBtn.onclick = () => { editCustomDose(id); setTimeout(() => showDoseModal(id), 300); };
@@ -646,14 +767,11 @@
 
         function confirmDose(type) {
             if (!pendingToggleId) return;
-            // We could store 'type' in today object if we want stats later
-            // For now just mark done
             commitToggle(pendingToggleId);
             closeModal('doseModal');
         }
 
         function confirmConflictAction() {
-            // Conflict override -> Still ask for dose
             if (pendingToggleId) {
                 closeModal('conflictModal');
                 setTimeout(() => showDoseModal(pendingToggleId), 200);
@@ -712,7 +830,6 @@
             const rate = Math.round((done/core.length)*100) || 0;
             document.getElementById('complianceRate').innerText = `${rate}%`;
             
-            // Heatmap
             const map = document.getElementById('heatmapContainer');
             map.innerHTML = '';
             let data = [...appState.history, {items: appState.today}].slice(-7);
@@ -730,7 +847,6 @@
         // --- HEALTH MONITOR LOGIC ---
 
         function renderHealth() {
-            // Body Metrics
             const bm = appState.bodyMetrics.current;
             document.getElementById('dispHeight').innerText = bm.height || '--';
             document.getElementById('dispWeight').innerText = bm.weight || '--';
@@ -738,7 +854,6 @@
             document.getElementById('dispWaist').innerText = bm.waist || '--';
             document.getElementById('metricsDate').innerText = bm.date ? new Date(bm.date).toLocaleDateString() : '点击记录';
 
-            // Checkups
             const list = document.getElementById('checkupList');
             list.innerHTML = '';
 
@@ -748,7 +863,7 @@
                 const lastDate = data.lastDate ? new Date(data.lastDate) : null;
                 const interval = data.intervalMonths || type.interval;
                 
-                let statusColor = 'border-slate-200 dark:border-slate-700'; // Default
+                let statusColor = 'border-slate-200 dark:border-slate-700';
                 let statusText = '暂无记录';
                 let daysLeft = null;
 
@@ -851,13 +966,11 @@
             document.getElementById('checkupTitle').innerText = `记录: ${typeDef.title}`;
             document.getElementById('checkupSubtitle').innerText = data.lastDate ? `上次检查: ${new Date(data.lastDate).toLocaleDateString()}` : '首次记录';
             
-            // Set Inputs
             document.getElementById('cuDate').valueAsDate = new Date();
             document.getElementById('cuInterval').value = data.intervalMonths || typeDef.interval;
             document.getElementById('cuScore').value = 8;
             document.getElementById('scoreVal').innerText = '8';
 
-            // Generate Metric Inputs
             const container = document.getElementById('cuMetricsContainer');
             container.innerHTML = '';
             
