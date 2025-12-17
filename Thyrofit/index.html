@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <title>ThyroFit Pro</title>
+    
+    <!-- PWA Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%23000'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2360a5fa'/%3E%3Cstop offset='100%25' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0s256 114.6 256 256-114.6 256-256 256z' fill='black'/%3E%3Cpath d='M368 160h-16c-8.8 0-16 7.2-16 16v16c0 53-43 96-96 96H240c-53 0-96-43-96-96v-16c0-8.8-7.2-16-16-16h-16c-8.8 0-16 7.2-16 16v16c0 88.4 71.6 160 160 160h.2c88.4 0 160-71.6 160-160v-16c0-8.8-7.2-16-16-16z' fill='url(%23g)' opacity='0.8'/%3E%3Cpath d='M256 272c-44.2 0-80 35.8-80 80v16c0 8.8 7.2 16 16 16h128c8.8 0 16-7.2 16-16v-16c0-44.2-35.8-80-80-80z' fill='url(%23g)'/%3E%3C/svg%3E">
+
+    <!-- Fonts & Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'media',
+            theme: {
+                fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'sans-serif'] },
+                extend: {
+                    colors: {
+                        ios: {
+                            bg: '#F2F2F7', darkBg: '#000000',
+                            card: '#FFFFFF', darkCard: '#1C1C1E',
+                            blue: '#007AFF', green: '#34C759', red: '#FF3B30',
+                            orange: '#FF9500', gray: '#8E8E93'
+                        }
+                    },
+                    animation: { 'bounce-slight': 'bounce-slight 0.3s ease-in-out' },
+                    keyframes: {
+                        'bounce-slight': {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(0.97)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { -webkit-tap-highlight-color: transparent; padding-bottom: env(safe-area-inset-bottom); }
+        body { background-color: #F2F2F7; padding-top: env(safe-area-inset-top); }
+        @media (prefers-color-scheme: dark) { body { background-color: #000000; } }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .glass {
+            background: rgba(28, 28, 30, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Tab Transition */
+        .view-section { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
+        .view-section.active { display: block; opacity: 1; }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-900 dark:text-white transition-colors duration-300 select-none overflow-hidden">
+
+    <!-- Header -->
+    <header class="px-6 pt-4 pb-2 flex justify-between items-end z-10">
+        <div>
+            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1" id="currentDate">LOADING...</div>
+            <h1 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">ThyroFit</h1>
+        </div>
+        <button onclick="showSettings()" class="text-slate-400 hover:text-blue-500 p-2 transition">
+            <i class="fas fa-cog text-xl"></i>
+        </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto no-scrollbar relative w-full">
+        
+        <!-- VIEW 1: DAILY TRACKER -->
+        <div id="view-daily" class="view-section active px-5 pb-24 space-y-6 pt-2">
+            <!-- Stats -->
+            <section class="glass rounded-2xl p-5 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-300">今日依从率 (Core)</h3>
+                    <div class="text-xl font-bold text-ios-green" id="complianceRate">0%</div>
+                </div>
+                <div class="flex justify-between space-x-1 h-2" id="heatmapContainer"></div>
+            </section>
+
+            <!-- Schedule -->
+            <div id="scheduleList" class="space-y-6"></div>
+        </div>
+
+        <!-- VIEW 2: HEALTH MONITOR -->
+        <div id="view-health" class="view-section px-5 pb-24 space-y-6 pt-2">
+            
+            <!-- Body Metrics Card -->
+            <section class="glass rounded-2xl p-5 shadow-sm relative overflow-hidden" onclick="showBodyModal()">
+                <div class="absolute top-0 right-0 p-3 opacity-10"><i class="fas fa-ruler-combined text-6xl"></i></div>
+                <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">Body Metrics</h3>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">体重 (KG)</div>
+                        <div class="text-xl font-bold" id="dispWeight">--</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">体脂 (%)</div>
+                        <div class="text-xl font-bold text-blue-500" id="dispFat">--</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">腹围 (CM)</div>
+                        <div class="text-xl font-bold text-purple-500" id="dispWaist">--</div>
+                    </div>
+                </div>
+                <div class="mt-4 text-xs text-right text-slate-400 flex justify-end items-center">
+                    <span id="metricsDate">未记录</span> <i class="fas fa-chevron-right ml-2"></i>
+                </div>
+            </section>
+
+            <!-- Medical Checkups List -->
+            <div id="checkupList" class="space-y-4">
+                <!-- Injected via JS -->
+            </div>
+            
+            <div class="text-center text-xs text-slate-400 py-4">
+                根据 ATA 指南及运动营养学推荐生成
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <div class="fixed bottom-0 left-0 w-full glass border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)] z-50">
+        <div class="flex justify-around items-center h-16">
+            <button onclick="switchTab('daily')" id="tab-daily" class="flex flex-col items-center justify-center w-full h-full text-blue-500 transition-colors">
+                <i class="fas fa-check-circle text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">日常打卡</span>
+            </button>
+            <button onclick="switchTab('health')" id="tab-health" class="flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors">
+                <i class="fas fa-heartbeat text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">健康监测</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- 1. Conflict Warning -->
+    <div id="conflictModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
+        <div class="bg-white dark:bg-ios-darkCard w-4/5 max-w-sm rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform" id="conflictCard">
+            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-center mb-2">相互作用警报</h3>
+            <p id="conflictMsg" class="text-sm text-slate-600 dark:text-slate-300 text-center mb-6 leading-relaxed"></p>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeModal('conflictModal')" class="w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-slate-600 dark:text-slate-300 text-sm">取消</button>
+                <button onclick="showDoseModal(pendingToggleId)" class="w-full py-3 rounded-xl bg-red-500 text-white font-semibold text-sm">强制继续</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Dose Selection Modal (Action Sheet Style) -->
+    <div id="doseModal" class="fixed inset-0 z-[65] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity">
+        <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform translate-y-full sm:translate-y-0 transition-transform duration-300" id="doseCard">
+            <h3 class="text-lg font-bold mb-4 text-center">确认摄入剂量</h3>
+            
+            <div class="space-y-3">
+                <button onclick="confirmDose('recommended')" class="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between group active:scale-[0.98] transition-transform">
+                    <div class="text-left">
+                        <div class="text-xs text-slate-500 uppercase font-bold">推荐剂量</div>
+                        <div class="font-bold text-lg" id="doseModalRec">--</div>
+                    </div>
+                    <i class="fas fa-check-circle text-2xl text-slate-200 group-hover:text-blue-500 transition-colors"></i>
+                </button>
+
+                <button onclick="confirmDose('personal')" class="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between group active:scale-[0.98] transition-transform">
+                    <div class="text-left">
+                        <div class="text-xs text-blue-500 uppercase font-bold">个人设定</div>
+                        <div class="font-bold text-lg" id="doseModalPers">未设定</div>
+                    </div>
+                    <i class="fas fa-user-edit text-xl text-slate-400"></i>
+                </button>
+            </div>
+
+            <button onclick="closeModal('doseModal')" class="mt-6 w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-700 font-semibold text-sm text-slate-500">取消</button>
+        </div>
+    </div>
+
+    <!-- 3. Supplement Info -->
+    <div id="infoModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm hidden opacity-0">
+        <div onclick="event.stopPropagation()" class="bg-white dark:bg-ios-darkCard w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform translate-y-full sm:translate-y-0 transition-transform duration-300" id="infoCard">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
+            <div class="flex justify-between items-start mb-4">
+                <h3 id="infoTitle" class="text-xl font-bold">Details</h3>
+                <span id="infoBadge" class="text-xs px-2 py-1 rounded font-bold bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">CORE</span>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-slate-50 dark:bg-white/5 p-3 rounded-xl">
+                    <div class="text-xs text-slate-400 uppercase font-bold mb-1">推荐剂量</div>
+                    <div id="infoDose" class="font-mono text-sm"></div>
+                </div>
+                <div><div class="text-xs text-slate-400 uppercase font-bold mb-1">权威机制</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300"></p></div>
+                <div><div class="text-xs text-red-400 uppercase font-bold mb-1">禁忌 & 注意</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300"></p></div>
+            </div>
+            <button onclick="closeModal('infoModal')" class="mt-8 w-full py-3.5 rounded-xl bg-ios-blue text-white font-semibold shadow-lg">知道了</button>
+        </div>
+    </div>
+
+    <!-- 4. Body Metrics Input -->
+    <div id="bodyModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
+        <div class="bg-white dark:bg-ios-darkCard w-full max-w-sm mx-4 rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform" id="bodyCard">
+            <h3 class="text-lg font-bold mb-4">更新身体数据</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-500 block mb-1">体重 (KG)</label>
+                    <input type="number" id="inWeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">体脂率 (%)</label>
+                        <input type="number" id="inFat" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">腹围 (CM)</label>
+                        <input type="number" id="inWaist" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0">
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-6">
+                <button onclick="closeModal('bodyModal')" class="py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-sm">取消</button>
+                <button onclick="saveBodyMetrics()" class="py-3 rounded-xl bg-ios-blue text-white font-semibold text-sm shadow-lg">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Checkup Update Modal -->
+    <div id="checkupModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm hidden opacity-0 transition-opacity">
+        <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform translate-y-full sm:translate-y-0 transition-transform duration-300" id="checkupCard">
+            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 sm:hidden"></div>
+            <h3 class="text-lg font-bold mb-1" id="checkupTitle">Update Checkup</h3>
+            <p class="text-xs text-slate-400 mb-4" id="checkupSubtitle">上次: 2023-10-01</p>
+
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto no-scrollbar">
+                <!-- Date & Interval -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">本次体检日期</label>
+                        <input type="date" id="cuDate" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">下次复查间隔</label>
+                        <select id="cuInterval" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-sm font-bold">
+                            <option value="1">1 个月</option>
+                            <option value="2">2 个月</option>
+                            <option value="3">3 个月</option>
+                            <option value="6">6 个月 (常规)</option>
+                            <option value="12">12 个月</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Subjective Score -->
+                <div class="bg-slate-50 dark:bg-white/5 p-3 rounded-xl">
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs text-slate-500 font-bold">自我感觉评分 (1-10)</label>
+                        <span id="scoreVal" class="text-sm font-bold text-ios-blue">8</span>
+                    </div>
+                    <input type="range" id="cuScore" min="1" max="10" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                    <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                        <span>极差</span><span>极佳</span>
+                    </div>
+                </div>
+
+                <!-- Metrics Inputs (Dynamic) -->
+                <div id="cuMetricsContainer" class="space-y-3">
+                    <!-- JS Injected inputs -->
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-6">
+                <button onclick="closeModal('checkupModal')" class="py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-sm">取消</button>
+                <button onclick="saveCheckup()" class="py-3 rounded-xl bg-ios-blue text-white font-semibold text-sm shadow-lg">保存记录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
+        <div class="bg-white dark:bg-ios-darkCard w-4/5 max-w-sm rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform" id="settingsCard">
+            <h3 class="text-lg font-bold mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">设置 & 数据</h3>
+            
+            <div class="space-y-3">
+                <button onclick="exportData()" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 transition">
+                    <span class="font-medium text-sm">导出数据备份 (JSON)</span>
+                    <i class="fas fa-file-export text-slate-400"></i>
+                </button>
+                <div class="relative">
+                    <input type="file" id="importFile" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="importData(this)">
+                    <button class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 transition">
+                        <span class="font-medium text-sm">导入数据备份</span>
+                        <i class="fas fa-file-import text-slate-400"></i>
+                    </button>
+                </div>
+                <button onclick="resetAppConfirm()" class="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-xl hover:bg-red-100 transition text-red-500">
+                    <span class="font-medium text-sm">重置所有数据</span>
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+
+            <button onclick="closeModal('settingsModal')" class="mt-6 w-full py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-semibold text-sm">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STRUCTURES ---
+
+        const SUPPLEMENTS = {
+            'euthyrox': { name: '优甲乐', section: 'wakeup', dose: '处方量', isCore: true, warn: '空腹，禁食60分钟', mech: '补充T4', checkConflict: ['levothyroxine'] },
+            'selenium': { name: '硒 (Selenium)', section: 'breakfast', dose: '200mcg', isCore: true, warn: '需随餐', mech: '降TPOAb抗体', checkConflict: ['levothyroxine'] },
+            'd3k2': { name: '维D3 + K2', section: 'breakfast', dose: '5000IU', isCore: true, warn: '定期查血钙', mech: '免疫调节', checkConflict: ['levothyroxine'] },
+            'q10': { name: '辅酶 Q10', section: 'breakfast', dose: '100mg', isCore: false, warn: '避免睡前', mech: '线粒体', checkConflict: ['levothyroxine'] },
+            'curcumin': { name: '姜黄素', section: 'breakfast', dose: '1粒', isCore: false, warn: '轻微抗凝', mech: '抗炎', checkConflict: ['levothyroxine'] },
+            'alphagpc': { name: 'Alpha-GPC', section: 'preworkout', dose: '300mg', isCore: false, warn: '不练不吃', mech: '爆发力', checkConflict: [] },
+            'ps': { name: '磷脂酰丝氨酸', section: 'dinner', dose: '400mg', isCore: false, warn: '无禁忌', mech: '降皮质醇', checkConflict: [] },
+            'zinc': { name: '锌 + 铜', section: 'dinner', dose: '30mg', isCore: true, warn: '严禁空腹', mech: 'T4转T3', checkConflict: ['empty_stomach'] },
+            'omega3': { name: 'Omega-3', section: 'dinner', dose: '2粒', isCore: false, warn: '随餐', mech: '抗炎', checkConflict: [] },
+            'magnesium': { name: '镁', section: 'bedtime', dose: '300mg', isCore: true, warn: '腹泻减量', mech: '助眠', checkConflict: [] }
+        };
+
+        const SECTIONS = [
+            { id: 'wakeup', title: '早起空腹', icon: 'fa-sun', color: 'text-red-500', sub: '醒来第一件事' },
+            { id: 'breakfast', title: '早餐随餐', icon: 'fa-coffee', color: 'text-blue-500', sub: '需含油脂' },
+            { id: 'preworkout', title: '训练前', icon: 'fa-dumbbell', color: 'text-purple-500', sub: '30-45min前' },
+            { id: 'dinner', title: '晚餐/练后', icon: 'fa-utensils', color: 'text-green-500', sub: '皮质醇控制' },
+            { id: 'bedtime', title: '睡前', icon: 'fa-moon', color: 'text-indigo-500', sub: '神经放松' },
+        ];
+
+        const CHECKUP_TYPES = {
+            'thyroid': { title: '甲功七项', icon: 'fa-butterfly', fields: ['TSH', 'FT3', 'FT4', 'TPOAb', 'TGAb'], interval: 6 },
+            'liver_kidney': { title: '肝肾功能', icon: 'fa-flask', fields: ['ALT', 'AST', 'Creatinine'], interval: 6 },
+            'vit_d': { title: '维D & 钙', icon: 'fa-sun', fields: ['VitD', 'Calcium'], interval: 6 },
+            'iron': { title: '铁代谢', icon: 'fa-magnet', fields: ['Ferritin'], interval: 6 },
+            'lipid': { title: '血脂四项', icon: 'fa-tint', fields: ['LDL-C', 'HDL-C', 'Triglycerides'], interval: 12 }
+        };
+
+        // --- APP STATE ---
+        let appState = {
+            today: {},
+            history: [],
+            bodyMetrics: { current: { weight: 0, fat: 0, waist: 0, date: null }, history: [] },
+            checkups: {},
+            customDoses: {} // { 'selenium': '100mcg', ... }
+        };
+
+        let currentTab = 'daily';
+        let pendingToggleId = null;
+        let activeCheckupType = null;
+
+        // --- INIT ---
+
+        function init() {
+            loadData();
+            checkDayCut();
+            
+            // Render
+            renderDaily();
+            renderHealth();
+            
+            // Set Date
+            const now = new Date();
+            document.getElementById('currentDate').innerText = now.toLocaleDateString('zh-CN', { weekday: 'long', month: 'long', day: 'numeric' });
+            
+            // Listeners
+            document.getElementById('cuScore').addEventListener('input', (e) => document.getElementById('scoreVal').innerText = e.target.value);
+        }
+
+        // --- DATA PERSISTENCE ---
+
+        function loadData() {
+            const raw = localStorage.getItem('thyrofit_pro_data');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                appState = { ...appState, ...parsed };
+                if(!appState.checkups) appState.checkups = {};
+                if(!appState.customDoses) appState.customDoses = {};
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('thyrofit_pro_data', JSON.stringify(appState));
+            updateStats();
+        }
+
+        function checkDayCut() {
+            const lastDate = localStorage.getItem('thyrofit_last_date');
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+
+            if (lastDate && lastDate !== dateStr) {
+                if (Object.keys(appState.today).length > 0) {
+                    appState.history.push({ date: lastDate, items: { ...appState.today } });
+                    if (appState.history.length > 365) appState.history.shift();
+                }
+                appState.today = {};
+            }
+            localStorage.setItem('thyrofit_last_date', dateStr);
+        }
+
+        // --- TAB SWITCHING ---
+        
+        window.switchTab = function(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${tabId}`).classList.add('active');
+            
+            // Update Tab Icons
+            document.getElementById('tab-daily').className = tabId === 'daily' ? 'flex flex-col items-center justify-center w-full h-full text-blue-500 transition-colors' : 'flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors';
+            document.getElementById('tab-health').className = tabId === 'health' ? 'flex flex-col items-center justify-center w-full h-full text-blue-500 transition-colors' : 'flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors';
+
+            if(tabId === 'health') renderHealth();
+        };
+
+        // --- DAILY TRACKER LOGIC ---
+
+        function renderDaily() {
+            const container = document.getElementById('scheduleList');
+            container.innerHTML = '';
+            
+            SECTIONS.forEach(sec => {
+                const secDiv = document.createElement('div');
+                secDiv.innerHTML = `
+                    <div class="flex items-center space-x-2 mb-2 px-1">
+                        <div class="w-7 h-7 rounded-full bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center ${sec.color}"><i class="fas ${sec.icon} text-xs"></i></div>
+                        <div><h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">${sec.title}</h2></div>
+                    </div>
+                    <div class="space-y-2" id="grp-${sec.id}"></div>
+                `;
+                container.appendChild(secDiv);
+                
+                Object.keys(SUPPLEMENTS).forEach(key => {
+                    const item = SUPPLEMENTS[key];
+                    if (item.section === sec.id) {
+                        const isDone = appState.today[key]?.done;
+                        const persDose = appState.customDoses[key];
+                        
+                        const itemEl = document.createElement('div');
+                        itemEl.id = `row-${key}`;
+                        itemEl.className = `glass rounded-xl p-3 flex items-center justify-between transition-all duration-300 ${isDone ? 'opacity-60 grayscale-[0.5]' : ''}`;
+                        
+                        // Main Click Area (Triggers Check/Prompt)
+                        itemEl.innerHTML = `
+                            <div class="flex items-center flex-1 cursor-pointer" onclick="if(!event.target.closest('.no-toggle')) handleItemClick('${key}')">
+                                <div class="relative w-5 h-5 mr-3 flex-shrink-0">
+                                    <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 transition-colors" id="cb-${key}"></div>
+                                    <i class="fas fa-check absolute inset-0 text-white flex items-center justify-center text-[10px] opacity-0 transition-opacity transform scale-50" id="ic-${key}"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-sm ${isDone ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}" id="ti-${key}">${item.name}</div>
+                                    <div class="flex items-center text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                        <span>Rec: ${item.dose}</span>
+                                        <span class="mx-1 text-slate-300">|</span>
+                                        <span class="no-toggle text-blue-500 dark:text-blue-400 font-medium active:opacity-50" onclick="editCustomDose('${key}')">
+                                            My: ${persDose ? persDose : '--'} <i class="fas fa-pen text-[8px] ml-0.5"></i>
+                                        </span>
+                                        ${item.isCore ? '<span class="text-blue-500 bg-blue-100 dark:bg-blue-900/30 px-1 rounded ml-1.5 font-bold">CORE</span>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="showInfo('${key}')" class="info-btn w-8 h-8 flex items-center justify-center rounded-full text-slate-300 hover:text-blue-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition ml-2"><i class="fas fa-info-circle"></i></button>
+                        `;
+                        secDiv.querySelector(`#grp-${sec.id}`).appendChild(itemEl);
+                        if(isDone) renderItemState(key, true);
+                    }
+                });
+            });
+            updateStats();
+        }
+
+        // --- DOSE LOGIC ---
+
+        function editCustomDose(id) {
+            const current = appState.customDoses[id] || '';
+            const newVal = prompt(`设定 ${SUPPLEMENTS[id].name} 的个人剂量:`, current);
+            if (newVal !== null) {
+                if (newVal.trim() === '') {
+                    delete appState.customDoses[id];
+                } else {
+                    appState.customDoses[id] = newVal;
+                }
+                saveData();
+                renderDaily();
+            }
+        }
+
+        function handleItemClick(id) {
+            // Uncheck is simple
+            if (appState.today[id]?.done) {
+                delete appState.today[id];
+                saveData();
+                renderItemState(id, false);
+                return;
+            }
+            
+            // Check conflicts first
+            const conflict = checkConflicts(id);
+            if (conflict) {
+                pendingToggleId = id;
+                document.getElementById('conflictMsg').innerText = conflict;
+                openModal('conflictModal');
+                return;
+            }
+
+            // Proceed to Dose Selection
+            showDoseModal(id);
+        }
+
+        function showDoseModal(id) {
+            closeModal('conflictModal'); // ensure conflict modal is gone
+            pendingToggleId = id;
+            const item = SUPPLEMENTS[id];
+            const pers = appState.customDoses[id];
+
+            document.getElementById('doseModalRec').innerText = item.dose;
+            document.getElementById('doseModalPers').innerText = pers ? pers : '点击设定';
+            
+            // If no personal dose set, clicking "Personal" button acts as "Set Dose"
+            const persBtn = document.querySelector('#doseModal button:nth-child(2)');
+            if (!pers) {
+                 persBtn.onclick = () => { editCustomDose(id); setTimeout(() => showDoseModal(id), 300); };
+            } else {
+                 persBtn.onclick = () => confirmDose('personal');
+            }
+
+            openModal('doseModal');
+        }
+
+        function confirmDose(type) {
+            if (!pendingToggleId) return;
+            // We could store 'type' in today object if we want stats later
+            // For now just mark done
+            commitToggle(pendingToggleId);
+            closeModal('doseModal');
+        }
+
+        function confirmConflictAction() {
+            // Conflict override -> Still ask for dose
+            if (pendingToggleId) {
+                closeModal('conflictModal');
+                setTimeout(() => showDoseModal(pendingToggleId), 200);
+            }
+        }
+
+        function checkConflicts(id) {
+            const item = SUPPLEMENTS[id];
+            const now = Date.now();
+            if (item.checkConflict.includes('levothyroxine')) {
+                const levo = appState.today['euthyrox'];
+                if (levo && levo.done) {
+                    const diff = (now - levo.time)/60000;
+                    if (diff < 60) return `距离优甲乐服用仅 ${Math.floor(diff)} 分钟。\n需间隔 60 分钟。\n建议等待 ${60 - Math.floor(diff)} 分钟。`;
+                }
+            }
+            if (item.checkConflict.includes('empty_stomach')) {
+                return '警告：空腹服用锌会导致剧烈恶心。\n请确认您已随餐服用。';
+            }
+            return null;
+        }
+
+        function commitToggle(id) {
+            appState.today[id] = { done: true, time: Date.now() };
+            document.getElementById(`row-${id}`).classList.add('animate-bounce-slight');
+            setTimeout(() => document.getElementById(`row-${id}`).classList.remove('animate-bounce-slight'), 300);
+            saveData();
+            renderItemState(id, true);
+        }
+
+        function renderItemState(id, isDone) {
+            const row = document.getElementById(`row-${id}`);
+            const title = document.getElementById(`ti-${id}`);
+            const cb = document.getElementById(`cb-${id}`);
+            const ic = document.getElementById(`ic-${id}`);
+
+            if (isDone) {
+                row.classList.add('opacity-60', 'grayscale-[0.5]');
+                title.classList.add('line-through', 'text-slate-400');
+                title.classList.remove('text-slate-800', 'dark:text-slate-200');
+                cb.className = 'w-5 h-5 rounded-full bg-ios-green border-2 border-ios-green transition-colors';
+                ic.classList.remove('opacity-0', 'scale-50');
+            } else {
+                row.classList.remove('opacity-60', 'grayscale-[0.5]');
+                title.classList.remove('line-through', 'text-slate-400');
+                title.classList.add('text-slate-800', 'dark:text-slate-200');
+                cb.className = 'w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 transition-colors';
+                ic.classList.add('opacity-0', 'scale-50');
+            }
+            updateStats();
+        }
+
+        function updateStats() {
+            const core = Object.keys(SUPPLEMENTS).filter(k => SUPPLEMENTS[k].isCore);
+            const done = core.filter(k => appState.today[k]?.done).length;
+            const rate = Math.round((done/core.length)*100) || 0;
+            document.getElementById('complianceRate').innerText = `${rate}%`;
+            
+            // Heatmap
+            const map = document.getElementById('heatmapContainer');
+            map.innerHTML = '';
+            let data = [...appState.history, {items: appState.today}].slice(-7);
+            while(data.length < 7) data.unshift({items:{}});
+            
+            data.forEach(d => {
+                const dCore = core.filter(k => d.items && d.items[k]?.done).length;
+                const dRate = dCore/core.length;
+                const div = document.createElement('div');
+                div.className = `flex-1 rounded-full ${dRate===0 ? 'bg-slate-200 dark:bg-slate-700' : dRate < 0.5 ? 'bg-green-200' : dRate < 1 ? 'bg-green-400' : 'bg-green-500'}`;
+                map.appendChild(div);
+            });
+        }
+
+        // --- HEALTH MONITOR LOGIC ---
+
+        function renderHealth() {
+            // Body Metrics
+            const bm = appState.bodyMetrics.current;
+            document.getElementById('dispWeight').innerText = bm.weight || '--';
+            document.getElementById('dispFat').innerText = bm.fat || '--';
+            document.getElementById('dispWaist').innerText = bm.waist || '--';
+            document.getElementById('metricsDate').innerText = bm.date ? new Date(bm.date).toLocaleDateString() : '点击记录';
+
+            // Checkups
+            const list = document.getElementById('checkupList');
+            list.innerHTML = '';
+
+            Object.keys(CHECKUP_TYPES).forEach(key => {
+                const type = CHECKUP_TYPES[key];
+                const data = appState.checkups[key] || {};
+                const lastDate = data.lastDate ? new Date(data.lastDate) : null;
+                const interval = data.intervalMonths || type.interval;
+                
+                let statusColor = 'border-slate-200 dark:border-slate-700'; // Default
+                let statusText = '暂无记录';
+                let daysLeft = null;
+
+                if (lastDate) {
+                    const nextDate = new Date(lastDate);
+                    nextDate.setMonth(nextDate.getMonth() + parseInt(interval));
+                    const diffTime = nextDate - new Date();
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    daysLeft = diffDays;
+
+                    if (diffDays < 0) {
+                        statusColor = 'border-red-400 border-l-4';
+                        statusText = `逾期 ${Math.abs(diffDays)} 天`;
+                    } else if (diffDays < 30) {
+                        statusColor = 'border-orange-300 border-l-4';
+                        statusText = `剩余 ${diffDays} 天`;
+                    } else {
+                        statusColor = 'border-green-400 border-l-4';
+                        statusText = `剩余 ${diffDays} 天`;
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = `glass rounded-xl p-4 flex items-center justify-between border ${statusColor} active:scale-95 transition-transform`;
+                card.onclick = () => showCheckupModal(key);
+                card.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-3 text-slate-500">
+                            <i class="fas ${type.icon}"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-800 dark:text-slate-200">${type.title}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">
+                                ${lastDate ? lastDate.toLocaleDateString() : '未开始'} 
+                                <span class="mx-1">•</span> ${interval}个月一检
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-bold ${daysLeft < 0 ? 'text-red-500' : 'text-slate-500'}">${statusText}</div>
+                        ${data.history && data.history.length > 0 ? `<div class="text-[10px] text-ios-blue mt-1">上次评分: ${data.history[data.history.length-1].score}/10</div>` : ''}
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // --- MODAL FUNCTIONS (BODY & CHECKUPS) ---
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                const card = modal.querySelector('div[id$="Card"]');
+                card.classList.remove('scale-95', 'translate-y-full');
+            }, 10);
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('opacity-0');
+            const card = modal.querySelector('div[id$="Card"]');
+            card.classList.add('scale-95', 'translate-y-full');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // Body Metrics
+        function showBodyModal() {
+            const bm = appState.bodyMetrics.current;
+            document.getElementById('inWeight').value = bm.weight || '';
+            document.getElementById('inFat').value = bm.fat || '';
+            document.getElementById('inWaist').value = bm.waist || '';
+            openModal('bodyModal');
+        }
+
+        function saveBodyMetrics() {
+            const w = parseFloat(document.getElementById('inWeight').value);
+            const f = parseFloat(document.getElementById('inFat').value);
+            const waist = parseFloat(document.getElementById('inWaist').value);
+            
+            if (w || f || waist) {
+                const entry = { weight: w, fat: f, waist: waist, date: Date.now() };
+                appState.bodyMetrics.current = entry;
+                appState.bodyMetrics.history.push(entry);
+                saveData();
+                renderHealth();
+            }
+            closeModal('bodyModal');
+        }
+
+        // Checkups
+        function showCheckupModal(typeKey) {
+            activeCheckupType = typeKey;
+            const typeDef = CHECKUP_TYPES[typeKey];
+            const data = appState.checkups[typeKey] || {};
+            
+            document.getElementById('checkupTitle').innerText = `记录: ${typeDef.title}`;
+            document.getElementById('checkupSubtitle').innerText = data.lastDate ? `上次检查: ${new Date(data.lastDate).toLocaleDateString()}` : '首次记录';
+            
+            // Set Inputs
+            document.getElementById('cuDate').valueAsDate = new Date();
+            document.getElementById('cuInterval').value = data.intervalMonths || typeDef.interval;
+            document.getElementById('cuScore').value = 8;
+            document.getElementById('scoreVal').innerText = '8';
+
+            // Generate Metric Inputs
+            const container = document.getElementById('cuMetricsContainer');
+            container.innerHTML = '';
+            
+            const lastRecord = data.history && data.history.length > 0 ? data.history[data.history.length-1].results : {};
+
+            typeDef.fields.forEach(field => {
+                const prevVal = lastRecord[field];
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs text-slate-500">${field}</label>
+                        ${prevVal ? `<span class="text-[10px] text-slate-400">上次: ${prevVal}</span>` : ''}
+                    </div>
+                    <input type="text" data-field="${field}" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-sm font-bold placeholder-slate-300" placeholder="输入数值">
+                `;
+                container.appendChild(div);
+            });
+
+            openModal('checkupModal');
+        }
+
+        function saveCheckup() {
+            if (!activeCheckupType) return;
+            
+            const dateVal = document.getElementById('cuDate').value;
+            const intervalVal = document.getElementById('cuInterval').value;
+            const scoreVal = document.getElementById('cuScore').value;
+            
+            const results = {};
+            document.querySelectorAll('#cuMetricsContainer input').forEach(input => {
+                const val = input.value;
+                if(val) results[input.dataset.field] = val;
+            });
+
+            if (!appState.checkups[activeCheckupType]) {
+                appState.checkups[activeCheckupType] = { history: [] };
+            }
+            
+            const record = {
+                date: dateVal,
+                results: results,
+                score: scoreVal
+            };
+
+            appState.checkups[activeCheckupType].lastDate = dateVal;
+            appState.checkups[activeCheckupType].intervalMonths = intervalVal;
+            appState.checkups[activeCheckupType].history.push(record);
+            
+            saveData();
+            renderHealth();
+            closeModal('checkupModal');
+        }
+
+        // --- SETTINGS / UTILS ---
+
+        function showSettings() { openModal('settingsModal'); }
+        
+        function showInfo(id) {
+            const item = SUPPLEMENTS[id];
+            document.getElementById('infoTitle').innerText = item.name;
+            document.getElementById('infoBadge').style.display = item.isCore ? 'block' : 'none';
+            document.getElementById('infoDose').innerText = item.dose;
+            document.getElementById('infoMech').innerText = item.mech;
+            document.getElementById('infoWarn').innerText = item.warn;
+            openModal('infoModal');
+        }
+
+        function resetAppConfirm() {
+            if(confirm("确定清除所有数据？")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "thyrofit_backup_" + new Date().toISOString().slice(0,10) + ".json");
+            dlAnchorElem.click();
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if(confirm("这将覆盖当前数据，确定导入吗？")) {
+                        appState = parsed;
+                        saveData();
+                        location.reload();
+                    }
+                } catch(err) {
+                    alert("文件格式错误");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // BOOT
+        init();
+
+    </script>
+</body>
+</html>
