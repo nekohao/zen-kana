@@ -428,9 +428,13 @@
                         <input type="range" id="uiWidth" min="40" max="100" value="100" oninput="updateUI()">
                     </div>
                     <div>
-                        <!-- 新增：底部填充控制，解决 Home 条遮挡问题 -->
-                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">底部填充高度 (Padding)</span><span id="uiPadVal" class="font-mono text-blue-500 font-bold">20px</span></div>
-                        <input type="range" id="uiPad" min="0" max="50" value="20" oninput="updateUI()">
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">底部悬空距离 (Offset)</span><span id="uiOffsetVal" class="font-mono text-blue-500 font-bold">0px</span></div>
+                        <input type="range" id="uiOffset" min="0" max="60" value="0" oninput="updateUI()">
+                    </div>
+                    <div>
+                        <!-- 控制 padding-bottom，即“那个区域”的大小 -->
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">内部填充高度 (Padding)</span><span id="uiPadVal" class="font-mono text-blue-500 font-bold">20px</span></div>
+                        <input type="range" id="uiPad" min="5" max="50" value="20" oninput="updateUI()">
                     </div>
                 </div>
             </div>
@@ -492,7 +496,7 @@
             checkups: {}, // 检查记录
             customDoses: {}, // 用户自定义剂量
             // UI 配置：新增 navPadding 用于控制底部栏内部填充
-            ui: { barWidth: 100, barPadding: 20 }
+            ui: { barWidth: 100, barOffset: 0, barPadding: 20 }
         };
         
         // 运行时变量
@@ -794,12 +798,15 @@
         // --- UI 设置逻辑 (UI Lab) ---
         function initUI() {
             document.getElementById('uiWidth').value = appState.ui.barWidth;
+            // 恢复 Offset
+            document.getElementById('uiOffset').value = appState.ui.barOffset || 0;
             // 新增 uiPad 控制
             document.getElementById('uiPad').value = appState.ui.barPadding || 20;
             applyUI();
         }
         function updateUI() {
             appState.ui.barWidth = document.getElementById('uiWidth').value;
+            appState.ui.barOffset = document.getElementById('uiOffset').value;
             appState.ui.barPadding = document.getElementById('uiPad').value;
             applyUI();
             saveData();
@@ -808,15 +815,20 @@
             const container = document.getElementById('navContainer');
             const navContent = document.getElementById('navContent');
             const w = appState.ui.barWidth;
+            const o = appState.ui.barOffset || 0;
             const p = appState.ui.barPadding || 20;
             
             // 更新数值显示
             document.getElementById('uiWidthVal').innerText = w + '%';
+            document.getElementById('uiOffsetVal').innerText = o + 'px';
             document.getElementById('uiPadVal').innerText = p + 'px';
             
             // 容器宽度调整
             container.style.width = w + '%';
             
+            // 垂直位置控制 (悬空距离)
+            container.style.bottom = o + 'px';
+
             // 核心逻辑：底部栏高度 = 内容区 + 用户设定的Padding。
             // 背景色是应用在 navContent 上的，所以 padding 增加会撑开背景，从而覆盖 Home Indicator
             navContent.style.paddingBottom = p + 'px';
@@ -824,14 +836,14 @@
             if (w < 100) {
                 // 悬浮条模式
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'none');
-                container.style.bottom = '10px';
+                // container.style.bottom = '10px'; // 移除强制 10px，交由 Offset 控制
                 navContent.style.borderRadius = '30px';
                 // 悬浮时 border 围住四周
                 navContent.style.border = '1px solid rgba(255, 255, 255, 0.25)';
             } else {
                 // 全宽通栏模式
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'block');
-                container.style.bottom = '0px';
+                // container.style.bottom = '0px'; // 移除强制 0px，交由 Offset 控制
                 navContent.style.borderRadius = '0px'; // 贴底直角
                 navContent.style.border = 'none';
                 navContent.style.borderTop = '0.5px solid rgba(255, 255, 255, 0.25)';
@@ -1180,7 +1192,7 @@
             if (!appState.bodyMetrics.history) appState.bodyMetrics.history = [];
             
             // 默认值填充
-            if (!appState.ui) appState.ui = { barWidth: 100, barPadding: 20 };
+            if (!appState.ui) appState.ui = { barWidth: 100, barPadding: 20, barOffset: 0 };
             
             Object.keys(DEFAULT_DOSES).forEach(k => { 
                 if(!appState.customDoses[k]) appState.customDoses[k]=DEFAULT_DOSES[k]; 
