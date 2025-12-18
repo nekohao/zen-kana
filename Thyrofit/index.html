@@ -2,26 +2,31 @@
 <html lang="zh-CN" class="h-full">
 <head>
     <meta charset="UTF-8">
+    <!-- 
+        viewport 设置：
+        viewport-fit=cover: 确保页面内容充满整个屏幕，包括刘海屏区域 
+        user-scalable=no: 禁止用户缩放，类似原生 App 体验
+    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
     <title>ThyroFit Pro</title>
     
-    <!-- PWA Icon -->
+    <!-- PWA 图标 -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%23000'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2360a5fa'/%3E%3Cstop offset='100%25' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0s256 114.6 256 256-114.6 256-256 256z' fill='black'/%3E%3Cpath d='M368 160h-16c-8.8 0-16 7.2-16 16v16c0 53-43 96-96 96H240c-53 0-96-43-96-96v-16c0-8.8-7.2-16-16-16h-16c-8.8 0-16 7.2-16 16v16c0 88.4 71.6 160 160 160h.2c88.4 0 160-71.6 160-160v-16c0-8.8-7.2-16-16-16z' fill='url(%23g)' opacity='0.8'/%3E%3Cpath d='M256 272c-44.2 0-80 35.8-80 80v16c0 8.8 7.2 16 16 16h128c8.8 0 16-7.2 16-16v-16c0-44.2-35.8-80-80-80z' fill='url(%23g)'/%3E%3C/svg%3E">
 
-    <!-- Tailwind & Fonts -->
+    <!-- 引入 Tailwind CSS 和 FontAwesome 图标库 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Config -->
+    
+    <!-- 配置 Tailwind -->
     <script>
         tailwind.config = {
-            darkMode: 'media',
+            darkMode: 'media', // 跟随系统深色模式
             theme: {
-                fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'] }, // Inter First
+                // 字体栈：优先使用苹果系统字体，提供最优雅的原生体验
+                fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Helvetica Neue', 'Arial', 'sans-serif'] },
                 extend: {
                     colors: {
                         ios: {
@@ -31,6 +36,7 @@
                             orange: '#FF9500', gray: '#8E8E93', yellow: '#FFCC00'
                         }
                     },
+                    // 自定义动画曲线，模仿 iOS 物理回弹效果
                     animation: { 
                         'bounce-slight': 'bounce-slight 0.4s cubic-bezier(0.32, 0.72, 0, 1)', 
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' 
@@ -47,17 +53,19 @@
     </script>
 
     <style>
+        /* 基础样式重置 */
         html { -webkit-tap-highlight-color: transparent; padding-bottom: env(safe-area-inset-bottom); }
         body { background-color: #F2F2F7; padding-top: env(safe-area-inset-top); }
         @media (prefers-color-scheme: dark) { body { background-color: #000000; } }
         
-        /* 120Hz Smooth Transition Base */
         * {
-            -webkit-font-smoothing: antialiased;
+            -webkit-font-smoothing: antialiased; /*字体抗锯齿，更清晰*/
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Enhanced Glassmorphism for Cards */
+        /* 玻璃拟态 (Glassmorphism) 核心样式 
+           使用了 saturate 增加通透感
+        */
         .glass {
             background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(25px) saturate(180%); 
@@ -71,29 +79,31 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
-        /* Ultimate Nav Glass - No Shadow, Pure Frost */
+        /* 底部导航栏专用玻璃样式 
+           更强的模糊，无阴影，营造悬浮感
+        */
         .nav-glass {
             background: rgba(250, 250, 250, 0.5);
             backdrop-filter: blur(50px) saturate(200%); 
             -webkit-backdrop-filter: blur(50px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-top: 0.5px solid rgba(255, 255, 255, 0.3); /* 仅顶部有极细边框 */
             box-shadow: none !important;
         }
         .dark .nav-glass {
             background: rgba(20, 20, 20, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* High Refresh Rate Optimizations */
+        /* 页面切换动画 */
         .view-section { 
             display: none; 
             opacity: 0; 
             transform: scale(0.98);
             transition: opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            will-change: opacity, transform;
+            will-change: opacity, transform; /* GPU 加速 */
         }
         .view-section.active { 
             display: block; 
@@ -101,7 +111,7 @@
             transform: scale(1);
         }
 
-        /* Modal Transitions (Spring Physics) */
+        /* 弹窗动画 */
         .modal-enter {
             opacity: 0;
             transition: opacity 0.3s cubic-bezier(0.32, 0.72, 0, 1);
@@ -111,14 +121,14 @@
         }
         .modal-card {
             transform: scale(0.92) translateY(10px);
-            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); /* Apple Spring */
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             will-change: transform;
         }
         .modal-enter-active .modal-card {
             transform: scale(1) translateY(0);
         }
 
-        /* Range Slider */
+        /* 滑块美化 */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
@@ -132,71 +142,92 @@
 </head>
 <body class="h-full flex flex-col text-slate-900 dark:text-white transition-colors duration-300 select-none overflow-hidden font-sans">
 
-    <!-- Header -->
+    <!-- 顶部标题栏 -->
     <header class="px-6 pt-4 pb-2 flex justify-between items-end z-10">
         <div>
-            <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1" id="currentDate">LOADING...</div>
-            <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">ThyroFit</h1>
+            <!-- 日期显示 -->
+            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1" id="currentDate">加载中...</div>
+            <!-- LOGO 渐变色 -->
+            <h1 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">ThyroFit</h1>
         </div>
+        <!-- 设置按钮 -->
         <button onclick="showSettings()" class="text-slate-400 hover:text-blue-500 p-2 transition active:scale-90 duration-200">
             <i class="fas fa-cog text-xl"></i>
         </button>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- 主内容区域 (可滚动) -->
     <main class="flex-1 overflow-y-auto no-scrollbar relative w-full transform-gpu">
         
-        <!-- VIEW 1: DAILY TRACKER -->
-        <div id="view-daily" class="view-section active px-5 pb-32 space-y-6 pt-2">
+        <!-- 页面 1: 日常打卡 (Daily Tracker) -->
+        <div id="view-daily" class="view-section active px-5 pb-36 space-y-6 pt-2">
             
-            <!-- LEVO-GUARD PROTECTION PANEL -->
+            <!-- 优甲乐吸收期保护面板 (动态注入) -->
             <div id="levoProtectionPanel" class="hidden transform transition-all duration-500 cubic-bezier(0.32, 0.72, 0, 1)">
-                <!-- Status Bar injected by JS -->
+                <!-- JS 会在这里插入状态条 -->
             </div>
 
-            <!-- Stats -->
+            <!-- 统计概览卡片 -->
             <section class="glass rounded-[20px] p-5 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">今日依从率</h3>
-                    <div class="text-2xl font-extrabold text-ios-green tracking-tight" id="complianceRate">0%</div>
+                    <div class="text-2xl font-bold text-ios-green tracking-tight" id="complianceRate">0%</div>
                 </div>
+                <!-- 热力图条 -->
                 <div class="flex justify-between space-x-1.5 h-2" id="heatmapContainer"></div>
             </section>
 
-            <!-- Schedule -->
+            <!-- 补剂清单容器 -->
             <div id="scheduleList" class="space-y-6"></div>
             
-            <div class="text-center text-[10px] text-slate-400 mt-8 pb-4 font-medium opacity-60">
-                Data based on ATA Guidelines & ISSN Sports Nutrition
+            <!-- 底部声明 -->
+            <div class="text-center text-[10px] text-slate-400 mt-8 pb-4 font-normal opacity-60">
+                数据基于 ATA 指南 & ISSN 运动营养建议
             </div>
         </div>
 
-        <!-- VIEW 2: HEALTH MONITOR -->
-        <div id="view-health" class="view-section px-5 pb-32 space-y-6 pt-2">
-            <!-- Body Metrics Card -->
+        <!-- 页面 2: 健康监测 (Health Monitor) -->
+        <div id="view-health" class="view-section px-5 pb-36 space-y-6 pt-2">
+            <!-- 身体数据卡片 (点击修改) -->
             <section class="glass rounded-[20px] p-5 shadow-sm relative overflow-hidden active:scale-[0.98] transition-transform duration-300 ease-out cursor-pointer group" onclick="showBodyModal()">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fas fa-ruler-combined text-7xl"></i></div>
                 <div class="flex justify-between items-start mb-6">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Body Metrics</h3>
-                    <div class="text-[10px] text-blue-500 font-bold bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">LIVE</div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">身体数据 (Body Metrics)</h3>
+                    <div class="text-[10px] text-blue-500 font-bold bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">实时</div>
                 </div>
                 
                 <div class="grid grid-cols-4 gap-2 text-center">
-                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Height</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispHeight">--</div></div>
-                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Weight</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispWeight">--</div></div>
-                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Fat %</div><div class="text-lg font-bold text-blue-500" id="dispFat">--</div></div>
-                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Waist</div><div class="text-lg font-bold text-purple-500" id="dispWaist">--</div></div>
+                    <div><div class="text-[10px] text-slate-400 mb-1 font-medium">身高</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispHeight">--</div></div>
+                    <div><div class="text-[10px] text-slate-400 mb-1 font-medium">体重</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispWeight">--</div></div>
+                    <div><div class="text-[10px] text-slate-400 mb-1 font-medium">体脂率</div><div class="text-lg font-bold text-blue-500" id="dispFat">--</div></div>
+                    <div><div class="text-[10px] text-slate-400 mb-1 font-medium">腹围</div><div class="text-lg font-bold text-purple-500" id="dispWaist">--</div></div>
                 </div>
                 <div class="mt-4 text-xs text-right text-slate-400 flex justify-end items-center">
-                    <span id="metricsDate">No Data</span> <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+                    <span id="metricsDate">无记录</span> <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
+                </div>
+            </section>
+
+            <!-- 历史档案入口 (新功能) -->
+            <section class="glass rounded-[20px] p-5 shadow-sm active:scale-[0.98] transition-transform cursor-pointer" onclick="showHistoryCalendar()">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mr-3 text-blue-500">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-800 dark:text-slate-200">历史档案</div>
+                            <div class="text-xs text-slate-500 mt-0.5">查看往期打卡记录</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-slate-300 text-xs"></i>
                 </div>
             </section>
             
-            <!-- Lab Test Warning -->
+            <!-- 验血警告 -->
             <div class="bg-amber-50 dark:bg-amber-900/10 border-l-[3px] border-amber-400 p-4 rounded-r-xl flex items-start backdrop-blur-sm">
                 <i class="fas fa-vial text-amber-500 mt-0.5 mr-3"></i>
                 <div class="text-xs text-amber-900 dark:text-amber-100/90 leading-relaxed font-medium">
-                    <strong class="text-amber-600 dark:text-amber-400">Lab Alert:</strong> Stop <span class="underline decoration-amber-400/50">Biotin</span> supplements 3-5 days before any thyroid blood panel.
+                    <strong class="text-amber-600 dark:text-amber-400">验血提醒:</strong> 任何含 <span class="underline decoration-amber-400/50">生物素 (Biotin)</span> 的补剂，必须在甲功验血前 3-5 天停服。
                 </div>
             </div>
 
@@ -204,34 +235,46 @@
         </div>
     </main>
 
-    <!-- Bottom Tab Bar (ULTIMATE GLASS, NO SHADOW, FULL CONTROL) -->
-    <div id="bottomNavBar" class="fixed left-1/2 transform -translate-x-1/2 nav-glass z-50 transition-all duration-300 ease-out flex justify-around items-center" 
-         style="bottom: 0px; width: 92%; height: 60px; border-radius: 30px;">
-        <button onclick="switchTab('daily')" id="tab-daily" class="flex-1 flex flex-col items-center justify-center h-full text-blue-500 active:scale-90 duration-200 group">
-            <div class="mb-0.5 transform group-active:translate-y-0.5 transition-transform duration-200">
-                <i class="fas fa-check-circle text-[22px]"></i>
-            </div>
-            <span class="text-[9px] font-bold tracking-wide nav-label opacity-100 transition-opacity">打卡</span>
-        </button>
-        <div class="w-[1px] h-5 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent opacity-40"></div>
-        <button onclick="switchTab('health')" id="tab-health" class="flex-1 flex flex-col items-center justify-center h-full text-slate-400 active:scale-90 duration-200 group">
-            <div class="mb-0.5 transform group-active:translate-y-0.5 transition-transform duration-200">
-                <i class="fas fa-heartbeat text-[22px]"></i>
-            </div>
-            <span class="text-[9px] font-bold tracking-wide nav-label opacity-100 transition-opacity">健康</span>
-        </button>
+    <!-- 底部导航栏容器 (Fixed) -->
+    <!-- 结构说明：外层 nav-container 负责定位和宽度。内层 nav-bg 负责背景色和模糊，通过 padding 控制高度 -->
+    <div id="navContainer" class="fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-out flex flex-col justify-end" 
+         style="bottom: 0; width: 100%;">
+        
+        <!-- 导航背景层 & 内容层 -->
+        <div id="navContent" class="nav-glass w-full flex justify-around items-start pt-2 transition-all duration-300" 
+             style="padding-bottom: 20px; height: auto;">
+             
+            <!-- 按钮：打卡 -->
+            <button onclick="switchTab('daily')" id="tab-daily" class="flex-1 flex flex-col items-center justify-start text-blue-500 active:scale-90 duration-200 group pt-1">
+                <div class="mb-1 transform group-active:translate-y-0.5 transition-transform duration-200">
+                    <i class="fas fa-check-circle text-[22px]"></i>
+                </div>
+                <span class="text-[10px] font-medium tracking-wide nav-label opacity-100 transition-opacity">打卡</span>
+            </button>
+            
+            <!-- 分隔线 -->
+            <div class="w-[1px] h-6 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent opacity-40 mt-1"></div>
+            
+            <!-- 按钮：健康 -->
+            <button onclick="switchTab('health')" id="tab-health" class="flex-1 flex flex-col items-center justify-start text-slate-400 active:scale-90 duration-200 group pt-1">
+                <div class="mb-1 transform group-active:translate-y-0.5 transition-transform duration-200">
+                    <i class="fas fa-heartbeat text-[22px]"></i>
+                </div>
+                <span class="text-[10px] font-medium tracking-wide nav-label opacity-100 transition-opacity">健康</span>
+            </button>
+        </div>
     </div>
 
-    <!-- MODALS (Updated with new transitions) -->
+    <!-- 模态框区域 -->
 
-    <!-- 1. Euthyrox Time Input Modal -->
+    <!-- 1. 优甲乐时间输入 -->
     <div id="levoTimeModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <div class="text-center">
                 <div class="w-14 h-14 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mx-auto mb-5 text-blue-500">
                     <i class="fas fa-clock text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-2 tracking-tight">Time Check</h3>
+                <h3 class="text-xl font-bold mb-2 tracking-tight">确认时间</h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-8 font-medium leading-relaxed">精准记录服药时间以激活冲突算法。</p>
                 
                 <div class="bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-2 mb-8 border border-transparent focus-within:border-blue-500/50 transition-colors">
@@ -246,7 +289,7 @@
         </div>
     </div>
 
-    <!-- 2. Conflict Warning Modal -->
+    <!-- 2. 冲突警告 -->
     <div id="conflictModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <div class="w-14 h-14 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-5 text-red-500">
@@ -261,17 +304,17 @@
         </div>
     </div>
 
-    <!-- 3. Dose Selection Modal -->
+    <!-- 3. 剂量确认 -->
     <div id="doseModal" class="fixed inset-0 z-[65] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border">
             <h3 class="text-lg font-bold mb-6 text-center tracking-tight">确认剂量</h3>
             <div class="space-y-3">
                 <button id="btnDoseRec" class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-blue-500/30 rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all duration-200">
-                    <div class="text-left"><div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Recommended</div><div class="font-bold text-lg" id="doseModalRec">--</div></div>
+                    <div class="text-left"><div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">权威推荐</div><div class="font-bold text-lg" id="doseModalRec">--</div></div>
                     <i class="fas fa-check-circle text-2xl text-slate-200 group-hover:text-blue-500 transition-colors"></i>
                 </button>
                 <button id="btnDosePers" class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-blue-500/30 rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all duration-200">
-                    <div class="text-left"><div class="text-[10px] text-blue-500 uppercase font-bold tracking-wider mb-0.5">My Custom</div><div class="font-bold text-lg" id="doseModalPers">未设定</div></div>
+                    <div class="text-left"><div class="text-[10px] text-blue-500 uppercase font-bold tracking-wider mb-0.5">个人设定</div><div class="font-bold text-lg" id="doseModalPers">未设定</div></div>
                     <i class="fas fa-pen-circle text-2xl text-slate-200 group-hover:text-blue-500 transition-colors"></i>
                 </button>
             </div>
@@ -279,114 +322,144 @@
         </div>
     </div>
 
-    <!-- Info Modal -->
+    <!-- 详情 Modal (新增历史记录功能) -->
     <div id="infoModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
-        <div onclick="event.stopPropagation()" class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border" id="infoCard">
-            <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
-            <div class="flex justify-between items-center mb-6">
-                <h3 id="infoTitle" class="text-xl font-bold tracking-tight">Details</h3>
+        <div onclick="event.stopPropagation()" class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border flex flex-col max-h-[80vh]" id="infoCard">
+            <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden shrink-0"></div>
+            <div class="flex justify-between items-center mb-6 shrink-0">
+                <h3 id="infoTitle" class="text-xl font-bold tracking-tight">详情</h3>
                 <span id="infoBadge" class="text-[10px] px-2.5 py-1 rounded-full font-black tracking-wide bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">CORE</span>
             </div>
-            <div class="space-y-5">
+            <div class="space-y-5 overflow-y-auto no-scrollbar">
                 <div class="bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-black/5 dark:border-white/5">
-                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-1 tracking-wider">Dosage</div>
+                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-1 tracking-wider">剂量 (Dosage)</div>
                     <div id="infoDose" class="font-mono text-base font-bold text-slate-700 dark:text-slate-200"></div>
                 </div>
-                <div><div class="text-[10px] text-slate-400 uppercase font-bold mb-1.5 tracking-wider">Mechanism</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
-                <div><div class="text-[10px] text-red-400 uppercase font-bold mb-1.5 tracking-wider">Contraindications</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
+                <div><div class="text-[10px] text-slate-400 uppercase font-bold mb-1.5 tracking-wider">作用机制</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
+                <div><div class="text-[10px] text-red-400 uppercase font-bold mb-1.5 tracking-wider">禁忌</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
+                
+                <!-- 新增：单项历史记录 -->
+                <div class="border-t border-slate-100 dark:border-white/10 pt-4 mt-2">
+                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-2 tracking-wider">最近打卡记录</div>
+                    <div id="infoHistoryList" class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                        <!-- JS 注入 -->
+                    </div>
+                </div>
             </div>
-            <button onclick="closeModal('infoModal')" class="mt-8 w-full py-4 rounded-xl bg-ios-blue text-white font-bold shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-transform">Got it</button>
+            <button onclick="closeModal('infoModal')" class="mt-6 w-full py-4 rounded-xl bg-ios-blue text-white font-bold shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-transform shrink-0">知道了</button>
         </div>
     </div>
 
-    <!-- Body Metrics Input -->
+    <!-- 全局历史日历 Modal (新功能) -->
+    <div id="historyCalendarModal" class="fixed inset-0 z-[75] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div class="bg-white dark:bg-ios-darkCard w-[90%] max-w-sm rounded-[24px] shadow-2xl p-6 modal-card border border-white/10 max-h-[80vh] flex flex-col">
+            <h3 class="text-lg font-bold mb-4 text-center">本月打卡概览</h3>
+            <!-- 日历网格容器 -->
+            <div id="calendarGrid" class="grid grid-cols-7 gap-2 mb-4 text-center text-sm font-medium">
+                <!-- 星期头 -->
+                <div class="text-slate-400 text-xs py-2">日</div>
+                <div class="text-slate-400 text-xs py-2">一</div>
+                <div class="text-slate-400 text-xs py-2">二</div>
+                <div class="text-slate-400 text-xs py-2">三</div>
+                <div class="text-slate-400 text-xs py-2">四</div>
+                <div class="text-slate-400 text-xs py-2">五</div>
+                <div class="text-slate-400 text-xs py-2">六</div>
+                <!-- JS 注入日期 -->
+            </div>
+            <div class="text-center text-xs text-slate-400 mb-6">点击日期查看详情</div>
+            <button onclick="closeModal('historyCalendarModal')" class="w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 font-bold text-sm">关闭</button>
+        </div>
+    </div>
+
+    <!-- 身体数据输入 -->
     <div id="bodyModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
-            <h3 class="text-lg font-bold mb-6 text-center">Update Metrics</h3>
+            <h3 class="text-lg font-bold mb-6 text-center">更新数据</h3>
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Height (CM)</label><input type="number" id="inHeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0"></div>
-                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Weight (KG)</label><input type="number" id="inWeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">身高 (CM)</label><input type="number" id="inHeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">体重 (KG)</label><input type="number" id="inWeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Fat (%)</label><input type="number" id="inFat" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
-                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Waist (CM)</label><input type="number" id="inWaist" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">体脂 (%)</label><input type="number" id="inFat" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">腹围 (CM)</label><input type="number" id="inWaist" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3 mt-8">
-                <button onclick="closeModal('bodyModal')" class="py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm active:scale-[0.98] transition-transform">Cancel</button>
-                <button onclick="saveBodyMetrics()" class="py-3.5 rounded-xl bg-ios-blue text-white font-bold text-sm shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-transform">Save</button>
+                <button onclick="closeModal('bodyModal')" class="py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm active:scale-[0.98] transition-transform">取消</button>
+                <button onclick="saveBodyMetrics()" class="py-3.5 rounded-xl bg-ios-blue text-white font-bold text-sm shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-transform">保存</button>
             </div>
         </div>
     </div>
 
-    <!-- Checkup Update Modal -->
+    <!-- 检查更新 -->
     <div id="checkupModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border" id="checkupCard">
             <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
-            <h3 class="text-lg font-bold mb-1" id="checkupTitle">Update Checkup</h3>
+            <h3 class="text-lg font-bold mb-1" id="checkupTitle">更新检查记录</h3>
             <p class="text-xs text-slate-400 mb-6 font-medium" id="checkupSubtitle">上次: 2023-10-01</p>
             <div class="space-y-5 max-h-[55vh] overflow-y-auto no-scrollbar">
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Date</label><input type="date" id="cuDate" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-2.5 text-xs font-bold"></div>
-                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Interval</label><select id="cuInterval" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-2.5 text-xs font-bold"><option value="1">1 Month</option><option value="3">3 Months</option><option value="6">6 Months</option><option value="12">1 Year</option></select></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">日期</label><input type="date" id="cuDate" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-2.5 text-xs font-bold"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">复查间隔</label><select id="cuInterval" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-2.5 text-xs font-bold"><option value="1">1 个月</option><option value="3">3 个月</option><option value="6">6 个月</option><option value="12">1 年</option></select></div>
                 </div>
                 <div class="bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/5">
-                    <div class="flex justify-between mb-3"><label class="text-[10px] text-slate-500 font-bold uppercase">Feeling (1-10)</label><span id="scoreVal" class="text-sm font-bold text-ios-blue">8</span></div>
+                    <div class="flex justify-between mb-3"><label class="text-[10px] text-slate-500 font-bold uppercase">体感评分 (1-10)</label><span id="scoreVal" class="text-sm font-bold text-ios-blue">8</span></div>
                     <input type="range" id="cuScore" min="1" max="10" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500">
                 </div>
                 <div id="cuMetricsContainer" class="space-y-3"></div>
             </div>
             <div class="grid grid-cols-2 gap-3 mt-8">
-                <button onclick="closeModal('checkupModal')" class="py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm active:scale-[0.98] transition-transform">Cancel</button>
-                <button onclick="saveCheckup()" class="py-3.5 rounded-xl bg-ios-blue text-white font-bold text-sm shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-transform">Save</button>
+                <button onclick="closeModal('checkupModal')" class="py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm active:scale-[0.98] transition-transform">取消</button>
+                <button onclick="saveCheckup()" class="py-3.5 rounded-xl bg-ios-blue text-white font-bold text-sm shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-transform">保存</button>
             </div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
+    <!-- 设置 -->
     <div id="settingsModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10 max-h-[85vh] overflow-y-auto no-scrollbar" id="settingsCard">
             <h3 class="text-lg font-bold mb-6 border-b border-slate-100 dark:border-white/10 pb-4">设置 & 个性化</h3>
             <div class="mb-8">
-                <div class="text-[10px] text-slate-400 font-black uppercase mb-3 tracking-widest">UI Lab (Pro)</div>
+                <div class="text-[10px] text-slate-400 font-black uppercase mb-3 tracking-widest">UI 实验室</div>
                 <div class="bg-slate-50 dark:bg-white/5 p-4 rounded-2xl space-y-6 border border-black/5 dark:border-white/5">
                     <div>
-                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">Bar Width</span><span id="uiWidthVal" class="font-mono text-blue-500 font-bold">92%</span></div>
-                        <input type="range" id="uiWidth" min="40" max="100" value="92" oninput="updateUI()">
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">底部栏宽度</span><span id="uiWidthVal" class="font-mono text-blue-500 font-bold">100%</span></div>
+                        <input type="range" id="uiWidth" min="40" max="100" value="100" oninput="updateUI()">
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">Vertical Offset</span><span id="uiOffsetVal" class="font-mono text-blue-500 font-bold">0px</span></div>
-                        <!-- Range starts from 0 as requested -->
-                        <input type="range" id="uiOffset" min="0" max="60" value="0" oninput="updateUI()">
+                        <!-- 新增：底部填充控制，解决 Home 条遮挡问题 -->
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">底部填充高度 (Padding)</span><span id="uiPadVal" class="font-mono text-blue-500 font-bold">20px</span></div>
+                        <input type="range" id="uiPad" min="0" max="50" value="20" oninput="updateUI()">
                     </div>
                 </div>
             </div>
             <div class="space-y-3">
-                <div class="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">Data</div>
-                <button onclick="exportData()" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl active:bg-slate-200 transition"><span class="font-bold text-xs">Backup (JSON)</span><i class="fas fa-file-export text-slate-400"></i></button>
-                <div class="relative"><input type="file" id="importFile" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="importData(this)"><button class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl active:bg-slate-200 transition"><span class="font-bold text-xs">Restore</span><i class="fas fa-file-import text-slate-400"></i></button></div>
-                <button onclick="resetAppConfirm()" class="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-xl active:bg-red-100 transition text-red-500"><span class="font-bold text-xs">Reset All Data</span><i class="fas fa-trash-alt"></i></button>
+                <div class="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">数据管理</div>
+                <button onclick="exportData()" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl active:bg-slate-200 transition"><span class="font-bold text-xs">备份数据 (JSON)</span><i class="fas fa-file-export text-slate-400"></i></button>
+                <div class="relative"><input type="file" id="importFile" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="importData(this)"><button class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl active:bg-slate-200 transition"><span class="font-bold text-xs">恢复数据</span><i class="fas fa-file-import text-slate-400"></i></button></div>
+                <button onclick="resetAppConfirm()" class="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-xl active:bg-red-100 transition text-red-500"><span class="font-bold text-xs">重置所有数据</span><i class="fas fa-trash-alt"></i></button>
             </div>
-            <button onclick="closeModal('settingsModal')" class="mt-8 w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 font-bold text-sm text-slate-600 dark:text-slate-300 active:scale-[0.98] transition-transform">Close</button>
+            <button onclick="closeModal('settingsModal')" class="mt-8 w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 font-bold text-sm text-slate-600 dark:text-slate-300 active:scale-[0.98] transition-transform">关闭</button>
         </div>
     </div>
 
     <script>
-        // --- DATA STRUCTURES (Scientific) ---
+        // --- 核心数据结构 (基于权威指南) ---
+        // conflictType: 'fasting' (60分钟空腹) 或 'chelation' (4小时金属间隔)
         const SUPPLEMENTS = {
-            'euthyrox': { name: '优甲乐', section: 'wakeup', dose: '处方量', isCore: true, warn: '绝对空腹。', mech: 'T4补充', checkConflict: [], conflictType: null },
-            'selenium': { name: '硒 (Selenium)', section: 'breakfast', dose: '200mcg', isCore: true, warn: '随餐服用。', mech: 'T4转T3', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
-            'd3k2': { name: '维D3 + K2', section: 'breakfast', dose: '5000IU', isCore: true, warn: '脂溶性。', mech: '免疫调节', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
-            'bcomplex': { name: 'B族复合 (隔天)', section: 'breakfast', dose: '1粒', isCore: false, warn: '生物素干扰验血。', mech: '能量代谢', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
-            'q10': { name: '辅酶 Q10', section: 'breakfast', dose: '100mg', isCore: false, warn: '避免睡前。', mech: '线粒体', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
-            'curcumin': { name: '姜黄素', section: 'breakfast', dose: '1粒', isCore: false, warn: '抗凝。', mech: '抗炎', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
-            'alphagpc': { name: 'Alpha-GPC', section: 'preworkout', dose: '300mg', isCore: false, warn: '下午慎用。', mech: '爆发力', checkConflict: [], conflictType: null },
-            'ps': { name: '磷脂酰丝氨酸', section: 'dinner', dose: '400mg', isCore: false, warn: '无禁忌。', mech: '降皮质醇', checkConflict: [], conflictType: null },
-            'zinc_only': { name: '锌 (Zinc)', section: 'dinner', dose: '30mg', isCore: true, warn: '严禁空腹。', mech: 'T3受体', checkConflict: ['empty_stomach', 'levothyroxine'], conflictType: 'chelation' },
-            'copper': { name: '铜 (Copper)', section: 'dinner', dose: '2mg', isCore: false, warn: '避免空腹。', mech: '锌拮抗', checkConflict: ['levothyroxine'], conflictType: 'chelation' },
-            'omega3': { name: 'Omega-3', section: 'dinner', dose: '1000mg', isCore: false, warn: '抗凝。', mech: '细胞膜', checkConflict: [], conflictType: null },
-            'magnesium': { name: '镁 (Magnesium)', section: 'bedtime', dose: '200mg', isCore: true, warn: '腹泻减量。', mech: '助眠', checkConflict: ['levothyroxine'], conflictType: 'chelation' }
+            'euthyrox': { name: '优甲乐 (Levothyroxine)', section: 'wakeup', dose: '处方量', isCore: true, warn: '需绝对空腹，避光保存。', mech: '补充 T4 甲状腺素', checkConflict: [], conflictType: null },
+            'selenium': { name: '硒 (Selenium)', section: 'breakfast', dose: '200mcg', isCore: true, warn: '建议随餐服用以减少胃部不适。', mech: '辅助 T4 转化为 T3', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
+            'd3k2': { name: '维D3 + K2', section: 'breakfast', dose: '5000IU', isCore: true, warn: '脂溶性维生素，必须随餐（含油脂）。', mech: '调节免疫，骨骼健康', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
+            'bcomplex': { name: 'B族复合 (隔天)', section: 'breakfast', dose: '1粒', isCore: false, warn: '含生物素，验血前需停服。', mech: '提升能量代谢', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
+            'q10': { name: '辅酶 Q10', section: 'breakfast', dose: '100mg', isCore: false, warn: '避免睡前服用，可能影响睡眠。', mech: '线粒体供能，心脏健康', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
+            'curcumin': { name: '姜黄素', section: 'breakfast', dose: '1粒', isCore: false, warn: '有轻微抗凝血作用。', mech: '强效抗炎', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
+            'alphagpc': { name: 'Alpha-GPC', section: 'preworkout', dose: '300mg', isCore: false, warn: '下午4点后慎用。', mech: '提升神经募集与爆发力', checkConflict: [], conflictType: null },
+            'ps': { name: '磷脂酰丝氨酸 (PS)', section: 'dinner', dose: '400mg', isCore: false, warn: '无特殊禁忌。', mech: '降低皮质醇，缓解压力', checkConflict: [], conflictType: null },
+            'zinc_only': { name: '锌 (Zinc)', section: 'dinner', dose: '30mg', isCore: true, warn: '严禁空腹服用（会导致呕吐）。', mech: '激活 T3 受体', checkConflict: ['empty_stomach', 'levothyroxine'], conflictType: 'chelation' },
+            'copper': { name: '铜 (Copper)', section: 'dinner', dose: '2mg', isCore: false, warn: '避免空腹。', mech: '平衡锌的拮抗作用', checkConflict: ['levothyroxine'], conflictType: 'chelation' },
+            'omega3': { name: 'Omega-3 (深海鱼油)', section: 'dinner', dose: '1000mg', isCore: false, warn: '手术前需停服（抗凝）。', mech: '抗炎，细胞膜健康', checkConflict: [], conflictType: null },
+            'magnesium': { name: '镁 (Magnesium)', section: 'bedtime', dose: '200mg', isCore: true, warn: '如腹泻请减量。', mech: '助眠，神经放松', checkConflict: ['levothyroxine'], conflictType: 'chelation' }
         };
 
         const SECTIONS = [
@@ -399,10 +472,10 @@
 
         const CHECKUP_TYPES = {
             'thyroid': { title: '甲功七项', icon: 'fa-butterfly', fields: ['TSH', 'FT3', 'FT4', 'TPOAb', 'TGAb'], interval: 6 },
-            'liver_kidney': { title: '肝肾功能', icon: 'fa-flask', fields: ['ALT', 'AST', 'Creatinine'], interval: 6 },
-            'vit_d': { title: '维D & 钙', icon: 'fa-sun', fields: ['VitD', 'Calcium'], interval: 6 },
-            'iron': { title: '铁代谢', icon: 'fa-magnet', fields: ['Ferritin'], interval: 6 },
-            'lipid': { title: '血脂四项', icon: 'fa-tint', fields: ['LDL-C', 'HDL-C', 'Triglycerides'], interval: 12 }
+            'liver_kidney': { title: '肝肾功能', icon: 'fa-flask', fields: ['ALT', 'AST', '肌酐'], interval: 6 },
+            'vit_d': { title: '维D & 钙', icon: 'fa-sun', fields: ['25-OH-D', '钙'], interval: 6 },
+            'iron': { title: '铁代谢', icon: 'fa-magnet', fields: ['铁蛋白'], interval: 6 },
+            'lipid': { title: '血脂四项', icon: 'fa-tint', fields: ['低密度脂蛋白', '高密度脂蛋白', '甘油三酯'], interval: 12 }
         };
 
         const DEFAULT_DOSES = {
@@ -411,48 +484,52 @@
             'copper': '2mg', 'omega3': '1000mg', 'magnesium': '200mg'
         };
 
-        // --- STATE ---
+        // --- 应用状态管理 (State) ---
         let appState = {
-            today: {}, // { itemId: { done: true, time: timestamp } }
-            history: [],
-            bodyMetrics: { current: {}, history: [] },
-            checkups: {},
-            customDoses: {},
-            // CHANGED: Default offset 0 to adhere to user request
-            ui: { barWidth: 92, barOffset: 0 }
+            today: {}, // 当日打卡数据 { itemId: { done: true, time: timestamp } }
+            history: [], // 历史归档 [{ date: '2023-10-01', items: {...} }]
+            bodyMetrics: { current: {}, history: [] }, // 身体数据
+            checkups: {}, // 检查记录
+            customDoses: {}, // 用户自定义剂量
+            // UI 配置：新增 navPadding 用于控制底部栏内部填充
+            ui: { barWidth: 100, barPadding: 20 }
         };
         
+        // 运行时变量
         let pendingToggleId = null;
         let activeCheckupType = null;
         let levoTimer = null;
 
-        // --- BOOT ---
+        // --- 初始化 (Boot) ---
         function init() {
             loadData();
-            checkDayCut();
+            checkDayCut(); // 检查是否跨天
             renderDaily();
             renderHealth();
-            initUI();
+            initUI(); // 应用 UI 设置
             
-            // Start protection timer
+            // 启动优甲乐计时器
             updateLevoProtectionStatus();
             levoTimer = setInterval(updateLevoProtectionStatus, 60000); 
 
             document.getElementById('currentDate').innerText = new Date().toLocaleDateString('zh-CN', { weekday: 'long', month: 'long', day: 'numeric' });
             document.getElementById('cuScore').addEventListener('input', (e) => document.getElementById('scoreVal').innerText = e.target.value);
             
+            // 设置默认时间为当前时间
             const now = new Date();
             const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
             document.getElementById('levoTimeInput').value = timeStr;
         }
 
-        // --- CORE FUNCTIONS ---
+        // --- 核心逻辑 ---
+
+        // 切换底部 Tab
         function switchTab(tab) {
+            // 视图切换
             document.querySelectorAll('.view-section').forEach(el => {
                 if(el.id === 'view-' + tab) {
                     el.style.display = 'block';
-                    // Force reflow for transition
-                    void el.offsetWidth;
+                    void el.offsetWidth; // 强制重绘触发动画
                     el.classList.add('active');
                 } else {
                     el.classList.remove('active');
@@ -460,32 +537,37 @@
                 }
             });
 
+            // 按钮样式激活/非激活
             const btnDaily = document.getElementById('tab-daily');
             const btnHealth = document.getElementById('tab-health');
             
             if(tab === 'daily') {
-                btnDaily.className = 'flex-1 flex flex-col items-center justify-center h-full text-blue-500 active:scale-90 duration-200 group';
-                btnHealth.className = 'flex-1 flex flex-col items-center justify-center h-full text-slate-400 active:scale-90 duration-200 group';
+                btnDaily.className = 'flex-1 flex flex-col items-center justify-start text-blue-500 active:scale-90 duration-200 group pt-1';
+                btnHealth.className = 'flex-1 flex flex-col items-center justify-start text-slate-400 active:scale-90 duration-200 group pt-1';
             } else {
-                btnDaily.className = 'flex-1 flex flex-col items-center justify-center h-full text-slate-400 active:scale-90 duration-200 group';
-                btnHealth.className = 'flex-1 flex flex-col items-center justify-center h-full text-blue-500 active:scale-90 duration-200 group';
+                btnDaily.className = 'flex-1 flex flex-col items-center justify-start text-slate-400 active:scale-90 duration-200 group pt-1';
+                btnHealth.className = 'flex-1 flex flex-col items-center justify-start text-blue-500 active:scale-90 duration-200 group pt-1';
             }
         }
 
+        // 跨天检查逻辑
         function checkDayCut() {
             const lastDate = localStorage.getItem('thyrofit_last_date');
             const now = new Date();
-            const dateStr = now.toISOString().split('T')[0];
+            // 使用本地时间字符串作为 Key，避免时区问题
+            const dateStr = now.toLocaleDateString('zh-CN').split('/').join('-');
 
             if (lastDate && lastDate !== dateStr) {
+                // 如果是新的一天，归档旧数据
                 if (Object.keys(appState.today).length > 0) {
                     appState.history.push({
                         date: lastDate,
                         items: { ...appState.today }
                     });
+                    // 只保留最近一年记录
                     if (appState.history.length > 365) appState.history.shift();
                 }
-                appState.today = {};
+                appState.today = {}; // 重置今日状态
             }
             localStorage.setItem('thyrofit_last_date', dateStr);
             saveData();
@@ -496,6 +578,7 @@
             updateStats();
         }
 
+        // 优甲乐保护状态逻辑
         function updateLevoProtectionStatus() {
             const levo = appState.today['euthyrox'];
             const panel = document.getElementById('levoProtectionPanel');
@@ -514,6 +597,7 @@
             let statusClass = '';
 
             if (diffMins < 60) {
+                // 红色警戒：胃酸吸收期 (0-60min)
                 const remaining = 60 - diffMins;
                 statusClass = 'bg-red-500 text-white shadow-xl shadow-red-500/30';
                 statusHTML = `
@@ -521,12 +605,12 @@
                         <div class="flex items-center">
                             <div class="animate-pulse-slow mr-3 text-3xl"><i class="fas fa-ban"></i></div>
                             <div>
-                                <div class="font-bold text-xs uppercase tracking-wider opacity-90">Strict Fasting</div>
+                                <div class="font-bold text-xs uppercase tracking-wider opacity-90">禁食中 (Fasting)</div>
                                 <div class="text-lg font-bold">绝对禁食期</div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-3xl font-mono font-bold leading-none tracking-tighter">${remaining}<span class="text-xs ml-1 font-sans">min</span></div>
+                            <div class="text-3xl font-mono font-bold leading-none tracking-tighter">${remaining}<span class="text-xs ml-1 font-sans">分</span></div>
                         </div>
                     </div>
                     <div class="w-full bg-black/20 h-1.5 mt-3 rounded-full overflow-hidden">
@@ -534,6 +618,7 @@
                     </div>
                 `;
             } else if (diffMins < 240) {
+                // 黄色警戒：金属螯合期 (1-4小时)
                 const remaining = 240 - diffMins;
                 const h = Math.floor(remaining / 60);
                 const m = remaining % 60;
@@ -543,12 +628,12 @@
                         <div class="flex items-center">
                             <div class="mr-3 text-3xl"><i class="fas fa-exclamation-circle"></i></div>
                             <div>
-                                <div class="font-bold text-xs uppercase tracking-wider opacity-80">Chelation Risk</div>
+                                <div class="font-bold text-xs uppercase tracking-wider opacity-80">金属避让 (Chelation)</div>
                                 <div class="text-lg font-bold">金属间隔期</div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-2xl font-mono font-bold leading-none tracking-tighter">${h}h ${m}m</div>
+                            <div class="text-2xl font-mono font-bold leading-none tracking-tighter">${h}小时 ${m}分</div>
                         </div>
                     </div>
                     <div class="w-full bg-black/10 h-1.5 mt-3 rounded-full overflow-hidden">
@@ -556,6 +641,7 @@
                     </div>
                 `;
             } else {
+                // 绿色安全
                 statusClass = 'bg-ios-green text-white shadow-xl shadow-green-500/30';
                 statusHTML = `
                     <div class="flex items-center justify-center py-2">
@@ -570,6 +656,7 @@
             panel.classList.remove('hidden');
         }
 
+        // 冲突检查算法
         function checkConflicts(id) {
             const item = SUPPLEMENTS[id];
             if (id === 'euthyrox') return null;
@@ -630,7 +717,9 @@
             closeModal('levoTimeModal');
         }
 
+        // 打卡项点击逻辑
         function handleItemClick(id) {
+            // 反选逻辑
             if (appState.today[id]?.done) {
                 delete appState.today[id];
                 saveData();
@@ -638,10 +727,12 @@
                 updateLevoProtectionStatus();
                 return;
             }
+            // 优甲乐特殊处理
             if (id === 'euthyrox') {
                 openLevoTimeModal();
                 return;
             }
+            // 冲突检查
             const conflict = checkConflicts(id);
             if (conflict) {
                 pendingToggleId = id;
@@ -652,6 +743,7 @@
             showDoseModal(id);
         }
 
+        // 渲染日常列表
         function renderDaily() {
             const container = document.getElementById('scheduleList');
             container.innerHTML = '';
@@ -699,49 +791,58 @@
             updateStats();
         }
 
-        // --- UI & UTILS ---
+        // --- UI 设置逻辑 (UI Lab) ---
         function initUI() {
             document.getElementById('uiWidth').value = appState.ui.barWidth;
-            document.getElementById('uiOffset').value = appState.ui.barOffset;
+            // 新增 uiPad 控制
+            document.getElementById('uiPad').value = appState.ui.barPadding || 20;
             applyUI();
         }
         function updateUI() {
             appState.ui.barWidth = document.getElementById('uiWidth').value;
-            appState.ui.barOffset = document.getElementById('uiOffset').value;
+            appState.ui.barPadding = document.getElementById('uiPad').value;
             applyUI();
             saveData();
         }
         function applyUI() {
-            const bar = document.getElementById('bottomNavBar');
+            const container = document.getElementById('navContainer');
+            const navContent = document.getElementById('navContent');
             const w = appState.ui.barWidth;
-            const o = appState.ui.barOffset;
+            const p = appState.ui.barPadding || 20;
             
+            // 更新数值显示
             document.getElementById('uiWidthVal').innerText = w + '%';
-            document.getElementById('uiOffsetVal').innerText = o + 'px';
+            document.getElementById('uiPadVal').innerText = p + 'px';
             
-            bar.style.width = w + '%';
-            // Allow absolute 0 positioning without adding safe-area padding automatically
-            // The user wants full control to pull it down to the bezel
-            bar.style.bottom = o + 'px'; 
+            // 容器宽度调整
+            container.style.width = w + '%';
             
-            if (w < 60) {
+            // 核心逻辑：底部栏高度 = 内容区 + 用户设定的Padding。
+            // 背景色是应用在 navContent 上的，所以 padding 增加会撑开背景，从而覆盖 Home Indicator
+            navContent.style.paddingBottom = p + 'px';
+            
+            if (w < 100) {
+                // 悬浮条模式
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'none');
-                bar.style.borderRadius = '30px';
+                container.style.bottom = '10px';
+                navContent.style.borderRadius = '30px';
+                // 悬浮时 border 围住四周
+                navContent.style.border = '1px solid rgba(255, 255, 255, 0.25)';
             } else {
+                // 全宽通栏模式
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'block');
-                bar.style.borderRadius = w > 98 ? '0px' : '30px';
-                
-                // If flush with bottom (0 offset) and full width, we might want to handle safe area manually?
-                // No, user said "I will adjust it myself". So we do nothing extra.
+                container.style.bottom = '0px';
+                navContent.style.borderRadius = '0px'; // 贴底直角
+                navContent.style.border = 'none';
+                navContent.style.borderTop = '0.5px solid rgba(255, 255, 255, 0.25)';
             }
         }
 
-        // --- STANDARD MODALS ---
+        // --- 模态框通用逻辑 ---
         function openModal(id) { 
             const el = document.getElementById(id);
             if(!el) return;
             el.classList.remove('hidden'); 
-            // Force reflow
             void el.offsetWidth;
             el.classList.add('modal-enter-active');
         }
@@ -750,10 +851,10 @@
             const el = document.getElementById(id);
             if(!el) return;
             el.classList.remove('modal-enter-active');
-            setTimeout(() => el.classList.add('hidden'), 300); // Match CSS transition time
+            setTimeout(() => el.classList.add('hidden'), 300);
         }
         
-        // --- FIXED DOSE MODAL LOGIC (CRASH FIX) ---
+        // --- 剂量确认逻辑 ---
         function showDoseModal(id) {
             try {
                 closeModal('conflictModal');
@@ -762,7 +863,7 @@
                 const pers = appState.customDoses[id];
 
                 document.getElementById('doseModalRec').innerText = item.dose;
-                document.getElementById('doseModalPers').innerText = pers ? pers : 'Set Custom';
+                document.getElementById('doseModalPers').innerText = pers ? pers : '点击设定';
                 
                 const btnRec = document.getElementById('btnDoseRec');
                 const btnPers = document.getElementById('btnDosePers');
@@ -812,14 +913,102 @@
             }
         }
 
+        // --- 详情弹窗 (含单项历史) ---
         function showInfo(id) {
             const item = SUPPLEMENTS[id];
-            document.getElementById('infoTitle').innerText = item.name;
+            document.getElementById('infoTitle').innerText = item.name.split(' ')[0]; // 只取中文名
             document.getElementById('infoBadge').style.display = item.isCore ? 'block' : 'none';
             document.getElementById('infoDose').innerText = item.dose;
             document.getElementById('infoMech').innerText = item.mech;
             document.getElementById('infoWarn').innerText = item.warn;
+
+            // 渲染单项历史
+            const list = document.getElementById('infoHistoryList');
+            list.innerHTML = '';
+            
+            // 合并今日与历史记录，筛选该 ID 的记录
+            let records = [];
+            // 1. 今日
+            if(appState.today[id]?.done) {
+                records.push({ date: '今天', time: appState.today[id].time });
+            }
+            // 2. 历史 (倒序)
+            [...appState.history].reverse().forEach(h => {
+                if(h.items && h.items[id]?.done) {
+                    records.push({ date: h.date, time: h.items[id].time });
+                }
+            });
+            
+            // 取最近5条
+            records.slice(0, 5).forEach(rec => {
+                const dateObj = new Date(rec.time);
+                const timeStr = dateObj.getHours().toString().padStart(2,'0') + ':' + dateObj.getMinutes().toString().padStart(2,'0');
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center py-1 border-b border-slate-50 dark:border-white/5 last:border-0';
+                div.innerHTML = `<span>${rec.date}</span><span class="font-mono text-xs opacity-70">${timeStr}</span>`;
+                list.appendChild(div);
+            });
+
+            if(records.length === 0) {
+                list.innerHTML = '<div class="text-xs text-slate-300 italic py-1">暂无记录</div>';
+            }
+
             openModal('infoModal');
+        }
+
+        // --- 全局历史日历 ---
+        function showHistoryCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            // 清理旧日期 (保留前7个星期头)
+            while(grid.children.length > 7) {
+                grid.removeChild(grid.lastChild);
+            }
+            
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDay = new Date(year, month, 1).getDay(); // 0 是周日
+
+            // 生成空白填充
+            for(let i=0; i<firstDay; i++) {
+                const empty = document.createElement('div');
+                grid.appendChild(empty);
+            }
+
+            // 生成日期
+            for(let d=1; d<=daysInMonth; d++) {
+                const dateStr = `${year}-${(month+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+                
+                // 查找该日期的完成度
+                let doneCount = 0;
+                let isToday = (d === now.getDate());
+                
+                if(isToday) {
+                    doneCount = Object.keys(appState.today).length;
+                } else {
+                    const historyDay = appState.history.find(h => h.date === dateStr); // 这里日期格式需匹配
+                    // 注意：history 存储的 date 格式通常是 YYYY-MM-DD
+                    // 如果上面 checkDayCut 用了 localeString，这里要保持一致
+                    // 为简化，这里假设 key 匹配。实际需保证 checkDayCut 格式一致
+                    if(historyDay && historyDay.items) {
+                        doneCount = Object.keys(historyDay.items).length;
+                    }
+                }
+
+                // 简单的颜色判断
+                let bgClass = 'bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-300';
+                if(doneCount > 0) bgClass = 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300';
+                if(doneCount > 5) bgClass = 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300';
+                if(isToday) bgClass += ' ring-2 ring-blue-500';
+
+                const cell = document.createElement('div');
+                cell.className = `aspect-square flex items-center justify-center rounded-lg text-xs cursor-pointer ${bgClass}`;
+                cell.innerText = d;
+                grid.appendChild(cell);
+            }
+
+            openModal('historyCalendarModal');
         }
 
         function renderHealth() {
@@ -828,7 +1017,7 @@
             document.getElementById('dispWeight').innerText = bm.weight || '--';
             document.getElementById('dispFat').innerText = bm.fat || '--';
             document.getElementById('dispWaist').innerText = bm.waist || '--';
-            document.getElementById('metricsDate').innerText = bm.date ? new Date(bm.date).toLocaleDateString() : 'No Data';
+            document.getElementById('metricsDate').innerText = bm.date ? new Date(bm.date).toLocaleDateString() : '无记录';
 
             const list = document.getElementById('checkupList');
             list.innerHTML = '';
@@ -842,7 +1031,7 @@
                 const interval = data.intervalMonths || type.interval;
                 
                 let statusColor = 'border-slate-200 dark:border-slate-700';
-                let statusText = 'No Data';
+                let statusText = '无记录';
                 let statusBg = 'bg-slate-50 dark:bg-slate-800/50';
                 
                 if(lastDate) {
@@ -852,17 +1041,17 @@
                     
                     if(diffDays<0) { 
                         statusColor='border-red-400 border-l-[3px]'; 
-                        statusText=`Overdue ${Math.abs(diffDays)}d`; 
+                        statusText=`逾期 ${Math.abs(diffDays)} 天`; 
                         statusBg = 'bg-red-50 dark:bg-red-900/10';
                     }
                     else if(diffDays<30) { 
                         statusColor='border-orange-300 border-l-[3px]'; 
-                        statusText=`${diffDays} days left`;
+                        statusText=`剩 ${diffDays} 天`;
                         statusBg = 'bg-orange-50 dark:bg-orange-900/10';
                     }
                     else { 
                         statusColor='border-green-400 border-l-[3px]'; 
-                        statusText=`${diffDays} days left`;
+                        statusText=`剩 ${diffDays} 天`;
                     }
                 }
                 
@@ -877,8 +1066,8 @@
                         <div>
                             <div class="font-bold text-[15px] text-slate-800 dark:text-slate-200 tracking-tight">${type.title}</div>
                             <div class="text-[11px] text-slate-500 mt-0.5 font-medium">
-                                ${lastDate ? lastDate.toLocaleDateString() : 'Start Now'} 
-                                <span class="mx-1 opacity-50">•</span> Every ${interval}mo
+                                ${lastDate ? lastDate.toLocaleDateString() : '立即开始'} 
+                                <span class="mx-1 opacity-50">•</span> 每${interval}月
                             </div>
                         </div>
                     </div>
@@ -889,6 +1078,7 @@
             });
         }
         
+        // 身体数据更新
         function showBodyModal() {
             const bm = appState.bodyMetrics?.current || {};
             document.getElementById('inHeight').value = bm.height || '';
@@ -911,6 +1101,8 @@
             }
             closeModal('bodyModal');
         }
+
+        // 检查记录更新
         function showCheckupModal(key) {
             activeCheckupType = key;
             if(!appState.checkups) appState.checkups = {};
@@ -918,7 +1110,7 @@
             const typeDef = CHECKUP_TYPES[key];
             
             document.getElementById('checkupTitle').innerText = typeDef.title;
-            document.getElementById('checkupSubtitle').innerText = data.lastDate ? `Last: ${new Date(data.lastDate).toLocaleDateString()}` : 'New';
+            document.getElementById('checkupSubtitle').innerText = data.lastDate ? `上次: ${new Date(data.lastDate).toLocaleDateString()}` : '无记录';
             document.getElementById('cuDate').valueAsDate = new Date();
             document.getElementById('cuInterval').value = data.intervalMonths || typeDef.interval;
             document.getElementById('cuMetricsContainer').innerHTML='';
@@ -927,7 +1119,7 @@
             
             typeDef.fields.forEach(f => {
                 const div = document.createElement('div');
-                div.innerHTML = `<div class="flex justify-between items-center mb-1"><label class="text-[10px] font-bold uppercase text-slate-400">${f}</label>${lastRec[f]?`<span class="text-[9px] text-slate-400 opacity-70">Prev: ${lastRec[f]}</span>`:''}</div><input type="text" data-field="${f}" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2.5 text-sm font-bold" placeholder="-">`;
+                div.innerHTML = `<div class="flex justify-between items-center mb-1"><label class="text-[10px] font-bold uppercase text-slate-400">${f}</label>${lastRec[f]?`<span class="text-[9px] text-slate-400 opacity-70">前值: ${lastRec[f]}</span>`:''}</div><input type="text" data-field="${f}" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2.5 text-sm font-bold" placeholder="-">`;
                 document.getElementById('cuMetricsContainer').appendChild(div);
             });
             openModal('checkupModal');
@@ -953,8 +1145,10 @@
             const r=new FileReader(); r.onload=e=>{try{appState=JSON.parse(e.target.result);saveData();location.reload();}catch(x){alert('Error')}};
             r.readAsText(f);
         }
-        function resetAppConfirm(){if(confirm("Reset All?")){localStorage.clear();location.reload();}}
-        function updateStats(){
+        function resetAppConfirm(){if(confirm("重置所有数据？此操作不可逆。")){localStorage.clear();location.reload();}}
+        
+        // 顶部统计更新
+        function updateStats() {
             const core = Object.keys(SUPPLEMENTS).filter(k=>SUPPLEMENTS[k].isCore);
             const done = core.filter(k=>appState.today[k]?.done).length;
             document.getElementById('complianceRate').innerText = Math.round((done/core.length)*100)+'%';
@@ -969,6 +1163,7 @@
             });
         }
         
+        // 数据加载
         function loadData() {
             const raw = localStorage.getItem('thyrofit_pro_data');
             try {
@@ -984,8 +1179,8 @@
             if (!appState.bodyMetrics.current) appState.bodyMetrics.current = {};
             if (!appState.bodyMetrics.history) appState.bodyMetrics.history = [];
             
-            // CHANGED: Default offset 0
-            if (!appState.ui) appState.ui = { barWidth: 92, barOffset: 0 };
+            // 默认值填充
+            if (!appState.ui) appState.ui = { barWidth: 100, barPadding: 20 };
             
             Object.keys(DEFAULT_DOSES).forEach(k => { 
                 if(!appState.customDoses[k]) appState.customDoses[k]=DEFAULT_DOSES[k]; 
