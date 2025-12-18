@@ -2,25 +2,17 @@
 <html lang="zh-CN" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <!-- 
-        viewport 设置：
-        viewport-fit=cover: 确保页面内容充满整个屏幕，包括刘海屏区域 
-        user-scalable=no: 禁止用户缩放，类似原生 App 体验
-    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
     <title>ThyroFit Pro</title>
     
-    <!-- PWA 图标 -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%23000'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2360a5fa'/%3E%3Cstop offset='100%25' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0s256 114.6 256 256-114.6 256-256 256z' fill='black'/%3E%3Cpath d='M368 160h-16c-8.8 0-16 7.2-16 16v16c0 53-43 96-96 96H240c-53 0-96-43-96-96v-16c0-8.8-7.2-16-16-16h-16c-8.8 0-16 7.2-16 16v16c0 88.4 71.6 160 160 160h.2c88.4 0 160-71.6 160-160v-16c0-8.8-7.2-16-16-16z' fill='url(%23g)' opacity='0.8'/%3E%3Cpath d='M256 272c-44.2 0-80 35.8-80 80v16c0 8.8 7.2 16 16 16h128c8.8 0 16-7.2 16-16v-16c0-44.2-35.8-80-80-80z' fill='url(%23g)'/%3E%3C/svg%3E">
 
-    <!-- 引入 Tailwind CSS 和 FontAwesome 图标库 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- 配置 Tailwind -->
     <script>
         tailwind.config = {
             darkMode: 'media', // 跟随系统深色模式
@@ -142,53 +134,39 @@
 </head>
 <body class="h-full flex flex-col text-slate-900 dark:text-white transition-colors duration-300 select-none overflow-hidden font-sans">
 
-    <!-- 顶部标题栏 -->
     <header class="px-6 pt-4 pb-2 flex justify-between items-end z-10">
         <div>
-            <!-- 日期显示 -->
             <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1" id="currentDate">加载中...</div>
-            <!-- LOGO 渐变色 -->
             <h1 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">ThyroFit</h1>
         </div>
-        <!-- 设置按钮 -->
         <button onclick="showSettings()" class="text-slate-400 hover:text-blue-500 p-2 transition active:scale-90 duration-200">
             <i class="fas fa-cog text-xl"></i>
         </button>
     </header>
 
-    <!-- 主内容区域 (可滚动) -->
     <main class="flex-1 overflow-y-auto no-scrollbar relative w-full transform-gpu">
         
-        <!-- 页面 1: 日常打卡 (Daily Tracker) -->
         <div id="view-daily" class="view-section active px-5 pb-36 space-y-6 pt-2">
             
-            <!-- 优甲乐吸收期保护面板 (动态注入) -->
             <div id="levoProtectionPanel" class="hidden transform transition-all duration-500 cubic-bezier(0.32, 0.72, 0, 1)">
-                <!-- JS 会在这里插入状态条 -->
-            </div>
+                </div>
 
-            <!-- 统计概览卡片 -->
             <section class="glass rounded-[20px] p-5 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">今日依从率</h3>
                     <div class="text-2xl font-bold text-ios-green tracking-tight" id="complianceRate">0%</div>
                 </div>
-                <!-- 热力图条 -->
                 <div class="flex justify-between space-x-1.5 h-2" id="heatmapContainer"></div>
             </section>
 
-            <!-- 补剂清单容器 -->
             <div id="scheduleList" class="space-y-6"></div>
             
-            <!-- 底部声明 -->
             <div class="text-center text-[10px] text-slate-400 mt-8 pb-4 font-normal opacity-60">
                 数据基于 ATA 指南 & ISSN 运动营养建议
             </div>
         </div>
 
-        <!-- 页面 2: 健康监测 (Health Monitor) -->
         <div id="view-health" class="view-section px-5 pb-36 space-y-6 pt-2">
-            <!-- 身体数据卡片 (点击修改) -->
             <section class="glass rounded-[20px] p-5 shadow-sm relative overflow-hidden active:scale-[0.98] transition-transform duration-300 ease-out cursor-pointer group" onclick="showBodyModal()">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fas fa-ruler-combined text-7xl"></i></div>
                 <div class="flex justify-between items-start mb-6">
@@ -207,7 +185,6 @@
                 </div>
             </section>
 
-            <!-- 历史档案入口 (新功能) -->
             <section class="glass rounded-[20px] p-5 shadow-sm active:scale-[0.98] transition-transform cursor-pointer" onclick="showHistoryCalendar()">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
@@ -223,7 +200,6 @@
                 </div>
             </section>
             
-            <!-- 验血警告 -->
             <div class="bg-amber-50 dark:bg-amber-900/10 border-l-[3px] border-amber-400 p-4 rounded-r-xl flex items-start backdrop-blur-sm">
                 <i class="fas fa-vial text-amber-500 mt-0.5 mr-3"></i>
                 <div class="text-xs text-amber-900 dark:text-amber-100/90 leading-relaxed font-medium">
@@ -235,16 +211,12 @@
         </div>
     </main>
 
-    <!-- 底部导航栏容器 (Fixed) -->
-    <!-- 结构说明：外层 nav-container 负责定位和宽度。内层 nav-bg 负责背景色和模糊，通过 padding 控制高度 -->
     <div id="navContainer" class="fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-out flex flex-col justify-end" 
          style="bottom: 0; width: 100%;">
         
-        <!-- 导航背景层 & 内容层 -->
-        <div id="navContent" class="nav-glass w-full flex justify-around items-start pt-2 transition-all duration-300" 
+        <div id="navContent" class="nav-glass w-full flex justify-around items-start transition-all duration-300" 
              style="padding-bottom: 20px; height: auto;">
              
-            <!-- 按钮：打卡 -->
             <button onclick="switchTab('daily')" id="tab-daily" class="flex-1 flex flex-col items-center justify-start text-blue-500 active:scale-90 duration-200 group pt-1">
                 <div class="mb-1 transform group-active:translate-y-0.5 transition-transform duration-200">
                     <i class="fas fa-check-circle text-[22px]"></i>
@@ -252,10 +224,8 @@
                 <span class="text-[10px] font-medium tracking-wide nav-label opacity-100 transition-opacity">打卡</span>
             </button>
             
-            <!-- 分隔线 -->
             <div class="w-[1px] h-6 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent opacity-40 mt-1"></div>
             
-            <!-- 按钮：健康 -->
             <button onclick="switchTab('health')" id="tab-health" class="flex-1 flex flex-col items-center justify-start text-slate-400 active:scale-90 duration-200 group pt-1">
                 <div class="mb-1 transform group-active:translate-y-0.5 transition-transform duration-200">
                     <i class="fas fa-heartbeat text-[22px]"></i>
@@ -265,9 +235,6 @@
         </div>
     </div>
 
-    <!-- 模态框区域 -->
-
-    <!-- 1. 优甲乐时间输入 -->
     <div id="levoTimeModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <div class="text-center">
@@ -289,7 +256,6 @@
         </div>
     </div>
 
-    <!-- 2. 冲突警告 -->
     <div id="conflictModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <div class="w-14 h-14 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-5 text-red-500">
@@ -304,7 +270,6 @@
         </div>
     </div>
 
-    <!-- 3. 剂量确认 -->
     <div id="doseModal" class="fixed inset-0 z-[65] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border">
             <h3 class="text-lg font-bold mb-6 text-center tracking-tight">确认剂量</h3>
@@ -322,7 +287,6 @@
         </div>
     </div>
 
-    <!-- 详情 Modal (新增历史记录功能) -->
     <div id="infoModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div onclick="event.stopPropagation()" class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border flex flex-col max-h-[80vh]" id="infoCard">
             <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden shrink-0"></div>
@@ -338,25 +302,20 @@
                 <div><div class="text-[10px] text-slate-400 uppercase font-bold mb-1.5 tracking-wider">作用机制</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
                 <div><div class="text-[10px] text-red-400 uppercase font-bold mb-1.5 tracking-wider">禁忌</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
                 
-                <!-- 新增：单项历史记录 -->
                 <div class="border-t border-slate-100 dark:border-white/10 pt-4 mt-2">
                     <div class="text-[10px] text-slate-400 uppercase font-bold mb-2 tracking-wider">最近打卡记录</div>
                     <div id="infoHistoryList" class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                        <!-- JS 注入 -->
-                    </div>
+                        </div>
                 </div>
             </div>
             <button onclick="closeModal('infoModal')" class="mt-6 w-full py-4 rounded-xl bg-ios-blue text-white font-bold shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-transform shrink-0">知道了</button>
         </div>
     </div>
 
-    <!-- 全局历史日历 Modal (新功能) -->
     <div id="historyCalendarModal" class="fixed inset-0 z-[75] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[90%] max-w-sm rounded-[24px] shadow-2xl p-6 modal-card border border-white/10 max-h-[80vh] flex flex-col">
             <h3 class="text-lg font-bold mb-4 text-center">本月打卡概览</h3>
-            <!-- 日历网格容器 -->
             <div id="calendarGrid" class="grid grid-cols-7 gap-2 mb-4 text-center text-sm font-medium">
-                <!-- 星期头 -->
                 <div class="text-slate-400 text-xs py-2">日</div>
                 <div class="text-slate-400 text-xs py-2">一</div>
                 <div class="text-slate-400 text-xs py-2">二</div>
@@ -364,14 +323,12 @@
                 <div class="text-slate-400 text-xs py-2">四</div>
                 <div class="text-slate-400 text-xs py-2">五</div>
                 <div class="text-slate-400 text-xs py-2">六</div>
-                <!-- JS 注入日期 -->
-            </div>
+                </div>
             <div class="text-center text-xs text-slate-400 mb-6">点击日期查看详情</div>
             <button onclick="closeModal('historyCalendarModal')" class="w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 font-bold text-sm">关闭</button>
         </div>
     </div>
 
-    <!-- 身体数据输入 -->
     <div id="bodyModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <h3 class="text-lg font-bold mb-6 text-center">更新数据</h3>
@@ -392,7 +349,6 @@
         </div>
     </div>
 
-    <!-- 检查更新 -->
     <div id="checkupModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border" id="checkupCard">
             <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
@@ -416,7 +372,6 @@
         </div>
     </div>
 
-    <!-- 设置 -->
     <div id="settingsModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10 max-h-[85vh] overflow-y-auto no-scrollbar" id="settingsCard">
             <h3 class="text-lg font-bold mb-6 border-b border-slate-100 dark:border-white/10 pb-4">设置 & 个性化</h3>
@@ -431,10 +386,15 @@
                         <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">底部悬空距离 (Offset)</span><span id="uiOffsetVal" class="font-mono text-blue-500 font-bold">0px</span></div>
                         <input type="range" id="uiOffset" min="0" max="60" value="0" oninput="updateUI()">
                     </div>
+                    
                     <div>
-                        <!-- 控制 padding-bottom，即“那个区域”的大小 -->
-                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">内部填充高度 (Padding)</span><span id="uiPadVal" class="font-mono text-blue-500 font-bold">20px</span></div>
-                        <input type="range" id="uiPad" min="5" max="50" value="20" oninput="updateUI()">
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">垂直高度 (Vertical Padding)</span><span id="uiHeightVal" class="font-mono text-blue-500 font-bold">8px</span></div>
+                        <input type="range" id="uiHeight" min="2" max="30" value="8" oninput="updateUI()">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">内部填充高度 (Padding Bottom)</span><span id="uiPadVal" class="font-mono text-blue-500 font-bold">20px</span></div>
+                        <input type="range" id="uiPad" min="0" max="50" value="20" oninput="updateUI()">
                     </div>
                 </div>
             </div>
@@ -495,8 +455,8 @@
             bodyMetrics: { current: {}, history: [] }, // 身体数据
             checkups: {}, // 检查记录
             customDoses: {}, // 用户自定义剂量
-            // UI 配置：新增 navPadding 用于控制底部栏内部填充
-            ui: { barWidth: 100, barOffset: 0, barPadding: 20 }
+            // UI 配置：新增 barHeight (顶部高度)
+            ui: { barWidth: 100, barOffset: 0, barPadding: 20, barHeight: 8 }
         };
         
         // 运行时变量
@@ -798,16 +758,18 @@
         // --- UI 设置逻辑 (UI Lab) ---
         function initUI() {
             document.getElementById('uiWidth').value = appState.ui.barWidth;
-            // 恢复 Offset
             document.getElementById('uiOffset').value = appState.ui.barOffset || 0;
-            // 新增 uiPad 控制
             document.getElementById('uiPad').value = appState.ui.barPadding || 20;
+            // 新增：初始化 barHeight
+            document.getElementById('uiHeight').value = appState.ui.barHeight || 8;
             applyUI();
         }
         function updateUI() {
             appState.ui.barWidth = document.getElementById('uiWidth').value;
             appState.ui.barOffset = document.getElementById('uiOffset').value;
             appState.ui.barPadding = document.getElementById('uiPad').value;
+            // 新增：读取 barHeight
+            appState.ui.barHeight = document.getElementById('uiHeight').value;
             applyUI();
             saveData();
         }
@@ -817,11 +779,13 @@
             const w = appState.ui.barWidth;
             const o = appState.ui.barOffset || 0;
             const p = appState.ui.barPadding || 20;
+            const h = appState.ui.barHeight || 8; // Default 8px (like pt-2)
             
             // 更新数值显示
             document.getElementById('uiWidthVal').innerText = w + '%';
             document.getElementById('uiOffsetVal').innerText = o + 'px';
             document.getElementById('uiPadVal').innerText = p + 'px';
+            document.getElementById('uiHeightVal').innerText = h + 'px'; // 新增显示
             
             // 容器宽度调整
             container.style.width = w + '%';
@@ -829,22 +793,21 @@
             // 垂直位置控制 (悬空距离)
             container.style.bottom = o + 'px';
 
-            // 核心逻辑：底部栏高度 = 内容区 + 用户设定的Padding。
-            // 背景色是应用在 navContent 上的，所以 padding 增加会撑开背景，从而覆盖 Home Indicator
+            // 底部填充 (Safe Area)
             navContent.style.paddingBottom = p + 'px';
+            
+            // 新增：顶部高度控制 (Padding Top)
+            navContent.style.paddingTop = h + 'px';
             
             if (w < 100) {
                 // 悬浮条模式
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'none');
-                // container.style.bottom = '10px'; // 移除强制 10px，交由 Offset 控制
                 navContent.style.borderRadius = '30px';
-                // 悬浮时 border 围住四周
                 navContent.style.border = '1px solid rgba(255, 255, 255, 0.25)';
             } else {
                 // 全宽通栏模式
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'block');
-                // container.style.bottom = '0px'; // 移除强制 0px，交由 Offset 控制
-                navContent.style.borderRadius = '0px'; // 贴底直角
+                navContent.style.borderRadius = '0px'; 
                 navContent.style.border = 'none';
                 navContent.style.borderTop = '0.5px solid rgba(255, 255, 255, 0.25)';
             }
@@ -1000,9 +963,6 @@
                     doneCount = Object.keys(appState.today).length;
                 } else {
                     const historyDay = appState.history.find(h => h.date === dateStr); // 这里日期格式需匹配
-                    // 注意：history 存储的 date 格式通常是 YYYY-MM-DD
-                    // 如果上面 checkDayCut 用了 localeString，这里要保持一致
-                    // 为简化，这里假设 key 匹配。实际需保证 checkDayCut 格式一致
                     if(historyDay && historyDay.items) {
                         doneCount = Object.keys(historyDay.items).length;
                     }
@@ -1192,7 +1152,7 @@
             if (!appState.bodyMetrics.history) appState.bodyMetrics.history = [];
             
             // 默认值填充
-            if (!appState.ui) appState.ui = { barWidth: 100, barPadding: 20, barOffset: 0 };
+            if (!appState.ui) appState.ui = { barWidth: 100, barPadding: 20, barOffset: 0, barHeight: 8 }; // barHeight Default 8
             
             Object.keys(DEFAULT_DOSES).forEach(k => { 
                 if(!appState.customDoses[k]) appState.customDoses[k]=DEFAULT_DOSES[k]; 
