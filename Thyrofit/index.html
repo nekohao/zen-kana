@@ -2,20 +2,29 @@
 <html lang="zh-CN" class="h-full">
 <head>
     <meta charset="UTF-8">
+    <!-- 
+        viewport 设置：
+        viewport-fit=cover: 确保页面内容充满整个屏幕，包括刘海屏区域 
+        user-scalable=no: 禁止用户缩放，类似原生 App 体验
+    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
+    <!-- 修改：锁定为浅色背景色 -->
+    <meta name="theme-color" content="#F2F2F7">
     <title>ThyroFit Pro</title>
     
+    <!-- PWA 图标 -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%23000'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2360a5fa'/%3E%3Cstop offset='100%25' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0s256 114.6 256 256-114.6 256-256 256z' fill='black'/%3E%3Cpath d='M368 160h-16c-8.8 0-16 7.2-16 16v16c0 53-43 96-96 96H240c-53 0-96-43-96-96v-16c0-8.8-7.2-16-16-16h-16c-8.8 0-16 7.2-16 16v16c0 88.4 71.6 160 160 160h.2c88.4 0 160-71.6 160-160v-16c0-8.8-7.2-16-16-16z' fill='url(%23g)' opacity='0.8'/%3E%3Cpath d='M256 272c-44.2 0-80 35.8-80 80v16c0 8.8 7.2 16 16 16h128c8.8 0 16-7.2 16-16v-16c0-44.2-35.8-80-80-80z' fill='url(%23g)'/%3E%3C/svg%3E">
 
+    <!-- 引入 Tailwind CSS 和 FontAwesome 图标库 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <!-- 配置 Tailwind -->
     <script>
         tailwind.config = {
-            darkMode: 'media', // 跟随系统深色模式
+            darkMode: 'class', // 修改：改为手动模式，从而禁用自动深色模式
             theme: {
                 // 字体栈：优先使用苹果系统字体，提供最优雅的原生体验
                 fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Helvetica Neue', 'Arial', 'sans-serif'] },
@@ -48,7 +57,7 @@
         /* 基础样式重置 */
         html { -webkit-tap-highlight-color: transparent; padding-bottom: env(safe-area-inset-bottom); }
         body { background-color: #F2F2F7; padding-top: env(safe-area-inset-top); }
-        @media (prefers-color-scheme: dark) { body { background-color: #000000; } }
+        /* 修改：移除深色模式下的背景色设置 */
         
         * {
             -webkit-font-smoothing: antialiased; /*字体抗锯齿，更清晰*/
@@ -64,12 +73,7 @@
             -webkit-backdrop-filter: blur(25px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
-        .dark .glass {
-            background: rgba(30, 30, 32, 0.60);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+        /* 修改：移除深色模式下的玻璃样式 */
         
         /* 底部导航栏专用玻璃样式 
            更强的模糊，无阴影，营造悬浮感
@@ -81,10 +85,7 @@
             border-top: 0.5px solid rgba(255, 255, 255, 0.3); /* 仅顶部有极细边框 */
             box-shadow: none !important;
         }
-        .dark .nav-glass {
-            background: rgba(20, 20, 20, 0.5);
-            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
-        }
+        /* 修改：移除深色模式下的导航栏样式 */
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -129,44 +130,58 @@
             cursor: pointer; margin-top: -10px; 
         }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(120,120,128,0.2); border-radius: 2px; }
-        .dark input[type=range]::-webkit-slider-runnable-track { background: rgba(120,120,128,0.4); }
+        /* 修改：移除深色模式下的滑块样式 */
     </style>
 </head>
 <body class="h-full flex flex-col text-slate-900 dark:text-white transition-colors duration-300 select-none overflow-hidden font-sans">
 
+    <!-- 顶部标题栏 -->
     <header class="px-6 pt-4 pb-2 flex justify-between items-end z-10">
         <div>
+            <!-- 日期显示 -->
             <div class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1" id="currentDate">加载中...</div>
+            <!-- LOGO 渐变色 -->
             <h1 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">ThyroFit</h1>
         </div>
+        <!-- 设置按钮 -->
         <button onclick="showSettings()" class="text-slate-400 hover:text-blue-500 p-2 transition active:scale-90 duration-200">
             <i class="fas fa-cog text-xl"></i>
         </button>
     </header>
 
+    <!-- 主内容区域 (可滚动) -->
     <main class="flex-1 overflow-y-auto no-scrollbar relative w-full transform-gpu">
         
+        <!-- 页面 1: 日常打卡 (Daily Tracker) -->
         <div id="view-daily" class="view-section active px-5 pb-36 space-y-6 pt-2">
             
+            <!-- 优甲乐吸收期保护面板 (动态注入) -->
             <div id="levoProtectionPanel" class="hidden transform transition-all duration-500 cubic-bezier(0.32, 0.72, 0, 1)">
-                </div>
+                <!-- JS 会在这里插入状态条 -->
+            </div>
 
+            <!-- 统计概览卡片 -->
             <section class="glass rounded-[20px] p-5 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">今日依从率</h3>
                     <div class="text-2xl font-bold text-ios-green tracking-tight" id="complianceRate">0%</div>
                 </div>
+                <!-- 热力图条 -->
                 <div class="flex justify-between space-x-1.5 h-2" id="heatmapContainer"></div>
             </section>
 
+            <!-- 补剂清单容器 -->
             <div id="scheduleList" class="space-y-6"></div>
             
+            <!-- 底部声明 -->
             <div class="text-center text-[10px] text-slate-400 mt-8 pb-4 font-normal opacity-60">
                 数据基于 ATA 指南 & ISSN 运动营养建议
             </div>
         </div>
 
+        <!-- 页面 2: 健康监测 (Health Monitor) -->
         <div id="view-health" class="view-section px-5 pb-36 space-y-6 pt-2">
+            <!-- 身体数据卡片 (点击修改) -->
             <section class="glass rounded-[20px] p-5 shadow-sm relative overflow-hidden active:scale-[0.98] transition-transform duration-300 ease-out cursor-pointer group" onclick="showBodyModal()">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fas fa-ruler-combined text-7xl"></i></div>
                 <div class="flex justify-between items-start mb-6">
@@ -185,6 +200,7 @@
                 </div>
             </section>
 
+            <!-- 历史档案入口 (新功能) -->
             <section class="glass rounded-[20px] p-5 shadow-sm active:scale-[0.98] transition-transform cursor-pointer" onclick="showHistoryCalendar()">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
@@ -200,6 +216,7 @@
                 </div>
             </section>
             
+            <!-- 验血警告 -->
             <div class="bg-amber-50 dark:bg-amber-900/10 border-l-[3px] border-amber-400 p-4 rounded-r-xl flex items-start backdrop-blur-sm">
                 <i class="fas fa-vial text-amber-500 mt-0.5 mr-3"></i>
                 <div class="text-xs text-amber-900 dark:text-amber-100/90 leading-relaxed font-medium">
@@ -211,12 +228,17 @@
         </div>
     </main>
 
+    <!-- 底部导航栏容器 (Fixed) -->
+    <!-- 结构说明：外层 nav-container 负责定位和宽度。内层 nav-bg 负责背景色和模糊，通过 padding 控制高度 -->
     <div id="navContainer" class="fixed left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-out flex flex-col justify-end" 
          style="bottom: 0; width: 100%;">
         
+        <!-- 导航背景层 & 内容层 -->
+        <!-- 注意：移除了 pt-2，改为 JS 动态控制 -->
         <div id="navContent" class="nav-glass w-full flex justify-around items-start transition-all duration-300" 
              style="padding-bottom: 20px; height: auto;">
              
+            <!-- 按钮：打卡 -->
             <button onclick="switchTab('daily')" id="tab-daily" class="flex-1 flex flex-col items-center justify-start text-blue-500 active:scale-90 duration-200 group pt-1">
                 <div class="mb-1 transform group-active:translate-y-0.5 transition-transform duration-200">
                     <i class="fas fa-check-circle text-[22px]"></i>
@@ -224,8 +246,10 @@
                 <span class="text-[10px] font-medium tracking-wide nav-label opacity-100 transition-opacity">打卡</span>
             </button>
             
+            <!-- 分隔线 -->
             <div class="w-[1px] h-6 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent opacity-40 mt-1"></div>
             
+            <!-- 按钮：健康 -->
             <button onclick="switchTab('health')" id="tab-health" class="flex-1 flex flex-col items-center justify-start text-slate-400 active:scale-90 duration-200 group pt-1">
                 <div class="mb-1 transform group-active:translate-y-0.5 transition-transform duration-200">
                     <i class="fas fa-heartbeat text-[22px]"></i>
@@ -235,6 +259,9 @@
         </div>
     </div>
 
+    <!-- 模态框区域 -->
+
+    <!-- 1. 优甲乐时间输入 -->
     <div id="levoTimeModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <div class="text-center">
@@ -256,6 +283,7 @@
         </div>
     </div>
 
+    <!-- 2. 冲突警告 -->
     <div id="conflictModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <div class="w-14 h-14 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-5 text-red-500">
@@ -270,6 +298,7 @@
         </div>
     </div>
 
+    <!-- 3. 剂量确认 -->
     <div id="doseModal" class="fixed inset-0 z-[65] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border">
             <h3 class="text-lg font-bold mb-6 text-center tracking-tight">确认剂量</h3>
@@ -287,6 +316,7 @@
         </div>
     </div>
 
+    <!-- 详情 Modal (新增历史记录功能) -->
     <div id="infoModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div onclick="event.stopPropagation()" class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border flex flex-col max-h-[80vh]" id="infoCard">
             <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden shrink-0"></div>
@@ -302,20 +332,25 @@
                 <div><div class="text-[10px] text-slate-400 uppercase font-bold mb-1.5 tracking-wider">作用机制</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
                 <div><div class="text-[10px] text-red-400 uppercase font-bold mb-1.5 tracking-wider">禁忌</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
                 
+                <!-- 新增：单项历史记录 -->
                 <div class="border-t border-slate-100 dark:border-white/10 pt-4 mt-2">
                     <div class="text-[10px] text-slate-400 uppercase font-bold mb-2 tracking-wider">最近打卡记录</div>
                     <div id="infoHistoryList" class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                        </div>
+                        <!-- JS 注入 -->
+                    </div>
                 </div>
             </div>
             <button onclick="closeModal('infoModal')" class="mt-6 w-full py-4 rounded-xl bg-ios-blue text-white font-bold shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-transform shrink-0">知道了</button>
         </div>
     </div>
 
+    <!-- 全局历史日历 Modal (新功能) -->
     <div id="historyCalendarModal" class="fixed inset-0 z-[75] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[90%] max-w-sm rounded-[24px] shadow-2xl p-6 modal-card border border-white/10 max-h-[80vh] flex flex-col">
             <h3 class="text-lg font-bold mb-4 text-center">本月打卡概览</h3>
+            <!-- 日历网格容器 -->
             <div id="calendarGrid" class="grid grid-cols-7 gap-2 mb-4 text-center text-sm font-medium">
+                <!-- 星期头 -->
                 <div class="text-slate-400 text-xs py-2">日</div>
                 <div class="text-slate-400 text-xs py-2">一</div>
                 <div class="text-slate-400 text-xs py-2">二</div>
@@ -323,12 +358,14 @@
                 <div class="text-slate-400 text-xs py-2">四</div>
                 <div class="text-slate-400 text-xs py-2">五</div>
                 <div class="text-slate-400 text-xs py-2">六</div>
-                </div>
+                <!-- JS 注入日期 -->
+            </div>
             <div class="text-center text-xs text-slate-400 mb-6">点击日期查看详情</div>
             <button onclick="closeModal('historyCalendarModal')" class="w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 font-bold text-sm">关闭</button>
         </div>
     </div>
 
+    <!-- 身体数据输入 -->
     <div id="bodyModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <h3 class="text-lg font-bold mb-6 text-center">更新数据</h3>
@@ -349,6 +386,7 @@
         </div>
     </div>
 
+    <!-- 检查更新 -->
     <div id="checkupModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border" id="checkupCard">
             <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
@@ -372,6 +410,7 @@
         </div>
     </div>
 
+    <!-- 设置 -->
     <div id="settingsModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
         <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10 max-h-[85vh] overflow-y-auto no-scrollbar" id="settingsCard">
             <h3 class="text-lg font-bold mb-6 border-b border-slate-100 dark:border-white/10 pb-4">设置 & 个性化</h3>
@@ -387,12 +426,15 @@
                         <input type="range" id="uiOffset" min="0" max="60" value="0" oninput="updateUI()">
                     </div>
                     
+                    <!-- 新增：垂直高度控制 -->
                     <div>
                         <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">垂直高度 (Vertical Padding)</span><span id="uiHeightVal" class="font-mono text-blue-500 font-bold">8px</span></div>
+                        <!-- 默认为 8px (对应原来的 pt-2)，允许调整到 0 或更高 -->
                         <input type="range" id="uiHeight" min="2" max="30" value="8" oninput="updateUI()">
                     </div>
 
                     <div>
+                        <!-- 控制 padding-bottom -->
                         <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">内部填充高度 (Padding Bottom)</span><span id="uiPadVal" class="font-mono text-blue-500 font-bold">20px</span></div>
                         <input type="range" id="uiPad" min="0" max="50" value="20" oninput="updateUI()">
                     </div>
