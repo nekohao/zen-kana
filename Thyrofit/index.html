@@ -21,7 +21,7 @@
         tailwind.config = {
             darkMode: 'media',
             theme: {
-                fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'sans-serif'] },
+                fontFamily: { sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'] }, // Inter First
                 extend: {
                     colors: {
                         ios: {
@@ -31,11 +31,14 @@
                             orange: '#FF9500', gray: '#8E8E93', yellow: '#FFCC00'
                         }
                     },
-                    animation: { 'bounce-slight': 'bounce-slight 0.3s ease-in-out', 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
+                    animation: { 
+                        'bounce-slight': 'bounce-slight 0.4s cubic-bezier(0.32, 0.72, 0, 1)', 
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' 
+                    },
                     keyframes: {
                         'bounce-slight': {
                             '0%, 100%': { transform: 'scale(1)' },
-                            '50%': { transform: 'scale(0.97)' }
+                            '50%': { transform: 'scale(0.96)' }
                         }
                     }
                 }
@@ -48,109 +51,152 @@
         body { background-color: #F2F2F7; padding-top: env(safe-area-inset-top); }
         @media (prefers-color-scheme: dark) { body { background-color: #000000; } }
         
+        /* 120Hz Smooth Transition Base */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Enhanced Glassmorphism for Cards */
         .glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(25px) saturate(180%); 
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
         .dark .glass {
-            background: rgba(28, 28, 30, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 30, 32, 0.60);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
-        /* Premium Bottom Bar Glass */
+        /* Ultimate Nav Glass - No Shadow, Pure Frost */
         .nav-glass {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: none; /* No shadow as requested */
+            background: rgba(250, 250, 250, 0.5);
+            backdrop-filter: blur(50px) saturate(200%); 
+            -webkit-backdrop-filter: blur(50px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: none !important;
         }
         .dark .nav-glass {
-            background: rgba(20, 20, 20, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: none;
+            background: rgba(20, 20, 20, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Tab Transition */
-        .view-section { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
-        .view-section.active { display: block; opacity: 1; }
+        /* High Refresh Rate Optimizations */
+        .view-section { 
+            display: none; 
+            opacity: 0; 
+            transform: scale(0.98);
+            transition: opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            will-change: opacity, transform;
+        }
+        .view-section.active { 
+            display: block; 
+            opacity: 1; 
+            transform: scale(1);
+        }
+
+        /* Modal Transitions (Spring Physics) */
+        .modal-enter {
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .modal-enter-active {
+            opacity: 1;
+        }
+        .modal-card {
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); /* Apple Spring */
+            will-change: transform;
+        }
+        .modal-enter-active .modal-card {
+            transform: scale(1) translateY(0);
+        }
 
         /* Range Slider */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
-            background: #007AFF; cursor: pointer; margin-top: -8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
+            background: #ffffff; border: 0.5px solid rgba(0,0,0,0.04);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            cursor: pointer; margin-top: -10px; 
         }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #E5E5EA; border-radius: 2px; }
-        .dark input[type=range]::-webkit-slider-runnable-track { background: #38383A; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(120,120,128,0.2); border-radius: 2px; }
+        .dark input[type=range]::-webkit-slider-runnable-track { background: rgba(120,120,128,0.4); }
     </style>
 </head>
-<body class="h-full flex flex-col text-slate-900 dark:text-white transition-colors duration-300 select-none overflow-hidden">
+<body class="h-full flex flex-col text-slate-900 dark:text-white transition-colors duration-300 select-none overflow-hidden font-sans">
 
     <!-- Header -->
     <header class="px-6 pt-4 pb-2 flex justify-between items-end z-10">
         <div>
-            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1" id="currentDate">LOADING...</div>
-            <h1 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">ThyroFit</h1>
+            <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1" id="currentDate">LOADING...</div>
+            <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">ThyroFit</h1>
         </div>
-        <button onclick="showSettings()" class="text-slate-400 hover:text-blue-500 p-2 transition">
+        <button onclick="showSettings()" class="text-slate-400 hover:text-blue-500 p-2 transition active:scale-90 duration-200">
             <i class="fas fa-cog text-xl"></i>
         </button>
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-1 overflow-y-auto no-scrollbar relative w-full">
+    <main class="flex-1 overflow-y-auto no-scrollbar relative w-full transform-gpu">
         
         <!-- VIEW 1: DAILY TRACKER -->
-        <div id="view-daily" class="view-section active px-5 pb-24 space-y-6 pt-2">
+        <div id="view-daily" class="view-section active px-5 pb-32 space-y-6 pt-2">
             
             <!-- LEVO-GUARD PROTECTION PANEL -->
-            <div id="levoProtectionPanel" class="hidden transform transition-all duration-500">
+            <div id="levoProtectionPanel" class="hidden transform transition-all duration-500 cubic-bezier(0.32, 0.72, 0, 1)">
                 <!-- Status Bar injected by JS -->
             </div>
 
             <!-- Stats -->
-            <section class="glass rounded-2xl p-5 shadow-sm">
+            <section class="glass rounded-[20px] p-5 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-300">今日依从率 (Core)</h3>
-                    <div class="text-xl font-bold text-ios-green" id="complianceRate">0%</div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">今日依从率</h3>
+                    <div class="text-2xl font-extrabold text-ios-green tracking-tight" id="complianceRate">0%</div>
                 </div>
-                <div class="flex justify-between space-x-1 h-2" id="heatmapContainer"></div>
+                <div class="flex justify-between space-x-1.5 h-2" id="heatmapContainer"></div>
             </section>
 
             <!-- Schedule -->
             <div id="scheduleList" class="space-y-6"></div>
             
-            <div class="text-center text-[10px] text-slate-400 mt-4 pb-4">
-                基于 ATA / Endocrine Society 指南 & ISSN 运动营养建议
+            <div class="text-center text-[10px] text-slate-400 mt-8 pb-4 font-medium opacity-60">
+                Data based on ATA Guidelines & ISSN Sports Nutrition
             </div>
         </div>
 
         <!-- VIEW 2: HEALTH MONITOR -->
-        <div id="view-health" class="view-section px-5 pb-24 space-y-6 pt-2">
+        <div id="view-health" class="view-section px-5 pb-32 space-y-6 pt-2">
             <!-- Body Metrics Card -->
-            <section class="glass rounded-2xl p-5 shadow-sm relative overflow-hidden active:scale-98 transition-transform" onclick="showBodyModal()">
-                <div class="absolute top-0 right-0 p-3 opacity-10"><i class="fas fa-ruler-combined text-6xl"></i></div>
-                <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">Body Metrics</h3>
+            <section class="glass rounded-[20px] p-5 shadow-sm relative overflow-hidden active:scale-[0.98] transition-transform duration-300 ease-out cursor-pointer group" onclick="showBodyModal()">
+                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fas fa-ruler-combined text-7xl"></i></div>
+                <div class="flex justify-between items-start mb-6">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Body Metrics</h3>
+                    <div class="text-[10px] text-blue-500 font-bold bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">LIVE</div>
+                </div>
+                
                 <div class="grid grid-cols-4 gap-2 text-center">
-                    <div><div class="text-[10px] text-slate-400 mb-1">身高 (CM)</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispHeight">--</div></div>
-                    <div><div class="text-[10px] text-slate-400 mb-1">体重 (KG)</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispWeight">--</div></div>
-                    <div><div class="text-[10px] text-slate-400 mb-1">体脂 (%)</div><div class="text-lg font-bold text-blue-500" id="dispFat">--</div></div>
-                    <div><div class="text-[10px] text-slate-400 mb-1">腹围 (CM)</div><div class="text-lg font-bold text-purple-500" id="dispWaist">--</div></div>
+                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Height</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispHeight">--</div></div>
+                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Weight</div><div class="text-lg font-bold text-slate-700 dark:text-slate-200" id="dispWeight">--</div></div>
+                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Fat %</div><div class="text-lg font-bold text-blue-500" id="dispFat">--</div></div>
+                    <div><div class="text-[9px] text-slate-400 mb-1 uppercase font-bold">Waist</div><div class="text-lg font-bold text-purple-500" id="dispWaist">--</div></div>
                 </div>
                 <div class="mt-4 text-xs text-right text-slate-400 flex justify-end items-center">
-                    <span id="metricsDate">未记录</span> <i class="fas fa-chevron-right ml-2"></i>
+                    <span id="metricsDate">No Data</span> <i class="fas fa-chevron-right ml-2 text-[10px]"></i>
                 </div>
             </section>
             
             <!-- Lab Test Warning -->
-            <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-3 rounded-r-lg flex items-start">
-                <i class="fas fa-vial text-yellow-500 mt-1 mr-3"></i>
-                <div class="text-xs text-yellow-800 dark:text-yellow-200 leading-relaxed">
-                    <strong>重要提示：</strong> 任何含 <span class="font-bold">生物素 (Biotin)</span> 的补剂，必须在甲功验血前 <span class="font-bold underline">停服 3-5 天</span>。
+            <div class="bg-amber-50 dark:bg-amber-900/10 border-l-[3px] border-amber-400 p-4 rounded-r-xl flex items-start backdrop-blur-sm">
+                <i class="fas fa-vial text-amber-500 mt-0.5 mr-3"></i>
+                <div class="text-xs text-amber-900 dark:text-amber-100/90 leading-relaxed font-medium">
+                    <strong class="text-amber-600 dark:text-amber-400">Lab Alert:</strong> Stop <span class="underline decoration-amber-400/50">Biotin</span> supplements 3-5 days before any thyroid blood panel.
                 </div>
             </div>
 
@@ -158,169 +204,176 @@
         </div>
     </main>
 
-    <!-- Bottom Tab Bar (ELEGANT, NO SHADOW) -->
-    <div id="bottomNavBar" class="fixed left-1/2 transform -translate-x-1/2 nav-glass z-50 transition-all duration-300 overflow-hidden flex justify-around items-center" 
-         style="bottom: 10px; width: 92%; height: 60px; border-radius: 30px;">
-        <button onclick="switchTab('daily')" id="tab-daily" class="flex-1 flex flex-col items-center justify-center h-full text-blue-500 transition-colors active:scale-90 duration-200">
-            <i class="fas fa-check-circle text-xl mb-0.5"></i>
-            <span class="text-[10px] font-medium nav-label">日常打卡</span>
+    <!-- Bottom Tab Bar (ULTIMATE GLASS, NO SHADOW, FULL CONTROL) -->
+    <div id="bottomNavBar" class="fixed left-1/2 transform -translate-x-1/2 nav-glass z-50 transition-all duration-300 ease-out flex justify-around items-center" 
+         style="bottom: 0px; width: 92%; height: 60px; border-radius: 30px;">
+        <button onclick="switchTab('daily')" id="tab-daily" class="flex-1 flex flex-col items-center justify-center h-full text-blue-500 active:scale-90 duration-200 group">
+            <div class="mb-0.5 transform group-active:translate-y-0.5 transition-transform duration-200">
+                <i class="fas fa-check-circle text-[22px]"></i>
+            </div>
+            <span class="text-[9px] font-bold tracking-wide nav-label opacity-100 transition-opacity">打卡</span>
         </button>
-        <div class="w-[1px] h-6 bg-slate-300 dark:bg-slate-700 opacity-50 rounded-full"></div>
-        <button onclick="switchTab('health')" id="tab-health" class="flex-1 flex flex-col items-center justify-center h-full text-slate-400 transition-colors active:scale-90 duration-200">
-            <i class="fas fa-heartbeat text-xl mb-0.5"></i>
-            <span class="text-[10px] font-medium nav-label">健康监测</span>
+        <div class="w-[1px] h-5 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent opacity-40"></div>
+        <button onclick="switchTab('health')" id="tab-health" class="flex-1 flex flex-col items-center justify-center h-full text-slate-400 active:scale-90 duration-200 group">
+            <div class="mb-0.5 transform group-active:translate-y-0.5 transition-transform duration-200">
+                <i class="fas fa-heartbeat text-[22px]"></i>
+            </div>
+            <span class="text-[9px] font-bold tracking-wide nav-label opacity-100 transition-opacity">健康</span>
         </button>
     </div>
 
-    <!-- MODALS -->
+    <!-- MODALS (Updated with new transitions) -->
 
     <!-- 1. Euthyrox Time Input Modal -->
-    <div id="levoTimeModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
-        <div class="bg-white dark:bg-ios-darkCard w-4/5 max-w-sm rounded-2xl shadow-none border border-white/10 p-6 transform scale-95 transition-transform">
+    <div id="levoTimeModal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
             <div class="text-center">
-                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-clock text-blue-500 text-xl"></i>
+                <div class="w-14 h-14 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mx-auto mb-5 text-blue-500">
+                    <i class="fas fa-clock text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-2">记录摄入时间</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">为了精准计算冲突，请确认您的服药时间。</p>
+                <h3 class="text-xl font-bold mb-2 tracking-tight">Time Check</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-8 font-medium leading-relaxed">精准记录服药时间以激活冲突算法。</p>
                 
-                <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-2 mb-6">
-                    <input type="time" id="levoTimeInput" class="w-full bg-transparent text-center text-2xl font-bold p-2 focus:outline-none dark:text-white">
+                <div class="bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-2 mb-8 border border-transparent focus-within:border-blue-500/50 transition-colors">
+                    <input type="time" id="levoTimeInput" class="w-full bg-transparent text-center text-3xl font-mono font-bold py-2 focus:outline-none dark:text-white">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="setLevoTime('now')" class="w-full py-3 rounded-xl bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/30">就是现在</button>
-                    <button onclick="setLevoTime('manual')" class="w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-700 font-semibold text-sm">确认时间</button>
+                <div class="space-y-3">
+                    <button onclick="setLevoTime('now')" class="w-full py-3.5 rounded-xl bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-transform">就是现在</button>
+                    <button onclick="setLevoTime('manual')" class="w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm text-slate-600 dark:text-slate-300 active:scale-[0.98] transition-transform">自定义时间</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 2. Conflict Warning Modal -->
-    <div id="conflictModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
-        <div class="bg-white dark:bg-ios-darkCard w-4/5 max-w-sm rounded-2xl shadow-none border border-white/10 p-6 transform scale-95 transition-transform">
-            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+    <div id="conflictModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
+            <div class="w-14 h-14 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-5 text-red-500">
+                <i class="fas fa-shield-alt text-2xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-center mb-2">拦截警告</h3>
-            <p id="conflictMsg" class="text-sm text-slate-600 dark:text-slate-300 text-center mb-6 leading-relaxed font-medium"></p>
+            <h3 class="text-xl font-bold text-center mb-2 tracking-tight">拦截警告</h3>
+            <p id="conflictMsg" class="text-sm text-slate-600 dark:text-slate-300 text-center mb-8 leading-7 font-medium"></p>
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="closeModal('conflictModal')" class="w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-slate-600 dark:text-slate-300 text-sm">取消</button>
-                <button onclick="showDoseModal(pendingToggleId)" class="w-full py-3 rounded-xl bg-red-500 text-white font-semibold text-sm">强制继续</button>
+                <button onclick="closeModal('conflictModal')" class="w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-slate-600 dark:text-slate-300 text-sm active:scale-[0.98] transition-transform">取消</button>
+                <button onclick="showDoseModal(pendingToggleId)" class="w-full py-3.5 rounded-xl bg-red-500 text-white font-bold text-sm shadow-lg shadow-red-500/20 active:scale-[0.98] transition-transform">强制继续</button>
             </div>
         </div>
     </div>
 
-    <!-- 3. Dose Selection Modal (Fixed Freeze Bug) -->
-    <div id="doseModal" class="fixed inset-0 z-[65] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity">
-        <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform translate-y-full sm:translate-y-0 transition-transform duration-300">
-            <h3 class="text-lg font-bold mb-4 text-center">确认摄入剂量</h3>
+    <!-- 3. Dose Selection Modal -->
+    <div id="doseModal" class="fixed inset-0 z-[65] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border">
+            <h3 class="text-lg font-bold mb-6 text-center tracking-tight">确认剂量</h3>
             <div class="space-y-3">
-                <button id="btnDoseRec" class="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between group active:scale-[0.98] transition-transform">
-                    <div class="text-left"><div class="text-xs text-slate-500 uppercase font-bold">推荐权威剂量</div><div class="font-bold text-lg" id="doseModalRec">--</div></div>
+                <button id="btnDoseRec" class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-blue-500/30 rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all duration-200">
+                    <div class="text-left"><div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Recommended</div><div class="font-bold text-lg" id="doseModalRec">--</div></div>
                     <i class="fas fa-check-circle text-2xl text-slate-200 group-hover:text-blue-500 transition-colors"></i>
                 </button>
-                <button id="btnDosePers" class="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between group active:scale-[0.98] transition-transform">
-                    <div class="text-left"><div class="text-xs text-blue-500 uppercase font-bold">个人设定</div><div class="font-bold text-lg" id="doseModalPers">未设定</div></div>
-                    <i class="fas fa-user-edit text-xl text-slate-400"></i>
+                <button id="btnDosePers" class="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-blue-500/30 rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all duration-200">
+                    <div class="text-left"><div class="text-[10px] text-blue-500 uppercase font-bold tracking-wider mb-0.5">My Custom</div><div class="font-bold text-lg" id="doseModalPers">未设定</div></div>
+                    <i class="fas fa-pen-circle text-2xl text-slate-200 group-hover:text-blue-500 transition-colors"></i>
                 </button>
             </div>
-            <button onclick="closeModal('doseModal')" class="mt-6 w-full py-3 rounded-xl bg-slate-100 dark:bg-slate-700 font-semibold text-sm text-slate-500">取消</button>
+            <button onclick="closeModal('doseModal')" class="mt-8 w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm text-slate-500 active:scale-[0.98] transition-transform">取消</button>
         </div>
     </div>
 
     <!-- Info Modal -->
-    <div id="infoModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm hidden opacity-0">
-        <div onclick="event.stopPropagation()" class="bg-white dark:bg-ios-darkCard w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform translate-y-full sm:translate-y-0 transition-transform duration-300" id="infoCard">
-            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
-            <div class="flex justify-between items-start mb-4">
-                <h3 id="infoTitle" class="text-xl font-bold">Details</h3>
-                <span id="infoBadge" class="text-xs px-2 py-1 rounded font-bold bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">CORE</span>
+    <div id="infoModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div onclick="event.stopPropagation()" class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border" id="infoCard">
+            <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="infoTitle" class="text-xl font-bold tracking-tight">Details</h3>
+                <span id="infoBadge" class="text-[10px] px-2.5 py-1 rounded-full font-black tracking-wide bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">CORE</span>
             </div>
-            <div class="space-y-4">
-                <div class="bg-slate-50 dark:bg-white/5 p-3 rounded-xl"><div class="text-xs text-slate-400 uppercase font-bold mb-1">权威推荐剂量</div><div id="infoDose" class="font-mono text-sm"></div></div>
-                <div><div class="text-xs text-slate-400 uppercase font-bold mb-1">作用机制 (Mechanism)</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p></div>
-                <div><div class="text-xs text-red-400 uppercase font-bold mb-1">禁忌 & 相互作用</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p></div>
+            <div class="space-y-5">
+                <div class="bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-black/5 dark:border-white/5">
+                    <div class="text-[10px] text-slate-400 uppercase font-bold mb-1 tracking-wider">Dosage</div>
+                    <div id="infoDose" class="font-mono text-base font-bold text-slate-700 dark:text-slate-200"></div>
+                </div>
+                <div><div class="text-[10px] text-slate-400 uppercase font-bold mb-1.5 tracking-wider">Mechanism</div><p id="infoMech" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
+                <div><div class="text-[10px] text-red-400 uppercase font-bold mb-1.5 tracking-wider">Contraindications</div><p id="infoWarn" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium"></p></div>
             </div>
-            <button onclick="closeModal('infoModal')" class="mt-8 w-full py-3.5 rounded-xl bg-ios-blue text-white font-semibold shadow-lg">知道了</button>
+            <button onclick="closeModal('infoModal')" class="mt-8 w-full py-4 rounded-xl bg-ios-blue text-white font-bold shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-transform">Got it</button>
         </div>
     </div>
 
     <!-- Body Metrics Input -->
-    <div id="bodyModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
-        <div class="bg-white dark:bg-ios-darkCard w-full max-w-sm mx-4 rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform" id="bodyCard">
-            <h3 class="text-lg font-bold mb-4">更新身体数据</h3>
+    <div id="bodyModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10">
+            <h3 class="text-lg font-bold mb-6 text-center">Update Metrics</h3>
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-xs text-slate-500 block mb-1">身高 (CM)</label><input type="number" id="inHeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0"></div>
-                    <div><label class="text-xs text-slate-500 block mb-1">体重 (KG)</label><input type="number" id="inWeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Height (CM)</label><input type="number" id="inHeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Weight (KG)</label><input type="number" id="inWeight" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-xs text-slate-500 block mb-1">体脂率 (%)</label><input type="number" id="inFat" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0"></div>
-                    <div><label class="text-xs text-slate-500 block mb-1">腹围 (CM)</label><input type="number" id="inWaist" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Fat (%)</label><input type="number" id="inFat" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Waist (CM)</label><input type="number" id="inWaist" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-3 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" placeholder="0.0"></div>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-3 mt-6">
-                <button onclick="closeModal('bodyModal')" class="py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-sm">取消</button>
-                <button onclick="saveBodyMetrics()" class="py-3 rounded-xl bg-ios-blue text-white font-semibold text-sm shadow-lg">保存</button>
+            <div class="grid grid-cols-2 gap-3 mt-8">
+                <button onclick="closeModal('bodyModal')" class="py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm active:scale-[0.98] transition-transform">Cancel</button>
+                <button onclick="saveBodyMetrics()" class="py-3.5 rounded-xl bg-ios-blue text-white font-bold text-sm shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-transform">Save</button>
             </div>
         </div>
     </div>
 
     <!-- Checkup Update Modal -->
-    <div id="checkupModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm hidden opacity-0 transition-opacity">
-        <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl shadow-2xl p-6 transform translate-y-full sm:translate-y-0 transition-transform duration-300" id="checkupCard">
-            <div class="w-12 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-4 sm:hidden"></div>
+    <div id="checkupModal" class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div class="bg-white dark:bg-ios-darkCard w-full sm:max-w-xs sm:rounded-[24px] rounded-t-[24px] shadow-2xl p-6 modal-card border-t border-white/10 sm:border" id="checkupCard">
+            <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
             <h3 class="text-lg font-bold mb-1" id="checkupTitle">Update Checkup</h3>
-            <p class="text-xs text-slate-400 mb-4" id="checkupSubtitle">上次: 2023-10-01</p>
-            <div class="space-y-4 max-h-[60vh] overflow-y-auto no-scrollbar">
+            <p class="text-xs text-slate-400 mb-6 font-medium" id="checkupSubtitle">上次: 2023-10-01</p>
+            <div class="space-y-5 max-h-[55vh] overflow-y-auto no-scrollbar">
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-xs text-slate-500 block mb-1">本次体检日期</label><input type="date" id="cuDate" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-sm font-bold"></div>
-                    <div><label class="text-xs text-slate-500 block mb-1">下次复查间隔</label><select id="cuInterval" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-sm font-bold"><option value="1">1 个月</option><option value="2">2 个月</option><option value="3">3 个月</option><option value="6">6 个月 (常规)</option><option value="12">12 个月</option></select></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Date</label><input type="date" id="cuDate" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-2.5 text-xs font-bold"></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Interval</label><select id="cuInterval" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl p-2.5 text-xs font-bold"><option value="1">1 Month</option><option value="3">3 Months</option><option value="6">6 Months</option><option value="12">1 Year</option></select></div>
                 </div>
-                <div class="bg-slate-50 dark:bg-white/5 p-3 rounded-xl">
-                    <div class="flex justify-between mb-2"><label class="text-xs text-slate-500 font-bold">自我感觉评分 (1-10)</label><span id="scoreVal" class="text-sm font-bold text-ios-blue">8</span></div>
+                <div class="bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/5">
+                    <div class="flex justify-between mb-3"><label class="text-[10px] text-slate-500 font-bold uppercase">Feeling (1-10)</label><span id="scoreVal" class="text-sm font-bold text-ios-blue">8</span></div>
                     <input type="range" id="cuScore" min="1" max="10" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500">
                 </div>
                 <div id="cuMetricsContainer" class="space-y-3"></div>
             </div>
-            <div class="grid grid-cols-2 gap-3 mt-6">
-                <button onclick="closeModal('checkupModal')" class="py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-sm">取消</button>
-                <button onclick="saveCheckup()" class="py-3 rounded-xl bg-ios-blue text-white font-semibold text-sm shadow-lg">保存记录</button>
+            <div class="grid grid-cols-2 gap-3 mt-8">
+                <button onclick="closeModal('checkupModal')" class="py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-sm active:scale-[0.98] transition-transform">Cancel</button>
+                <button onclick="saveCheckup()" class="py-3.5 rounded-xl bg-ios-blue text-white font-bold text-sm shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-transform">Save</button>
             </div>
         </div>
     </div>
 
     <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity">
-        <div class="bg-white dark:bg-ios-darkCard w-4/5 max-w-sm rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform max-h-[85vh] overflow-y-auto no-scrollbar" id="settingsCard">
-            <h3 class="text-lg font-bold mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">设置 & 个性化</h3>
-            <div class="mb-6">
-                <div class="text-xs text-slate-500 font-bold uppercase mb-3">界面自定义 (UI Lab)</div>
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl space-y-4">
+    <div id="settingsModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-md hidden modal-enter">
+        <div class="bg-white dark:bg-ios-darkCard w-[85%] max-w-xs rounded-[24px] shadow-2xl p-6 modal-card border border-white/10 max-h-[85vh] overflow-y-auto no-scrollbar" id="settingsCard">
+            <h3 class="text-lg font-bold mb-6 border-b border-slate-100 dark:border-white/10 pb-4">设置 & 个性化</h3>
+            <div class="mb-8">
+                <div class="text-[10px] text-slate-400 font-black uppercase mb-3 tracking-widest">UI Lab (Pro)</div>
+                <div class="bg-slate-50 dark:bg-white/5 p-4 rounded-2xl space-y-6 border border-black/5 dark:border-white/5">
                     <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="text-slate-600 dark:text-slate-300">底部栏宽度</span><span id="uiWidthVal" class="font-mono text-blue-500">92%</span></div>
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">Bar Width</span><span id="uiWidthVal" class="font-mono text-blue-500 font-bold">92%</span></div>
                         <input type="range" id="uiWidth" min="40" max="100" value="92" oninput="updateUI()">
                     </div>
                     <div>
-                        <div class="flex justify-between text-xs mb-1"><span class="text-slate-600 dark:text-slate-300">底部垂直偏移</span><span id="uiOffsetVal" class="font-mono text-blue-500">10px</span></div>
-                        <input type="range" id="uiOffset" min="0" max="60" value="10" oninput="updateUI()">
+                        <div class="flex justify-between text-xs mb-2 font-medium"><span class="text-slate-600 dark:text-slate-300">Vertical Offset</span><span id="uiOffsetVal" class="font-mono text-blue-500 font-bold">0px</span></div>
+                        <!-- Range starts from 0 as requested -->
+                        <input type="range" id="uiOffset" min="0" max="60" value="0" oninput="updateUI()">
                     </div>
                 </div>
             </div>
             <div class="space-y-3">
-                <div class="text-xs text-slate-500 font-bold uppercase mb-1">数据管理</div>
-                <button onclick="exportData()" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 transition"><span class="font-medium text-sm">导出数据备份 (JSON)</span><i class="fas fa-file-export text-slate-400"></i></button>
-                <div class="relative"><input type="file" id="importFile" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="importData(this)"><button class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 transition"><span class="font-medium text-sm">导入数据备份</span><i class="fas fa-file-import text-slate-400"></i></button></div>
-                <button onclick="resetAppConfirm()" class="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-xl hover:bg-red-100 transition text-red-500"><span class="font-medium text-sm">重置所有数据</span><i class="fas fa-trash-alt"></i></button>
+                <div class="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">Data</div>
+                <button onclick="exportData()" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl active:bg-slate-200 transition"><span class="font-bold text-xs">Backup (JSON)</span><i class="fas fa-file-export text-slate-400"></i></button>
+                <div class="relative"><input type="file" id="importFile" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="importData(this)"><button class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl active:bg-slate-200 transition"><span class="font-bold text-xs">Restore</span><i class="fas fa-file-import text-slate-400"></i></button></div>
+                <button onclick="resetAppConfirm()" class="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-xl active:bg-red-100 transition text-red-500"><span class="font-bold text-xs">Reset All Data</span><i class="fas fa-trash-alt"></i></button>
             </div>
-            <button onclick="closeModal('settingsModal')" class="mt-6 w-full py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-semibold text-sm">保存并关闭</button>
+            <button onclick="closeModal('settingsModal')" class="mt-8 w-full py-3.5 rounded-xl bg-slate-100 dark:bg-slate-700 font-bold text-sm text-slate-600 dark:text-slate-300 active:scale-[0.98] transition-transform">Close</button>
         </div>
     </div>
 
     <script>
         // --- DATA STRUCTURES (Scientific) ---
-        // conflictType: 'fasting' (60 min) or 'chelation' (4 hours)
         const SUPPLEMENTS = {
             'euthyrox': { name: '优甲乐', section: 'wakeup', dose: '处方量', isCore: true, warn: '绝对空腹。', mech: 'T4补充', checkConflict: [], conflictType: null },
             'selenium': { name: '硒 (Selenium)', section: 'breakfast', dose: '200mcg', isCore: true, warn: '随餐服用。', mech: 'T4转T3', checkConflict: ['levothyroxine'], conflictType: 'fasting' },
@@ -365,7 +418,8 @@
             bodyMetrics: { current: {}, history: [] },
             checkups: {},
             customDoses: {},
-            ui: { barWidth: 92, barOffset: 10 }
+            // CHANGED: Default offset 0 to adhere to user request
+            ui: { barWidth: 92, barOffset: 0 }
         };
         
         let pendingToggleId = null;
@@ -382,43 +436,39 @@
             
             // Start protection timer
             updateLevoProtectionStatus();
-            levoTimer = setInterval(updateLevoProtectionStatus, 60000); // Check every minute
+            levoTimer = setInterval(updateLevoProtectionStatus, 60000); 
 
             document.getElementById('currentDate').innerText = new Date().toLocaleDateString('zh-CN', { weekday: 'long', month: 'long', day: 'numeric' });
             document.getElementById('cuScore').addEventListener('input', (e) => document.getElementById('scoreVal').innerText = e.target.value);
             
-            // Set default time in modal
             const now = new Date();
             const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
             document.getElementById('levoTimeInput').value = timeStr;
         }
 
         // --- CORE FUNCTIONS ---
-        // MISSING FUNCTION FIXED: Tab Switching Logic
         function switchTab(tab) {
-            // 1. Handle Content Views
             document.querySelectorAll('.view-section').forEach(el => {
                 if(el.id === 'view-' + tab) {
                     el.style.display = 'block';
-                    // Delay adding active class for fade-in effect
-                    setTimeout(() => el.classList.add('active'), 10);
+                    // Force reflow for transition
+                    void el.offsetWidth;
+                    el.classList.add('active');
                 } else {
                     el.classList.remove('active');
-                    // Wait for fade-out then hide
-                    setTimeout(() => { if(!el.classList.contains('active')) el.style.display = 'none'; }, 200);
+                    setTimeout(() => { if(!el.classList.contains('active')) el.style.display = 'none'; }, 400);
                 }
             });
 
-            // 2. Handle Bottom Nav styling
             const btnDaily = document.getElementById('tab-daily');
             const btnHealth = document.getElementById('tab-health');
             
             if(tab === 'daily') {
-                btnDaily.className = 'flex-1 flex flex-col items-center justify-center h-full text-blue-500 transition-colors active:scale-90 duration-200';
-                btnHealth.className = 'flex-1 flex flex-col items-center justify-center h-full text-slate-400 transition-colors active:scale-90 duration-200';
+                btnDaily.className = 'flex-1 flex flex-col items-center justify-center h-full text-blue-500 active:scale-90 duration-200 group';
+                btnHealth.className = 'flex-1 flex flex-col items-center justify-center h-full text-slate-400 active:scale-90 duration-200 group';
             } else {
-                btnDaily.className = 'flex-1 flex flex-col items-center justify-center h-full text-slate-400 transition-colors active:scale-90 duration-200';
-                btnHealth.className = 'flex-1 flex flex-col items-center justify-center h-full text-blue-500 transition-colors active:scale-90 duration-200';
+                btnDaily.className = 'flex-1 flex flex-col items-center justify-center h-full text-slate-400 active:scale-90 duration-200 group';
+                btnHealth.className = 'flex-1 flex flex-col items-center justify-center h-full text-blue-500 active:scale-90 duration-200 group';
             }
         }
 
@@ -437,7 +487,6 @@
                 }
                 appState.today = {};
             }
-            
             localStorage.setItem('thyrofit_last_date', dateStr);
             saveData();
         }
@@ -447,7 +496,6 @@
             updateStats();
         }
 
-        // --- LEVO PROTECTION LOGIC (THE BRAIN) ---
         function updateLevoProtectionStatus() {
             const levo = appState.today['euthyrox'];
             const panel = document.getElementById('levoProtectionPanel');
@@ -458,7 +506,7 @@
                 return;
             }
 
-            const intakeTime = levo.time; // Timestamp
+            const intakeTime = levo.time;
             const now = Date.now();
             const diffMins = Math.floor((now - intakeTime) / 60000);
             
@@ -466,68 +514,62 @@
             let statusClass = '';
 
             if (diffMins < 60) {
-                // RED ZONE: Stomach Acid Phase
                 const remaining = 60 - diffMins;
-                statusClass = 'bg-red-500 text-white shadow-lg shadow-red-500/30';
+                statusClass = 'bg-red-500 text-white shadow-xl shadow-red-500/30';
                 statusHTML = `
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="animate-pulse-slow mr-3 text-2xl"><i class="fas fa-ban"></i></div>
+                            <div class="animate-pulse-slow mr-3 text-3xl"><i class="fas fa-ban"></i></div>
                             <div>
-                                <div class="font-bold text-sm uppercase tracking-wider">绝对禁食期</div>
-                                <div class="text-[10px] opacity-90">严禁: 咖啡 / 早餐 / 蛋白粉</div>
+                                <div class="font-bold text-xs uppercase tracking-wider opacity-90">Strict Fasting</div>
+                                <div class="text-lg font-bold">绝对禁食期</div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-2xl font-mono font-bold leading-none">${remaining}<span class="text-xs ml-1">min</span></div>
-                            <div class="text-[10px]">倒计时</div>
+                            <div class="text-3xl font-mono font-bold leading-none tracking-tighter">${remaining}<span class="text-xs ml-1 font-sans">min</span></div>
                         </div>
                     </div>
-                    <div class="w-full bg-black/20 h-1 mt-2 rounded-full overflow-hidden">
-                        <div class="bg-white h-full transition-all duration-1000" style="width: ${(diffMins/60)*100}%"></div>
+                    <div class="w-full bg-black/20 h-1.5 mt-3 rounded-full overflow-hidden">
+                        <div class="bg-white h-full transition-all duration-1000 ease-linear" style="width: ${(diffMins/60)*100}%"></div>
                     </div>
                 `;
-            } else if (diffMins < 240) { // 4 hours
-                // YELLOW ZONE: Chelation Phase
+            } else if (diffMins < 240) {
                 const remaining = 240 - diffMins;
                 const h = Math.floor(remaining / 60);
                 const m = remaining % 60;
-                statusClass = 'bg-ios-yellow text-slate-900 shadow-lg shadow-yellow-500/20';
+                statusClass = 'bg-ios-yellow text-slate-900 shadow-xl shadow-yellow-500/20';
                 statusHTML = `
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="mr-3 text-2xl"><i class="fas fa-exclamation-circle"></i></div>
+                            <div class="mr-3 text-3xl"><i class="fas fa-exclamation-circle"></i></div>
                             <div>
-                                <div class="font-bold text-sm uppercase tracking-wider">金属间隔期</div>
-                                <div class="text-[10px] opacity-80">严禁: 锌 / 铁 / 钙 / 镁 / 豆浆</div>
+                                <div class="font-bold text-xs uppercase tracking-wider opacity-80">Chelation Risk</div>
+                                <div class="text-lg font-bold">金属间隔期</div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-xl font-mono font-bold leading-none">${h}h ${m}m</div>
-                            <div class="text-[10px]">至安全期</div>
+                            <div class="text-2xl font-mono font-bold leading-none tracking-tighter">${h}h ${m}m</div>
                         </div>
                     </div>
-                    <div class="w-full bg-black/10 h-1 mt-2 rounded-full overflow-hidden">
-                        <div class="bg-black/40 h-full transition-all duration-1000" style="width: ${(diffMins/240)*100}%"></div>
+                    <div class="w-full bg-black/10 h-1.5 mt-3 rounded-full overflow-hidden">
+                        <div class="bg-black/40 h-full transition-all duration-1000 ease-linear" style="width: ${(diffMins/240)*100}%"></div>
                     </div>
                 `;
             } else {
-                // GREEN ZONE
-                statusClass = 'bg-ios-green text-white shadow-lg shadow-green-500/30';
+                statusClass = 'bg-ios-green text-white shadow-xl shadow-green-500/30';
                 statusHTML = `
-                    <div class="flex items-center justify-center py-1">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <span class="font-bold text-xs">优甲乐吸收期已结束，全解禁</span>
+                    <div class="flex items-center justify-center py-2">
+                        <i class="fas fa-check-circle mr-2 text-xl"></i>
+                        <span class="font-bold text-sm">优甲乐吸收期已结束，全解禁</span>
                     </div>
                 `;
             }
 
-            panel.className = `mx-auto mb-4 p-4 rounded-xl transition-all duration-500 ${statusClass}`;
+            panel.className = `mx-auto mb-6 p-5 rounded-[24px] transition-all duration-500 cubic-bezier(0.32, 0.72, 0, 1) ${statusClass}`;
             panel.innerHTML = statusHTML;
             panel.classList.remove('hidden');
         }
 
-        // --- INTERCEPTION SYSTEM ---
         function checkConflicts(id) {
             const item = SUPPLEMENTS[id];
             if (id === 'euthyrox') return null;
@@ -555,14 +597,12 @@
             return null;
         }
 
-        // --- LEVO TIME MODAL ---
         function openLevoTimeModal() {
             closeModal('conflictModal');
             const modal = document.getElementById('levoTimeModal');
             modal.classList.remove('hidden');
             setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.querySelector('div').classList.remove('scale-95');
+                modal.classList.add('modal-enter-active');
             }, 10);
         }
 
@@ -580,18 +620,16 @@
             }
             appState.today['euthyrox'] = { done: true, time: timestamp };
             saveData();
-            // Animation
             const row = document.getElementById('row-euthyrox');
             if(row) {
                 row.classList.add('animate-bounce-slight');
-                setTimeout(() => row.classList.remove('animate-bounce-slight'), 300);
+                setTimeout(() => row.classList.remove('animate-bounce-slight'), 400);
             }
             renderDaily();
             updateLevoProtectionStatus();
             closeModal('levoTimeModal');
         }
 
-        // --- STANDARD ITEM HANDLER ---
         function handleItemClick(id) {
             if (appState.today[id]?.done) {
                 delete appState.today[id];
@@ -621,11 +659,11 @@
             SECTIONS.forEach(sec => {
                 const secDiv = document.createElement('div');
                 secDiv.innerHTML = `
-                    <div class="flex items-center space-x-2 mb-2 px-1">
-                        <div class="w-7 h-7 rounded-full bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center ${sec.color}"><i class="fas ${sec.icon} text-xs"></i></div>
-                        <div><h2 class="font-bold text-sm text-slate-800 dark:text-slate-100">${sec.title}</h2></div>
+                    <div class="flex items-center space-x-3 mb-3 px-1 mt-4">
+                        <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center ${sec.color} border border-slate-100 dark:border-slate-700"><i class="fas ${sec.icon} text-sm"></i></div>
+                        <div><h2 class="font-bold text-base text-slate-800 dark:text-slate-100 tracking-tight">${sec.title}</h2></div>
                     </div>
-                    <div class="space-y-2" id="grp-${sec.id}"></div>
+                    <div class="space-y-3" id="grp-${sec.id}"></div>
                 `;
                 container.appendChild(secDiv);
                 
@@ -636,23 +674,23 @@
                         const persDose = appState.customDoses[key];
                         const itemEl = document.createElement('div');
                         itemEl.id = `row-${key}`;
-                        itemEl.className = `glass rounded-xl p-3 flex items-center justify-between transition-all duration-300 ${isDone ? 'opacity-60 grayscale-[0.5]' : ''}`;
+                        itemEl.className = `glass rounded-[18px] p-3.5 flex items-center justify-between transition-all duration-300 ${isDone ? 'opacity-50 grayscale' : 'active:scale-[0.98]'}`;
                         itemEl.innerHTML = `
                             <div class="flex items-center flex-1 cursor-pointer" onclick="if(!event.target.closest('.no-toggle')) handleItemClick('${key}')">
-                                <div class="relative w-5 h-5 mr-3 flex-shrink-0">
-                                    <div class="w-5 h-5 rounded-full ${isDone ? 'bg-ios-green border-ios-green' : 'border-slate-300 dark:border-slate-600'} border-2 transition-colors" id="cb-${key}"></div>
-                                    <i class="fas fa-check absolute inset-0 text-white flex items-center justify-center text-[10px] ${isDone ? 'opacity-100 scale-100' : 'opacity-0 scale-50'} transition-opacity transform" id="ic-${key}"></i>
+                                <div class="relative w-6 h-6 mr-3.5 flex-shrink-0">
+                                    <div class="w-6 h-6 rounded-full ${isDone ? 'bg-ios-green border-ios-green' : 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800'} border-[2.5px] transition-colors" id="cb-${key}"></div>
+                                    <i class="fas fa-check absolute inset-0 text-white flex items-center justify-center text-xs ${isDone ? 'opacity-100 scale-100' : 'opacity-0 scale-50'} transition-all duration-300 transform" id="ic-${key}"></i>
                                 </div>
                                 <div>
-                                    <div class="font-semibold text-sm ${isDone ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${item.name}</div>
-                                    <div class="flex items-center text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                                        <span>Rec: ${item.dose}</span><span class="mx-1 text-slate-300">|</span>
-                                        <span class="no-toggle text-blue-500 dark:text-blue-400 font-medium active:opacity-50" onclick="editCustomDose('${key}')">My: ${persDose ? persDose : '--'} <i class="fas fa-pen text-[8px] ml-0.5"></i></span>
-                                        ${item.isCore ? '<span class="text-blue-500 bg-blue-100 dark:bg-blue-900/30 px-1 rounded ml-1.5 font-bold">CORE</span>' : ''}
+                                    <div class="font-bold text-[15px] ${isDone ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${item.name}</div>
+                                    <div class="flex items-center text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+                                        <span>${item.dose}</span>
+                                        ${persDose ? `<span class="mx-1.5 text-slate-300">|</span><span class="no-toggle text-blue-500 dark:text-blue-400 font-bold active:opacity-50" onclick="editCustomDose('${key}')">${persDose} <i class="fas fa-pen text-[8px] ml-0.5"></i></span>` : ''}
+                                        ${item.isCore ? '<span class="text-[9px] text-blue-600 bg-blue-100 dark:bg-blue-900/40 px-1.5 py-0.5 rounded ml-2 font-black tracking-wide">CORE</span>' : ''}
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="showInfo('${key}')" class="info-btn w-8 h-8 flex items-center justify-center rounded-full text-slate-300 hover:text-blue-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition ml-2"><i class="fas fa-info-circle"></i></button>
+                            <button onclick="showInfo('${key}')" class="info-btn w-9 h-9 flex items-center justify-center rounded-full text-slate-300 hover:text-blue-500 active:bg-slate-100 dark:active:bg-slate-800 transition ml-1"><i class="fas fa-info-circle text-lg"></i></button>
                         `;
                         secDiv.querySelector(`#grp-${sec.id}`).appendChild(itemEl);
                     }
@@ -677,18 +715,24 @@
             const bar = document.getElementById('bottomNavBar');
             const w = appState.ui.barWidth;
             const o = appState.ui.barOffset;
+            
             document.getElementById('uiWidthVal').innerText = w + '%';
             document.getElementById('uiOffsetVal').innerText = o + 'px';
+            
             bar.style.width = w + '%';
-            bar.style.bottom = Math.max(0, o) + 'px'; // Allow down to 0
+            // Allow absolute 0 positioning without adding safe-area padding automatically
+            // The user wants full control to pull it down to the bezel
+            bar.style.bottom = o + 'px'; 
+            
             if (w < 60) {
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'none');
                 bar.style.borderRadius = '30px';
             } else {
                 document.querySelectorAll('.nav-label').forEach(el => el.style.display = 'block');
-                bar.style.borderRadius = w > 95 ? '0px' : '30px';
-                if(w>95) { bar.style.bottom='0'; bar.style.height='auto'; bar.style.paddingBottom='env(safe-area-inset-bottom)'; }
-                else { bar.style.height='60px'; bar.style.paddingBottom='0'; }
+                bar.style.borderRadius = w > 98 ? '0px' : '30px';
+                
+                // If flush with bottom (0 offset) and full width, we might want to handle safe area manually?
+                // No, user said "I will adjust it myself". So we do nothing extra.
             }
         }
 
@@ -697,51 +741,33 @@
             const el = document.getElementById(id);
             if(!el) return;
             el.classList.remove('hidden'); 
-            // Small delay to ensure display:block applies before opacity transition
-            setTimeout(() => {
-                el.classList.remove('opacity-0');
-                const card = el.querySelector('div[class*="transform"]');
-                if(card) {
-                    card.classList.remove('scale-95');
-                    card.classList.remove('translate-y-full');
-                }
-            }, 20); 
+            // Force reflow
+            void el.offsetWidth;
+            el.classList.add('modal-enter-active');
         }
         
         function closeModal(id) { 
             const el = document.getElementById(id);
             if(!el) return;
-            el.classList.add('opacity-0'); 
-            const card = el.querySelector('div[class*="transform"]');
-            if(card) {
-                // If it was a bottom sheet, slide down; otherwise scale down
-                if(card.classList.contains('rounded-t-2xl')) card.classList.add('translate-y-full');
-                else card.classList.add('scale-95');
-            }
-            setTimeout(() => el.classList.add('hidden'), 300); 
+            el.classList.remove('modal-enter-active');
+            setTimeout(() => el.classList.add('hidden'), 300); // Match CSS transition time
         }
         
         // --- FIXED DOSE MODAL LOGIC (CRASH FIX) ---
         function showDoseModal(id) {
             try {
-                closeModal('conflictModal'); // Safety close
+                closeModal('conflictModal');
                 pendingToggleId = id;
                 const item = SUPPLEMENTS[id];
                 const pers = appState.customDoses[id];
 
-                // Text Updates
                 document.getElementById('doseModalRec').innerText = item.dose;
-                document.getElementById('doseModalPers').innerText = pers ? pers : '点击设定';
+                document.getElementById('doseModalPers').innerText = pers ? pers : 'Set Custom';
                 
-                // Event Bindings - Safe replacement (Direct Property Assignment)
-                // This replaces the buggy replaceChild logic
                 const btnRec = document.getElementById('btnDoseRec');
                 const btnPers = document.getElementById('btnDosePers');
                 
-                btnRec.onclick = function() {
-                    confirmDose('recommended');
-                };
-
+                btnRec.onclick = function() { confirmDose('recommended'); };
                 btnPers.onclick = function() {
                     if (!pers) {
                         editCustomDose(id);
@@ -754,7 +780,6 @@
                 openModal('doseModal');
             } catch (error) {
                 console.error("Dose Modal Error:", error);
-                // Fallback: if modal fails, just toggle it to prevent blocking user
                 commitToggle(id);
             }
         }
@@ -769,14 +794,13 @@
         function commitToggle(id) {
             appState.today[id] = { done: true, time: Date.now() };
             saveData();
-            // Animation
             const row = document.getElementById(`row-${id}`);
             if(row) {
                 row.classList.add('animate-bounce-slight');
-                setTimeout(() => row.classList.remove('animate-bounce-slight'), 300);
+                setTimeout(() => row.classList.remove('animate-bounce-slight'), 400);
             }
             renderDaily();
-            updateLevoProtectionStatus(); // Update banner immediately
+            updateLevoProtectionStatus();
         }
 
         function editCustomDose(id) {
@@ -799,18 +823,16 @@
         }
 
         function renderHealth() {
-            // SAFEGUARD: Ensure data structures exist before rendering
             const bm = appState.bodyMetrics?.current || {};
             document.getElementById('dispHeight').innerText = bm.height || '--';
             document.getElementById('dispWeight').innerText = bm.weight || '--';
             document.getElementById('dispFat').innerText = bm.fat || '--';
             document.getElementById('dispWaist').innerText = bm.waist || '--';
-            document.getElementById('metricsDate').innerText = bm.date ? new Date(bm.date).toLocaleDateString() : '点击记录';
+            document.getElementById('metricsDate').innerText = bm.date ? new Date(bm.date).toLocaleDateString() : 'No Data';
 
             const list = document.getElementById('checkupList');
             list.innerHTML = '';
             
-            // Safeguard loop
             const checkups = appState.checkups || {};
             
             Object.keys(CHECKUP_TYPES).forEach(key => {
@@ -820,36 +842,48 @@
                 const interval = data.intervalMonths || type.interval;
                 
                 let statusColor = 'border-slate-200 dark:border-slate-700';
-                let statusText = '暂无记录';
+                let statusText = 'No Data';
+                let statusBg = 'bg-slate-50 dark:bg-slate-800/50';
                 
                 if(lastDate) {
                     const nextDate = new Date(lastDate); 
                     nextDate.setMonth(nextDate.getMonth()+parseInt(interval));
                     const diffDays = Math.ceil((nextDate - new Date())/(1000*60*60*24));
                     
-                    if(diffDays<0) { statusColor='border-red-400 border-l-4'; statusText=`逾期 ${Math.abs(diffDays)} 天`; }
-                    else if(diffDays<30) { statusColor='border-orange-300 border-l-4'; statusText=`剩余 ${diffDays} 天`; }
-                    else { statusColor='border-green-400 border-l-4'; statusText=`剩余 ${diffDays} 天`; }
+                    if(diffDays<0) { 
+                        statusColor='border-red-400 border-l-[3px]'; 
+                        statusText=`Overdue ${Math.abs(diffDays)}d`; 
+                        statusBg = 'bg-red-50 dark:bg-red-900/10';
+                    }
+                    else if(diffDays<30) { 
+                        statusColor='border-orange-300 border-l-[3px]'; 
+                        statusText=`${diffDays} days left`;
+                        statusBg = 'bg-orange-50 dark:bg-orange-900/10';
+                    }
+                    else { 
+                        statusColor='border-green-400 border-l-[3px]'; 
+                        statusText=`${diffDays} days left`;
+                    }
                 }
                 
                 const card = document.createElement('div');
-                card.className = `glass rounded-xl p-4 flex items-center justify-between border ${statusColor} active:scale-95 transition-transform`;
+                card.className = `glass rounded-[18px] p-4 flex items-center justify-between border ${statusColor} ${statusBg} active:scale-[0.98] transition-transform duration-200`;
                 card.onclick = () => showCheckupModal(key);
                 card.innerHTML = `
                     <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-3 text-slate-500">
+                        <div class="w-10 h-10 rounded-full bg-white dark:bg-white/10 flex items-center justify-center mr-3.5 text-slate-500 shadow-sm">
                             <i class="fas ${type.icon}"></i>
                         </div>
                         <div>
-                            <div class="font-bold text-sm text-slate-800 dark:text-slate-200">${type.title}</div>
-                            <div class="text-xs text-slate-500 mt-0.5">
-                                ${lastDate ? lastDate.toLocaleDateString() : '未开始'} 
-                                <span class="mx-1">•</span> ${interval}个月一检
+                            <div class="font-bold text-[15px] text-slate-800 dark:text-slate-200 tracking-tight">${type.title}</div>
+                            <div class="text-[11px] text-slate-500 mt-0.5 font-medium">
+                                ${lastDate ? lastDate.toLocaleDateString() : 'Start Now'} 
+                                <span class="mx-1 opacity-50">•</span> Every ${interval}mo
                             </div>
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-xs font-bold text-slate-500">${statusText}</div>
+                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">${statusText}</div>
                     </div>`;
                 list.appendChild(card);
             });
@@ -893,7 +927,7 @@
             
             typeDef.fields.forEach(f => {
                 const div = document.createElement('div');
-                div.innerHTML = `<div class="flex justify-between items-center mb-1"><label class="text-xs text-slate-500">${f}</label>${lastRec[f]?`<span class="text-[10px] text-slate-400">Prev: ${lastRec[f]}</span>`:''}</div><input type="text" data-field="${f}" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-sm font-bold" placeholder="-">`;
+                div.innerHTML = `<div class="flex justify-between items-center mb-1"><label class="text-[10px] font-bold uppercase text-slate-400">${f}</label>${lastRec[f]?`<span class="text-[9px] text-slate-400 opacity-70">Prev: ${lastRec[f]}</span>`:''}</div><input type="text" data-field="${f}" class="w-full bg-slate-100 dark:bg-slate-800 rounded-lg p-2.5 text-sm font-bold" placeholder="-">`;
                 document.getElementById('cuMetricsContainer').appendChild(div);
             });
             openModal('checkupModal');
@@ -940,28 +974,23 @@
             try {
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    // Deep merge or overwrite? Spread is shallow. Let's do partial overwrite.
                     appState = { ...appState, ...parsed };
                 }
             } catch(e) { console.error("Corrupt Data reset"); }
 
-            // ---------------------------------------------------------
-            // SCHEMA HYDRATION
-            // ---------------------------------------------------------
             if (!appState.checkups) appState.checkups = {};
             if (!appState.customDoses) appState.customDoses = {};
             if (!appState.bodyMetrics) appState.bodyMetrics = { current: {}, history: [] };
             if (!appState.bodyMetrics.current) appState.bodyMetrics.current = {};
             if (!appState.bodyMetrics.history) appState.bodyMetrics.history = [];
             
-            if (!appState.ui) appState.ui = { barWidth: 92, barOffset: 10 };
+            // CHANGED: Default offset 0
+            if (!appState.ui) appState.ui = { barWidth: 92, barOffset: 0 };
             
-            // Ensure Defaults
             Object.keys(DEFAULT_DOSES).forEach(k => { 
                 if(!appState.customDoses[k]) appState.customDoses[k]=DEFAULT_DOSES[k]; 
             });
         }
-        // Boot
         init();
     </script>
 </body>
