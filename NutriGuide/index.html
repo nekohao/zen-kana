@@ -58,7 +58,7 @@
 
         // ================= 数据源 =================
         
-        // 1. 营养素数据 (全面覆盖，详细解释)
+        // 1. 营养素数据 (保持详细解释)
         const nutrientsData = [
             // --- 维生素 ---
             {
@@ -277,7 +277,7 @@
             }
         ];
 
-        // 2. 2026 膳食指南数据 (通俗易懂，权威解读)
+        // 2. 2026 膳食指南数据
         const guidelinesData = [
             {
                 title: "酒精：能不喝就不喝",
@@ -323,12 +323,24 @@
             }
         ];
 
-        // 3. 信源信息
+        // 3. 信源信息 (更详细、更具权威性，增加大字版适配)
         const sourcesInfo = [
-            { name: "NIH ODS (美国国立卫生研究院)", desc: "Office of Dietary Supplements. 全球最权威、最客观的膳食补充剂科学数据库，不带商业色彩。" },
-            { name: "Mayo Clinic (梅奥诊所)", desc: "世界排名第一的综合医院。其建议基于庞大的临床病例和循证医学，非常实用且注重安全。" },
-            { name: "USDA 2025-2030 DGA", desc: "美国农业部发布的最新居民膳食指南。这是美国国家营养政策的基石，指导学校和医院的饮食标准。" },
-            { name: "LPI (莱纳斯·鲍林研究所)", desc: "专注于微量营养素研究的顶级机构，特别是在维生素预防疾病和抗衰老领域非常权威。" }
+            { 
+                name: "NIH ODS (美国国立卫生研究院)", 
+                desc: "Office of Dietary Supplements. 美国联邦政府下属的最高医学研究机构，其数据代表了全球最严谨、客观的科学共识，绝无任何商业利益干扰。是医生和科学家参考的金标准。" 
+            },
+            { 
+                name: "Mayo Clinic (梅奥诊所)", 
+                desc: "梅奥诊所（Mayo Clinic）。连续多年蝉联'世界最佳医院'排行榜榜首。其建议汇集了全球顶尖医生的临床经验，不仅科学，更注重患者的安全与实际应用。" 
+            },
+            { 
+                name: "USDA 2025-2030 DGA", 
+                desc: "美国农业部（USDA）与卫生部联合发布。每五年更新一次的《美国居民膳食指南》是美国国家营养政策的法律基础，由顶级科学家组成的咨询委员会基于最新科研成果制定。" 
+            },
+            { 
+                name: "LPI (莱纳斯·鲍林研究所)", 
+                desc: "莱纳斯·鲍林研究所（Linus Pauling Institute）。由诺贝尔奖得主创立，是全球微量营养素研究的圣地，专注于研究维生素如何预防疾病和延缓衰老，数据极其专业详尽。" 
+            }
         ];
 
         // ================= 组件 =================
@@ -343,6 +355,11 @@
                 trace: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
             };
 
+            const handleCollapse = (e) => {
+                e.stopPropagation(); // 防止冒泡
+                setExpanded(false);
+            };
+
             return (
                 <div 
                     onClick={() => setExpanded(!expanded)}
@@ -353,7 +370,7 @@
                             <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold mb-2 ${categoryColor[item.category]}`}>
                                 {item.category === 'vitamin' ? '维生素' : item.category === 'mineral' ? '矿物质' : '微量元素'}
                             </span>
-                            <h3 className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-2xl' : 'text-lg'}`}>
+                            <h3 className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-4xl' : 'text-lg'}`}>
                                 {item.name}
                             </h3>
                             <p className="text-slate-400 text-sm font-medium">{item.nameEn}</p>
@@ -363,24 +380,24 @@
                         </div>
                     </div>
 
-                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-[1500px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
-                        <div className={`space-y-4 ${isSeniorMode ? 'text-lg leading-loose' : 'text-sm leading-relaxed'}`}>
+                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-[3500px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                        <div className={`space-y-4 ${isSeniorMode ? 'text-2xl leading-loose tracking-wide' : 'text-sm leading-relaxed'}`}>
                             
                             {/* 权威数值区 */}
                             <div className="grid grid-cols-2 gap-3 mb-2">
                                 <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
                                     <span className="text-xs text-slate-500 block">推荐摄入 (RDA)</span>
-                                    <span className="font-bold text-primary dark:text-blue-400">{item.rda}</span>
+                                    <span className={`font-bold text-primary dark:text-blue-400 ${isSeniorMode ? 'text-xl' : ''}`}>{item.rda}</span>
                                 </div>
                                 <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
                                     <span className="text-xs text-slate-500 block">耐受上限 (UL)</span>
-                                    <span className="font-bold text-danger dark:text-red-400">{item.ul}</span>
+                                    <span className={`font-bold text-danger dark:text-red-400 ${isSeniorMode ? 'text-xl' : ''}`}>{item.ul}</span>
                                 </div>
                             </div>
 
                             {/* 相互作用 */}
                             <div className="bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                                <h4 className="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-2 mb-1">
+                                <h4 className={`font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
                                     <i className="fa-solid fa-right-left"></i> 相互作用
                                 </h4>
                                 <p className="text-slate-700 dark:text-slate-300">{item.interaction}</p>
@@ -388,7 +405,7 @@
 
                             {/* 缺乏 */}
                             <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-xl border border-red-100 dark:border-red-800/50">
-                                <h4 className="font-bold text-red-700 dark:text-red-300 flex items-center gap-2 mb-1">
+                                <h4 className={`font-bold text-red-700 dark:text-red-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
                                     <i className="fa-solid fa-arrow-trend-down"></i> 缺乏症状
                                 </h4>
                                 <p className="text-slate-700 dark:text-slate-300">{item.deficiency}</p>
@@ -396,7 +413,7 @@
 
                             {/* 过量 */}
                             <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-xl border border-orange-100 dark:border-orange-800/50">
-                                <h4 className="font-bold text-orange-700 dark:text-orange-300 flex items-center gap-2 mb-1">
+                                <h4 className={`font-bold text-orange-700 dark:text-orange-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
                                     <i className="fa-solid fa-triangle-exclamation"></i> 过量/中毒症状
                                 </h4>
                                 <p className="text-slate-700 dark:text-slate-300">{item.excess}</p>
@@ -404,7 +421,7 @@
 
                             {/* 食物来源 */}
                             <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-100 dark:border-green-800/50">
-                                <h4 className="font-bold text-green-700 dark:text-green-300 flex items-center gap-2 mb-1">
+                                <h4 className={`font-bold text-green-700 dark:text-green-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
                                     <i className="fa-solid fa-leaf"></i> 食物来源
                                 </h4>
                                 <p className="text-slate-700 dark:text-slate-300">{item.sources}</p>
@@ -412,13 +429,23 @@
 
                             {/* 老年人特别建议 - 始终显示但高亮 */}
                             <div className={`p-4 rounded-xl border-l-4 shadow-sm animate-pulse-once ${isSeniorMode ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-300'}`}>
-                                <h4 className={`font-bold flex items-center gap-2 mb-2 ${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400 text-xl' : 'text-slate-700 dark:text-slate-300'}`}>
+                                <h4 className={`font-bold flex items-center gap-2 mb-2 ${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400 text-3xl mb-3' : 'text-slate-700 dark:text-slate-300'}`}>
                                     <i className="fa-solid fa-user-doctor"></i> 老年人特别提醒
                                 </h4>
                                 <p className="text-slate-800 dark:text-slate-200 font-medium">{item.seniorAdvice}</p>
                             </div>
 
                             <p className="text-xs text-right text-slate-400 dark:text-slate-600 mt-2">信息来源: {item.sourceRef}</p>
+                            
+                            {/* 底部收起按钮 (新增) */}
+                            <div className="pt-4 flex justify-center border-t border-slate-100 dark:border-slate-700 mt-4">
+                                <button 
+                                    onClick={handleCollapse}
+                                    className={`flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold rounded-full transition-colors shadow-sm ${isSeniorMode ? 'text-2xl px-8 py-3' : 'text-sm px-4 py-2'}`}
+                                >
+                                    <i className="fa-solid fa-chevron-up"></i> 收起
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -434,39 +461,39 @@
                     </span>
                     <span className="text-xs text-slate-400 dark:text-slate-500">{item.source}</span>
                 </div>
-                <h3 className={`font-bold text-slate-800 dark:text-white mb-2 ${isSeniorMode ? 'text-2xl' : 'text-xl'}`}>
+                <h3 className={`font-bold text-slate-800 dark:text-white mb-2 ${isSeniorMode ? 'text-4xl' : 'text-xl'}`}>
                     {item.title}
                 </h3>
-                <p className={`text-slate-600 dark:text-slate-300 mb-4 ${isSeniorMode ? 'text-lg leading-relaxed' : 'text-base'}`}>
+                <p className={`text-slate-600 dark:text-slate-300 mb-4 ${isSeniorMode ? 'text-2xl leading-loose tracking-wide' : 'text-base'}`}>
                     {item.content}
                 </p>
                 
                 <div className={`p-3 rounded-lg border-l-4 ${isSeniorMode ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-300'}`}>
-                    <p className={`${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400' : 'text-slate-500 dark:text-slate-400'} font-bold mb-1`}>
+                    <p className={`${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400 text-3xl' : 'text-slate-500 dark:text-slate-400'} font-bold mb-1`}>
                         <i className="fa-solid fa-user-check"></i> 老年人注意：
                     </p>
-                    <p className={`text-slate-700 dark:text-slate-200 ${isSeniorMode ? 'text-lg' : 'text-sm'}`}>{item.seniorNote}</p>
+                    <p className={`text-slate-700 dark:text-slate-200 ${isSeniorMode ? 'text-2xl leading-loose' : 'text-sm'}`}>{item.seniorNote}</p>
                 </div>
             </div>
         );
 
-        // --- 3. 信源弹窗 ---
-        const SourcesModal = ({ onClose }) => (
+        // --- 3. 信源弹窗 (支持大字版) ---
+        const SourcesModal = ({ onClose, isSeniorMode }) => (
             <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm fade-in" onClick={onClose}>
-                <div className="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-bold text-slate-800 dark:text-white">权威信息来源</h3>
-                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><i className="fa-solid fa-xmark text-xl"></i></button>
+                <div className={`bg-white dark:bg-darkCard w-full rounded-2xl p-6 shadow-2xl flex flex-col max-h-[90vh] ${isSeniorMode ? 'max-w-2xl' : 'max-w-md'}`} onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-between items-center mb-4 shrink-0">
+                        <h3 className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}>权威信息来源</h3>
+                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-2"><i className={`fa-solid fa-xmark ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}></i></button>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-4 overflow-y-auto pr-2">
                         {sourcesInfo.map((source, index) => (
                             <div key={index} className="border-b border-slate-100 dark:border-slate-700 pb-3 last:border-0">
-                                <h4 className="font-bold text-primary dark:text-blue-400 text-sm mb-1">{source.name}</h4>
-                                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{source.desc}</p>
+                                <h4 className={`font-bold text-primary dark:text-blue-400 mb-2 ${isSeniorMode ? 'text-2xl' : 'text-sm'}`}>{source.name}</h4>
+                                <p className={`text-slate-600 dark:text-slate-300 leading-relaxed ${isSeniorMode ? 'text-xl' : 'text-xs'}`}>{source.desc}</p>
                             </div>
                         ))}
                     </div>
-                    <button onClick={onClose} className="w-full mt-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white py-2 rounded-xl font-bold text-sm">关闭</button>
+                    <button onClick={onClose} className={`w-full mt-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white rounded-xl font-bold shrink-0 ${isSeniorMode ? 'text-2xl py-4' : 'text-sm py-2'}`}>关闭</button>
                 </div>
             </div>
         );
@@ -500,7 +527,7 @@
             }, [filter, searchTerm]);
 
             return (
-                <div className={`min-h-screen pb-20 ${isSeniorMode ? 'text-lg' : 'text-base'}`}>
+                <div className={`min-h-screen pb-20 ${isSeniorMode ? 'text-xl' : 'text-base'}`}>
                     
                     {/* Header */}
                     <header className="sticky top-0 z-50 bg-white/90 dark:bg-darkBg/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
@@ -518,7 +545,7 @@
                                         <i className={`fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}`}></i>
                                     </button>
                                     
-                                    {/* 信息来源按钮 (带文字) */}
+                                    {/* 信息来源按钮 */}
                                     <button 
                                         onClick={() => setShowSources(true)} 
                                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-blue-400 transition-colors"
@@ -527,7 +554,7 @@
                                         <span className="text-xs font-bold">信息来源</span>
                                     </button>
                                     
-                                    {/* 大字版按钮 (回归上版本逻辑/样式) */}
+                                    {/* 大字版按钮 */}
                                     <button 
                                         onClick={() => setIsSeniorMode(!isSeniorMode)}
                                         className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
@@ -567,7 +594,7 @@
                                             placeholder="搜索症状、营养素..." 
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            className={`w-full bg-slate-100 dark:bg-slate-800 dark:text-white border-none rounded-xl pl-10 pr-4 focus:ring-2 focus:ring-primary focus:outline-none transition-all ${isSeniorMode ? 'py-4 text-lg' : 'py-2.5 text-base'}`}
+                                            className={`w-full bg-slate-100 dark:bg-slate-800 dark:text-white border-none rounded-xl pl-10 pr-4 focus:ring-2 focus:ring-primary focus:outline-none transition-all ${isSeniorMode ? 'py-4 text-xl' : 'py-2.5 text-base'}`}
                                         />
                                     </div>
                                     <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -579,7 +606,7 @@
                                                     filter === tab.id 
                                                     ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-900 shadow-md' 
                                                     : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-                                                } ${isSeniorMode ? 'py-2 text-base' : 'py-1.5 text-sm'}`}
+                                                } ${isSeniorMode ? 'py-2 text-xl' : 'py-1.5 text-sm'}`}
                                             >
                                                 {tab.label}
                                             </button>
@@ -631,7 +658,7 @@
                         </div>
                     </main>
 
-                    {showSources && <SourcesModal onClose={() => setShowSources(false)} />}
+                    {showSources && <SourcesModal onClose={() => setShowSources(false)} isSeniorMode={isSeniorMode} />}
                 </div>
             );
         };
