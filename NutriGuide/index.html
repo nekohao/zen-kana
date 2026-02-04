@@ -275,7 +275,7 @@
                 interaction: '【铜的跷跷板】锌和铜在肠道里竞争同一个吸收通道。长期高剂量补锌（每天超过50mg）会把铜“挤”出去，导致严重的铜缺乏。此外，锌会降低四环素和喹诺酮类抗生素的药效。',
                 deficiency: '【感官与免疫衰退】1. 味觉嗅觉失灵：吃东西像嚼蜡，没有味道（这是老年人食欲差的常见原因）。2. 伤口不愈合：老烂腿、褥疮难以恢复。3. 免疫力低下：动不动就感冒肺炎。4. 脱发和皮炎。',
                 excess: '【免疫反转】适量锌增强免疫，过量锌反而抑制免疫功能！还会导致恶心、呕吐、好胆固醇（HDL）降低。最严重的是继发性铜缺乏，导致贫血和神经损伤。',
-                seniorAdvice: '【胃口的开关】如果您发现家里长辈突然做菜很咸、或者不想吃饭，先别急着怪他们，可能是缺锌了。适当补锌（每天15-20mg）可以改善食欲和免疫力，对伤口愈合也极有帮助。但切记：不要长期超量，最好选择含有少量铜的锌补充剂，以维持平衡。',
+                seniorAdvice: '【胃口的开关】如果您发现家里长辈突然做菜很咸、或者不想吃饭，先别急着怪他们，可能是缺锌了。适当补锌（每天15-20mg）可以改善食欲和免疫力，对伤口愈合也极有帮助。但切记：不要长期超量，最好选择含有少量铜的锌补充剂，以防顾此失彼。',
                 sources: '牡蛎（含量遥遥领先）、牛肉、螃蟹、猪排、南瓜籽、鹰嘴豆。',
                 sourceRef: 'Mayo Clinic / NIH'
             },
@@ -624,7 +624,7 @@
                                     营养素
                                 </button>
                                 <button onClick={() => setView('guidelines')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'guidelines' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
-                                    2026 指南
+                                    膳食指南
                                 </button>
                             </div>
 
@@ -682,13 +682,13 @@
                         ) : (
                             <div className="space-y-4 animate-fadeIn">
                                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white mb-6 shadow-lg">
-                                    <h2 className="text-2xl font-bold mb-2">2026 美国居民膳食指南</h2>
-                                    <p className="opacity-90 text-sm mb-4">
+                                    <h2 className={`font-bold mb-2 transition-all ${isSeniorMode ? 'text-3xl' : 'text-2xl'}`}>2026 美国居民膳食指南</h2>
+                                    <p className={`opacity-90 mb-4 transition-all ${isSeniorMode ? 'text-xl leading-loose' : 'text-sm'}`}>
                                         这不是普通的“建议”，而是美国联邦政府每五年发布一次的“营养宪法”。它是全球数千名顶尖科学家，审阅了过去五年所有的医学研究后，得出的最权威、最科学、不容置疑的健康真理。这是全球医生、营养师制定治疗方案的最高标准。对于老年人来说，这就意味着：照着做，能保命。
                                     </p>
                                     <div className="mt-4 flex gap-2">
-                                        <span className="bg-white/20 px-2 py-1 rounded text-xs"><i className="fa-solid fa-scale-balanced"></i> 全球金标准</span>
-                                        <span className="bg-white/20 px-2 py-1 rounded text-xs"><i className="fa-solid fa-flask"></i> 顶尖科学背书</span>
+                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-scale-balanced"></i> 全球金标准</span>
+                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-flask"></i> 顶尖科学背书</span>
                                     </div>
                                 </div>
                                 {guidelinesData.map((item, index) => (
