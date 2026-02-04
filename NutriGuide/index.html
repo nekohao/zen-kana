@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- 强制禁止浏览器缓存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <title>NutriGuide Pro 营养素速查</title>
     
     <!-- PWA 配置 -->
@@ -17,7 +23,7 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
 
     <!-- Tailwind 深色模式配置 -->
     <script>
@@ -30,6 +36,9 @@
                         secondary: '#10b981',
                         darkBg: '#0f172a',
                         darkCard: '#1e293b',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     }
                 }
             }
@@ -43,26 +52,45 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
-        .dark .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3); }
-        /* 切换动画 */
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 英雄联盟风格卡片特效 */
+        .hero-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hero-card:active {
+            transform: scale(0.95);
+        }
+        .hero-card.dimmed {
+            opacity: 0.2;
+            filter: grayscale(100%);
+            transform: scale(0.9);
+        }
+        .hero-card.highlighted {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            z-index: 10;
+        }
+
+        /* 弹窗动画 */
+        .modal-enter { animation: modalIn 0.3s ease-out forwards; }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-darkBg transition-colors duration-300">
-    <div id="root"></div>
+<body class="bg-slate-50 dark:bg-darkBg transition-colors duration-300 overflow-hidden fixed inset-0">
+    <div id="root" class="h-full overflow-y-auto"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
-        // ================= 数据源 =================
-        
-        // 1. 营养素数据 (保持详细解释)
+        // ================= 数据源 (增加 tags 用于症状筛选) =================
         const nutrientsData = [
             // --- 维生素 ---
             {
-                id: 'va', category: 'vitamin', name: '维生素 A', nameEn: 'Vitamin A',
+                id: 'va', category: 'vitamin', shortName: '维A', name: '维生素 A', nameEn: 'Vitamin A',
+                tags: ['eye', 'skin', 'immune'],
                 rda: '男 900mcg / 女 700mcg', ul: '3000mcg',
                 interaction: '长期饮酒会耗尽肝脏VA储备；与异维A酸类药物（治痘药）同服可能导致严重中毒。',
                 deficiency: '夜盲症（晚上看不清）、干眼症、皮肤干燥起鸡皮（毛囊角化）、免疫力下降易感冒。',
@@ -72,7 +100,8 @@
                 sourceRef: 'NIH Office of Dietary Supplements'
             },
             {
-                id: 'vd', category: 'vitamin', name: '维生素 D', nameEn: 'Vitamin D',
+                id: 'vd', category: 'vitamin', shortName: '维D', name: '维生素 D', nameEn: 'Vitamin D',
+                tags: ['bone', 'immune', 'mood'],
                 rda: '600-800 IU (70岁以上建议更高)', ul: '4000 IU',
                 interaction: '皮质类固醇（激素类药物）会降低VD吸收；VD的代谢和发挥作用必须要有“镁”的参与，缺镁补D效果差。',
                 deficiency: '骨质疏松、肌肉无力、容易骨折、情绪抑郁、免疫力低下、脱发。',
@@ -82,7 +111,8 @@
                 sourceRef: 'Mayo Clinic / NIH'
             },
             {
-                id: 've', category: 'vitamin', name: '维生素 E', nameEn: 'Vitamin E',
+                id: 've', category: 'vitamin', shortName: '维E', name: '维生素 E', nameEn: 'Vitamin E',
+                tags: ['skin', 'blood'],
                 rda: '15mg', ul: '1000mg',
                 interaction: '它有抗凝血作用，服用华法林、阿司匹林等抗凝药的人如果大量补充VE，会增加出血风险。',
                 deficiency: '平时很罕见。主要见于吸收不良者，表现为溶血性贫血、走路不稳（神经损伤）、视网膜病变。',
@@ -92,7 +122,8 @@
                 sourceRef: 'NIH / Harvard Health'
             },
             {
-                id: 'vk', category: 'vitamin', name: '维生素 K', nameEn: 'Vitamin K (K1 & K2)',
+                id: 'vk', category: 'vitamin', shortName: '维K', name: '维生素 K', nameEn: 'Vitamin K',
+                tags: ['bone', 'blood'],
                 rda: '男 120mcg / 女 90mcg', ul: '未设定',
                 interaction: '它是华法林（抗凝药）的死对头！服用华法林期间必须保持饮食中绿叶菜摄入量的稳定，忽多忽少会要命。',
                 deficiency: '凝血困难（流鼻血、牙龈出血难止）、骨质疏松、动脉钙化（K2缺乏）。',
@@ -102,7 +133,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'vb1', category: 'vitamin', name: '维生素 B1', nameEn: 'Thiamine',
+                id: 'vb1', category: 'vitamin', shortName: 'B1', name: '维生素 B1', nameEn: 'Thiamine',
+                tags: ['energy', 'brain'],
                 rda: '男 1.2mg / 女 1.1mg', ul: '未设定 (安全)',
                 interaction: '长期服用利尿剂（降压药）会导致B1随尿液流失；大量饮茶或咖啡中的单宁酸会阻碍吸收。',
                 deficiency: '脚气病（下肢水肿）、严重疲劳、厌食、韦尼克脑病（突然的精神错乱、记忆丧失，常见于酗酒者）。',
@@ -112,7 +144,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'vb2', category: 'vitamin', name: '维生素 B2', nameEn: 'Riboflavin',
+                id: 'vb2', category: 'vitamin', shortName: 'B2', name: '维生素 B2', nameEn: 'Riboflavin',
+                tags: ['eye', 'skin'],
                 rda: '男 1.3mg / 女 1.1mg', ul: '未设定',
                 interaction: '某些抗抑郁药和抗癌药会干扰B2代谢。',
                 deficiency: '最典型的是“烂嘴角”（口角炎）、舌头红肿疼痛、眼睛怕光流泪、阴囊皮炎。',
@@ -122,7 +155,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'vb3', category: 'vitamin', name: '维生素 B3', nameEn: 'Niacin',
+                id: 'vb3', category: 'vitamin', shortName: 'B3', name: '维生素 B3', nameEn: 'Niacin',
+                tags: ['skin', 'brain'],
                 rda: '男 16mg / 女 14mg', ul: '35mg (指补充剂)',
                 interaction: '异烟肼（抗结核药）会造成B3缺乏；高剂量B3会加重痛风。',
                 deficiency: '糙皮病（皮肤暴露处粗糙发黑）、舌炎、腹泻、严重时会导致痴呆。',
@@ -132,7 +166,8 @@
                 sourceRef: 'Mayo Clinic'
             },
             {
-                id: 'vb6', category: 'vitamin', name: '维生素 B6', nameEn: 'Pyridoxine',
+                id: 'vb6', category: 'vitamin', shortName: 'B6', name: '维生素 B6', nameEn: 'Pyridoxine',
+                tags: ['brain', 'mood', 'skin'],
                 rda: '1.7mg (50岁以上)', ul: '100mg',
                 interaction: '左旋多巴（帕金森药）效果会被B6降低；异烟肼会消耗B6。',
                 deficiency: '皮炎、舌头光滑疼痛、抑郁、贫血、免疫力低。',
@@ -142,7 +177,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'vb9', category: 'vitamin', name: '维生素 B9', nameEn: 'Folate (叶酸)',
+                id: 'vb9', category: 'vitamin', shortName: '叶酸', name: '维生素 B9 (叶酸)', nameEn: 'Folate',
+                tags: ['blood', 'brain'],
                 rda: '400mcg', ul: '1000mcg',
                 interaction: '甲氨蝶呤（治类风湿、癌症）是叶酸拮抗剂；抗癫痫药会降低叶酸水平。',
                 deficiency: '巨幼细胞贫血（红细胞变大）、虚弱、舌炎、孕期胎儿神经管畸形。',
@@ -152,7 +188,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'vb12', category: 'vitamin', name: '维生素 B12', nameEn: 'Cobalamin',
+                id: 'vb12', category: 'vitamin', shortName: 'B12', name: '维生素 B12', nameEn: 'Cobalamin',
+                tags: ['brain', 'blood', 'energy'],
                 rda: '2.4mcg', ul: '未设定',
                 interaction: '二甲双胍（降糖药）和奥美拉唑（胃药）会显著阻碍B12吸收，长期服用者必须监测。',
                 deficiency: '恶性贫血、神经损伤（手脚麻木、刺痛、平衡感差）、记忆力减退、痴呆样症状。',
@@ -162,7 +199,8 @@
                 sourceRef: 'USDA / Mayo Clinic'
             },
             {
-                id: 'vc', category: 'vitamin', name: '维生素 C', nameEn: 'Vitamin C',
+                id: 'vc', category: 'vitamin', shortName: '维C', name: '维生素 C', nameEn: 'Vitamin C',
+                tags: ['immune', 'skin'],
                 rda: '男 90mg / 女 75mg', ul: '2000mg',
                 interaction: '能促进铁的吸收（好事）；大剂量VC可能会干扰华法林的效果。',
                 deficiency: '坏血病（牙龈肿胀出血、牙齿松动、皮下瘀斑）、伤口愈合慢、关节痛。',
@@ -174,7 +212,8 @@
 
             // --- 矿物质 ---
             {
-                id: 'ca', category: 'mineral', name: '钙', nameEn: 'Calcium',
+                id: 'ca', category: 'mineral', shortName: '钙', name: '钙', nameEn: 'Calcium',
+                tags: ['bone', 'muscle'],
                 rda: '1000-1200mg', ul: '2000-2500mg',
                 interaction: '高剂量钙会抑制铁、锌的吸收（最好分开吃）；钙吸收依赖维生素D；四环素类抗生素需避开钙服用。',
                 deficiency: '长期缺乏导致骨质疏松、佝偻病。急性缺乏会导致手足抽搐、肌肉痉挛、心律失常。',
@@ -184,7 +223,8 @@
                 sourceRef: 'NOF (National Osteoporosis Foundation)'
             },
             {
-                id: 'mg', category: 'mineral', name: '镁', nameEn: 'Magnesium',
+                id: 'mg', category: 'mineral', shortName: '镁', name: '镁', nameEn: 'Magnesium',
+                tags: ['sleep', 'muscle', 'mood', 'bone'],
                 rda: '男 420mg / 女 320mg', ul: '350mg (仅限补充剂摄入量)',
                 interaction: '利尿剂、质子泵抑制剂（胃药）是“镁强盗”；镁和钙在体内有竞争也有协同，建议比例2:1。',
                 deficiency: '肌肉震颤、抽筋（特别是腿抽筋）、失眠、心律失常、偏头痛、焦虑。',
@@ -194,7 +234,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'k', category: 'mineral', name: '钾', nameEn: 'Potassium',
+                id: 'k', category: 'mineral', shortName: '钾', name: '钾', nameEn: 'Potassium',
+                tags: ['heart', 'muscle'],
                 rda: '男 3400mg / 女 2600mg', ul: '未设定（肾脏正常时）',
                 interaction: 'ACEI/ARB类降压药、保钾利尿剂会导致血钾升高，此时严禁额外补钾。',
                 deficiency: '严重的肌无力、疲劳、便秘、心律失常（甚至心脏骤停）。',
@@ -204,7 +245,8 @@
                 sourceRef: 'AHA / NIH'
             },
             {
-                id: 'na', category: 'mineral', name: '钠', nameEn: 'Sodium',
+                id: 'na', category: 'mineral', shortName: '钠', name: '钠', nameEn: 'Sodium',
+                tags: ['heart'],
                 rda: '建议 <2300mg (约6克盐)', ul: '越少越好',
                 interaction: '高钠会导致钙流失（骨质疏松帮凶）；钾可以对抗钠的升压作用。',
                 deficiency: '低钠血症（恶心、头痛、意识模糊、抽搐）。老年人常见原因：利尿剂副作用、出汗后只喝白水不补电解质。',
@@ -216,7 +258,8 @@
 
             // --- 微量元素 ---
             {
-                id: 'fe', category: 'trace', name: '铁', nameEn: 'Iron',
+                id: 'fe', category: 'trace', shortName: '铁', name: '铁', nameEn: 'Iron',
+                tags: ['blood', 'energy'],
                 rda: '男 8mg / 女 18mg (50岁后降为8mg)', ul: '45mg',
                 interaction: '茶和咖啡中的多酚阻碍铁吸收；维生素C促进铁吸收；钙片会抑制铁吸收（要分开吃）。',
                 deficiency: '缺铁性贫血（脸色苍白、乏力、指甲凹陷变脆、爬楼梯气喘）、免疫力低。',
@@ -226,7 +269,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'zn', category: 'trace', name: '锌', nameEn: 'Zinc',
+                id: 'zn', category: 'trace', shortName: '锌', name: '锌', nameEn: 'Zinc',
+                tags: ['immune', 'skin'],
                 rda: '男 11mg / 女 8mg', ul: '40mg',
                 interaction: '长期高锌 (>50mg/天) 会抑制铜的吸收，导致铜缺乏；会降低四环素和喹诺酮类抗生素药效。',
                 deficiency: '味觉嗅觉减退（吃东西没味）、伤口愈合慢、脱发、免疫力差、皮炎。',
@@ -236,7 +280,8 @@
                 sourceRef: 'Mayo Clinic'
             },
             {
-                id: 'se', category: 'trace', name: '硒', nameEn: 'Selenium',
+                id: 'se', category: 'trace', shortName: '硒', name: '硒', nameEn: 'Selenium',
+                tags: ['immune'],
                 rda: '55mcg', ul: '400mcg',
                 interaction: '与维生素E协同抗氧化；对甲状腺激素的代谢至关重要。',
                 deficiency: '克山病（心肌病）、大骨节病、甲状腺功能减退、免疫力下降。',
@@ -246,7 +291,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'i', category: 'trace', name: '碘', nameEn: 'Iodine',
+                id: 'i', category: 'trace', shortName: '碘', name: '碘', nameEn: 'Iodine',
+                tags: ['energy'],
                 rda: '150mcg', ul: '1100mcg',
                 interaction: '缺硒会加重碘缺乏的影响；十字花科蔬菜生吃过多可能阻碍碘吸收（煮熟没事）。',
                 deficiency: '甲状腺肿大（大脖子病）、甲减（怕冷、乏力、体重增加、反应迟钝）。',
@@ -256,7 +302,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'cu', category: 'trace', name: '铜', nameEn: 'Copper',
+                id: 'cu', category: 'trace', shortName: '铜', name: '铜', nameEn: 'Copper',
+                tags: ['blood', 'bone'],
                 rda: '900mcg', ul: '10000mcg',
                 interaction: '高剂量的锌会强力抑制铜吸收；高剂量的维生素C也可能降低铜水平。',
                 deficiency: '贫血（补铁也好不了）、白细胞减少（易感染）、骨质疏松、神经病变。',
@@ -266,7 +313,8 @@
                 sourceRef: 'NIH ODS'
             },
             {
-                id: 'mn', category: 'trace', name: '锰', nameEn: 'Manganese',
+                id: 'mn', category: 'trace', shortName: '锰', name: '锰', nameEn: 'Manganese',
+                tags: ['bone'],
                 rda: '男 2.3mg / 女 1.8mg', ul: '11mg',
                 interaction: '铁和锰在吸收上有竞争关系；镁和钙的制酸剂可能减少锰吸收。',
                 deficiency: '罕见。可能导致骨骼畸形、糖耐量受损、皮疹。',
@@ -277,7 +325,20 @@
             }
         ];
 
-        // 2. 2026 膳食指南数据
+        // 症状映射表 (英文key -> 中文显示)
+        const symptomMap = [
+            { id: 'sleep', label: '😴 失眠/焦虑', desc: '助眠、放松神经' },
+            { id: 'bone', label: '🦴 骨骼/关节', desc: '强健骨骼、防抽筋' },
+            { id: 'eye', label: '👀 护眼/视力', desc: '缓解干涩、夜盲' },
+            { id: 'immune', label: '🛡️ 免疫/感冒', desc: '增强抵抗力' },
+            { id: 'energy', label: '⚡ 精力/疲劳', desc: '提升活力、抗疲劳' },
+            { id: 'skin', label: '✨ 皮肤/抗衰', desc: '美白、抗氧化' },
+            { id: 'blood', label: '🩸 贫血/头晕', desc: '造血功能' },
+            { id: 'heart', label: '❤️ 心脏/血压', desc: '心血管健康' },
+            { id: 'muscle', label: '💪 肌肉/力量', desc: '防抽筋、增肌' },
+            { id: 'brain', label: '🧠 记忆/神经', desc: '神经保护、防痴呆' },
+        ];
+
         const guidelinesData = [
             {
                 title: "酒精：能不喝就不喝",
@@ -323,7 +384,6 @@
             }
         ];
 
-        // 3. 信源信息 (更详细、更具权威性，增加大字版适配)
         const sourcesInfo = [
             { 
                 name: "NIH ODS (美国国立卫生研究院)", 
@@ -345,155 +405,158 @@
 
         // ================= 组件 =================
 
-        // --- 1. 营养素卡片 ---
-        const NutriCard = ({ item, isSeniorMode }) => {
-            const [expanded, setExpanded] = useState(false);
-
-            const categoryColor = {
-                vitamin: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-                mineral: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
-                trace: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-            };
-
-            const handleCollapse = (e) => {
-                e.stopPropagation(); // 防止冒泡
-                setExpanded(false);
+        // --- 1. 英雄网格卡片 ---
+        const HeroCard = ({ item, isDimmed, isHighlighted, onClick }) => {
+            // 分类颜色
+            const colors = {
+                vitamin: 'from-blue-500 to-blue-600 shadow-blue-200 dark:shadow-blue-900/30',
+                mineral: 'from-emerald-500 to-emerald-600 shadow-emerald-200 dark:shadow-emerald-900/30',
+                trace: 'from-purple-500 to-purple-600 shadow-purple-200 dark:shadow-purple-900/30'
             };
 
             return (
                 <div 
-                    onClick={() => setExpanded(!expanded)}
-                    className={`bg-white dark:bg-darkCard rounded-2xl p-5 mb-4 border border-slate-100 dark:border-slate-700 card-shadow transition-all duration-300 cursor-pointer active:scale-[0.98] ${expanded ? 'ring-2 ring-primary ring-opacity-50' : ''}`}
+                    onClick={onClick}
+                    className={`
+                        hero-card relative aspect-square rounded-2xl p-2 cursor-pointer
+                        bg-gradient-to-br ${colors[item.category]}
+                        flex flex-col items-center justify-center text-white
+                        shadow-lg border border-white/10
+                        ${isDimmed ? 'dimmed' : ''}
+                        ${isHighlighted ? 'highlighted' : ''}
+                    `}
                 >
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold mb-2 ${categoryColor[item.category]}`}>
-                                {item.category === 'vitamin' ? '维生素' : item.category === 'mineral' ? '矿物质' : '微量元素'}
-                            </span>
-                            <h3 className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-4xl' : 'text-lg'}`}>
-                                {item.name}
-                            </h3>
-                            <p className="text-slate-400 text-sm font-medium">{item.nameEn}</p>
-                        </div>
-                        <div className={`text-slate-300 dark:text-slate-500 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}>
-                            <i className="fa-solid fa-chevron-down"></i>
-                        </div>
-                    </div>
+                    <div className="text-3xl font-black mb-1 drop-shadow-md">{item.shortName}</div>
+                    <div className="text-[10px] opacity-90 font-medium tracking-wide text-center leading-tight">{item.nameEn}</div>
+                    
+                    {/* 右上角角标 */}
+                    <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-white/40"></div>
+                </div>
+            );
+        };
 
-                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-[3500px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
-                        <div className={`space-y-4 ${isSeniorMode ? 'text-2xl leading-loose tracking-wide' : 'text-sm leading-relaxed'}`}>
-                            
-                            {/* 权威数值区 */}
-                            <div className="grid grid-cols-2 gap-3 mb-2">
-                                <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
-                                    <span className="text-xs text-slate-500 block">推荐摄入 (RDA)</span>
-                                    <span className={`font-bold text-primary dark:text-blue-400 ${isSeniorMode ? 'text-xl' : ''}`}>{item.rda}</span>
-                                </div>
-                                <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
-                                    <span className="text-xs text-slate-500 block">耐受上限 (UL)</span>
-                                    <span className={`font-bold text-danger dark:text-red-400 ${isSeniorMode ? 'text-xl' : ''}`}>{item.ul}</span>
-                                </div>
+        // --- 2. 详情弹窗 (Modal) ---
+        const DetailModal = ({ item, onClose, isSeniorMode, setIsSeniorMode }) => {
+            if (!item) return null;
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 modal-enter" onClick={onClose}>
+                    <div 
+                        className={`bg-white dark:bg-darkCard w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col relative`}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* 顶部栏 */}
+                        <div className="bg-slate-50 dark:bg-slate-800/50 p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{item.name}</h2>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">{item.nameEn}</p>
                             </div>
-
-                            {/* 相互作用 */}
-                            <div className="bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                                <h4 className={`font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
-                                    <i className="fa-solid fa-right-left"></i> 相互作用
-                                </h4>
-                                <p className="text-slate-700 dark:text-slate-300">{item.interaction}</p>
-                            </div>
-
-                            {/* 缺乏 */}
-                            <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-xl border border-red-100 dark:border-red-800/50">
-                                <h4 className={`font-bold text-red-700 dark:text-red-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
-                                    <i className="fa-solid fa-arrow-trend-down"></i> 缺乏症状
-                                </h4>
-                                <p className="text-slate-700 dark:text-slate-300">{item.deficiency}</p>
-                            </div>
-
-                            {/* 过量 */}
-                            <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-xl border border-orange-100 dark:border-orange-800/50">
-                                <h4 className={`font-bold text-orange-700 dark:text-orange-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
-                                    <i className="fa-solid fa-triangle-exclamation"></i> 过量/中毒症状
-                                </h4>
-                                <p className="text-slate-700 dark:text-slate-300">{item.excess}</p>
-                            </div>
-
-                            {/* 食物来源 */}
-                            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-100 dark:border-green-800/50">
-                                <h4 className={`font-bold text-green-700 dark:text-green-300 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-3xl mb-3' : ''}`}>
-                                    <i className="fa-solid fa-leaf"></i> 食物来源
-                                </h4>
-                                <p className="text-slate-700 dark:text-slate-300">{item.sources}</p>
-                            </div>
-
-                            {/* 老年人特别建议 - 始终显示但高亮 */}
-                            <div className={`p-4 rounded-xl border-l-4 shadow-sm animate-pulse-once ${isSeniorMode ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-300'}`}>
-                                <h4 className={`font-bold flex items-center gap-2 mb-2 ${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400 text-3xl mb-3' : 'text-slate-700 dark:text-slate-300'}`}>
-                                    <i className="fa-solid fa-user-doctor"></i> 老年人特别提醒
-                                </h4>
-                                <p className="text-slate-800 dark:text-slate-200 font-medium">{item.seniorAdvice}</p>
-                            </div>
-
-                            <p className="text-xs text-right text-slate-400 dark:text-slate-600 mt-2">信息来源: {item.sourceRef}</p>
-                            
-                            {/* 底部收起按钮 (新增) */}
-                            <div className="pt-4 flex justify-center border-t border-slate-100 dark:border-slate-700 mt-4">
+                            <div className="flex gap-2">
                                 <button 
-                                    onClick={handleCollapse}
-                                    className={`flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold rounded-full transition-colors shadow-sm ${isSeniorMode ? 'text-2xl px-8 py-3' : 'text-sm px-4 py-2'}`}
+                                    onClick={() => setIsSeniorMode(!isSeniorMode)}
+                                    className={`px-3 py-1.5 rounded-full text-sm font-bold transition-colors ${
+                                        isSeniorMode 
+                                        ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-400 dark:bg-yellow-900 dark:text-yellow-200' 
+                                        : 'bg-white border border-slate-200 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300'
+                                    }`}
                                 >
-                                    <i className="fa-solid fa-chevron-up"></i> 收起
+                                    {isSeniorMode ? '大字版开' : '大字版'}
+                                </button>
+                                <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-300 transition-colors">
+                                    <i className="fa-solid fa-xmark text-lg"></i>
                                 </button>
                             </div>
+                        </div>
+
+                        {/* 内容区 (可滚动) */}
+                        <div className="overflow-y-auto p-5">
+                            <div className={`space-y-6 ${isSeniorMode ? 'text-2xl leading-loose tracking-wide' : 'text-base leading-relaxed'}`}>
+                                
+                                {/* 权威数值 */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
+                                        <span className="text-xs text-slate-500 block mb-1">推荐摄入 (RDA)</span>
+                                        <span className={`font-bold text-primary dark:text-blue-400 ${isSeniorMode ? 'text-xl' : 'text-lg'}`}>{item.rda}</span>
+                                    </div>
+                                    <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
+                                        <span className="text-xs text-slate-500 block mb-1">耐受上限 (UL)</span>
+                                        <span className={`font-bold text-danger dark:text-red-400 ${isSeniorMode ? 'text-xl' : 'text-lg'}`}>{item.ul}</span>
+                                    </div>
+                                </div>
+
+                                {/* 交互 & 症状 */}
+                                {[
+                                    { title: '相互作用', icon: 'fa-right-left', color: 'indigo', content: item.interaction },
+                                    { title: '缺乏症状', icon: 'fa-arrow-trend-down', color: 'red', content: item.deficiency },
+                                    { title: '过量/中毒', icon: 'fa-triangle-exclamation', color: 'orange', content: item.excess },
+                                    { title: '食物来源', icon: 'fa-leaf', color: 'green', content: item.sources },
+                                ].map((sec, idx) => (
+                                    <div key={idx} className={`p-4 rounded-xl bg-${sec.color}-50 dark:bg-${sec.color}-900/20 border border-${sec.color}-100 dark:border-${sec.color}-800/50`}>
+                                        <h4 className={`font-bold text-${sec.color}-700 dark:text-${sec.color}-300 flex items-center gap-2 mb-2 ${isSeniorMode ? 'text-3xl' : 'text-lg'}`}>
+                                            <i className={`fa-solid ${sec.icon}`}></i> {sec.title}
+                                        </h4>
+                                        <p className="text-slate-700 dark:text-slate-300">{sec.content}</p>
+                                    </div>
+                                ))}
+
+                                {/* 老年人特别提醒 */}
+                                <div className={`p-5 rounded-xl border-l-4 shadow-sm ${isSeniorMode ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-300'}`}>
+                                    <h4 className={`font-bold flex items-center gap-2 mb-3 ${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400 text-3xl' : 'text-slate-700 dark:text-slate-300 text-lg'}`}>
+                                        <i className="fa-solid fa-user-doctor"></i> 老年人特别提醒
+                                    </h4>
+                                    <p className="text-slate-800 dark:text-slate-200 font-medium">{item.seniorAdvice}</p>
+                                </div>
+
+                                <p className="text-xs text-right text-slate-400 dark:text-slate-600">信息来源: {item.sourceRef}</p>
+                            </div>
+                        </div>
+
+                        {/* 底部按钮 */}
+                        <div className="p-4 border-t border-slate-100 dark:border-slate-700 shrink-0 bg-white dark:bg-darkCard">
+                            <button onClick={onClose} className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-white font-bold py-3 rounded-xl transition-colors text-lg">
+                                关闭
+                            </button>
                         </div>
                     </div>
                 </div>
             );
         };
 
-        // --- 2. 膳食指南卡片 ---
-        const GuidelineCard = ({ item, isSeniorMode }) => (
-            <div className="bg-white dark:bg-darkCard rounded-2xl p-5 mb-4 card-shadow fade-in border border-slate-100 dark:border-slate-700">
+        // --- 3. 膳食指南卡片 (列表模式更适合阅读) ---
+        const GuidelineCard = ({ item }) => (
+            <div className="bg-white dark:bg-darkCard rounded-2xl p-5 mb-4 border border-slate-100 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center gap-3 mb-3">
                     <span className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
                         {item.highlight}
                     </span>
                     <span className="text-xs text-slate-400 dark:text-slate-500">{item.source}</span>
                 </div>
-                <h3 className={`font-bold text-slate-800 dark:text-white mb-2 ${isSeniorMode ? 'text-4xl' : 'text-xl'}`}>
-                    {item.title}
-                </h3>
-                <p className={`text-slate-600 dark:text-slate-300 mb-4 ${isSeniorMode ? 'text-2xl leading-loose tracking-wide' : 'text-base'}`}>
-                    {item.content}
-                </p>
-                
-                <div className={`p-3 rounded-lg border-l-4 ${isSeniorMode ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-300'}`}>
-                    <p className={`${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400 text-3xl' : 'text-slate-500 dark:text-slate-400'} font-bold mb-1`}>
-                        <i className="fa-solid fa-user-check"></i> 老年人注意：
-                    </p>
-                    <p className={`text-slate-700 dark:text-slate-200 ${isSeniorMode ? 'text-2xl leading-loose' : 'text-sm'}`}>{item.seniorNote}</p>
+                <h3 className="font-bold text-slate-800 dark:text-white mb-2 text-xl">{item.title}</h3>
+                <p className="text-slate-600 dark:text-slate-300 mb-4 text-base leading-relaxed">{item.content}</p>
+                <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border-l-4 border-yellow-400">
+                    <p className="text-slate-500 dark:text-slate-400 font-bold mb-1 text-sm"><i className="fa-solid fa-user-check"></i> 老年人注意：</p>
+                    <p className="text-slate-700 dark:text-slate-200 text-sm">{item.seniorNote}</p>
                 </div>
             </div>
         );
 
-        // --- 3. 信源弹窗 (支持大字版) ---
-        const SourcesModal = ({ onClose, isSeniorMode }) => (
-            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm fade-in" onClick={onClose}>
-                <div className={`bg-white dark:bg-darkCard w-full rounded-2xl p-6 shadow-2xl flex flex-col max-h-[90vh] ${isSeniorMode ? 'max-w-2xl' : 'max-w-md'}`} onClick={e => e.stopPropagation()}>
-                    <div className="flex justify-between items-center mb-4 shrink-0">
-                        <h3 className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}>权威信息来源</h3>
-                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-2"><i className={`fa-solid fa-xmark ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}></i></button>
+        // --- 4. 信源弹窗 ---
+        const SourcesModal = ({ onClose }) => (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
+                <div className="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-bold text-slate-800 dark:text-white">权威信息来源</h3>
+                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><i className="fa-solid fa-xmark text-xl"></i></button>
                     </div>
-                    <div className="space-y-4 overflow-y-auto pr-2">
+                    <div className="space-y-4">
                         {sourcesInfo.map((source, index) => (
                             <div key={index} className="border-b border-slate-100 dark:border-slate-700 pb-3 last:border-0">
-                                <h4 className={`font-bold text-primary dark:text-blue-400 mb-2 ${isSeniorMode ? 'text-2xl' : 'text-sm'}`}>{source.name}</h4>
-                                <p className={`text-slate-600 dark:text-slate-300 leading-relaxed ${isSeniorMode ? 'text-xl' : 'text-xs'}`}>{source.desc}</p>
+                                <h4 className="font-bold text-primary dark:text-blue-400 text-sm mb-1">{source.name}</h4>
+                                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{source.desc}</p>
                             </div>
                         ))}
                     </div>
-                    <button onClick={onClose} className={`w-full mt-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white rounded-xl font-bold shrink-0 ${isSeniorMode ? 'text-2xl py-4' : 'text-sm py-2'}`}>关闭</button>
+                    <button onClick={onClose} className="w-full mt-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white py-2 rounded-xl font-bold text-sm">关闭</button>
                 </div>
             </div>
         );
@@ -501,9 +564,9 @@
         // --- 主程序 ---
         const App = () => {
             const [view, setView] = useState('nutrients');
-            const [filter, setFilter] = useState('all');
-            const [searchTerm, setSearchTerm] = useState('');
-            const [isSeniorMode, setIsSeniorMode] = useState(false);
+            const [activeSymptom, setActiveSymptom] = useState(null);
+            const [selectedNutrient, setSelectedNutrient] = useState(null);
+            const [isSeniorMode, setIsSeniorMode] = useState(false); // 全局状态或弹窗内状态，这里用于弹窗
             const [showSources, setShowSources] = useState(false);
             const [isDark, setIsDark] = useState(false);
 
@@ -515,103 +578,58 @@
                 }
             }, [isDark]);
 
-            const filteredNutrients = useMemo(() => {
-                return nutrientsData.filter(item => {
-                    const matchesCategory = filter === 'all' || item.category === filter;
-                    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                          item.nameEn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                          item.deficiency.includes(searchTerm) ||
-                                          item.seniorAdvice.includes(searchTerm);
-                    return matchesCategory && matchesSearch;
-                });
-            }, [filter, searchTerm]);
-
             return (
-                <div className={`min-h-screen pb-20 ${isSeniorMode ? 'text-xl' : 'text-base'}`}>
+                <div className="min-h-screen pb-20">
                     
                     {/* Header */}
-                    <header className="sticky top-0 z-50 bg-white/90 dark:bg-darkBg/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                    <header className="sticky top-0 z-40 bg-white/95 dark:bg-darkBg/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
                         <div className="max-w-3xl mx-auto px-4 py-3">
-                            <div className="flex justify-between items-center mb-3">
+                            <div className="flex justify-between items-center mb-4">
                                 <div>
                                     <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                                         <i className="fa-solid fa-seedling text-green-500 mr-2"></i>NutriGuide
                                     </h1>
                                     <p className="text-[10px] text-slate-400 font-medium tracking-wide">By Hao Guo</p>
                                 </div>
-                                
                                 <div className="flex gap-2">
-                                    <button onClick={() => setIsDark(!isDark)} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-yellow-400 flex items-center justify-center transition-colors">
+                                    <button onClick={() => setIsDark(!isDark)} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-yellow-400 flex items-center justify-center">
                                         <i className={`fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}`}></i>
                                     </button>
-                                    
-                                    {/* 信息来源按钮 */}
-                                    <button 
-                                        onClick={() => setShowSources(true)} 
-                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-blue-400 transition-colors"
-                                    >
+                                    <button onClick={() => setShowSources(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-blue-400">
                                         <i className="fa-solid fa-circle-info"></i>
-                                        <span className="text-xs font-bold">信息来源</span>
-                                    </button>
-                                    
-                                    {/* 大字版按钮 */}
-                                    <button 
-                                        onClick={() => setIsSeniorMode(!isSeniorMode)}
-                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
-                                            isSeniorMode 
-                                            ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-400 dark:bg-yellow-900 dark:text-yellow-200' 
-                                            : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300'
-                                        }`}
-                                    >
-                                        <i className="fa-solid fa-glasses"></i>
-                                        <span className="text-sm font-bold">{isSeniorMode ? '大字版' : '标准'}</span>
+                                        <span className="text-xs font-bold">来源</span>
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Tabs */}
+                            {/* View Tabs */}
                             <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-3">
-                                <button 
-                                    onClick={() => setView('nutrients')}
-                                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'nutrients' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}
-                                >
-                                    营养素速查
+                                <button onClick={() => setView('nutrients')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'nutrients' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
+                                    英雄列表
                                 </button>
-                                <button 
-                                    onClick={() => setView('guidelines')}
-                                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'guidelines' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}
-                                >
-                                    膳食指南 2026
+                                <button onClick={() => setView('guidelines')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'guidelines' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
+                                    2026 指南
                                 </button>
                             </div>
 
+                            {/* 症状筛选条 (仅在营养素视图) */}
                             {view === 'nutrients' && (
-                                <div className="fade-in">
-                                    <div className="relative mb-3">
-                                        <i className="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                                        <input 
-                                            type="text" 
-                                            placeholder="搜索症状、营养素..." 
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                            className={`w-full bg-slate-100 dark:bg-slate-800 dark:text-white border-none rounded-xl pl-10 pr-4 focus:ring-2 focus:ring-primary focus:outline-none transition-all ${isSeniorMode ? 'py-4 text-xl' : 'py-2.5 text-base'}`}
-                                        />
-                                    </div>
-                                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                        {[{id: 'all', label: '全部'}, {id: 'vitamin', label: '维生素'}, {id: 'mineral', label: '矿物质'}, {id: 'trace', label: '微量元素'}].map(tab => (
-                                            <button
-                                                key={tab.id}
-                                                onClick={() => setFilter(tab.id)}
-                                                className={`whitespace-nowrap px-4 rounded-full font-medium transition-all ${
-                                                    filter === tab.id 
-                                                    ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-900 shadow-md' 
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-                                                } ${isSeniorMode ? 'py-2 text-xl' : 'py-1.5 text-sm'}`}
-                                            >
-                                                {tab.label}
-                                            </button>
-                                        ))}
-                                    </div>
+                                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                    <button 
+                                        onClick={() => setActiveSymptom(null)}
+                                        className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all ${activeSymptom === null ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}
+                                    >
+                                        全部
+                                    </button>
+                                    {symptomMap.map(sym => (
+                                        <button 
+                                            key={sym.id}
+                                            onClick={() => setActiveSymptom(activeSymptom === sym.id ? null : sym.id)}
+                                            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${activeSymptom === sym.id ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700' : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'}`}
+                                        >
+                                            {sym.label}
+                                        </button>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -620,45 +638,62 @@
                     {/* Main Content */}
                     <main className="max-w-3xl mx-auto px-4 py-6">
                         {view === 'nutrients' ? (
-                            <div className="fade-in">
-                                {filteredNutrients.length > 0 ? (
-                                    filteredNutrients.map(item => (
-                                        <NutriCard key={item.id} item={item} isSeniorMode={isSeniorMode} />
-                                    ))
-                                ) : (
-                                    <div className="text-center py-10 text-slate-400">
-                                        <i className="fa-solid fa-circle-question text-4xl mb-3"></i>
-                                        <p>没有找到相关内容</p>
+                            <>
+                                {/* 症状描述提示 */}
+                                {activeSymptom && (
+                                    <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-xl text-center text-sm font-medium animate-pulse-once">
+                                        💡 {symptomMap.find(s => s.id === activeSymptom)?.desc}
                                     </div>
                                 )}
-                            </div>
+
+                                {/* 英雄网格 */}
+                                <div className="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6">
+                                    {nutrientsData.map(item => {
+                                        const isDimmed = activeSymptom && !item.tags.includes(activeSymptom);
+                                        const isHighlighted = activeSymptom && item.tags.includes(activeSymptom);
+                                        return (
+                                            <HeroCard 
+                                                key={item.id} 
+                                                item={item} 
+                                                isDimmed={isDimmed} 
+                                                isHighlighted={isHighlighted}
+                                                onClick={() => setSelectedNutrient(item)}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </>
                         ) : (
-                            <div className="space-y-4 fade-in">
+                            <div className="space-y-4 animate-fadeIn">
                                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white mb-6 shadow-lg">
-                                    <h2 className="text-2xl font-bold mb-2">美国居民膳食指南 2026</h2>
-                                    <p className="opacity-90 text-sm mb-0">
-                                        Dietary Guidelines for Americans 2026 版更注重"全生命周期"的健康。特别是针对慢性病高发的中老年人群，提出了更严格的糖酒限制和更科学的蛋白质建议。
-                                    </p>
-                                    <div className="mt-4 flex gap-2">
-                                        <span className="bg-white/20 px-2 py-1 rounded text-xs"><i className="fa-solid fa-scale-balanced"></i> 权威发布</span>
-                                        <span className="bg-white/20 px-2 py-1 rounded text-xs"><i className="fa-solid fa-flask"></i> 科学循证</span>
-                                    </div>
+                                    <h2 className="text-2xl font-bold mb-2">2026 膳食指南</h2>
+                                    <p className="opacity-90 text-sm">更科学、更严格、更适合全生命周期的健康建议。</p>
                                 </div>
                                 {guidelinesData.map((item, index) => (
-                                    <GuidelineCard key={index} item={item} isSeniorMode={isSeniorMode} />
+                                    <GuidelineCard key={index} item={item} />
                                 ))}
                             </div>
                         )}
-
-                        <div className="mt-8 text-center pb-6">
+                        
+                        <div className="mt-12 text-center pb-6">
                             <p className="text-xs text-slate-400 dark:text-slate-600">
                                 数据来源: NIH, Mayo Clinic, USDA.
-                                <br/>本应用仅供健康教育参考，不替代专业医疗诊断。
+                                <br/>仅供参考，不作为医疗诊断依据。
                             </p>
                         </div>
                     </main>
 
-                    {showSources && <SourcesModal onClose={() => setShowSources(false)} isSeniorMode={isSeniorMode} />}
+                    {/* 弹窗层 */}
+                    {selectedNutrient && (
+                        <DetailModal 
+                            item={selectedNutrient} 
+                            onClose={() => setSelectedNutrient(null)} 
+                            isSeniorMode={isSeniorMode}
+                            setIsSeniorMode={setIsSeniorMode}
+                        />
+                    )}
+
+                    {showSources && <SourcesModal onClose={() => setShowSources(false)} />}
                 </div>
             );
         };
