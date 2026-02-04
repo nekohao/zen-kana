@@ -530,15 +530,19 @@
             </div>
         );
 
-        // --- 4. 信源弹窗 (修正：支持大字版) ---
+        // --- 4. 信源弹窗 (修正：支持大字版，增加滚动条防止溢出) ---
         const SourcesModal = ({ onClose, isSeniorMode }) => (
             <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-                <div className={`bg-white dark:bg-darkCard w-full rounded-2xl p-6 shadow-xl transition-all ${isSeniorMode ? 'max-w-2xl' : 'max-w-md'}`} onClick={e => e.stopPropagation()}>
-                    <div className="flex justify-between items-center mb-4">
+                <div 
+                    className={`bg-white dark:bg-darkCard w-full rounded-2xl p-6 shadow-xl transition-all flex flex-col max-h-[90vh] ${isSeniorMode ? 'max-w-2xl' : 'max-w-md'}`} 
+                    onClick={e => e.stopPropagation()}
+                >
+                    <div className="flex justify-between items-center mb-4 shrink-0">
                         <h3 className={`font-bold text-slate-800 dark:text-white transition-all ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}>权威信息来源</h3>
-                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><i className={`fa-solid fa-xmark transition-all ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}></i></button>
+                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-2"><i className={`fa-solid fa-xmark transition-all ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}></i></button>
                     </div>
-                    <div className="space-y-4">
+                    
+                    <div className="space-y-4 overflow-y-auto pr-2 flex-1">
                         {sourcesInfo.map((source, index) => (
                             <div key={index} className="border-b border-slate-100 dark:border-slate-700 pb-3 last:border-0">
                                 <h4 className={`font-bold text-primary dark:text-blue-400 mb-1 transition-all ${isSeniorMode ? 'text-2xl' : 'text-sm'}`}>{source.name}</h4>
@@ -546,7 +550,10 @@
                             </div>
                         ))}
                     </div>
-                    <button onClick={onClose} className={`w-full mt-4 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white rounded-xl font-bold transition-all ${isSeniorMode ? 'text-2xl py-4' : 'text-sm py-2'}`}>关闭</button>
+                    
+                    <div className="mt-4 shrink-0">
+                        <button onClick={onClose} className={`w-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white rounded-xl font-bold transition-all ${isSeniorMode ? 'text-2xl py-4' : 'text-sm py-2'}`}>关闭</button>
+                    </div>
                 </div>
             </div>
         );
