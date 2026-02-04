@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NutriGuide 营养素速查</title>
+    
+    <!-- PWA 配置: 让网页像 App 一样运行 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/healthy-food.png">
+
+    <!-- 引入 React 和 Tailwind -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 字体优化 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* 隐藏滚动条但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    
+    <!-- Tailwind 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6', // Blue 500
+                        secondary: '#10b981', // Emerald 500
+                        danger: '#ef4444', // Red 500
+                        warning: '#f59e0b', // Amber 500
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // ================= 数据源 (基于 NIH, Mayo Clinic) =================
+        const nutrientsData = [
+            // --- 维生素 ---
+            {
+                id: 'va', category: 'vitamin', name: '维生素 A', nameEn: 'Vitamin A',
+                deficiency: '夜盲症、干眼症、皮肤干燥角化、免疫力下降、生长发育迟缓。',
+                excess: '急性中毒（恶心、呕吐、头痛），慢性中毒（肝损伤、骨骼疼痛、皮肤脱皮）、孕妇致畸。',
+                seniorAdvice: '老年人肝脏代谢能力下降，更容易发生维生素A蓄积中毒，应避免长期大量服用鱼肝油，优先从食物（胡萝卜、红薯）中获取β-胡萝卜素。',
+                sources: '肝脏、鱼肝油、胡萝卜、深绿色蔬菜。'
+            },
+            {
+                id: 'vd', category: 'vitamin', name: '维生素 D', nameEn: 'Vitamin D',
+                deficiency: '佝偻病（儿童）、骨软化症（成人）、骨质疏松、肌肉无力、易骨折、抑郁风险增加。',
+                excess: '高钙血症（恶心、呕吐、极度口渴、尿频）、肾结石、软组织钙化。',
+                seniorAdvice: '极重要！老年人皮肤合成VD能力大幅下降，且户外活动减少。缺乏VD直接导致骨折风险剧增。建议检测血清25(OH)D水平，并遵医嘱补充 VD3。',
+                sources: '阳光照射、富脂鱼类、蛋黄、强化牛奶。'
+            },
+            {
+                id: 've', category: 'vitamin', name: '维生素 E', nameEn: 'Vitamin E',
+                deficiency: '罕见。溶血性贫血、神经损伤（共济失调）、视网膜病变、免疫功能受损。',
+                excess: '干扰维生素K的凝血功能，增加出血风险（如脑出血）。',
+                seniorAdvice: '虽然VE是抗氧化剂，但高剂量补充剂可能增加全因死亡率或出血性中风风险。不建议老年人为了“抗衰老”而盲目大剂量补充。',
+                sources: '植物油、坚果（杏仁、榛子）、种子、鳄梨。'
+            },
+            {
+                id: 'vk', category: 'vitamin', name: '维生素 K', nameEn: 'Vitamin K (K1, K2)',
+                deficiency: '凝血时间延长、易出血（流鼻血、牙龈出血）、骨质疏松。',
+                excess: '天然形式毒性低。合成维生素K3可能导致溶血性贫血（婴儿多见）。',
+                seniorAdvice: '服用抗凝药（如华法林）的老年人，需保持饮食中维生素K摄入量的恒定，不可忽多忽少，以免影响药效。',
+                sources: '绿叶蔬菜（K1）、纳豆、奶酪（K2）。'
+            },
+            {
+                id: 'vb1', category: 'vitamin', name: '维生素 B1', nameEn: 'Thiamine',
+                deficiency: '脚气病（水肿、心力衰竭）、韦尼克-科萨科夫综合征（常见于酗酒者，表现为意识混乱、记忆丧失）。',
+                excess: '肾脏排出快，罕见中毒。极大剂量可能引起头痛或过敏。',
+                seniorAdvice: '消化吸收功能差的老年人可能出现亚临床缺乏，表现为食欲不振和便秘。',
+                sources: '全谷物、猪肉、豆类、葵花籽。'
+            },
+            {
+                id: 'vb2', category: 'vitamin', name: '维生素 B2', nameEn: 'Riboflavin',
+                deficiency: '口腔-生殖综合征（口角炎、唇炎、舌炎、阴囊皮炎）、眼睛畏光流泪。',
+                excess: '无明显毒性，过量会使尿液变黄（无害）。',
+                seniorAdvice: '老年人若长期饮食单一（如只喝粥吃咸菜）极易缺乏。',
+                sources: '牛奶、内脏、鸡蛋、绿叶菜。'
+            },
+            {
+                id: 'vb3', category: 'vitamin', name: '维生素 B3', nameEn: 'Niacin',
+                deficiency: '糙皮病（3D症状：皮炎、腹泻、痴呆）。',
+                excess: '皮肤潮红（烟酸潮红）、肝损伤、血糖升高、痛风加重。',
+                seniorAdvice: '服用高剂量烟酸治疗血脂问题的老年人需定期监测肝功能和血糖。',
+                sources: '肉类、鱼类、全谷物、花生。'
+            },
+            {
+                id: 'vb6', category: 'vitamin', name: '维生素 B6', nameEn: 'Pyridoxine',
+                deficiency: '皮炎、舌炎、贫血、抑郁、免疫力低下。',
+                excess: '长期过量（>100mg/天）可致严重周围神经病变（手脚麻木、步态不稳）。',
+                seniorAdvice: '老年人对B6需求量略有增加。补充B6需谨慎，不可过量，否则神经毒性对老年人步态影响大，增加跌倒风险。',
+                sources: '家禽、鱼、土豆、香蕉。'
+            },
+            {
+                id: 'vb9', category: 'vitamin', name: '维生素 B9', nameEn: 'Folate (叶酸)',
+                deficiency: '巨幼细胞贫血、舌炎、腹泻、孕期胎儿神经管缺陷。',
+                excess: '掩盖维生素B12缺乏的早期症状（神经损伤持续发展）。',
+                seniorAdvice: '老年人补充叶酸时，务必确认B12是否充足。如果只补叶酸不补B12，可能导致不可逆的神经损伤。',
+                sources: '深绿色蔬菜、豆类、强化谷物。'
+            },
+            {
+                id: 'vb12', category: 'vitamin', name: '维生素 B12', nameEn: 'Cobalamin',
+                deficiency: '恶性贫血、神经系统损伤（手脚麻木、平衡感差、记忆力减退、痴呆样症状）。',
+                excess: '毒性低，通常无害。但高水平可能与某些疾病状态相关（需医生判断）。',
+                seniorAdvice: '关键！约10-30%的老年人因萎缩性胃炎导致胃酸减少，无法从食物中吸收B12。建议老年人通过补充剂或强化食品获取，或进行注射。',
+                sources: '肉类、鱼类、蛋奶（植物性食物几乎不含）。'
+            },
+            {
+                id: 'vc', category: 'vitamin', name: '维生素 C', nameEn: 'Vitamin C',
+                deficiency: '坏血病（牙龈出血、伤口愈合慢、皮下瘀斑）、关节痛、乏力。',
+                excess: '腹泻、恶心、胃痉挛、增加肾结石风险（尤其是草酸钙结石）。',
+                seniorAdvice: '老年人免疫力弱，适当补充有益，但过量（>2000mg）易导致肾结石，男士风险更高。',
+                sources: '柑橘类水果、浆果、辣椒、西兰花。'
+            },
+
+            // --- 矿物质 (常量) ---
+            {
+                id: 'ca', category: 'mineral', name: '钙', nameEn: 'Calcium',
+                deficiency: '骨质疏松、佝偻病、肌肉痉挛（抽筋）、指甲易断。',
+                excess: '肾结石、高钙血症、可能干扰铁和锌的吸收、血管钙化风险。',
+                seniorAdvice: '绝经后女性和老年男性必须关注。尽量通过饮食（奶制品）补钙。若吃钙片，建议少量多次，且必须配合维生素D。',
+                sources: '牛奶、酸奶、豆腐、带骨小鱼、深色蔬菜。'
+            },
+            {
+                id: 'mg', category: 'mineral', name: '镁', nameEn: 'Magnesium',
+                deficiency: '肌肉震颤/抽筋、心律失常、疲劳、偏头痛、骨质疏松风险。',
+                excess: '腹泻（最常见）、低血压、肌肉无力、呼吸困难（严重时）。',
+                seniorAdvice: '老年人常服用的某些药物（如利尿剂、质子泵抑制剂）会消耗镁。镁有助于改善老年人睡眠和便秘（氧化镁），但肾功能不全者需遵医嘱。',
+                sources: '绿叶菜、坚果、种子、全谷物、黑巧克力。'
+            },
+            {
+                id: 'k', category: 'mineral', name: '钾', nameEn: 'Potassium',
+                deficiency: '肌无力、心律失常、便秘、血压升高。',
+                excess: '高钾血症（极度危险，可致心脏骤停），常见于肾功能不全者。',
+                seniorAdvice: '老年人肾功能自然衰退，排钾能力减弱。除非医生处方，不要随意服用钾补充剂。多吃富钾食物（蔬菜水果）通常是安全的，有助控制血压。',
+                sources: '香蕉、土豆、菠菜、鳄梨。'
+            },
+            {
+                id: 'na', category: 'mineral', name: '钠', nameEn: 'Sodium',
+                deficiency: '低钠血症（恶心、头痛、意识模糊、癫痫），常见于过度出汗后只喝水或老年人。',
+                excess: '高血压、水肿、增加中风和心衰风险、钙流失。',
+                seniorAdvice: '老年人对盐敏感度增加，味觉减退可能导致做菜过咸。应严格控盐，预防高血压。',
+                sources: '食盐、酱油、加工肉类、腌制食品。'
+            },
+
+            // --- 微量元素 ---
+            {
+                id: 'fe', category: 'trace', name: '铁', nameEn: 'Iron',
+                deficiency: '缺铁性贫血（乏力、苍白、心悸、指甲凹陷）、免疫力下降。',
+                excess: '血色素沉着病、肝损伤、心脏损伤、糖尿病、皮肤色素沉着。',
+                seniorAdvice: '绝经后女性和老年男性不再失血，铁需求量大减。除非确诊缺铁性贫血，否则不要额外补铁，过量的铁是强氧化剂，加速衰老和慢性病。',
+                sources: '红肉、动物肝脏、血制品、豆类（吸收率低）。'
+            },
+            {
+                id: 'zn', category: 'trace', name: '锌', nameEn: 'Zinc',
+                deficiency: '味觉嗅觉减退、伤口愈合慢、脱发、免疫力差、皮炎。',
+                excess: '干扰铜吸收（导致铜缺乏性贫血）、恶心、免疫功能受损。',
+                seniorAdvice: '老年人味觉减退导致食欲差，可能与缺锌有关。补充锌有助于改善免疫，但切忌过量，以免造成铜缺乏。',
+                sources: '牡蛎（含量极高）、红肉、家禽、南瓜籽。'
+            },
+            {
+                id: 'se', category: 'trace', name: '硒', nameEn: 'Selenium',
+                deficiency: '克山病（心肌病）、大骨节病、甲状腺功能减退、免疫力低。',
+                excess: '硒中毒（呼气有大蒜味、脱发、指甲脆弱脱落、皮疹、神经损伤）。',
+                seniorAdvice: '对甲状腺健康至关重要。但安全范围窄，不仅是老年人，所有人群都应避免长期过量摄入。',
+                sources: '巴西坚果（含量极高）、海鲜、肉类、全谷物。'
+            },
+            {
+                id: 'i', category: 'trace', name: '碘', nameEn: 'Iodine',
+                deficiency: '甲状腺肿大（大脖子病）、甲状腺功能减退（怕冷、乏力、体重增加）。',
+                excess: '甲状腺功能亢进、自身免疫性甲状腺炎、甲状腺乳头状癌风险。',
+                seniorAdvice: '老年人甲状腺结节高发。如有甲状腺疾病，需根据医生建议调整碘摄入（如是否吃加碘盐）。',
+                sources: '海带、紫菜、海鱼、加碘盐。'
+            },
+            {
+                id: 'cu', category: 'trace', name: '铜', nameEn: 'Copper',
+                deficiency: '贫血（补铁无效）、中性粒细胞减少、骨质疏松、色素脱失。',
+                excess: '肝损伤、肾衰竭、胃肠道症状、神经毒性。',
+                seniorAdvice: '通常饮食不缺。如果长期大剂量补锌（如为了前列腺健康），必须补铜，否则会导致铜缺乏。',
+                sources: '贝类、肝脏、坚果、黑巧克力。'
+            }
+        ];
+
+        // ================= 组件 =================
+
+        const NutriCard = ({ item, isSeniorMode }) => {
+            const [expanded, setExpanded] = useState(false);
+
+            const categoryColor = {
+                vitamin: 'bg-blue-100 text-blue-800 border-blue-200',
+                mineral: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                trace: 'bg-purple-100 text-purple-800 border-purple-200'
+            };
+
+            const categoryLabel = {
+                vitamin: '维生素',
+                mineral: '矿物质',
+                trace: '微量元素'
+            };
+
+            return (
+                <div 
+                    onClick={() => setExpanded(!expanded)}
+                    className={`bg-white rounded-2xl p-5 mb-4 border border-slate-100 card-shadow transition-all duration-300 cursor-pointer active:scale-[0.98] ${expanded ? 'ring-2 ring-primary ring-opacity-50' : ''}`}
+                >
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold mb-2 ${categoryColor[item.category]}`}>
+                                {categoryLabel[item.category]}
+                            </span>
+                            <h3 className={`font-bold text-slate-800 ${isSeniorMode ? 'text-2xl' : 'text-lg'}`}>
+                                {item.name}
+                            </h3>
+                            <p className="text-slate-400 text-sm font-medium">{item.nameEn}</p>
+                        </div>
+                        <div className={`text-slate-300 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}>
+                            <i className="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    {/* 展开内容 */}
+                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${expanded ? 'max-h-[1000px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                        <div className={`space-y-4 ${isSeniorMode ? 'text-lg leading-loose' : 'text-sm leading-relaxed'}`}>
+                            
+                            {/* 缺乏 */}
+                            <div className="bg-red-50 p-3 rounded-xl border border-red-100">
+                                <h4 className={`font-bold text-red-700 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-xl' : 'text-base'}`}>
+                                    <i className="fa-solid fa-arrow-trend-down"></i> 缺乏症状
+                                </h4>
+                                <p className="text-slate-700">{item.deficiency}</p>
+                            </div>
+
+                            {/* 过量 */}
+                            <div className="bg-orange-50 p-3 rounded-xl border border-orange-100">
+                                <h4 className={`font-bold text-orange-700 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-xl' : 'text-base'}`}>
+                                    <i className="fa-solid fa-triangle-exclamation"></i> 过量/中毒
+                                </h4>
+                                <p className="text-slate-700">{item.excess}</p>
+                            </div>
+
+                            {/* 食物来源 */}
+                            <div className="bg-green-50 p-3 rounded-xl border border-green-100">
+                                <h4 className={`font-bold text-green-700 flex items-center gap-2 mb-1 ${isSeniorMode ? 'text-xl' : 'text-base'}`}>
+                                    <i className="fa-solid fa-leaf"></i> 食物来源
+                                </h4>
+                                <p className="text-slate-700">{item.sources}</p>
+                            </div>
+
+                            {/* 老年人特别建议 - 仅在大字版开启时或始终显示但高亮? 需求说是开启大字版后添加 */}
+                            {isSeniorMode && (
+                                <div className="bg-yellow-50 p-4 rounded-xl border-l-4 border-yellow-400 shadow-sm mt-2 animate-pulse-once">
+                                    <h4 className="font-bold text-yellow-800 flex items-center gap-2 mb-2 text-xl">
+                                        <i className="fa-solid fa-user-doctor"></i> 中老年人特别提醒
+                                    </h4>
+                                    <p className="text-slate-800 font-medium">{item.seniorAdvice}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [filter, setFilter] = useState('all'); // all, vitamin, mineral, trace
+            const [searchTerm, setSearchTerm] = useState('');
+            const [isSeniorMode, setIsSeniorMode] = useState(false);
+
+            // 过滤逻辑
+            const filteredData = useMemo(() => {
+                return nutrientsData.filter(item => {
+                    const matchesCategory = filter === 'all' || item.category === filter;
+                    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                          item.nameEn.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                          item.deficiency.includes(searchTerm) ||
+                                          item.seniorAdvice.includes(searchTerm);
+                    return matchesCategory && matchesSearch;
+                });
+            }, [filter, searchTerm]);
+
+            return (
+                <div className={`min-h-screen pb-20 transition-all duration-300 ${isSeniorMode ? 'text-lg' : 'text-base'}`}>
+                    
+                    {/* 顶部导航栏 */}
+                    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+                        <div className="max-w-3xl mx-auto px-4 py-3">
+                            <div className="flex justify-between items-center mb-3">
+                                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                                    <i className="fa-solid fa-seedling text-green-500 mr-2"></i>NutriGuide
+                                </h1>
+                                
+                                {/* 适老模式开关 */}
+                                <button 
+                                    onClick={() => setIsSeniorMode(!isSeniorMode)}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
+                                        isSeniorMode 
+                                        ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-400' 
+                                        : 'bg-slate-100 text-slate-500'
+                                    }`}
+                                >
+                                    <i className="fa-solid fa-glasses"></i>
+                                    <span className="text-sm font-bold">{isSeniorMode ? '大字版已开' : '大字版'}</span>
+                                </button>
+                            </div>
+
+                            {/* 搜索框 */}
+                            <div className="relative">
+                                <i className="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                <input 
+                                    type="text" 
+                                    placeholder="搜索症状、营养素..." 
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className={`w-full bg-slate-100 border-none rounded-xl pl-10 pr-4 focus:ring-2 focus:ring-primary focus:outline-none transition-all ${isSeniorMode ? 'py-4 text-lg' : 'py-2.5 text-base'}`}
+                                />
+                            </div>
+
+                            {/* 分类 Tabs */}
+                            <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
+                                {[
+                                    {id: 'all', label: '全部'},
+                                    {id: 'vitamin', label: '维生素'},
+                                    {id: 'mineral', label: '矿物质'},
+                                    {id: 'trace', label: '微量元素'}
+                                ].map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setFilter(tab.id)}
+                                        className={`whitespace-nowrap px-4 rounded-full font-medium transition-all ${
+                                            filter === tab.id 
+                                            ? 'bg-slate-800 text-white shadow-md' 
+                                            : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                        } ${isSeniorMode ? 'py-2 text-base' : 'py-1.5 text-sm'}`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* 主内容区域 */}
+                    <main className="max-w-3xl mx-auto px-4 py-6">
+                        {filteredData.length > 0 ? (
+                            filteredData.map(item => (
+                                <NutriCard key={item.id} item={item} isSeniorMode={isSeniorMode} />
+                            ))
+                        ) : (
+                            <div className="text-center py-10 text-slate-400">
+                                <i className="fa-solid fa-circle-question text-4xl mb-3"></i>
+                                <p>没有找到相关内容</p>
+                            </div>
+                        )}
+
+                        <div className="mt-8 text-center">
+                            <p className="text-xs text-slate-400">
+                                数据来源: NIH Office of Dietary Supplements, Mayo Clinic. 
+                                <br/>本应用仅供参考，不作为医疗诊断依据。
+                            </p>
+                        </div>
+                    </main>
+
+                    {/* 底部浮动按钮 (回到顶部) - 仅在长滚动时有用，这里简化 */}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
