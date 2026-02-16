@@ -85,7 +85,7 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
-        // ================= 数据源 (内容已彻底充实，用语权威且通俗) =================
+        // ================= 数据源 =================
         const nutrientsData = [
             // --- 维生素 ---
             {
@@ -385,6 +385,82 @@
             }
         ];
 
+        // --- 新增：家庭精选方案数据 (Thorne & NOW) ---
+        const productsData = [
+            {
+                id: 'thorne-basic',
+                name: 'Thorne 基础营养素 (两粒装)',
+                enName: 'Basic Nutrients 2/Day',
+                brand: 'Thorne Research (医疗级品牌)',
+                brandDesc: '【世界第一医院的选择】Thorne 不是普通保健品公司，它是连续多年排名全美第一的“梅奥诊所 (Mayo Clinic)”官方指定的科研合作伙伴。美国国家队、UFC冠军都在吃。它的核心逻辑是：只用最昂贵、人体能直接吸收的“活性原料”，绝不添加任何廉价的“凑数成分”。这是真正给家人续命的东西，不是吃心理安慰的。',
+                dosage: '每两天 1 粒 (早餐随餐服用)',
+                packSize: '60 粒 / 瓶',
+                tags: ['梅奥诊所合作', '活性辅酶B族', '专利螯合矿物质'],
+                color: 'blue',
+                highlights: [
+                    {
+                        title: '1. B族维生素群：全活性“辅酶”形态',
+                        desc: '【医学核心差异】这是这款产品最贵、也是最值的地方。普通维生素B族进入人体后，必须经过肝脏复杂的转化才能被利用（如普通叶酸需4步转化）。很多中老年人肝脏代谢功能下降，或者有基因变异（MTHFR），根本无法转化，吃了等于白吃，甚至产生未代谢毒素。Thorne 采用的是已经转化好的“辅酶形态”：\n• 活性叶酸 (5-MTHF)：直接进入细胞修复DNA，有效降低同型半胱氨酸（预防中风的关键指标）。\n• 活性B12 (甲钴胺)：不同于廉价的氰钴胺（含微量氰化物），甲钴胺能直接滋养神经，改善手脚麻木和认知退化。\n• 活性B6 (P-5-P)：直接参与神经递质合成，改善睡眠和情绪。\n• 活性B2 (R-5-P)：保护粘膜，预防烂嘴角和视力模糊。'
+                    },
+                    {
+                        title: '2. 矿物质群：TRAACS® 氨基酸螯合技术',
+                        desc: '【吸收率革命】你看瓶身上的“Bisglycinate”字样，这代表了全球顶尖的 TRAACS® 专利技术。普通产品用的是氧化物（如氧化锌），其实就是“石头粉”，吸收率极低且极其伤胃（容易恶心）。Thorne 将锌、铜、锰、铬等矿物质用两个甘氨酸分子“钳”住，伪装成氨基酸。结果是：\n• 不刺激胃粘膜：哪怕空腹吃也不会难受。\n• 吸收率提升数倍：肠道把它当成肉类营养直接吸收，不与钙片等其他药物竞争通道。'
+                    },
+                    {
+                        title: '3. 维生素 K2 (MK-4)：骨骼与血管的“导航员”',
+                        desc: '【极罕见成分】普通钙片只含K1（管凝血）。这款豪横地添加了 200mcg 的 K2 (MK-4)。这是目前医学界公认生物活性最高的形式。它的作用是“导航”：激活骨钙素，把血液里游离的钙“抓”进骨头里。这不仅预防骨质疏松，更重要的是防止钙沉积在血管壁上导致动脉硬化。这是一箭双雕的血管保护神。'
+                    },
+                    {
+                        title: '4. 维生素 A：安全复配的双重防线',
+                        desc: '【拒绝单一风险】市售廉价品通常只用合成视黄醇（过量伤肝）或只用胡萝卜素（转化效率低）。Thorne 采用了 棕榈酸酯（快速起效，修复粘膜） + β-胡萝卜素（安全储备，抗氧化） 的混合配方。既保证了呼吸道和消化道粘膜的免疫屏障功能，又将蓄积中毒的风险降到了最低。'
+                    },
+                    {
+                        title: '5. 微量元素：被忽视的关键拼图',
+                        desc: '每一毫克都有据可依：\n• 铬 (Nicotinate Glycinate)：400mcg。这是调节血糖的关键因子，能增加胰岛素敏感性，对血糖偏高的老人至关重要。\n• 硼 (Boron)：2mg。这是锁住骨钙的“守门员”，能减少钙和镁从尿液中流失，强化骨密度。\n• 硒 (Selenium)：200mcg。甲状腺的守护神，同时是强大的心脏抗氧化剂。\n• 叶黄素 (Lutein)：140mcg。沉积在视网膜黄斑区，像墨镜一样过滤蓝光，延缓视力衰退。'
+                    },
+                    {
+                        title: '6. 纯净度：拒绝“科技与狠活”',
+                        desc: '【无添加承诺】如果你仔细看成分表的“Other Ingredients”，你会发现它极其干净。没有硬脂酸镁（一种廉价的润滑剂，会阻碍吸收），没有二氧化钛（致癌风险增白剂），没有人工色素，没有麸质。胶囊壳由植物纤维制成。这是给身体做加法，而不是增加排毒负担。'
+                    }
+                ],
+                caution: '⚠️ 服用提示：含碘和维K。甲亢患者、正在服用华法林（抗凝药）者，请务必咨询医生。'
+            },
+            {
+                id: 'now-omega',
+                name: 'NOW Ultra Omega-3-D',
+                enName: '深海鱼油 (高浓度EPA/DHA + 维D3)',
+                brand: 'NOW Foods (美国国民品牌)',
+                brandDesc: '【百年家族企业的良心】美国拥有50年历史的家族企业，以“极致性价比”和“透明工厂”闻名。这款 Ultra Omega-3-D 是它家最高端的“旗舰线”，通过了全球最严苛的 GOED（EPA和DHA组织）标准检测，确保每一颗都是纯净的“液体黄金”。',
+                dosage: '每天 1 粒 (必须随餐服用)',
+                packSize: '180 粒 / 瓶 (6 个月量)',
+                tags: ['90%高纯度', '分子蒸馏去重金属', '心脑骨同补'],
+                color: 'yellow',
+                highlights: [
+                    {
+                        title: '【拒绝智商税】买鱼油只看一个指标：浓度',
+                        desc: '普通鱼油一颗1000mg里只有300mg有效成分（EPA+DHA），剩下的700mg全是让你长胖的劣质脂肪。NOW 这款“超级版”，一颗含有 900mg 有效成分（600 EPA + 300 DHA），浓度高达 90%。这意味着：吃这一颗，顶普通鱼油吃三颗！不仅省钱，还少吃了没用的油。'
+                    },
+                    {
+                        title: '1. EPA 600mg：血管的“强力疏通剂”',
+                        desc: '【精准护心】为什么是600mg？因为临床研究证实，只有高剂量的 EPA 才能有效降低甘油三酯，对抗血管内的慢性炎症。这就像给血管做了一次大扫除，让血液流动更顺畅，直接减轻心脏负担。'
+                    },
+                    {
+                        title: '2. DHA 300mg：大脑和眼睛的“润滑油”',
+                        desc: '【防呆防花】DHA 是大脑细胞膜和视网膜的主要成分。随着年龄增长，大脑里的DHA会流失，导致记性变差。补充足量 DHA 就像给生锈的齿轮加了油，预防认知衰退，同时缓解老花眼和干眼症。'
+                    },
+                    {
+                        title: '3. 维生素 D3 (1000 IU)：神来之笔',
+                        desc: '【一步到位】大多数老人既缺鱼油也缺维D。这款产品直接添加了 1000 IU 的维生素 D3。鱼油本身就能促进维D吸收，两者配合，一边清理血管，一边把钙锁进骨头里。每天一颗，心、脑、骨、眼、免疫全照顾到了，省去了吃一大堆药片的麻烦。'
+                    },
+                    {
+                        title: '4. 分子蒸馏工艺：比吃鱼更安全',
+                        desc: '【重金属归零】现在的海鱼普遍有汞、铅污染，老人吃多了反而伤脑。这款鱼油采用了昂贵的“分子蒸馏”技术，在真空环境下把重金属和多氯联苯（PCBs）彻底分离出去。这是比直接吃深海鱼更安全、更纯净的选择。'
+                    }
+                ],
+                caution: '⚠️ 服用提示：鱼油有轻微抗凝血作用。如果有出血倾向、近期要做手术，或正在服用阿司匹林/华法林，请务必咨询医生。'
+            }
+        ];
+
         const sourcesInfo = [
             { 
                 name: "NIH ODS (美国国立卫生研究院)", 
@@ -392,7 +468,7 @@
             },
             { 
                 name: "Mayo Clinic (梅奥诊所)", 
-                desc: "【医学界的麦加】连续多年蝉联“世界最佳医院”排行榜榜首，是全球医疗质量的标杆。其给出的建议不仅仅是理论，更是基于每年服务百万患者的庞大临床经验。梅奥的建议意味着：这是目前医学界能给出的最安全、最有效的治疗方案。" 
+                desc: "【世界第一医院】已连续多年蝉联“世界最佳医院”排行榜榜首。它是全球医疗质量的终极标杆，是无数疑难杂症患者最后的希望。Thorne 品牌正是梅奥诊所官方合作的补剂品牌，这意味着其产品质量通过了世界最顶尖医生的严苛审查。" 
             },
             { 
                 name: "USDA 2025-2030 DGA", 
@@ -538,6 +614,67 @@
             </div>
         );
 
+        // --- 新增：产品介绍卡片 ---
+        const ProductCard = ({ item, isSeniorMode }) => {
+            const isBlue = item.color === 'blue';
+            
+            return (
+                <div className="bg-white dark:bg-darkCard rounded-3xl overflow-hidden shadow-lg border border-slate-100 dark:border-slate-700 mb-8 last:mb-20">
+                    {/* 产品头部 */}
+                    <div className={`p-6 ${isBlue ? 'bg-gradient-to-r from-blue-600 to-indigo-700' : 'bg-gradient-to-r from-amber-500 to-orange-600'} text-white`}>
+                        <div className="flex justify-between items-start mb-2">
+                            <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                                {isBlue ? '综合维矿 • 旗舰版' : '深海鱼油 • 医疗级'}
+                            </span>
+                            <span className="text-white/80 text-xs font-mono">{item.packSize}</span>
+                        </div>
+                        <h2 className={`font-black leading-tight mb-2 ${isSeniorMode ? 'text-4xl' : 'text-2xl'}`}>{item.name}</h2>
+                        <p className={`font-medium opacity-90 ${isSeniorMode ? 'text-xl' : 'text-sm'}`}>{item.enName}</p>
+                        
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            {item.tags.map((tag, i) => (
+                                <span key={i} className="bg-black/20 px-2 py-1 rounded text-xs font-medium border border-white/10">{tag}</span>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* 产品详情 */}
+                    <div className="p-6 space-y-6">
+                        {/* 品牌与服用建议 */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
+                                <h4 className="text-xs text-slate-500 uppercase font-bold mb-2">品牌背书</h4>
+                                <p className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-xl' : 'text-sm'}`}>{item.brand}</p>
+                                <p className={`text-slate-500 mt-1 leading-relaxed ${isSeniorMode ? 'text-lg' : 'text-xs'}`}>{item.brandDesc}</p>
+                            </div>
+                            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border-l-4 border-green-500">
+                                <h4 className="text-xs text-green-600 uppercase font-bold mb-2">服用建议</h4>
+                                <p className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-2xl' : 'text-base'}`}>{item.dosage}</p>
+                            </div>
+                        </div>
+
+                        {/* 核心亮点 */}
+                        <div className="space-y-4">
+                            <h3 className={`font-bold text-slate-800 dark:text-white flex items-center gap-2 ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}>
+                                <i className="fa-solid fa-star text-yellow-400"></i> 权威成分详解
+                            </h3>
+                            {item.highlights.map((hl, idx) => (
+                                <div key={idx} className="border-b border-slate-100 dark:border-slate-700 pb-4 last:border-0 last:pb-0">
+                                    <h4 className={`font-bold text-primary dark:text-blue-400 mb-2 ${isSeniorMode ? 'text-2xl' : 'text-base'}`}>{hl.title}</h4>
+                                    <p className={`text-slate-600 dark:text-slate-300 leading-relaxed ${isSeniorMode ? 'text-xl leading-loose' : 'text-sm'}`}>{hl.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* 警示 */}
+                        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl text-red-700 dark:text-red-300">
+                            <p className={`${isSeniorMode ? 'text-lg font-bold' : 'text-xs'}`}>{item.caution}</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // --- 4. 信源弹窗 (修正：支持大字版，增加滚动条防止溢出) ---
         const SourcesModal = ({ onClose, isSeniorMode }) => (
             <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
@@ -568,7 +705,7 @@
 
         // --- 主程序 ---
         const App = () => {
-            const [view, setView] = useState('nutrients');
+            const [view, setView] = useState('products'); // 默认显示产品介绍
             const [activeSymptom, setActiveSymptom] = useState(null);
             const [selectedNutrient, setSelectedNutrient] = useState(null);
             const [isSeniorMode, setIsSeniorMode] = useState(false);
@@ -626,6 +763,9 @@
                                 <button onClick={() => setView('guidelines')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'guidelines' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
                                     膳食指南
                                 </button>
+                                <button onClick={() => setView('products')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'products' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
+                                    精选方案
+                                </button>
                             </div>
 
                             {/* 症状筛选条 (仅在营养素视图) */}
@@ -653,8 +793,9 @@
 
                     {/* Main Content */}
                     <main className="max-w-3xl mx-auto px-4 py-6">
-                        {view === 'nutrients' ? (
-                            <>
+                        {/* 视图 1：营养素 */}
+                        {view === 'nutrients' && (
+                            <div className="animate-fadeIn">
                                 {/* 症状描述提示 */}
                                 {activeSymptom && (
                                     <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-xl text-center text-sm font-medium animate-pulse-once">
@@ -678,8 +819,11 @@
                                         );
                                     })}
                                 </div>
-                            </>
-                        ) : (
+                            </div>
+                        )}
+
+                        {/* 视图 2：膳食指南 */}
+                        {view === 'guidelines' && (
                             <div className="space-y-4 animate-fadeIn">
                                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white mb-6 shadow-lg">
                                     <h2 className={`font-bold mb-2 transition-all ${isSeniorMode ? 'text-3xl' : 'text-2xl'}`}>2026 美国居民膳食指南</h2>
@@ -693,6 +837,26 @@
                                 </div>
                                 {guidelinesData.map((item, index) => (
                                     <GuidelineCard key={index} item={item} isSeniorMode={isSeniorMode} />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* 视图 3：精选方案 (新) */}
+                        {view === 'products' && (
+                            <div className="animate-fadeIn">
+                                <div className="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 text-white mb-8 shadow-lg">
+                                    <h2 className={`font-bold mb-2 transition-all ${isSeniorMode ? 'text-3xl' : 'text-2xl'}`}>家人自用 • 医疗级方案</h2>
+                                    <p className={`opacity-90 mb-4 transition-all ${isSeniorMode ? 'text-xl leading-loose' : 'text-sm'}`}>
+                                        严格遵循‘临床医疗级’选品标准，核心指标只有两个：极高的生物利用度（吃进去能真正被身体利用）与绝对的成分纯净度（长期服用无肝肾负担）。区别于市面常见的合成维生素，这两款产品代表了目前营养医学界的顶级工艺：Thorne 采用全活性辅酶形态（梅奥诊所科研合作标准），NOW 采用分子蒸馏提纯技术（去除重金属）。这是基于严谨医学数据筛选出的、针对中老年代谢特点的最优健康支持方案。
+                                    </p>
+                                    <div className="mt-4 flex gap-2">
+                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-check-double"></i> 顶级双重认证</span>
+                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-heart-pulse"></i> 临床有效剂量</span>
+                                    </div>
+                                </div>
+                                
+                                {productsData.map((item, index) => (
+                                    <ProductCard key={index} item={item} isSeniorMode={isSeniorMode} />
                                 ))}
                             </div>
                         )}
