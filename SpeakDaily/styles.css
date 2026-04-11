@@ -348,6 +348,10 @@ h3 {
   margin: 14px 0;
 }
 
+.control-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .result-panel {
   min-height: 116px;
   padding: 16px;
@@ -364,11 +368,6 @@ h3 {
 .result-panel p {
   color: var(--muted);
   line-height: 1.45;
-}
-
-audio {
-  width: 100%;
-  margin-top: 12px;
 }
 
 .decision-row {
@@ -414,6 +413,204 @@ audio {
 
 .compact .phrase-item { min-height: 86px; }
 
+.lesson-path {
+  display: grid;
+  gap: 10px;
+}
+
+.lesson-card {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 78px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 251, 0.76);
+  box-shadow: 0 10px 24px rgba(24, 26, 24, 0.07);
+  text-align: left;
+}
+
+.lesson-card:disabled {
+  opacity: 0.56;
+}
+
+.lesson-number {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: white;
+  font-weight: 780;
+}
+
+.lesson-card strong,
+.lesson-card em {
+  display: block;
+}
+
+.lesson-card em {
+  margin-top: 4px;
+  color: var(--muted);
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.lesson-detail {
+  display: grid;
+  gap: 14px;
+}
+
+.lesson-hero {
+  box-shadow: var(--shadow);
+}
+
+.lesson-block {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 251, 0.74);
+}
+
+.lesson-block h3 {
+  margin-bottom: 10px;
+}
+
+.lesson-block p,
+.lesson-block li {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.lesson-block ul,
+.lesson-block ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.formula-row {
+  display: grid;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.formula-row:last-child {
+  border-bottom: 0;
+}
+
+.formula-row span,
+.mini-note {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.lesson-examples,
+.mistake-list,
+.quiz-list {
+  display: grid;
+  gap: 10px;
+}
+
+.example-card,
+.mistake-card,
+.quiz-card {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(247, 247, 242, 0.78);
+  text-align: left;
+}
+
+.example-card {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 4px 10px;
+}
+
+.example-card span {
+  grid-row: span 3;
+  color: var(--mint);
+  font-weight: 780;
+}
+
+.example-card strong,
+.example-card em,
+.example-card small {
+  display: block;
+}
+
+.example-card em,
+.example-card small,
+.mistake-card p,
+.quiz-feedback {
+  color: var(--muted);
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.mistake-card del {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--coral);
+}
+
+.quiz-card h4 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.quiz-options {
+  display: grid;
+  gap: 8px;
+}
+
+.quiz-options label {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: start;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 251, 0.78);
+}
+
+.quiz-text,
+.lesson-note {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 251, 0.86);
+  color: var(--ink);
+  outline: none;
+}
+
+.lesson-note {
+  min-height: 96px;
+  margin: 10px 0;
+  resize: vertical;
+}
+
+.quiz-feedback {
+  margin-top: 8px;
+}
+
+.quiz-feedback.is-right {
+  color: #2c6b59;
+}
+
+.quiz-feedback.is-wrong {
+  color: #9a3128;
+}
+
 .install-note {
   margin-top: 16px;
   padding: 16px;
@@ -435,7 +632,7 @@ audio {
   bottom: calc(env(safe-area-inset-bottom) + 12px);
   z-index: 50;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 4px;
   max-width: 760px;
   min-height: 66px;
@@ -482,4 +679,7 @@ audio {
   .hero-panel, .practice-card { padding: 18px; }
   .ghost { display: none; }
   .stats-grid { grid-template-columns: 1fr; }
+  .control-grid.three { grid-template-columns: 1fr; }
+  .lesson-card { grid-template-columns: 36px 1fr; }
+  .lesson-card .badge { grid-column: 2; justify-self: start; }
 }

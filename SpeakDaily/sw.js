@@ -1,9 +1,10 @@
-const CACHE_NAME = "speakdaily-v3-20260411";
+const CACHE_NAME = "speakdaily-v4-grammar-20260411";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./data.js",
+  "./grammar-data.js",
   "./app.js",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",

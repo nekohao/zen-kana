@@ -166,7 +166,7 @@ window.SPEAK_DAILY_PHRASES = [
   {id:"fix-03",group:"小问题处理",en:"It's not a big deal.",zh:"这不是什么大事。",scene:"安慰别人或淡化问题。",tip:"big deal 重，not a 弱读。",example:"It's not a big deal. We can fix it.",keys:["big","deal"]},
   {id:"fix-04",group:"小问题处理",en:"Let's figure this out.",zh:"我们来把它解决掉。",scene:"遇到问题时进入解决模式。",tip:"figure this out 连读，out 清楚。",example:"Let's figure this out together.",keys:["figure","out"]},
   {id:"fix-05",group:"小问题处理",en:"That's on me.",zh:"这算我的责任。",scene:"主动承担责任。",tip:"on me 连读，me 轻落。",example:"I missed the detail. That's on me.",keys:["on","me"]},
-  {id:"fix-06",group:"小问题处理",en:"Can we try that again?",zh:"我们能再试一次吗？",scene:"没成功、没听清、操作错了。",tip:"try that again 连读，again 重音在 gain。",example:"The audio cut out. Can we try that again?",keys:["try","again"]},
+  {id:"fix-06",group:"小问题处理",en:"Can we try that again?",zh:"我们能再试一次吗？",scene:"没成功、没听清、操作错了。",tip:"try that again 连读，again 重音在 gain。",example:"The sound cut out. Can we try that again?",keys:["try","again"]},
   {id:"fix-07",group:"小问题处理",en:"No harm done.",zh:"没造成什么损失。",scene:"事情有惊无险，安慰对方。",tip:"harm done 两个词都稳。",example:"You clicked the wrong button, but no harm done.",keys:["harm","done"]},
   {id:"fix-08",group:"小问题处理",en:"We're good now.",zh:"现在没问题了。",scene:"问题解决后确认状态。",tip:"we're good now 连读，good 重。",example:"I restarted it. We're good now.",keys:["good","now"]},
   {id:"agree-01",group:"同意不同意",en:"Totally.",zh:"完全同意。",scene:"很自然地强烈认同。",tip:"to-tal-ly 三拍，第一音节重。",example:"A: This place is cozy. B: Totally.",keys:["totally"]},
