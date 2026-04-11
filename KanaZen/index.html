@@ -283,6 +283,18 @@ button:disabled {
 
 .segmented::-webkit-scrollbar, .chip-row::-webkit-scrollbar { display: none; }
 
+.write-toolbar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.write-toolbar .segmented,
+.write-toolbar .chip-row {
+  min-width: 0;
+}
+
 .chip {
   padding: 0 14px;
   border: 1px solid var(--line);
@@ -1122,9 +1134,15 @@ canvas {
     const prevId = lesson.ids[lessonIndex - 1];
     const nextId = lesson.ids[lessonIndex + 1];
     return `<div class="stack">
-      <div class="segmented">
-        <button class="chip ${mode === "hira" ? "is-active" : ""}" data-action="write-script" data-script="hira">平仮名</button>
-        <button class="chip ${mode === "kata" ? "is-active" : ""}" data-action="write-script" data-script="kata">片仮名</button>
+      <div class="write-toolbar">
+        <div class="segmented">
+          <button class="chip ${mode === "hira" ? "is-active" : ""}" data-action="write-script" data-script="hira">平仮名</button>
+          <button class="chip ${mode === "kata" ? "is-active" : ""}" data-action="write-script" data-script="kata">片仮名</button>
+        </div>
+        <div class="chip-row">${lesson.ids.map((kanaId) => {
+          const k = byId[kanaId];
+          return `<button class="chip ${k.id === item.id ? "is-active" : ""}" data-action="write-id" data-id="${k.id}">${charFor(k, mode)}</button>`;
+        }).join("")}</div>
       </div>
       <div class="panel write-card tight">
         <div class="row"><strong>${lesson.name} · ${item.romaji}</strong><span class="status-pill ${traced ? "is-done" : "is-open"}">${lessonIndex + 1}/${lesson.ids.length} · ${traced ? "已临摹" : "待临摹"}</span></div>
@@ -1137,7 +1155,6 @@ canvas {
         <button class="primary-button accent-button" data-action="mark-traced" data-id="${item.id}">${traced ? "继续下一个" : "我写好了"}</button>
         <button class="danger-button" data-action="clear-canvas">清除笔迹</button>
       </div>
-      <div class="chip-row">${availableItems().map((k) => `<button class="chip ${k.id === item.id ? "is-active" : ""}" data-action="write-id" data-id="${k.id}">${charFor(k, mode)}</button>`).join("")}</div>
       <div class="panel detail-card tight"><div class="row"><strong>${lesson.name} 进度</strong><span class="small">${tracedCount(lesson)}/${lesson.ids.length}</span></div>
         <button class="primary-button" data-action="start-lesson-quiz" data-lesson="${lesson.id}" ${lessonReady(lesson) ? "" : "disabled"}>${lessonReady(lesson) ? "开始本课测验" : "临摹完本课后解锁测验"}</button></div>
     </div>`;
