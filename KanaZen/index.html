@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f6f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KanaZen">
+  <meta name="format-detection" content="telephone=no">
+  <title>KanaZen</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-1024.png">
+  <link rel="icon" href="./assets/icons/icon-192.png" type="image/png">
+  <style>
+:root {
+  --paper: #f4f6f2;
+  --paper-2: #e7ece6;
+  --ink: #1f2320;
+  --muted: #70756d;
+  --line: rgba(31, 35, 32, 0.12);
+  --glass: rgba(255, 255, 253, 0.72);
+  --accent: #b83b40;
+  --accent-dark: #812b2f;
+  --celadon: #5d8b7d;
+  --gold: #b28a3f;
+  --shadow: 0 18px 45px rgba(31, 35, 32, 0.12);
+  --bar: rgba(246, 246, 241, 0.86);
+  --radius: 8px;
+  --tap: 48px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans CJK SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(31, 35, 32, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 35, 32, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px, 32px 32px;
+}
+
+button, input, textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  color: inherit;
+  background: none;
+  touch-action: manipulation;
+}
+
+.app-shell {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(244, 246, 242, 0.96), rgba(231, 236, 230, 0.88));
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding: calc(env(safe-area-inset-top) + 10px) 18px 10px;
+  background: var(--bar);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border-bottom: 1px solid rgba(31, 35, 32, 0.08);
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  display: grid;
+  place-items: center;
+  color: white;
+  background: var(--accent);
+  box-shadow: 0 12px 28px rgba(184, 59, 64, 0.28);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.brand-title {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.brand-title strong {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.brand-title span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.view-title {
+  text-align: right;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.content {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: calc(env(safe-area-inset-top) + 78px) 16px calc(env(safe-area-inset-bottom) + 86px);
+}
+
+.screen {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  animation: rise 260ms ease both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stack { display: grid; gap: 14px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tight { display: grid; gap: 8px; }
+
+.panel {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius);
+  background: var(--glass);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(26px) saturate(145%);
+  -webkit-backdrop-filter: blur(26px) saturate(145%);
+}
+
+.section-title {
+  margin: 4px 2px 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hero-panel {
+  padding: 20px;
+  min-height: 214px;
+  display: grid;
+  align-content: space-between;
+  gap: 20px;
+}
+
+.hero-kana {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hero-kana .kana {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Times New Roman", serif;
+  font-size: 86px;
+  line-height: 0.95;
+  font-weight: 700;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.metric {
+  min-height: 72px;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid var(--line);
+}
+
+.metric strong {
+  display: block;
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.metric span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.primary-button, .ghost-button, .danger-button, .chip, .tab-button, .kana-cell, .option {
+  min-height: var(--tap);
+  border-radius: var(--radius);
+  transition: transform 140ms ease, opacity 140ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.primary-button:active, .ghost-button:active, .danger-button:active, .chip:active,
+.tab-button:active, .kana-cell:active, .option:active {
+  transform: scale(0.98);
+}
+
+.primary-button {
+  width: 100%;
+  padding: 14px 16px;
+  color: white;
+  background: var(--ink);
+  font-weight: 800;
+  box-shadow: 0 18px 32px rgba(31, 35, 32, 0.18);
+}
+
+.accent-button { background: var(--accent); box-shadow: 0 18px 32px rgba(184, 59, 64, 0.24); }
+
+.ghost-button, .danger-button {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.danger-button { color: var(--accent-dark); }
+
+.segmented, .chip-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px;
+  scrollbar-width: none;
+}
+
+.segmented::-webkit-scrollbar, .chip-row::-webkit-scrollbar { display: none; }
+
+.chip {
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.58);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 780;
+  white-space: nowrap;
+}
+
+.chip.is-active {
+  color: white;
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.kana-board {
+  display: grid;
+  gap: 8px;
+}
+
+.kana-row {
+  display: grid;
+  grid-template-columns: 32px repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  align-items: center;
+}
+
+.row-label {
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+  text-align: center;
+}
+
+.kana-cell {
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.56);
+  position: relative;
+}
+
+.kana-cell.is-empty {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.kana-char {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.kana-romaji {
+  position: absolute;
+  bottom: 5px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.detail-card, .quiz-card, .write-card {
+  padding: 18px;
+}
+
+.detail-kana {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 18px 0;
+}
+
+.detail-kana strong {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 96px;
+  line-height: 0.9;
+}
+
+.detail-kana span {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 56px;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.quiz-card {
+  min-height: 280px;
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+}
+
+.prompt {
+  text-align: center;
+  display: grid;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.prompt .label {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.prompt .big {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 76px;
+  line-height: 1;
+}
+
+.prompt .romaji {
+  font-size: 46px;
+  font-weight: 850;
+}
+
+.progress-track {
+  height: 7px;
+  background: rgba(31, 35, 32, 0.1);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width 220ms ease;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.option {
+  min-height: 62px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid var(--line);
+  font-weight: 820;
+  font-size: 20px;
+}
+
+.option.is-correct { color: white; background: var(--celadon); border-color: var(--celadon); }
+.option.is-wrong { color: white; background: var(--accent); border-color: var(--accent); }
+.option.is-muted { opacity: 0.42; }
+
+.write-stage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #fffefa;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.copy-kana {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(184, 59, 64, 0.12);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 210px;
+  pointer-events: none;
+}
+
+.write-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(184, 59, 64, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184, 59, 64, 0.14) 1px, transparent 1px),
+    linear-gradient(45deg, transparent 49.5%, rgba(184, 59, 64, 0.16) 50%, transparent 50.5%),
+    linear-gradient(-45deg, transparent 49.5%, rgba(184, 59, 64, 0.16) 50%, transparent 50.5%);
+  background-size: 50% 50%, 50% 50%, 100% 100%, 100% 100%;
+  pointer-events: none;
+}
+
+canvas {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 5px;
+}
+
+.heat {
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  background: rgba(31, 35, 32, 0.08);
+  border: 1px solid rgba(31, 35, 32, 0.04);
+}
+
+.weak-list {
+  display: grid;
+  gap: 8px;
+}
+
+.weak-item {
+  min-height: 50px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.tabbar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom) + 10px);
+  z-index: 35;
+  max-width: 720px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius);
+  background: var(--bar);
+  box-shadow: 0 18px 42px rgba(31, 35, 32, 0.18);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+}
+
+.tab-button {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.tab-button strong { font-size: 18px; line-height: 1; }
+.tab-button.is-active { color: var(--accent); background: rgba(184, 59, 64, 0.08); }
+
+.toast {
+  position: fixed;
+  left: 18px;
+  right: 18px;
+  bottom: calc(env(safe-area-inset-bottom) + 86px);
+  z-index: 60;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  color: white;
+  background: rgba(31, 35, 32, 0.92);
+  box-shadow: var(--shadow);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.hidden { display: none !important; }
+
+@media (min-width: 760px) {
+  .content { padding-left: 28px; padding-right: 28px; }
+  .hero-kana .kana { font-size: 104px; }
+  .copy-kana { font-size: 260px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div id="app" class="app-shell" aria-live="polite"></div>
+  <script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "kanazen:v1";
+  const TABS = [
+    ["home", "今", "今日"],
+    ["chart", "表", "五十音"],
+    ["quiz", "試", "试炼"],
+    ["write", "書", "临摹"],
+    ["profile", "我", "我的"]
+  ];
+  const ROWS = [
+    ["a", "a", ["a", "i", "u", "e", "o"]],
+    ["k", "k", ["ka", "ki", "ku", "ke", "ko"]],
+    ["s", "s", ["sa", "shi", "su", "se", "so"]],
+    ["t", "t", ["ta", "chi", "tsu", "te", "to"]],
+    ["nrow", "n", ["na", "ni", "nu", "ne", "no"]],
+    ["h", "h", ["ha", "hi", "fu", "he", "ho"]],
+    ["m", "m", ["ma", "mi", "mu", "me", "mo"]],
+    ["y", "y", ["ya", null, "yu", null, "yo"]],
+    ["r", "r", ["ra", "ri", "ru", "re", "ro"]],
+    ["w", "w", ["wa", null, null, null, "wo"]],
+    ["n", "n", ["n", null, null, null, null]]
+  ];
+  const KANA = [
+    ["a","a","a","あ","ア"],["i","a","i","い","イ"],["u","a","u","う","ウ"],["e","a","e","え","エ"],["o","a","o","お","オ"],
+    ["ka","k","a","か","カ"],["ki","k","i","き","キ"],["ku","k","u","く","ク"],["ke","k","e","け","ケ"],["ko","k","o","こ","コ"],
+    ["sa","s","a","さ","サ"],["shi","s","i","し","シ"],["su","s","u","す","ス"],["se","s","e","せ","セ"],["so","s","o","そ","ソ"],
+    ["ta","t","a","た","タ"],["chi","t","i","ち","チ"],["tsu","t","u","つ","ツ"],["te","t","e","て","テ"],["to","t","o","と","ト"],
+    ["na","nrow","a","な","ナ"],["ni","nrow","i","に","ニ"],["nu","nrow","u","ぬ","ヌ"],["ne","nrow","e","ね","ネ"],["no","nrow","o","の","ノ"],
+    ["ha","h","a","は","ハ"],["hi","h","i","ひ","ヒ"],["fu","h","u","ふ","フ"],["he","h","e","へ","ヘ"],["ho","h","o","ほ","ホ"],
+    ["ma","m","a","ま","マ"],["mi","m","i","み","ミ"],["mu","m","u","む","ム"],["me","m","e","め","メ"],["mo","m","o","も","モ"],
+    ["ya","y","a","や","ヤ"],["yu","y","u","ゆ","ユ"],["yo","y","o","よ","ヨ"],
+    ["ra","r","a","ら","ラ"],["ri","r","i","り","リ"],["ru","r","u","る","ル"],["re","r","e","れ","レ"],["ro","r","o","ろ","ロ"],
+    ["wa","w","a","わ","ワ"],["wo","w","o","を","ヲ"],["n","n","a","ん","ン"]
+  ].map(([id, row, vowel, hira, kata]) => ({ id, row, vowel, hira, kata, romaji: id, audio: `assets/audio/${id}.mp3` }));
+  const byId = Object.fromEntries(KANA.map((item) => [item.id, item]));
+  const app = document.getElementById("app");
+  const audioCache = new Map();
+  let data = loadData();
+  let tab = "home";
+  let scriptMode = data.settings.script || "hira";
+  let quiz = null;
+  let toastTimer = 0;
+  let toastText = "";
+
+  function loadData() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (parsed && parsed.version === 1) {
+        parsed.records ||= {};
+        parsed.activity ||= {};
+        parsed.settings ||= {};
+        return parsed;
+      }
+    } catch (error) {}
+    return { version: 1, records: {}, activity: {}, settings: { script: "hira", quizMode: "review", quizRow: "all", writeId: "a", writeScript: "hira" } };
+  }
+  function saveData() {
+    data.settings.script = scriptMode;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+  function baseRecord() {
+    return { mastery: 0, lastSeen: 0, nextReview: 0, correct: 0, wrong: 0 };
+  }
+  function readRecord(id) {
+    return data.records[id] ? { ...baseRecord(), ...data.records[id] } : baseRecord();
+  }
+  function touchRecord(id) {
+    data.records[id] = readRecord(id);
+    return data.records[id];
+  }
+  function todayKey(offset = 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+  function markActivity() {
+    const key = todayKey();
+    data.activity[key] = (data.activity[key] || 0) + 1;
+  }
+  function updateRecord(id, correct) {
+    const rec = touchRecord(id);
+    const now = Date.now();
+    rec.lastSeen = now;
+    if (correct) {
+      rec.correct += 1;
+      rec.mastery = Math.min(5, rec.mastery + 1);
+      const days = [0.25, 0.5, 1, 2, 4, 7][rec.mastery];
+      rec.nextReview = now + days * 86400000;
+    } else {
+      rec.wrong += 1;
+      rec.mastery = Math.max(0, rec.mastery - 1);
+      rec.nextReview = now + 10 * 60000;
+    }
+    markActivity();
+    saveData();
+  }
+  function stats() {
+    const values = KANA.map((item) => readRecord(item.id));
+    const learned = values.filter((r) => r.lastSeen).length;
+    const mastered = values.filter((r) => r.mastery >= 4).length;
+    const due = values.filter((r) => r.nextReview && r.nextReview <= Date.now()).length;
+    return { learned, mastered, due, streak: streakDays(), today: data.activity[todayKey()] || 0 };
+  }
+  function streakDays() {
+    let total = 0;
+    for (let i = 0; i < 365; i += 1) {
+      if (!data.activity[todayKey(-i)]) break;
+      total += 1;
+    }
+    return total;
+  }
+  function charFor(item, mode = scriptMode) {
+    return mode === "kata" ? item.kata : item.hira;
+  }
+  function h(value) {
+    return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
+  }
+  function showToast(text) {
+    toastText = text;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toastText = ""; render(); }, 2100);
+    render();
+  }
+
+  function playKana(id) {
+    const item = byId[id];
+    if (!item) return;
+    let audio = audioCache.get(id);
+    if (!audio) {
+      audio = new Audio(item.audio);
+      audio.preload = "auto";
+      audioCache.set(id, audio);
+    }
+    audio.currentTime = 0;
+    audio.play().catch(() => speakFallback(item.hira));
+  }
+  function speakFallback(text) {
+    if (!("speechSynthesis" in window)) {
+      showToast("音频暂不可用，请稍后重试");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "ja-JP";
+    utter.rate = 0.82;
+    window.speechSynthesis.speak(utter);
+    showToast("已用系统日语发音代替音频");
+  }
+
+  function buildQueue(mode, row) {
+    const now = Date.now();
+    let pool = KANA.filter((item) => row === "all" || item.row === row);
+    if (mode === "weak") {
+      const weak = pool.filter((item) => {
+        const rec = readRecord(item.id);
+        return rec.wrong > 0 || (rec.lastSeen && rec.mastery < 3) || (rec.nextReview && rec.nextReview <= now);
+      });
+      if (weak.length) pool = weak;
+    }
+    const ranked = pool.map((item) => {
+      const rec = readRecord(item.id);
+      let score = Math.random();
+      if (!rec.lastSeen) score += 80;
+      if (rec.nextReview && rec.nextReview <= now) score += 120;
+      score += rec.wrong * 10 + (5 - rec.mastery) * 4 - rec.correct;
+      return { item, score };
+    }).sort((a, b) => b.score - a.score).map((entry) => entry.item);
+    while (ranked.length < 10 && pool.length) ranked.push(pool[Math.floor(Math.random() * pool.length)]);
+    return ranked.slice(0, 10);
+  }
+  function startQuiz(mode = data.settings.quizMode || "review", row = data.settings.quizRow || "all") {
+    data.settings.quizMode = mode;
+    data.settings.quizRow = row;
+    const queue = buildQueue(mode, row);
+    quiz = { mode, row, queue, index: 0, correct: 0, selected: null, done: false, played: "", question: null };
+    quiz.question = makeQuestion();
+    tab = "quiz";
+    saveData();
+    render();
+  }
+  function makeQuestion() {
+    if (!quiz || quiz.done) return null;
+    const target = quiz.queue[quiz.index];
+    const types = ["sound", "romaji", "kana"];
+    const type = types[quiz.index % types.length];
+    const wrong = KANA.filter((item) => item.id !== target.id).sort(() => Math.random() - 0.5).slice(0, 3);
+    return { target, type, options: [target, ...wrong].sort(() => Math.random() - 0.5) };
+  }
+  function currentQuestion() {
+    if (!quiz || quiz.done) return null;
+    if (!quiz.question) quiz.question = makeQuestion();
+    return quiz.question;
+  }
+  function answerQuiz(id) {
+    if (!quiz || quiz.selected) return;
+    const target = quiz.queue[quiz.index];
+    const correct = id === target.id;
+    quiz.selected = id;
+    if (correct) quiz.correct += 1;
+    updateRecord(target.id, correct);
+    playKana(target.id);
+    render();
+    window.setTimeout(() => {
+      if (!quiz) return;
+      quiz.index += 1;
+      quiz.selected = null;
+      quiz.played = "";
+      if (quiz.index >= 10) quiz.done = true;
+      else quiz.question = makeQuestion();
+      render();
+    }, 820);
+  }
+
+  function render() {
+    const title = TABS.find((item) => item[0] === tab)?.[2] || "今日";
+    app.innerHTML = `
+      <header class="topbar">
+        <div class="brand-row">
+          <div class="brand">
+            <div class="brand-mark">禅</div>
+            <div class="brand-title"><strong>KanaZen</strong><span>五十音修行</span></div>
+          </div>
+          <div class="view-title">${h(title)}</div>
+        </div>
+      </header>
+      <main class="content"><section class="screen">${renderScreen()}</section></main>
+      ${renderTabs()}
+      ${toastText ? `<div class="toast">${h(toastText)}</div>` : ""}
+    `;
+    afterRender();
+  }
+  function renderTabs() {
+    return `<nav class="tabbar" aria-label="主导航">${TABS.map(([id, mark, label]) => `
+      <button class="tab-button ${tab === id ? "is-active" : ""}" data-action="tab" data-tab="${id}">
+        <strong>${mark}</strong><span>${label}</span>
+      </button>`).join("")}</nav>`;
+  }
+  function renderScreen() {
+    if (tab === "chart") return renderChart();
+    if (tab === "quiz") return renderQuiz();
+    if (tab === "write") return renderWrite();
+    if (tab === "profile") return renderProfile();
+    return renderHome();
+  }
+  function renderHome() {
+    const s = stats();
+    const focus = weakestItems()[0] || KANA.find((item) => !readRecord(item.id).lastSeen) || KANA[0];
+    return `<div class="stack">
+      <div class="panel hero-panel">
+        <div class="hero-kana"><div><div class="section-title">今日先练这个</div><div class="kana">${charFor(focus)}</div></div>
+          <button class="ghost-button" data-action="play" data-id="${focus.id}">播放 ${focus.romaji}</button></div>
+        <button class="primary-button accent-button" data-action="start-quiz" data-mode="review" data-row="all">开始 10 题</button>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><strong>${s.today}</strong><span>今日练习</span></div>
+        <div class="metric"><strong>${s.due}</strong><span>待复习</span></div>
+        <div class="metric"><strong>${s.streak}</strong><span>连续天数</span></div>
+      </div>
+      <div class="panel detail-card tight">
+        <div class="row"><strong>弱项优先</strong><span class="small">${s.mastered}/46 已稳固</span></div>
+        <button class="primary-button" data-action="start-quiz" data-mode="weak" data-row="all">练习弱项</button>
+      </div>
+    </div>`;
+  }
+  function renderChart() {
+    const active = data.settings.detailId || "a";
+    const item = byId[active] || KANA[0];
+    return `<div class="stack">
+      <div class="segmented">${scriptButtons()}</div>
+      <div class="kana-board">${ROWS.map(([rowId, label, cells]) => `
+        <div class="kana-row"><div class="row-label">${label}</div>${cells.map((id) => {
+          if (!id) return `<div class="kana-cell is-empty"></div>`;
+          const cell = byId[id];
+          return `<button class="kana-cell" data-action="detail" data-id="${cell.id}">
+            <span class="kana-char">${charFor(cell)}</span><span class="kana-romaji">${cell.romaji}</span>
+          </button>`;
+        }).join("")}</div>`).join("")}</div>
+      ${renderDetail(item)}
+    </div>`;
+  }
+  function scriptButtons() {
+    return `<button class="chip ${scriptMode === "hira" ? "is-active" : ""}" data-action="script" data-script="hira">平仮名</button>
+      <button class="chip ${scriptMode === "kata" ? "is-active" : ""}" data-action="script" data-script="kata">片仮名</button>`;
+  }
+  function renderDetail(item) {
+    const rec = readRecord(item.id);
+    return `<div class="panel detail-card">
+      <div class="detail-kana"><strong>${item.hira}</strong><span>${item.kata}</span></div>
+      <div class="row"><strong>${item.romaji}</strong><span class="small">熟练度 ${rec.mastery}/5</span></div>
+      <div class="row">
+        <button class="ghost-button" data-action="play" data-id="${item.id}">播放</button>
+        <button class="ghost-button" data-action="write-id" data-id="${item.id}">临摹</button>
+      </div>
+    </div>`;
+  }
+  function renderQuiz() {
+    if (quiz?.done) return `<div class="stack">
+      <div class="panel hero-panel"><div class="tight"><div class="section-title">本轮完成</div>
+        <div class="hero-kana"><div class="kana">${quiz.correct}</div><strong>/10</strong></div>
+        <p class="small">学习记录已经保存，弱项会进入下一轮优先队列。</p></div>
+        <button class="primary-button accent-button" data-action="start-quiz" data-mode="${quiz.mode}" data-row="${quiz.row}">再来一轮</button>
+      </div></div>`;
+    if (quiz) return renderQuizActive();
+    return `<div class="stack">
+      <div class="panel detail-card tight">
+        <div class="row"><strong>试炼设置</strong><span class="small">每轮 10 题</span></div>
+        <div class="segmented">
+          ${quizModeButton("review", "综合")}
+          ${quizModeButton("weak", "弱项")}
+          ${quizModeButton("row", "专项")}
+        </div>
+        <div class="chip-row">${rowButtons()}</div>
+        <button class="primary-button accent-button" data-action="start-quiz" data-mode="${data.settings.quizMode || "review"}" data-row="${data.settings.quizRow || "all"}">开始</button>
+      </div>
+    </div>`;
+  }
+  function quizModeButton(mode, label) {
+    const active = (data.settings.quizMode || "review") === mode;
+    return `<button class="chip ${active ? "is-active" : ""}" data-action="quiz-mode" data-mode="${mode}">${label}</button>`;
+  }
+  function rowButtons() {
+    const rows = [["all", "全部"], ...ROWS.map(([id, label]) => [id, label])];
+    const current = data.settings.quizRow || "all";
+    return rows.map(([id, label]) => `<button class="chip ${current === id ? "is-active" : ""}" data-action="quiz-row" data-row="${id}">${label}</button>`).join("");
+  }
+  function renderQuizActive() {
+    const q = currentQuestion();
+    const pct = (quiz.index / 10) * 100;
+    const label = q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
+    const prompt = q.type === "sound"
+      ? `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">播放读音</button>`
+      : q.type === "romaji" ? `<div class="romaji">${q.target.romaji}</div>` : `<div class="big">${charFor(q.target)}</div>`;
+    return `<div class="stack">
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="panel quiz-card">
+        <div class="prompt"><div class="label">${label} · ${quiz.index + 1}/10</div>${prompt}</div>
+        <div class="options">${q.options.map((opt) => optionButton(q, opt)).join("")}</div>
+      </div>
+    </div>`;
+  }
+  function optionButton(q, opt) {
+    const answered = Boolean(quiz.selected);
+    const isCorrect = answered && opt.id === q.target.id;
+    const isWrong = answered && opt.id === quiz.selected && opt.id !== q.target.id;
+    const muted = answered && !isCorrect && !isWrong;
+    const text = q.type === "kana" ? opt.romaji : charFor(opt);
+    return `<button class="option ${isCorrect ? "is-correct" : ""} ${isWrong ? "is-wrong" : ""} ${muted ? "is-muted" : ""}" data-action="answer" data-id="${opt.id}">${text}</button>`;
+  }
+  function renderWrite() {
+    const id = data.settings.writeId || "a";
+    const item = byId[id] || KANA[0];
+    const mode = data.settings.writeScript || "hira";
+    return `<div class="stack">
+      <div class="segmented">
+        <button class="chip ${mode === "hira" ? "is-active" : ""}" data-action="write-script" data-script="hira">平仮名</button>
+        <button class="chip ${mode === "kata" ? "is-active" : ""}" data-action="write-script" data-script="kata">片仮名</button>
+      </div>
+      <div class="panel write-card tight">
+        <div class="row"><strong>${item.romaji}</strong><button class="ghost-button" data-action="play" data-id="${item.id}">播放</button></div>
+        <div class="write-stage"><div class="copy-kana">${charFor(item, mode)}</div><div class="write-grid"></div><canvas id="writeCanvas"></canvas></div>
+        <button class="danger-button" data-action="clear-canvas">清除笔迹</button>
+      </div>
+      <div class="chip-row">${KANA.map((k) => `<button class="chip ${k.id === item.id ? "is-active" : ""}" data-action="write-id" data-id="${k.id}">${charFor(k, mode)}</button>`).join("")}</div>
+    </div>`;
+  }
+  function renderProfile() {
+    const s = stats();
+    return `<div class="stack">
+      <div class="metric-grid">
+        <div class="metric"><strong>${s.learned}</strong><span>已接触</span></div>
+        <div class="metric"><strong>${s.mastered}</strong><span>已稳固</span></div>
+        <div class="metric"><strong>${s.streak}</strong><span>连续天数</span></div>
+      </div>
+      <div class="panel detail-card tight"><strong>近 14 天</strong><div class="heatmap">${heatmap()}</div></div>
+      <div class="panel detail-card tight"><div class="row"><strong>弱项列表</strong><span class="small">优先复习</span></div><div class="weak-list">${weakList()}</div></div>
+      <div class="panel detail-card tight">
+        <button class="ghost-button" data-action="backup">复制备份码</button>
+        <button class="ghost-button" data-action="restore">恢复备份码</button>
+        <button class="danger-button" data-action="reset">清空学习数据</button>
+      </div>
+    </div>`;
+  }
+  function heatmap() {
+    return Array.from({ length: 14 }, (_, i) => {
+      const count = data.activity[todayKey(i - 13)] || 0;
+      const alpha = count ? Math.min(0.28 + count * 0.12, 0.92) : 0.08;
+      return `<div class="heat" style="background:rgba(184,59,64,${alpha})"></div>`;
+    }).join("");
+  }
+  function weakestItems() {
+    return KANA.map((item) => ({ item, rec: readRecord(item.id) }))
+      .filter(({ rec }) => rec.wrong > 0 || (rec.lastSeen && rec.mastery < 3) || (rec.nextReview && rec.nextReview <= Date.now()))
+      .sort((a, b) => (b.rec.wrong - a.rec.wrong) || (a.rec.mastery - b.rec.mastery))
+      .map(({ item }) => item);
+  }
+  function weakList() {
+    const list = weakestItems().slice(0, 6);
+    if (!list.length) return `<p class="small">还没有弱项。完成一轮试炼后，这里会自动出现需要复习的假名。</p>`;
+    return list.map((item) => {
+      const rec = readRecord(item.id);
+      return `<button class="weak-item" data-action="detail-write" data-id="${item.id}"><strong>${item.hira} ${item.kata}</strong><span class="small">${item.romaji} · 熟练度 ${rec.mastery}/5</span></button>`;
+    }).join("");
+  }
+  function exportData() {
+    const json = JSON.stringify({ exportedAt: new Date().toISOString(), data });
+    const bytes = new TextEncoder().encode(json);
+    let binary = "";
+    bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+    return btoa(binary);
+  }
+  function importData(code) {
+    const bytes = Uint8Array.from(atob(code.trim()), (c) => c.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder().decode(bytes));
+    if (!parsed.data || parsed.data.version !== 1 || typeof parsed.data.records !== "object") throw new Error("Invalid backup");
+    data = parsed.data;
+    data.settings ||= {};
+    scriptMode = data.settings.script || "hira";
+    saveData();
+  }
+  async function copyBackup() {
+    const code = exportData();
+    try {
+      await navigator.clipboard.writeText(code);
+      showToast("备份码已复制");
+    } catch (error) {
+      prompt("复制备份码：", code);
+    }
+  }
+  function restoreBackup() {
+    const code = prompt("粘贴备份码：");
+    if (!code) return;
+    try {
+      importData(code);
+      showToast("数据恢复成功");
+      render();
+    } catch (error) {
+      showToast("备份码无效");
+    }
+  }
+  function afterRender() {
+    if (tab === "write") setupCanvas();
+    if (tab === "quiz" && quiz && !quiz.done && !quiz.selected) {
+      const q = currentQuestion();
+      const key = `${quiz.index}:${q.type}:${q.target.id}`;
+      if (q.type === "sound" && quiz.played !== key) {
+        quiz.played = key;
+        window.setTimeout(() => playKana(q.target.id), 120);
+      }
+    }
+  }
+  function setupCanvas() {
+    const canvas = document.getElementById("writeCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.round(rect.width * scale));
+      canvas.height = Math.max(1, Math.round(rect.height * scale));
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "#1f2320";
+    };
+    resize();
+    let drawing = false;
+    let last = null;
+    const point = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    };
+    canvas.onpointerdown = (event) => {
+      drawing = true;
+      last = point(event);
+      canvas.setPointerCapture(event.pointerId);
+    };
+    canvas.onpointermove = (event) => {
+      if (!drawing) return;
+      const next = point(event);
+      const distance = Math.hypot(next.x - last.x, next.y - last.y);
+      ctx.lineWidth = Math.max(3, 10 - distance * 0.24);
+      ctx.beginPath();
+      ctx.moveTo(last.x, last.y);
+      ctx.lineTo(next.x, next.y);
+      ctx.stroke();
+      last = next;
+    };
+    canvas.onpointerup = canvas.onpointercancel = () => { drawing = false; last = null; };
+    canvas.dataset.ready = "1";
+  }
+  function clearCanvas() {
+    const canvas = document.getElementById("writeCanvas");
+    if (!canvas) return;
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+  }
+  app.addEventListener("click", (event) => {
+    const el = event.target.closest("[data-action]");
+    if (!el) return;
+    const action = el.dataset.action;
+    if (action === "tab") { tab = el.dataset.tab; quiz = null; render(); }
+    if (action === "script") { scriptMode = el.dataset.script; saveData(); render(); }
+    if (action === "detail") { data.settings.detailId = el.dataset.id; playKana(el.dataset.id); saveData(); render(); }
+    if (action === "play") playKana(el.dataset.id);
+    if (action === "write-id" || action === "detail-write") { data.settings.writeId = el.dataset.id; tab = "write"; saveData(); render(); }
+    if (action === "write-script") { data.settings.writeScript = el.dataset.script; saveData(); render(); }
+    if (action === "clear-canvas") clearCanvas();
+    if (action === "quiz-mode") { data.settings.quizMode = el.dataset.mode; saveData(); render(); }
+    if (action === "quiz-row") { data.settings.quizRow = el.dataset.row; data.settings.quizMode = data.settings.quizMode || "row"; saveData(); render(); }
+    if (action === "start-quiz") startQuiz(el.dataset.mode, el.dataset.row);
+    if (action === "answer") answerQuiz(el.dataset.id);
+    if (action === "backup") copyBackup();
+    if (action === "restore") restoreBackup();
+    if (action === "reset" && confirm("确定清空 KanaZen 的学习数据吗？")) { localStorage.removeItem(STORAGE_KEY); data = loadData(); quiz = null; render(); }
+  });
+  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  }
+  render();
+})();
+
+  </script>
+</body>
+</html>
