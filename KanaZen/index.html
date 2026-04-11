@@ -246,6 +246,11 @@ button {
   transform: scale(0.98);
 }
 
+button:disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
 .primary-button {
   width: 100%;
   padding: 14px 16px;
@@ -328,6 +333,11 @@ button {
   border-color: transparent;
   box-shadow: none;
   pointer-events: none;
+}
+
+.kana-cell.is-locked {
+  opacity: 0.34;
+  filter: grayscale(0.8);
 }
 
 .kana-char {
@@ -501,6 +511,45 @@ canvas {
   border-radius: var(--radius);
 }
 
+.lesson-card {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.lesson-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.lesson-kana {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 26px;
+  letter-spacing: 0;
+}
+
+.status-pill {
+  padding: 6px 9px;
+  border-radius: var(--radius);
+  background: rgba(31, 35, 32, 0.08);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 820;
+  white-space: nowrap;
+}
+
+.status-pill.is-open {
+  color: var(--accent-dark);
+  background: rgba(184, 59, 64, 0.1);
+}
+
+.status-pill.is-done {
+  color: #2c6b59;
+  background: rgba(93, 139, 125, 0.16);
+}
+
 .tabbar {
   position: fixed;
   left: 12px;
@@ -598,6 +647,24 @@ canvas {
     ["w", "w", ["wa", null, null, null, "wo"]],
     ["n", "n", ["n", null, null, null, null]]
   ];
+  const BASE_LESSONS = [
+    ["a", "あ行", ["a", "i", "u", "e", "o"]],
+    ["k", "か行", ["ka", "ki", "ku", "ke", "ko"]],
+    ["s", "さ行", ["sa", "shi", "su", "se", "so"]],
+    ["t", "た行", ["ta", "chi", "tsu", "te", "to"]],
+    ["nrow", "な行", ["na", "ni", "nu", "ne", "no"]],
+    ["h", "は行", ["ha", "hi", "fu", "he", "ho"]],
+    ["m", "ま行", ["ma", "mi", "mu", "me", "mo"]],
+    ["y", "や行", ["ya", "yu", "yo"]],
+    ["r", "ら行", ["ra", "ri", "ru", "re", "ro"]],
+    ["w", "わ行 + ん", ["wa", "wo", "n"]]
+  ].map(([id, name, ids], index) => ({ id, name, ids, index, kind: "base", passScore: 8 }));
+  const ADVANCED_LESSONS = [
+    ["dakuten", "浊音", ["ga", "gi", "gu", "ge", "go", "za", "ji", "zu", "ze", "zo", "da", "de", "do", "ba", "bi", "bu", "be", "bo"]],
+    ["handakuten", "半浊音", ["pa", "pi", "pu", "pe", "po"]],
+    ["yoon", "拗音", ["kya", "kyu", "kyo", "sha", "shu", "sho", "cha", "chu", "cho", "nya", "nyu", "nyo", "hya", "hyu", "hyo", "mya", "myu", "myo", "rya", "ryu", "ryo", "gya", "gyu", "gyo", "ja", "ju", "jo", "bya", "byu", "byo", "pya", "pyu", "pyo"]]
+  ].map(([id, name, ids], index) => ({ id, name, ids, index, kind: "advanced", passScore: 8 }));
+  const LESSONS = [...BASE_LESSONS, ...ADVANCED_LESSONS];
   const KANA = [
     ["a","a","a","あ","ア"],["i","a","i","い","イ"],["u","a","u","う","ウ"],["e","a","e","え","エ"],["o","a","o","お","オ"],
     ["ka","k","a","か","カ"],["ki","k","i","き","キ"],["ku","k","u","く","ク"],["ke","k","e","け","ケ"],["ko","k","o","こ","コ"],
@@ -610,7 +677,26 @@ canvas {
     ["ra","r","a","ら","ラ"],["ri","r","i","り","リ"],["ru","r","u","る","ル"],["re","r","e","れ","レ"],["ro","r","o","ろ","ロ"],
     ["wa","w","a","わ","ワ"],["wo","w","o","を","ヲ"],["n","n","a","ん","ン"]
   ].map(([id, row, vowel, hira, kata]) => ({ id, row, vowel, hira, kata, romaji: id, audio: `assets/audio/${id}.mp3` }));
-  const byId = Object.fromEntries(KANA.map((item) => [item.id, item]));
+  const ADVANCED_KANA = [
+    ["ga","dakuten","a","が","ガ"],["gi","dakuten","i","ぎ","ギ"],["gu","dakuten","u","ぐ","グ"],["ge","dakuten","e","げ","ゲ"],["go","dakuten","o","ご","ゴ"],
+    ["za","dakuten","a","ざ","ザ"],["ji","dakuten","i","じ","ジ"],["zu","dakuten","u","ず","ズ"],["ze","dakuten","e","ぜ","ゼ"],["zo","dakuten","o","ぞ","ゾ"],
+    ["da","dakuten","a","だ","ダ"],["de","dakuten","e","で","デ"],["do","dakuten","o","ど","ド"],["ba","dakuten","a","ば","バ"],["bi","dakuten","i","び","ビ"],
+    ["bu","dakuten","u","ぶ","ブ"],["be","dakuten","e","べ","ベ"],["bo","dakuten","o","ぼ","ボ"],
+    ["pa","handakuten","a","ぱ","パ"],["pi","handakuten","i","ぴ","ピ"],["pu","handakuten","u","ぷ","プ"],["pe","handakuten","e","ぺ","ペ"],["po","handakuten","o","ぽ","ポ"],
+    ["kya","yoon","a","きゃ","キャ"],["kyu","yoon","u","きゅ","キュ"],["kyo","yoon","o","きょ","キョ"],
+    ["sha","yoon","a","しゃ","シャ"],["shu","yoon","u","しゅ","シュ"],["sho","yoon","o","しょ","ショ"],
+    ["cha","yoon","a","ちゃ","チャ"],["chu","yoon","u","ちゅ","チュ"],["cho","yoon","o","ちょ","チョ"],
+    ["nya","yoon","a","にゃ","ニャ"],["nyu","yoon","u","にゅ","ニュ"],["nyo","yoon","o","にょ","ニョ"],
+    ["hya","yoon","a","ひゃ","ヒャ"],["hyu","yoon","u","ひゅ","ヒュ"],["hyo","yoon","o","ひょ","ヒョ"],
+    ["mya","yoon","a","みゃ","ミャ"],["myu","yoon","u","みゅ","ミュ"],["myo","yoon","o","みょ","ミョ"],
+    ["rya","yoon","a","りゃ","リャ"],["ryu","yoon","u","りゅ","リュ"],["ryo","yoon","o","りょ","リョ"],
+    ["gya","yoon","a","ぎゃ","ギャ"],["gyu","yoon","u","ぎゅ","ギュ"],["gyo","yoon","o","ぎょ","ギョ"],
+    ["ja","yoon","a","じゃ","ジャ"],["ju","yoon","u","じゅ","ジュ"],["jo","yoon","o","じょ","ジョ"],
+    ["bya","yoon","a","びゃ","ビャ"],["byu","yoon","u","びゅ","ビュ"],["byo","yoon","o","びょ","ビョ"],
+    ["pya","yoon","a","ぴゃ","ピャ"],["pyu","yoon","u","ぴゅ","ピュ"],["pyo","yoon","o","ぴょ","ピョ"]
+  ].map(([id, row, vowel, hira, kata]) => ({ id, row, vowel, hira, kata, romaji: id, audio: "" }));
+  const ALL_KANA = [...KANA, ...ADVANCED_KANA];
+  const byId = Object.fromEntries(ALL_KANA.map((item) => [item.id, item]));
   const app = document.getElementById("app");
   const audioCache = new Map();
   let data = loadData();
@@ -627,10 +713,11 @@ canvas {
         parsed.records ||= {};
         parsed.activity ||= {};
         parsed.settings ||= {};
+        parsed.lessons ||= {};
         return parsed;
       }
     } catch (error) {}
-    return { version: 1, records: {}, activity: {}, settings: { script: "hira", quizMode: "review", quizRow: "all", writeId: "a", writeScript: "hira" } };
+    return { version: 1, records: {}, activity: {}, lessons: {}, settings: { script: "hira", quizMode: "path", quizRow: "a", writeId: "a", writeScript: "hira", activeLesson: "a" } };
   }
   function saveData() {
     data.settings.script = scriptMode;
@@ -645,6 +732,54 @@ canvas {
   function touchRecord(id) {
     data.records[id] = readRecord(id);
     return data.records[id];
+  }
+  function lessonById(id) {
+    return LESSONS.find((lesson) => lesson.id === id) || BASE_LESSONS[0];
+  }
+  function lessonForItem(id) {
+    return LESSONS.find((lesson) => lesson.ids.includes(id)) || BASE_LESSONS[0];
+  }
+  function lessonState(id) {
+    data.lessons ||= {};
+    data.lessons[id] ||= { traced: {}, best: 0, passed: false };
+    data.lessons[id].traced ||= {};
+    return data.lessons[id];
+  }
+  function baseComplete() {
+    return BASE_LESSONS.every((lesson) => lessonState(lesson.id).passed);
+  }
+  function currentBaseLesson() {
+    return BASE_LESSONS.find((lesson) => !lessonState(lesson.id).passed) || BASE_LESSONS[BASE_LESSONS.length - 1];
+  }
+  function isLessonUnlocked(lesson) {
+    if (lesson.kind === "advanced") return baseComplete();
+    return lesson.index <= currentBaseLesson().index || lessonState(lesson.id).passed;
+  }
+  function tracedCount(lesson) {
+    const traced = lessonState(lesson.id).traced;
+    return lesson.ids.filter((id) => traced[id]).length;
+  }
+  function lessonReady(lesson) {
+    return tracedCount(lesson) >= lesson.ids.length;
+  }
+  function markTraced(id) {
+    const lesson = lessonForItem(id);
+    lessonState(lesson.id).traced[id] = Date.now();
+    markActivity();
+    saveData();
+  }
+  function passLesson(lesson, score) {
+    const state = lessonState(lesson.id);
+    state.best = Math.max(state.best || 0, score);
+    if (score >= lesson.passScore) state.passed = true;
+    saveData();
+  }
+  function unlockedBaseItems() {
+    const ids = BASE_LESSONS.filter(isLessonUnlocked).flatMap((lesson) => lesson.ids);
+    return ids.map((id) => byId[id]).filter(Boolean);
+  }
+  function availableItems() {
+    return baseComplete() ? ALL_KANA : unlockedBaseItems();
   }
   function todayKey(offset = 0) {
     const d = new Date();
@@ -680,7 +815,9 @@ canvas {
     const learned = values.filter((r) => r.lastSeen).length;
     const mastered = values.filter((r) => r.mastery >= 4).length;
     const due = values.filter((r) => r.nextReview && r.nextReview <= Date.now()).length;
-    return { learned, mastered, due, streak: streakDays(), today: data.activity[todayKey()] || 0 };
+    const passedRows = BASE_LESSONS.filter((lesson) => lessonState(lesson.id).passed).length;
+    const advancedPassed = ADVANCED_LESSONS.filter((lesson) => lessonState(lesson.id).passed).length;
+    return { learned, mastered, due, passedRows, advancedPassed, streak: streakDays(), today: data.activity[todayKey()] || 0 };
   }
   function streakDays() {
     let total = 0;
@@ -706,6 +843,10 @@ canvas {
   function playKana(id) {
     const item = byId[id];
     if (!item) return;
+    if (!item.audio) {
+      speakFallback(item.hira);
+      return;
+    }
     let audio = audioCache.get(id);
     if (!audio) {
       audio = new Audio(item.audio);
@@ -730,7 +871,8 @@ canvas {
 
   function buildQueue(mode, row) {
     const now = Date.now();
-    let pool = KANA.filter((item) => row === "all" || item.row === row);
+    const lesson = mode === "lesson" ? lessonById(row) : null;
+    let pool = lesson ? lesson.ids.map((id) => byId[id]).filter(Boolean) : availableItems().filter((item) => row === "all" || item.row === row);
     if (mode === "weak") {
       const weak = pool.filter((item) => {
         const rec = readRecord(item.id);
@@ -750,9 +892,15 @@ canvas {
     return ranked.slice(0, 10);
   }
   function startQuiz(mode = data.settings.quizMode || "review", row = data.settings.quizRow || "all") {
+    if (mode === "lesson") {
+      const lesson = lessonById(row);
+      if (!isLessonUnlocked(lesson)) { showToast("先通过前一行，再解锁这里"); return; }
+      if (!lessonReady(lesson)) { showToast("先把这一行都临摹一遍"); return; }
+    }
     data.settings.quizMode = mode;
     data.settings.quizRow = row;
     const queue = buildQueue(mode, row);
+    if (!queue.length) { showToast("这一组还没有可练习的假名"); return; }
     quiz = { mode, row, queue, index: 0, correct: 0, selected: null, done: false, played: "", question: null };
     quiz.question = makeQuestion();
     tab = "quiz";
@@ -763,8 +911,9 @@ canvas {
     if (!quiz || quiz.done) return null;
     const target = quiz.queue[quiz.index];
     const types = ["sound", "romaji", "kana"];
-    const type = types[quiz.index % types.length];
-    const wrong = KANA.filter((item) => item.id !== target.id).sort(() => Math.random() - 0.5).slice(0, 3);
+    const type = quiz.mode === "lesson" ? "lesson" : types[quiz.index % types.length];
+    const optionPool = availableItems();
+    const wrong = optionPool.filter((item) => item.id !== target.id).sort(() => Math.random() - 0.5).slice(0, 3);
     return { target, type, options: [target, ...wrong].sort(() => Math.random() - 0.5) };
   }
   function currentQuestion() {
@@ -786,8 +935,10 @@ canvas {
       quiz.index += 1;
       quiz.selected = null;
       quiz.played = "";
-      if (quiz.index >= 10) quiz.done = true;
-      else quiz.question = makeQuestion();
+      if (quiz.index >= 10) {
+        quiz.done = true;
+        if (quiz.mode === "lesson") passLesson(lessonById(quiz.row), quiz.correct);
+      } else quiz.question = makeQuestion();
       render();
     }, 820);
   }
@@ -825,38 +976,59 @@ canvas {
   }
   function renderHome() {
     const s = stats();
-    const focus = weakestItems()[0] || KANA.find((item) => !readRecord(item.id).lastSeen) || KANA[0];
+    const lesson = baseComplete() ? ADVANCED_LESSONS.find((item) => !lessonState(item.id).passed) || ADVANCED_LESSONS[0] : currentBaseLesson();
+    const focus = byId[lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0]];
+    const ready = lessonReady(lesson);
     return `<div class="stack">
       <div class="panel hero-panel">
-        <div class="hero-kana"><div><div class="section-title">今日先练这个</div><div class="kana">${charFor(focus)}</div></div>
+        <div class="hero-kana"><div><div class="section-title">当前课程 · ${lesson.name}</div><div class="kana">${charFor(focus)}</div></div>
           <button class="ghost-button" data-action="play" data-id="${focus.id}">播放 ${focus.romaji}</button></div>
-        <button class="primary-button accent-button" data-action="start-quiz" data-mode="review" data-row="all">开始 10 题</button>
+        <button class="primary-button accent-button" data-action="${ready ? "start-lesson-quiz" : "go-lesson-write"}" data-lesson="${lesson.id}">${ready ? "开始及格测验" : "先临摹这一行"}</button>
       </div>
       <div class="metric-grid">
-        <div class="metric"><strong>${s.today}</strong><span>今日练习</span></div>
-        <div class="metric"><strong>${s.due}</strong><span>待复习</span></div>
+        <div class="metric"><strong>${s.passedRows}</strong><span>基础行进度</span></div>
+        <div class="metric"><strong>${tracedCount(lesson)}/${lesson.ids.length}</strong><span>本课临摹</span></div>
         <div class="metric"><strong>${s.streak}</strong><span>连续天数</span></div>
       </div>
       <div class="panel detail-card tight">
-        <div class="row"><strong>弱项优先</strong><span class="small">${s.mastered}/46 已稳固</span></div>
-        <button class="primary-button" data-action="start-quiz" data-mode="weak" data-row="all">练习弱项</button>
+        <div class="row"><strong>${baseComplete() ? "进阶音已开放" : "学习路径"}</strong><span class="small">及格线 8/10</span></div>
+        <p class="small">${baseComplete() ? "基础五十音已经完成，可以开始浊音、半浊音和拗音。" : "每一行先临摹全部假名，再做 10 题测验；达成 8 分就解锁下一行。"}</p>
+        <button class="primary-button" data-action="tab" data-tab="chart">查看课程</button>
       </div>
     </div>`;
   }
   function renderChart() {
-    const active = data.settings.detailId || "a";
+    const active = data.settings.detailId || currentBaseLesson().ids[0];
     const item = byId[active] || KANA[0];
     return `<div class="stack">
       <div class="segmented">${scriptButtons()}</div>
+      <div class="stack">${BASE_LESSONS.map(renderLessonCard).join("")}</div>
+      ${baseComplete() ? `<div class="section-title">进阶音</div><div class="stack">${ADVANCED_LESSONS.map(renderLessonCard).join("")}</div>` : `<div class="panel detail-card small">基础五十音全部及格后，会自动解锁浊音、半浊音和拗音。</div>`}
       <div class="kana-board">${ROWS.map(([rowId, label, cells]) => `
         <div class="kana-row"><div class="row-label">${label}</div>${cells.map((id) => {
           if (!id) return `<div class="kana-cell is-empty"></div>`;
           const cell = byId[id];
-          return `<button class="kana-cell" data-action="detail" data-id="${cell.id}">
+          const locked = !isLessonUnlocked(lessonForItem(cell.id));
+          return `<button class="kana-cell ${locked ? "is-locked" : ""}" ${locked ? "disabled" : `data-action="detail" data-id="${cell.id}"`}>
             <span class="kana-char">${charFor(cell)}</span><span class="kana-romaji">${cell.romaji}</span>
           </button>`;
         }).join("")}</div>`).join("")}</div>
       ${renderDetail(item)}
+    </div>`;
+  }
+  function renderLessonCard(lesson) {
+    const state = lessonState(lesson.id);
+    const unlocked = isLessonUnlocked(lesson);
+    const ready = lessonReady(lesson);
+    const label = state.passed ? "已通过" : !unlocked ? "未解锁" : ready ? "可测验" : "先临摹";
+    const pill = state.passed ? "is-done" : unlocked ? "is-open" : "";
+    const kana = lesson.ids.map((id) => charFor(byId[id])).join(" ");
+    const action = !unlocked ? "" : ready ? "start-lesson-quiz" : "go-lesson-write";
+    return `<div class="panel lesson-card">
+      <div class="lesson-row"><strong>${lesson.name}</strong><span class="status-pill ${pill}">${label}${state.best ? ` · 最好 ${state.best}/10` : ""}</span></div>
+      <div class="lesson-kana">${kana}</div>
+      <div class="row"><span class="small">临摹 ${tracedCount(lesson)}/${lesson.ids.length} · 及格 ${lesson.passScore}/10</span>
+      ${unlocked ? `<button class="ghost-button" data-action="${action}" data-lesson="${lesson.id}">${ready ? "测验" : "临摹"}</button>` : `<button class="ghost-button" disabled>锁定</button>`}</div>
     </div>`;
   }
   function scriptButtons() {
@@ -875,24 +1047,25 @@ canvas {
     </div>`;
   }
   function renderQuiz() {
-    if (quiz?.done) return `<div class="stack">
+    if (quiz?.done) {
+      const lesson = quiz.mode === "lesson" ? lessonById(quiz.row) : null;
+      const passed = lesson ? quiz.correct >= lesson.passScore : false;
+      return `<div class="stack">
       <div class="panel hero-panel"><div class="tight"><div class="section-title">本轮完成</div>
         <div class="hero-kana"><div class="kana">${quiz.correct}</div><strong>/10</strong></div>
-        <p class="small">学习记录已经保存，弱项会进入下一轮优先队列。</p></div>
-        <button class="primary-button accent-button" data-action="start-quiz" data-mode="${quiz.mode}" data-row="${quiz.row}">再来一轮</button>
+        <p class="small">${lesson ? (passed ? `${lesson.name} 已通过，下一课已经解锁。` : `${lesson.name} 还差一点，8/10 及格；先复习再来一轮。`) : "学习记录已经保存，弱项会进入下一轮优先队列。"}</p></div>
+        <button class="primary-button accent-button" data-action="${lesson && passed ? "tab" : "start-quiz"}" ${lesson && passed ? `data-tab="chart"` : `data-mode="${quiz.mode}" data-row="${quiz.row}"`}>${lesson && passed ? "查看下一课" : "再来一轮"}</button>
       </div></div>`;
+    }
     if (quiz) return renderQuizActive();
+    const lesson = baseComplete() ? ADVANCED_LESSONS.find((item) => !lessonState(item.id).passed) || ADVANCED_LESSONS[0] : currentBaseLesson();
     return `<div class="stack">
       <div class="panel detail-card tight">
-        <div class="row"><strong>试炼设置</strong><span class="small">每轮 10 题</span></div>
-        <div class="segmented">
-          ${quizModeButton("review", "综合")}
-          ${quizModeButton("weak", "弱项")}
-          ${quizModeButton("row", "专项")}
-        </div>
-        <div class="chip-row">${rowButtons()}</div>
-        <button class="primary-button accent-button" data-action="start-quiz" data-mode="${data.settings.quizMode || "review"}" data-row="${data.settings.quizRow || "all"}">开始</button>
+        <div class="row"><strong>${lesson.name} 测验</strong><span class="small">${tracedCount(lesson)}/${lesson.ids.length} 已临摹</span></div>
+        <p class="small">题目会显示罗马音并播放声音，从四个假名里选择正确答案。10 题达到 8 分就解锁下一课。</p>
+        <button class="primary-button accent-button" data-action="${lessonReady(lesson) ? "start-lesson-quiz" : "go-lesson-write"}" data-lesson="${lesson.id}">${lessonReady(lesson) ? "开始测验" : "先去临摹"}</button>
       </div>
+      <div class="stack">${[...BASE_LESSONS, ...(baseComplete() ? ADVANCED_LESSONS : [])].map(renderLessonCard).join("")}</div>
     </div>`;
   }
   function quizModeButton(mode, label) {
@@ -907,9 +1080,10 @@ canvas {
   function renderQuizActive() {
     const q = currentQuestion();
     const pct = (quiz.index / 10) * 100;
-    const label = q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
+    const label = q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
     const prompt = q.type === "sound"
       ? `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">播放读音</button>`
+      : q.type === "lesson" ? `<div class="romaji">${q.target.romaji}</div><button class="ghost-button" data-action="play" data-id="${q.target.id}">重播声音</button>`
       : q.type === "romaji" ? `<div class="romaji">${q.target.romaji}</div>` : `<div class="big">${charFor(q.target)}</div>`;
     return `<div class="stack">
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -931,17 +1105,23 @@ canvas {
     const id = data.settings.writeId || "a";
     const item = byId[id] || KANA[0];
     const mode = data.settings.writeScript || "hira";
+    const lesson = lessonForItem(item.id);
+    const traced = Boolean(lessonState(lesson.id).traced[item.id]);
     return `<div class="stack">
       <div class="segmented">
         <button class="chip ${mode === "hira" ? "is-active" : ""}" data-action="write-script" data-script="hira">平仮名</button>
         <button class="chip ${mode === "kata" ? "is-active" : ""}" data-action="write-script" data-script="kata">片仮名</button>
       </div>
       <div class="panel write-card tight">
-        <div class="row"><strong>${item.romaji}</strong><button class="ghost-button" data-action="play" data-id="${item.id}">播放</button></div>
+        <div class="row"><strong>${lesson.name} · ${item.romaji}</strong><span class="status-pill ${traced ? "is-done" : "is-open"}">${traced ? "已临摹" : "待临摹"}</span></div>
+        <button class="ghost-button" data-action="play" data-id="${item.id}">播放</button>
         <div class="write-stage"><div class="copy-kana">${charFor(item, mode)}</div><div class="write-grid"></div><canvas id="writeCanvas"></canvas></div>
+        <button class="primary-button accent-button" data-action="mark-traced" data-id="${item.id}">${traced ? "继续下一个" : "我写好了"}</button>
         <button class="danger-button" data-action="clear-canvas">清除笔迹</button>
       </div>
-      <div class="chip-row">${KANA.map((k) => `<button class="chip ${k.id === item.id ? "is-active" : ""}" data-action="write-id" data-id="${k.id}">${charFor(k, mode)}</button>`).join("")}</div>
+      <div class="chip-row">${availableItems().map((k) => `<button class="chip ${k.id === item.id ? "is-active" : ""}" data-action="write-id" data-id="${k.id}">${charFor(k, mode)}</button>`).join("")}</div>
+      <div class="panel detail-card tight"><div class="row"><strong>${lesson.name} 进度</strong><span class="small">${tracedCount(lesson)}/${lesson.ids.length}</span></div>
+        <button class="primary-button" data-action="start-lesson-quiz" data-lesson="${lesson.id}" ${lessonReady(lesson) ? "" : "disabled"}>${lessonReady(lesson) ? "开始本课测验" : "临摹完本课后解锁测验"}</button></div>
     </div>`;
   }
   function renderProfile() {
@@ -952,6 +1132,8 @@ canvas {
         <div class="metric"><strong>${s.mastered}</strong><span>已稳固</span></div>
         <div class="metric"><strong>${s.streak}</strong><span>连续天数</span></div>
       </div>
+      <div class="panel detail-card tight"><div class="row"><strong>课程进度</strong><span class="small">${s.passedRows}/10 基础行</span></div>
+        <p class="small">${baseComplete() ? `进阶音已开放，已通过 ${s.advancedPassed}/3 个模块。` : `下一课：${currentBaseLesson().name}。每课临摹完成后，8/10 即可解锁下一行。`}</p></div>
       <div class="panel detail-card tight"><strong>近 14 天</strong><div class="heatmap">${heatmap()}</div></div>
       <div class="panel detail-card tight"><div class="row"><strong>弱项列表</strong><span class="small">优先复习</span></div><div class="weak-list">${weakList()}</div></div>
       <div class="panel detail-card tight">
@@ -969,7 +1151,7 @@ canvas {
     }).join("");
   }
   function weakestItems() {
-    return KANA.map((item) => ({ item, rec: readRecord(item.id) }))
+    return availableItems().map((item) => ({ item, rec: readRecord(item.id) }))
       .filter(({ rec }) => rec.wrong > 0 || (rec.lastSeen && rec.mastery < 3) || (rec.nextReview && rec.nextReview <= Date.now()))
       .sort((a, b) => (b.rec.wrong - a.rec.wrong) || (a.rec.mastery - b.rec.mastery))
       .map(({ item }) => item);
@@ -995,6 +1177,7 @@ canvas {
     if (!parsed.data || parsed.data.version !== 1 || typeof parsed.data.records !== "object") throw new Error("Invalid backup");
     data = parsed.data;
     data.settings ||= {};
+    data.lessons ||= {};
     scriptMode = data.settings.script || "hira";
     saveData();
   }
@@ -1023,7 +1206,7 @@ canvas {
     if (tab === "quiz" && quiz && !quiz.done && !quiz.selected) {
       const q = currentQuestion();
       const key = `${quiz.index}:${q.type}:${q.target.id}`;
-      if (q.type === "sound" && quiz.played !== key) {
+      if ((q.type === "sound" || q.type === "lesson") && quiz.played !== key) {
         quiz.played = key;
         window.setTimeout(() => playKana(q.target.id), 120);
       }
@@ -1085,6 +1268,9 @@ canvas {
     if (action === "write-id" || action === "detail-write") { data.settings.writeId = el.dataset.id; tab = "write"; saveData(); render(); }
     if (action === "write-script") { data.settings.writeScript = el.dataset.script; saveData(); render(); }
     if (action === "clear-canvas") clearCanvas();
+    if (action === "go-lesson-write") { const lesson = lessonById(el.dataset.lesson); data.settings.writeId = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0]; tab = "write"; saveData(); render(); }
+    if (action === "mark-traced") { const lesson = lessonForItem(el.dataset.id); markTraced(el.dataset.id); const next = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]); if (next) data.settings.writeId = next; else showToast(`${lesson.name} 临摹完成，可以测验了`); saveData(); render(); }
+    if (action === "start-lesson-quiz") startQuiz("lesson", el.dataset.lesson);
     if (action === "quiz-mode") { data.settings.quizMode = el.dataset.mode; saveData(); render(); }
     if (action === "quiz-row") { data.settings.quizRow = el.dataset.row; data.settings.quizMode = data.settings.quizMode || "row"; saveData(); render(); }
     if (action === "start-quiz") startQuiz(el.dataset.mode, el.dataset.row);

@@ -52,3 +52,5 @@ The kana pronunciation MP3 files in `assets/audio/` were downloaded from Wikimed
 | `n.mp3` | File:Japanese N.ogg | Hakatanoshio117117 | Public domain | https://commons.wikimedia.org/wiki/File:Japanese_N.ogg |
 
 App icon files in `assets/icons/` are copied from the repository root `icon.png`.
+
+Advanced kana modules use the device's Japanese speech synthesis fallback instead of bundled MP3 files.

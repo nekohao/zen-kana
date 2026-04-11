@@ -1,4 +1,4 @@
-const CACHE_NAME = "kanazen-v2-20260411";
+const CACHE_NAME = "kanazen-v3-20260411";
 const CORE_ASSETS = [
   "./",
   "./index.html",
