@@ -476,6 +476,11 @@ h3 {
   background: rgba(255, 255, 251, 0.74);
 }
 
+.lesson-block.is-current {
+  border-color: rgba(76, 141, 121, 0.34);
+  box-shadow: 0 14px 30px rgba(76, 141, 121, 0.1);
+}
+
 .lesson-block h3 {
   margin-bottom: 10px;
 }
@@ -490,6 +495,77 @@ h3 {
 .lesson-block ol {
   margin: 0;
   padding-left: 20px;
+}
+
+.lesson-flow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.lesson-flow button {
+  min-height: 48px;
+  padding: 9px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 251, 0.68);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 720;
+  text-align: left;
+}
+
+.lesson-flow button span {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  border-radius: 999px;
+  background: rgba(24, 26, 24, 0.08);
+  color: var(--ink);
+  font-size: 0.72rem;
+}
+
+.lesson-flow button.is-active {
+  border-color: rgba(76, 141, 121, 0.46);
+  background: rgba(76, 141, 121, 0.12);
+  color: var(--ink);
+}
+
+.lesson-flow button:disabled {
+  opacity: 0.42;
+}
+
+.lesson-current {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 720;
+}
+
+.lesson-step-controls {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+}
+
+.lesson-step-controls button:disabled {
+  opacity: 0.45;
+}
+
+.teacher-list {
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-callout {
+  margin-top: 12px;
+  padding: 12px;
+  border-left: 3px solid var(--mint);
+  border-radius: var(--radius);
+  background: rgba(76, 141, 121, 0.1);
+  color: var(--ink) !important;
+  font-weight: 720;
 }
 
 .formula-row {
@@ -611,6 +687,64 @@ h3 {
   color: #9a3128;
 }
 
+.guided-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.guided-card,
+.recap-card,
+.weakness-panel,
+.weakness-card {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(247, 247, 242, 0.78);
+  text-align: left;
+}
+
+.guided-card span,
+.recap-card strong,
+.weakness-card strong {
+  font-weight: 760;
+}
+
+.guided-card textarea {
+  width: 100%;
+  min-height: 74px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 251, 0.86);
+  color: var(--ink);
+  resize: vertical;
+  outline: none;
+}
+
+.recap-card ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.weakness-panel {
+  margin-bottom: 10px;
+  background: rgba(255, 255, 251, 0.74);
+}
+
+.weakness-panel p,
+.weakness-card p {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.weakness-card {
+  margin-top: 10px;
+}
+
 .install-note {
   margin-top: 16px;
   padding: 16px;
@@ -682,4 +816,6 @@ h3 {
   .control-grid.three { grid-template-columns: 1fr; }
   .lesson-card { grid-template-columns: 36px 1fr; }
   .lesson-card .badge { grid-column: 2; justify-self: start; }
+  .lesson-flow { grid-template-columns: repeat(2, 1fr); }
+  .lesson-step-controls { grid-template-columns: 1fr; }
 }

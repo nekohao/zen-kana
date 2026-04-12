@@ -1,4 +1,4 @@
-const CACHE_NAME = "speakdaily-v4-grammar-20260411";
+const CACHE_NAME = "speakdaily-v5-teacher-flow-20260412";
 const ASSETS = [
   "./",
   "./index.html",

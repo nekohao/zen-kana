@@ -95,7 +95,10 @@
       grammarProgress: {},
       lessonScores: {},
       lessonNotes: {},
-      lessonReview: {}
+      lessonReview: {},
+      lessonStepProgress: {},
+      guidedAnswers: {},
+      tenseWeakness: {}
     };
   }
 
@@ -110,7 +113,10 @@
         grammarProgress: parsed.grammarProgress || {},
         lessonScores: parsed.lessonScores || {},
         lessonNotes: parsed.lessonNotes || {},
-        lessonReview: parsed.lessonReview || {}
+        lessonReview: parsed.lessonReview || {},
+        lessonStepProgress: parsed.lessonStepProgress || {},
+        guidedAnswers: parsed.guidedAnswers || {},
+        tenseWeakness: parsed.tenseWeakness || {}
       };
     } catch {
       return defaultState();
@@ -170,11 +176,11 @@
   function renderToday() {
     const lesson = todayLesson();
     const done = new Set(state.daily[todayKey()] || []);
-    els.todayLessonTitle.textContent = `${lesson.title}：${lesson.core}`;
-    els.todayLessonLead.textContent = `${lesson.teacher} 今天学完后，再顺手复习 5 个真实口语短语。`;
+    els.todayLessonTitle.textContent = `今天跟老师学：${lesson.title}`;
+    els.todayLessonLead.textContent = `${lesson.core} 预计 ${lesson.minutes || 8} 分钟。${weaknessSummary()}学完后，再顺手复习 5 个真实口语短语。`;
     els.streak.textContent = state.streak || 0;
     els.courseDone.textContent = `${completedLessons()}/${lessons.length}`;
-    els.reviewCount.textContent = Object.keys(state.mistakes).length + Object.keys(state.lessonReview).length;
+    els.reviewCount.textContent = Object.keys(state.mistakes).length + Object.keys(state.lessonReview).length + Object.keys(state.tenseWeakness || {}).length;
     const daily = getDailyPhrases();
     els.dailyList.innerHTML = daily.map((item) => phraseButton(item, done.has(item.id))).join("");
     els.dailyList.querySelectorAll("button").forEach((button) => {
@@ -192,9 +198,12 @@
       const score = state.lessonScores[lesson.id]?.best;
       const locked = !isLessonUnlocked(lesson);
       const label = progress?.completed ? "已通过" : locked ? "未解锁" : "继续学习";
+      const step = getLessonStep(lesson.id) + 1;
+      const total = getLessonFlow(lesson).length;
+      const type = lesson.kind === "stage-review" ? "阶段诊断" : lesson.kind === "tense" ? "时态课" : "结构课";
       return `<button class="lesson-card ${locked ? "is-locked" : ""}" data-lesson="${lesson.id}" type="button" ${locked ? "disabled" : ""}>
         <span class="lesson-number">${String(index + 1).padStart(2, "0")}</span>
-        <span><strong>${escapeHtml(lesson.title)}</strong><em>${escapeHtml(lesson.tag)} · ${lesson.minutes} 分钟课</em></span>
+        <span><strong>${escapeHtml(lesson.title)}</strong><em>${type} · ${escapeHtml(lesson.tag)} · ${lesson.minutes} 分钟 · 第 ${Math.min(step, total)}/${total} 段</em></span>
         <span class="badge">${score ? `${score}%` : label}</span>
       </button>`;
     }).join("");
@@ -218,28 +227,26 @@
     if (!lesson) return;
     const score = state.lessonScores[lesson.id]?.best || 0;
     const progress = state.grammarProgress[lesson.id];
-    const note = state.lessonNotes[lesson.id] || "";
+    const flow = getLessonFlow(lesson);
+    const step = Math.min(getLessonStep(lesson.id), flow.length - 1);
+    const sections = lessonSections(lesson);
+    const currentTitle = flow[step] || sections[step]?.title || "课堂";
     els.lessonView.innerHTML = `<article class="lesson-detail">
       <button class="text-button lesson-action" data-action="courses" type="button">返回课程</button>
       <div class="hero-panel lesson-hero">
-        <p class="eyebrow">${lesson.kind === "tense" ? "Tense Lesson" : "Speaking Structure"}</p>
+        <p class="eyebrow">${lesson.kind === "stage-review" ? "Stage Review" : lesson.kind === "tense" ? "Tense Lesson" : "Speaking Structure"}</p>
         <h2>${escapeHtml(lesson.title)}</h2>
-        <p class="lead">${escapeHtml(lesson.teacher)}</p>
+        <p class="lead">${escapeHtml(lesson.core)}</p>
         <div class="stats-grid">
-          <div><span>${lesson.examples.length}</span><small>核心例句</small></div>
-          <div><span>${lesson.quiz.length}</span><small>小测题</small></div>
+          <div><span>${step + 1}/${flow.length}</span><small>课堂进度</small></div>
+          <div><span>${lesson.examples.length}</span><small>口语例句</small></div>
           <div><span>${score || 0}%</span><small>最高分</small></div>
         </div>
       </div>
-      ${lessonBlock("这一课先记住", `<p>${escapeHtml(lesson.core)}</p>`)}
-      ${lessonBlock("什么时候用", `<ul>${lesson.uses.map((use) => `<li>${escapeHtml(use)}</li>`).join("")}</ul>`)}
-      ${lessonBlock("句型公式", formulaHtml(lesson.formula))}
-      ${lessonBlock("中文思维提醒", `<p>${escapeHtml(lesson.chinese)}</p><p class="mini-note">常见时间词：${escapeHtml(lesson.markers)}</p>`)}
-      ${lessonBlock("核心口语例句", examplesHtml(lesson))}
-      ${lessonBlock("容易混淆", `<p>${escapeHtml(lesson.contrast)}</p>`)}
-      ${lessonBlock("常见错误", mistakesHtml(lesson))}
-      ${lessonBlock("开口造句任务", `<ol>${lesson.speaking.map((task) => `<li>${escapeHtml(task)}</li>`).join("")}</ol><textarea class="lesson-note" id="lessonNote" placeholder="写下你自己的 2-3 句。">${escapeHtml(note)}</textarea><button class="secondary lesson-action" data-action="save-note" type="button">保存造句</button>`)}
-      ${lessonBlock("小测", quizHtml(lesson))}
+      ${flowRail(lesson, flow, step)}
+      <p class="lesson-current">现在这一段：${escapeHtml(currentTitle)}</p>
+      ${sections.slice(0, step + 1).map((section, index) => lessonBlock(section.title, section.body, index === step)).join("")}
+      ${lessonStepControls(step, flow.length, progress)}
       <div class="decision-row">
         <button class="secondary lesson-action" data-action="review" type="button">${state.lessonReview[lesson.id] ? "已加入课程复习" : "加入课程复习"}</button>
         <button class="primary lesson-action" data-action="complete" type="button">${progress?.completed ? "本课已完成" : "本课我学会了"}</button>
@@ -247,8 +254,81 @@
     </article>`;
   }
 
-  function lessonBlock(title, body) {
-    return `<section class="lesson-block"><h3>${title}</h3>${body}</section>`;
+  function getLessonFlow(lesson) {
+    return lesson.lessonFlow || ["课前判断", "老师导入", "核心画面", "使用场景", "句型公式", "中文误区", "口语例句", "易混对比", "常见错误", "跟老师造句", "小测", "课后复盘"];
+  }
+
+  function getLessonStep(id) {
+    return Math.max(0, state.lessonStepProgress[id]?.step || 0);
+  }
+
+  function setLessonStep(id, step) {
+    const flowLength = getLessonFlow(lessonById.get(id) || todayLesson()).length;
+    const next = Math.max(0, Math.min(step, flowLength - 1));
+    const old = state.lessonStepProgress[id] || {step: 0, max: 0};
+    state.lessonStepProgress[id] = {step: next, max: Math.max(old.max || 0, next), updatedAt: new Date().toISOString()};
+    save();
+    renderLesson();
+  }
+
+  function flowRail(lesson, flow, step) {
+    const max = Math.max(state.lessonStepProgress[lesson.id]?.max || 0, step);
+    return `<div class="lesson-flow">${flow.map((label, index) => `<button class="lesson-action ${index === step ? "is-active" : ""} ${index <= max ? "is-open" : ""}" data-action="jump-step" data-step="${index}" type="button" ${index <= max + 1 ? "" : "disabled"}>
+      <span>${index + 1}</span>${escapeHtml(label)}
+    </button>`).join("")}</div>`;
+  }
+
+  function lessonStepControls(step, total, progress) {
+    return `<div class="lesson-step-controls">
+      <button class="secondary lesson-action" data-action="prev-step" type="button" ${step <= 0 ? "disabled" : ""}>上一段</button>
+      <button class="primary lesson-action" data-action="${step >= total - 1 ? "complete" : "next-step"}" type="button">${step >= total - 1 ? progress?.completed ? "本课已完成" : "完成这一课" : "下一段"}</button>
+    </div>`;
+  }
+
+  function lessonSections(lesson) {
+    const guided = state.guidedAnswers[lesson.id] || [];
+    return [
+      {title:"课前判断", body: teacherList(lesson.warmup)},
+      {title:"老师导入", body: `<p>${escapeHtml(lesson.teacher)}</p>`},
+      {title:"核心画面", body: `<p>${escapeHtml(lesson.mentalModel || lesson.core)}</p><p class="lesson-callout">${escapeHtml(lesson.core)}</p>`},
+      {title:"使用场景", body: teacherList(lesson.uses)},
+      {title:"句型公式", body: formulaHtml(lesson.formula)},
+      {title:"中文误区", body: `<p>${escapeHtml(lesson.chinese)}</p><p class="mini-note">常见时间词：${escapeHtml(lesson.markers)}</p>`},
+      {title:"口语例句", body: examplesHtml(lesson)},
+      {title:"易混对比", body: `<p>${escapeHtml(lesson.contrast)}</p>${teacherList(lesson.decisionGuide)}`},
+      {title:"常见错误", body: mistakesHtml(lesson)},
+      {title:"跟老师造句", body: guidedPracticeHtml(lesson, guided)},
+      {title:"小测", body: quizHtml(lesson)},
+      {title:"课后复盘", body: recapHtml(lesson, guided)}
+    ];
+  }
+
+  function teacherList(items = []) {
+    return `<ul class="teacher-list">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+  }
+
+  function lessonBlock(title, body, active = false) {
+    return `<section class="lesson-block ${active ? "is-current" : ""}"><h3>${title}</h3>${body}</section>`;
+  }
+
+  function guidedPracticeHtml(lesson, guided) {
+    const prompts = lesson.guidedPractice || lesson.speaking || [];
+    const legacy = state.lessonNotes[lesson.id] || "";
+    return `<p class="mini-note">先套半成品句架，再换成你自己的真实生活。保存后会出现在课后复盘里。</p>
+      <div class="guided-list">${prompts.map((prompt, index) => `<label class="guided-card">
+        <span>${escapeHtml(prompt)}</span>
+        <textarea data-guided-index="${index}" placeholder="写你的句子，例如把空格换成自己的生活。">${escapeHtml(guided[index] || "")}</textarea>
+      </label>`).join("")}</div>
+      <textarea class="lesson-note" id="lessonNote" placeholder="额外笔记：哪里容易混、你想怎么记。">${escapeHtml(legacy)}</textarea>
+      <button class="secondary lesson-action" data-action="save-guided" type="button">保存造句和笔记</button>`;
+  }
+
+  function recapHtml(lesson, guided) {
+    const answers = guided.filter(Boolean).slice(0, 3);
+    const answerHtml = answers.length ? `<ol>${answers.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>` : `<p class="mini-note">还没有保存自己的造句。回到“跟老师造句”写 3 句，这一课会更像真的练会了。</p>`;
+    return `${teacherList(lesson.teacherRecap || [])}
+      <div class="recap-card"><strong>你的 3 句输出</strong>${answerHtml}</div>
+      <p class="mini-note">80% 通过小测后会自动完成课程；你也可以在理解后手动点“完成这一课”。</p>`;
   }
 
   function formulaHtml(formula) {
@@ -291,10 +371,24 @@
     const action = button.dataset.action;
     if (action === "courses") return showScreen("courses");
     if (action === "speak-example") return speakText(button.dataset.text, 1);
+    if (action === "prev-step") return setLessonStep(activeLessonId, getLessonStep(activeLessonId) - 1);
+    if (action === "next-step") return setLessonStep(activeLessonId, getLessonStep(activeLessonId) + 1);
+    if (action === "jump-step") return setLessonStep(activeLessonId, Number(button.dataset.step || 0));
+    if (action === "save-guided") return saveGuidedAnswers();
     if (action === "save-note") return saveLessonNote();
     if (action === "submit-quiz") return submitQuiz();
     if (action === "review") return toggleLessonReview();
     if (action === "complete") return completeLesson(activeLessonId, state.lessonScores[activeLessonId]?.best || 100);
+  }
+
+  function saveGuidedAnswers() {
+    const values = [...document.querySelectorAll("[data-guided-index]")]
+      .sort((a, b) => Number(a.dataset.guidedIndex) - Number(b.dataset.guidedIndex))
+      .map((input) => input.value.trim());
+    state.guidedAnswers[activeLessonId] = values;
+    state.lessonNotes[activeLessonId] = $("lessonNote")?.value || "";
+    save();
+    flash("造句和笔记已保存。");
   }
 
   function saveLessonNote() {
@@ -313,6 +407,7 @@
       const value = selected?.value || input?.value || "";
       const ok = answerOk(value, item.answer);
       correct += ok ? 1 : 0;
+      if (!ok) trackWeakness(lesson, item, index, value);
       const feedback = $(`quizFeedback${index}`);
       if (feedback) {
         feedback.textContent = ok ? `对。${item.note}` : `参考答案：${item.answer}。${item.note}`;
@@ -326,11 +421,24 @@
     entry.lastScore = score;
     entry.history = [...(entry.history || []), {score, at: new Date().toISOString()}].slice(-10);
     state.lessonScores[lesson.id] = entry;
-    if (score >= 80) completeLesson(lesson.id, score, false);
+    if (score >= 80) {
+      setLessonStep(lesson.id, getLessonFlow(lesson).length - 1);
+      completeLesson(lesson.id, score, false);
+    }
     save();
     renderToday();
     renderCourses();
     $("quizScoreLine").textContent = score >= 80 ? `本次 ${score}%，已通过。下一课已解锁。` : `本次 ${score}%，再看一遍例句和错句后重做。`;
+  }
+
+  function trackWeakness(lesson, item, index, value) {
+    const current = state.tenseWeakness[lesson.id] || {count: 0, items: []};
+    current.count += 1;
+    current.title = lesson.title;
+    current.lastAt = new Date().toISOString();
+    current.items = [{type: item.type, prompt: item.prompt, answer: item.answer, value: value || "", index}, ...(current.items || [])].slice(0, 8);
+    state.tenseWeakness[lesson.id] = current;
+    if (lesson.kind === "tense" || lesson.kind === "stage-review") state.lessonReview[lesson.id] = {addedAt: current.lastAt, reason: "quiz"};
   }
 
   function answerOk(value, answer) {
@@ -343,6 +451,12 @@
   function completeLesson(id, score = 100, rerender = true) {
     state.grammarProgress[id] = {completed: true, completedAt: new Date().toISOString()};
     delete state.lessonReview[id];
+    const lesson = lessonById.get(id);
+    if (lesson) {
+      const old = state.lessonStepProgress[id] || {step: 0, max: 0};
+      const finalStep = getLessonFlow(lesson).length - 1;
+      state.lessonStepProgress[id] = {step: finalStep, max: Math.max(old.max || 0, finalStep), updatedAt: new Date().toISOString()};
+    }
     bumpStreak();
     const entry = state.lessonScores[id] || {best: 0, history: []};
     entry.best = Math.max(entry.best || 0, score);
@@ -424,11 +538,37 @@
     const review = Object.keys(state.mistakes).map((id) => byId.get(id)).filter(Boolean);
     const favs = Object.keys(state.favorites).map((id) => byId.get(id)).filter(Boolean);
     const list = [...review, ...favs.filter((item) => !review.some((r) => r.id === item.id))];
-    els.reviewList.innerHTML = list.length ? list.map((item) => phraseButton(item, false)).join("") : `<div class="empty-state">还没有短语复习项。课程复习请点上方按钮。</div>`;
-    els.reviewList.querySelectorAll("button").forEach((button) => {
+    const weakness = weaknessCards();
+    const phrasesHtml = list.length ? list.map((item) => phraseButton(item, false)).join("") : `<div class="empty-state">还没有短语复习项。课程复习请点上方按钮。</div>`;
+    els.reviewList.innerHTML = `${weakness}${phrasesHtml}`;
+    els.reviewList.querySelectorAll("button[data-id]").forEach((button) => {
       const item = byId.get(button.dataset.id);
       button.addEventListener("click", () => item && openPractice([item], "短语复习", 0, true));
     });
+    els.reviewList.querySelectorAll("button[data-lesson]").forEach((button) => {
+      button.addEventListener("click", () => openLesson(button.dataset.lesson));
+    });
+  }
+
+  function weaknessSummary() {
+    const top = Object.entries(state.tenseWeakness || {}).sort((a, b) => (b[1].count || 0) - (a[1].count || 0))[0];
+    if (!top) return "今天先按顺序推进。";
+    const lesson = lessonById.get(top[0]);
+    return `上次薄弱点：${lesson?.title || top[1].title || "语法选择"}，今天会优先提醒。`;
+  }
+
+  function weaknessCards() {
+    const entries = Object.entries(state.tenseWeakness || {}).sort((a, b) => (b[1].count || 0) - (a[1].count || 0)).slice(0, 4);
+    if (!entries.length) return `<div class="weakness-panel"><h3>我总混淆的时态</h3><p>小测错题会自动出现在这里，像老师给你标薄弱点。</p></div>`;
+    return `<div class="weakness-panel"><h3>我总混淆的时态</h3>${entries.map(([id, item]) => {
+      const lesson = lessonById.get(id);
+      const last = item.items?.[0];
+      return `<button class="weakness-card" data-lesson="${id}" type="button">
+        <span class="badge">${item.count} 次</span>
+        <strong>${escapeHtml(lesson?.title || item.title || "语法复习")}</strong>
+        <p>${escapeHtml(last?.prompt || "回到课程再过一遍判断逻辑。")}</p>
+      </button>`;
+    }).join("")}</div>`;
   }
 
   function openPractice(items, name, start, navigate) {

@@ -1,7 +1,7 @@
 {
   "name": "Speak Daily",
   "short_name": "Speak Daily",
-  "description": "A mobile English speaking coach with grammar lessons, tense practice, and everyday phrases.",
+  "description": "A mobile English speaking coach with teacher-style tense lessons, guided practice, and everyday phrases.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -40,4 +40,175 @@
     lesson({id:"passive-voice",kind:"structure",title:"被动语态口语用法",tag:"被 / 被安排",core:"当重点是事情本身，而不是谁做的，用 be + 过去分词。",teacher:"被动语态不是只在书面语里。口语里也常说：It was canceled, I got invited, The file was sent. 它让你把焦点放在结果上。",formula:{positive:"It is done. It was canceled. I got invited.",negative:"It isn't done. It wasn't canceled.",question:"Was it sent? Did you get invited?",wh:"When was it changed?"},uses:"不知道或不重要是谁做的|强调结果状态|通知变化：取消/安排/发送|get + 过去分词的口语被动",chinese:"中文常省略主语：会议取消了。英文需要结构：The meeting was canceled。",markers:"was canceled, is included, got invited, was sent, be done",contrast:"主动 The manager canceled it 强调经理；被动 It was canceled 强调这事被取消了。",examples:["The meeting was canceled.|会议取消了。|通知变化|rescheduled","The file was sent this morning.|文件今天早上发了。|强调结果|uploaded","Is tip included?|小费包含了吗？|账单询问|tax included","I got invited to the party.|我被邀请去派对了。|口语被动|get asked","The door is locked.|门锁着。|状态|closed","It wasn't mentioned in the email.|邮件里没提到这个。|强调信息缺失|included","When was it changed?|什么时候改的？|问变化|updated","The issue has been fixed.|问题已经修好了。|现在完成被动|resolved","We got stuck in traffic.|我们堵车了。|get 被动/状态|caught in the rain","The order was delivered late.|订单送晚了。|投诉|charged twice","This is made locally.|这是本地制造的。|介绍产品|made by hand","Were you told about the change?|有人告诉你这个变化了吗？|问信息传达|informed"],mistakes:["The meeting canceled.|The meeting was canceled.|被动需要 be + 过去分词。","The file sent this morning.|The file was sent this morning.|缺 was。","I was invited me.|I was invited.|被动里不要再加 me 作宾语。","It was happened yesterday.|It happened yesterday.|happen 不用被动。"],speaking:"说一个安排被取消，用 The ... was canceled|说一个问题已经修好，用 The issue has been...|问别人有没有被告知，用 Were you told...?",quiz:["choice|“会议取消了。”|The meeting was canceled.|The meeting canceled. / The meeting was canceled. / The meeting is cancel.|被动 be + 过去分词。","fill|The file was ___ this morning.|sent|send / sent / sending|was sent。","fix|It was happened yesterday.|It happened yesterday.| |happen 不用被动。","choice|I got invited 语气如何？|口语化“我被邀请了”|我邀请别人 / 我正在邀请 / 我每天邀请|got + 过去分词常见口语被动。","translate|问题已经修好了。|The issue has been fixed.| |现在完成被动。","choice|被动语态适合什么时候？|重点是结果，不是执行者|只想强调执行者 / 只能写论文 / 不能口语|口语也常用。"]}),
     lesson({id:"reported-speech",kind:"structure",title:"转述别人说的话",tag:"他说 / 她问",core:"转述时常把时态往过去退一步，也要改人称和时间。",teacher:"你不会永远只说自己的话。转述别人说什么、问什么、提醒什么，是工作和聊天必备。核心是：He said..., She asked..., They told me...。",formula:{positive:"He said he was busy. She told me to wait.",negative:"He said he wasn't ready.",question:"She asked if I was free.",wh:"He asked where I lived."},uses:"转述别人说的话|转述问题|转述请求/命令|会议后复述信息",chinese:"中文“他说他很忙”不用变时态；英文转述过去说的话，常从 is 变 was、will 变 would、can 变 could。",markers:"said, told me, asked if, asked where, mentioned that",contrast:"直接引语：He said, 'I am busy.' 转述：He said he was busy.",examples:["He said he was busy.|他说他很忙。|转述陈述|tired / ready","She told me to wait outside.|她让我在外面等。|转述指令|call back","They said they would call later.|他们说晚点会打来。|will 变 would|send it later","He asked if I was free.|他问我有没有空。|转述 yes/no 问题|available","She asked where I lived.|她问我住哪里。|转述 wh 问题|worked","He said he couldn't make it.|他说他来不了。|can 变 could|join us","They mentioned that the plan had changed.|他们提到计划变了。|转述更新|deadline had moved","She told me not to worry.|她让我别担心。|否定指令|not to wait","He asked me to send the file.|他让我发文件。|请求|check the link","I said I would think about it.|我说我会考虑。|转述自己|get back to them","She said she had already eaten.|她说她已经吃过了。|转述完成|finished it","He asked what time it started.|他问几点开始。|转述问题|ended"],mistakes:["He said he is busy.|He said he was busy.|过去说的话通常时态后退。","She asked where did I live.|She asked where I lived.|转述问题不用疑问语序。","He told me wait.|He told me to wait.|tell someone to do。","She said me she was tired.|She told me she was tired. / She said she was tired.|有宾语 me 时用 told me。"],speaking:"转述朋友说他很忙，用 He said...|转述别人问你住哪里，用 She asked where...|转述一个请求，用 He asked me to...",quiz:["choice|“他说他很忙。”|He said he was busy.|He said he is busy. / He said he was busy. / He told he busy.|转述过去说的话常后退。","fill|She told me ___ wait.|to|to / for / that|tell me to do。","fix|She asked where did I live.|She asked where I lived.| |转述问题用陈述语序。","choice|He asked if I was free 是什么？|转述 yes/no 问题|直接疑问句 / 命令 / 被动|asked if。","translate|他让我发文件。|He asked me to send the file.| |ask someone to do。","choice|said 和 told 区别？|told 后常直接接人|said 必须接人 / told 不能接人 / 完全一样|told me, said that。"]})
   ];
+
+  window.SPEAK_DAILY_GRAMMAR = insertStageReviews(
+    window.SPEAK_DAILY_GRAMMAR.map(enrichLesson),
+    buildStageReviews()
+  );
+
+  function insertStageReviews(base, reviews) {
+    const after = {
+      "present-perfect-continuous": reviews.find((item) => item.id === "stage-present-review"),
+      "past-perfect-continuous": reviews.find((item) => item.id === "stage-past-review"),
+      "future-perfect-continuous": reviews.find((item) => item.id === "stage-future-review")
+    };
+    return base.flatMap((item) => after[item.id] ? [item, after[item.id]] : [item]);
+  }
+
+  function enrichLesson(item) {
+    const guide = teacherGuide(item);
+    const warmup = guide.warmup || [
+      `先别想语法名。看这个场景：${item.core}`,
+      "这句话是在说习惯、正在发生、过去某点、影响现在，还是未来结果？",
+      "先用中文判断时间画面，再套英文结构。"
+    ];
+    const decisionGuide = guide.decisionGuide || [
+      `如果你想表达“${item.core}”，优先考虑 ${item.title}。`,
+      `看到这些提示词就警觉：${item.markers || "上下文时间线"}`,
+      `如果重点变了，立刻对比：${item.contrast}`
+    ];
+    const guidedPractice = guide.guidedPractice || [
+      `半成品 1：${item.examples[0]?.en || "I ..."} -> 换成你的真实生活。`,
+      `半成品 2：${item.examples[1]?.en || "She ..."} -> 换一个主语。`,
+      `半成品 3：${item.examples[2]?.en || "We ..."} -> 换一个时间或场景。`
+    ];
+    const teacherRecap = guide.teacherRecap || [
+      `今天先记住一句话：${item.core}`,
+      `开口前先问自己：${decisionGuide[0]}`,
+      `最容易错的是：${item.mistakes[0]?.wrong || "不要直译中文"}`
+    ];
+    return {
+      ...item,
+      warmup,
+      mentalModel: guide.mentalModel || `把 ${item.title} 想成一个镜头：${item.teacher}`,
+      decisionGuide,
+      guidedPractice,
+      stageReview: guide.stageReview || `这一课学完后，和它最容易混的是：${item.contrast}`,
+      teacherRecap,
+      lessonFlow: [
+        "课前问题",
+        "老师导入",
+        "核心画面",
+        "使用场景",
+        "句型公式",
+        "中文误区",
+        "口语例句",
+        "易混对比",
+        "常见错误",
+        "跟老师造句",
+        "小测",
+        "课后复盘"
+      ]
+    };
+  }
+
+  function teacherGuide(item) {
+    const guide = {
+      "present-simple": {
+        warmup:["你每天都做的事，不是“正在做”，而是“平常就是这样”。","问自己：这句话能不能加 usually / every day / on weekends？","如果能，它大概率就是一般现在时。"],
+        mentalModel:"把它想成“个人说明书”：我平常怎样、事实怎样、规则怎样。",
+        decisionGuide:["这件事是习惯或事实吗？用一般现在。","主语是 he / she / it 吗？肯定句动词记得加 s。","如果是此刻正在发生，换现在进行时。"],
+        guidedPractice:["I usually ___ in the morning.","She works in ___ / She doesn't work in ___.","Do you usually ___ after work?"],
+        stageReview:"和现在进行时对比：I work here 是长期事实；I'm working here today 是今天临时正在这里工作。",
+        teacherRecap:["一般现在时说习惯、事实、规则，不说“此刻正在”。","疑问句用 Do / Does；否定句用 don't / doesn't。","第三人称单数只在肯定句动词上加 s。"]
+      },
+      "present-continuous": {
+        warmup:["想象镜头正在拍：现在、今天、这阵子，事情正在推进。","问自己：能不能加 right now / these days / this week？","如果能，它大概率就是现在进行时。"],
+        mentalModel:"把它想成“正在播放的视频”，可以是此刻，也可以是最近这个阶段。",
+        decisionGuide:["此刻正在发生，用 am/is/are + ing。","最近临时状态，也常用现在进行。","如果是长期习惯，回到一般现在。"],
+        guidedPractice:["I'm working on ___ these days.","Are you using ___ right now?","We're trying ___ tonight."],
+        stageReview:"和一般现在时对比：I live here 是长期；I'm living here this month 是临时。",
+        teacherRecap:["现在进行时的核心是“正在进行”或“临时阶段”。","结构永远是 be + -ing。","know / like / need 这类状态动词通常不用进行时。"]
+      },
+      "present-perfect": {
+        warmup:["别把它翻译成简单的“了”。先问：过去那件事现在还有结果吗？","如果你想说“已经、还没、做过、到现在为止”，它就很可能出现。","它关心现在，不关心过去几点发生。"],
+        mentalModel:"把它想成“过去事件留下的现在结果”。",
+        decisionGuide:["有明确过去时间 yesterday / last year，通常用一般过去。","强调现在结果、经历、到现在为止，用现在完成。","结构是 have/has + 过去分词。"],
+        guidedPractice:["I've already ___.","Have you ever ___?","I haven't ___ yet."],
+        stageReview:"和一般过去时对比：I lost my keys yesterday 讲过去；I've lost my keys 暗示现在还没找到。",
+        teacherRecap:["现在完成时不是“过去式高级版”，而是“过去影响现在”。","already / yet / ever / never 很常见。","不要和明确过去时间一起乱用。"]
+      },
+      "present-perfect-continuous": {
+        warmup:["想象你不是展示结果，而是在展示一段持续的过程。","问自己：这件事是不是从过去一直做到现在？","如果答案是“是，而且我想强调过程”，用它。"],
+        mentalModel:"把它想成“从过去滚到现在的一条线”。",
+        decisionGuide:["强调一直在做，用 have/has been + ing。","解释现在为什么累、为什么有进展，很适合它。","如果强调已经完成的结果，换现在完成时。"],
+        guidedPractice:["I've been ___ for ___.","She's been ___ all day.","What have you been ___ lately?"],
+        stageReview:"和现在完成时对比：I've read it 可能读完；I've been reading it 强调最近一直在读。",
+        teacherRecap:["现在完成进行时强调持续过程。","for 接时长，since 接起点。","finish / complete 这类结果词通常更适合现在完成时。"]
+      },
+      "past-simple": {
+        warmup:["把故事钉在过去某个时间点：昨天、刚才、上周、小时候。","问自己：这件事是否已经在过去发生完？","如果是，先考虑一般过去时。"],
+        mentalModel:"把它想成“过去时间线上的一个点”。",
+        decisionGuide:["有 yesterday / last night / ago，用一般过去。","疑问和否定用 did / didn't 后接原形。","如果强调现在结果，才考虑现在完成。"],
+        guidedPractice:["I ___ yesterday.","Did you ___ this morning?","We didn't ___ last night."],
+        stageReview:"和现在完成时对比：I went there last year 是过去事件；I've been there 是经历。",
+        teacherRecap:["一般过去时讲过去发生完的事。","did 后动词回原形。","不要看见中文“了”就自动用完成时。"]
+      },
+      "past-continuous": {
+        warmup:["想象过去某一刻有个镜头正在拍。","问自己：那时我正在做什么？","如果一个动作被另一个动作打断，背景动作常用过去进行。"],
+        mentalModel:"把它想成“过去的正在播放”。",
+        decisionGuide:["过去某刻正在发生，用 was/were + ing。","when 后常接打断事件，while 后常接背景动作。","只说过去做完一件事，用一般过去。"],
+        guidedPractice:["I was ___ when you called.","What were you doing at ___?","While I was ___, ___. "],
+        stageReview:"和一般过去时对比：I cooked dinner 是做饭这件事；I was cooking dinner 是当时正在做。",
+        teacherRecap:["过去进行时负责给过去故事搭背景。","was/were 要跟主语一致。","它常和 when / while 一起出现。"]
+      },
+      "past-perfect": {
+        warmup:["先找到过去故事里的两个动作。","哪个更早？更早的那个可以用 had done。","它的作用是说清“过去的过去”。"],
+        mentalModel:"把它想成“过去时间线前面又插了一面小旗”。",
+        decisionGuide:["有两个过去动作，需要说明先后，用过去完成。","had 后接过去分词，不随主语变化。","如果顺序已经很清楚，口语里有时一般过去也够用。"],
+        guidedPractice:["I had already ___ before ___.","By the time I arrived, they had ___.","I realized I had ___."],
+        stageReview:"和一般过去时对比：I left when he arrived 可能同时；I had left when he arrived 表示他到之前我已经走了。",
+        teacherRecap:["过去完成时讲“过去的过去”。","结构是 had + 过去分词。","不要没有两个时间层次也硬用它。"]
+      },
+      "past-perfect-continuous": {
+        warmup:["还是两个过去时间点，但你要强调更早之前一直持续的过程。","问自己：到过去某点为止，已经持续多久？","如果是，使用 had been + ing。"],
+        mentalModel:"把它想成“过去某点之前的一段过程录像”。",
+        decisionGuide:["强调过去某点前一直在做，用 had been + ing。","它常用来解释过去那个时候为什么累、为什么生气、为什么有结果。","如果只强调已经完成，用过去完成。"],
+        guidedPractice:["I had been ___ for ___ before ___.","She had been ___ all day, so ___.","How long had you been ___ before ___?"],
+        stageReview:"和过去完成时对比：I had waited 强调等过/等完；I had been waiting 强调一直等的过程。",
+        teacherRecap:["过去完成进行时强调过去某点前的持续过程。","had been + ing 是固定骨架。","它不是日常最高频，但能让解释更精确。"]
+      },
+      "future-simple": {
+        warmup:["未来不是只有 will。先问：这是临时决定、承诺、预测，还是已经计划？","will 常负责“现在决定”和“我来做”。","计划感更强时，常换 going to 或现在进行。"],
+        mentalModel:"把 will 想成“说话当下把未来接过来”。",
+        decisionGuide:["临时决定、承诺、预测，用 will。","已有计划或迹象，考虑 going to。","固定近期安排，也可用现在进行。"],
+        guidedPractice:["I'll ___ right now.","I think it will ___.","Don't worry, I'll ___."],
+        stageReview:"和 going to 对比：I'll call him 是现在决定；I'm going to call him 是之前已有计划。",
+        teacherRecap:["will 不等于所有将来。","它很适合承诺、预测、临时决定。","口语里 I'll 比 I will 更自然。"]
+      },
+      "future-continuous": {
+        warmup:["把镜头放到未来某个时间：到那时，我正在做什么？","如果你要礼貌询问或说明未来某时的安排，它很好用。","它听起来比 will do 更像时间表里的画面。"],
+        mentalModel:"把它想成“未来某刻正在播放的视频”。",
+        decisionGuide:["未来某时正在发生，用 will be + ing。","礼貌询问安排时，Will you be ...? 很自然。","只说会不会做，用一般将来就够。"],
+        guidedPractice:["I'll be ___ at 8.","Will you be ___ tomorrow morning?","This time next week, I'll be ___."],
+        stageReview:"和一般将来时对比：I'll work tomorrow 说会工作；I'll be working at 8 说八点那刻正在工作。",
+        teacherRecap:["将来进行时强调未来某刻正在发生。","will be + ing 是固定骨架。","它也能让询问听起来更礼貌。"]
+      },
+      "future-perfect": {
+        warmup:["把自己放到未来截止点：到那时，这件事完成了吗？","如果你要说 by Friday / by then / by the time，常会用它。","它说的是未来某点之前的完成结果。"],
+        mentalModel:"把它想成“站在未来回头看已经完成”。",
+        decisionGuide:["到未来某时已经完成，用 will have + 过去分词。","看到 by + 未来时间，先警觉。","如果只是未来正在做，换将来进行。"],
+        guidedPractice:["I'll have ___ by Friday.","By the time you arrive, I will have ___.","We will have ___ by then."],
+        stageReview:"和将来进行时对比：I'll be finishing it 是到时正在收尾；I'll have finished it 是到时已经完成。",
+        teacherRecap:["将来完成时强调未来截止点前的结果。","结构是 will have + 过去分词。","它适合目标、截止日期和承诺结果。"]
+      },
+      "future-perfect-continuous": {
+        warmup:["这是最细的时间镜头：到未来某点为止，已经持续多久？","先确认你不是只说完成，而是强调持续时长。","它常用于学习、工作、等待这类持续动作。"],
+        mentalModel:"把它想成“站在未来看一条已经延续很久的线”。",
+        decisionGuide:["到未来某点已经持续多久，用 will have been + ing。","常搭配 for + 时长。","如果只强调完成结果，用将来完成。"],
+        guidedPractice:["By next month, I'll have been ___ for ___.","By then, she will have been ___ for ___.","How long will you have been ___ by ___?"],
+        stageReview:"和将来完成时对比：I'll have worked there for a year 强调结果；I'll have been working there for a year 强调持续过程。",
+        teacherRecap:["将来完成进行时强调未来截止点前的持续过程。","它不高频，但非常适合说长期努力。","结构长，先用半成品句架套熟。"]
+      }
+    };
+    return guide[item.id] || {};
+  }
+
+  function buildStageReviews() {
+    return [
+      lesson({id:"stage-present-review",kind:"stage-review",minutes:10,title:"现在组混合诊断课",tag:"习惯 / 正在 / 影响现在 / 一直在做",core:"学会在四个现在时态里选对镜头。",teacher:"这一课不是新语法，而是像老师带你做诊断：同一句中文“我学英语”，为什么会变成 I learn, I'm learning, I've learned, I've been learning。",formula:{positive:"I work. / I'm working. / I've worked. / I've been working.",negative:"I don't work. / I'm not working. / I haven't worked. / I haven't been working.",question:"Do you work? / Are you working? / Have you worked? / Have you been working?",wh:"What do you do? / What are you doing? / How long have you worked?"},uses:"习惯事实用一般现在|此刻或最近阶段用现在进行|过去影响现在用现在完成|从过去持续到现在用现在完成进行",chinese:"中文一句“我学英语”靠上下文；英文先选镜头：平常学、最近正在学、已经学过、一直学到现在。",markers:"usually, now, already, yet, since, for, lately",contrast:"I study English 是习惯；I'm studying English 是最近在学；I've studied English 是有学过/已有结果；I've been studying English 是一直在学。",examples:["I study English every night.|我每天晚上学英语。|习惯|read / exercise","I'm studying English these days.|我最近在学英语。|近期阶段|learning coding","I've studied English before.|我以前学过英语。|经历|tried this","I've been studying English for three months.|我已经学英语三个月了。|持续过程|working here","She works from home.|她在家办公。|长期方式|studies online","She's working from home today.|她今天在家办公。|临时安排|staying home","I've already sent it.|我已经发了。|现在结果|finished it","I've been trying to send it.|我一直在尝试发送。|持续努力|trying to call","Do you live around here?|你住这附近吗？|长期情况|work here","Are you living here this month?|你这个月住这里吗？|临时情况|staying here","Have you ever lived abroad?|你在国外住过吗？|经历|worked abroad","How long have you been living here?|你在这里住多久了？|持续过程|working here"],mistakes:["I am learning English every day.|I learn English every day.|every day 说习惯，通常用一般现在。","I learn English right now.|I'm learning English right now.|right now 强调正在发生。","I have learned English for three months.|I've been learning English for three months.|强调持续学习过程，用完成进行时。","I have seen him yesterday.|I saw him yesterday.|明确过去时间不要用现在完成。"],speaking:"用四个现在时态各造一句关于 English 的句子|把 I work here 改成“今天临时在这里工作”|解释你最近一直在做什么，用 I've been...",quiz:["choice|every day 更像哪个时态？|一般现在时|现在进行时 / 现在完成时 / 现在完成进行时|every day 说习惯。","choice|right now 更像哪个时态？|现在进行时|一般现在时 / 一般过去时 / 将来完成时|right now 说正在发生。","fill|I've been learning English ___ three months.|for|for / since / already|for 接时长。","fix|I have seen him yesterday.|I saw him yesterday.| |yesterday 明确过去。","translate|我最近一直在学英语。|I've been learning English lately.| |强调持续过程。","choice|I've lost my keys 强调什么？|现在结果|每天丢 / 正在丢 / 明天会丢|完成时看现在结果。"]}),
+      lesson({id:"stage-past-review",kind:"stage-review",minutes:10,title:"过去组混合诊断课",tag:"发生了 / 正在发生 / 更早已经 / 更早一直",core:"学会把过去故事讲清先后和背景。",teacher:"过去组的关键是时间线。先找过去故事的主事件，再判断要不要背景、要不要更早的动作、要不要强调持续过程。",formula:{positive:"I left. / I was leaving. / I had left. / I had been waiting.",negative:"I didn't leave. / I wasn't leaving. / I hadn't left.",question:"Did you leave? / Were you leaving? / Had you left?",wh:"What did you do? / What were you doing? / How long had you been waiting?"},uses:"过去发生完用一般过去|过去某刻正在用过去进行|过去的过去用过去完成|过去某点前一直在做用过去完成进行",chinese:"中文“我走了”不说明先后；英文如果要说“他到之前我已经走了”，就要 had left。",markers:"yesterday, when, while, before, by the time, for two hours",contrast:"I waited 是等过；I was waiting 是那时正在等；I had waited 是更早已经等过；I had been waiting 是到那时已经一直在等。",examples:["I called her yesterday.|我昨天给她打电话了。|过去事件|texted him","I was calling her when you walked in.|你进来时我正在给她打电话。|背景动作|texting him","I had called her before the meeting.|会议前我已经给她打过电话。|更早动作|emailed her","I had been calling her all morning.|我整个上午一直在给她打电话。|持续过程|trying to reach her","When I arrived, they left.|我到的时候他们走了。|可能先后接近|started","When I arrived, they had left.|我到的时候他们已经走了。|更早完成|finished","I was cooking at seven.|七点时我正在做饭。|过去某刻|driving","I cooked dinner last night.|我昨晚做了晚饭。|完成事件|ordered dinner","She had been working all day, so she was tired.|她一整天都在工作，所以很累。|解释过去状态|studying","Did you see him?|你看见他了吗？|过去事件|call him","Were you sleeping?|你当时在睡觉吗？|过去正在|working","How long had you been waiting before I arrived?|我到之前你等多久了？|过去前持续|working"],mistakes:["Did you saw him?|Did you see him?|did 后动词原形。","I cooked when you called.|I was cooking when you called.|你打来时正在做饭，用过去进行。","I had left yesterday.|I left yesterday.|只有一个明确过去点，通常一般过去够了。","I had been finished it.|I had finished it.|finish 强调完成结果，不用进行。"],speaking:"讲一个昨天发生完的事|讲别人打电话时你正在做什么|用 before 讲一个更早已经完成的事",quiz:["choice|when you called 常触发什么？|过去进行作背景|将来完成 / 一般现在 / 现在完成|电话打来时正在做。","fill|Did you ___ him yesterday?|see|saw / see / seen|did 后原形。","fix|I was cook when you called.|I was cooking when you called.| |was + ing。","choice|By the time I arrived, they had left 表示？|我到之前他们已经走了|我到后他们走 / 他们正在走 / 他们每天走|had left 是更早完成。","translate|我到之前已经等了二十分钟。|I had been waiting for twenty minutes before you arrived.| |强调过去前持续等待。","choice|只说 last night 发生完，优先用？|一般过去时|过去完成时 / 现在完成时 / 将来进行时|明确过去时间。"]}),
+      lesson({id:"stage-future-review",kind:"stage-review",minutes:10,title:"未来组混合诊断课",tag:"会做 / 正在做 / 已完成 / 已持续",core:"学会把未来计划讲成时间画面。",teacher:"未来组不是把 will 套到底。你要先问：只是会做，还是未来某刻正在做？到某个截止点完成了吗？到那时已经持续多久？",formula:{positive:"I'll work. / I'll be working. / I'll have finished. / I'll have been working.",negative:"I won't work. / I won't be working. / I won't have finished.",question:"Will you work? / Will you be working? / Will you have finished?",wh:"What will you be doing? / How long will you have been working?"},uses:"承诺预测用 will|未来某刻正在用将来进行|未来截止点前完成用将来完成|未来截止点前持续多久用将来完成进行",chinese:"中文“我明天会做完”可能只说结果；英文如果强调“到明天之前已经做完”，要用 I'll have finished by tomorrow。",markers:"tomorrow, at 8, by Friday, by then, for three years",contrast:"I'll work tomorrow 是会工作；I'll be working at 8 是八点正在工作；I'll have finished by 8 是八点前完成；I'll have been working for 8 hours by then 是到那时持续八小时。",examples:["I'll call you later.|我晚点打给你。|承诺|text you","I'll be calling clients at ten.|十点我会在给客户打电话。|未来某刻正在|working","I'll have called everyone by noon.|中午前我会已经打完所有电话。|截止前完成|finished","I'll have been calling clients for two hours by noon.|到中午我就已经连续打两小时客户电话了。|截止前持续|working","Will you be home tonight?|你今晚会在家吗？|礼貌问安排|available","Will you have finished by Friday?|你周五前能完成吗？|问结果|sent it","By next year, I'll have been learning English for a year.|到明年我学英语就满一年了。|持续到未来|working here","I think it will rain.|我觉得会下雨。|预测|work out","I'm going to study tonight.|我今晚打算学习。|已有计划|call him","I'll be studying at eight.|八点我会正在学习。|未来某刻正在|driving","I'll have studied all twelve tenses by then.|到那时我会已经学完 12 个时态。|未来完成|finished","I'll have been studying for an hour by then.|到那时我会已经学了一个小时。|未来持续|waiting"],mistakes:["I will finished by Friday.|I'll have finished by Friday.|by Friday 强调截止前完成，用 will have done。","I will be finish at eight.|I'll be finishing at eight.|will be 后接 ing。","I will have been learn for a year.|I'll have been learning for a year.|完成进行时用 been + ing。","I'm going to call you now.|I'll call you now.|说话当下临时决定，用 will 更自然。"],speaking:"说一个你现在决定要做的事，用 I'll...|说未来某个时间你正在做什么，用 I'll be...|说到某个时间你已经完成什么，用 I'll have...",quiz:["choice|by Friday 常触发什么？|将来完成时|现在进行时 / 一般现在时 / 过去进行时|by + 截止点看完成结果。","fill|I'll ___ working at eight.|be|be / have / been|将来进行：will be + ing。","fix|I will finished by Friday.|I'll have finished by Friday.| |will have + 过去分词。","choice|I'll have been studying for a year 强调？|到未来某点已经持续一年|明天才开始 / 过去已经结束 / 每天都学|完成进行强调持续。","translate|到明天我会已经做完。|I'll have finished by tomorrow.| |by tomorrow 看截止前结果。","choice|临时决定“我来处理”更自然说？|I'll handle it.|I'm going to handled it. / I'll handle it. / I'll be handle it.|will 用于临时决定和承诺。"]})
+    ].map(enrichLesson);
+  }
 })();
