@@ -1,4 +1,4 @@
-const CACHE_NAME = "speakdaily-v5-teacher-flow-20260412";
+const CACHE_NAME = "speakdaily-v6-icon-20260412";
 const ASSETS = [
   "./",
   "./index.html",
