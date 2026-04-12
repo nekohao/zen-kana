@@ -1,891 +1,302 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- 强制禁止浏览器缓存 -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
-    <title>NutriGuide Pro 营养素速查</title>
-    
-    <!-- PWA 配置 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/healthy-food.png">
-
-    <!-- 库引入 -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-
-    <!-- Tailwind 深色模式配置 -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        secondary: '#10b981',
-                        darkBg: '#0f172a',
-                        darkCard: '#1e293b',
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>NutriGuide 营养素权威速查</title>
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light dark">
+  <meta name="application-name" content="NutriGuide">
+  <meta name="apple-mobile-web-app-title" content="NutriGuide">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://img.icons8.com/color/180/healthy-food.png">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#2563eb', secondary: '#059669', darkBg: '#101827', darkCard: '#172033' },
+          keyframes: {
+            fadeIn: { from: { opacity: 0, transform: 'translateY(8px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+            pulseOnce: { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.72 } }
+          },
+          animation: { fadeIn: 'fadeIn 180ms ease-out', pulseOnce: 'pulseOnce 900ms ease-out 1' }
         }
-    </script>
-
-    <style>
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* 英雄联盟风格卡片特效 */
-        .hero-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .hero-card:active {
-            transform: scale(0.95);
-        }
-        .hero-card.dimmed {
-            opacity: 0.2;
-            filter: grayscale(100%);
-            transform: scale(0.9);
-        }
-        .hero-card.highlighted {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-            z-index: 10;
-        }
-
-        /* 弹窗动画 */
-        .modal-enter { animation: modalIn 0.3s ease-out forwards; }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-    </style>
+      }
+    };
+  </script>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: 'Noto Sans SC', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+    .app-shell { min-height: 100vh; min-height: 100dvh; padding-bottom: calc(env(safe-area-inset-bottom) + 3rem); }
+    .app-header { padding-top: env(safe-area-inset-top); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .nutrient-card { transition: transform 160ms ease, opacity 160ms ease, filter 160ms ease, box-shadow 160ms ease; }
+    .nutrient-card:active { transform: scale(0.97); }
+  </style>
 </head>
-<body class="bg-slate-50 dark:bg-darkBg transition-colors duration-300 overflow-hidden fixed inset-0">
-    <div id="root" class="h-full overflow-y-auto"></div>
+<body class="bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-100 transition-colors duration-200">
+  <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+  <script type="text/babel">
+    const { useEffect, useState } = React;
 
-        // ================= 数据源 =================
-        const nutrientsData = [
-            // --- 维生素 ---
-            {
-                id: 'va', category: 'vitamin', shortName: '维A', name: '维生素 A', nameEn: 'Vitamin A',
-                tags: ['eye', 'skin', 'immune'],
-                rda: '男 900mcg / 女 700mcg (视黄醇当量)', ul: '3000mcg (警惕线)',
-                interaction: '【权威相互作用警示】1. 绝对不要与异维A酸类药物（通常用于治疗严重痤疮）同服，这会导致致命的肝脏中毒。2. 长期饮酒会耗尽肝脏中的维生素A储备，酒鬼更容易缺乏。',
-                deficiency: '【NIH临床定义缺乏症】1. 暗适应能力丧失（夜盲症）：这不只是看不清，而是从亮处走到暗处（如进楼道）时眼前一片漆黑，极易摔倒。2. 干眼症（Xerophthalmia）：泪腺萎缩，眼睛感觉像进了沙子一样干涩疼痛，严重可致失明。3. 皮肤角化：皮肤变得像蟾蜍皮一样粗糙，尤其是胳膊和腿上。',
-                excess: '【急性与慢性中毒】维生素A是脂溶性的，排不出去会堆积在肝脏！长期超量（每天超过3000mcg）会导致严重的肝损伤、骨骼疼痛（骨头疼）、脱发、皮肤干燥脱皮。一次性摄入极大剂量会导致恶心、喷射性呕吐和颅内压升高。',
-                seniorAdvice: '【老年人特别警示】随着年龄增长，老年人的肝脏代谢能力显著下降。美国国立卫生研究院（NIH）特别提醒：老年人非常容易发生维生素A蓄积中毒！请尽量避免长期服用鱼肝油或纯维生素A胶囊。最安全的方法是吃红薯、胡萝卜、南瓜，它们含有“β-胡萝卜素”，身体需要多少转化多少，完全没有中毒风险，这是最智慧的补法。',
-                sources: '最安全来源：红薯、胡萝卜、南瓜、菠菜（β-胡萝卜素）。动物来源（需控制）：猪肝、鸡肝、鱼肝油。',
-                sourceRef: 'NIH Office of Dietary Supplements / WHO'
-            },
-            {
-                id: 'vd', category: 'vitamin', shortName: '维D', name: '维生素 D', nameEn: 'Vitamin D',
-                tags: ['bone', 'immune', 'mood'],
-                rda: '600-800 IU (70岁以上必须增加)', ul: '4000 IU (安全上限)',
-                interaction: '【关键转化机制】维生素D在体内的代谢必须要“镁”的参与。如果你缺镁，补再多维生素D也无法被激活，等于白补。此外，长期服用激素类药物（皮质类固醇）会严重破坏维生素D，导致骨质流失。',
-                deficiency: '【全身性健康危机】不仅是骨头问题！1. 骨质疏松与骨软化：骨头变脆，像枯木一样，稍微磕碰就骨折。2. 肌肉萎缩（少肌症）：腿脚无力，走路摇晃，是老年人跌倒的根本原因。3. 免疫防线崩溃：梅奥诊所研究表明，缺乏维D的人群更容易患呼吸道感染。4. 情绪障碍：与老年抑郁症密切相关。',
-                excess: '【高钙血症风险】虽然维D很难中毒，但长期每天几万单位的超量服用，会导致血液中钙含量过高（高钙血症）。表现为：极度口渴、尿频、恶心呕吐、便秘，严重时会导致肾结石和血管钙化（血管变硬）。',
-                seniorAdvice: '【生命基石 - 绝不可缺】这可能是老年人最重要的一种营养素！权威医学共识指出：老年人皮肤合成维生素D的能力比年轻人下降了75%以上！靠晒太阳已经远远不够了。缺乏维生素D是导致老年人卧床不起（骨折）的第一大杀手。建议所有65岁以上老人，务必去医院检查“血清25(OH)D”水平，并遵医嘱每天补充维生素D3，这是维持晚年生活质量的底线。',
-                sources: '极难从普通食物获取足量。主要来源：阳光照射（效率随年龄递减）、富脂鱼类（三文鱼）、蛋黄、强化牛奶、补充剂。',
-                sourceRef: 'Mayo Clinic / NIH / Endocrine Society'
-            },
-            {
-                id: 've', category: 'vitamin', shortName: '维E', name: '维生素 E', nameEn: 'Vitamin E',
-                tags: ['skin', 'blood'],
-                rda: '15mg (天然形式最佳)', ul: '1000mg',
-                interaction: '【抗凝血警告】这是手术前必须停用的补剂！因为它有抗凝血作用。如果您正在服用华法林、阿司匹林等抗凝药，千万不要擅自大剂量补充维生素E，否则可能导致出血不止，引发严重后果。',
-                deficiency: '【罕见但严重】普通饮食很难缺乏。一旦缺乏（通常因吸收不良），会导致溶血性贫血（红细胞破裂）、周围神经病变（手脚麻木、走路像踩棉花）、视网膜病变。',
-                excess: '【死亡率风险】早年的研究曾认为大剂量维E抗衰老，但最新的权威荟萃分析（Meta-analysis）震惊了医学界：长期服用高剂量维生素E（每天超过400 IU）不仅不能延寿，反而可能增加全因死亡率和出血性中风（脑溢血）的风险！',
-                seniorAdvice: '【理性看待 - 食补为上】请告诉长辈：不要迷信维生素E胶囊能“返老还童”。对于老年人，血管脆性增加，盲目大剂量吃维E弊大于利。最顶级、最安全的补充方式是每天吃一把坚果（杏仁、葵花籽）或食用植物油。只有确诊吸收障碍的人才需要吃药。',
-                sources: '葵花籽、杏仁、榛子、植物油（小麦胚芽油含量最高）、鳄梨。',
-                sourceRef: 'NIH / Harvard T.H. Chan School of Public Health'
-            },
-            {
-                id: 'vk', category: 'vitamin', shortName: '维K', name: '维生素 K (K1 & K2)', nameEn: 'Vitamin K',
-                tags: ['bone', 'blood'],
-                rda: '男 120mcg / 女 90mcg', ul: '未设定 (极安全)',
-                interaction: '【华法林的天敌】这是心脏病患者必须知道的常识！维生素K会直接抵消抗凝药（华法林）的药效，导致血栓风险飙升。服药期间，必须保持饮食中绿叶蔬菜（含K1）的量每天恒定，忽多忽少会要命。',
-                deficiency: '【出血与钙化】1. 凝血功能障碍：流鼻血止不住、牙龈出血、皮下稍微碰撞就大片淤青。2. “钙迁徙”错误（缺乏K2）：钙没有进入骨头（导致骨质疏松），反而沉积到了血管壁上（导致动脉硬化）。',
-                excess: '【天然无毒】天然形式的K1（蔬菜）和K2（纳豆）几乎没有毒性。但人工合成的水溶性K3已被禁止用于食品补充剂，因为它可能导致肝损伤。',
-                seniorAdvice: '【血管与骨骼的指挥官】老年人常面临“骨质疏松”和“血管硬化”的双重威胁。维生素K2是解决这个矛盾的关键！它像交通警察，把血液里的钙指挥进骨头里。NIH建议：老年人除了补钙和维D，多吃纳豆、硬奶酪补充K2，能真正实现“软化血管、硬化骨骼”的双重获益。',
-                sources: 'K1（管凝血）：羽衣甘蓝、菠菜等绿叶菜。K2（管骨骼）：纳豆（含量之王）、硬奶酪、蛋黄。',
-                sourceRef: 'NIH ODS / Cleveland Clinic'
-            },
-            {
-                id: 'vb1', category: 'vitamin', shortName: 'B1', name: '维生素 B1', nameEn: 'Thiamine',
-                tags: ['energy', 'brain', 'heart'],
-                rda: '男 1.2mg / 女 1.1mg', ul: '未设定 (水溶性安全)',
-                interaction: '【利尿剂流失】许多老年人因为高血压服用利尿剂（如呋塞米），这会强制B1随尿液排出，导致严重缺乏。此外，大量饮用浓茶或咖啡，其中的单宁酸会阻碍B1的吸收。',
-                deficiency: '【能量枯竭】B1是将食物转化为能量的关键。缺乏会导致：1. 脚气病（不是真菌感染，是下肢水肿、心脏衰竭）。2. 韦尼克脑病：这是急症，表现为突然的神志不清、走路不稳、眼球乱动，常被误认为是老年痴呆，实则是脑细胞“饿”坏了。',
-                excess: '【极度安全】作为水溶性维生素，多余的B1会迅速随尿液排出体外，几乎没有中毒风险。',
-                seniorAdvice: '【被忽视的乏力原因】很多老年人常年吃精米白面，早饭馒头咸菜，晚饭白粥，这是B1缺乏的重灾区！如果您感觉整天没劲、腿脚发沉、食欲不振，很可能是缺B1了。建议主食里必须加点糙米、燕麦，或者每天吃点瘦猪肉（B1含量极高），这是恢复体力的“神药”。',
-                sources: '猪肉（含量极高）、全谷物（糙米、燕麦）、豆类、葵花籽。',
-                sourceRef: 'NIH ODS'
-            },
-            {
-                id: 'vb2', category: 'vitamin', shortName: 'B2', name: '维生素 B2', nameEn: 'Riboflavin',
-                tags: ['eye', 'skin'],
-                rda: '男 1.3mg / 女 1.1mg', ul: '未设定 (排泄快)',
-                interaction: '某些抗抑郁药物和抗癌药物会干扰B2的代谢。长期酗酒也会阻碍B2的吸收和利用。',
-                deficiency: '【典型的粘膜病变】1. 口角炎：嘴角烂、裂口子，张嘴都疼。2. 舌炎：舌头红肿、疼痛（地图舌）。3. 眼睛问题：眼睛怕光、流泪、感觉有沙子、视力疲劳。4. 阴囊炎：私密部位的皮炎。',
-                excess: '【无害的荧光黄】非常安全。唯一的副作用是服用后尿液会变成明亮的荧光黄色，这是B2被排出的正常现象，完全不用恐慌，反而证明肾脏排泄功能正常。',
-                seniorAdvice: '【烂嘴角的克星】老年人消化功能弱，如果长期不喝奶、不吃动物内脏，很容易烂嘴角。B2对于维持口腔、眼睛和皮肤的健康至关重要。作为水溶性维生素，它每天都在流失，必须每天补充，不能“攒着吃”。',
-                sources: '牛奶、酸奶（最佳来源）、动物肝脏、鸡蛋、蘑菇、杏仁。',
-                sourceRef: 'NIH ODS'
-            },
-            {
-                id: 'vb3', category: 'vitamin', shortName: 'B3', name: '维生素 B3', nameEn: 'Niacin',
-                tags: ['skin', 'brain', 'heart'],
-                rda: '男 16mg / 女 14mg', ul: '35mg (指补充剂形式)',
-                interaction: '【痛风警告】高剂量的烟酸（B3的一种形式）会与尿酸竞争排泄，可能导致痛风发作！此外，异烟肼（抗结核药）会导致B3缺乏。',
-                deficiency: '【糙皮病 - Pellagra】如果不及时治疗会致死！著名的“3D”症状：1. Dermatitis（皮炎）：暴露在阳光下的皮肤变黑、粗糙、脱皮。2. Diarrhea（腹泻）。3. Dementia（痴呆）：精神错乱、记忆力丧失。',
-                excess: '【烟酸潮红与肝毒性】一次摄入过量（>30mg）会导致“烟酸潮红”，全身皮肤发红、发烫、刺痛，非常吓人。长期大剂量（克级别）用于降血脂时，必须监测肝功能，因为它可能导致严重的肝中毒和血糖升高。',
-                seniorAdvice: '【切勿乱用降脂】虽然大剂量烟酸曾被用于降血脂，但副作用极大（伤肝、升糖、痛风）。老年人千万不要听信偏方自己买烟酸粉吃！必须在医生严格监控下使用。日常饮食吃点肉和花生，通常不会缺。',
-                sources: '鸡胸肉、金枪鱼、牛肉、花生、全谷物。',
-                sourceRef: 'Mayo Clinic / NIH'
-            },
-            {
-                id: 'vb6', category: 'vitamin', shortName: 'B6', name: '维生素 B6', nameEn: 'Pyridoxine',
-                tags: ['brain', 'mood', 'skin'],
-                rda: '1.7mg (50岁以上需求增加)', ul: '100mg (严格上限)',
-                interaction: '【帕金森药物干扰】维生素B6会降低左旋多巴（治疗帕金森病的药）的疗效，帕金森患者补充前必须咨询医生！',
-                deficiency: '【免疫与神经双输】1. 贫血：红细胞虽多但个头小，运氧能力差。2. 免疫力崩盘：淋巴细胞减少。3. 神经精神症状：抑郁、困惑、甚至脑电波异常导致惊厥。4. 舌头光滑发红、口角炎。',
-                excess: '【神经毒性警报】这是B族维生素中少数几个会中毒的！长期每天摄入超过100mg（甚至更低），会导致严重的、痛苦的周围神经病变。症状包括：手脚麻木、感觉丧失、走路像踩在棉花上无法保持平衡。这种损伤有时是不可逆的！',
-                seniorAdvice: '【也是双刃剑】老年人对B6的需求量确实比年轻人高，它对认知功能和免疫力很重要。但是，绝对不能把它当成“补品”随便狂吃。一定要看清补充剂的剂量，千万别超标。通过吃鸡肉、鱼和香蕉补充是最安全的。',
-                sources: '鹰嘴豆（含量极高）、金枪鱼、三文鱼、鸡胸肉、土豆、香蕉。',
-                sourceRef: 'NIH ODS'
-            },
-            {
-                id: 'vb9', category: 'vitamin', shortName: '叶酸', name: '维生素 B9 (叶酸)', nameEn: 'Folate',
-                tags: ['blood', 'brain', 'heart'],
-                rda: '400mcg', ul: '1000mcg (合成叶酸上限)',
-                interaction: '【药物拮抗】甲氨蝶呤（治疗类风湿关节炎、癌症的常用药）是叶酸的死对头，它会阻断叶酸的利用，导致严重副作用，服药者需遵医嘱补叶酸。抗癫痫药物也会降低叶酸水平。',
-                deficiency: '【巨幼细胞贫血】红细胞变得巨大但未成熟，无法携带氧气，导致极度虚弱、疲劳。此外，还会导致舌头红肿疼痛、腹泻、以及同型半胱氨酸升高（增加中风风险）。',
-                excess: '【掩盖B12缺乏】这是最隐蔽的风险！老年人常缺B12。如果单独大量补充叶酸，会治好贫血的表面症状，但B12缺乏引起的神经损伤（痴呆、瘫痪风险）却在“正常”的化验单掩护下继续恶化，直到不可挽回。',
-                seniorAdvice: '【同补原则】老年人也是中风的高危人群，适当补充叶酸降低同型半胱氨酸是有益的。但是，梅奥诊所强调：补充叶酸前，必须先排除或同时补充维生素B12！这是保护老年人神经系统的铁律。',
-                sources: '深绿色蔬菜（菠菜、芦笋）、动物肝脏、豆类、强化谷物。',
-                sourceRef: 'NIH ODS / Mayo Clinic'
-            },
-            {
-                id: 'vb12', category: 'vitamin', shortName: 'B12', name: '维生素 B12', nameEn: 'Cobalamin',
-                tags: ['brain', 'blood', 'energy'],
-                rda: '2.4mcg', ul: '未设定 (极安全)',
-                interaction: '【胃药与糖药的阻击】1. 二甲双胍（糖友常吃）：长期服用会显著减少B12吸收。2. 质子泵抑制剂（奥美拉唑等胃药）：抑制胃酸，而B12吸收必须靠胃酸。常吃这些药的老人是B12缺乏的高危人群。',
-                deficiency: '【神经系统的毁灭】B12缺乏是灾难性的。1. 恶性贫血。2. 不可逆神经损伤：手脚麻木刺痛（像戴了手套袜子）、行走困难（平衡失调）、记忆力减退、甚至出现类似老年痴呆的幻觉和精神错乱。一旦神经损伤形成，补回去也未必能恢复！',
-                excess: '【无毒】B12毒性极低，身体吸收不了的会随尿排出，目前医学界未设定上限。',
-                seniorAdvice: '【吸收障碍是关键】权威数据表明：10%-30%的老年人患有萎缩性胃炎，胃酸不足，根本无法从肉类中吸收B12！因此，对于50岁以上人群，美国膳食指南明确建议：直接吃补充剂（甲钴胺）或强化食品！因为补充剂里的B12不需要胃酸消化就能直接被吸收。这是老年人必须打破的“食补迷思”。',
-                sources: '蛤蜊（含量之王）、牛肝、鱼、肉、蛋、奶。（植物性食物几乎完全不含B12，素食者必须吃补剂）。',
-                sourceRef: 'USDA / Mayo Clinic / Harvard Health'
-            },
-            {
-                id: 'vc', category: 'vitamin', shortName: '维C', name: '维生素 C', nameEn: 'Vitamin C',
-                tags: ['immune', 'skin', 'blood'],
-                rda: '男 90mg / 女 75mg', ul: '2000mg',
-                interaction: '【铁的黄金搭档】维C能将植物铁的吸收率提升数倍。但要注意：极大剂量的维C可能会干扰华法林（抗凝药）的效果，且可能干扰血糖试纸的读数。',
-                deficiency: '【坏血病】这不仅是历史名词。缺乏维C会导致：1. 胶原蛋白无法合成：伤口不愈合、牙龈肿胀出血、牙齿松动脱落。2. 微血管破裂：皮肤上莫名出现大片淤青和出血点。3. 关节疼痛和严重疲劳。',
-                excess: '【结石风险】虽然维C水溶性好，但每天超过2000mg（2克）会导致腹泻、恶心、胃痉挛。最重要的是：过量的维C在体内代谢为草酸，对于有肾结石病史（特别是草酸钙结石）的人，会大大增加结石复发的风险！',
-                seniorAdvice: '【适度即可】老年人免疫力弱，适当补维C（每天100-500mg）有助于抵抗感染和保护血管。但千万别迷信“大剂量维C防癌”的谣言每天吃几克。最健康的方式是每天吃两个猕猴桃或一盘西兰花，既补C又补膳食纤维。',
-                sources: '红辣椒（含量秒杀柠檬）、番石榴、猕猴桃、草莓、柑橘类、西兰花。',
-                sourceRef: 'NIH ODS'
-            },
+    const sources = {
+      'ods-supp-safe': { label: 'NIH ODS', title: 'Dietary Supplements: What You Need to Know', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/WYNTK-Consumer/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-va': { label: 'NIH ODS', title: 'Vitamin A Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-vd': { label: 'NIH ODS', title: 'Vitamin D Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-ve': { label: 'NIH ODS', title: 'Vitamin E Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-vk': { label: 'NIH ODS', title: 'Vitamin K Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/VitaminK-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-b1': { label: 'NIH ODS', title: 'Thiamin Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Thiamin-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-b2': { label: 'NIH ODS', title: 'Riboflavin Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Riboflavin-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-b3': { label: 'NIH ODS', title: 'Niacin Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Niacin-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-b6': { label: 'NIH ODS', title: 'Vitamin B6 Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-folate': { label: 'NIH ODS', title: 'Folate Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-b12': { label: 'NIH ODS', title: 'Vitamin B12 Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-vc': { label: 'NIH ODS', title: 'Vitamin C Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-ca': { label: 'NIH ODS', title: 'Calcium Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-mg': { label: 'NIH ODS', title: 'Magnesium Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-k': { label: 'NIH ODS', title: 'Potassium Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Potassium-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'fda-na': { label: 'FDA', title: 'Sodium in Your Diet', publisher: 'U.S. Food and Drug Administration', url: 'https://www.fda.gov/food/nutrition-education-resources-materials/sodium-your-diet', updatedOrAccessed: 'Content current as of 2024-03-05' },
+      'medline-na-low': { label: 'MedlinePlus', title: 'Low Blood Sodium', publisher: 'MedlinePlus Medical Encyclopedia', url: 'https://medlineplus.gov/ency/article/000394.htm', updatedOrAccessed: 'Reviewed 2025-05-19' },
+      'ods-fe': { label: 'NIH ODS', title: 'Iron Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-zn': { label: 'NIH ODS', title: 'Zinc Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-se': { label: 'NIH ODS', title: 'Selenium Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Selenium-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-iodine': { label: 'NIH ODS', title: 'Iodine Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Iodine-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-cu': { label: 'NIH ODS', title: 'Copper Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Copper-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' },
+      'ods-mn': { label: 'NIH ODS', title: 'Manganese Fact Sheet for Health Professionals', publisher: 'NIH Office of Dietary Supplements', url: 'https://ods.od.nih.gov/factsheets/Manganese-HealthProfessional/', updatedOrAccessed: 'Accessed 2026-04-12' }
+    };
 
-            // --- 矿物质 ---
-            {
-                id: 'ca', category: 'mineral', shortName: '钙', name: '钙', nameEn: 'Calcium',
-                tags: ['bone', 'muscle', 'heart'],
-                rda: '1000-1200mg (女性50+，男性70+需1200mg)', ul: '2000-2500mg',
-                interaction: '【吸收的竞争】1. 铁和锌：高剂量的钙会“打压”铁和锌的吸收，所以钙片最好和多维元素片分开吃。2. 抗生素：钙会和四环素、喹诺酮类抗生素结合失效，服药前后2小时别喝奶。',
-                deficiency: '【静悄悄的骨折】早期通常没有症状（骨质流失是不痛的）。长期缺乏导致骨质疏松（骨头变脆）、佝偻病。急性低钙血症会导致可怕的“手足抽搐”（肌肉强直性痉挛）、心律失常，甚至心脏骤停。',
-                excess: '【钙的反作用】补钙不是越多越好！超量补钙（尤其是碳酸钙补剂）会导致：1. 便秘。2. 肾结石风险增加。3. 干扰心脏功能。4. 血管钙化：多余的钙没去骨头，反而沉积在血管壁上，增加心脏病风险。',
-                seniorAdvice: '【少量多次，食补为王】NIH金标准建议：尽量通过饮食（牛奶、酸奶、豆腐）补钙。如果必须吃钙片，请遵循“少量多次”原则，一次不要超过500mg，因为肠道一次吸收不了那么多。一定要随餐服用以减少胃部不适。最最重要的是：没有维生素D，吃再多钙也是穿肠过！',
-                sources: '牛奶、酸奶、奶酪、沙丁鱼（带骨吃）、豆腐（石膏点的）、深绿色蔬菜。',
-                sourceRef: 'National Osteoporosis Foundation (NOF)'
-            },
-            {
-                id: 'mg', category: 'mineral', shortName: '镁', name: '镁', nameEn: 'Magnesium',
-                tags: ['sleep', 'muscle', 'mood', 'bone', 'heart'],
-                rda: '男 420mg / 女 320mg', ul: '350mg (仅限补充剂摄入量，食物来源不限)',
-                interaction: '【药师提醒】1. 隔开服用：镁会减少双磷酸盐（骨质疏松药）和部分抗生素的吸收。2. 镁的强盗：长期服用利尿剂和质子泵抑制剂（胃药）会耗尽体内的镁，导致顽固性低镁血症。',
-                deficiency: '【身体的火花塞失效】镁参与体内600多种反应。缺乏会导致：1. 肌肉震颤、抽筋（特别是夜间小腿抽筋）。2. 顽固性失眠和焦虑。3. 心律失常（心跳乱）、高血压。4. 骨质疏松（镁也是骨骼成分）。',
-                excess: '【腹泻预警】食物中的镁非常安全，肾脏会排出多余的。但补充剂（尤其是氧化镁）吃多了会导致腹泻、恶心。严重过量（通常发生在肾衰竭患者乱吃含镁泻药时）会导致低血压、呼吸麻痹和心脏骤停。',
-                seniorAdvice: '【放松神经的矿物质】很多老年人睡不好、腿抽筋、便秘、血压高，其实根源可能是缺镁！适当补充容易吸收的镁（如甘氨酸镁、柠檬酸镁）能显著改善睡眠和便秘。但特别提醒：肾功能不全的老人，排镁能力弱，补充前必须咨询医生，以免中毒。',
-                sources: '南瓜籽（含量极高）、菠菜、黑豆、黑巧克力、杏仁、鳄梨。',
-                sourceRef: 'NIH ODS / Harvard Health'
-            },
-            {
-                id: 'k', category: 'mineral', shortName: '钾', name: '钾', nameEn: 'Potassium',
-                tags: ['heart', 'muscle', 'blood'],
-                rda: '男 3400mg / 女 2600mg', ul: '未设定（肾功能正常者）',
-                interaction: '【致命的叠加】许多降压药（ACEI/ARB类，如**普利、**沙坦）和保钾利尿剂（螺内酯）本身就会导致血钾升高。如果服药期间再擅自服用钾补充剂，会导致高钾血症，引发生命危险！',
-                deficiency: '【无力与心慌】1. 严重的肌肉无力，连抬手都费劲。2. 顽固性便秘（肠道肌肉无力）。3. 心律失常。4. 血压升高（钾太少压不住钠）。',
-                excess: '【心脏停跳的隐形杀手】高钾血症通常没有预兆，一旦发作可能直接导致心脏骤停！这主要发生在肾衰竭患者身上，或者乱吃药物的人。',
-                seniorAdvice: '【吃菜不吃药】随着年龄增长，肾脏排泄钾的能力会自然衰退。因此，老年人补钾的金科玉律是：多吃蔬菜水果（这是安全的），但绝对不要自己去买“钾片”吃，也别为了降压狂吃低钠盐（高钾盐），除非医生根据你的验血结果开了处方。',
-                sources: '土豆（含皮）、红薯、香蕉、菠菜、鳄梨、西红柿。',
-                sourceRef: 'American Heart Association (AHA) / NIH'
-            },
-            {
-                id: 'na', category: 'mineral', shortName: '钠', name: '钠', nameEn: 'Sodium',
-                tags: ['heart', 'blood'],
-                rda: '建议 <2300mg (约6克盐)，高血压者 <1500mg', ul: '越少越好',
-                interaction: '【水钠潴留】钠会把水锁在血管里，导致血容量增加，血压飙升。高钠还会导致尿钙排出增加，是骨质疏松的隐形帮凶。钾可以对抗钠的这种升压作用。',
-                deficiency: '【低钠血症 - 老年急症】虽然现代人普遍钠超标，但老年人极易出现低钠血症！原因：利尿剂副作用、出汗后只喝白水不补盐、抗抑郁药副作用。症状：恶心、头痛、意识模糊、抽搐、像傻了一样（脑水肿）。',
-                excess: '【血管的压力】长期高钠饮食是高血压、中风、心脏病、胃癌的直接推手。它还会让血管壁变厚变硬。',
-                seniorAdvice: '【味觉的欺骗】老年人味蕾退化，觉得菜没味就拼命放盐。这是极其危险的。建议：1. 使用醋、柠檬、蒜、葱、辣椒等天然香料提味。2. 警惕“隐形盐”：酱油、味精、咸菜、火腿肠里的盐比你想象的多得多。3. 监控血压，定期查电解质防止低钠。',
-                sources: '食盐、酱油、腌制食品（咸菜、腊肉）、加工肉类、方便面。',
-                sourceRef: 'CDC / WHO / AHA'
-            },
+    const c = (text, sourceIds) => ({ text, sourceIds });
+    const source = id => [id];
+    const withSafety = id => [id, 'ods-supp-safe'];
 
-            // --- 微量元素 ---
-            {
-                id: 'fe', category: 'trace', shortName: '铁', name: '铁', nameEn: 'Iron',
-                tags: ['blood', 'energy', 'brain'],
-                rda: '男 8mg / 女 18mg (50岁以上降为8mg)', ul: '45mg',
-                interaction: '【吸收的拉锯战】1. 维C是神助攻：维C能把植物铁的吸收率提高好几倍。2. 茶和咖啡是拦路虎：里面的多酚和单宁酸会锁死铁，饭后别马上喝浓茶。3. 钙片要分开吃：钙会抑制铁吸收。',
-                deficiency: '【缺铁性贫血】全世界最常见的营养缺乏。症状：脸色苍白、极度疲劳、爬楼梯气喘吁吁、指甲变脆凹陷（反甲）、异食癖（想吃土或冰）。脑供氧不足会导致反应迟钝。',
-                excess: '【氧化生锈】铁是强氧化剂，过量的铁就像身体里生了锈！它会沉积在肝脏、心脏、胰腺，导致肝硬化、心力衰竭、糖尿病（青铜色糖尿病）。',
-                seniorAdvice: '【止血比补血重要】绝经后女性和老年男性不再失血，对铁的需求量骤降。除非确诊缺铁性贫血（必须由医生看验血单确认），否则**千万不要**吃含铁的复合维生素或补铁口服液！老年人贫血首先要查是不是消化道出血（如溃疡、肿瘤），而不是盲目补铁。过量的铁会加速衰老和器官损伤。',
-                sources: '红肉（牛肉、羊肉）、动物肝脏、血制品（鸭血）、强化谷物、扁豆。',
-                sourceRef: 'NIH ODS'
-            },
-            {
-                id: 'zn', category: 'trace', shortName: '锌', name: '锌', nameEn: 'Zinc',
-                tags: ['immune', 'skin', 'eye'],
-                rda: '男 11mg / 女 8mg', ul: '40mg',
-                interaction: '【铜的跷跷板】锌和铜在肠道里竞争同一个吸收通道。长期高剂量补锌（每天超过50mg）会把铜“挤”出去，导致严重的铜缺乏。此外，锌会降低四环素和喹诺酮类抗生素的药效。',
-                deficiency: '【感官与免疫衰退】1. 味觉嗅觉失灵：吃东西像嚼蜡，没有味道（这是老年人食欲差的常见原因）。2. 伤口不愈合：老烂腿、褥疮难以恢复。3. 免疫力低下：动不动就感冒肺炎。4. 脱发和皮炎。',
-                excess: '【免疫反转】适量锌增强免疫，过量锌反而抑制免疫功能！还会导致恶心、呕吐、好胆固醇（HDL）降低。最严重的是继发性铜缺乏，导致贫血和神经损伤。',
-                seniorAdvice: '【胃口的开关】如果您发现家里长辈突然做菜很咸、或者不想吃饭，先别急着怪他们，可能是缺锌了。适当补锌（每天15-20mg）可以改善食欲和免疫力，对伤口愈合也极有帮助。但切记：不要长期超量，最好选择含有少量铜的锌补充剂，以防顾此失彼。',
-                sources: '牡蛎（含量遥遥领先）、牛肉、螃蟹、猪排、南瓜籽、鹰嘴豆。',
-                sourceRef: 'Mayo Clinic / NIH'
-            },
-            {
-                id: 'se', category: 'trace', shortName: '硒', name: '硒', nameEn: 'Selenium',
-                tags: ['immune', 'thyroid'],
-                rda: '55mcg', ul: '400mcg (包括食物和补剂)',
-                interaction: '【抗氧化联盟】硒与维生素E协同工作，像保镖一样保护细胞免受氧化损伤。它对甲状腺激素的代谢至关重要，是甲状腺的守护神。',
-                deficiency: '【心脏与免疫】1. 克山病（一种充血性心肌病）。2. 大骨节病。3. 甲状腺功能减退。4. 免疫功能受损，更容易被病毒感染。',
-                excess: '【毒性极强】硒的安全范围非常窄！中毒症状包括：呼气有大蒜味、头发指甲变脆脱落、皮疹、疲劳、神经损伤。长期过量还可能增加糖尿病风险。',
-                seniorAdvice: '【过犹不及】硒被炒作得很厉害，但NIH权威数据表明：大多数人饮食中不缺硒。千万不要迷信“富硒产品”而长期大量乱补。每天吃两个巴西坚果，硒摄入量就可能超标了！除非有医嘱（如针对自身免疫性甲状腺炎），否则普通老人正常吃饭即可，不要刻意吃高剂量硒补剂。',
-                sources: '巴西坚果（含量极高，一颗即满足全天）、金枪鱼、沙丁鱼、虾、猪肉。',
-                sourceRef: 'NIH ODS'
-            },
-            {
-                id: 'i', category: 'trace', shortName: '碘', name: '碘', nameEn: 'Iodine',
-                tags: ['energy', 'thyroid'],
-                rda: '150mcg', ul: '1100mcg',
-                interaction: '【甲状腺的燃料】碘是制造甲状腺激素的原料。十字花科蔬菜（西兰花、卷心菜）含有的致甲状腺肿物质会阻碍碘吸收，但只要煮熟了吃就没事。缺硒会加重碘缺乏的后果。',
-                deficiency: '【大脖子与迟钝】1. 甲状腺肿大（脖子变粗）。2. 甲状腺功能减退（甲减）：怕冷、乏力、体重莫名增加、反应迟钝、便秘、嗜睡。这常被误认为是正常的衰老迹象。',
-                excess: '【甲状腺的负担】碘补多了也会导致甲状腺肿！还可能诱发甲亢、自身免疫性甲状腺炎（桥本氏病），甚至增加甲状腺乳头状癌的风险。',
-                seniorAdvice: '【因人而异】老年人甲状腺结节高发。如果生活在沿海地区常吃海鲜，或者有自身免疫性甲状腺疾病（如桥本），可能需要限制碘摄入（买无碘盐，少吃海带）。如果是内陆缺碘地区，则需要加碘盐。这件事必须听内分泌科医生的，不能一刀切。',
-                sources: '海带、紫菜（含量极高）、海鱼、贝类、加碘盐、奶制品。',
-                sourceRef: 'NIH ODS / American Thyroid Association'
-            },
-            {
-                id: 'cu', category: 'trace', shortName: '铜', name: '铜', nameEn: 'Copper',
-                tags: ['blood', 'bone', 'immune'],
-                rda: '900mcg', ul: '10000mcg',
-                interaction: '【锌的受害者】如前所述，高剂量的锌是铜的死敌，会强力抑制铜吸收。另外，高剂量的维生素C也可能略微降低铜水平。',
-                deficiency: '【补铁无效的贫血】铜负责帮铁“搬家”，缺铜时，铁无法被利用。症状：1. 贫血（吃铁药也好不了）。2. 白细胞减少（极易感染）。3. 骨质疏松。4. 神经病变（麻木、步态不稳），常被误诊为B12缺乏。',
-                excess: '【肝脑毒性】游离铜离子是有毒的。过量会导致肝脏损伤、肾衰竭、胃肠道剧烈呕吐。威尔逊氏病患者因基因缺陷无法排泄铜，必须严格忌口。',
-                seniorAdvice: '【被遗忘的元素】一般人正常吃饭不会缺铜。但如果您为了前列腺健康或免疫力在长期吃锌补剂，请务必关注铜的摄入。建议选择“锌铜配方”的补剂（通常每15-30mg锌配1-2mg铜），以防顾此失彼。',
-                sources: '牛肝（含量极高）、牡蛎、香菇、黑巧克力、腰果、葵花籽。',
-                sourceRef: 'NIH ODS'
-            },
-            {
-                id: 'mn', category: 'trace', shortName: '锰', name: '锰', nameEn: 'Manganese',
-                tags: ['bone', 'energy'],
-                rda: '男 2.3mg / 女 1.8mg', ul: '11mg',
-                interaction: '【吸收竞争】铁和锰在肠道吸收上有竞争关系，缺铁的人吸收锰会更多。含有镁和钙的制酸剂（胃药）可能会减少锰的吸收。',
-                deficiency: '【罕见】人类极少缺锰。可能导致骨骼畸形、糖耐量受损（血糖控制差）、皮疹、头发变红。',
-                excess: '【神经毒性 - 锰狂症】锰主要通过胆汁排泄。如果有严重肝病或胆道梗阻的老年人，排不出去，锰会堆积在脑部，导致神经毒性！症状类似帕金森病：震颤、僵硬、行动迟缓。',
-                seniorAdvice: '【肝病患者注意】锰虽然是微量元素，但重金属属性明显。肝功能不好的老年人，不要刻意去吃高锰补充剂。喝茶和吃全谷物就能获得足够的锰。',
-                sources: '全谷物（糙米、燕麦）、蛤蜊、坚果（榛子、核桃）、茶叶、豆类。',
-                sourceRef: 'NIH ODS'
-            }
-        ];
+    const nutrientsData = [
+      { id: 'va', category: 'vitamin', shortName: '维A', name: '维生素 A', nameEn: 'Vitamin A', tags: ['eye','skin','immune'], basic: [c('维生素 A 参与视觉、免疫功能、细胞生长和上皮组织维护。', source('ods-va'))], intake: [c('成人男性 RDA 为 900 mcg RAE，成人女性 RDA 为 700 mcg RAE，成人 UL 为 3,000 mcg RAE。', source('ods-va'))], foods: [c('常见食物来源包括动物肝脏、鱼油、奶制品、鸡蛋，以及能提供维生素 A 原的深绿色和橙黄色蔬果。', source('ods-va'))], deficiency: [c('缺乏可影响暗适应并导致干眼症，严重缺乏会增加感染和死亡风险。', source('ods-va'))], excess: [c('过量预成型维生素 A 可导致头晕、恶心、头痛、昏迷甚至死亡，并可能损害骨骼和肝脏。', source('ods-va'))], interactions: [c('维生素 A 补充剂可能与减肥药奥利司他、类维生素 A 药物和部分肝毒性药物产生需要医生评估的相互作用。', withSafety('ods-va'))], senior: [c('老年人如同时服用多种药物或补充剂，应先把维生素 A 剂量和药物清单交给医生或药师核对。', withSafety('ods-va'))] },
+      { id: 'vd', category: 'vitamin', shortName: '维D', name: '维生素 D', nameEn: 'Vitamin D', tags: ['bone','immune','mood'], basic: [c('维生素 D 帮助钙吸收并维持骨骼矿化，也参与免疫和细胞功能。', source('ods-vd'))], intake: [c('19-70 岁成人 RDA 为 15 mcg 或 600 IU，70 岁以上成人 RDA 为 20 mcg 或 800 IU，成人 UL 为 100 mcg 或 4,000 IU。', source('ods-vd'))], foods: [c('天然来源较少，常见来源包括富脂鱼类、鱼肝油、蛋黄、强化牛奶和强化食品。', source('ods-vd'))], deficiency: [c('缺乏可导致儿童佝偻病和成人骨软化，并可能加重骨质疏松风险。', source('ods-vd'))], excess: [c('过量维生素 D 主要通过高钙血症造成恶心、呕吐、肌无力、疼痛、食欲下降、脱水、尿频、口渴和肾结石等问题。', source('ods-vd'))], interactions: [c('维生素 D 补充剂可能与奥利司他、他汀类药物、类固醇和噻嗪类利尿剂等药物产生需要核对的相互作用。', withSafety('ods-vd'))], senior: [c('70 岁以上成人的推荐摄入量高于 19-70 岁成人，补充剂剂量仍应与化验结果和医生建议一起判断。', withSafety('ods-vd'))] },
+      { id: 've', category: 'vitamin', shortName: '维E', name: '维生素 E', nameEn: 'Vitamin E', tags: ['skin','blood'], basic: [c('维生素 E 是脂溶性抗氧化营养素，能保护细胞膜免受氧化损伤。', source('ods-ve'))], intake: [c('成人 RDA 为 15 mg α-生育酚，成人 UL 为 1,000 mg α-生育酚。', source('ods-ve'))], foods: [c('常见食物来源包括植物油、坚果、种子和绿叶蔬菜。', source('ods-ve'))], deficiency: [c('缺乏较少见，可能在脂肪吸收障碍人群中造成神经和肌肉问题。', source('ods-ve'))], excess: [c('高剂量 α-生育酚补充剂可增加出血风险，并可能与抗凝治疗相关风险叠加。', source('ods-ve'))], interactions: [c('正在使用抗凝或抗血小板药物、化疗或放疗的人，使用维生素 E 补充剂前应咨询医生。', withSafety('ods-ve'))], senior: [c('老年人常见抗凝或抗血小板用药，维生素 E 补充剂不宜在未核对用药清单时自行加量。', withSafety('ods-ve'))] },
+      { id: 'vk', category: 'vitamin', shortName: '维K', name: '维生素 K', nameEn: 'Vitamin K', tags: ['bone','blood'], basic: [c('维生素 K 是凝血蛋白和骨骼相关蛋白合成所需的营养素。', source('ods-vk'))], intake: [c('成人男性 AI 为 120 mcg，成人女性 AI 为 90 mcg，美国膳食参考摄入量未为维生素 K 设定 UL。', source('ods-vk'))], foods: [c('常见来源包括菠菜、羽衣甘蓝、花椰菜、植物油和部分发酵食品。', source('ods-vk'))], deficiency: [c('缺乏可造成凝血时间延长和出血倾向。', source('ods-vk'))], excess: [c('美国膳食参考摄入量未为天然维生素 K 设定 UL，但这不等于补充剂适合所有用药人群。', withSafety('ods-vk'))], interactions: [c('维生素 K 会影响华法林等维生素 K 拮抗剂的抗凝效果，用药者应保持摄入稳定并听从医生建议。', withSafety('ods-vk'))], senior: [c('使用华法林的老年人不应自行大幅改变绿叶蔬菜或维生素 K 补充剂摄入。', withSafety('ods-vk'))] },
+      { id: 'vb1', category: 'vitamin', shortName: 'B1', name: '维生素 B1', nameEn: 'Thiamin', tags: ['energy','brain','heart'], basic: [c('维生素 B1 作为辅酶参与能量代谢，并支持细胞生长、发育和功能。', source('ods-b1'))], intake: [c('成人男性 RDA 为 1.2 mg，成人女性 RDA 为 1.1 mg，美国膳食参考摄入量未为硫胺素设定 UL。', source('ods-b1'))], foods: [c('常见来源包括全谷物、强化谷物、肉类、鱼类、豆类、坚果和种子。', source('ods-b1'))], deficiency: [c('缺乏可导致脚气病，并可出现周围神经病变、心血管表现或韦尼克-科萨科夫综合征。', source('ods-b1'))], excess: [c('美国膳食参考摄入量未为硫胺素设定 UL，因为口服高摄入量导致不良反应的证据有限。', source('ods-b1'))], interactions: [c('利尿剂和氟尿嘧啶等药物可能影响硫胺素状态，需要结合用药情况评估。', withSafety('ods-b1'))], senior: [c('长期饮酒、饮食单一或使用影响营养状态药物的老年人，应由医生评估硫胺素缺乏风险。', withSafety('ods-b1'))] },
+      { id: 'vb2', category: 'vitamin', shortName: 'B2', name: '维生素 B2', nameEn: 'Riboflavin', tags: ['eye','skin','energy'], basic: [c('维生素 B2 参与能量产生、细胞功能、脂肪代谢和药物代谢。', source('ods-b2'))], intake: [c('成人男性 RDA 为 1.3 mg，成人女性 RDA 为 1.1 mg，美国膳食参考摄入量未为核黄素设定 UL。', source('ods-b2'))], foods: [c('常见来源包括鸡蛋、动物内脏、瘦肉、牛奶、绿色蔬菜和强化谷物。', source('ods-b2'))], deficiency: [c('缺乏可出现口角炎、唇炎、舌炎、脂溢性皮炎和贫血等表现。', source('ods-b2'))], excess: [c('美国膳食参考摄入量未为核黄素设定 UL，因为高摄入量造成不良反应的证据有限。', source('ods-b2'))], interactions: [c('长期使用药物或多种补充剂时，应让医生或药师核对核黄素与整体用药方案。', withSafety('ods-b2'))], senior: [c('饮食摄入不足或食物选择受限的老年人，可把口腔、皮肤和贫血相关症状交由医生鉴别。', withSafety('ods-b2'))] },
+      { id: 'vb3', category: 'vitamin', shortName: 'B3', name: '维生素 B3', nameEn: 'Niacin', tags: ['skin','brain','heart','energy'], basic: [c('烟酸参与 NAD 和 NADP 辅酶形成，并支持能量代谢和细胞功能。', source('ods-b3'))], intake: [c('成人男性 RDA 为 16 mg NE，成人女性 RDA 为 14 mg NE，成人补充剂或强化食品来源烟酸 UL 为 35 mg。', source('ods-b3'))], foods: [c('常见来源包括肉类、禽肉、鱼、坚果、豆类、谷物和强化食品。', source('ods-b3'))], deficiency: [c('严重烟酸缺乏会导致糙皮病，其典型表现包括皮炎、腹泻和痴呆样改变。', source('ods-b3'))], excess: [c('高剂量烟酸可导致皮肤潮红、胃肠不适、肝毒性、高血糖和高尿酸等风险。', source('ods-b3'))], interactions: [c('高剂量烟酸与降脂药、降压药、抗凝药、抗糖尿病药或肝毒性药物同用时需要医生评估。', withSafety('ods-b3'))], senior: [c('老年人不应把高剂量烟酸当作自行降脂方案，相关用途应由医生监测。', withSafety('ods-b3'))] },
+      { id: 'vb6', category: 'vitamin', shortName: 'B6', name: '维生素 B6', nameEn: 'Vitamin B6', tags: ['brain','mood','skin','blood'], basic: [c('维生素 B6 参与蛋白质、脂肪和碳水化合物代谢，并参与神经递质和血红蛋白相关过程。', source('ods-b6'))], intake: [c('51 岁以上成人男性 RDA 为 1.7 mg，51 岁以上成人女性 RDA 为 1.5 mg，美国成人 UL 为 100 mg。', source('ods-b6'))], foods: [c('常见来源包括鱼、牛肝、禽肉、土豆和其他淀粉类蔬菜、部分水果以及强化谷物。', source('ods-b6'))], deficiency: [c('缺乏可出现贫血、皮炎、舌炎、抑郁、意识混乱和免疫功能改变。', source('ods-b6'))], excess: [c('长期高剂量维生素 B6 补充剂可导致严重感觉神经病变、皮肤损害、光敏和胃肠症状。', source('ods-b6'))], interactions: [c('维生素 B6 补充剂可能与环丝氨酸、部分抗癫痫药和茶碱等药物产生需要核对的相互作用。', withSafety('ods-b6'))], senior: [c('老年人如果使用复合维生素和单方 B6，应把总剂量相加后再判断是否接近 UL。', withSafety('ods-b6'))] },
+      { id: 'vb9', category: 'vitamin', shortName: '叶酸', name: '维生素 B9', nameEn: 'Folate', tags: ['blood','brain','heart'], basic: [c('叶酸参与核酸合成和细胞分裂，并参与同型半胱氨酸代谢。', source('ods-folate'))], intake: [c('成人 RDA 为 400 mcg DFE，成人合成叶酸 UL 为 1,000 mcg。', source('ods-folate'))], foods: [c('常见来源包括深绿色蔬菜、豆类、花生、葵花籽、动物肝脏和强化谷物。', source('ods-folate'))], deficiency: [c('缺乏可导致巨幼细胞性贫血，并可出现虚弱、疲劳、注意力下降、易怒、头痛、心悸和气短。', source('ods-folate'))], excess: [c('高剂量合成叶酸可掩盖维生素 B12 缺乏并延误神经损害的识别。', source('ods-folate'))], interactions: [c('叶酸补充剂可能与甲氨蝶呤、部分抗癫痫药和柳氮磺吡啶等药物产生需要医生评估的相互作用。', withSafety('ods-folate'))], senior: [c('老年人补充较高剂量叶酸前，应同时关注维生素 B12 状态。', withSafety('ods-folate'))] },
+      { id: 'vb12', category: 'vitamin', shortName: 'B12', name: '维生素 B12', nameEn: 'Vitamin B12', tags: ['brain','blood','energy'], basic: [c('维生素 B12 参与神经功能、DNA 合成和红细胞形成。', source('ods-b12'))], intake: [c('成人 RDA 为 2.4 mcg，美国膳食参考摄入量未为维生素 B12 设定 UL。', source('ods-b12'))], foods: [c('天然来源主要是动物性食物，包括鱼、肉、禽、蛋和奶制品，强化食品也可提供维生素 B12。', source('ods-b12'))], deficiency: [c('缺乏可导致巨幼细胞性贫血、疲劳、虚弱、便秘、食欲下降、体重下降和神经系统症状。', source('ods-b12'))], excess: [c('美国膳食参考摄入量未为维生素 B12 设定 UL，因为健康人群高摄入量导致毒性的证据有限。', source('ods-b12'))], interactions: [c('二甲双胍、胃酸抑制药和部分抗生素可能影响维生素 B12 状态或检测，需要医生结合用药判断。', withSafety('ods-b12'))], senior: [c('50 岁以上成人应主要通过强化食品或补充剂满足维生素 B12 需求，因为部分老年人从天然食物中吸收维生素 B12 的能力下降。', source('ods-b12'))] },
+      { id: 'vc', category: 'vitamin', shortName: '维C', name: '维生素 C', nameEn: 'Vitamin C', tags: ['immune','skin','blood'], basic: [c('维生素 C 参与胶原合成、抗氧化防御、免疫功能，并促进非血红素铁吸收。', source('ods-vc'))], intake: [c('成人男性 RDA 为 90 mg，成人女性 RDA 为 75 mg，吸烟者需要额外 35 mg，成人 UL 为 2,000 mg。', source('ods-vc'))], foods: [c('常见来源包括柑橘类水果、红绿甜椒、猕猴桃、西兰花、草莓、抱子甘蓝和土豆。', source('ods-vc'))], deficiency: [c('严重缺乏会导致坏血病，表现可包括疲劳、牙龈炎症、皮肤瘀点、伤口愈合不良和关节疼痛。', source('ods-vc'))], excess: [c('高剂量维生素 C 可导致腹泻、恶心、腹部痉挛和其他胃肠不适。', source('ods-vc'))], interactions: [c('维生素 C 补充剂可能与部分化疗或放疗方案产生需要医生评估的相互作用。', withSafety('ods-vc'))], senior: [c('有肾结石病史、肾病或接受癌症治疗的老年人，使用高剂量维生素 C 前应咨询医生。', withSafety('ods-vc'))] },
+      { id: 'ca', category: 'mineral', shortName: '钙', name: '钙', nameEn: 'Calcium', tags: ['bone','muscle','heart'], basic: [c('钙是骨骼和牙齿的主要矿物质，也参与血管收缩、肌肉功能、神经传导和激素分泌。', source('ods-ca'))], intake: [c('51-70 岁女性和 71 岁以上成人 RDA 为 1,200 mg，19-50 岁成人和 51-70 岁男性 RDA 为 1,000 mg，成人 UL 通常为 2,000-2,500 mg。', source('ods-ca'))], foods: [c('常见来源包括牛奶、酸奶、奶酪、带骨鱼、强化饮料、豆腐和部分绿叶蔬菜。', source('ods-ca'))], deficiency: [c('长期摄入不足会影响骨量，严重低钙血症可造成麻木、刺痛、肌肉痉挛和心律异常等问题。', source('ods-ca'))], excess: [c('过量钙补充剂可增加便秘、肾结石和高钙血症风险。', source('ods-ca'))], interactions: [c('钙补充剂可影响部分抗生素、双膦酸盐、左甲状腺素和铁锌镁等营养素吸收，需要安排间隔或由医生指导。', withSafety('ods-ca'))], senior: [c('老年人补钙应优先核对总摄入量、肾结石史、肾功能和正在服用的甲状腺或骨质疏松药物。', withSafety('ods-ca'))] },
+      { id: 'mg', category: 'mineral', shortName: '镁', name: '镁', nameEn: 'Magnesium', tags: ['sleep','muscle','mood','bone','heart'], basic: [c('镁参与能量产生、蛋白质合成、肌肉和神经功能、血糖控制、血压调节和骨骼发育。', source('ods-mg'))], intake: [c('成人男性 RDA 为 400-420 mg，成人女性 RDA 为 310-320 mg，补充剂或药物来源镁的成人 UL 为 350 mg。', source('ods-mg'))], foods: [c('常见来源包括绿叶蔬菜、豆类、坚果、种子和全谷物。', source('ods-mg'))], deficiency: [c('缺乏可出现食欲下降、恶心、呕吐、疲劳、虚弱、麻木、刺痛、肌肉收缩、抽筋、癫痫发作或心律异常。', source('ods-mg'))], excess: [c('来自补充剂或药物的高剂量镁可导致腹泻、恶心和腹部痉挛，极高剂量可造成严重毒性。', source('ods-mg'))], interactions: [c('镁补充剂可与双膦酸盐、抗生素、利尿剂、质子泵抑制剂等药物产生需要核对的相互作用。', withSafety('ods-mg'))], senior: [c('肾功能下降者排镁能力可能降低，老年人使用含镁泻药或镁补充剂前应核对肾功能和用药。', withSafety('ods-mg'))] },
+      { id: 'k', category: 'mineral', shortName: '钾', name: '钾', nameEn: 'Potassium', tags: ['heart','muscle','blood'], basic: [c('钾帮助维持细胞内液量，并参与神经传导、肌肉收缩和血压调节。', source('ods-k'))], intake: [c('成人男性 AI 为 3,400 mg，成人女性 AI 为 2,600 mg，美国膳食参考摄入量未为健康人群设定钾 UL。', source('ods-k'))], foods: [c('常见来源包括水果、蔬菜、豆类、奶制品、肉类、禽肉、鱼和坚果。', source('ods-k'))], deficiency: [c('低钾血症可造成便秘、疲劳、肌无力、不适和心律异常。', source('ods-k'))], excess: [c('肾功能受损或使用影响排钾药物的人可能发生高钾血症，并出现肌无力、麻痹和心律异常。', source('ods-k'))], interactions: [c('ACE 抑制剂、ARB、保钾利尿剂和部分利尿剂会影响钾水平，用药者不应自行使用钾补充剂或低钠盐。', withSafety('ods-k'))], senior: [c('老年人如有肾病、高血压用药或心衰用药，应在医生指导下决定低钠盐和钾补充剂是否适合。', withSafety('ods-k'))] },
+      { id: 'na', category: 'mineral', shortName: '钠', name: '钠', nameEn: 'Sodium', tags: ['heart','blood'], basic: [c('钠是人体少量需要的营养素，参与体液平衡、肌肉功能和神经功能。', source('fda-na'))], intake: [c('FDA 页面列出的钠每日值为少于每日 2,300 mg。', source('fda-na'))], foods: [c('多数膳食钠来自包装食品和预制食品，而不只是烹调或餐桌上额外加入的食盐。', source('fda-na'))], deficiency: [c('低钠血症可出现头痛、恶心、呕吐、肌肉痉挛、疲劳、意识混乱和癫痫发作等表现。', source('medline-na-low'))], excess: [c('较高钠摄入与较高血压风险相关，高血压会增加心脏病和卒中等问题的风险。', source('fda-na'))], interactions: [c('使用利尿剂或有心衰、肝硬化、肾病时，钠和液体策略应由医生决定。', withSafety('medline-na-low'))], senior: [c('FDA 提醒血压通常会随年龄上升，因此限制钠摄入会随着年龄增长变得更重要。', withSafety('fda-na'))] },
+      { id: 'fe', category: 'trace', shortName: '铁', name: '铁', nameEn: 'Iron', tags: ['blood','energy','brain'], basic: [c('铁是血红蛋白和肌红蛋白组成部分，也参与能量代谢和细胞功能。', source('ods-fe'))], intake: [c('成年男性和 51 岁以上女性 RDA 为 8 mg，19-50 岁女性 RDA 为 18 mg，成人 UL 为 45 mg。', source('ods-fe'))], foods: [c('常见来源包括瘦肉、海鲜、禽肉、白豆、扁豆、菠菜、坚果和强化谷物。', source('ods-fe'))], deficiency: [c('缺乏可发展为缺铁性贫血，并导致疲劳、虚弱、免疫功能下降和体温调节受影响。', source('ods-fe'))], excess: [c('过量铁可导致胃肠不适，急性高剂量摄入可造成严重中毒。', source('ods-fe'))], interactions: [c('铁补充剂可与左甲状腺素、左旋多巴、质子泵抑制剂和部分抗生素等药物相互影响。', withSafety('ods-fe'))], senior: [c('绝经后女性和成年男性在未确认缺铁时不宜自行长期补铁。', withSafety('ods-fe'))] },
+      { id: 'zn', category: 'trace', shortName: '锌', name: '锌', nameEn: 'Zinc', tags: ['immune','skin','blood'], basic: [c('锌参与细胞代谢、免疫功能、蛋白质合成、伤口愈合、DNA 合成和味觉嗅觉功能。', source('ods-zn'))], intake: [c('成人男性 RDA 为 11 mg，成人女性 RDA 为 8 mg，成人 UL 为 40 mg。', source('ods-zn'))], foods: [c('常见来源包括牡蛎、红肉、禽肉、豆类、坚果、全谷物和奶制品。', source('ods-zn'))], deficiency: [c('缺乏可导致生长迟缓、食欲下降、免疫功能受损、脱发、腹泻、味觉异常和伤口愈合延迟。', source('ods-zn'))], excess: [c('长期过量锌可导致铜缺乏、免疫功能下降和 HDL 胆固醇降低。', source('ods-zn'))], interactions: [c('锌补充剂可影响部分抗生素和青霉胺吸收，也可能与利尿剂相关锌状态变化有关。', withSafety('ods-zn'))], senior: [c('老年人若长期使用高剂量锌，应让医生关注铜状态和总剂量。', withSafety('ods-zn'))] },
+      { id: 'se', category: 'trace', shortName: '硒', name: '硒', nameEn: 'Selenium', tags: ['immune','thyroid','heart'], basic: [c('硒是多种硒蛋白组成部分，参与抗氧化防御、甲状腺激素代谢、DNA 合成和生殖功能。', source('ods-se'))], intake: [c('成人 RDA 为 55 mcg，成人 UL 为 400 mcg。', source('ods-se'))], foods: [c('常见来源包括巴西坚果、海鲜、肉类、禽肉、鸡蛋、奶制品、面包和谷物。', source('ods-se'))], deficiency: [c('缺乏较少见，但与克山病、男性不育和可能加重碘缺乏相关甲状腺问题有关。', source('ods-se'))], excess: [c('过量硒可导致蒜味口气、金属味、脱发、指甲脆裂、胃肠不适、皮疹、疲劳、易怒和神经系统异常。', source('ods-se'))], interactions: [c('硒补充剂与常规药物相互作用证据有限，但正在用药者仍应核对补充剂清单。', withSafety('ods-se'))], senior: [c('老年人不宜把巴西坚果或硒补充剂叠加到接近 UL 的长期方案中。', withSafety('ods-se'))] },
+      { id: 'i', category: 'trace', shortName: '碘', name: '碘', nameEn: 'Iodine', tags: ['thyroid','energy','brain'], basic: [c('碘是甲状腺激素合成所必需的元素，甲状腺激素调节许多重要生化反应。', source('ods-iodine'))], intake: [c('成人 RDA 为 150 mcg，成人 UL 为 1,100 mcg。', source('ods-iodine'))], foods: [c('常见来源包括海藻、鱼类、奶制品、加碘盐和部分谷物制品。', source('ods-iodine'))], deficiency: [c('缺乏可导致甲状腺肿和甲状腺功能减退，并在孕期和婴幼儿期影响神经发育。', source('ods-iodine'))], excess: [c('过量碘可引发类似缺乏的甲状腺肿、TSH 升高和甲状腺功能减退，也可诱发甲状腺功能亢进。', source('ods-iodine'))], interactions: [c('胺碘酮、抗甲状腺药物和含钾碘的药物可显著影响碘和甲状腺状态。', withSafety('ods-iodine'))], senior: [c('有甲状腺病史或使用胺碘酮的老年人，应避免自行使用海藻碘或高碘补充剂。', withSafety('ods-iodine'))] },
+      { id: 'cu', category: 'trace', shortName: '铜', name: '铜', nameEn: 'Copper', tags: ['blood','bone','immune'], basic: [c('铜参与能量产生、铁代谢、神经肽激活、结缔组织形成、神经系统功能和抗氧化防御。', source('ods-cu'))], intake: [c('成人 RDA 为 900 mcg，成人 UL 为 10,000 mcg。', source('ods-cu'))], foods: [c('常见来源包括贝类、种子、坚果、动物内脏、全谷物和巧克力。', source('ods-cu'))], deficiency: [c('缺乏可导致贫血、低白细胞、中性粒细胞减少、骨质疏松和神经系统问题。', source('ods-cu'))], excess: [c('过量铜可导致胃肠症状，严重时可造成肝损伤。', source('ods-cu'))], interactions: [c('高剂量锌可降低铜吸收，长期补锌者应让医生评估铜状态。', withSafety('ods-cu'))], senior: [c('老年人如果长期服用锌补充剂，应避免忽视铜缺乏风险。', withSafety('ods-cu'))] },
+      { id: 'mn', category: 'trace', shortName: '锰', name: '锰', nameEn: 'Manganese', tags: ['bone','energy'], basic: [c('锰参与氨基酸、胆固醇、葡萄糖和碳水化合物代谢，也参与骨形成和抗氧化过程。', source('ods-mn'))], intake: [c('成人男性 AI 为 2.3 mg，成人女性 AI 为 1.8 mg，成人 UL 为 11 mg。', source('ods-mn'))], foods: [c('常见来源包括全谷物、贝类、坚果、豆类、米饭、茶和部分蔬菜。', source('ods-mn'))], deficiency: [c('人类锰缺乏很少见，研究中报道的表现包括骨矿化和代谢相关变化。', source('ods-mn'))], excess: [c('长期高暴露锰可产生神经系统毒性，肝功能受损者可能更易蓄积。', source('ods-mn'))], interactions: [c('钙、铁和镁等矿物质可能影响锰吸收，补充剂叠加使用时应核对总方案。', withSafety('ods-mn'))], senior: [c('有肝胆疾病的老年人不宜自行使用高锰补充剂。', withSafety('ods-mn'))] }
+    ];
 
-        // 症状映射表
-        const symptomMap = [
-            { id: 'sleep', label: '😴 失眠/焦虑', desc: '助眠、放松神经、抗焦虑' },
-            { id: 'bone', label: '🦴 骨骼/关节', desc: '强健骨骼、防骨折、防抽筋' },
-            { id: 'eye', label: '👀 护眼/视力', desc: '缓解干涩、夜盲、视疲劳' },
-            { id: 'immune', label: '🛡️ 免疫/感冒', desc: '增强抵抗力、少生病' },
-            { id: 'energy', label: '⚡ 精力/疲劳', desc: '提升活力、改善乏力' },
-            { id: 'skin', label: '✨ 皮肤/抗衰', desc: '伤口愈合、抗氧化、防干裂' },
-            { id: 'blood', label: '🩸 贫血/头晕', desc: '造血功能、改善面色' },
-            { id: 'heart', label: '❤️ 心脏/血压', desc: '心血管健康、血压控制' },
-            { id: 'muscle', label: '💪 肌肉/力量', desc: '防跌倒、增肌、防无力' },
-            { id: 'brain', label: '🧠 记忆/神经', desc: '神经保护、防痴呆、防麻木' },
-            { id: 'thyroid', label: '🦋 甲状腺', desc: '代谢调节、激素平衡' },
-        ];
+    const symptomMap = [
+      { id: 'sleep', label: '失眠/焦虑', desc: '与睡眠、放松或情绪相关的营养素' },
+      { id: 'bone', label: '骨骼/关节', desc: '与骨骼、矿化或关节支持相关的营养素' },
+      { id: 'eye', label: '护眼/视力', desc: '与视觉和眼部组织相关的营养素' },
+      { id: 'immune', label: '免疫', desc: '与免疫功能相关的营养素' },
+      { id: 'energy', label: '精力/代谢', desc: '与能量代谢相关的营养素' },
+      { id: 'skin', label: '皮肤/黏膜', desc: '与皮肤、黏膜或伤口愈合相关的营养素' },
+      { id: 'blood', label: '造血/凝血', desc: '与血液、凝血或贫血风险相关的营养素' },
+      { id: 'heart', label: '心脏/血压', desc: '与心血管、电解质或血压相关的营养素' },
+      { id: 'muscle', label: '肌肉/神经', desc: '与肌肉收缩或神经传导相关的营养素' },
+      { id: 'brain', label: '记忆/神经', desc: '与神经系统相关的营养素' },
+      { id: 'thyroid', label: '甲状腺', desc: '与甲状腺功能相关的营养素' }
+    ];
 
-        const guidelinesData = [
-            {
-                title: "酒精：一级致癌物，能不喝就不喝",
-                highlight: "⚠️ 严厉警告",
-                content: "【颠覆性认知】忘了“适量饮酒有益心脏”的旧说法吧！《2025-2030 美国居民膳食指南》基于全球数万份权威研究，做出了最严厉的定性：酒精被列为“一级致癌物”（和砒霜、石棉同一级别）。权威数据表明，任何剂量的酒精（哪怕一滴）都会直接损伤肝脏、脑细胞和心脏，并显著增加食道癌、肝癌和乳腺癌的风险。",
-                seniorNote: "【老年人绝对禁区】随着年龄增长，身体含水量减少，肝脏解毒能力衰退。老年人喝一杯酒，血液中的酒精浓度是年轻人的三倍！更可怕的是，酒精会与降压药、安眠药、止痛药发生致命的化学反应，导致昏迷或内出血。为了脑子不糊涂、半夜不摔跤，请把酒彻底戒了。这是医生的死命令。",
-                source: "USDA / NIAAA / National Cancer Institute"
-            },
-            {
-                title: "糖：甜蜜的毒药，不仅是糖尿病，更是催老剂",
-                highlight: "🚫 严格控糖",
-                content: "【抗衰老的头号敌人】新指南将添加糖的限制从10%直接砍到了6%！为什么这么严？因为糖不仅导致糖尿病。权威研究证实，糖进入血液后会发生“糖化反应”，就像把肉放在糖浆里煮焦了一样，让您的血管变硬、皮肤长皱纹、大脑反应变慢（增加痴呆风险）。糖是全身慢性炎症的燃料。",
-                seniorNote: "【隐形陷阱】老年人胰岛功能老化，也就是“血糖大门”坏了，根本处理不了糖。不仅要戒掉糖果点心，更要小心“咸味陷阱”：红烧肉、番茄酱、超市买的面包、速溶麦片，里面藏着大量的隐形糖。买东西前戴上老花镜看配料表，凡是有“糖、浆、蜜”字的，直接放下别买。",
-                source: "AHA / USDA / American Diabetes Association"
-            },
-            {
-                title: "蛋白质：生命的基石，抗衰老的“肌肉黄金”",
-                highlight: "💪 肌肉就是命",
-                content: "【反常识真相】很多老人认为“年纪大了要清淡，少吃肉”，这是大错特错！PROT-AGE（国际老年营养权威组织）明确指出：老年人合成肌肉的效率变差了，所以反而需要比年轻人多吃50%的蛋白质！蛋白质是合成肌肉的“砖头”。如果原料（砖头）不足，身体不仅没法修补旧房子，还会拆东墙补西墙（拆解肌肉）来维持生命。这直接导致“少肌症”——也就是俗称的“老来瘦”，腿细如麻杆，走路打晃，一碰就倒。",
-                seniorNote: "【千金难买老来瘦？错！】对于老人，太瘦意味着没有肌肉储备。没有肌肉保护骨头，一旦摔倒直接骨折；没有肌肉储存能量，生一场小病就可能直接卧床不起，再也起不来。怎么补？别光喝粥吃咸菜！必须保证每顿饭（早中晚）都有巴掌大小的优质蛋白（鸡蛋、牛奶、鱼、去皮鸡肉、豆腐）。把蛋白质分散到三餐吃，比一顿大餐吸收效果好得多。这是让您腿脚有劲、能自己走路、不坐轮椅的根本保障。",
-                source: "PROT-AGE Study Group / ESPEN"
-            },
-            {
-                title: "超加工食品：工业制造的“假食物”，全身发炎的元凶",
-                highlight: "🛑 工业毒药",
-                content: "【什么是假食物？】如果您在厨房里做不出来，那就是假食物。比如配料表里有“变性淀粉、高果糖浆、增味剂、防腐剂”的。权威医学期刊《BMJ》证实：这些工业化学品会欺骗大脑，让您吃不停，同时在体内制造持续的炎症。这种“慢性低度炎症”就像身体里着了一把看不见的火，常年累月地烧，直接烧坏血管（心脏病）、烧坏细胞（癌症）和烧坏大脑（痴呆）。",
-                seniorNote: "【把它们扔掉】火腿肠、午餐肉、方便面、饼干、萨琪玛、速冻丸子、含糖麦片……这些东西虽然吃着方便、口感好，但其实是“热量炸弹”和“促炎毒药”。它们高盐、高坏脂肪，却几乎没有真正的营养。请回归天然：买新鲜猪肉而不是午餐肉，买水果而不是果汁，买燕麦米而不是甜麦片。吃真食物，身体才不会生病。",
-                source: "BMJ / NIH / World Health Organization"
-            },
-            {
-                title: "盐与钾：高血压的克星，换种盐就能保命",
-                highlight: "⚖️ 黄金比例",
-                content: "【血管的压力】现代人最大的饮食危机是：钠（盐）太多，钾太少。这就像给血管施加了双重压力：钠把水锁在血管里，把血管撑得像高压水管；而钾本该负责放松血管、把钠排出去，却因为摄入不足而缺席。世界公认最护心的“DASH饮食”（得舒饮食）的核心就是：大幅减盐，大幅补钾。权威研究显示，如果能做到钠钾平衡，对控制血压的效果堪比一线降压药，而且没有副作用。",
-                seniorNote: "【最简单的长寿法】一个救命的建议：如果您肾功能正常（这一点请务必先咨询医生），请把家里的普通盐全部换成“低钠盐”（富钾盐）。这种盐里加了25%-30%的钾，不用改变口味就能补钾降钠，这是被中国和美国大规模研究证实能显著降低中风和全因死亡率的“神盐”。另外，多吃土豆、香蕉、菠菜，它们是天然的降压药。少吃咸菜腐乳，那是“血压升压器”。",
-                source: "DASH Diet / AHA / The Lancet"
-            },
-            {
-                title: "脂肪：大脑的润滑油，选对油就是养脑",
-                highlight: "🥑 脑黄金",
-                content: "【大脑60%是脂肪】别因为怕血脂高就滴油不沾！大脑和神经系统主要由脂肪构成，长期缺油会导致记忆力衰退、反应迟钝和情绪抑郁。关键在于“换油”：把堵塞血管的“坏脂肪”（饱和脂肪、反式脂肪）换成清理血管的“好脂肪”（Omega-3、单不饱和脂肪酸）。坏脂肪像淤泥堵塞管道，好脂肪像清洁工疏通管道。",
-                seniorNote: "【好油名单】1. 坚决不吃（血管杀手）：起酥油、代可可脂、人造奶油、植物奶油（凡是带“酥”、“脆”的点心多半都有）。2. 少吃：猪大油、肥肉、黄油。3. 多吃（脑黄金）：深海鱼（三文鱼、鲭鱼，富含Omega-3，护脑护心）、橄榄油、茶油、亚麻籽油。炒菜换成植物油，每周吃两次鱼，您的血管和大脑会感谢您。",
-                source: "Harvard Health / USDA"
-            }
-        ];
+    const sectionDefs = [
+      { key: 'basic', title: '基本作用', icon: 'fa-circle-check', wrap: 'bg-blue-50 border-blue-100 dark:bg-blue-950/30 dark:border-blue-900', heading: 'text-blue-800 dark:text-blue-200' },
+      { key: 'intake', title: '推荐摄入与上限', icon: 'fa-scale-balanced', wrap: 'bg-slate-50 border-slate-200 dark:bg-slate-900 dark:border-slate-700', heading: 'text-slate-800 dark:text-slate-200' },
+      { key: 'foods', title: '常见食物来源', icon: 'fa-leaf', wrap: 'bg-emerald-50 border-emerald-100 dark:bg-emerald-950/30 dark:border-emerald-900', heading: 'text-emerald-800 dark:text-emerald-200' },
+      { key: 'deficiency', title: '缺乏风险', icon: 'fa-arrow-trend-down', wrap: 'bg-rose-50 border-rose-100 dark:bg-rose-950/30 dark:border-rose-900', heading: 'text-rose-800 dark:text-rose-200' },
+      { key: 'excess', title: '过量风险', icon: 'fa-triangle-exclamation', wrap: 'bg-amber-50 border-amber-100 dark:bg-amber-950/30 dark:border-amber-900', heading: 'text-amber-800 dark:text-amber-200' },
+      { key: 'interactions', title: '药物与疾病注意事项', icon: 'fa-pills', wrap: 'bg-indigo-50 border-indigo-100 dark:bg-indigo-950/30 dark:border-indigo-900', heading: 'text-indigo-800 dark:text-indigo-200' },
+      { key: 'senior', title: '老年人提示', icon: 'fa-user-doctor', wrap: 'bg-lime-50 border-lime-100 dark:bg-lime-950/30 dark:border-lime-900', heading: 'text-lime-800 dark:text-lime-200' }
+    ];
 
-        // --- 新增：家庭精选方案数据 (Thorne & NOW) ---
-        const productsData = [
-            {
-                id: 'thorne-basic',
-                name: 'Thorne 基础营养素',
-                enName: 'Basic Nutrients 2/Day',
-                brand: 'Thorne Research (医疗级品牌)',
-                brandDesc: '【世界第一医院的选择】Thorne 不是普通保健品公司，它是连续多年排名全球第一的“梅奥诊所 (Mayo Clinic)”官方指定的科研合作伙伴。美国国家队、UFC冠军都在吃。它的核心逻辑是：只用最昂贵、人体能直接吸收的“活性原料”，绝不添加任何廉价的“凑数成分”。这是真正给家人续命的东西，不是吃心理安慰的。',
-                dosage: '每两天 1 粒 (早餐随餐服用)',
-                packSize: '60 粒 / 瓶',
-                tags: ['梅奥诊所合作', '活性辅酶B族', '专利螯合矿物质'],
-                color: 'blue',
-                highlights: [
-                    {
-                        title: '1. B族维生素群：全活性“辅酶”形态',
-                        desc: '【医学核心差异】这是这款产品最贵、也是最值的地方。普通维生素B族进入人体后，必须经过肝脏复杂的转化才能被利用（如普通叶酸需4步转化）。很多中老年人肝脏代谢功能下降，或者有基因变异（MTHFR），根本无法转化，吃了等于白吃，甚至产生未代谢毒素。Thorne 采用的是已经转化好的“辅酶形态”：\n• 活性叶酸 (5-MTHF)：直接进入细胞修复DNA，有效降低同型半胱氨酸（预防中风的关键指标）。\n• 活性B12 (甲钴胺)：不同于廉价的氰钴胺（含微量氰化物），甲钴胺能直接滋养神经，改善手脚麻木和认知退化。\n• 活性B6 (P-5-P)：直接参与神经递质合成，改善睡眠和情绪。\n• 活性B2 (R-5-P)：保护粘膜，预防烂嘴角和视力模糊。'
-                    },
-                    {
-                        title: '2. 矿物质群：TRAACS® 氨基酸螯合技术',
-                        desc: '【吸收率革命】你看瓶身上的“Bisglycinate”字样，这代表了全球顶尖的 TRAACS® 专利技术。普通产品用的是氧化物（如氧化锌），其实就是“石头粉”，吸收率极低且极其伤胃（容易恶心）。Thorne 将锌、铜、锰、铬等矿物质用两个甘氨酸分子“钳”住，伪装成氨基酸。结果是：\n• 不刺激胃粘膜：哪怕空腹吃也不会难受。\n• 吸收率提升数倍：肠道把它当成肉类营养直接吸收，不与钙片等其他药物竞争通道。'
-                    },
-                    {
-                        title: '3. 维生素 K2 (MK-4)：骨骼与血管的“导航员”',
-                        desc: '【极罕见成分】普通钙片只含K1（管凝血）。这款豪横地添加了 200mcg 的 K2 (MK-4)。这是目前医学界公认生物活性最高的形式。它的作用是“导航”：激活骨钙素，把血液里游离的钙“抓”进骨头里。这不仅预防骨质疏松，更重要的是防止钙沉积在血管壁上导致动脉硬化。这是一箭双雕的血管保护神。'
-                    },
-                    {
-                        title: '4. 维生素 A：安全复配的双重防线',
-                        desc: '【拒绝单一风险】市售廉价品通常只用合成视黄醇（过量伤肝）或只用胡萝卜素（转化效率低）。Thorne 采用了 棕榈酸酯（快速起效，修复粘膜） + β-胡萝卜素（安全储备，抗氧化） 的混合配方。既保证了呼吸道和消化道粘膜的免疫屏障功能，又将蓄积中毒的风险降到了最低。'
-                    },
-                    {
-                        title: '5. 微量元素：被忽视的关键拼图',
-                        desc: '每一毫克都有据可依：\n• 铬 (Nicotinate Glycinate)：400mcg。这是调节血糖的关键因子，能增加胰岛素敏感性，对血糖偏高的老人至关重要。\n• 硼 (Boron)：2mg。这是锁住骨钙的“守门员”，能减少钙和镁从尿液中流失，强化骨密度。\n• 硒 (Selenium)：200mcg。甲状腺的守护神，同时是强大的心脏抗氧化剂。\n• 叶黄素 (Lutein)：140mcg。沉积在视网膜黄斑区，像墨镜一样过滤蓝光，延缓视力衰退。'
-                    },
-                    {
-                        title: '6. 纯净度：拒绝“科技与狠活”',
-                        desc: '【无添加承诺】如果你仔细看成分表的“Other Ingredients”，你会发现它极其干净。没有硬脂酸镁（一种廉价的润滑剂，会阻碍吸收），没有二氧化钛（致癌风险增白剂），没有人工色素，没有麸质。胶囊壳由植物纤维制成。这是给身体做加法，而不是增加排毒负担。'
-                    }
-                ],
-                caution: '⚠️ 服用提示：含碘和维K。甲亢患者、正在服用华法林（抗凝药）者，请务必咨询医生。'
-            },
-            {
-                id: 'now-omega',
-                name: 'NOW Ultra Omega-3-D',
-                enName: '深海鱼油 (高浓度EPA/DHA + 维D3)',
-                brand: 'NOW Foods (美国国民品牌)',
-                brandDesc: '【百年家族企业的良心】美国拥有50年历史的家族企业，以“极致性价比”和“透明工厂”闻名。这款 Ultra Omega-3-D 是它家最高端的“旗舰线”，通过了全球最严苛的 GOED（EPA和DHA组织）标准检测，确保每一颗都是纯净的“液体黄金”。',
-                dosage: '每天 1 粒 (必须随餐服用)',
-                packSize: '180 粒 / 瓶',
-                tags: ['90%高纯度', '分子蒸馏去重金属', '心脑骨同补'],
-                color: 'yellow',
-                highlights: [
-                    {
-                        title: '【拒绝智商税】买鱼油只看一个指标：浓度',
-                        desc: '普通鱼油一颗1000mg里只有300mg有效成分（EPA+DHA），剩下的700mg全是让你长胖的劣质脂肪。NOW 这款“超级版”，一颗含有 900mg 有效成分（600 EPA + 300 DHA），浓度高达 90%。这意味着：吃这一颗，顶普通鱼油吃三颗！不仅省钱，还少吃了没用的油。'
-                    },
-                    {
-                        title: '1. EPA 600mg：血管的“强力疏通剂”',
-                        desc: '【精准护心】为什么是600mg？因为临床研究证实，只有高剂量的 EPA 才能有效降低甘油三酯，对抗血管内的慢性炎症。这就像给血管做了一次大扫除，让血液流动更顺畅，直接减轻心脏负担。'
-                    },
-                    {
-                        title: '2. DHA 300mg：大脑和眼睛的“润滑油”',
-                        desc: '【防呆防花】DHA 是大脑细胞膜和视网膜的主要成分。随着年龄增长，大脑里的DHA会流失，导致记性变差。补充足量 DHA 就像给生锈的齿轮加了油，预防认知衰退，同时缓解老花眼和干眼症。'
-                    },
-                    {
-                        title: '3. 维生素 D3 (1000 IU)：神来之笔',
-                        desc: '【一步到位】大多数老人既缺鱼油也缺维D。这款产品直接添加了 1000 IU 的维生素 D3。鱼油本身就能促进维D吸收，两者配合，一边清理血管，一边把钙锁进骨头里。每天一颗，心、脑、骨、眼、免疫全照顾到了，省去了吃一大堆药片的麻烦。'
-                    },
-                    {
-                        title: '4. 分子蒸馏工艺：比吃鱼更安全',
-                        desc: '【重金属归零】现在的海鱼普遍有汞、铅污染，老人吃多了反而伤脑。这款鱼油采用了昂贵的“分子蒸馏”技术，在真空环境下把重金属和多氯联苯（PCBs）彻底分离出去。这是比直接吃深海鱼更安全、更纯净的选择。'
-                    }
-                ],
-                caution: '⚠️ 服用提示：鱼油有轻微抗凝血作用。如果有出血倾向、近期要做手术，或正在服用阿司匹林/华法林，请务必咨询医生。'
-            }
-        ];
+    const categoryMeta = {
+      vitamin: { label: '维生素', card: 'bg-blue-600 hover:bg-blue-700 shadow-blue-200 dark:shadow-blue-950/40' },
+      mineral: { label: '矿物质', card: 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200 dark:shadow-emerald-950/40' },
+      trace: { label: '微量元素', card: 'bg-fuchsia-700 hover:bg-fuchsia-800 shadow-fuchsia-200 dark:shadow-fuchsia-950/40' }
+    };
 
-        const sourcesInfo = [
-            { 
-                name: "NIH ODS (美国国立卫生研究院)", 
-                desc: "【全球最高医学殿堂】美国联邦政府下属的最高医学研究机构。其“膳食补充剂办公室(ODS)”发布的数据，代表了全人类目前最严谨、最客观、最不容置疑的科学共识。它不为任何药厂背书，只为科学真相说话，是全球医生和科学家参考的绝对金标准。" 
-            },
-            { 
-                name: "Mayo Clinic (梅奥诊所)", 
-                desc: "【世界第一医院】已连续多年蝉联“世界最佳医院”排行榜榜首。它是全球医疗质量的终极标杆，是无数疑难杂症患者最后的希望。Thorne 品牌正是梅奥诊所官方合作的补剂品牌，这意味着其产品质量通过了世界最顶尖医生的严苛审查。" 
-            },
-            { 
-                name: "USDA 2025-2030 DGA", 
-                desc: "【国家营养宪法】由美国农业部（USDA）与卫生部联合发布。每五年更新一次的《美国居民膳食指南》是美国国家营养政策的法律基础，由顶级科学家组成的咨询委员会，审查了过去五年全球所有的顶尖营养学研究后制定。它是学校、医院、军队饮食标准的唯一依据。" 
-            },
-            { 
-                name: "LPI (莱纳斯·鲍林研究所)", 
-                desc: "【微量元素权威】由诺贝尔奖得主莱纳斯·鲍林创立，是全球微量营养素研究的圣地。该研究所专注于研究维生素和矿物质如何预防疾病、延缓衰老及治疗慢性病。其数据极度详尽专业，特别是在“正分子医学”领域具有无可撼动的地位。" 
-            }
-        ];
+    const validateData = () => {
+      const sourceIds = new Set(Object.keys(sources));
+      const errors = [];
+      nutrientsData.forEach(item => sectionDefs.forEach(section => (item[section.key] || []).forEach((claim, index) => {
+        if (!claim.sourceIds || claim.sourceIds.length === 0) errors.push(`${item.id}.${section.key}[${index}] 缺少来源`);
+        (claim.sourceIds || []).forEach(id => { if (!sourceIds.has(id)) errors.push(`${item.id}.${section.key}[${index}] 未定义来源 ${id}`); });
+      })));
+      if (errors.length) console.error('NutriGuide source validation failed:', errors);
+    };
+    validateData();
 
-        // ================= 组件 =================
+    const SourceMarks = ({ ids, onOpen }) => (
+      <span className="ml-1 inline-flex flex-wrap gap-1 align-baseline">
+        {ids.map(id => (
+          <button key={id} onClick={(event) => { event.stopPropagation(); onOpen(ids); }} className="rounded px-1.5 py-0.5 text-[11px] font-bold bg-white/80 text-blue-700 border border-blue-200 hover:bg-blue-50 dark:bg-slate-900 dark:text-blue-200 dark:border-blue-800" aria-label={`查看来源：${sources[id].title}`}>
+            {sources[id].label}
+          </button>
+        ))}
+      </span>
+    );
 
-        // --- 1. 英雄网格卡片 ---
-        const HeroCard = ({ item, isDimmed, isHighlighted, onClick }) => {
-            const colors = {
-                vitamin: 'from-blue-500 to-blue-600 shadow-blue-200 dark:shadow-blue-900/30',
-                mineral: 'from-emerald-500 to-emerald-600 shadow-emerald-200 dark:shadow-emerald-900/30',
-                trace: 'from-purple-500 to-purple-600 shadow-purple-200 dark:shadow-purple-900/30'
-            };
+    const ClaimList = ({ claims, isSeniorMode, onOpenSources }) => (
+      <div className="space-y-3">
+        {claims.map((claim, index) => (
+          <p key={index} className={`text-slate-700 dark:text-slate-200 ${isSeniorMode ? 'text-xl leading-9' : 'text-sm leading-7'}`}>
+            {claim.text}
+            <SourceMarks ids={claim.sourceIds} onOpen={onOpenSources} />
+          </p>
+        ))}
+      </div>
+    );
 
-            return (
-                <div 
-                    onClick={onClick}
-                    className={`
-                        hero-card relative aspect-square rounded-2xl p-2 cursor-pointer
-                        bg-gradient-to-br ${colors[item.category]}
-                        flex flex-col items-center justify-center text-white
-                        shadow-lg border border-white/10
-                        ${isDimmed ? 'dimmed' : ''}
-                        ${isHighlighted ? 'highlighted' : ''}
-                    `}
-                >
-                    <div className="text-3xl font-black mb-1 drop-shadow-md">{item.shortName}</div>
-                    <div className="text-[10px] opacity-90 font-medium tracking-wide text-center leading-tight">{item.nameEn}</div>
-                    <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-white/40"></div>
-                </div>
-            );
-        };
-
-        // --- 2. 详情弹窗 (Modal) ---
-        const DetailModal = ({ item, onClose, isSeniorMode, setIsSeniorMode }) => {
-            if (!item) return null;
-
-            return (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 modal-enter" onClick={onClose}>
-                    <div 
-                        className={`bg-white dark:bg-darkCard w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col relative`}
-                        onClick={e => e.stopPropagation()}
-                    >
-                        {/* 顶部栏 */}
-                        <div className="bg-slate-50 dark:bg-slate-800/50 p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
-                            <div>
-                                <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{item.name}</h2>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">{item.nameEn}</p>
-                            </div>
-                            <div className="flex gap-2">
-                                <button 
-                                    onClick={() => setIsSeniorMode(!isSeniorMode)}
-                                    className={`px-3 py-1.5 rounded-full text-sm font-bold transition-colors ${
-                                        isSeniorMode 
-                                        ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-400 dark:bg-yellow-900 dark:text-yellow-200' 
-                                        : 'bg-white border border-slate-200 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300'
-                                    }`}
-                                >
-                                    {isSeniorMode ? '大字版开' : '大字版'}
-                                </button>
-                                <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-300 transition-colors">
-                                    <i className="fa-solid fa-xmark text-lg"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* 内容区 (可滚动) */}
-                        <div className="overflow-y-auto p-5">
-                            <div className={`space-y-6 ${isSeniorMode ? 'text-2xl leading-loose tracking-wide' : 'text-base leading-relaxed'}`}>
-                                
-                                {/* 权威数值 */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
-                                        <span className="text-xs text-slate-500 block mb-1">权威推荐摄入 (RDA)</span>
-                                        <span className={`font-bold text-primary dark:text-blue-400 ${isSeniorMode ? 'text-xl' : 'text-lg'}`}>{item.rda}</span>
-                                    </div>
-                                    <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
-                                        <span className="text-xs text-slate-500 block mb-1">医学耐受上限 (UL)</span>
-                                        <span className={`font-bold text-danger dark:text-red-400 ${isSeniorMode ? 'text-xl' : 'text-lg'}`}>{item.ul}</span>
-                                    </div>
-                                </div>
-
-                                {/* 交互 & 症状 */}
-                                {[
-                                    { title: '药物与相互作用', icon: 'fa-right-left', color: 'indigo', content: item.interaction },
-                                    { title: '缺乏的临床症状', icon: 'fa-arrow-trend-down', color: 'red', content: item.deficiency },
-                                    { title: '过量与中毒风险', icon: 'fa-triangle-exclamation', color: 'orange', content: item.excess },
-                                    { title: '最佳食物来源', icon: 'fa-leaf', color: 'green', content: item.sources },
-                                ].map((sec, idx) => (
-                                    <div key={idx} className={`p-4 rounded-xl bg-${sec.color}-50 dark:bg-${sec.color}-900/20 border border-${sec.color}-100 dark:border-${sec.color}-800/50`}>
-                                        <h4 className={`font-bold text-${sec.color}-700 dark:text-${sec.color}-300 flex items-center gap-2 mb-2 ${isSeniorMode ? 'text-3xl' : 'text-lg'}`}>
-                                            <i className={`fa-solid ${sec.icon}`}></i> {sec.title}
-                                        </h4>
-                                        <p className="text-slate-700 dark:text-slate-300">{sec.content}</p>
-                                    </div>
-                                ))}
-
-                                {/* 老年人特别提醒 */}
-                                <div className={`p-5 rounded-xl border-l-4 shadow-sm ${isSeniorMode ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400' : 'bg-slate-50 dark:bg-slate-800 border-slate-300'}`}>
-                                    <h4 className={`font-bold flex items-center gap-2 mb-3 ${isSeniorMode ? 'text-yellow-800 dark:text-yellow-400 text-3xl' : 'text-slate-700 dark:text-slate-300 text-lg'}`}>
-                                        <i className="fa-solid fa-user-doctor"></i> 老年人特别警示 (权威建议)
-                                    </h4>
-                                    <p className="text-slate-800 dark:text-slate-200 font-medium">{item.seniorAdvice}</p>
-                                </div>
-
-                                <p className="text-xs text-right text-slate-400 dark:text-slate-600">权威数据来源: {item.sourceRef}</p>
-                            </div>
-                        </div>
-
-                        {/* 底部按钮 */}
-                        <div className="p-4 border-t border-slate-100 dark:border-slate-700 shrink-0 bg-white dark:bg-darkCard">
-                            <button onClick={onClose} className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-white font-bold py-3 rounded-xl transition-colors text-lg">
-                                关闭
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        // --- 3. 膳食指南卡片 (修正：支持大字版) ---
-        const GuidelineCard = ({ item, isSeniorMode }) => (
-            <div className="bg-white dark:bg-darkCard rounded-2xl p-5 mb-4 border border-slate-100 dark:border-slate-700 shadow-sm">
-                <div className="flex items-center gap-3 mb-3">
-                    <span className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap">
-                        {item.highlight}
-                    </span>
-                    <span className="text-xs text-slate-400 dark:text-slate-500">{item.source}</span>
-                </div>
-                <h3 className={`font-bold text-slate-800 dark:text-white mb-2 transition-all ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}>{item.title}</h3>
-                <p className={`text-slate-600 dark:text-slate-300 mb-4 transition-all ${isSeniorMode ? 'text-xl leading-loose tracking-wide' : 'text-base leading-relaxed'}`}>{item.content}</p>
-                <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border-l-4 border-yellow-400">
-                    <p className={`text-slate-500 dark:text-slate-400 font-bold mb-1 transition-all ${isSeniorMode ? 'text-lg' : 'text-sm'}`}><i className="fa-solid fa-user-check"></i> 老年人权威警示：</p>
-                    <p className={`text-slate-700 dark:text-slate-200 transition-all ${isSeniorMode ? 'text-lg' : 'text-sm'}`}>{item.seniorNote}</p>
-                </div>
+    const SourceModal = ({ sourceIds, onClose }) => {
+      const ids = sourceIds && sourceIds.length ? [...new Set(sourceIds)] : Object.keys(sources);
+      return (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/70 p-4" role="dialog" aria-modal="true" onClick={onClose}>
+          <div className="w-full max-w-xl max-h-[88vh] overflow-hidden rounded-lg bg-white shadow-2xl dark:bg-darkCard" onClick={event => event.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
+              <h3 className="text-lg font-bold">来源</h3>
+              <button onClick={onClose} className="rounded-lg px-3 py-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="关闭来源弹窗"><i className="fa-solid fa-xmark"></i></button>
             </div>
-        );
-
-        // --- 新增：产品介绍卡片 ---
-        const ProductCard = ({ item, isSeniorMode }) => {
-            const isBlue = item.color === 'blue';
-            
-            return (
-                <div className="bg-white dark:bg-darkCard rounded-3xl overflow-hidden shadow-lg border border-slate-100 dark:border-slate-700 mb-8 last:mb-20">
-                    {/* 产品头部 */}
-                    <div className={`p-6 ${isBlue ? 'bg-gradient-to-r from-blue-600 to-indigo-700' : 'bg-gradient-to-r from-amber-500 to-orange-600'} text-white`}>
-                        <div className="flex justify-between items-start mb-2">
-                            <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                                {isBlue ? '综合维矿 • 旗舰版' : '深海鱼油 • 医疗级'}
-                            </span>
-                            <span className="text-white/80 text-xs font-mono">{item.packSize}</span>
-                        </div>
-                        <h2 className={`font-black leading-tight mb-2 ${isSeniorMode ? 'text-4xl' : 'text-2xl'}`}>{item.name}</h2>
-                        <p className={`font-medium opacity-90 ${isSeniorMode ? 'text-xl' : 'text-sm'}`}>{item.enName}</p>
-                        
-                        <div className="mt-4 flex flex-wrap gap-2">
-                            {item.tags.map((tag, i) => (
-                                <span key={i} className="bg-black/20 px-2 py-1 rounded text-xs font-medium border border-white/10">{tag}</span>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* 产品详情 */}
-                    <div className="p-6 space-y-6">
-                        {/* 品牌与服用建议 */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
-                                <h4 className="text-xs text-slate-500 uppercase font-bold mb-2">品牌背书</h4>
-                                <p className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-xl' : 'text-sm'}`}>{item.brand}</p>
-                                <p className={`text-slate-500 mt-1 leading-relaxed ${isSeniorMode ? 'text-lg' : 'text-xs'}`}>{item.brandDesc}</p>
-                            </div>
-                            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border-l-4 border-green-500">
-                                <h4 className="text-xs text-green-600 uppercase font-bold mb-2">服用建议</h4>
-                                <p className={`font-bold text-slate-800 dark:text-white ${isSeniorMode ? 'text-2xl' : 'text-base'}`}>{item.dosage}</p>
-                            </div>
-                        </div>
-
-                        {/* 核心亮点 */}
-                        <div className="space-y-4">
-                            <h3 className={`font-bold text-slate-800 dark:text-white flex items-center gap-2 ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}>
-                                <i className="fa-solid fa-star text-yellow-400"></i> 权威成分详解
-                            </h3>
-                            {item.highlights.map((hl, idx) => (
-                                <div key={idx} className="border-b border-slate-100 dark:border-slate-700 pb-4 last:border-0 last:pb-0">
-                                    <h4 className={`font-bold text-primary dark:text-blue-400 mb-2 ${isSeniorMode ? 'text-2xl' : 'text-base'}`}>{hl.title}</h4>
-                                    <p className={`text-slate-600 dark:text-slate-300 leading-relaxed ${isSeniorMode ? 'text-xl leading-loose' : 'text-sm'}`}>{hl.desc}</p>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* 警示 */}
-                        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl text-red-700 dark:text-red-300">
-                            <p className={`${isSeniorMode ? 'text-lg font-bold' : 'text-xs'}`}>{item.caution}</p>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        // --- 4. 信源弹窗 (修正：支持大字版，增加滚动条防止溢出) ---
-        const SourcesModal = ({ onClose, isSeniorMode }) => (
-            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-                <div 
-                    className={`bg-white dark:bg-darkCard w-full rounded-2xl p-6 shadow-xl transition-all flex flex-col max-h-[90vh] ${isSeniorMode ? 'max-w-2xl' : 'max-w-md'}`} 
-                    onClick={e => e.stopPropagation()}
-                >
-                    <div className="flex justify-between items-center mb-4 shrink-0">
-                        <h3 className={`font-bold text-slate-800 dark:text-white transition-all ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}>权威信息来源</h3>
-                        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-2"><i className={`fa-solid fa-xmark transition-all ${isSeniorMode ? 'text-3xl' : 'text-xl'}`}></i></button>
-                    </div>
-                    
-                    <div className="space-y-4 overflow-y-auto pr-2 flex-1">
-                        {sourcesInfo.map((source, index) => (
-                            <div key={index} className="border-b border-slate-100 dark:border-slate-700 pb-3 last:border-0">
-                                <h4 className={`font-bold text-primary dark:text-blue-400 mb-1 transition-all ${isSeniorMode ? 'text-2xl' : 'text-sm'}`}>{source.name}</h4>
-                                <p className={`text-slate-600 dark:text-slate-300 leading-relaxed transition-all ${isSeniorMode ? 'text-xl' : 'text-xs'}`}>{source.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                    
-                    <div className="mt-4 shrink-0">
-                        <button onClick={onClose} className={`w-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white rounded-xl font-bold transition-all ${isSeniorMode ? 'text-2xl py-4' : 'text-sm py-2'}`}>关闭</button>
-                    </div>
-                </div>
+            <div className="max-h-[70vh] space-y-3 overflow-y-auto p-4">
+              {ids.map(id => {
+                const item = sources[id];
+                return (
+                  <div key={id} className="rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{item.title}</p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.publisher} · {item.updatedOrAccessed}</p>
+                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700">打开原始来源</a>
+                  </div>
+                );
+              })}
             </div>
-        );
+          </div>
+        </div>
+      );
+    };
 
-        // --- 主程序 ---
-        const App = () => {
-            const [view, setView] = useState('products'); // 默认显示产品介绍
-            const [activeSymptom, setActiveSymptom] = useState(null);
-            const [selectedNutrient, setSelectedNutrient] = useState(null);
-            const [isSeniorMode, setIsSeniorMode] = useState(false);
-            const [showSources, setShowSources] = useState(false);
-            const [isDark, setIsDark] = useState(false);
+    const NutrientCard = ({ item, isDimmed, isHighlighted, onClick }) => (
+      <button onClick={onClick} className={`nutrient-card relative aspect-square rounded-lg p-2 text-white shadow-lg ${categoryMeta[item.category].card} ${isDimmed ? 'opacity-30 grayscale' : ''} ${isHighlighted ? 'ring-4 ring-blue-200 dark:ring-blue-500' : ''}`} aria-label={`查看 ${item.name}`}>
+        <span className="block text-2xl font-black sm:text-3xl">{item.shortName}</span>
+        <span className="mt-1 block text-[10px] font-medium leading-tight opacity-95">{item.nameEn}</span>
+        <span className="absolute right-1.5 top-1.5 rounded bg-white/20 px-1.5 py-0.5 text-[9px] font-bold">{categoryMeta[item.category].label}</span>
+      </button>
+    );
 
-            useEffect(() => {
-                if (isDark) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            }, [isDark]);
+    const DetailModal = ({ item, isSeniorMode, setIsSeniorMode, onClose, onOpenSources }) => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4" role="dialog" aria-modal="true" onClick={onClose}>
+        <div className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl dark:bg-darkCard" onClick={event => event.stopPropagation()}>
+          <div className="flex items-start justify-between gap-3 border-b border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
+            <div>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400">{categoryMeta[item.category].label}</p>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white">{item.name}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{item.nameEn}</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setIsSeniorMode(!isSeniorMode)} className={`rounded-lg px-3 py-2 text-sm font-bold ${isSeniorMode ? 'bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-100' : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700'}`}>{isSeniorMode ? '大字版' : '标准字'}</button>
+              <button onClick={onClose} className="rounded-lg bg-slate-200 px-3 py-2 text-slate-700 hover:bg-slate-300 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700" aria-label="关闭详情"><i className="fa-solid fa-xmark"></i></button>
+            </div>
+          </div>
+          <div className="overflow-y-auto p-4">
+            <div className="space-y-4">
+              {sectionDefs.map(section => (
+                <section key={section.key} className={`rounded-lg border p-4 ${section.wrap}`}>
+                  <h3 className={`mb-3 flex items-center gap-2 font-bold ${section.heading} ${isSeniorMode ? 'text-2xl' : 'text-base'}`}>
+                    <i className={`fa-solid ${section.icon}`}></i>
+                    {section.title}
+                  </h3>
+                  <ClaimList claims={item[section.key]} isSeniorMode={isSeniorMode} onOpenSources={onOpenSources} />
+                </section>
+              ))}
+            </div>
+          </div>
+          <div className="border-t border-slate-200 p-4 dark:border-slate-700">
+            <button onClick={onClose} className="w-full rounded-lg bg-slate-100 py-3 font-bold text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700">关闭</button>
+          </div>
+        </div>
+      </div>
+    );
 
-            return (
-                <div className="min-h-screen pb-20">
-                    
-                    {/* Header */}
-                    <header className="sticky top-0 z-40 bg-white/95 dark:bg-darkBg/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-                        <div className="max-w-3xl mx-auto px-4 py-3">
-                            <div className="flex justify-between items-center mb-4">
-                                <div>
-                                    <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                                        <i className="fa-solid fa-seedling text-green-500 mr-2"></i>NutriGuide
-                                    </h1>
-                                    <p className="text-[10px] text-slate-400 font-medium tracking-wide">By Hao Guo</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button onClick={() => setIsDark(!isDark)} className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-yellow-400 flex items-center justify-center">
-                                        <i className={`fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}`}></i>
-                                    </button>
-                                    <button onClick={() => setShowSources(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-blue-400">
-                                        <i className="fa-solid fa-circle-info"></i>
-                                        <span className="text-xs font-bold">来源</span>
-                                    </button>
-                                     <button 
-                                        onClick={() => setIsSeniorMode(!isSeniorMode)}
-                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
-                                            isSeniorMode 
-                                            ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-400 dark:bg-yellow-900 dark:text-yellow-200' 
-                                            : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300'
-                                        }`}
-                                    >
-                                        <i className="fa-solid fa-glasses"></i>
-                                        <span className="text-sm font-bold">{isSeniorMode ? '大字版' : '标准'}</span>
-                                    </button>
-                                </div>
-                            </div>
+    const App = () => {
+      const [activeSymptom, setActiveSymptom] = useState(null);
+      const [selectedNutrient, setSelectedNutrient] = useState(null);
+      const [sourceFocus, setSourceFocus] = useState(null);
+      const [isSeniorMode, setIsSeniorMode] = useState(false);
+      const [isDark, setIsDark] = useState(false);
+      useEffect(() => { document.documentElement.classList.toggle('dark', isDark); }, [isDark]);
+      const activeDesc = symptomMap.find(item => item.id === activeSymptom)?.desc;
 
-                            {/* View Tabs */}
-                            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-3">
-                                <button onClick={() => setView('nutrients')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'nutrients' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
-                                    营养素
-                                </button>
-                                <button onClick={() => setView('guidelines')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'guidelines' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
-                                    膳食指南
-                                </button>
-                                <button onClick={() => setView('products')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${view === 'products' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-400'}`}>
-                                    精选方案
-                                </button>
-                            </div>
-
-                            {/* 症状筛选条 (仅在营养素视图) */}
-                            {view === 'nutrients' && (
-                                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                    <button 
-                                        onClick={() => setActiveSymptom(null)}
-                                        className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all ${activeSymptom === null ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}
-                                    >
-                                        全部
-                                    </button>
-                                    {symptomMap.map(sym => (
-                                        <button 
-                                            key={sym.id}
-                                            onClick={() => setActiveSymptom(activeSymptom === sym.id ? null : sym.id)}
-                                            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${activeSymptom === sym.id ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700' : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'}`}
-                                        >
-                                            {sym.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </header>
-
-                    {/* Main Content */}
-                    <main className="max-w-3xl mx-auto px-4 py-6">
-                        {/* 视图 1：营养素 */}
-                        {view === 'nutrients' && (
-                            <div className="animate-fadeIn">
-                                {/* 症状描述提示 */}
-                                {activeSymptom && (
-                                    <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-xl text-center text-sm font-medium animate-pulse-once">
-                                        💡 {symptomMap.find(s => s.id === activeSymptom)?.desc}
-                                    </div>
-                                )}
-
-                                {/* 英雄网格 */}
-                                <div className="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-6">
-                                    {nutrientsData.map(item => {
-                                        const isDimmed = activeSymptom && !item.tags.includes(activeSymptom);
-                                        const isHighlighted = activeSymptom && item.tags.includes(activeSymptom);
-                                        return (
-                                            <HeroCard 
-                                                key={item.id} 
-                                                item={item} 
-                                                isDimmed={isDimmed} 
-                                                isHighlighted={isHighlighted}
-                                                onClick={() => setSelectedNutrient(item)}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 视图 2：膳食指南 */}
-                        {view === 'guidelines' && (
-                            <div className="space-y-4 animate-fadeIn">
-                                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white mb-6 shadow-lg">
-                                    <h2 className={`font-bold mb-2 transition-all ${isSeniorMode ? 'text-3xl' : 'text-2xl'}`}>2026 美国居民膳食指南</h2>
-                                    <p className={`opacity-90 mb-4 transition-all ${isSeniorMode ? 'text-xl leading-loose' : 'text-sm'}`}>
-                                        这不是普通的“建议”，而是美国联邦政府每五年发布一次的“营养宪法”。它是全球数千名顶尖科学家，审阅了过去五年所有的医学研究后，得出的最权威、最科学、不容置疑的健康真理。这是全球医生、营养师制定治疗方案的最高标准。对于老年人来说，这就意味着：照着做，能保命。
-                                    </p>
-                                    <div className="mt-4 flex gap-2">
-                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-scale-balanced"></i> 全球金标准</span>
-                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-flask"></i> 顶尖科学背书</span>
-                                    </div>
-                                </div>
-                                {guidelinesData.map((item, index) => (
-                                    <GuidelineCard key={index} item={item} isSeniorMode={isSeniorMode} />
-                                ))}
-                            </div>
-                        )}
-
-                        {/* 视图 3：精选方案 (新) */}
-                        {view === 'products' && (
-                            <div className="animate-fadeIn">
-                                <div className="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-6 text-white mb-8 shadow-lg">
-                                    <h2 className={`font-bold mb-2 transition-all ${isSeniorMode ? 'text-3xl' : 'text-2xl'}`}>家人自用 • 医疗级方案</h2>
-                                    <p className={`opacity-90 mb-4 transition-all ${isSeniorMode ? 'text-xl leading-loose' : 'text-sm'}`}>
-                                        严格遵循‘临床医疗级’选品标准，核心指标只有两个：极高的生物利用度（吃进去能真正被身体利用）与绝对的成分纯净度（长期服用无肝肾负担）。区别于市面常见的合成维生素，这两款产品代表了目前营养医学界的顶级工艺：Thorne 采用全活性辅酶形态（梅奥诊所科研合作标准），NOW 采用分子蒸馏提纯技术（去除重金属）。这是基于严谨医学数据筛选出的、针对中老年代谢特点的最优健康支持方案。
-                                    </p>
-                                    <div className="mt-4 flex gap-2">
-                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-check-double"></i> 顶级双重认证</span>
-                                        <span className={`bg-white/20 px-2 py-1 rounded transition-all ${isSeniorMode ? 'text-lg' : 'text-xs'}`}><i className="fa-solid fa-heart-pulse"></i> 临床有效剂量</span>
-                                    </div>
-                                </div>
-                                
-                                {productsData.map((item, index) => (
-                                    <ProductCard key={index} item={item} isSeniorMode={isSeniorMode} />
-                                ))}
-                            </div>
-                        )}
-                        
-                        <div className="mt-12 text-center pb-6">
-                            <p className="text-xs text-slate-400 dark:text-slate-600">
-                                数据来源: NIH, Mayo Clinic, USDA.
-                                <br/>仅供参考，不作为医疗诊断依据。
-                            </p>
-                        </div>
-                    </main>
-
-                    {/* 弹窗层 */}
-                    {selectedNutrient && (
-                        <DetailModal 
-                            item={selectedNutrient} 
-                            onClose={() => setSelectedNutrient(null)} 
-                            isSeniorMode={isSeniorMode}
-                            setIsSeniorMode={setIsSeniorMode}
-                        />
-                    )}
-
-                    {showSources && <SourcesModal onClose={() => setShowSources(false)} isSeniorMode={isSeniorMode} />}
+      return (
+        <div className="app-shell">
+          <header className="app-header sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-darkBg/95">
+            <div className="mx-auto max-w-4xl px-4 py-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex gap-3">
+                  <img src="https://img.icons8.com/color/96/healthy-food.png" alt="" className="h-10 w-10 rounded-lg bg-white p-1" />
+                  <div>
+                    <h1 className="text-xl font-black text-slate-950 dark:text-white">NutriGuide</h1>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">营养素权威速查 · 每条结论附来源</p>
+                  </div>
                 </div>
-            );
-        };
+                <div className="flex gap-2">
+                  <button onClick={() => setIsDark(!isDark)} className="rounded-lg bg-slate-100 px-3 py-2 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-amber-200 dark:hover:bg-slate-700" aria-label="切换深色模式"><i className={`fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}`}></i></button>
+                  <button onClick={() => setIsSeniorMode(!isSeniorMode)} className={`rounded-lg px-3 py-2 text-sm font-bold ${isSeniorMode ? 'bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-100' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-200'}`}>{isSeniorMode ? '大字版' : '标准'}</button>
+                  <button onClick={() => setSourceFocus(Object.keys(sources))} className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700">来源</button>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                <button onClick={() => setActiveSymptom(null)} className={`shrink-0 rounded-lg px-3 py-2 text-sm font-bold ${activeSymptom === null ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}`}>全部</button>
+                {symptomMap.map(symptom => (
+                  <button key={symptom.id} onClick={() => setActiveSymptom(activeSymptom === symptom.id ? null : symptom.id)} className={`shrink-0 rounded-lg border px-3 py-2 text-sm font-bold ${activeSymptom === symptom.id ? 'border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-700 dark:bg-blue-950 dark:text-blue-200' : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}>{symptom.label}</button>
+                ))}
+              </div>
+            </div>
+          </header>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+          <main className="mx-auto max-w-4xl px-4 py-6">
+            <div className="mb-5 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-darkCard">
+              <p className={`${isSeniorMode ? 'text-xl leading-9' : 'text-sm leading-7'} text-slate-700 dark:text-slate-200`}>
+                本页用于快速查阅营养素信息，不替代医生、注册营养师或药师的个体化建议。
+                <SourceMarks ids={['ods-supp-safe']} onOpen={setSourceFocus} />
+              </p>
+            </div>
+            {activeDesc && <div className="mb-4 rounded-lg bg-blue-50 p-3 text-center text-sm font-bold text-blue-800 animate-pulseOnce dark:bg-blue-950 dark:text-blue-200">{activeDesc}</div>}
+            <div className="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-7 animate-fadeIn">
+              {nutrientsData.map(item => {
+                const isDimmed = activeSymptom && !item.tags.includes(activeSymptom);
+                const isHighlighted = activeSymptom && item.tags.includes(activeSymptom);
+                return <NutrientCard key={item.id} item={item} isDimmed={isDimmed} isHighlighted={isHighlighted} onClick={() => setSelectedNutrient(item)} />;
+              })}
+            </div>
+          </main>
+          {selectedNutrient && <DetailModal item={selectedNutrient} isSeniorMode={isSeniorMode} setIsSeniorMode={setIsSeniorMode} onClose={() => setSelectedNutrient(null)} onOpenSources={setSourceFocus} />}
+          {sourceFocus && <SourceModal sourceIds={sourceFocus} onClose={() => setSourceFocus(null)} />}
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>

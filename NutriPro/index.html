@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8f5">
+  <meta name="color-scheme" content="light dark">
+  <meta name="application-name" content="NutriPro">
+  <meta name="apple-mobile-web-app-title" content="NutriPro">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>NutriPro</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-180.png">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f8f5; --surface: rgba(255,255,255,.78); --solid: #fff;
+      --text: #111; --muted: #67706c; --hair: rgba(20,26,23,.12);
+      --accent: #2d7a6f; --accent-soft: #e3f0ec; --warn: #a9631d;
+      --shadow: 0 14px 38px rgba(18,24,21,.08);
+      --top: env(safe-area-inset-top); --bottom: env(safe-area-inset-bottom);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#080a09; --surface:rgba(24,26,25,.78); --solid:#141716; --text:#f4f5f2; --muted:#9aa29d; --hair:rgba(245,248,244,.14); --accent:#7fc8bb; --accent-soft:rgba(127,200,187,.16); --shadow:0 14px 38px rgba(0,0,0,.38); }
+    }
+    * { box-sizing: border-box; letter-spacing: 0; }
+    html, body { margin: 0; min-height: 100%; overflow-x: hidden; background: var(--bg); color: var(--text); }
+    body { -webkit-tap-highlight-color: transparent; font-size: 16px; }
+    button, input { font: inherit; color: inherit; }
+    button { border: 0; background: none; padding: 0; touch-action: manipulation; cursor: pointer; }
+    a { color: inherit; }
+    .app { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+    .topbar { position: sticky; top: 0; z-index: 20; padding: calc(var(--top) + 10px) 16px 10px; background: color-mix(in srgb, var(--bg) 74%, transparent); backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%); border-bottom: 1px solid var(--hair); }
+    .title-row { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .mark { width: 34px; height: 34px; border-radius: 8px; background: var(--solid); border: 1px solid var(--hair); display: grid; place-items: center; box-shadow: var(--shadow); flex: 0 0 auto; }
+    .mark svg { width: 22px; height: 22px; }
+    h1 { margin: 0; font-size: 22px; line-height: 1.08; font-weight: 800; }
+    .subtitle { margin: 2px 0 0; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pill-btn { min-height: 36px; padding: 0 12px; border-radius: 8px; background: var(--solid); border: 1px solid var(--hair); color: var(--text); font-size: 14px; font-weight: 700; }
+    .search { margin-top: 10px; height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 8px; background: var(--solid); border: 1px solid var(--hair); }
+    .search span { color: var(--muted); font-size: 17px; }
+    .search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 16px; }
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { flex: 0 0 auto; min-height: 36px; padding: 0 12px; border-radius: 8px; background: var(--solid); border: 1px solid var(--hair); color: var(--muted); font-size: 14px; font-weight: 700; }
+    .chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    main { min-width: 0; overflow: auto; padding: 14px 16px calc(92px + var(--bottom)); }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 2px 0 12px; }
+    .section-head h2 { margin: 0; font-size: 18px; line-height: 1.2; }
+    .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .list { display: grid; gap: 10px; }
+    .nutri { min-height: 88px; width: 100%; text-align: left; border-radius: 8px; border: 1px solid var(--hair); background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); padding: 13px; display: grid; grid-template-columns: 1fr 32px; gap: 12px; align-items: center; box-shadow: var(--shadow); }
+    .badge { width: 54px; height: 54px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 19px; font-weight: 850; border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+    .nutri h3 { margin: 0; font-size: 17px; line-height: 1.2; }
+    .nutri p { margin: 5px 0 0; color: var(--muted); font-size: 13px; line-height: 1.36; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .open-hit { text-align: left; min-width: 0; min-height: 62px; display: grid; grid-template-columns: 54px 1fr; gap: 12px; align-items: center; }
+    .star { width: 32px; height: 44px; border-radius: 8px; color: var(--muted); font-size: 20px; }
+    .star.on { color: var(--warn); }
+    .empty { border: 1px dashed var(--hair); border-radius: 8px; padding: 28px 18px; color: var(--muted); text-align: center; line-height: 1.5; }
+    .tabbar { position: fixed; left: env(safe-area-inset-left); right: env(safe-area-inset-right); bottom: 0; z-index: 25; padding: 8px 12px calc(8px + var(--bottom)); background: color-mix(in srgb, var(--bg) 70%, transparent); border-top: 1px solid var(--hair); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .tab { min-height: 48px; border-radius: 8px; color: var(--muted); display: grid; place-items: center; align-content: center; gap: 2px; font-size: 11px; font-weight: 750; }
+    .tab b { font-size: 19px; line-height: 1; }
+    .tab.active { color: var(--accent); background: var(--accent-soft); }
+    .sheet { position: fixed; inset: 0; z-index: 50; display: none; background: rgba(0,0,0,.28); padding: calc(var(--top) + 18px) 12px calc(var(--bottom) + 12px); }
+    .sheet.open { display: grid; align-items: end; }
+    .panel { max-height: min(780px, calc(100dvh - var(--top) - var(--bottom) - 32px)); overflow: hidden; border-radius: 8px; background: var(--solid); border: 1px solid var(--hair); box-shadow: 0 26px 70px rgba(0,0,0,.24); display: grid; grid-template-rows: auto 1fr auto; }
+    .panel-head { min-height: 60px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--hair); }
+    .panel-title { min-width: 0; }
+    .panel-title h2 { margin: 0; font-size: 21px; line-height: 1.15; }
+    .panel-title p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+    .panel-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+    .icon-btn { width: 44px; height: 44px; border-radius: 8px; background: var(--bg); border: 1px solid var(--hair); font-size: 20px; }
+    .panel-body { overflow: auto; padding: 12px 14px 16px; }
+    .fact { border-bottom: 1px solid var(--hair); padding: 14px 0; }
+    .fact:first-child { padding-top: 2px; }
+    .fact h3 { margin: 0 0 7px; font-size: 15px; color: var(--accent); }
+    .fact p { margin: 0; font-size: 15px; line-height: 1.62; overflow-wrap: anywhere; }
+    .source-link { margin-left: 6px; display: inline-flex; align-items: center; min-height: 24px; padding: 0 6px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 800; text-decoration: none; }
+    .panel-foot { padding: 10px 14px 14px; border-top: 1px solid var(--hair); color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .toast { position: fixed; left: 50%; bottom: calc(82px + var(--bottom)); transform: translateX(-50%) translateY(18px); opacity: 0; pointer-events: none; z-index: 80; min-height: 36px; max-width: calc(100vw - 48px); padding: 8px 12px; border-radius: 8px; background: rgba(20,22,21,.88); color: #fff; font-size: 13px; transition: opacity .18s ease, transform .18s ease; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (min-width: 760px) { .topbar, main { max-width: 760px; margin: 0 auto; } .tabbar { left: 50%; right: auto; transform: translateX(-50%); width: min(760px, 100vw); } .sheet { justify-items: center; } .panel { width: min(720px, calc(100vw - 24px)); } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="title-row">
+        <div class="brand">
+          <div class="mark" aria-hidden="true"><svg viewBox="0 0 48 48" role="img"><rect x="8" y="8" width="32" height="32" rx="8" fill="#2d7a6f"/><path d="M16 28c9 0 15-5 16-14 7 6 4 19-7 20-5 .4-8-1.4-9-6Z" fill="#f7f8f5"/><path d="M16 31c6-7 12-11 19-13" fill="none" stroke="#f7f8f5" stroke-width="3" stroke-linecap="round"/></svg></div>
+          <div><h1>NutriPro</h1><p class="subtitle">营养素速查</p></div>
+        </div>
+        <button class="pill-btn" id="sourceAll" type="button">来源</button>
+      </div>
+      <label class="search"><span>⌕</span><input id="search" type="search" enterkeyhint="search" autocomplete="off" placeholder="搜索营养素、风险或食物"></label>
+      <div class="chips" id="chips" aria-label="筛选"></div>
+    </header>
+    <main>
+      <div class="section-head"><h2 id="viewTitle">全部营养素</h2><span class="count" id="count"></span></div>
+      <div class="list" id="list"></div>
+    </main>
+    <nav class="tabbar" aria-label="底部导航">
+      <button class="tab active" data-view="all" type="button"><b>⌘</b><span>速查</span></button>
+      <button class="tab" data-view="favorites" type="button"><b>☆</b><span>收藏</span></button>
+      <button class="tab" data-view="recent" type="button"><b>◷</b><span>最近</span></button>
+    </nav>
+  </div>
+  <div class="sheet" id="sheet" aria-hidden="true"><div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="panel-head"><div class="panel-title"><h2 id="sheetTitle"></h2><p id="sheetSub"></p></div><div class="panel-actions"><button class="icon-btn" id="sheetFav" type="button" aria-label="收藏">☆</button><button class="icon-btn" id="sheetClose" type="button" aria-label="关闭">×</button></div></div><div class="panel-body" id="sheetBody"></div><div class="panel-foot">仅供健康信息查询，不替代医生、注册营养师或药师的个体化建议。</div></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const STORE_KEY = 'nutripro:v1';
+    const STORE_VERSION = 1;
+    const sources = {
+      supp:{label:'NIH ODS',title:'Dietary Supplements: What You Need to Know',url:'https://ods.od.nih.gov/factsheets/WYNTK-Consumer/'},
+      va:{label:'NIH ODS',title:'Vitamin A Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/'},
+      vd:{label:'NIH ODS',title:'Vitamin D Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/'},
+      ve:{label:'NIH ODS',title:'Vitamin E Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/'},
+      vk:{label:'NIH ODS',title:'Vitamin K Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/VitaminK-HealthProfessional/'},
+      b1:{label:'NIH ODS',title:'Thiamin Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Thiamin-HealthProfessional/'},
+      b2:{label:'NIH ODS',title:'Riboflavin Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Riboflavin-HealthProfessional/'},
+      b3:{label:'NIH ODS',title:'Niacin Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Niacin-HealthProfessional/'},
+      b6:{label:'NIH ODS',title:'Vitamin B6 Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/'},
+      folate:{label:'NIH ODS',title:'Folate Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/'},
+      b12:{label:'NIH ODS',title:'Vitamin B12 Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/'},
+      vc:{label:'NIH ODS',title:'Vitamin C Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/'},
+      ca:{label:'NIH ODS',title:'Calcium Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/'},
+      mg:{label:'NIH ODS',title:'Magnesium Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/'},
+      k:{label:'NIH ODS',title:'Potassium Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Potassium-HealthProfessional/'},
+      na:{label:'FDA',title:'Sodium in Your Diet',url:'https://www.fda.gov/food/nutrition-education-resources-materials/sodium-your-diet'},
+      fe:{label:'NIH ODS',title:'Iron Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/'},
+      zn:{label:'NIH ODS',title:'Zinc Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/'},
+      se:{label:'NIH ODS',title:'Selenium Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Selenium-HealthProfessional/'},
+      iodine:{label:'NIH ODS',title:'Iodine Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Iodine-HealthProfessional/'},
+      cu:{label:'NIH ODS',title:'Copper Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Copper-HealthProfessional/'},
+      mn:{label:'NIH ODS',title:'Manganese Fact Sheet for Health Professionals',url:'https://ods.od.nih.gov/factsheets/Manganese-HealthProfessional/'}
+    };
+    const nutrients = [
+      ['va','维A','维生素 A','Vitamin A','eye skin immune','视觉、免疫与上皮组织维护。','成人男 900 mcg RAE，女 700 mcg RAE；UL 3,000 mcg RAE。','肝脏、鱼油、奶制品、鸡蛋、深绿和橙黄色蔬果。','缺乏可影响暗适应并导致干眼症；过量预成型维 A 可损害肝脏和骨骼。'],
+      ['vd','维D','维生素 D','Vitamin D','bone immune mood','帮助钙吸收并维持骨骼矿化。','19-70 岁 600 IU；70 岁以上 800 IU；UL 4,000 IU。','富脂鱼类、鱼肝油、蛋黄、强化牛奶和强化食品。','缺乏可导致骨软化或佝偻病；过量主要风险是高钙血症。'],
+      ['ve','维E','维生素 E','Vitamin E','skin blood','脂溶性抗氧化营养素。','成人 RDA 15 mg α-生育酚；UL 1,000 mg。','植物油、坚果、种子和绿叶蔬菜。','高剂量补充剂可增加出血风险，抗凝用药者需先咨询医生。'],
+      ['vk','维K','维生素 K','Vitamin K','bone blood','凝血蛋白和骨骼相关蛋白合成所需。','成人男 AI 120 mcg，女 AI 90 mcg；未设 UL。','菠菜、羽衣甘蓝、花椰菜、植物油和部分发酵食品。','会影响华法林等维生素 K 拮抗剂，摄入应保持稳定。'],
+      ['b1','B1','维生素 B1','Thiamin','energy brain heart','参与能量代谢和细胞功能。','成人男 1.2 mg，女 1.1 mg；未设 UL。','全谷物、强化谷物、肉类、鱼类、豆类、坚果和种子。','缺乏可导致脚气病或神经、心血管表现。'],
+      ['b2','B2','维生素 B2','Riboflavin','eye skin energy','参与能量产生、细胞功能和药物代谢。','成人男 1.3 mg，女 1.1 mg；未设 UL。','鸡蛋、动物内脏、瘦肉、牛奶、绿色蔬菜和强化谷物。','缺乏可出现口角炎、唇炎、舌炎、皮炎和贫血。'],
+      ['b3','B3','维生素 B3','Niacin','skin brain heart energy','参与 NAD 和 NADP 辅酶形成。','成人男 16 mg NE，女 14 mg NE；补充剂来源 UL 35 mg。','肉类、禽肉、鱼、坚果、豆类、谷物和强化食品。','高剂量烟酸可导致潮红、肝毒性、高血糖和高尿酸。'],
+      ['b6','B6','维生素 B6','Vitamin B6','brain mood skin blood','参与宏量营养素代谢、神经递质和血红蛋白相关过程。','51 岁以上男 1.7 mg，女 1.5 mg；成人 UL 100 mg。','鱼、牛肝、禽肉、土豆、淀粉类蔬菜、部分水果和强化谷物。','长期高剂量补充剂可导致感觉神经病变。'],
+      ['folate','叶酸','维生素 B9','Folate','blood brain heart','参与核酸合成、细胞分裂和同型半胱氨酸代谢。','成人 RDA 400 mcg DFE；合成叶酸 UL 1,000 mcg。','深绿色蔬菜、豆类、花生、葵花籽、动物肝脏和强化谷物。','高剂量合成叶酸可掩盖维生素 B12 缺乏。'],
+      ['b12','B12','维生素 B12','Vitamin B12','brain blood energy','参与神经功能、DNA 合成和红细胞形成。','成人 RDA 2.4 mcg；未设 UL。','鱼、肉、禽、蛋、奶制品和强化食品。','50 岁以上成人宜通过强化食品或补充剂满足需求。'],
+      ['vc','维C','维生素 C','Vitamin C','immune skin blood','参与胶原合成、抗氧化防御、免疫功能和非血红素铁吸收。','成人男 90 mg，女 75 mg；吸烟者额外 35 mg；UL 2,000 mg。','柑橘类水果、甜椒、猕猴桃、西兰花、草莓和土豆。','高剂量可导致腹泻、恶心和腹部痉挛。'],
+      ['ca','钙','钙','Calcium','bone muscle heart','骨骼和牙齿主要矿物质，也参与肌肉、神经和激素功能。','多数成人 1,000 mg；51 岁以上女性和 71 岁以上成人 1,200 mg。','牛奶、酸奶、奶酪、带骨鱼、强化饮料、豆腐和部分绿叶蔬菜。','过量补充剂可增加便秘、肾结石和高钙血症风险。'],
+      ['mg','镁','镁','Magnesium','sleep muscle mood bone heart','参与能量产生、肌肉神经功能、血糖和血压调节。','成人男 400-420 mg，女 310-320 mg；补充剂来源 UL 350 mg。','绿叶蔬菜、豆类、坚果、种子和全谷物。','肾功能下降者使用含镁泻药或补充剂前应咨询医生。'],
+      ['k','钾','钾','Potassium','heart muscle blood','参与体液平衡、神经传导、肌肉收缩和血压调节。','成人男 AI 3,400 mg，女 AI 2,600 mg；健康人群未设 UL。','水果、蔬菜、豆类、奶制品、肉类、禽肉、鱼和坚果。','肾病或使用影响排钾药物者不应自行使用钾补充剂或低钠盐。'],
+      ['na','钠','钠','Sodium','heart blood','参与体液平衡、肌肉功能和神经功能。','FDA 每日值为少于 2,300 mg。','多数钠来自包装食品和预制食品。','较高钠摄入与较高血压风险相关。'],
+      ['fe','铁','铁','Iron','blood energy brain','血红蛋白和肌红蛋白组成部分。','成年男性和 51 岁以上女性 8 mg；19-50 岁女性 18 mg；UL 45 mg。','瘦肉、海鲜、禽肉、白豆、扁豆、菠菜、坚果和强化谷物。','未确认缺铁时不宜自行长期补铁。'],
+      ['zn','锌','锌','Zinc','immune skin blood','参与免疫、蛋白质合成、伤口愈合、DNA 合成和味觉嗅觉。','成人男 11 mg，女 8 mg；UL 40 mg。','牡蛎、红肉、禽肉、豆类、坚果、全谷物和奶制品。','长期过量可导致铜缺乏、免疫功能下降和 HDL 降低。'],
+      ['se','硒','硒','Selenium','immune thyroid heart','参与抗氧化防御、甲状腺激素代谢、DNA 合成和生殖功能。','成人 RDA 55 mcg；UL 400 mcg。','巴西坚果、海鲜、肉类、禽肉、鸡蛋、奶制品和谷物。','过量可导致蒜味口气、金属味、脱发、指甲脆裂和神经系统异常。'],
+      ['iodine','碘','碘','Iodine','thyroid energy brain','甲状腺激素合成所必需。','成人 RDA 150 mcg；UL 1,100 mcg。','海藻、鱼类、奶制品、加碘盐和部分谷物制品。','有甲状腺病史或使用胺碘酮者不宜自行使用高碘补充剂。'],
+      ['cu','铜','铜','Copper','blood bone immune','参与能量产生、铁代谢、结缔组织形成和抗氧化防御。','成人 RDA 900 mcg；UL 10,000 mcg。','贝类、种子、坚果、动物内脏、全谷物和巧克力。','高剂量锌可降低铜吸收。'],
+      ['mn','锰','锰','Manganese','bone energy','参与代谢、骨形成和抗氧化过程。','成人男 AI 2.3 mg，女 AI 1.8 mg；UL 11 mg。','全谷物、贝类、坚果、豆类、米饭、茶和部分蔬菜。','长期高暴露可产生神经系统毒性，肝功能受损者可能更易蓄积。']
+    ].map(([id,shortName,name,en,tags,basic,intake,foods,risk]) => ({id,shortName,name,en,tags:tags.split(' '), sourceId:id, facts:{'作用':basic,'摄入':intake,'食物':foods,'注意':risk}}));
+    const filters = [['all','全部'],['bone','骨骼'],['immune','免疫'],['heart','心血管'],['brain','神经'],['blood','血液'],['skin','皮肤'],['energy','代谢'],['thyroid','甲状腺']];
+    const el = id => document.getElementById(id);
+    let state = loadStore(), view = 'all', filter = 'all', query = '', current = null, toastTimer = null;
+    function loadStore(){ try { const raw = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); if (raw.version !== STORE_VERSION) throw new Error('version'); return {version:STORE_VERSION, favorites:Array.isArray(raw.favorites)?raw.favorites:[], recent:Array.isArray(raw.recent)?raw.recent.slice(0,20):[], settings:raw.settings && typeof raw.settings==='object'?raw.settings:{}}; } catch { return {version:STORE_VERSION, favorites:[], recent:[], settings:{}}; } }
+    function saveStore(){ localStorage.setItem(STORE_KEY, JSON.stringify({version:STORE_VERSION, favorites:state.favorites, recent:state.recent.slice(0,20), settings:state.settings || {}})); }
+    function toast(msg){ clearTimeout(toastTimer); el('toast').textContent = msg; el('toast').classList.add('show'); toastTimer = setTimeout(()=>el('toast').classList.remove('show'), 1500); }
+    function sourceMark(id){ const s = sources[id] || sources.supp; return `<a class="source-link" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a>`; }
+    function getItems(){ let items = nutrients; if (view === 'favorites') items = items.filter(n => state.favorites.includes(n.id)); if (view === 'recent') items = state.recent.map(id => nutrients.find(n => n.id === id)).filter(Boolean); if (filter !== 'all' && view === 'all') items = items.filter(n => n.tags.includes(filter)); const q = query.trim().toLowerCase(); if (q) items = items.filter(n => [n.shortName,n.name,n.en,...Object.values(n.facts)].join(' ').toLowerCase().includes(q)); return items; }
+    function renderChips(){ el('chips').innerHTML = filters.map(([id,label]) => `<button class="chip ${filter===id?'active':''}" data-filter="${id}" type="button">${label}</button>`).join(''); }
+    function render(){ renderChips(); document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === view)); const items = getItems(); el('viewTitle').textContent = view === 'favorites' ? '收藏' : view === 'recent' ? '最近查看' : (filter === 'all' ? '全部营养素' : filters.find(f=>f[0]===filter)[1]); el('count').textContent = `${items.length} 项`; el('list').innerHTML = items.length ? items.map(n => `<div class="nutri"><button class="open-hit" data-open="${n.id}" type="button"><div class="badge">${n.shortName}</div><div><h3>${n.name}</h3><p>${n.facts['作用']}</p></div></button><button class="star ${state.favorites.includes(n.id)?'on':''}" data-fav="${n.id}" type="button" aria-label="收藏">${state.favorites.includes(n.id)?'★':'☆'}</button></div>`).join('') : `<div class="empty">没有匹配的营养素</div>`; }
+    function toggleFav(id){ const has = state.favorites.includes(id); state.favorites = has ? state.favorites.filter(x => x !== id) : [id, ...state.favorites]; saveStore(); toast(has ? '已取消收藏' : '已收藏'); render(); if (current && current.id === id) updateFavButton(); }
+    function updateFavButton(){ el('sheetFav').hidden = false; el('sheetFav').textContent = state.favorites.includes(current.id) ? '★' : '☆'; }
+    function openItem(id){ current = nutrients.find(n => n.id === id); if (!current) return; state.recent = [id, ...state.recent.filter(x => x !== id)].slice(0,20); saveStore(); el('sheetTitle').textContent = current.name; el('sheetSub').textContent = current.en; el('sheetBody').innerHTML = Object.entries(current.facts).map(([k,v]) => `<section class="fact"><h3>${k}</h3><p>${v}${sourceMark(current.sourceId)}</p></section>`).join(''); updateFavButton(); el('sheet').classList.add('open'); el('sheet').setAttribute('aria-hidden','false'); render(); }
+    function closeSheet(){ el('sheet').classList.remove('open'); el('sheet').setAttribute('aria-hidden','true'); current = null; }
+    el('search').addEventListener('input', e => { query = e.target.value; render(); });
+    el('chips').addEventListener('click', e => { const b = e.target.closest('[data-filter]'); if (!b) return; filter = b.dataset.filter; if (view !== 'all') view = 'all'; render(); });
+    document.querySelector('.tabbar').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (!b) return; view = b.dataset.view; render(); });
+    el('list').addEventListener('click', e => { const fav = e.target.closest('[data-fav]'); if (fav) { e.stopPropagation(); toggleFav(fav.dataset.fav); return; } const open = e.target.closest('[data-open]'); if (open) openItem(open.dataset.open); });
+    el('sheetClose').addEventListener('click', closeSheet);
+    el('sheet').addEventListener('click', e => { if (e.target === el('sheet')) closeSheet(); });
+    el('sheetFav').addEventListener('click', () => current && toggleFav(current.id));
+    el('sourceAll').addEventListener('click', () => { const body = Object.values(sources).map(s => `<section class="fact"><h3>${s.label}</h3><p><a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.title}</a></p></section>`).join(''); current = null; el('sheetTitle').textContent = '来源'; el('sheetSub').textContent = '权威资料入口'; el('sheetBody').innerHTML = body; el('sheetFav').hidden = true; el('sheet').classList.add('open'); el('sheet').setAttribute('aria-hidden','false'); });
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(() => {});
+    render();
+  </script>
+</body>
+</html>
