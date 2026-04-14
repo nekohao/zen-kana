@@ -28,6 +28,7 @@
   --bar: rgba(246, 246, 241, 0.86);
   --radius: 8px;
   --tap: 48px;
+  --kana-practice-font: "Yu Kyokasho", "UD Digi Kyokasho N-R", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans CJK JP", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -150,7 +151,7 @@ button {
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: calc(env(safe-area-inset-top) + 78px) 16px calc(env(safe-area-inset-bottom) + 86px);
+  padding: calc(env(safe-area-inset-top) + 78px) 16px calc(env(safe-area-inset-bottom) + 92px);
 }
 
 .screen {
@@ -294,6 +295,12 @@ button:disabled {
 .write-toolbar .segmented,
 .write-toolbar .chip-row {
   min-width: 0;
+}
+
+.write-toolbar .chip-row .chip {
+  font-family: var(--kana-practice-font);
+  font-size: 18px;
+  font-weight: 760;
 }
 
 .chip {
@@ -475,9 +482,11 @@ button:disabled {
   inset: 0;
   display: grid;
   place-items: center;
-  color: rgba(184, 59, 64, 0.12);
-  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  color: rgba(184, 59, 64, 0.13);
+  font-family: var(--kana-practice-font);
   font-size: 210px;
+  font-weight: 760;
+  line-height: 1;
   pointer-events: none;
 }
 
@@ -579,22 +588,22 @@ canvas {
 
 .tabbar {
   position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: calc(env(safe-area-inset-bottom) + 10px);
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 35;
-  max-width: 720px;
-  margin: 0 auto;
+  margin: 0;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  padding: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: var(--radius);
-  background: var(--bar);
-  box-shadow: 0 18px 42px rgba(31, 35, 32, 0.18);
-  backdrop-filter: blur(28px) saturate(150%);
-  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  gap: 4px;
+  padding: 7px max(10px, calc((100vw - 720px) / 2 + 10px)) calc(env(safe-area-inset-bottom) + 7px);
+  border-top: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 253, 0.82), rgba(244, 246, 242, 0.68));
+  box-shadow: 0 -18px 42px rgba(31, 35, 32, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
 }
 
 .tab-button {
@@ -605,16 +614,21 @@ canvas {
   color: var(--muted);
   font-size: 10px;
   font-weight: 780;
+  padding: 3px 0 2px;
 }
 
 .tab-button strong { font-size: 18px; line-height: 1; }
-.tab-button.is-active { color: var(--accent); background: rgba(184, 59, 64, 0.08); }
+.tab-button.is-active {
+  color: var(--accent);
+  background: rgba(184, 59, 64, 0.09);
+  box-shadow: inset 0 0 0 1px rgba(184, 59, 64, 0.08);
+}
 
 .toast {
   position: fixed;
   left: 18px;
   right: 18px;
-  bottom: calc(env(safe-area-inset-bottom) + 86px);
+  bottom: calc(env(safe-area-inset-bottom) + 74px);
   z-index: 60;
   max-width: 420px;
   margin: 0 auto;
@@ -730,6 +744,7 @@ canvas {
   const byId = Object.fromEntries(ALL_KANA.map((item) => [item.id, item]));
   const app = document.getElementById("app");
   const audioCache = new Map();
+  let japaneseVoice = null;
   let data = loadData();
   let tab = "home";
   let scriptMode = data.settings.script || "hira";
@@ -884,12 +899,60 @@ canvas {
     render();
   }
 
+  function scoreJapaneseVoice(voice) {
+    if (!voice?.lang) return -1;
+    const lang = voice.lang.toLowerCase();
+    if (!lang.startsWith("ja")) return -1;
+    const name = voice.name.toLowerCase();
+    let score = lang === "ja-jp" ? 60 : 44;
+    [
+      ["neural", 22], ["natural", 22], ["premium", 18], ["enhanced", 18],
+      ["google", 16], ["microsoft", 12], ["nanami", 18], ["haruka", 16],
+      ["ayumi", 14], ["ichiro", 14], ["kyoko", 18], ["otoya", 16],
+      ["siri", 14], ["japanese", 8], ["日本", 8]
+    ].forEach(([hint, value]) => {
+      if (name.includes(hint)) score += value;
+    });
+    if (voice.localService) score += 4;
+    if (name.includes("compact") || name.includes("eloquence")) score -= 22;
+    return score;
+  }
+  function refreshJapaneseVoice() {
+    if (!("speechSynthesis" in window)) return null;
+    japaneseVoice = window.speechSynthesis.getVoices()
+      .filter((voice) => scoreJapaneseVoice(voice) >= 0)
+      .sort((a, b) => scoreJapaneseVoice(b) - scoreJapaneseVoice(a))[0] || null;
+    return japaneseVoice;
+  }
+  function getJapaneseVoice() {
+    return japaneseVoice || refreshJapaneseVoice();
+  }
+  function hasNaturalJapaneseVoice(voice) {
+    return Boolean(voice && scoreJapaneseVoice(voice) >= 72);
+  }
+  function speakFallback(text, notify = false) {
+    if (!("speechSynthesis" in window)) {
+      if (notify) showToast("音频暂不可用，请稍后重试");
+      return false;
+    }
+    const voice = getJapaneseVoice();
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    if (voice) utter.voice = voice;
+    utter.lang = voice?.lang || "ja-JP";
+    utter.rate = voice ? 0.76 : 0.72;
+    utter.pitch = 1.02;
+    utter.volume = 1;
+    window.speechSynthesis.speak(utter);
+    return true;
+  }
   function playKana(id) {
     const item = byId[id];
     if (!item) return;
-    if (!item.audio) {
-      speakFallback(item.hira);
-      return;
+    const voice = getJapaneseVoice();
+    if (!item.audio || hasNaturalJapaneseVoice(voice)) {
+      if (speakFallback(item.hira, !item.audio)) return;
+      if (!item.audio) return;
     }
     let audio = audioCache.get(id);
     if (!audio) {
@@ -898,19 +961,8 @@ canvas {
       audioCache.set(id, audio);
     }
     audio.currentTime = 0;
-    audio.play().catch(() => speakFallback(item.hira));
-  }
-  function speakFallback(text) {
-    if (!("speechSynthesis" in window)) {
-      showToast("音频暂不可用，请稍后重试");
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "ja-JP";
-    utter.rate = 0.82;
-    window.speechSynthesis.speak(utter);
-    showToast("已用系统日语发音代替音频");
+    audio.playbackRate = 0.96;
+    audio.play().catch(() => speakFallback(item.hira, true));
   }
 
   function buildLessonQueue(lesson) {
@@ -1118,7 +1170,7 @@ canvas {
     const label = q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
     const prompt = q.type === "sound"
       ? `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">播放读音</button>`
-      : q.type === "lesson" ? `<div class="romaji">${q.target.romaji}</div><div class="sound-hint">${q.target.audio ? "已播放，没听到就点重播" : "使用系统日语发音"}</div><button class="ghost-button" data-action="play" data-id="${q.target.id}">重播声音</button>`
+      : q.type === "lesson" ? `<div class="romaji">${q.target.romaji}</div><div class="sound-hint">${q.target.audio ? "已播放，没听到就点重播" : "使用自然日语语音"}</div><button class="ghost-button" data-action="play" data-id="${q.target.id}">重播声音</button>`
       : q.type === "romaji" ? `<div class="romaji">${q.target.romaji}</div>` : `<div class="big">${charFor(q.target)}</div>`;
     return `<div class="stack">
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -1333,6 +1385,10 @@ canvas {
     if (action === "restore") restoreBackup();
     if (action === "reset" && confirm("确定清空 KanaZen 的学习数据吗？")) { localStorage.removeItem(STORAGE_KEY); data = loadData(); quiz = null; render(); }
   });
+  if ("speechSynthesis" in window) {
+    refreshJapaneseVoice();
+    window.speechSynthesis.onvoiceschanged = () => { refreshJapaneseVoice(); };
+  }
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     navigator.serviceWorker.register("./sw.js").catch(() => {});
   }
