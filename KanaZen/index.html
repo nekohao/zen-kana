@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KanaZen">
   <meta name="format-detection" content="telephone=no">
+  <meta name="kanazen-build" content="kanazen-v10-20260415">
   <title>KanaZen</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icons/icon-1024.png">
@@ -688,7 +689,10 @@ canvas {
 (() => {
   "use strict";
 
+  const APP_BUILD = "kanazen-v10-20260415";
   const STORAGE_KEY = "kanazen:v1";
+  const UPDATE_CHECK_KEY = "kanazen:lastUpdateCheck";
+  const UPDATE_CHECK_INTERVAL = 15 * 60 * 1000;
   const TABS = [
     ["home", "今", "今日"],
     ["chart", "課", "路径"],
@@ -1391,6 +1395,62 @@ canvas {
     if (!canvas) return;
     canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
   }
+  function readBuildFromHtml(html) {
+    const match = html.match(/<meta\s+name=["']kanazen-build["']\s+content=["']([^"']+)["']/i);
+    return match ? match[1] : "";
+  }
+  function rememberUpdateCheck(time) {
+    try { localStorage.setItem(UPDATE_CHECK_KEY, String(time)); } catch (error) {}
+  }
+  function lastUpdateCheck() {
+    try { return Number(localStorage.getItem(UPDATE_CHECK_KEY) || 0); } catch (error) { return 0; }
+  }
+  async function checkForAppUpdate(registration, force = false) {
+    if (document.visibilityState === "hidden") return;
+    const now = Date.now();
+    if (!force && now - lastUpdateCheck() < UPDATE_CHECK_INTERVAL) return;
+    rememberUpdateCheck(now);
+    try { await registration.update(); } catch (error) {}
+    try {
+      const response = await fetch(`./index.html?kanazen-check=${now}`, { cache: "no-store" });
+      if (!response.ok) return;
+      const remoteBuild = readBuildFromHtml(await response.text());
+      if (remoteBuild && remoteBuild !== APP_BUILD) {
+        sessionStorage.setItem("kanazen:updated", "1");
+        window.location.reload();
+      }
+    } catch (error) {}
+  }
+  function setupAutoUpdate() {
+    let reloading = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (reloading) return;
+      reloading = true;
+      sessionStorage.setItem("kanazen:updated", "1");
+      window.location.reload();
+    });
+    navigator.serviceWorker.register("./sw.js").then((registration) => {
+      registration.addEventListener("updatefound", () => {
+        const worker = registration.installing;
+        if (!worker) return;
+        worker.addEventListener("statechange", () => {
+          if (worker.state === "installed" && navigator.serviceWorker.controller) {
+            worker.postMessage({ type: "SKIP_WAITING" });
+          }
+        });
+      });
+      const check = (force = false) => checkForAppUpdate(registration, force);
+      window.setTimeout(() => check(), 1200);
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") check();
+      });
+      window.addEventListener("focus", () => check());
+      if (sessionStorage.getItem("kanazen:updated") === "1") {
+        sessionStorage.removeItem("kanazen:updated");
+        window.setTimeout(() => showToast("已更新到最新版"), 420);
+      }
+    }).catch(() => {});
+  }
   app.addEventListener("click", (event) => {
     const el = event.target.closest("[data-action]");
     if (!el) return;
@@ -1415,7 +1475,7 @@ canvas {
     window.speechSynthesis.onvoiceschanged = () => { refreshJapaneseVoice(); };
   }
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+    setupAutoUpdate();
   }
   render();
 })();
