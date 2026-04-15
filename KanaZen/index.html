@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KanaZen">
   <meta name="format-detection" content="telephone=no">
-  <meta name="kanazen-build" content="kanazen-v12-20260415">
+  <meta name="kanazen-build" content="kanazen-v13-20260416">
   <title>KanaZen</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icons/icon-1024.png">
@@ -141,11 +141,49 @@ button {
   line-height: 1.2;
 }
 
-.view-title {
-  text-align: right;
-  font-size: 12px;
+.version-entry {
+  min-width: 92px;
+  padding: 7px 9px;
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  border: 1px solid rgba(31, 35, 32, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.46);
   color: var(--muted);
   white-space: nowrap;
+}
+
+.version-entry:active {
+  transform: scale(0.98);
+}
+
+.screen-name {
+  font-size: 12px;
+  font-weight: 780;
+  line-height: 1.1;
+}
+
+.version-line {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 780;
+  line-height: 1.15;
+}
+
+.version-build {
+  color: var(--ink);
+}
+
+.version-state {
+  color: var(--celadon);
+}
+
+.version-state.is-warn {
+  color: var(--accent-dark);
 }
 
 .content {
@@ -663,6 +701,120 @@ canvas {
   font-weight: 760;
 }
 
+.version-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: calc(env(safe-area-inset-top) + 86px) 16px calc(env(safe-area-inset-bottom) + 24px);
+  background: rgba(31, 35, 32, 0.18);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+
+.version-sheet {
+  width: min(100%, 430px);
+  max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 112px);
+  overflow: auto;
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 253, 0.86), rgba(244, 246, 242, 0.72));
+  box-shadow: 0 24px 70px rgba(31, 35, 32, 0.22);
+  backdrop-filter: blur(34px) saturate(180%);
+  -webkit-backdrop-filter: blur(34px) saturate(180%);
+}
+
+.version-sheet-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.version-sheet-title {
+  display: grid;
+  gap: 4px;
+}
+
+.version-sheet-title strong {
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.version-close {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(31, 35, 32, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.58);
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.version-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.version-info-item {
+  min-height: 64px;
+  padding: 10px;
+  display: grid;
+  align-content: space-between;
+  gap: 6px;
+  border: 1px solid rgba(31, 35, 32, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.version-info-item span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.version-info-item strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.version-log {
+  display: grid;
+  gap: 8px;
+}
+
+.version-log-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(31, 35, 32, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.version-log-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 820;
+}
+
+.version-log-item p {
+  margin: 0;
+}
+
 .small { color: var(--muted); font-size: 12px; line-height: 1.5; }
 .hidden { display: none !important; }
 
@@ -689,10 +841,17 @@ canvas {
 (() => {
   "use strict";
 
-  const APP_BUILD = "kanazen-v12-20260415";
+  const APP_BUILD = "kanazen-v13-20260416";
   const STORAGE_KEY = "kanazen:v1";
   const UPDATE_CHECK_KEY = "kanazen:lastUpdateCheck";
+  const UPDATE_REMOTE_KEY = "kanazen:lastRemoteBuild";
   const UPDATE_CHECK_INTERVAL = 15 * 60 * 1000;
+  const VERSION_HISTORY = [
+    { build: "kanazen-v13-20260416", title: "版本窗口", note: "右上角加入版本入口，点开可查看本地版本、更新状态和最近改动。" },
+    { build: "kanazen-v12-20260415", title: "混合测验", note: "测验加入听音选假名、看假名选罗马音，让复习不只依赖罗马音提示。" },
+    { build: "kanazen-v11-20260415", title: "每日学习", note: "移除课程栏目，把首页聚焦到本日学习和艾宾浩斯复习安排。" },
+    { build: "kanazen-v10-20260415", title: "体验整理", note: "优化底部栏、语音速度、临摹区和 PWA 自动更新提示。" }
+  ];
   const TABS = [
     ["home", "今", "今日"],
     ["write", "書", "临摹"],
@@ -786,6 +945,10 @@ canvas {
   let quiz = null;
   let toastTimer = 0;
   let toastText = "";
+  let versionSheetOpen = false;
+  let checkedRemoteBuild = lastRemoteBuild();
+  let updateState = location.protocol === "file:" ? "file" : (checkedRemoteBuild === APP_BUILD && Date.now() - lastUpdateCheck() < UPDATE_CHECK_INTERVAL ? "latest" : "local");
+  let swRegistration = null;
 
   function loadData() {
     try {
@@ -943,6 +1106,67 @@ canvas {
   }
   function h(value) {
     return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
+  }
+  function shortBuild(value = APP_BUILD) {
+    const text = String(value || "");
+    const match = text.match(/v\d+/i);
+    return match ? match[0].toLowerCase() : text.replace(/^kanazen-/, "") || "未知";
+  }
+  function buildDate(value = APP_BUILD) {
+    const match = String(value || "").match(/(\d{4})(\d{2})(\d{2})$/);
+    return match ? `${match[1]}-${match[2]}-${match[3]}` : "未标注";
+  }
+  function localVersionLabel() {
+    return `本地 ${shortBuild(APP_BUILD)}`;
+  }
+  function updateStatusLabel() {
+    const labels = {
+      file: "本地文件",
+      local: "本地版本",
+      checking: "检查中",
+      latest: "已是最新",
+      offline: "离线",
+      update: "发现新版"
+    };
+    return labels[updateState] || labels.local;
+  }
+  function updateStatusClass() {
+    return updateState === "file" || updateState === "offline" || updateState === "update" ? "is-warn" : "";
+  }
+  function updateStatusDetail() {
+    if (updateState === "file") return "现在是直接打开本地 HTML，无法对比 GitHub Pages。发布后从网页或主屏幕 PWA 打开，就会显示线上状态。";
+    if (updateState === "checking") return "正在读取 GitHub Pages 上的 index.html，并和当前本地版本号对比。";
+    if (updateState === "latest") return "当前本地版本和线上版本一致。自动检测会在启动、回到前台时触发，最短间隔 15 分钟。";
+    if (updateState === "offline") return "这次没有连上线上版本，已继续使用本机缓存，不会影响学习进度。";
+    if (updateState === "update") return "线上已经有新版本，应用会自动刷新并切到新版缓存。";
+    return "本地会保留学习进度。更新 App 代码不会清空进度，删除 PWA 或清除网站数据才会丢失。";
+  }
+  function formatCheckTime(time) {
+    if (!time) return "还未检测";
+    try {
+      return new Date(time).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+    } catch (error) {
+      return "已检测";
+    }
+  }
+  function refreshVersionUi() {
+    if (versionSheetOpen) {
+      render();
+      return;
+    }
+    const build = app.querySelector(".version-build");
+    const state = app.querySelector(".version-state");
+    if (build) build.textContent = localVersionLabel();
+    if (state) {
+      state.textContent = updateStatusLabel();
+      state.classList.toggle("is-warn", Boolean(updateStatusClass()));
+    }
+  }
+  function setUpdateState(state, remoteBuild = checkedRemoteBuild) {
+    const changed = updateState !== state || checkedRemoteBuild !== remoteBuild;
+    updateState = state;
+    checkedRemoteBuild = remoteBuild || "";
+    if (changed) refreshVersionUi();
   }
   function showToast(text) {
     toastText = text;
@@ -1122,6 +1346,47 @@ canvas {
     }, 1180);
   }
 
+  function renderVersionEntry(title) {
+    return `<button class="version-entry" data-action="version-info" aria-label="查看版本信息">
+      <span class="screen-name">${h(title)}</span>
+      <span class="version-line"><span class="version-build">${h(localVersionLabel())}</span><span class="version-state ${updateStatusClass()}">${h(updateStatusLabel())}</span></span>
+    </button>`;
+  }
+  function renderVersionSheet() {
+    const s = stats();
+    const remote = checkedRemoteBuild ? shortBuild(checkedRemoteBuild) : "未检测";
+    const nextLesson = currentLesson();
+    return `<div class="version-overlay" data-action="close-version">
+      <section class="version-sheet" role="dialog" aria-modal="true" aria-label="版本信息">
+        <div class="version-sheet-head">
+          <div class="version-sheet-title">
+            <strong>KanaZen 版本信息</strong>
+            <span class="small">本地进度会留在这台设备，代码更新不会覆盖学习数据。</span>
+          </div>
+          <button class="version-close" data-action="close-version" aria-label="关闭">×</button>
+        </div>
+        <div class="version-info-grid">
+          <div class="version-info-item"><span>本地版本</span><strong>${h(localVersionLabel())}</strong></div>
+          <div class="version-info-item"><span>更新状态</span><strong>${h(updateStatusLabel())}</strong></div>
+          <div class="version-info-item"><span>线上版本</span><strong>${h(remote)}</strong></div>
+          <div class="version-info-item"><span>最近检测</span><strong>${h(formatCheckTime(lastUpdateCheck()))}</strong></div>
+        </div>
+        <p class="small">${h(updateStatusDetail())}</p>
+        <button class="ghost-button" data-action="check-update">${updateState === "checking" ? "正在检查" : "手动检查更新"}</button>
+        <div class="version-info-grid">
+          <div class="version-info-item"><span>当前学习</span><strong>${h(nextLesson.name)}</strong></div>
+          <div class="version-info-item"><span>复习队列</span><strong>${s.reviewCount} 个到期</strong></div>
+        </div>
+        <div class="version-log">
+          <div class="row"><strong>更新日志</strong><span class="small">最近版本</span></div>
+          ${VERSION_HISTORY.map((entry) => `<div class="version-log-item">
+            <div class="version-log-title"><span>${h(shortBuild(entry.build))} · ${h(entry.title)}</span><span>${h(buildDate(entry.build))}</span></div>
+            <p class="small">${h(entry.note)}</p>
+          </div>`).join("")}
+        </div>
+      </section>
+    </div>`;
+  }
   function render() {
     const title = tab === "lessonQuiz" ? "测验" : TABS.find((item) => item[0] === tab)?.[2] || "今日";
     app.innerHTML = `
@@ -1131,11 +1396,12 @@ canvas {
             <img class="brand-mark" src="./assets/icons/icon-192.png" alt="KanaZen">
             <div class="brand-title"><strong>KanaZen</strong><span>五十音修行</span></div>
           </div>
-          <div class="view-title">${h(title)}</div>
+          ${renderVersionEntry(title)}
         </div>
       </header>
       <main class="content"><section class="screen">${renderScreen()}</section></main>
       ${renderTabs()}
+      ${versionSheetOpen ? renderVersionSheet() : ""}
       ${toastText ? `<div class="toast">${h(toastText)}</div>` : ""}
     `;
     afterRender();
@@ -1483,21 +1749,39 @@ canvas {
   function lastUpdateCheck() {
     try { return Number(localStorage.getItem(UPDATE_CHECK_KEY) || 0); } catch (error) { return 0; }
   }
+  function rememberRemoteBuild(build) {
+    try {
+      if (build) localStorage.setItem(UPDATE_REMOTE_KEY, build);
+    } catch (error) {}
+  }
+  function lastRemoteBuild() {
+    try { return localStorage.getItem(UPDATE_REMOTE_KEY) || ""; } catch (error) { return ""; }
+  }
   async function checkForAppUpdate(registration, force = false) {
     if (document.visibilityState === "hidden") return;
     const now = Date.now();
     if (!force && now - lastUpdateCheck() < UPDATE_CHECK_INTERVAL) return;
+    setUpdateState("checking");
     rememberUpdateCheck(now);
     try { await registration.update(); } catch (error) {}
     try {
       const response = await fetch(`./index.html?kanazen-check=${now}`, { cache: "no-store" });
-      if (!response.ok) return;
-      const remoteBuild = readBuildFromHtml(await response.text());
-      if (remoteBuild && remoteBuild !== APP_BUILD) {
-        sessionStorage.setItem("kanazen:updated", "1");
-        window.location.reload();
+      if (!response.ok) {
+        setUpdateState("offline");
+        return;
       }
-    } catch (error) {}
+      const remoteBuild = readBuildFromHtml(await response.text());
+      if (remoteBuild) rememberRemoteBuild(remoteBuild);
+      if (remoteBuild && remoteBuild !== APP_BUILD) {
+        setUpdateState("update", remoteBuild);
+        sessionStorage.setItem("kanazen:updated", "1");
+        window.setTimeout(() => window.location.reload(), 360);
+        return;
+      }
+      setUpdateState(remoteBuild ? "latest" : "local", remoteBuild);
+    } catch (error) {
+      setUpdateState("offline");
+    }
   }
   function setupAutoUpdate() {
     let reloading = false;
@@ -1508,6 +1792,8 @@ canvas {
       window.location.reload();
     });
     navigator.serviceWorker.register("./sw.js").then((registration) => {
+      swRegistration = registration;
+      if (versionSheetOpen) render();
       registration.addEventListener("updatefound", () => {
         const worker = registration.installing;
         if (!worker) return;
@@ -1525,6 +1811,9 @@ canvas {
       window.addEventListener("focus", () => check());
       if (sessionStorage.getItem("kanazen:updated") === "1") {
         sessionStorage.removeItem("kanazen:updated");
+        checkedRemoteBuild = APP_BUILD;
+        rememberRemoteBuild(APP_BUILD);
+        updateState = "latest";
         window.setTimeout(() => showToast("已更新到最新版"), 420);
       }
     }).catch(() => {});
@@ -1533,6 +1822,19 @@ canvas {
     const el = event.target.closest("[data-action]");
     if (!el) return;
     const action = el.dataset.action;
+    if (action === "version-info") { versionSheetOpen = true; render(); return; }
+    if (action === "close-version") {
+      if (el.classList.contains("version-overlay") && event.target.closest(".version-sheet")) return;
+      versionSheetOpen = false;
+      render();
+      return;
+    }
+    if (action === "check-update") {
+      if (location.protocol === "file:") { showToast("本地文件模式无法检查线上版本"); return; }
+      if (!swRegistration) { showToast("更新检查准备中"); return; }
+      checkForAppUpdate(swRegistration, true);
+      return;
+    }
     if (action === "tab") { tab = el.dataset.tab; quiz = null; render(); }
     if (action === "script") { scriptMode = el.dataset.script; saveData(); render(); }
     if (action === "detail") { data.settings.detailId = el.dataset.id; playKana(el.dataset.id); saveData(); render(); }
@@ -1548,6 +1850,12 @@ canvas {
     if (action === "backup") copyBackup();
     if (action === "restore") restoreBackup();
     if (action === "reset" && confirm("确定清空 KanaZen 的学习数据吗？")) { localStorage.removeItem(STORAGE_KEY); data = loadData(); quiz = null; render(); }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && versionSheetOpen) {
+      versionSheetOpen = false;
+      render();
+    }
   });
   if ("speechSynthesis" in window) {
     refreshJapaneseVoice();
