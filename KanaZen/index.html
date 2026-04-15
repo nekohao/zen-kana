@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KanaZen">
   <meta name="format-detection" content="telephone=no">
-  <meta name="kanazen-build" content="kanazen-v10-20260415">
+  <meta name="kanazen-build" content="kanazen-v11-20260415">
   <title>KanaZen</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icons/icon-1024.png">
@@ -614,7 +614,7 @@ canvas {
   max-width: 390px;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 3px;
   padding: 6px;
   border: 1px solid rgba(255, 255, 255, 0.78);
@@ -689,16 +689,26 @@ canvas {
 (() => {
   "use strict";
 
-  const APP_BUILD = "kanazen-v10-20260415";
+  const APP_BUILD = "kanazen-v11-20260415";
   const STORAGE_KEY = "kanazen:v1";
   const UPDATE_CHECK_KEY = "kanazen:lastUpdateCheck";
   const UPDATE_CHECK_INTERVAL = 15 * 60 * 1000;
   const TABS = [
     ["home", "今", "今日"],
-    ["chart", "課", "路径"],
     ["write", "書", "临摹"],
     ["library", "図", "图鉴"],
     ["profile", "我", "我的"]
+  ];
+  const EBBINGHAUS_STEPS = [
+    10 * 60 * 1000,
+    30 * 60 * 1000,
+    12 * 60 * 60 * 1000,
+    24 * 60 * 60 * 1000,
+    2 * 24 * 60 * 60 * 1000,
+    4 * 24 * 60 * 60 * 1000,
+    7 * 24 * 60 * 60 * 1000,
+    15 * 24 * 60 * 60 * 1000,
+    30 * 24 * 60 * 60 * 1000
   ];
   const ROWS = [
     ["a", "a", ["a", "i", "u", "e", "o"]],
@@ -795,7 +805,7 @@ canvas {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
   function baseRecord() {
-    return { mastery: 0, lastSeen: 0, nextReview: 0, correct: 0, wrong: 0 };
+    return { mastery: 0, reviewStep: 0, lastSeen: 0, nextReview: 0, correct: 0, wrong: 0 };
   }
   function readRecord(id) {
     return data.records[id] ? { ...baseRecord(), ...data.records[id] } : baseRecord();
@@ -860,6 +870,25 @@ canvas {
     const advancedIds = baseComplete() ? ADVANCED_LESSONS.filter(isLessonUnlocked).flatMap((lesson) => lesson.ids) : [];
     return [...unlockedBaseItems(), ...advancedIds.map((id) => byId[id]).filter(Boolean)];
   }
+  function isLearned(item) {
+    const rec = readRecord(item.id);
+    const state = lessonState(lessonForItem(item.id).id);
+    return Boolean(rec.lastSeen || rec.correct || rec.wrong || state.traced[item.id]);
+  }
+  function learnedItems() {
+    return availableItems().filter(isLearned);
+  }
+  function dueReviewItems() {
+    const now = Date.now();
+    return learnedItems().filter((item) => {
+      const rec = readRecord(item.id);
+      return (rec.nextReview && rec.nextReview <= now) || (!rec.nextReview && rec.lastSeen && rec.mastery < 3);
+    }).sort((a, b) => {
+      const ar = readRecord(a.id);
+      const br = readRecord(b.id);
+      return (ar.nextReview || 0) - (br.nextReview || 0) || (br.wrong - ar.wrong) || (ar.mastery - br.mastery);
+    });
+  }
   function todayKey(offset = 0) {
     const d = new Date();
     d.setDate(d.getDate() + offset);
@@ -879,28 +908,26 @@ canvas {
     if (correct) {
       rec.correct += 1;
       rec.mastery = Math.min(5, rec.mastery + 1);
-      const days = [0.25, 0.5, 1, 2, 4, 7][rec.mastery];
-      rec.nextReview = now + days * 86400000;
+      rec.reviewStep = Math.min(EBBINGHAUS_STEPS.length - 1, (rec.reviewStep || 0) + 1);
+      rec.nextReview = now + EBBINGHAUS_STEPS[rec.reviewStep];
     } else {
       rec.wrong += 1;
       rec.mastery = Math.max(0, rec.mastery - 1);
+      rec.reviewStep = Math.max(0, (rec.reviewStep || 0) - 2);
       rec.nextReview = now + 10 * 60000;
     }
     markActivity();
     saveData();
   }
   function stats() {
-    const values = KANA.map((item) => readRecord(item.id));
+    const values = ALL_KANA.map((item) => readRecord(item.id));
     const learned = values.filter((r) => r.lastSeen).length;
     const mastered = values.filter((r) => r.mastery >= 4).length;
     const due = values.filter((r) => r.nextReview && r.nextReview <= Date.now()).length;
     const passedRows = BASE_LESSONS.filter((lesson) => lessonState(lesson.id).passed).length;
     const advancedPassed = ADVANCED_LESSONS.filter((lesson) => lessonState(lesson.id).passed).length;
     const weakCount = weakestItems().length;
-    const reviewCount = availableItems().filter((item) => {
-      const rec = readRecord(item.id);
-      return rec.wrong > 0 || (rec.lastSeen && rec.mastery < 3) || (rec.nextReview && rec.nextReview <= Date.now());
-    }).length;
+    const reviewCount = dueReviewItems().length;
     return { learned, mastered, due, weakCount, reviewCount, passedRows, advancedPassed, streak: streakDays(), today: data.activity[todayKey()] || 0 };
   }
   function streakDays() {
@@ -1004,6 +1031,39 @@ canvas {
     while (ranked.length < 10 && pool.length) ranked.push(pool[Math.floor(Math.random() * pool.length)]);
     return ranked.slice(0, 10);
   }
+  function buildDailyReviewQueue() {
+    const now = Date.now();
+    const pool = dueReviewItems();
+    const ranked = pool.map((item) => {
+      const rec = readRecord(item.id);
+      let score = Math.random();
+      if (rec.nextReview && rec.nextReview <= now) score += 160;
+      score += rec.wrong * 14 + (5 - rec.mastery) * 8 - rec.correct;
+      return { item, score };
+    }).sort((a, b) => b.score - a.score).map((entry) => entry.item);
+    while (ranked.length < 10 && pool.length) ranked.push(pool[Math.floor(Math.random() * pool.length)]);
+    return ranked.slice(0, 10);
+  }
+  function startDailyStudy() {
+    const reviewQueue = buildDailyReviewQueue();
+    if (reviewQueue.length) {
+      quiz = { mode: "review", lessonId: "", queue: reviewQueue, index: 0, correct: 0, selected: null, done: false, played: "", question: null, misses: [] };
+      quiz.question = makeQuestion();
+      tab = "lessonQuiz";
+      saveData();
+      render();
+      return;
+    }
+    const lesson = currentLesson();
+    if (!lessonReady(lesson)) {
+      data.settings.writeId = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0];
+      tab = "write";
+      saveData();
+      render();
+      return;
+    }
+    startLessonQuiz(lesson.id);
+  }
   function startLessonQuiz(lessonId) {
     const lesson = lessonById(lessonId);
     if (!lesson) { showToast("没有找到这一课"); return; }
@@ -1012,7 +1072,7 @@ canvas {
     data.settings.quizRow = lesson.id;
     const queue = buildLessonQueue(lesson);
     if (!queue.length) { showToast("这一组还没有可练习的假名"); return; }
-    quiz = { lessonId: lesson.id, queue, index: 0, correct: 0, selected: null, done: false, played: "", question: null, misses: [] };
+    quiz = { mode: "lesson", lessonId: lesson.id, queue, index: 0, correct: 0, selected: null, done: false, played: "", question: null, misses: [] };
     quiz.question = makeQuestion();
     tab = "lessonQuiz";
     saveData();
@@ -1047,9 +1107,9 @@ canvas {
       quiz.index += 1;
       quiz.selected = null;
       quiz.played = "";
-      if (quiz.index >= 10) {
+      if (quiz.index >= quiz.queue.length) {
         quiz.done = true;
-        passLesson(lessonById(quiz.lessonId), quiz.correct);
+        if (quiz.mode === "lesson") passLesson(lessonById(quiz.lessonId), quiz.correct);
       } else quiz.question = makeQuestion();
       render();
     }, 1180);
@@ -1075,13 +1135,12 @@ canvas {
   }
   function renderTabs() {
     return `<nav class="tabbar" aria-label="主导航">${TABS.map(([id, mark, label]) => `
-      <button class="tab-button ${tab === id || (tab === "lessonQuiz" && id === "chart") ? "is-active" : ""}" data-action="tab" data-tab="${id}">
+      <button class="tab-button ${tab === id || (tab === "lessonQuiz" && id === "home") ? "is-active" : ""}" data-action="tab" data-tab="${id}">
         <strong>${mark}</strong><span>${label}</span>
       </button>`).join("")}</nav>`;
   }
   function renderScreen() {
     if (tab === "lessonQuiz") return renderQuiz();
-    if (tab === "chart") return renderChart();
     if (tab === "write") return renderWrite();
     if (tab === "library") return renderLibrary();
     if (tab === "profile") return renderProfile();
@@ -1090,47 +1149,51 @@ canvas {
   function renderHome() {
     const s = stats();
     const lesson = currentLesson();
-    const focus = byId[lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0]];
+    const reviewItems = dueReviewItems();
+    const focus = reviewItems[0] || byId[lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0]];
     const ready = lessonReady(lesson);
     const courseProgress = baseComplete() ? `${s.advancedPassed}/${ADVANCED_LESSONS.length}` : `${s.passedRows}/${BASE_LESSONS.length}`;
+    const planText = reviewItems.length
+      ? `先复习 ${reviewItems.length} 个到期或薄弱假名，再继续 ${lesson.name}。`
+      : ready ? `${lesson.name} 已经临摹完成，今天可以直接测验。` : `今天从 ${lesson.name} 继续，先把这一组临摹完。`;
     return `<div class="stack">
       <div class="panel hero-panel">
-        <div class="hero-kana"><div><div class="section-title">当前课程 · ${lesson.name}</div><div class="kana">${charFor(focus)}</div></div>
+        <div class="hero-kana"><div><div class="section-title">${reviewItems.length ? "今日复习" : `今日学习 · ${lesson.name}`}</div><div class="kana">${charFor(focus)}</div></div>
           <button class="ghost-button" data-action="play" data-id="${focus.id}">播放 ${focus.romaji}</button></div>
-        <button class="primary-button accent-button" data-action="${ready ? "start-lesson-quiz" : "go-lesson-write"}" data-lesson="${lesson.id}">${ready ? "开始及格测验" : "先临摹这一行"}</button>
+        <button class="primary-button accent-button" data-action="start-daily-study">开启本日学习</button>
       </div>
       <div class="metric-grid home-metrics">
+        <div class="metric"><strong>${s.reviewCount}</strong><span>需要复习</span></div>
         <div class="metric"><strong>${courseProgress}</strong><span>${baseComplete() ? "进阶进度" : "基础进度"}</span></div>
-        <div class="metric"><strong>${s.reviewCount}</strong><span>今日复习</span></div>
       </div>
       <div class="panel detail-card tight">
-        <div class="row"><strong>${baseComplete() ? "进阶课程" : "学习路径"}</strong><span class="small">及格线 8/10</span></div>
-        <p class="small">${baseComplete() ? "进阶音会按小组顺序学习：先临摹，再测验，通过后解锁下一组。" : "每一行先临摹全部假名，再做 10 题测验；达成 8 分就解锁下一行。"}</p>
-        <button class="primary-button" data-action="tab" data-tab="chart">查看课程</button>
+        <div class="row"><strong>今日安排</strong><span class="small">间隔复习</span></div>
+        <p class="small">${planText} 复习会按艾宾浩斯间隔自动安排，不只看昨天。</p>
       </div>
-    </div>`;
-  }
-  function renderChart() {
-    return `<div class="stack">
-      <div class="panel detail-card tight">
-        <div class="row"><strong>学习路径</strong><span class="small">基础 ${stats().passedRows}/${BASE_LESSONS.length}</span></div>
-        <p class="small">顺着当前进度走，不急着跳课；今日会给出下一步。</p>
-      </div>
-      <div class="stack">${BASE_LESSONS.map((lesson) => renderLessonCard(lesson, false)).join("")}</div>
-      ${baseComplete() ? `<div class="section-title">进阶音 · ${stats().advancedPassed}/${ADVANCED_LESSONS.length}</div><div class="stack">${ADVANCED_LESSONS.map((lesson) => renderLessonCard(lesson, false)).join("")}</div>` : `<div class="panel detail-card small">基础五十音全部及格后，会按小组解锁浊音、半浊音和拗音。</div>`}
     </div>`;
   }
   function renderLibrary() {
-    const active = data.settings.detailId || currentBaseLesson().ids[0];
-    const item = byId[active] || KANA[0];
+    const learned = learnedItems();
+    const learnedSet = new Set(learned.map((item) => item.id));
+    const active = learnedSet.has(data.settings.detailId) ? data.settings.detailId : learned[0]?.id;
+    const item = active ? byId[active] : null;
+    if (!item) {
+      return `<div class="stack">
+        <div class="panel detail-card tight">
+          <div class="row"><strong>图鉴</strong><span class="small">已学内容</span></div>
+          <p class="small">先从今日学习开始。临摹或测验接触过的假名，会自动收进这里。</p>
+          <button class="primary-button accent-button" data-action="start-daily-study">开启本日学习</button>
+        </div>
+      </div>`;
+    }
     return `<div class="stack">
       <div class="segmented">${scriptButtons()}</div>
       <div class="kana-board">${ROWS.map(([rowId, label, cells]) => `
         <div class="kana-row"><div class="row-label">${label}</div>${cells.map((id) => {
           if (!id) return `<div class="kana-cell is-empty"></div>`;
           const cell = byId[id];
-          const locked = !isLessonUnlocked(lessonForItem(cell.id));
-          return `<button class="kana-cell ${locked ? "is-locked" : ""}" ${locked ? "disabled" : `data-action="detail" data-id="${cell.id}"`}>
+          const locked = !learnedSet.has(cell.id);
+          return locked ? `<div class="kana-cell is-empty"></div>` : `<button class="kana-cell" data-action="detail" data-id="${cell.id}">
             <span class="kana-char">${charFor(cell)}</span><span class="kana-romaji">${cell.romaji}</span>
           </button>`;
         }).join("")}</div>`).join("")}</div>
@@ -1171,13 +1234,18 @@ canvas {
   }
   function renderQuiz() {
     if (quiz?.done) {
-      const lesson = lessonById(quiz.lessonId);
+      const lesson = quiz.lessonId ? lessonById(quiz.lessonId) : null;
+      const isReview = quiz.mode === "review";
       const passed = lesson ? quiz.correct >= lesson.passScore : false;
+      const total = quiz.queue.length;
+      const summary = isReview
+        ? `本轮复习完成，之后会按间隔自动安排下一次出现。`
+        : passed ? `${lesson.name} 已通过，下一课已经解锁。` : `${lesson.name} 还差一点，8/10 及格；先复习再来一轮。`;
       return `<div class="stack">
       <div class="panel hero-panel"><div class="tight"><div class="section-title">本轮完成</div>
-        <div class="hero-kana"><div class="kana">${quiz.correct}</div><strong>/10</strong></div>
-        <p class="small">${passed ? `${lesson.name} 已通过，下一课已经解锁。` : `${lesson.name} 还差一点，8/10 及格；先复习再来一轮。`}</p></div>
-        <button class="primary-button accent-button" data-action="${passed ? "tab" : "start-lesson-quiz"}" ${passed ? `data-tab="chart"` : `data-lesson="${lesson.id}"`}>${passed ? "查看下一课" : "再来一轮"}</button>
+        <div class="hero-kana"><div class="kana">${quiz.correct}</div><strong>/${total}</strong></div>
+        <p class="small">${summary}</p></div>
+        <button class="primary-button accent-button" data-action="${isReview || passed ? "start-daily-study" : "start-lesson-quiz"}" ${!isReview && !passed ? `data-lesson="${lesson.id}"` : ""}>${isReview || passed ? "继续今日学习" : "再来一轮"}</button>
       </div>${renderMissReview()}</div>`;
     }
     if (quiz) return renderQuizActive();
@@ -1193,8 +1261,9 @@ canvas {
   }
   function renderQuizActive() {
     const q = currentQuestion();
-    const pct = (quiz.index / 10) * 100;
-    const label = q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
+    const total = quiz.queue.length;
+    const pct = (quiz.index / total) * 100;
+    const label = quiz.mode === "review" ? "间隔复习" : q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
     const prompt = q.type === "sound"
       ? `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">播放读音</button>`
       : q.type === "lesson" ? `<div class="romaji">${q.target.romaji}</div><div class="sound-hint">${q.target.audio ? "已播放，没听到就点重播" : "使用自然日语语音"}</div><button class="ghost-button" data-action="play" data-id="${q.target.id}">重播声音</button>`
@@ -1202,7 +1271,7 @@ canvas {
     return `<div class="stack">
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="panel quiz-card">
-        <div class="prompt"><div class="label">${label} · ${quiz.index + 1}/10</div>${prompt}</div>
+        <div class="prompt"><div class="label">${label} · ${quiz.index + 1}/${total}</div>${prompt}</div>
         <div class="options">${q.options.map((opt) => optionButton(q, opt)).join("")}</div>
       </div>
     </div>`;
@@ -1464,6 +1533,7 @@ canvas {
     if (action === "clear-canvas") clearCanvas();
     if (action === "go-lesson-write") { const lesson = lessonById(el.dataset.lesson); data.settings.writeId = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0]; tab = "write"; saveData(); render(); }
     if (action === "mark-traced") { const lesson = lessonForItem(el.dataset.id); markTraced(el.dataset.id); const next = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]); if (next) data.settings.writeId = next; else showToast(`${lesson.name} 临摹完成，可以测验了`); saveData(); render(); }
+    if (action === "start-daily-study") startDailyStudy();
     if (action === "start-lesson-quiz") startLessonQuiz(el.dataset.lesson);
     if (action === "answer") answerQuiz(el.dataset.id);
     if (action === "backup") copyBackup();
