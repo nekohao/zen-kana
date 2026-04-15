@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KanaZen">
   <meta name="format-detection" content="telephone=no">
-  <meta name="kanazen-build" content="kanazen-v11-20260415">
+  <meta name="kanazen-build" content="kanazen-v12-20260415">
   <title>KanaZen</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icons/icon-1024.png">
@@ -689,7 +689,7 @@ canvas {
 (() => {
   "use strict";
 
-  const APP_BUILD = "kanazen-v11-20260415";
+  const APP_BUILD = "kanazen-v12-20260415";
   const STORAGE_KEY = "kanazen:v1";
   const UPDATE_CHECK_KEY = "kanazen:lastUpdateCheck";
   const UPDATE_CHECK_INTERVAL = 15 * 60 * 1000;
@@ -1078,10 +1078,16 @@ canvas {
     saveData();
     render();
   }
+  function questionTypeForIndex(index) {
+    const reviewPattern = ["sound", "kana", "sound", "lesson", "sound", "kana"];
+    const lessonPattern = ["lesson", "kana", "sound", "lesson", "sound", "kana"];
+    const pattern = quiz?.mode === "review" ? reviewPattern : lessonPattern;
+    return pattern[index % pattern.length];
+  }
   function makeQuestion() {
     if (!quiz || quiz.done) return null;
     const target = quiz.queue[quiz.index];
-    const type = "lesson";
+    const type = questionTypeForIndex(quiz.index);
     const optionPool = availableItems();
     const hardPool = optionPool.filter((item) => item.id !== target.id && (item.row === target.row || item.vowel === target.vowel || item.hira.length === target.hira.length));
     const wrong = [...new Map([...hardPool, ...optionPool.filter((item) => item.id !== target.id)].sort(() => Math.random() - 0.5).map((item) => [item.id, item])).values()].slice(0, 3);
@@ -1094,11 +1100,12 @@ canvas {
   }
   function answerQuiz(id) {
     if (!quiz || quiz.selected) return;
-    const target = quiz.queue[quiz.index];
+    const q = currentQuestion();
+    const target = q.target;
     const correct = id === target.id;
     quiz.selected = id;
     if (correct) quiz.correct += 1;
-    else quiz.misses.push({ target: target.id, selected: id });
+    else quiz.misses.push({ target: target.id, selected: id, type: q.type });
     updateRecord(target.id, correct);
     playKana(target.id);
     render();
@@ -1263,9 +1270,10 @@ canvas {
     const q = currentQuestion();
     const total = quiz.queue.length;
     const pct = (quiz.index / total) * 100;
-    const label = quiz.mode === "review" ? "间隔复习" : q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
+    const typeLabel = q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
+    const label = quiz.mode === "review" ? `间隔复习 · ${typeLabel}` : typeLabel;
     const prompt = q.type === "sound"
-      ? `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">播放读音</button>`
+      ? `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">重播读音</button><div class="sound-hint">先听声音，不看罗马音</div>`
       : q.type === "lesson" ? `<div class="romaji">${q.target.romaji}</div><div class="sound-hint">${q.target.audio ? "已播放，没听到就点重播" : "使用自然日语语音"}</div><button class="ghost-button" data-action="play" data-id="${q.target.id}">重播声音</button>`
       : q.type === "romaji" ? `<div class="romaji">${q.target.romaji}</div>` : `<div class="big">${charFor(q.target)}</div>`;
     return `<div class="stack">
@@ -1282,7 +1290,8 @@ canvas {
       <div class="weak-list">${quiz.misses.map((miss) => {
         const target = byId[miss.target];
         const selected = byId[miss.selected];
-        return `<div class="weak-item"><strong>${target.hira} ${target.kata}</strong><span class="small">${target.romaji} · 你选了 ${selected ? charFor(selected) : "空"}</span></div>`;
+        const selectedText = selected ? (miss.type === "kana" ? selected.romaji : charFor(selected)) : "空";
+        return `<div class="weak-item"><strong>${target.hira} ${target.kata}</strong><span class="small">${target.romaji} · 你选了 ${selectedText}</span></div>`;
       }).join("")}</div></div>`;
   }
   function optionButton(q, opt) {
