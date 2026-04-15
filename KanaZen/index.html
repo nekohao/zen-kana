@@ -151,7 +151,7 @@ button {
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: calc(env(safe-area-inset-top) + 78px) 16px calc(env(safe-area-inset-bottom) + 92px);
+  padding: calc(env(safe-area-inset-top) + 78px) 16px calc(env(safe-area-inset-bottom) + 84px);
 }
 
 .screen {
@@ -301,6 +301,17 @@ button:disabled {
   font-family: var(--kana-practice-font);
   font-size: 18px;
   font-weight: 760;
+}
+
+.write-actions {
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.write-actions.secondary {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .chip {
@@ -470,7 +481,8 @@ button:disabled {
 
 .write-stage {
   position: relative;
-  aspect-ratio: 1 / 1;
+  height: min(292px, 38dvh);
+  min-height: 224px;
   background: #fffefa;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -484,7 +496,7 @@ button:disabled {
   place-items: center;
   color: rgba(184, 59, 64, 0.13);
   font-family: var(--kana-practice-font);
-  font-size: 210px;
+  font-size: 184px;
   font-weight: 760;
   line-height: 1;
   pointer-events: none;
@@ -547,6 +559,11 @@ canvas {
   box-shadow: 0 8px 24px rgba(31, 35, 32, 0.06);
 }
 
+.lesson-card.is-current {
+  border-color: rgba(184, 59, 64, 0.2);
+  background: rgba(255, 255, 255, 0.62);
+}
+
 .lesson-row {
   display: flex;
   justify-content: space-between;
@@ -588,22 +605,25 @@ canvas {
 
 .tabbar {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 50%;
+  right: auto;
+  bottom: max(0px, calc(env(safe-area-inset-bottom) - 24px));
   z-index: 35;
+  width: calc(100vw - 32px);
+  max-width: 390px;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  padding: 7px max(10px, calc((100vw - 720px) / 2 + 10px)) calc(env(safe-area-inset-bottom) + 7px);
-  border-top: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: 0;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: var(--radius);
   background:
     linear-gradient(180deg, rgba(255, 255, 253, 0.82), rgba(244, 246, 242, 0.68));
   box-shadow: 0 -18px 42px rgba(31, 35, 32, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.62);
   backdrop-filter: blur(32px) saturate(180%);
   -webkit-backdrop-filter: blur(32px) saturate(180%);
+  transform: translateX(-50%);
 }
 
 .tab-button {
@@ -628,7 +648,7 @@ canvas {
   position: fixed;
   left: 18px;
   right: 18px;
-  bottom: calc(env(safe-area-inset-bottom) + 74px);
+  bottom: calc(env(safe-area-inset-bottom) + 66px);
   z-index: 60;
   max-width: 420px;
   margin: 0 auto;
@@ -648,7 +668,8 @@ canvas {
 @media (min-width: 760px) {
   .content { padding-left: 28px; padding-right: 28px; }
   .hero-kana .kana { font-size: 104px; }
-  .copy-kana { font-size: 260px; }
+  .write-stage { height: 340px; }
+  .copy-kana { font-size: 236px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -670,7 +691,7 @@ canvas {
   const STORAGE_KEY = "kanazen:v1";
   const TABS = [
     ["home", "今", "今日"],
-    ["chart", "課", "课程"],
+    ["chart", "課", "路径"],
     ["write", "書", "临摹"],
     ["library", "図", "图鉴"],
     ["profile", "我", "我的"]
@@ -940,8 +961,8 @@ canvas {
     const utter = new SpeechSynthesisUtterance(text);
     if (voice) utter.voice = voice;
     utter.lang = voice?.lang || "ja-JP";
-    utter.rate = voice ? 0.76 : 0.72;
-    utter.pitch = 1.02;
+    utter.rate = voice ? 0.58 : 0.56;
+    utter.pitch = 1;
     utter.volume = 1;
     window.speechSynthesis.speak(utter);
     return true;
@@ -961,7 +982,7 @@ canvas {
       audioCache.set(id, audio);
     }
     audio.currentTime = 0;
-    audio.playbackRate = 0.96;
+    audio.playbackRate = 0.72;
     audio.play().catch(() => speakFallback(item.hira, true));
   }
 
@@ -1027,7 +1048,7 @@ canvas {
         passLesson(lessonById(quiz.lessonId), quiz.correct);
       } else quiz.question = makeQuestion();
       render();
-    }, 820);
+    }, 1180);
   }
 
   function render() {
@@ -1088,11 +1109,11 @@ canvas {
   function renderChart() {
     return `<div class="stack">
       <div class="panel detail-card tight">
-        <div class="row"><strong>课程路径</strong><span class="small">基础 ${stats().passedRows}/${BASE_LESSONS.length}</span></div>
-        <p class="small">先临摹当前组，再通过 10 题测验。达到 8/10 后自动解锁下一课。</p>
+        <div class="row"><strong>学习路径</strong><span class="small">基础 ${stats().passedRows}/${BASE_LESSONS.length}</span></div>
+        <p class="small">顺着当前进度走，不急着跳课；今日会给出下一步。</p>
       </div>
-      <div class="stack">${BASE_LESSONS.map(renderLessonCard).join("")}</div>
-      ${baseComplete() ? `<div class="section-title">进阶音 · ${stats().advancedPassed}/${ADVANCED_LESSONS.length}</div><div class="stack">${ADVANCED_LESSONS.map(renderLessonCard).join("")}</div>` : `<div class="panel detail-card small">基础五十音全部及格后，会按小组解锁浊音、半浊音和拗音。</div>`}
+      <div class="stack">${BASE_LESSONS.map((lesson) => renderLessonCard(lesson, false)).join("")}</div>
+      ${baseComplete() ? `<div class="section-title">进阶音 · ${stats().advancedPassed}/${ADVANCED_LESSONS.length}</div><div class="stack">${ADVANCED_LESSONS.map((lesson) => renderLessonCard(lesson, false)).join("")}</div>` : `<div class="panel detail-card small">基础五十音全部及格后，会按小组解锁浊音、半浊音和拗音。</div>`}
     </div>`;
   }
   function renderLibrary() {
@@ -1112,7 +1133,7 @@ canvas {
       ${renderDetail(item)}
     </div>`;
   }
-  function renderLessonCard(lesson) {
+  function renderLessonCard(lesson, actions = true) {
     const state = lessonState(lesson.id);
     const unlocked = isLessonUnlocked(lesson);
     const ready = lessonReady(lesson);
@@ -1120,11 +1141,13 @@ canvas {
     const pill = state.passed ? "is-done" : unlocked ? "is-open" : "";
     const kana = lesson.ids.map((id) => charFor(byId[id])).join(" ");
     const action = !unlocked ? "" : ready ? "start-lesson-quiz" : "go-lesson-write";
-    return `<div class="panel lesson-card">
+    const current = currentLesson().id === lesson.id && !state.passed;
+    const note = state.passed ? "完成" : !unlocked ? "待解锁" : ready ? "回到今日测验" : "回到今日临摹";
+    return `<div class="panel lesson-card ${current ? "is-current" : ""}">
       <div class="lesson-row"><strong>${lesson.name}</strong><span class="status-pill ${pill}">${label}${state.best ? ` · 最好 ${state.best}/10` : ""}</span></div>
       <div class="lesson-kana">${kana}</div>
       <div class="row"><span class="small">临摹 ${tracedCount(lesson)}/${lesson.ids.length} · 及格 ${lesson.passScore}/10</span>
-      ${unlocked ? `<button class="ghost-button" data-action="${action}" data-lesson="${lesson.id}">${ready ? "测验" : "临摹"}</button>` : `<button class="ghost-button" disabled>锁定</button>`}</div>
+      ${actions ? (unlocked ? `<button class="ghost-button" data-action="${action}" data-lesson="${lesson.id}">${ready ? "测验" : "临摹"}</button>` : `<button class="ghost-button" disabled>锁定</button>`) : `<span class="small">${note}</span>`}</div>
     </div>`;
   }
   function scriptButtons() {
@@ -1161,7 +1184,7 @@ canvas {
         <p class="small">题目会显示罗马音并播放声音，从四个假名里选择正确答案。10 题达到 8 分就解锁下一课。</p>
         <button class="primary-button accent-button" data-action="${lessonReady(lesson) ? "start-lesson-quiz" : "go-lesson-write"}" data-lesson="${lesson.id}">${lessonReady(lesson) ? "开始测验" : "先去临摹"}</button>
       </div>
-      <div class="stack">${[...BASE_LESSONS, ...(baseComplete() ? ADVANCED_LESSONS : [])].map(renderLessonCard).join("")}</div>
+      <div class="stack">${[...BASE_LESSONS, ...(baseComplete() ? ADVANCED_LESSONS : [])].map((lesson) => renderLessonCard(lesson)).join("")}</div>
     </div>`;
   }
   function renderQuizActive() {
@@ -1220,14 +1243,16 @@ canvas {
       </div>
       <div class="panel write-card tight">
         <div class="row"><strong>${lesson.name} · ${item.romaji}</strong><span class="status-pill ${traced ? "is-done" : "is-open"}">${lessonIndex + 1}/${lesson.ids.length} · ${traced ? "已临摹" : "待临摹"}</span></div>
-        <button class="ghost-button" data-action="play" data-id="${item.id}">播放</button>
+        <div class="write-actions">
+          <button class="ghost-button" data-action="play" data-id="${item.id}">慢速播放</button>
+          <button class="primary-button accent-button" data-action="mark-traced" data-id="${item.id}">${traced ? "继续下一个" : "我写好了"}</button>
+        </div>
         <div class="write-stage"><div class="copy-kana">${charFor(item, mode)}</div><div class="write-grid"></div><canvas id="writeCanvas"></canvas></div>
-        <div class="row">
+        <div class="write-actions secondary">
           <button class="ghost-button" data-action="write-id" data-id="${prevId || item.id}" ${prevId ? "" : "disabled"}>上一个</button>
           <button class="ghost-button" data-action="write-id" data-id="${nextId || item.id}" ${nextId ? "" : "disabled"}>下一个</button>
+          <button class="danger-button" data-action="clear-canvas">清除</button>
         </div>
-        <button class="primary-button accent-button" data-action="mark-traced" data-id="${item.id}">${traced ? "继续下一个" : "我写好了"}</button>
-        <button class="danger-button" data-action="clear-canvas">清除笔迹</button>
       </div>
       <div class="panel detail-card tight"><div class="row"><strong>${lesson.name} 进度</strong><span class="small">${tracedCount(lesson)}/${lesson.ids.length}</span></div>
         <button class="primary-button" data-action="start-lesson-quiz" data-lesson="${lesson.id}" ${lessonReady(lesson) ? "" : "disabled"}>${lessonReady(lesson) ? "开始本课测验" : "临摹完本课后解锁测验"}</button></div>
