@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KanaZen">
   <meta name="format-detection" content="telephone=no">
-  <meta name="kanazen-build" content="kanazen-v13-20260416">
+  <meta name="kanazen-build" content="ZenPro-v1-20260417">
   <title>KanaZen</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icons/icon-1024.png">
@@ -190,7 +190,7 @@ button {
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: calc(env(safe-area-inset-top) + 78px) 16px calc(env(safe-area-inset-bottom) + 84px);
+  padding: calc(env(safe-area-inset-top) + 78px) 16px calc(env(safe-area-inset-bottom) + 94px);
 }
 
 .screen {
@@ -598,6 +598,28 @@ canvas {
   box-shadow: 0 8px 24px rgba(31, 35, 32, 0.06);
 }
 
+.quiz-write-stage {
+  height: min(244px, 32dvh);
+  min-height: 190px;
+}
+
+.quiz-write-stage.is-blank {
+  background: rgba(255, 254, 250, 0.98);
+}
+
+.quiz-write-stage.is-reviewing {
+  background: rgba(255, 254, 250, 0.9);
+}
+
+.write-snapshot {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
 .lesson-card.is-current {
   border-color: rgba(184, 59, 64, 0.2);
   background: rgba(255, 255, 255, 0.62);
@@ -614,6 +636,22 @@ canvas {
   font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
   font-size: 26px;
   letter-spacing: 0;
+}
+
+.script-progress {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.script-progress span {
+  padding: 8px 10px;
+  border: 1px solid rgba(31, 35, 32, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 780;
 }
 
 .status-pill {
@@ -642,6 +680,49 @@ canvas {
   font-weight: 760;
 }
 
+.self-check {
+  display: grid;
+  gap: 10px;
+}
+
+.answer-reveal {
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(184, 59, 64, 0.16);
+  border-radius: var(--radius);
+  background: rgba(184, 59, 64, 0.07);
+}
+
+.answer-reveal span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 780;
+  text-align: left;
+}
+
+.answer-reveal strong {
+  font-family: var(--kana-practice-font);
+  font-size: 48px;
+  line-height: 1;
+}
+
+.answer-reveal em {
+  color: var(--muted);
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 820;
+}
+
+.self-check-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
 .tabbar {
   position: fixed;
   left: 50%;
@@ -649,10 +730,10 @@ canvas {
   bottom: max(0px, calc(env(safe-area-inset-bottom) - 24px));
   z-index: 35;
   width: calc(100vw - 32px);
-  max-width: 390px;
+  max-width: 430px;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 3px;
   padding: 6px;
   border: 1px solid rgba(255, 255, 255, 0.78);
@@ -712,6 +793,48 @@ canvas {
   background: rgba(31, 35, 32, 0.18);
   backdrop-filter: blur(18px) saturate(135%);
   -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+
+.study-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 88;
+  display: grid;
+  align-items: end;
+  justify-items: center;
+  padding: calc(env(safe-area-inset-top) + 24px) 16px calc(env(safe-area-inset-bottom) + 92px);
+  background: rgba(31, 35, 32, 0.16);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+
+.study-sheet {
+  width: min(100%, 430px);
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 253, 0.92), rgba(244, 246, 242, 0.78));
+  box-shadow: 0 24px 70px rgba(31, 35, 32, 0.22);
+  backdrop-filter: blur(34px) saturate(180%);
+  -webkit-backdrop-filter: blur(34px) saturate(180%);
+}
+
+.study-sheet-title {
+  display: grid;
+  gap: 4px;
+}
+
+.study-sheet-title strong {
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.study-actions {
+  display: grid;
+  gap: 8px;
 }
 
 .version-sheet {
@@ -841,12 +964,15 @@ canvas {
 (() => {
   "use strict";
 
-  const APP_BUILD = "kanazen-v13-20260416";
+  const APP_BUILD = "ZenPro-v1-20260417";
   const STORAGE_KEY = "kanazen:v1";
   const UPDATE_CHECK_KEY = "kanazen:lastUpdateCheck";
   const UPDATE_REMOTE_KEY = "kanazen:lastRemoteBuild";
   const UPDATE_CHECK_INTERVAL = 15 * 60 * 1000;
+  const QUIZ_SIZE = 30;
+  const SCRIPT_LABEL = { hira: "平假名", kata: "片假名" };
   const VERSION_HISTORY = [
+    { build: "ZenPro-v1-20260417", title: "测验强化", note: "新增听音手写自评题、30 题课程测验和独立测验入口，让临摹和复习形成闭环。" },
     { build: "kanazen-v13-20260416", title: "版本窗口", note: "右上角加入版本入口，点开可查看本地版本、更新状态和最近改动。" },
     { build: "kanazen-v12-20260415", title: "混合测验", note: "测验加入听音选假名、看假名选罗马音，让复习不只依赖罗马音提示。" },
     { build: "kanazen-v11-20260415", title: "每日学习", note: "移除课程栏目，把首页聚焦到本日学习和艾宾浩斯复习安排。" },
@@ -855,6 +981,7 @@ canvas {
   const TABS = [
     ["home", "今", "今日"],
     ["write", "書", "临摹"],
+    ["quiz", "問", "测验"],
     ["library", "図", "图鉴"],
     ["profile", "我", "我的"]
   ];
@@ -893,7 +1020,7 @@ canvas {
     ["y", "や行", ["ya", "yu", "yo"]],
     ["r", "ら行", ["ra", "ri", "ru", "re", "ro"]],
     ["w", "わ行 + ん", ["wa", "wo", "n"]]
-  ].map(([id, name, ids], index) => ({ id, name, ids, index, kind: "base", passScore: 8 }));
+  ].map(([id, name, ids], index) => ({ id, name, ids, index, kind: "base", passScore: 24 }));
   const ADVANCED_LESSONS = [
     ["ga", "が行", ["ga", "gi", "gu", "ge", "go"]],
     ["za", "ざ行", ["za", "ji", "zu", "ze", "zo"]],
@@ -902,7 +1029,7 @@ canvas {
     ["pa", "ぱ行", ["pa", "pi", "pu", "pe", "po"]],
     ["basic-yoon", "基础拗音", ["kya", "kyu", "kyo", "sha", "shu", "sho", "cha", "chu", "cho", "nya", "nyu", "nyo", "hya", "hyu", "hyo", "mya", "myu", "myo", "rya", "ryu", "ryo"]],
     ["voiced-yoon", "浊/半浊拗音", ["gya", "gyu", "gyo", "ja", "ju", "jo", "bya", "byu", "byo", "pya", "pyu", "pyo"]]
-  ].map(([id, name, ids], index) => ({ id, name, ids, index, kind: "advanced", passScore: 8 }));
+  ].map(([id, name, ids], index) => ({ id, name, ids, index, kind: "advanced", passScore: 24 }));
   const LESSONS = [...BASE_LESSONS, ...ADVANCED_LESSONS];
   const KANA = [
     ["a","a","a","あ","ア"],["i","a","i","い","イ"],["u","a","u","う","ウ"],["e","a","e","え","エ"],["o","a","o","お","オ"],
@@ -943,6 +1070,7 @@ canvas {
   let tab = "home";
   let scriptMode = data.settings.script || "hira";
   let quiz = null;
+  let studyPrompt = null;
   let toastTimer = 0;
   let toastText = "";
   let versionSheetOpen = false;
@@ -958,10 +1086,12 @@ canvas {
         parsed.activity ||= {};
         parsed.settings ||= {};
         parsed.lessons ||= {};
+        parsed.settings.writeScript ||= "hira";
+        parsed.settings.drillScript ||= parsed.settings.writeScript || "hira";
         return parsed;
       }
     } catch (error) {}
-    return { version: 1, records: {}, activity: {}, lessons: {}, settings: { script: "hira", quizMode: "path", quizRow: "a", writeId: "a", writeScript: "hira", activeLesson: "a" } };
+    return { version: 1, records: {}, activity: {}, lessons: {}, settings: { script: "hira", quizMode: "path", quizRow: "a", writeId: "a", writeScript: "hira", drillScript: "hira", activeLesson: "a" } };
   }
   function saveData() {
     data.settings.script = scriptMode;
@@ -987,10 +1117,43 @@ canvas {
     data.lessons ||= {};
     data.lessons[id] ||= { traced: {}, best: 0, passed: false };
     data.lessons[id].traced ||= {};
+    data.lessons[id].tracedScripts ||= {};
+    data.lessons[id].bestByScript ||= {};
+    data.lessons[id].passedScripts ||= {};
+    if (data.lessons[id].passed) {
+      data.lessons[id].passedScripts.hira = true;
+      data.lessons[id].passedScripts.kata = true;
+    }
+    if (data.lessons[id].passedScripts.hira && data.lessons[id].passedScripts.kata) {
+      data.lessons[id].passed = true;
+    }
     return data.lessons[id];
+  }
+  function scriptLabel(script = "hira") {
+    return SCRIPT_LABEL[script] || SCRIPT_LABEL.hira;
+  }
+  function quizScript() {
+    return quiz?.script || data.settings.writeScript || "hira";
+  }
+  function isScriptTraced(lesson, itemId, script = data.settings.writeScript || "hira") {
+    const state = lessonState(lesson.id);
+    return Boolean(state.tracedScripts?.[itemId]?.[script] || (script === "hira" && state.traced[itemId]));
+  }
+  function firstUntracedId(lesson, script = data.settings.writeScript || "hira") {
+    return lesson.ids.find((id) => !isScriptTraced(lesson, id, script)) || lesson.ids[0];
+  }
+  function lessonPassedScript(lesson, script = data.settings.writeScript || "hira") {
+    return Boolean(lessonState(lesson.id).passedScripts?.[script]);
+  }
+  function setWriteTarget(lesson, script = data.settings.writeScript || "hira") {
+    data.settings.writeScript = script;
+    data.settings.writeId = firstUntracedId(lesson, script);
   }
   function baseComplete() {
     return BASE_LESSONS.every((lesson) => lessonState(lesson.id).passed);
+  }
+  function allLessonsComplete() {
+    return baseComplete() && ADVANCED_LESSONS.every((lesson) => lessonState(lesson.id).passed);
   }
   function currentBaseLesson() {
     return BASE_LESSONS.find((lesson) => !lessonState(lesson.id).passed) || BASE_LESSONS[BASE_LESSONS.length - 1];
@@ -1006,23 +1169,29 @@ canvas {
     if (lesson.kind === "advanced") return baseComplete() && (lesson.index <= currentAdvancedLesson().index || lessonState(lesson.id).passed);
     return lesson.index <= currentBaseLesson().index || lessonState(lesson.id).passed;
   }
-  function tracedCount(lesson) {
-    const traced = lessonState(lesson.id).traced;
-    return lesson.ids.filter((id) => traced[id]).length;
+  function tracedCount(lesson, script = data.settings.writeScript || "hira") {
+    return lesson.ids.filter((id) => isScriptTraced(lesson, id, script)).length;
   }
-  function lessonReady(lesson) {
-    return tracedCount(lesson) >= lesson.ids.length;
+  function lessonReady(lesson, script = data.settings.writeScript || "hira") {
+    return tracedCount(lesson, script) >= lesson.ids.length;
   }
-  function markTraced(id) {
+  function markTraced(id, script = data.settings.writeScript || "hira") {
     const lesson = lessonForItem(id);
-    lessonState(lesson.id).traced[id] = Date.now();
+    const state = lessonState(lesson.id);
+    state.tracedScripts[id] ||= {};
+    state.tracedScripts[id][script] = Date.now();
+    if (script === "hira") state.traced[id] = state.tracedScripts[id][script];
     markActivity();
     saveData();
   }
-  function passLesson(lesson, score) {
+  function passLesson(lesson, score, script = "hira") {
     const state = lessonState(lesson.id);
     state.best = Math.max(state.best || 0, score);
-    if (score >= lesson.passScore) state.passed = true;
+    state.bestByScript ||= {};
+    state.passedScripts ||= {};
+    state.bestByScript[script] = Math.max(state.bestByScript[script] || 0, score);
+    if (score >= lesson.passScore) state.passedScripts[script] = true;
+    state.passed = Boolean(state.passedScripts.hira && state.passedScripts.kata);
     saveData();
   }
   function unlockedBaseItems() {
@@ -1036,7 +1205,7 @@ canvas {
   function isLearned(item) {
     const rec = readRecord(item.id);
     const state = lessonState(lessonForItem(item.id).id);
-    return Boolean(rec.lastSeen || rec.correct || rec.wrong || state.traced[item.id]);
+    return Boolean(rec.lastSeen || rec.correct || rec.wrong || state.traced[item.id] || state.tracedScripts?.[item.id]?.hira || state.tracedScripts?.[item.id]?.kata);
   }
   function learnedItems() {
     return availableItems().filter(isLearned);
@@ -1241,78 +1410,143 @@ canvas {
     audio.play().catch(() => speakFallback(item.hira, true));
   }
 
-  function buildLessonQueue(lesson) {
+  function uniqueItems(items) {
+    return [...new Map(items.filter(Boolean).map((item) => [item.id, item])).values()];
+  }
+  function rankedItems(items, dueBoost = 120) {
     const now = Date.now();
-    const pool = lesson.ids.map((id) => byId[id]).filter(Boolean);
-    const ranked = pool.map((item) => {
+    return uniqueItems(items).map((item) => {
       const rec = readRecord(item.id);
       let score = Math.random();
       if (!rec.lastSeen) score += 80;
-      if (rec.nextReview && rec.nextReview <= now) score += 120;
-      score += rec.wrong * 10 + (5 - rec.mastery) * 4 - rec.correct;
+      if (rec.nextReview && rec.nextReview <= now) score += dueBoost;
+      score += rec.wrong * 14 + (5 - rec.mastery) * 7 - rec.correct;
       return { item, score };
     }).sort((a, b) => b.score - a.score).map((entry) => entry.item);
-    while (ranked.length < 10 && pool.length) ranked.push(pool[Math.floor(Math.random() * pool.length)]);
-    return ranked.slice(0, 10);
+  }
+  function expandQueue(items, size = QUIZ_SIZE) {
+    const ranked = rankedItems(items);
+    const queue = [];
+    if (!ranked.length) return queue;
+    while (queue.length < size) {
+      const round = ranked.map((item) => ({ item, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map((entry) => entry.item);
+      queue.push(...round);
+    }
+    return queue.slice(0, size);
+  }
+  function buildLessonQueue(lesson) {
+    return expandQueue(lesson.ids.map((id) => byId[id]), QUIZ_SIZE);
   }
   function buildDailyReviewQueue() {
-    const now = Date.now();
-    const pool = dueReviewItems();
-    const ranked = pool.map((item) => {
-      const rec = readRecord(item.id);
-      let score = Math.random();
-      if (rec.nextReview && rec.nextReview <= now) score += 160;
-      score += rec.wrong * 14 + (5 - rec.mastery) * 8 - rec.correct;
-      return { item, score };
-    }).sort((a, b) => b.score - a.score).map((entry) => entry.item);
-    while (ranked.length < 10 && pool.length) ranked.push(pool[Math.floor(Math.random() * pool.length)]);
-    return ranked.slice(0, 10);
+    const due = dueReviewItems();
+    if (!due.length) return [];
+    const lowMastery = learnedItems().filter((item) => readRecord(item.id).mastery < 4);
+    const pool = uniqueItems([...due, ...weakestItems(), ...lowMastery, ...learnedItems()]);
+    return expandQueue(rankedItems(pool, 180), QUIZ_SIZE);
   }
-  function startDailyStudy() {
-    const reviewQueue = buildDailyReviewQueue();
-    if (reviewQueue.length) {
-      quiz = { mode: "review", lessonId: "", queue: reviewQueue, index: 0, correct: 0, selected: null, done: false, played: "", question: null, misses: [] };
-      quiz.question = makeQuestion();
-      tab = "lessonQuiz";
-      saveData();
-      render();
-      return;
-    }
-    const lesson = currentLesson();
-    if (!lessonReady(lesson)) {
-      data.settings.writeId = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0];
-      tab = "write";
-      saveData();
-      render();
-      return;
-    }
-    startLessonQuiz(lesson.id);
-  }
-  function startLessonQuiz(lessonId) {
-    const lesson = lessonById(lessonId);
-    if (!lesson) { showToast("没有找到这一课"); return; }
-    if (!isLessonUnlocked(lesson)) { showToast("先通过前一课，再解锁这里"); return; }
-    if (!lessonReady(lesson)) { showToast("先把这一组都临摹一遍"); return; }
-    data.settings.quizRow = lesson.id;
-    const queue = buildLessonQueue(lesson);
-    if (!queue.length) { showToast("这一组还没有可练习的假名"); return; }
-    quiz = { mode: "lesson", lessonId: lesson.id, queue, index: 0, correct: 0, selected: null, done: false, played: "", question: null, misses: [] };
+  function createQuiz(mode, queue, options = {}) {
+    quiz = {
+      mode,
+      lessonId: options.lessonId || "",
+      script: options.script || data.settings.writeScript || "hira",
+      originTab: options.originTab || "home",
+      queue,
+      index: 0,
+      correct: 0,
+      selected: null,
+      done: false,
+      played: "",
+      question: null,
+      misses: [],
+      selfCheckOpen: false,
+      writeSnapshot: ""
+    };
     quiz.question = makeQuestion();
     tab = "lessonQuiz";
     saveData();
     render();
   }
+  function startDailyStudy() {
+    const reviewQueue = buildDailyReviewQueue();
+    if (reviewQueue.length) {
+      createQuiz("review", reviewQueue, { script: data.settings.drillScript || scriptMode || "hira", originTab: "home" });
+      return;
+    }
+    if (allLessonsComplete()) {
+      showToast("今天的课程都完成了，可以去测验里强化弱项");
+      tab = "quiz";
+      quiz = null;
+      render();
+      return;
+    }
+    const lesson = currentLesson();
+    if (!lessonReady(lesson, "hira")) {
+      setWriteTarget(lesson, "hira");
+      tab = "write";
+      saveData();
+      render();
+      return;
+    }
+    if (!lessonPassedScript(lesson, "hira")) {
+      startLessonQuiz(lesson.id, "hira", "home");
+      return;
+    }
+    if (!lessonReady(lesson, "kata")) {
+      setWriteTarget(lesson, "kata");
+      tab = "write";
+      saveData();
+      render();
+      return;
+    }
+    if (!lessonPassedScript(lesson, "kata")) {
+      startLessonQuiz(lesson.id, "kata", "home");
+      return;
+    }
+    showToast("本课完成，继续下一课");
+    startDailyStudy();
+  }
+  function startReviewQuiz(originTab = "quiz") {
+    const queue = buildDailyReviewQueue();
+    if (!queue.length) { showToast("现在没有到期复习"); return; }
+    createQuiz("review", queue, { script: data.settings.drillScript || scriptMode || "hira", originTab });
+  }
+  function startLessonQuiz(lessonId, script = data.settings.writeScript || "hira", originTab = "home") {
+    const lesson = lessonById(lessonId);
+    if (!lesson) { showToast("没有找到这一课"); return; }
+    if (!isLessonUnlocked(lesson)) { showToast("先通过前一课，再解锁这里"); return; }
+    if (!lessonReady(lesson, script)) { showToast(`先把这一组${scriptLabel(script)}都临摹一遍`); return; }
+    data.settings.quizRow = lesson.id;
+    data.settings.writeScript = script;
+    const queue = buildLessonQueue(lesson);
+    if (!queue.length) { showToast("这一组还没有可练习的假名"); return; }
+    createQuiz("lesson", queue, { lessonId: lesson.id, script, originTab });
+  }
+  function startDrillQuiz(lessonId, script = data.settings.drillScript || "hira") {
+    const lesson = lessonById(lessonId);
+    if (!isLessonUnlocked(lesson)) { showToast("这一行还没有解锁"); return; }
+    data.settings.quizRow = lesson.id;
+    data.settings.drillScript = script;
+    const queue = buildLessonQueue(lesson);
+    if (!queue.length) { showToast("这一组还没有可练习的假名"); return; }
+    createQuiz("drill", queue, { lessonId: lesson.id, script, originTab: "quiz" });
+  }
   function questionTypeForIndex(index) {
-    const reviewPattern = ["sound", "kana", "sound", "lesson", "sound", "kana"];
-    const lessonPattern = ["lesson", "kana", "sound", "lesson", "sound", "kana"];
+    const reviewPattern = ["sound", "kana", "writeSound", "lesson", "sound", "kana", "writeSound", "sound", "kana", "lesson"];
+    const lessonPattern = ["lesson", "sound", "writeSound", "kana", "lesson", "sound", "kana", "writeSound", "sound", "kana", "lesson", "writeSound", "sound", "kana", "writeSound"];
     const pattern = quiz?.mode === "review" ? reviewPattern : lessonPattern;
     return pattern[index % pattern.length];
+  }
+  function optionPoolForQuestion(target) {
+    const scoped = quiz?.lessonId && quiz.mode !== "review"
+      ? lessonById(quiz.lessonId).ids.map((id) => byId[id]).filter(Boolean)
+      : availableItems();
+    return uniqueItems([target, ...scoped]);
   }
   function makeQuestion() {
     if (!quiz || quiz.done) return null;
     const target = quiz.queue[quiz.index];
     const type = questionTypeForIndex(quiz.index);
-    const optionPool = availableItems();
+    const optionPool = optionPoolForQuestion(target);
     const hardPool = optionPool.filter((item) => item.id !== target.id && (item.row === target.row || item.vowel === target.vowel || item.hira.length === target.hira.length));
     const wrong = [...new Map([...hardPool, ...optionPool.filter((item) => item.id !== target.id)].sort(() => Math.random() - 0.5).map((item) => [item.id, item])).values()].slice(0, 3);
     return { target, type, options: [target, ...wrong].sort(() => Math.random() - 0.5) };
@@ -1325,25 +1559,70 @@ canvas {
   function answerQuiz(id) {
     if (!quiz || quiz.selected) return;
     const q = currentQuestion();
+    if (!q || q.type === "writeSound") return;
     const target = q.target;
     const correct = id === target.id;
     quiz.selected = id;
-    if (correct) quiz.correct += 1;
-    else quiz.misses.push({ target: target.id, selected: id, type: q.type });
-    updateRecord(target.id, correct);
+    recordQuestionResult(q, correct, id);
     playKana(target.id);
     render();
-    window.setTimeout(() => {
-      if (!quiz) return;
-      quiz.index += 1;
-      quiz.selected = null;
-      quiz.played = "";
-      if (quiz.index >= quiz.queue.length) {
-        quiz.done = true;
-        if (quiz.mode === "lesson") passLesson(lessonById(quiz.lessonId), quiz.correct);
-      } else quiz.question = makeQuestion();
+    window.setTimeout(advanceQuiz, 1180);
+  }
+  function recordQuestionResult(q, correct, selected) {
+    if (correct) quiz.correct += 1;
+    else quiz.misses.push({ target: q.target.id, selected, type: q.type });
+    updateRecord(q.target.id, correct);
+  }
+  function advanceQuiz() {
+    if (!quiz) return;
+    quiz.index += 1;
+    quiz.selected = null;
+    quiz.selfCheckOpen = false;
+    quiz.writeSnapshot = "";
+    quiz.played = "";
+    if (quiz.index >= quiz.queue.length) {
+      quiz.done = true;
+      if (quiz.mode === "lesson") passLesson(lessonById(quiz.lessonId), quiz.correct, quiz.script);
+    } else {
+      quiz.question = makeQuestion();
+    }
+    render();
+  }
+  function snapshotCanvas() {
+    const canvas = document.getElementById("writeCanvas");
+    if (!canvas) return "";
+    try { return canvas.toDataURL("image/png"); } catch (error) { return ""; }
+  }
+  function showWriteAnswer() {
+    if (!quiz || quiz.selfCheckOpen || quiz.selected) return;
+    const q = currentQuestion();
+    if (!q || q.type !== "writeSound") return;
+    quiz.writeSnapshot = snapshotCanvas();
+    quiz.selfCheckOpen = true;
+    render();
+  }
+  function answerSelfCheck(correct) {
+    if (!quiz || !quiz.selfCheckOpen || quiz.selected) return;
+    const q = currentQuestion();
+    quiz.selected = correct ? q.target.id : "self";
+    recordQuestionResult(q, correct, quiz.selected);
+    playKana(q.target.id);
+    render();
+    window.setTimeout(advanceQuiz, 720);
+  }
+  function continueAfterQuiz() {
+    if (!quiz?.done) { startDailyStudy(); return; }
+    const finished = quiz;
+    quiz = null;
+    if (finished.mode === "lesson" && finished.script === "hira" && finished.correct >= lessonById(finished.lessonId).passScore) {
+      const lesson = lessonById(finished.lessonId);
+      setWriteTarget(lesson, "kata");
+      tab = "write";
+      saveData();
       render();
-    }, 1180);
+      return;
+    }
+    startDailyStudy();
   }
 
   function renderVersionEntry(title) {
@@ -1401,20 +1680,23 @@ canvas {
       </header>
       <main class="content"><section class="screen">${renderScreen()}</section></main>
       ${renderTabs()}
+      ${studyPrompt ? renderStudyPrompt() : ""}
       ${versionSheetOpen ? renderVersionSheet() : ""}
       ${toastText ? `<div class="toast">${h(toastText)}</div>` : ""}
     `;
     afterRender();
   }
   function renderTabs() {
+    const activeTab = tab === "lessonQuiz" ? (quiz?.originTab || "home") : tab;
     return `<nav class="tabbar" aria-label="主导航">${TABS.map(([id, mark, label]) => `
-      <button class="tab-button ${tab === id || (tab === "lessonQuiz" && id === "home") ? "is-active" : ""}" data-action="tab" data-tab="${id}">
+      <button class="tab-button ${activeTab === id ? "is-active" : ""}" data-action="tab" data-tab="${id}">
         <strong>${mark}</strong><span>${label}</span>
       </button>`).join("")}</nav>`;
   }
   function renderScreen() {
     if (tab === "lessonQuiz") return renderQuiz();
     if (tab === "write") return renderWrite();
+    if (tab === "quiz") return renderQuizHub();
     if (tab === "library") return renderLibrary();
     if (tab === "profile") return renderProfile();
     return renderHome();
@@ -1423,17 +1705,19 @@ canvas {
     const s = stats();
     const lesson = currentLesson();
     const reviewItems = dueReviewItems();
-    const focus = reviewItems[0] || byId[lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0]];
-    const ready = lessonReady(lesson);
+    const homeScript = !lessonReady(lesson, "hira") || !lessonPassedScript(lesson, "hira") ? "hira" : "kata";
+    const focus = reviewItems[0] || byId[firstUntracedId(lesson, homeScript)];
     const courseProgress = baseComplete() ? `${s.advancedPassed}/${ADVANCED_LESSONS.length}` : `${s.passedRows}/${BASE_LESSONS.length}`;
     const planText = reviewItems.length
       ? `先复习 ${reviewItems.length} 个到期或薄弱假名，再继续 ${lesson.name}。`
-      : ready ? `${lesson.name} 已经临摹完成，今天可以直接测验。` : `今天从 ${lesson.name} 继续，先把这一组临摹完。`;
+      : !lessonReady(lesson, homeScript) ? `今天从 ${lesson.name} 的${scriptLabel(homeScript)}继续，先写完这一组。`
+      : !lessonPassedScript(lesson, homeScript) ? `${lesson.name} 的${scriptLabel(homeScript)}已临摹完成，接下来做 30 题测验。`
+      : `继续 ${lesson.name} 的片假名巩固，完成后再进入下一行。`;
     return `<div class="stack">
       <div class="panel hero-panel">
         <div class="hero-kana"><div><div class="section-title">${reviewItems.length ? "今日复习" : `今日学习 · ${lesson.name}`}</div><div class="kana">${charFor(focus)}</div></div>
           <button class="ghost-button" data-action="play" data-id="${focus.id}">播放 ${focus.romaji}</button></div>
-        <button class="primary-button accent-button" data-action="start-daily-study">开启本日学习</button>
+        <button class="primary-button accent-button" data-action="start-daily-study">去学习</button>
       </div>
       <div class="metric-grid home-metrics">
         <div class="metric"><strong>${s.reviewCount}</strong><span>需要复习</span></div>
@@ -1443,6 +1727,66 @@ canvas {
         <div class="row"><strong>今日安排</strong><span class="small">间隔复习</span></div>
         <p class="small">${planText} 复习会按艾宾浩斯间隔自动安排，不只看昨天。</p>
       </div>
+    </div>`;
+  }
+  function renderQuizHub() {
+    const s = stats();
+    const lesson = currentLesson();
+    const drillScript = data.settings.drillScript || "hira";
+    const lessons = [...BASE_LESSONS, ...(baseComplete() ? ADVANCED_LESSONS : [])];
+    return `<div class="stack">
+      <div class="panel hero-panel">
+        <div class="tight">
+          <div class="section-title">测验</div>
+          <div class="hero-kana"><div class="kana">問</div><strong>${QUIZ_SIZE}</strong></div>
+          <p class="small">自己选择假名行强化记忆；到期复习会继续按艾宾浩斯间隔优先安排。</p>
+        </div>
+        <div class="write-actions">
+          <button class="primary-button accent-button" data-action="start-review-quiz" ${s.reviewCount ? "" : "disabled"}>复习到期 ${s.reviewCount}</button>
+          <button class="ghost-button" data-action="start-drill-quiz" data-lesson="${lesson.id}" data-script="${drillScript}">强化当前课</button>
+        </div>
+      </div>
+      <div class="panel detail-card tight">
+        <div class="row"><strong>测验文字</strong><span class="small">${scriptLabel(drillScript)}</span></div>
+        <div class="segmented">
+          <button class="chip ${drillScript === "hira" ? "is-active" : ""}" data-action="drill-script" data-script="hira">平仮名</button>
+          <button class="chip ${drillScript === "kata" ? "is-active" : ""}" data-action="drill-script" data-script="kata">片仮名</button>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="section-title">选择假名行</div>
+        ${lessons.map((item) => renderDrillLessonCard(item, drillScript)).join("")}
+      </div>
+    </div>`;
+  }
+  function renderDrillLessonCard(lesson, script) {
+    const unlocked = isLessonUnlocked(lesson);
+    const state = lessonState(lesson.id);
+    const best = state.bestByScript?.[script] || 0;
+    const status = state.passed ? "已通过" : unlocked ? "可测验" : "未解锁";
+    const kana = lesson.ids.map((id) => charFor(byId[id], script)).join(" ");
+    return `<div class="panel lesson-card">
+      <div class="lesson-row"><strong>${lesson.name}</strong><span class="status-pill ${state.passed ? "is-done" : unlocked ? "is-open" : ""}">${status}${best ? ` · ${best}/${QUIZ_SIZE}` : ""}</span></div>
+      <div class="lesson-kana">${kana}</div>
+      <div class="row"><span class="small">${scriptLabel(script)} · ${QUIZ_SIZE} 题强化</span>
+        <button class="ghost-button" data-action="start-drill-quiz" data-lesson="${lesson.id}" data-script="${script}" ${unlocked ? "" : "disabled"}>${unlocked ? "开始测验" : "锁定"}</button>
+      </div>
+    </div>`;
+  }
+  function renderStudyPrompt() {
+    const lesson = lessonById(studyPrompt.lessonId);
+    const script = studyPrompt.script || data.settings.writeScript || "hira";
+    return `<div class="study-overlay" data-action="close-study-prompt">
+      <section class="study-sheet" role="dialog" aria-modal="true" aria-label="学习提示">
+        <div class="study-sheet-title">
+          <strong>${h(lesson.name)} · ${h(scriptLabel(script))}临摹完成</strong>
+          <span class="small">现在做 ${QUIZ_SIZE} 题，只测刚才这一组假名。</span>
+        </div>
+        <div class="study-actions">
+          <button class="primary-button accent-button" data-action="prompt-start-quiz" data-lesson="${lesson.id}" data-script="${script}">开始测验</button>
+          <button class="ghost-button" data-action="close-study-prompt">稍后再测</button>
+        </div>
+      </section>
     </div>`;
   }
   function renderLibrary() {
@@ -1476,18 +1820,30 @@ canvas {
   function renderLessonCard(lesson, actions = true) {
     const state = lessonState(lesson.id);
     const unlocked = isLessonUnlocked(lesson);
-    const ready = lessonReady(lesson);
-    const label = state.passed ? "已通过" : !unlocked ? "未解锁" : ready ? "可测验" : "先临摹";
+    const hiraReady = lessonReady(lesson, "hira");
+    const kataReady = lessonReady(lesson, "kata");
+    const hiraPassed = lessonPassedScript(lesson, "hira");
+    const kataPassed = lessonPassedScript(lesson, "kata");
+    const label = state.passed ? "已通过" : !unlocked ? "未解锁" : !hiraReady ? "平假名临摹" : !hiraPassed ? "平假名测验" : !kataReady ? "片假名临摹" : !kataPassed ? "片假名测验" : "可强化";
     const pill = state.passed ? "is-done" : unlocked ? "is-open" : "";
     const kana = lesson.ids.map((id) => charFor(byId[id])).join(" ");
-    const action = !unlocked ? "" : ready ? "start-lesson-quiz" : "go-lesson-write";
     const current = currentLesson().id === lesson.id && !state.passed;
-    const note = state.passed ? "完成" : !unlocked ? "待解锁" : ready ? "回到今日测验" : "回到今日临摹";
+    const nextAction = !unlocked ? { action: "", label: "锁定", script: "hira" }
+      : !hiraReady ? { action: "go-lesson-write", label: "写平假名", script: "hira" }
+      : !hiraPassed ? { action: "start-lesson-quiz", label: "测平假名", script: "hira" }
+      : !kataReady ? { action: "go-lesson-write", label: "写片假名", script: "kata" }
+      : !kataPassed ? { action: "start-lesson-quiz", label: "测片假名", script: "kata" }
+      : { action: "start-drill-quiz", label: "强化", script: data.settings.drillScript || "hira" };
+    const note = state.passed ? "完成" : !unlocked ? "待解锁" : nextAction.label;
     return `<div class="panel lesson-card ${current ? "is-current" : ""}">
-      <div class="lesson-row"><strong>${lesson.name}</strong><span class="status-pill ${pill}">${label}${state.best ? ` · 最好 ${state.best}/10` : ""}</span></div>
+      <div class="lesson-row"><strong>${lesson.name}</strong><span class="status-pill ${pill}">${label}${state.best ? ` · 最好 ${state.best}/${QUIZ_SIZE}` : ""}</span></div>
       <div class="lesson-kana">${kana}</div>
-      <div class="row"><span class="small">临摹 ${tracedCount(lesson)}/${lesson.ids.length} · 及格 ${lesson.passScore}/10</span>
-      ${actions ? (unlocked ? `<button class="ghost-button" data-action="${action}" data-lesson="${lesson.id}">${ready ? "测验" : "临摹"}</button>` : `<button class="ghost-button" disabled>锁定</button>`) : `<span class="small">${note}</span>`}</div>
+      <div class="script-progress">
+        <span>平 ${tracedCount(lesson, "hira")}/${lesson.ids.length}${hiraPassed ? " · 过" : ""}</span>
+        <span>片 ${tracedCount(lesson, "kata")}/${lesson.ids.length}${kataPassed ? " · 过" : ""}</span>
+      </div>
+      <div class="row"><span class="small">30 题 · 及格 ${lesson.passScore}/${QUIZ_SIZE}</span>
+      ${actions ? (unlocked ? `<button class="ghost-button" data-action="${nextAction.action}" data-lesson="${lesson.id}" data-script="${nextAction.script}">${nextAction.label}</button>` : `<button class="ghost-button" disabled>锁定</button>`) : `<span class="small">${note}</span>`}</div>
     </div>`;
   }
   function scriptButtons() {
@@ -1509,46 +1865,68 @@ canvas {
     if (quiz?.done) {
       const lesson = quiz.lessonId ? lessonById(quiz.lessonId) : null;
       const isReview = quiz.mode === "review";
+      const isDrill = quiz.mode === "drill";
       const passed = lesson ? quiz.correct >= lesson.passScore : false;
       const total = quiz.queue.length;
       const summary = isReview
         ? `本轮复习完成，之后会按间隔自动安排下一次出现。`
-        : passed ? `${lesson.name} 已通过，下一课已经解锁。` : `${lesson.name} 还差一点，8/10 及格；先复习再来一轮。`;
+        : isDrill ? `${lesson.name} ${scriptLabel(quiz.script)}强化完成，薄弱项已经写回复习队列。`
+        : passed && quiz.script === "hira" ? `${lesson.name} 平假名通过，继续临摹片假名。`
+        : passed ? `${lesson.name} 已通过，下一课已经解锁。`
+        : `${lesson.name} ${scriptLabel(quiz.script)}还差一点，${lesson.passScore}/${QUIZ_SIZE} 及格；再来一轮。`;
+      const primaryAction = isReview || (passed && !isDrill) ? "continue-after-quiz" : isDrill ? "start-drill-quiz" : "start-lesson-quiz";
+      const primaryLabel = isReview ? "继续今日学习" : isDrill ? "再测一轮" : passed && quiz.script === "hira" ? "去写片假名" : passed ? "继续今日学习" : "再来一轮";
       return `<div class="stack">
       <div class="panel hero-panel"><div class="tight"><div class="section-title">本轮完成</div>
         <div class="hero-kana"><div class="kana">${quiz.correct}</div><strong>/${total}</strong></div>
         <p class="small">${summary}</p></div>
-        <button class="primary-button accent-button" data-action="${isReview || passed ? "start-daily-study" : "start-lesson-quiz"}" ${!isReview && !passed ? `data-lesson="${lesson.id}"` : ""}>${isReview || passed ? "继续今日学习" : "再来一轮"}</button>
+        <button class="primary-button accent-button" data-action="${primaryAction}" ${lesson ? `data-lesson="${lesson.id}" data-script="${quiz.script}"` : ""}>${primaryLabel}</button>
       </div>${renderMissReview()}</div>`;
     }
     if (quiz) return renderQuizActive();
     const lesson = currentLesson();
-    return `<div class="stack">
-      <div class="panel detail-card tight">
-        <div class="row"><strong>${lesson.name} 测验</strong><span class="small">${tracedCount(lesson)}/${lesson.ids.length} 已临摹</span></div>
-        <p class="small">题目会显示罗马音并播放声音，从四个假名里选择正确答案。10 题达到 8 分就解锁下一课。</p>
-        <button class="primary-button accent-button" data-action="${lessonReady(lesson) ? "start-lesson-quiz" : "go-lesson-write"}" data-lesson="${lesson.id}">${lessonReady(lesson) ? "开始测验" : "先去临摹"}</button>
-      </div>
-      <div class="stack">${[...BASE_LESSONS, ...(baseComplete() ? ADVANCED_LESSONS : [])].map((lesson) => renderLessonCard(lesson)).join("")}</div>
-    </div>`;
+    return renderQuizHub(lesson);
   }
   function renderQuizActive() {
     const q = currentQuestion();
     const total = quiz.queue.length;
     const pct = (quiz.index / total) * 100;
-    const typeLabel = q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
+    const mode = quizScript();
+    const typeLabel = q.type === "writeSound" ? "听音手写自评" : q.type === "lesson" ? "听音 + 罗马音选假名" : q.type === "sound" ? "听音选假名" : q.type === "romaji" ? "看罗马音选假名" : "看假名选罗马音";
     const label = quiz.mode === "review" ? `间隔复习 · ${typeLabel}` : typeLabel;
-    const prompt = q.type === "sound"
+    const prompt = q.type === "writeSound" ? renderWriteQuestion(q, mode) : q.type === "sound"
       ? `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">重播读音</button><div class="sound-hint">先听声音，不看罗马音</div>`
       : q.type === "lesson" ? `<div class="romaji">${q.target.romaji}</div><div class="sound-hint">${q.target.audio ? "已播放，没听到就点重播" : "使用自然日语语音"}</div><button class="ghost-button" data-action="play" data-id="${q.target.id}">重播声音</button>`
-      : q.type === "romaji" ? `<div class="romaji">${q.target.romaji}</div>` : `<div class="big">${charFor(q.target)}</div>`;
+      : q.type === "romaji" ? `<div class="romaji">${q.target.romaji}</div>` : `<div class="big">${charFor(q.target, mode)}</div>`;
     return `<div class="stack">
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="panel quiz-card">
         <div class="prompt"><div class="label">${label} · ${quiz.index + 1}/${total}</div>${prompt}</div>
-        <div class="options">${q.options.map((opt) => optionButton(q, opt)).join("")}</div>
+        ${q.type === "writeSound" ? "" : `<div class="options">${q.options.map((opt) => optionButton(q, opt)).join("")}</div>`}
       </div>
     </div>`;
+  }
+  function renderWriteQuestion(q, mode) {
+    if (quiz.selfCheckOpen) {
+      return `<div class="self-check">
+        <div class="answer-reveal"><span>正确答案</span><strong>${charFor(q.target, mode)}</strong><em>${q.target.romaji}</em></div>
+        <div class="write-stage quiz-write-stage is-reviewing">
+          <div class="write-grid"></div>
+          ${quiz.writeSnapshot ? `<img class="write-snapshot" src="${quiz.writeSnapshot}" alt="你的手写">` : ""}
+        </div>
+        <div class="self-check-actions">
+          <button class="danger-button" data-action="self-check" data-correct="0">我写错了</button>
+          <button class="primary-button accent-button" data-action="self-check" data-correct="1">我写对了</button>
+        </div>
+      </div>`;
+    }
+    return `<button class="primary-button accent-button" data-action="play" data-id="${q.target.id}">重播读音</button>
+      <div class="sound-hint">听到后直接写，不看罗马音；写完再自己判定。</div>
+      <div class="write-stage quiz-write-stage is-blank"><div class="write-grid"></div><canvas id="writeCanvas"></canvas></div>
+      <div class="write-actions">
+        <button class="ghost-button" data-action="clear-canvas">重写</button>
+        <button class="primary-button" data-action="show-write-answer">写完了</button>
+      </div>`;
   }
   function renderMissReview() {
     if (!quiz?.misses?.length) return "";
@@ -1556,7 +1934,7 @@ canvas {
       <div class="weak-list">${quiz.misses.map((miss) => {
         const target = byId[miss.target];
         const selected = byId[miss.selected];
-        const selectedText = selected ? (miss.type === "kana" ? selected.romaji : charFor(selected)) : "空";
+        const selectedText = miss.type === "writeSound" ? "自评写错" : selected ? (miss.type === "kana" ? selected.romaji : charFor(selected, quiz.script || scriptMode)) : "空";
         return `<div class="weak-item"><strong>${target.hira} ${target.kata}</strong><span class="small">${target.romaji} · 你选了 ${selectedText}</span></div>`;
       }).join("")}</div></div>`;
   }
@@ -1565,7 +1943,7 @@ canvas {
     const isCorrect = answered && opt.id === q.target.id;
     const isWrong = answered && opt.id === quiz.selected && opt.id !== q.target.id;
     const muted = answered && !isCorrect && !isWrong;
-    const text = q.type === "kana" ? opt.romaji : charFor(opt);
+    const text = q.type === "kana" ? opt.romaji : charFor(opt, quizScript());
     return `<button class="option ${isCorrect ? "is-correct" : ""} ${isWrong ? "is-wrong" : ""} ${muted ? "is-muted" : ""}" data-action="answer" data-id="${opt.id}">${text}</button>`;
   }
   function renderWrite() {
@@ -1573,10 +1951,12 @@ canvas {
     const item = byId[id] || KANA[0];
     const mode = data.settings.writeScript || "hira";
     const lesson = lessonForItem(item.id);
-    const traced = Boolean(lessonState(lesson.id).traced[item.id]);
+    const traced = isScriptTraced(lesson, item.id, mode);
     const lessonIndex = Math.max(0, lesson.ids.indexOf(item.id));
     const prevId = lesson.ids[lessonIndex - 1];
     const nextId = lesson.ids[lessonIndex + 1];
+    const scriptReady = lessonReady(lesson, mode);
+    const scriptPassed = lessonPassedScript(lesson, mode);
     return `<div class="stack">
       <div class="write-toolbar">
         <div class="segmented">
@@ -1585,12 +1965,12 @@ canvas {
         </div>
         <div class="chip-row">${lesson.ids.map((kanaId) => {
           const k = byId[kanaId];
-          const done = Boolean(lessonState(lesson.id).traced[k.id]);
+          const done = isScriptTraced(lesson, k.id, mode);
           return `<button class="chip ${k.id === item.id ? "is-active" : ""} ${done ? "is-done" : ""}" data-action="write-id" data-id="${k.id}">${charFor(k, mode)}</button>`;
         }).join("")}</div>
       </div>
       <div class="panel write-card tight">
-        <div class="row"><strong>${lesson.name} · ${item.romaji}</strong><span class="status-pill ${traced ? "is-done" : "is-open"}">${lessonIndex + 1}/${lesson.ids.length} · ${traced ? "已临摹" : "待临摹"}</span></div>
+        <div class="row"><strong>${lesson.name} · ${item.romaji}</strong><span class="status-pill ${traced ? "is-done" : "is-open"}">${scriptLabel(mode)} ${lessonIndex + 1}/${lesson.ids.length} · ${traced ? "已临摹" : "待临摹"}</span></div>
         <div class="write-actions">
           <button class="ghost-button" data-action="play" data-id="${item.id}">慢速播放</button>
           <button class="primary-button accent-button" data-action="mark-traced" data-id="${item.id}">${traced ? "继续下一个" : "我写好了"}</button>
@@ -1602,8 +1982,9 @@ canvas {
           <button class="danger-button" data-action="clear-canvas">清除</button>
         </div>
       </div>
-      <div class="panel detail-card tight"><div class="row"><strong>${lesson.name} 进度</strong><span class="small">${tracedCount(lesson)}/${lesson.ids.length}</span></div>
-        <button class="primary-button" data-action="start-lesson-quiz" data-lesson="${lesson.id}" ${lessonReady(lesson) ? "" : "disabled"}>${lessonReady(lesson) ? "开始本课测验" : "临摹完本课后解锁测验"}</button></div>
+      <div class="panel detail-card tight"><div class="row"><strong>${lesson.name} 进度</strong><span class="small">平 ${tracedCount(lesson, "hira")}/${lesson.ids.length} · 片 ${tracedCount(lesson, "kata")}/${lesson.ids.length}</span></div>
+        <p class="small">${scriptReady ? `${scriptLabel(mode)}已经写完，做 ${QUIZ_SIZE} 题确认记忆。` : `先写完这一组${scriptLabel(mode)}，系统会自动提示开始测验。`}</p>
+        <button class="primary-button" data-action="start-lesson-quiz" data-lesson="${lesson.id}" data-script="${mode}" ${scriptReady && !scriptPassed ? "" : "disabled"}>${scriptPassed ? "本段已通过" : scriptReady ? "开始本段测验" : "临摹完后解锁测验"}</button></div>
     </div>`;
   }
   function renderProfile() {
@@ -1615,7 +1996,7 @@ canvas {
         <div class="metric"><strong>${s.streak}</strong><span>连续天数</span></div>
       </div>
       <div class="panel detail-card tight"><div class="row"><strong>课程进度</strong><span class="small">${s.passedRows}/10 基础行</span></div>
-        <p class="small">${baseComplete() ? `进阶课程进行中，已通过 ${s.advancedPassed}/${ADVANCED_LESSONS.length} 个模块。` : `下一课：${currentBaseLesson().name}。每课临摹完成后，8/10 即可解锁下一行。`}</p></div>
+        <p class="small">${baseComplete() ? `进阶课程进行中，已通过 ${s.advancedPassed}/${ADVANCED_LESSONS.length} 个模块。` : `下一课：${currentBaseLesson().name}。每段临摹完成后，${BASE_LESSONS[0].passScore}/${QUIZ_SIZE} 即可解锁下一步。`}</p></div>
       <div class="panel detail-card tight"><strong>近 14 天</strong><div class="heatmap">${heatmap()}</div></div>
       <div class="panel detail-card tight"><div class="row"><strong>学习统计</strong><span class="small">弱项 ${s.weakCount} · 到期 ${s.due}</span></div><div class="weak-list">${weakList()}</div></div>
       <div class="panel detail-card tight">
@@ -1660,6 +2041,8 @@ canvas {
     data = parsed.data;
     data.settings ||= {};
     data.lessons ||= {};
+    data.settings.writeScript ||= "hira";
+    data.settings.drillScript ||= data.settings.writeScript || "hira";
     scriptMode = data.settings.script || "hira";
     saveData();
   }
@@ -1688,7 +2071,8 @@ canvas {
     if (tab === "lessonQuiz" && quiz && !quiz.done && !quiz.selected) {
       const q = currentQuestion();
       const key = `${quiz.index}:${q.type}:${q.target.id}`;
-      if ((q.type === "sound" || q.type === "lesson") && quiz.played !== key) {
+      if (q.type === "writeSound" && !quiz.selfCheckOpen) setupCanvas();
+      if ((q.type === "sound" || q.type === "lesson" || q.type === "writeSound") && quiz.played !== key) {
         quiz.played = key;
         window.setTimeout(() => playKana(q.target.id), 120);
       }
@@ -1835,18 +2219,46 @@ canvas {
       checkForAppUpdate(swRegistration, true);
       return;
     }
-    if (action === "tab") { tab = el.dataset.tab; quiz = null; render(); }
+    if (action === "close-study-prompt") {
+      if (el.classList.contains("study-overlay") && event.target.closest(".study-sheet")) return;
+      studyPrompt = null;
+      render();
+      return;
+    }
+    if (action === "prompt-start-quiz") {
+      const lessonId = el.dataset.lesson;
+      const script = el.dataset.script || data.settings.writeScript || "hira";
+      studyPrompt = null;
+      startLessonQuiz(lessonId, script, "home");
+      return;
+    }
+    if (action === "tab") { tab = el.dataset.tab; quiz = null; studyPrompt = null; render(); }
     if (action === "script") { scriptMode = el.dataset.script; saveData(); render(); }
     if (action === "detail") { data.settings.detailId = el.dataset.id; playKana(el.dataset.id); saveData(); render(); }
     if (action === "play") playKana(el.dataset.id);
     if (action === "write-id" || action === "detail-write") { data.settings.writeId = el.dataset.id; tab = "write"; saveData(); render(); }
     if (action === "write-script") { data.settings.writeScript = el.dataset.script; saveData(); render(); }
+    if (action === "drill-script") { data.settings.drillScript = el.dataset.script; saveData(); render(); }
     if (action === "clear-canvas") clearCanvas();
-    if (action === "go-lesson-write") { const lesson = lessonById(el.dataset.lesson); data.settings.writeId = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]) || lesson.ids[0]; tab = "write"; saveData(); render(); }
-    if (action === "mark-traced") { const lesson = lessonForItem(el.dataset.id); markTraced(el.dataset.id); const next = lesson.ids.find((id) => !lessonState(lesson.id).traced[id]); if (next) data.settings.writeId = next; else showToast(`${lesson.name} 临摹完成，可以测验了`); saveData(); render(); }
+    if (action === "go-lesson-write") { const lesson = lessonById(el.dataset.lesson); setWriteTarget(lesson, el.dataset.script || data.settings.writeScript || "hira"); tab = "write"; saveData(); render(); }
+    if (action === "mark-traced") {
+      const script = data.settings.writeScript || "hira";
+      const lesson = lessonForItem(el.dataset.id);
+      markTraced(el.dataset.id, script);
+      const next = lesson.ids.find((id) => !isScriptTraced(lesson, id, script));
+      if (next) data.settings.writeId = next;
+      else studyPrompt = { lessonId: lesson.id, script };
+      saveData();
+      render();
+    }
     if (action === "start-daily-study") startDailyStudy();
-    if (action === "start-lesson-quiz") startLessonQuiz(el.dataset.lesson);
+    if (action === "start-review-quiz") startReviewQuiz(tab === "quiz" ? "quiz" : "home");
+    if (action === "start-lesson-quiz") startLessonQuiz(el.dataset.lesson, el.dataset.script || data.settings.writeScript || "hira", tab === "quiz" ? "quiz" : "home");
+    if (action === "start-drill-quiz") startDrillQuiz(el.dataset.lesson, el.dataset.script || data.settings.drillScript || "hira");
     if (action === "answer") answerQuiz(el.dataset.id);
+    if (action === "show-write-answer") showWriteAnswer();
+    if (action === "self-check") answerSelfCheck(el.dataset.correct === "1");
+    if (action === "continue-after-quiz") continueAfterQuiz();
     if (action === "backup") copyBackup();
     if (action === "restore") restoreBackup();
     if (action === "reset" && confirm("确定清空 KanaZen 的学习数据吗？")) { localStorage.removeItem(STORAGE_KEY); data = loadData(); quiz = null; render(); }
