@@ -1,4 +1,4 @@
-const CACHE_NAME = "ZenPro-v1-20260417";
+const CACHE_NAME = "ZenPro-v2-20260417";
 const CORE_ASSETS = [
   "./",
   "./index.html",

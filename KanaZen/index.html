@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KanaZen">
   <meta name="format-detection" content="telephone=no">
-  <meta name="kanazen-build" content="ZenPro-v1-20260417">
+  <meta name="kanazen-build" content="ZenPro-v2-20260417">
   <title>KanaZen</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icons/icon-1024.png">
@@ -326,17 +326,26 @@ button:disabled {
 
 .write-toolbar {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px;
   align-items: center;
 }
 
-.write-toolbar .segmented,
+.write-toolbar .script-toggle,
 .write-toolbar .chip-row {
   min-width: 0;
 }
 
+.script-toggle {
+  width: 68px;
+  padding: 0 8px;
+  display: grid;
+  place-items: center;
+}
+
 .write-toolbar .chip-row .chip {
+  flex: 0 0 44px;
+  padding: 0;
   font-family: var(--kana-practice-font);
   font-size: 18px;
   font-weight: 760;
@@ -964,7 +973,7 @@ canvas {
 (() => {
   "use strict";
 
-  const APP_BUILD = "ZenPro-v1-20260417";
+  const APP_BUILD = "ZenPro-v2-20260417";
   const STORAGE_KEY = "kanazen:v1";
   const UPDATE_CHECK_KEY = "kanazen:lastUpdateCheck";
   const UPDATE_REMOTE_KEY = "kanazen:lastRemoteBuild";
@@ -972,6 +981,7 @@ canvas {
   const QUIZ_SIZE = 30;
   const SCRIPT_LABEL = { hira: "平假名", kata: "片假名" };
   const VERSION_HISTORY = [
+    { build: "ZenPro-v2-20260417", title: "临摹切换", note: "临摹页把平假名和片假名合并为单个切换按钮，给右侧假名预览留出完整空间。" },
     { build: "ZenPro-v1-20260417", title: "测验强化", note: "新增听音手写自评题、30 题课程测验和独立测验入口，让临摹和复习形成闭环。" },
     { build: "kanazen-v13-20260416", title: "版本窗口", note: "右上角加入版本入口，点开可查看本地版本、更新状态和最近改动。" },
     { build: "kanazen-v12-20260415", title: "混合测验", note: "测验加入听音选假名、看假名选罗马音，让复习不只依赖罗马音提示。" },
@@ -1957,12 +1967,10 @@ canvas {
     const nextId = lesson.ids[lessonIndex + 1];
     const scriptReady = lessonReady(lesson, mode);
     const scriptPassed = lessonPassedScript(lesson, mode);
+    const nextMode = mode === "hira" ? "kata" : "hira";
     return `<div class="stack">
       <div class="write-toolbar">
-        <div class="segmented">
-          <button class="chip ${mode === "hira" ? "is-active" : ""}" data-action="write-script" data-script="hira">平仮名</button>
-          <button class="chip ${mode === "kata" ? "is-active" : ""}" data-action="write-script" data-script="kata">片仮名</button>
-        </div>
+        <button class="chip script-toggle is-active" data-action="toggle-write-script" aria-label="切换为${scriptLabel(nextMode)}">${mode === "hira" ? "平仮名" : "片仮名"}</button>
         <div class="chip-row">${lesson.ids.map((kanaId) => {
           const k = byId[kanaId];
           const done = isScriptTraced(lesson, k.id, mode);
@@ -2238,6 +2246,7 @@ canvas {
     if (action === "play") playKana(el.dataset.id);
     if (action === "write-id" || action === "detail-write") { data.settings.writeId = el.dataset.id; tab = "write"; saveData(); render(); }
     if (action === "write-script") { data.settings.writeScript = el.dataset.script; saveData(); render(); }
+    if (action === "toggle-write-script") { data.settings.writeScript = (data.settings.writeScript || "hira") === "hira" ? "kata" : "hira"; saveData(); render(); }
     if (action === "drill-script") { data.settings.drillScript = el.dataset.script; saveData(); render(); }
     if (action === "clear-canvas") clearCanvas();
     if (action === "go-lesson-write") { const lesson = lessonById(el.dataset.lesson); setWriteTarget(lesson, el.dataset.script || data.settings.writeScript || "hira"); tab = "write"; saveData(); render(); }
