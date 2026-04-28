@@ -1095,6 +1095,31 @@
     }
     .info-row span:first-child { color: var(--text3); }
     .info-row span:last-child { font-weight: 1000; text-align: right; }
+    .theme-switch {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin: 12px 0;
+      padding: 6px;
+      border-radius: 20px;
+      background: rgba(241,245,249,0.78);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .theme-option {
+      border: 0;
+      min-height: 40px;
+      border-radius: 15px;
+      color: var(--text3);
+      background: transparent;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 1000;
+    }
+    .theme-option.active {
+      color: #fff;
+      background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
+      box-shadow: 0 10px 22px rgba(37,99,235,0.18);
+    }
     .release-notes { margin: 12px 0; padding-left: 20px; color: var(--text2); }
     .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 
@@ -1164,7 +1189,7 @@
         background: rgba(255,255,255,0.72);
         border-color: rgba(255,255,255,0.78);
       }
-      .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option, .visual-lab, .flow-node, .mem-cell, .type-chip, .gentle-guide, .guide-step {
+      .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option, .visual-lab, .flow-node, .mem-cell, .type-chip, .gentle-guide, .guide-step, .theme-switch {
         background: rgba(255,255,255,0.72);
         border-color: rgba(148,163,184,0.18);
       }
@@ -1200,7 +1225,7 @@
       .topbar { background: rgba(15,23,42,0.78); border-color: rgba(255,255,255,0.10); }
       .topbar-inner { background: transparent; }
       .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
-      .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option, .visual-lab, .flow-node, .mem-cell, .type-chip, .gentle-guide, .guide-step { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
+      .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option, .visual-lab, .flow-node, .mem-cell, .type-chip, .gentle-guide, .guide-step, .theme-switch { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
       .version-pill {
         color: #fff;
         background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
@@ -1211,6 +1236,104 @@
       .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
       .close-btn { background: rgba(30,41,59,0.9); color: #e2e8f0; }
     }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --text: #101828;
+      --text2: #475467;
+      --text3: #667085;
+      --card: rgba(255, 255, 255, 0.78);
+      --card-strong: rgba(255, 255, 255, 0.93);
+      --line: rgba(148, 163, 184, 0.22);
+      --shadow: 0 24px 70px rgba(15, 23, 42, 0.13);
+      --shadow2: 0 10px 32px rgba(15, 23, 42, 0.10);
+    }
+    :root[data-theme="light"] body {
+      background:
+        radial-gradient(circle at 14% -5%, rgba(96, 165, 250, 0.42), transparent 34%),
+        radial-gradient(circle at 92% 2%, rgba(249, 115, 22, 0.22), transparent 30%),
+        radial-gradient(circle at 50% 56%, rgba(124, 58, 237, 0.12), transparent 42%),
+        linear-gradient(180deg, #f8fbff 0%, #f6f7fb 44%, #eef2ff 100%);
+    }
+    :root[data-theme="light"] .topbar { background: rgba(247, 248, 252, 0.78); border-color: rgba(148, 163, 184, 0.18); }
+    :root[data-theme="light"] .tabs-inner,
+    :root[data-theme="light"] .sheet-panel,
+    :root[data-theme="light"] .toast {
+      background: rgba(255,255,255,0.72);
+      border-color: rgba(255,255,255,0.78);
+    }
+    :root[data-theme="light"] .concept,
+    :root[data-theme="light"] .step,
+    :root[data-theme="light"] .map-item,
+    :root[data-theme="light"] .course-card,
+    :root[data-theme="light"] .callout,
+    :root[data-theme="light"] .info-row,
+    :root[data-theme="light"] .test-question,
+    :root[data-theme="light"] .practice-card,
+    :root[data-theme="light"] .practice-option,
+    :root[data-theme="light"] .visual-lab,
+    :root[data-theme="light"] .flow-node,
+    :root[data-theme="light"] .mem-cell,
+    :root[data-theme="light"] .type-chip,
+    :root[data-theme="light"] .gentle-guide,
+    :root[data-theme="light"] .guide-step,
+    :root[data-theme="light"] .theme-switch {
+      background: rgba(255,255,255,0.72);
+      border-color: rgba(148,163,184,0.18);
+    }
+    :root[data-theme="light"] code,
+    :root[data-theme="light"] .kbd {
+      color: #0f172a;
+      background: rgba(241,245,249,0.95);
+      border-color: rgba(148,163,184,0.24);
+    }
+    :root[data-theme="light"] .tab.active { background: rgba(239,246,255,0.86); color: #1d4ed8; }
+    :root[data-theme="light"] .close-btn { background: rgba(241,245,249,0.9); color: #334155; }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --card: rgba(15, 23, 42, 0.62);
+      --card-strong: rgba(15, 23, 42, 0.78);
+      --text: #f8fafc;
+      --text2: #cbd5e1;
+      --text3: #94a3b8;
+    }
+    :root[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 16% -5%, rgba(37, 99, 235, 0.34), transparent 34%),
+        radial-gradient(circle at 88% 2%, rgba(249, 115, 22, 0.14), transparent 28%),
+        linear-gradient(180deg, #020617 0%, #0b1020 60%, #111827 100%);
+    }
+    :root[data-theme="dark"] .topbar { background: rgba(15,23,42,0.78); border-color: rgba(255,255,255,0.10); }
+    :root[data-theme="dark"] .tabs-inner,
+    :root[data-theme="dark"] .sheet-panel,
+    :root[data-theme="dark"] .toast {
+      background: rgba(15,23,42,0.72);
+      border-color: rgba(255,255,255,0.10);
+    }
+    :root[data-theme="dark"] .concept,
+    :root[data-theme="dark"] .step,
+    :root[data-theme="dark"] .map-item,
+    :root[data-theme="dark"] .course-card,
+    :root[data-theme="dark"] .callout,
+    :root[data-theme="dark"] .info-row,
+    :root[data-theme="dark"] .test-question,
+    :root[data-theme="dark"] .practice-card,
+    :root[data-theme="dark"] .practice-option,
+    :root[data-theme="dark"] .visual-lab,
+    :root[data-theme="dark"] .flow-node,
+    :root[data-theme="dark"] .mem-cell,
+    :root[data-theme="dark"] .type-chip,
+    :root[data-theme="dark"] .gentle-guide,
+    :root[data-theme="dark"] .guide-step,
+    :root[data-theme="dark"] .theme-switch {
+      background: rgba(15,23,42,0.60);
+      border-color: rgba(255,255,255,0.10);
+    }
+    :root[data-theme="dark"] code,
+    :root[data-theme="dark"] .kbd { color: #e2e8f0; background: rgba(30,41,59,0.95); border-color: rgba(255,255,255,0.10); }
+    :root[data-theme="dark"] .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
+    :root[data-theme="dark"] .close-btn { background: rgba(30,41,59,0.9); color: #e2e8f0; }
 
     @keyframes floatY {
       0%, 100% { transform: translateY(0); }
@@ -1254,7 +1377,7 @@
       </button>
       <button class="version-pill" id="versionButton" type="button" aria-label="打开版本管理">
         <span class="status-dot"></span>
-        <span id="versionText">v2.5.2</span>
+        <span id="versionText">v2.6.0</span>
       </button>
     </div>
   </header>
@@ -1362,18 +1485,24 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeVersionSheet" type="button">×</button></div>
       <div class="info-list">
-        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.5.2</span></div>
+        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.6.0</span></div>
         <div class="info-row"><span>GitHub 最新版本</span><span id="remoteVersion">未检查</span></div>
-        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 21:19</span></div>
+        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 21:27</span></div>
         <div class="info-row"><span>上次检查时间</span><span id="lastCheckTime">未检查</span></div>
         <div class="info-row"><span>更新状态</span><span id="updateStatus">准备检查</span></div>
       </div>
+      <h4>外观</h4>
+      <div class="theme-switch" aria-label="外观切换">
+        <button class="theme-option" type="button" data-theme-choice="system">跟随系统</button>
+        <button class="theme-option" type="button" data-theme-choice="light">浅色</button>
+        <button class="theme-option" type="button" data-theme-choice="dark">深色</button>
+      </div>
       <h4>本版更新</h4>
       <ul class="release-notes">
-        <li>右上角版本文字改为白色。</li>
-        <li>新增显式浅色模式适配层。</li>
-        <li>浅色和深色模式下顶部栏、卡片、弹层、代码和导航统一适配。</li>
-        <li>PWA theme-color 跟随系统浅色/深色。</li>
+        <li>版本面板新增外观切换：跟随系统、浅色、深色。</li>
+        <li>外观选择会保存到本机。</li>
+        <li>手动浅色/深色会覆盖系统设置。</li>
+        <li>PWA theme-color 会随选择同步。</li>
       </ul>
       <div class="sheet-actions">
         <button class="ios-button light" id="manualCheck" type="button">检查更新</button>
@@ -1400,8 +1529,8 @@
 
   <script>
     const APP_META = {
-      version: '2.5.2',
-      buildTime: '2026-04-28 21:19',
+      version: '2.6.0',
+      buildTime: '2026-04-28 21:27',
       autoUpdate: true
     };
 
@@ -1877,6 +2006,8 @@
     const progressText = $('#progressText');
     const progressFill = $('#progressFill');
     const readProgress = $('#readProgress');
+    const themeButtons = $$('.theme-option');
+    const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const STORAGE_KEYS = {
       passedLessons: 'cguide_passed_lessons',
@@ -1885,7 +2016,8 @@
       studyLog: 'cguide_study_log',
       currentLesson: 'cguide_current_lesson',
       activePage: 'cguide_active_page',
-      lastCheckTime: 'cguide_last_check_time'
+      lastCheckTime: 'cguide_last_check_time',
+      theme: 'cguide_theme'
     };
 
     function readStoredArray(key) {
@@ -1917,6 +2049,36 @@
     versionText.textContent = 'v' + APP_META.version;
     localVersion.textContent = 'v' + APP_META.version;
     buildTime.textContent = APP_META.buildTime;
+
+    function getResolvedTheme(preference) {
+      if (preference === 'light' || preference === 'dark') return preference;
+      return systemThemeQuery.matches ? 'dark' : 'light';
+    }
+
+    function updateThemeColor(preference) {
+      const color = getResolvedTheme(preference) === 'dark' ? '#020617' : '#f7f8fc';
+      document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+        meta.setAttribute('content', color);
+      });
+    }
+
+    function applyThemePreference(preference, { persist = false } = {}) {
+      const next = ['system', 'light', 'dark'].includes(preference) ? preference : 'system';
+      if (next === 'system') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.dataset.theme = next;
+      }
+      themeButtons.forEach((button) => {
+        button.classList.toggle('active', button.dataset.themeChoice === next);
+        button.setAttribute('aria-pressed', button.dataset.themeChoice === next ? 'true' : 'false');
+      });
+      updateThemeColor(next);
+      if (persist) {
+        localStorage.setItem(STORAGE_KEYS.theme, next);
+        showToast(next === 'system' ? '已跟随系统外观' : next === 'light' ? '已切换浅色模式' : '已切换深色模式');
+      }
+    }
 
     function showToast(message) {
       toast.textContent = message;
@@ -2364,6 +2526,14 @@
     sheetMask.addEventListener('click', closeSheets);
     manualCheck.addEventListener('click', () => checkForUpdate({ silent: false }));
     reloadLatest.addEventListener('click', hardReload);
+    themeButtons.forEach((button) => {
+      button.addEventListener('click', () => applyThemePreference(button.dataset.themeChoice, { persist: true }));
+    });
+    systemThemeQuery.addEventListener('change', () => {
+      if ((localStorage.getItem(STORAGE_KEYS.theme) || 'system') === 'system') {
+        applyThemePreference('system');
+      }
+    });
     window.addEventListener('scroll', updateReadProgress, { passive: true });
     window.addEventListener('resize', updateReadProgress);
 
@@ -2373,6 +2543,7 @@
     updateProgress();
     bindDynamicActions(document);
     bindCopyButtons(document);
+    applyThemePreference(localStorage.getItem(STORAGE_KEYS.theme) || 'system');
 
     const savedPage = localStorage.getItem(STORAGE_KEYS.activePage) || 'home';
     openPage(['home', 'course', 'mine'].includes(savedPage) ? savedPage : 'home');
