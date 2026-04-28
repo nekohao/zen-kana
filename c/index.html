@@ -200,6 +200,13 @@
       box-shadow: var(--shadow);
       min-height: 252px;
     }
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      gap: 18px;
+      align-items: center;
+    }
     .hero::before {
       content: "";
       position: absolute;
@@ -222,6 +229,96 @@
       color: rgba(255,255,255,0.08);
     }
     .hero-content { position: relative; z-index: 2; }
+    .hero-lab {
+      position: relative;
+      min-height: 226px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)),
+        rgba(15,23,42,0.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 24px 60px rgba(15,23,42,0.20);
+      overflow: hidden;
+      backdrop-filter: blur(24px) saturate(1.25);
+      -webkit-backdrop-filter: blur(24px) saturate(1.25);
+    }
+    .hero-lab::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity: 0.28;
+    }
+    .hero-code-card {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 18px;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(2, 6, 23, 0.72);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 18px 36px rgba(2,6,23,0.24);
+      animation: floatY 5.6s ease-in-out infinite;
+    }
+    .hero-code-card .codebar { height: 32px; margin: -12px -12px 10px; border-radius: 20px 20px 0 0; }
+    .hero-lines {
+      display: grid;
+      gap: 7px;
+      color: #dbeafe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .hero-lines span:nth-child(2) { color: #86efac; }
+    .hero-lines span:nth-child(3) { color: #fdba74; }
+    .orbital {
+      position: absolute;
+      width: 86px;
+      height: 86px;
+      right: 22px;
+      bottom: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.22);
+      animation: spinSlow 13s linear infinite;
+    }
+    .orbital::before,
+    .orbital::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f97316;
+      box-shadow: 0 0 20px rgba(249,115,22,0.55);
+    }
+    .orbital::before { left: 4px; top: 10px; }
+    .orbital::after { right: 6px; bottom: 8px; background: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.50); }
+    .hero-chip {
+      position: absolute;
+      left: 22px;
+      bottom: 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .hero-chip i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34,197,94,0.14);
+    }
     .eyebrow {
       display: inline-flex;
       gap: 6px;
@@ -387,6 +484,162 @@
       border: 1px solid rgba(148,163,184,0.18);
     }
     .concept b { display: block; margin-bottom: 4px; }
+
+    .visual-lab {
+      position: relative;
+      overflow: hidden;
+      margin: 16px 0;
+      padding: 16px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 8% 6%, rgba(34,197,94,0.16), transparent 28%),
+        radial-gradient(circle at 86% 0%, rgba(249,115,22,0.16), transparent 30%),
+        rgba(255,255,255,0.72);
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 18px 44px rgba(15,23,42,0.10);
+    }
+    .visual-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 1000;
+    }
+    .visual-title span {
+      color: var(--text3);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .flow-graph {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .flow-node {
+      position: relative;
+      padding: 13px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .flow-node b { display: block; margin-bottom: 3px; }
+    .flow-node.accent { color: #1e3a8a; background: rgba(219,234,254,0.82); }
+    .memory-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .mem-cell {
+      min-height: 64px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      padding: 8px;
+      border-radius: 18px;
+      color: #0f172a;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(148,163,184,0.18);
+      text-align: center;
+      font-weight: 1000;
+      animation: softPulse 4.2s ease-in-out infinite;
+    }
+    .mem-cell small { color: var(--text3); font-size: 11px; font-weight: 900; }
+    .mem-cell:nth-child(2) { animation-delay: 0.4s; }
+    .mem-cell:nth-child(3) { animation-delay: 0.8s; }
+    .mem-cell:nth-child(4) { animation-delay: 1.2s; }
+    .type-orbit {
+      position: relative;
+      min-height: 170px;
+      display: grid;
+      place-items: center;
+    }
+    .type-core {
+      width: 86px;
+      height: 86px;
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #2563eb);
+      font-weight: 1000;
+      box-shadow: 0 20px 45px rgba(37,99,235,0.22);
+    }
+    .type-chip {
+      position: absolute;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(148,163,184,0.18);
+      font-size: 12px;
+      font-weight: 1000;
+    }
+    .type-chip:nth-child(2) { top: 8px; left: 10%; }
+    .type-chip:nth-child(3) { top: 36px; right: 8%; }
+    .type-chip:nth-child(4) { bottom: 12px; left: 22%; }
+    .trace-panel {
+      display: grid;
+      gap: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    .trace-row {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 10px;
+      border-radius: 16px;
+      background: rgba(15,23,42,0.88);
+      color: #dbeafe;
+    }
+    .trace-row b {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: rgba(37,99,235,0.42);
+      color: white;
+    }
+    .code-gallery {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .mini-code {
+      overflow: hidden;
+      border-radius: 22px;
+      background: #0b1020;
+      border: 1px solid rgba(15,23,42,0.28);
+      box-shadow: 0 16px 36px rgba(15,23,42,0.14);
+    }
+    .mini-code h4 {
+      margin: 0;
+      padding: 10px 12px;
+      color: #cbd5e1;
+      background: rgba(17,24,39,0.95);
+      font-size: 12px;
+    }
+    .mini-code pre { padding: 12px; font-size: 12.5px; }
+    .sparkline {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+      align-items: end;
+      height: 86px;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(15,23,42,0.88);
+    }
+    .sparkline i {
+      display: block;
+      border-radius: 999px 999px 4px 4px;
+      background: linear-gradient(180deg, #60a5fa, #22c55e);
+      animation: barDance 3.6s ease-in-out infinite;
+    }
+    .sparkline i:nth-child(2n) { animation-delay: 0.3s; background: linear-gradient(180deg, #f97316, #fde68a); }
+    .sparkline i:nth-child(3n) { animation-delay: 0.6s; }
 
     .codebox {
       overflow: hidden;
@@ -746,9 +999,12 @@
     @media (min-width: 720px) {
       .app-shell { padding-left: 22px; padding-right: 22px; }
       .hero { padding: 42px; }
+      .hero-grid { grid-template-columns: minmax(0, 1.05fr) minmax(290px, 0.95fr); }
       .section-card { padding: 30px; }
       .concept-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .concept-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .flow-graph { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .code-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .hero-actions .ios-button { min-width: 170px; }
       pre { font-size: 14.5px; }
     }
@@ -770,10 +1026,33 @@
       .topbar { background: rgba(15,23,42,0.78); border-color: rgba(255,255,255,0.10); }
       .topbar-inner { background: transparent; }
       .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
-      .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
+      .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option, .visual-lab, .flow-node, .mem-cell, .type-chip { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
       code, .kbd { color: #e2e8f0; background: rgba(30,41,59,0.95); border-color: rgba(255,255,255,0.10); }
       .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
       .close-btn { background: rgba(30,41,59,0.9); color: #e2e8f0; }
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes softPulse {
+      0%, 100% { transform: translateY(0); box-shadow: 0 0 0 rgba(37,99,235,0); }
+      50% { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(37,99,235,0.10); }
+    }
+    @keyframes barDance {
+      0%, 100% { transform: scaleY(0.72); opacity: 0.82; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
@@ -791,7 +1070,7 @@
       </button>
       <button class="version-pill" id="versionButton" type="button" aria-label="打开版本管理">
         <span class="status-dot"></span>
-        <span id="versionText">v2.3.0</span>
+        <span id="versionText">v2.4.0</span>
       </button>
     </div>
   </header>
@@ -799,15 +1078,46 @@
   <main class="app-shell">
     <section class="page active" id="page-home" data-page="home">
       <div class="hero">
-        <div class="hero-content">
-          <div class="eyebrow">像 App 一样学 · 不背术语 · 测试过关</div>
-          <h1>从让电脑说一句话开始</h1>
-          <p>这份教程不会一上来扔给你一堆“变量、数组、结构体、指针”。每一课只讲一个核心点，学完可以测试，通过后才算掌握。</p>
-          <div class="hero-actions">
-            <button class="ios-button primary" type="button" data-action="choose-course">开始学习</button>
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="eyebrow">像 App 一样学 · 不背术语 · 测试过关</div>
+            <h1>从让电脑说一句话开始</h1>
+            <p>这份教程不会一上来扔给你一堆“变量、数组、结构体、指针”。每一课只讲一个核心点，学完可以测试，通过后才算掌握。</p>
+            <div class="hero-actions">
+              <button class="ios-button primary" type="button" data-action="choose-course">开始学习</button>
+            </div>
+          </div>
+          <div class="hero-lab" aria-hidden="true">
+            <div class="hero-code-card">
+              <div class="codebar"><span><span class="dotline"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i></span>learn.c</span></div>
+              <div class="hero-lines">
+                <span>#include &lt;stdio.h&gt;</span>
+                <span>printf("Hello, C\\n");</span>
+                <span>return 0;</span>
+              </div>
+            </div>
+            <div class="orbital"></div>
+            <div class="hero-chip"><i></i>编译思维在线</div>
           </div>
         </div>
       </div>
+
+      <section class="section-card">
+        <div class="section-head">
+          <div class="lesson-num">C</div>
+          <div>
+            <h2>代码会越来越有形</h2>
+            <p class="lead">从输出、变量到数组和指针，每一步都会配合图形、轨迹和代码片段一起理解。</p>
+          </div>
+        </div>
+        <div class="visual-lab">
+          <div class="visual-title">学习能量流 <span>concept → code → test</span></div>
+          <div class="sparkline" aria-hidden="true">
+            <i style="height:42%"></i><i style="height:68%"></i><i style="height:36%"></i><i style="height:82%"></i><i style="height:58%"></i>
+            <i style="height:74%"></i><i style="height:48%"></i><i style="height:92%"></i><i style="height:62%"></i><i style="height:78%"></i>
+          </div>
+        </div>
+      </section>
 
       <section class="section-card">
         <div class="section-head">
@@ -868,18 +1178,18 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeVersionSheet" type="button">×</button></div>
       <div class="info-list">
-        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.3.0</span></div>
+        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.4.0</span></div>
         <div class="info-row"><span>GitHub 最新版本</span><span id="remoteVersion">未检查</span></div>
-        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 14:52</span></div>
+        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 15:02</span></div>
         <div class="info-row"><span>上次检查时间</span><span id="lastCheckTime">未检查</span></div>
         <div class="info-row"><span>更新状态</span><span id="updateStatus">准备检查</span></div>
       </div>
       <h4>本版更新</h4>
       <ul class="release-notes">
-        <li>首页开始学习改为进入“我的课程”，由你选择学习内容。</li>
-        <li>每节课测试题扩充为 5 题，及格线自动计算。</li>
-        <li>动手练习改成选项式，减少手动输入。</li>
-        <li>代码类练习也提供多个备选答案。</li>
+        <li>首页加入动态代码仪表盘和学习能量图。</li>
+        <li>每节课增加图形化解释模型。</li>
+        <li>课程补充更多代码示例，覆盖流程、变量、数组、函数和指针。</li>
+        <li>新增细腻动效，并兼容减少动态效果设置。</li>
       </ul>
       <div class="sheet-actions">
         <button class="ios-button light" id="manualCheck" type="button">检查更新</button>
@@ -906,8 +1216,8 @@
 
   <script>
     const APP_META = {
-      version: '2.3.0',
-      buildTime: '2026-04-28 14:52',
+      version: '2.4.0',
+      buildTime: '2026-04-28 15:02',
       autoUpdate: true
     };
 
@@ -1143,6 +1453,153 @@
       }
     ];
 
+    const courseEnhancements = {
+      lesson1: {
+        title: '从想法到程序',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node accent"><b>想法</b>把人话变成清楚目标。</div>
+            <div class="flow-node"><b>步骤</b>拆成电脑能照做的小动作。</div>
+            <div class="flow-node"><b>代码</b>用 C 的规则写成可执行文本。</div>
+          </div>
+        `,
+        examples: [
+          { title: '人话版本', code: '先准备水\\n再加热\\n最后显示完成' },
+          { title: '代码思维版本', code: 'prepare_water();\\nheat_water();\\nprintf("完成\\\\n");' }
+        ]
+      },
+      lesson2: {
+        title: '输出管线',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>文字</b>"你好，C 语言！"</div>
+            <div class="flow-node accent"><b>printf</b>把文字送到屏幕。</div>
+            <div class="flow-node"><b>屏幕</b>显示结果并换行。</div>
+          </div>
+        `,
+        examples: [
+          { title: '输出多行', code: 'printf("第一行\\\\n");\\nprintf("第二行\\\\n");' },
+          { title: '输出数字', code: 'int count = 3;\\nprintf("今天练习 %d 次\\\\n", count);' }
+        ]
+      },
+      lesson3: {
+        title: '变量像有名字的格子',
+        visual: `
+          <div class="memory-strip">
+            <div class="mem-cell"><small>name</small>age</div>
+            <div class="mem-cell"><small>value</small>18</div>
+            <div class="mem-cell"><small>format</small>%d</div>
+            <div class="mem-cell"><small>output</small>18</div>
+          </div>
+        `,
+        examples: [
+          { title: '变量更新', code: 'int age = 18;\\nage = 19;\\nprintf("%d\\\\n", age);' },
+          { title: '多个变量', code: 'int apples = 3;\\nint oranges = 2;\\nprintf("%d\\\\n", apples + oranges);' }
+        ]
+      },
+      lesson4: {
+        title: '数据类型星图',
+        visual: `
+          <div class="type-orbit">
+            <div class="type-core">DATA</div>
+            <div class="type-chip">int · 整数</div>
+            <div class="type-chip">double · 小数</div>
+            <div class="type-chip">char · 字符</div>
+          </div>
+        `,
+        examples: [
+          { title: '类型组合', code: "int year = 2026;\\ndouble price = 9.9;\\nchar level = 'A';" },
+          { title: '格式占位', code: 'printf("%d %.1f %c\\\\n", year, price, level);' }
+        ]
+      },
+      lesson5: {
+        title: '判断分流',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>条件</b>score >= 60</div>
+            <div class="flow-node accent"><b>true</b>输出“及格”。</div>
+            <div class="flow-node"><b>false</b>输出“不及格”。</div>
+          </div>
+        `,
+        examples: [
+          { title: '判断奇偶', code: 'if (num % 2 == 0) {\\n    printf("偶数\\\\n");\\n} else {\\n    printf("奇数\\\\n");\\n}' },
+          { title: '多条件', code: 'if (score >= 90) printf("优秀\\\\n");\\nelse if (score >= 60) printf("及格\\\\n");\\nelse printf("继续练\\\\n");' }
+        ]
+      },
+      lesson6: {
+        title: '循环执行轨迹',
+        visual: `
+          <div class="trace-panel">
+            <div class="trace-row"><b>1</b><span>i = 1，打印一次。</span></div>
+            <div class="trace-row"><b>2</b><span>i++，继续检查条件。</span></div>
+            <div class="trace-row"><b>3</b><span>超过终点，循环结束。</span></div>
+          </div>
+        `,
+        examples: [
+          { title: '累加求和', code: 'int sum = 0;\\nfor (int i = 1; i <= 5; i++) {\\n    sum += i;\\n}' },
+          { title: 'while 倒计时', code: 'int n = 3;\\nwhile (n > 0) {\\n    printf("%d\\\\n", n);\\n    n--;\\n}' }
+        ]
+      },
+      lesson7: {
+        title: '数组像连续格子',
+        visual: `
+          <div class="memory-strip">
+            <div class="mem-cell"><small>[0]</small>90</div>
+            <div class="mem-cell"><small>[1]</small>85</div>
+            <div class="mem-cell"><small>[2]</small>70</div>
+            <div class="mem-cell"><small>[3]</small>88</div>
+          </div>
+        `,
+        examples: [
+          { title: '遍历数组', code: 'for (int i = 0; i < 5; i++) {\\n    printf("%d\\\\n", scores[i]);\\n}' },
+          { title: '找最大值', code: 'int max = scores[0];\\nfor (int i = 1; i < 5; i++) {\\n    if (scores[i] > max) max = scores[i];\\n}' }
+        ]
+      },
+      lesson8: {
+        title: '函数输入输出',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>参数</b>a = 3, b = 5</div>
+            <div class="flow-node accent"><b>函数</b>add(a, b)</div>
+            <div class="flow-node"><b>返回</b>8</div>
+          </div>
+        `,
+        examples: [
+          { title: '判断及格函数', code: 'int passed(int score) {\\n    return score >= 60;\\n}' },
+          { title: '函数复用', code: 'printf("%d\\\\n", add(1, 2));\\nprintf("%d\\\\n", add(10, 20));' }
+        ]
+      },
+      lesson9: {
+        title: '结构体信息卡',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>name</b>Tom</div>
+            <div class="flow-node"><b>age</b>18</div>
+            <div class="flow-node accent"><b>score</b>92.5</div>
+          </div>
+        `,
+        examples: [
+          { title: '创建学生', code: 'struct Student s = {"Ann", 19, 88.5};\\nprintf("%s\\\\n", s.name);' },
+          { title: '修改成员', code: 's.score = 96.0;\\nprintf("%.1f\\\\n", s.score);' }
+        ]
+      },
+      lesson10: {
+        title: '地址与指针地图',
+        visual: `
+          <div class="memory-strip">
+            <div class="mem-cell"><small>变量</small>x</div>
+            <div class="mem-cell"><small>值</small>10</div>
+            <div class="mem-cell"><small>地址</small>&x</div>
+            <div class="mem-cell"><small>指针</small>p</div>
+          </div>
+        `,
+        examples: [
+          { title: '通过指针改值', code: 'int x = 10;\\nint *p = &x;\\n*p = 20;' },
+          { title: '打印地址', code: 'printf("%p\\\\n", (void *)&x);\\nprintf("%p\\\\n", (void *)p);' }
+        ]
+      }
+    };
+
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
@@ -1317,6 +1774,26 @@
       `;
     }
 
+    function renderEnhancement(course) {
+      const item = courseEnhancements[course.id];
+      if (!item) return '';
+
+      return `
+        <div class="visual-lab">
+          <div class="visual-title">${escapeHtml(item.title)}<span>visual model</span></div>
+          ${item.visual}
+        </div>
+        <div class="code-gallery">
+          ${item.examples.map((example) => `
+            <div class="mini-code">
+              <h4>${escapeHtml(example.title)}</h4>
+              <pre>${escapeHtml(example.code)}</pre>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
     function renderLesson(lessonId) {
       const course = getCourse(lessonId);
       const index = courses.findIndex((item) => item.id === course.id);
@@ -1333,6 +1810,7 @@
         </div>
         <div class="callout ${done ? 'green' : 'blue'}"><strong>${done ? '这一课已掌握' : '学习模式'}</strong>${done ? '你已经通过测试。仍然可以重新学习或重新测试。' : '你可以直接学习，也可以先去测试；不要求按顺序解锁。'}</div>
         ${course.content}
+        ${renderEnhancement(course)}
         ${renderPractice(course)}
         <div class="sheet-actions">
           <button class="ios-button light" type="button" ${prev ? `data-action="learn" data-lesson="${prev.id}"` : 'disabled'}>${prev ? '上一课' : '已经是第一课'}</button>
