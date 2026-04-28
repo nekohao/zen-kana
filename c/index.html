@@ -526,6 +526,11 @@
     }
     .map-item {
       display: grid;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
       grid-template-columns: 42px 1fr;
       gap: 11px;
       align-items: center;
@@ -606,6 +611,10 @@
     }
     .progressfill { height: 100%; width: 0%; background: linear-gradient(90deg, #ffffff, #fed7aa); border-radius: 999px; }
 
+    .tab-page-hidden {
+      display: none !important;
+    }
+
     .bottom-tabs {
       position: fixed;
       left: 50%;
@@ -613,7 +622,7 @@
       bottom: 0;
       z-index: 95;
       width: min(100%, 920px);
-      padding: 9px 14px calc(var(--safe-bottom) + 9px);
+      padding: 7px 14px calc(var(--safe-bottom) + 2px);
       pointer-events: none;
     }
     .tabs-inner {
@@ -634,7 +643,7 @@
       display: grid;
       place-items: center;
       gap: 2px;
-      min-height: 54px;
+      min-height: 50px;
       border-radius: 20px;
       background: transparent;
       color: #64748b;
@@ -780,25 +789,25 @@
   </header>
 
   <main class="app-shell" id="home">
-    <section class="hero">
+    <section class="hero" data-tab-page="home">
       <div class="hero-content">
         <div class="eyebrow">像 App 一样学 · 不背术语 · 先建立感觉</div>
         <h1>从让电脑说一句话开始</h1>
         <p>这份教程不会一上来扔给你一堆“变量、数组、结构体、指针”。我们只在真正需要它们的时候再介绍。先让你知道：程序是什么，代码为什么要这么写，然后一步一步往下走。</p>
         <div class="hero-actions">
-          <a class="ios-button primary" href="#lesson1">开始学习</a>
+          <button class="ios-button primary" type="button" data-open-tab="course" data-scroll-target="lesson1">开始学习</button>
           <button class="ios-button ghost" type="button" id="checkUpdateHero">检查更新</button>
         </div>
       </div>
     </section>
 
-    <section class="quick-grid" aria-label="学习概览">
+    <section class="quick-grid" aria-label="学习概览" data-tab-page="home">
       <div class="quick-card"><b>12</b><span>节渐进课程</span></div>
       <div class="quick-card"><b id="quickProgress">0%</b><span>学习进度</span></div>
       <div class="quick-card"><b>3</b><span>个文件即可托管</span></div>
     </section>
 
-    <section class="section-card" id="roadmap">
+    <section class="section-card" id="roadmap" data-tab-page="home">
       <div class="section-head">
         <div class="lesson-num">图</div>
         <div>
@@ -807,20 +816,20 @@
         </div>
       </div>
       <div class="lesson-map">
-        <a class="map-item" href="#lesson1"><div class="bubble">1</div><div><strong>程序是什么</strong><span>先理解“给电脑写说明书”这件事</span></div></a>
-        <a class="map-item" href="#lesson2"><div class="bubble">2</div><div><strong>让电脑说一句话</strong><span>只认识 printf、分号、换行</span></div></a>
-        <a class="map-item" href="#lesson3"><div class="bubble">3</div><div><strong>为什么需要名字</strong><span>从“内容会变化”自然引出变量</span></div></a>
-        <a class="map-item" href="#lesson4"><div class="bubble">4</div><div><strong>不同的数据</strong><span>数字、文字、字符为什么要分类型</span></div></a>
-        <a class="map-item" href="#lesson5"><div class="bubble">5</div><div><strong>让程序做选择</strong><span>if / else：如果这样，就那样</span></div></a>
-        <a class="map-item" href="#lesson6"><div class="bubble">6</div><div><strong>让程序重复做事</strong><span>循环：重复劳动交给电脑</span></div></a>
-        <a class="map-item" href="#lesson7"><div class="bubble">7</div><div><strong>一次放很多个值</strong><span>当一个盒子不够用，再引出数组</span></div></a>
-        <a class="map-item" href="#lesson8"><div class="bubble">8</div><div><strong>把重复代码打包</strong><span>函数：让代码更像积木</span></div></a>
-        <a class="map-item" href="#lesson9"><div class="bubble">9</div><div><strong>把一组信息打包</strong><span>结构体：描述一个完整对象</span></div></a>
-        <a class="map-item" href="#lesson10"><div class="bubble">10</div><div><strong>地址和指针</strong><span>最后再碰 C 语言最核心的底层概念</span></div></a>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson1"><div class="bubble">1</div><div><strong>程序是什么</strong><span>先理解“给电脑写说明书”这件事</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson2"><div class="bubble">2</div><div><strong>让电脑说一句话</strong><span>只认识 printf、分号、换行</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson3"><div class="bubble">3</div><div><strong>为什么需要名字</strong><span>从“内容会变化”自然引出变量</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson4"><div class="bubble">4</div><div><strong>不同的数据</strong><span>数字、文字、字符为什么要分类型</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson5"><div class="bubble">5</div><div><strong>让程序做选择</strong><span>if / else：如果这样，就那样</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson6"><div class="bubble">6</div><div><strong>让程序重复做事</strong><span>循环：重复劳动交给电脑</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson7"><div class="bubble">7</div><div><strong>一次放很多个值</strong><span>当一个盒子不够用，再引出数组</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson8"><div class="bubble">8</div><div><strong>把重复代码打包</strong><span>函数：让代码更像积木</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson9"><div class="bubble">9</div><div><strong>把一组信息打包</strong><span>结构体：描述一个完整对象</span></div></button>
+        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson10"><div class="bubble">10</div><div><strong>地址和指针</strong><span>最后再碰 C 语言最核心的底层概念</span></div></button>
       </div>
     </section>
 
-    <section class="section-card" id="lesson1">
+    <section class="section-card" id="lesson1" data-tab-page="course">
       <div class="section-head">
         <div class="lesson-num">1</div>
         <div>
@@ -850,7 +859,7 @@
       </div>
     </section>
 
-    <section class="section-card" id="lesson2">
+    <section class="section-card" id="lesson2" data-tab-page="course">
       <div class="section-head">
         <div class="lesson-num">2</div>
         <div>
@@ -879,7 +888,7 @@
       <details><summary>那其他几行先怎么理解？</summary><p><code>#include &lt;stdio.h&gt;</code> 可以先理解成“我要用显示文字的工具”；<code>main</code> 是程序开始的地方；<code>return 0</code> 表示正常结束。现在不用深挖。</p></details>
     </section>
 
-    <section class="section-card" id="lesson3">
+    <section class="section-card" id="lesson3" data-tab-page="course">
       <div class="section-head">
         <div class="lesson-num">3</div>
         <div>
@@ -900,7 +909,7 @@
       <div class="quiz" data-answer="a"><div class="quiz-title">小测：变量最像什么？</div><div class="options"><button class="option" data-choice="a">A. 贴了名字的数据盒子</button><button class="option" data-choice="b">B. 一张图片</button><button class="option" data-choice="c">C. 键盘上的一个按键</button></div><div class="answer"></div></div>
     </section>
 
-    <section class="section-card" id="lesson4">
+    <section class="section-card" id="lesson4" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">4</div><div><h2>为什么数据要分类型？</h2><p class="lead">现在变量已经出现了。下一步才是：盒子也分用途，有的放整数，有的放小数，有的放单个字符。</p></div></div>
       <h3>先看几个不同的数据</h3>
       <div class="concept-grid three">
@@ -919,7 +928,7 @@
       <div class="callout orange"><strong>别急着背范围：</strong>刚入门先知道“放什么数据用什么类型”就够了，范围和精度后面再慢慢加。</div>
     </section>
 
-    <section class="section-card" id="lesson5">
+    <section class="section-card" id="lesson5" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">5</div><div><h2>让程序做选择</h2><p class="lead">人会判断：如果下雨就带伞，否则不带。程序也需要这种能力。</p></div></div>
       <h3>if / else：如果……否则……</h3>
       <div class="codebox"><div class="codebar"><span>if_else.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> score = <span class="num">75</span>;
@@ -934,7 +943,7 @@
       <div class="table-wrap"><table><tr><th>写法</th><th>意思</th></tr><tr><td><code>&gt;</code></td><td>大于</td></tr><tr><td><code>&lt;</code></td><td>小于</td></tr><tr><td><code>&gt;=</code></td><td>大于等于</td></tr><tr><td><code>&lt;=</code></td><td>小于等于</td></tr><tr><td><code>==</code></td><td>判断是否相等</td></tr><tr><td><code>!=</code></td><td>判断是否不相等</td></tr></table></div>
     </section>
 
-    <section class="section-card" id="lesson6">
+    <section class="section-card" id="lesson6" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">6</div><div><h2>让程序重复做事</h2><p class="lead">打印 100 句话，你不应该写 100 行。重复劳动是电脑的强项。</p></div></div>
       <h3>for：知道重复几次时很好用</h3>
       <div class="codebox"><div class="codebar"><span>for.c</span><button class="copy">复制</button></div><pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++) {
@@ -951,7 +960,7 @@
       <div class="callout red"><strong>死循环：</strong>如果条件永远成立，程序会一直跑。循环里通常要有机会改变条件。</div>
     </section>
 
-    <section class="section-card" id="lesson7">
+    <section class="section-card" id="lesson7" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">7</div><div><h2>一个变量不够用怎么办？</h2><p class="lead">现在才讲数组，因为你已经知道变量是一个盒子。数组就是一排同类型盒子。</p></div></div>
       <p>假设你有 5 个成绩，写 5 个变量很麻烦：</p>
       <div class="codebox"><div class="codebar"><span>array.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> scores[<span class="num">5</span>] = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">70</span>, <span class="num">88</span>, <span class="num">100</span>};
@@ -964,7 +973,7 @@
 }</pre></div>
     </section>
 
-    <section class="section-card" id="lesson8">
+    <section class="section-card" id="lesson8" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">8</div><div><h2>重复代码太多怎么办？</h2><p class="lead">这时候再讲函数。函数就是把一段代码打包成一个小工具，想用时叫它一下。</p></div></div>
       <div class="codebox"><div class="codebar"><span>function.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
     <span class="kw">return</span> a + b;
@@ -975,7 +984,7 @@
       <div class="callout green"><strong>人话理解：</strong>函数像一个小机器，把 3 和 5 放进去，它吐出 8。</div>
     </section>
 
-    <section class="section-card" id="lesson9">
+    <section class="section-card" id="lesson9" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">9</div><div><h2>一组信息想放在一起怎么办？</h2><p class="lead">现在才讲结构体。因为你已经知道变量和数组了，结构体就是把不同类型的信息打包。</p></div></div>
       <p>一个学生不只有一个成绩，还可能有姓名、年龄、分数。它们应该属于同一个“学生”。</p>
       <div class="codebox"><div class="codebar"><span>struct.c</span><button class="copy">复制</button></div><pre><span class="kw">struct</span> Student {
@@ -988,7 +997,7 @@
       <p><code>s1.age</code> 的意思就是：<code>s1</code> 这个学生里面的 <code>age</code>。</p>
     </section>
 
-    <section class="section-card" id="lesson10">
+    <section class="section-card" id="lesson10" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">10</div><div><h2>最后再碰指针：地址的纸条</h2><p class="lead">指针一开始很吓人，是因为它直接碰到了内存地址。现在你已经有一点基础，可以轻轻碰一下。</p></div></div>
       <h3>变量住在内存里</h3>
       <p>你可以把内存想象成很多小房间。变量是房间里的东西，地址是房间门牌号。</p>
@@ -1002,7 +1011,7 @@
       <div class="callout red"><strong>为什么危险：</strong>如果纸条上的地址错了，程序可能找错地方，甚至改坏别的数据。</div>
     </section>
 
-    <section class="section-card" id="practice">
+    <section class="section-card" id="practice" data-tab-page="course">
       <div class="section-head"><div class="lesson-num">练</div><div><h2>小练习：不要只看，要动手</h2><p class="lead">每学一点，写一个十几行的小程序。C 语言不是看会的，是敲会的。</p></div></div>
       <div class="concept-grid two"><div class="concept"><b>练习 1：打印自我介绍</b>输出姓名、年龄、喜欢什么。</div><div class="concept"><b>练习 2：年龄判断</b>输入年龄，判断是否成年。</div><div class="concept"><b>练习 3：1 到 100 求和</b>用循环累加。</div><div class="concept"><b>练习 4：成绩列表</b>用数组存几个成绩，求平均值。</div></div>
       <h3>示例：猜数字</h3>
@@ -1030,7 +1039,7 @@
 }</pre></div>
     </section>
 
-    <section class="section-card" id="progress">
+    <section class="section-card" id="progress" data-tab-page="progress">
       <div class="section-head"><div class="lesson-num">✓</div><div><h2>学习进度</h2><p class="lead">勾到 80%，就已经不是“完全小白”了。</p></div></div>
       <div class="progress-card"><div class="progress-meta"><span>当前完成度</span><span id="progressText">0%</span></div><div class="progressbar"><div class="progressfill" id="progressFill"></div></div></div>
       <div class="checklist">
@@ -1047,7 +1056,7 @@
       </div>
     </section>
 
-    <section class="section-card" id="deploy">
+    <section class="section-card" id="deploy" data-tab-page="deploy">
       <div class="section-head"><div class="lesson-num">发</div><div><h2>GitHub 托管方式</h2><p class="lead">终极版建议用 3 个文件：<code>index.html</code>、<code>manifest.json</code>、<code>sw.js</code>。这样手机添加到桌面更像 App，也能支持基础缓存。</p></div></div>
       <div class="callout green"><strong>推荐结构：</strong>仓库根目录放 <code>index.html</code>、<code>manifest.json</code>、<code>sw.js</code> 三个文件。GitHub Pages 打开后，手机 Safari / Chrome 可以添加到桌面。</div>
       <div class="codebox"><div class="codebar"><span>项目结构</span><button class="copy">复制</button></div><pre>c-language-guide/
@@ -1063,10 +1072,10 @@
 
   <nav class="bottom-tabs" aria-label="底部导航">
     <div class="tabs-inner">
-      <a class="tab active" href="#home"><b>⌂</b><span>首页</span></a>
-      <a class="tab" href="#roadmap"><b>◇</b><span>路线</span></a>
-      <a class="tab" href="#progress"><b>✓</b><span>进度</span></a>
-      <a class="tab" href="#deploy"><b>↗</b><span>发布</span></a>
+      <button class="tab active" type="button" data-tab="home"><b>⌂</b><span>首页</span></button>
+      <button class="tab" type="button" data-tab="course"><b>◇</b><span>课程</span></button>
+      <button class="tab" type="button" data-tab="progress"><b>✓</b><span>进度</span></button>
+      <button class="tab" type="button" data-tab="deploy"><b>↗</b><span>发布</span></button>
     </div>
   </nav>
 
@@ -1306,22 +1315,40 @@
     updateProgress();
 
     const tabs = $$('.tab');
-    function updateActiveTab() {
-      const y = window.scrollY + 140;
-      const sections = [
-        ['#home', $('#home')],
-        ['#roadmap', $('#roadmap')],
-        ['#progress', $('#progress')],
-        ['#deploy', $('#deploy')]
-      ];
-      let active = '#home';
-      for (const [id, el] of sections) {
-        if (el && el.offsetTop <= y) active = id;
+    const pages = $$('[data-tab-page]');
+
+    function openTab(tabName, scrollTarget) {
+      pages.forEach((page) => {
+        page.classList.toggle('tab-page-hidden', page.dataset.tabPage !== tabName);
+      });
+      tabs.forEach((tab) => {
+        tab.classList.toggle('active', tab.dataset.tab === tabName);
+      });
+
+      const target = scrollTarget ? document.getElementById(scrollTarget) : document.getElementById('home');
+      if (target) {
+        setTimeout(() => {
+          const top = Math.max(0, target.offsetTop - 92);
+          window.scrollTo({ top, behavior: 'smooth' });
+          updateReadProgress();
+        }, 20);
       }
-      tabs.forEach((tab) => tab.classList.toggle('active', tab.getAttribute('href') === active));
+
+      localStorage.setItem('cguide_active_tab', tabName);
     }
-    window.addEventListener('scroll', updateActiveTab, { passive: true });
-    updateActiveTab();
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => openTab(tab.dataset.tab));
+    });
+
+    $$('[data-open-tab]').forEach((item) => {
+      item.addEventListener('click', () => {
+        openTab(item.dataset.openTab, item.dataset.scrollTarget);
+      });
+    });
+
+    const initialTab = localStorage.getItem('cguide_active_tab') || 'home';
+    openTab(initialTab);
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
