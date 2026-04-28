@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="一份像 iOS 原生 App 一样使用的 C 语言零基础入门教程。单文件部署，支持 GitHub Pages 托管、版本检查、手机添加到桌面。" />
+  <meta name="description" content="一份像 iOS 原生 App 一样使用的 C 语言零基础入门教程。三文件 PWA 部署，支持 GitHub Pages 托管、版本检查、基础缓存、手机添加到桌面。" />
   <meta name="theme-color" content="#f7f8fc" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="C语言入门" />
+  <link rel="manifest" href="./manifest.json" />
   <title>C 语言零基础入门</title>
   <style>
     :root {
@@ -773,7 +774,7 @@
       </a>
       <button class="version-pill" id="versionButton" type="button" aria-label="打开版本管理">
         <span class="status-dot"></span>
-        <span id="versionText">v1.2.0</span>
+        <span id="versionText">v2.0.0</span>
       </button>
     </div>
   </header>
@@ -794,7 +795,7 @@
     <section class="quick-grid" aria-label="学习概览">
       <div class="quick-card"><b>12</b><span>节渐进课程</span></div>
       <div class="quick-card"><b id="quickProgress">0%</b><span>学习进度</span></div>
-      <div class="quick-card"><b>1</b><span>个文件即可部署</span></div>
+      <div class="quick-card"><b>3</b><span>个文件即可托管</span></div>
     </section>
 
     <section class="section-card" id="roadmap">
@@ -1047,13 +1048,17 @@
     </section>
 
     <section class="section-card" id="deploy">
-      <div class="section-head"><div class="lesson-num">发</div><div><h2>单文件 GitHub 托管方式</h2><p class="lead">你问能不能一个文件搞定：可以。这个版本就是一个 <code>index.html</code>。</p></div></div>
-      <div class="callout green"><strong>最省事结构：</strong>仓库里只放一个 <code>index.html</code>。GitHub Pages 打开后，手机 Safari / Chrome 可以添加到桌面。</div>
-      <div class="step-list"><div class="step"><div><strong>创建仓库</strong><br>GitHub 右上角 <code>+</code> → <code>New repository</code>，名字例如 <code>c-language-guide</code>。</div></div><div class="step"><div><strong>上传文件</strong><br>把这个 HTML 保存为 <code>index.html</code>，上传到仓库根目录。</div></div><div class="step"><div><strong>开启 Pages</strong><br>进入 <code>Settings</code> → <code>Pages</code>，选择 <code>Deploy from a branch</code>，分支选 <code>main</code>，目录选 <code>/(root)</code>。</div></div><div class="step"><div><strong>手机打开</strong><br>访问 <code>https://你的用户名.github.io/c-language-guide/</code>，然后添加到主屏幕。</div></div></div>
-      <div class="callout orange"><strong>单文件更新检查说明：</strong>页面会每次打开请求 GitHub 上最新的 <code>index.html</code>，从里面读取版本号。如果 GitHub 上版本更高，会提示“发现更新”。</div>
+      <div class="section-head"><div class="lesson-num">发</div><div><h2>GitHub 托管方式</h2><p class="lead">终极版建议用 3 个文件：<code>index.html</code>、<code>manifest.json</code>、<code>sw.js</code>。这样手机添加到桌面更像 App，也能支持基础缓存。</p></div></div>
+      <div class="callout green"><strong>推荐结构：</strong>仓库根目录放 <code>index.html</code>、<code>manifest.json</code>、<code>sw.js</code> 三个文件。GitHub Pages 打开后，手机 Safari / Chrome 可以添加到桌面。</div>
+      <div class="codebox"><div class="codebar"><span>项目结构</span><button class="copy">复制</button></div><pre>c-language-guide/
+├── index.html
+├── manifest.json
+└── sw.js</pre></div>
+      <div class="step-list"><div class="step"><div><strong>创建仓库</strong><br>GitHub 右上角 <code>+</code> → <code>New repository</code>，名字例如 <code>c-language-guide</code>。</div></div><div class="step"><div><strong>上传文件</strong><br>把这个 HTML 保存为 <code>index.html</code>，再把 <code>manifest.json</code> 和 <code>sw.js</code> 一起上传到仓库根目录。</div></div><div class="step"><div><strong>开启 Pages</strong><br>进入 <code>Settings</code> → <code>Pages</code>，选择 <code>Deploy from a branch</code>，分支选 <code>main</code>，目录选 <code>/(root)</code>。</div></div><div class="step"><div><strong>手机打开</strong><br>访问 <code>https://你的用户名.github.io/c-language-guide/</code>，然后添加到主屏幕。</div></div></div>
+      <div class="callout orange"><strong>更新检查说明：</strong>页面会每次打开请求 GitHub 上最新的 <code>index.html</code>，从里面读取版本号。如果 GitHub 上版本更高，会提示“发现更新”。<code>sw.js</code> 负责基础缓存和 Service Worker 更新。</div>
     </section>
 
-    <footer class="footer">单文件版 · iOS 风格 · GitHub Pages 友好 · 适合手机添加到桌面</footer>
+    <footer class="footer">三文件 PWA 版 · iOS 风格 · GitHub Pages 友好 · 适合手机添加到桌面</footer>
   </main>
 
   <nav class="bottom-tabs" aria-label="底部导航">
@@ -1071,9 +1076,9 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeSheet" type="button">×</button></div>
       <div class="info-list">
-        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v1.2.0</span></div>
+        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.0.0</span></div>
         <div class="info-row"><span>GitHub 最新版本</span><span id="remoteVersion">未检查</span></div>
-        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 21:30</span></div>
+        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 22:10</span></div>
         <div class="info-row"><span>上次检查时间</span><span id="lastCheckTime">未检查</span></div>
         <div class="info-row"><span>更新状态</span><span id="updateStatus">准备检查</span></div>
       </div>
@@ -1081,8 +1086,9 @@
       <ul class="release-notes" id="releaseNotes">
         <li>重构为 iOS 原生 App 风格 UI。</li>
         <li>内容顺序改为纯小白渐进式，不再开头堆术语。</li>
-        <li>支持单文件 GitHub Pages 托管。</li>
+        <li>升级为 index.html + manifest.json + sw.js 三文件 PWA 版。</li>
         <li>每次打开自动检查 GitHub 上的 index.html 是否有更新。</li>
+        <li>新增 Service Worker 基础缓存与更新检测能力。</li>
       </ul>
       <div class="sheet-actions">
         <button class="ios-button light" id="manualCheck" type="button">检查更新</button>
@@ -1096,13 +1102,14 @@
 
   <script>
     const APP_META = {
-      version: '1.2.0',
-      buildTime: '2026-04-28 21:30',
+      version: '2.0.0',
+      buildTime: '2026-04-28 22:10',
       notes: [
         '重构为 iOS 原生 App 风格 UI。',
         '内容顺序改为纯小白渐进式，不再开头堆术语。',
-        '支持单文件 GitHub Pages 托管。',
-        '每次打开自动检查 GitHub 上的 index.html 是否有更新。'
+        '升级为 index.html + manifest.json + sw.js 三文件 PWA 版。',
+        '每次打开自动检查 GitHub 上的 index.html 是否有更新。',
+        '新增 Service Worker 基础缓存与更新检测能力。'
       ]
     };
 
@@ -1315,6 +1322,31 @@
     }
     window.addEventListener('scroll', updateActiveTab, { passive: true });
     updateActiveTab();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+          reg.update();
+
+          if (reg.waiting) {
+            showToast('发现缓存更新，点击版本面板刷新最新版');
+          }
+
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showToast('新版本缓存已准备好，可刷新使用');
+              }
+            });
+          });
+        } catch (error) {
+          console.warn('Service Worker 注册失败：', error);
+        }
+      });
+    }
   </script>
 </body>
 </html>
