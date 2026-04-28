@@ -589,27 +589,28 @@
       overflow-x: auto;
       white-space: pre;
     }
-    .practice-row {
+    .practice-options {
       display: grid;
-      grid-template-columns: 1fr auto;
       gap: 9px;
-      align-items: center;
       margin-top: 10px;
     }
-    .practice-input {
+    .practice-option {
       width: 100%;
       min-height: 42px;
       border: 1px solid rgba(148, 163, 184, 0.26);
       border-radius: 15px;
       padding: 10px 12px;
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
       color: var(--text);
       background: rgba(255,255,255,0.88);
-      outline: none;
       font-weight: 800;
+      cursor: pointer;
     }
-    .practice-input:focus {
-      border-color: rgba(37, 99, 235, 0.58);
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    .practice-option input {
+      margin-top: 5px;
+      accent-color: var(--blue);
     }
     .practice-result {
       min-height: 20px;
@@ -769,7 +770,7 @@
       .topbar { background: rgba(15,23,42,0.78); border-color: rgba(255,255,255,0.10); }
       .topbar-inner { background: transparent; }
       .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
-      .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-input { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
+      .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
       code, .kbd { color: #e2e8f0; background: rgba(30,41,59,0.95); border-color: rgba(255,255,255,0.10); }
       .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
       .close-btn { background: rgba(30,41,59,0.9); color: #e2e8f0; }
@@ -790,7 +791,7 @@
       </button>
       <button class="version-pill" id="versionButton" type="button" aria-label="打开版本管理">
         <span class="status-dot"></span>
-        <span id="versionText">v2.2.0</span>
+        <span id="versionText">v2.3.0</span>
       </button>
     </div>
   </header>
@@ -830,7 +831,7 @@
           <div class="lesson-num">课</div>
           <div>
             <h2>我的课程</h2>
-            <p class="lead">点击任意课程即可学习；学完做测试，答对 2 题及以上才会标记为已掌握。</p>
+            <p class="lead">点击任意课程即可学习；学完做测试，达到本课及格线后会标记为已掌握。</p>
           </div>
         </div>
         <div class="progress-card">
@@ -867,18 +868,18 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeVersionSheet" type="button">×</button></div>
       <div class="info-list">
-        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.2.0</span></div>
+        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.3.0</span></div>
         <div class="info-row"><span>GitHub 最新版本</span><span id="remoteVersion">未检查</span></div>
-        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 14:31</span></div>
+        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 14:52</span></div>
         <div class="info-row"><span>上次检查时间</span><span id="lastCheckTime">未检查</span></div>
         <div class="info-row"><span>更新状态</span><span id="updateStatus">准备检查</span></div>
       </div>
       <h4>本版更新</h4>
       <ul class="release-notes">
         <li>首页开始学习改为进入“我的课程”，由你选择学习内容。</li>
-        <li>课程增加动手练习，学习记录会保存最近学习时间。</li>
-        <li>底部导航换成统一线性图标。</li>
-        <li>同步缓存版本并优化离线兜底。</li>
+        <li>每节课测试题扩充为 5 题，及格线自动计算。</li>
+        <li>动手练习改成选项式，减少手动输入。</li>
+        <li>代码类练习也提供多个备选答案。</li>
       </ul>
       <div class="sheet-actions">
         <button class="ios-button light" id="manualCheck" type="button">检查更新</button>
@@ -892,7 +893,7 @@
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
       <div class="sheet-title"><h3 id="testTitle">课程测试</h3><button class="close-btn" id="closeTestSheet" type="button">×</button></div>
-      <p class="small" id="testDesc">共 3 题，答对 2 题及以上算掌握。</p>
+      <p class="small" id="testDesc">完成本课测试并达到及格线后，会标记为已掌握。</p>
       <div id="testBody"></div>
       <div class="sheet-actions">
         <button class="ios-button light" id="cancelTest" type="button">稍后再做</button>
@@ -905,8 +906,8 @@
 
   <script>
     const APP_META = {
-      version: '2.2.0',
-      buildTime: '2026-04-28 14:31',
+      version: '2.3.0',
+      buildTime: '2026-04-28 14:52',
       autoUpdate: true
     };
 
@@ -926,12 +927,14 @@
           prompt: '把空白补完整：程序是一份写给电脑的____。',
           code: '程序 = 写给电脑的 ____',
           answer: ['精确操作说明书', '精确说明书', '操作说明书'],
-          placeholder: '输入你的答案'
+          options: ['精确操作说明书', '随机文件', '电脑壁纸']
         },
         test: [
           { q: '程序最像什么？', options: ['一份精确说明书', '一张图片', '一个随机文件'], answer: 0 },
           { q: '电脑会自动猜你的意图吗？', options: ['会', '不会，必须写清楚', '只在晚上会'], answer: 1 },
-          { q: '代码是什么？', options: ['程序说明书的文字形式', '只能给人看的文章', '浏览器收藏夹'], answer: 0 }
+          { q: '代码是什么？', options: ['程序说明书的文字形式', '只能给人看的文章', '浏览器收藏夹'], answer: 0 },
+          { q: '写程序时，步骤应该怎样？', options: ['尽量明确', '越模糊越好', '只写标题'], answer: 0 },
+          { q: 'C 语言代码主要是写给谁执行的？', options: ['电脑', '纸质笔记本', '图片软件'], answer: 0 }
         ]
       },
       {
@@ -947,12 +950,14 @@
           prompt: '把空白处补成要显示的文字。',
           code: 'printf("____\\n");',
           answer: ['你好，C 语言！', '你好，C语言！', '你好，C 语言', '你好，C语言'],
-          placeholder: '例如：你好，C 语言！'
+          options: ['你好，C 语言！', 'return 0', '#include']
         },
         test: [
           { q: 'printf 主要用来做什么？', options: ['输出内容', '删除文件', '连接网络'], answer: 0 },
           { q: '\\n 表示什么？', options: ['换行', '乘法', '结束程序'], answer: 0 },
-          { q: 'C 语言里很多语句后面要写什么？', options: ['分号 ;', '句号 。', '问号 ?'], answer: 0 }
+          { q: 'C 语言里很多语句后面要写什么？', options: ['分号 ;', '句号 。', '问号 ?'], answer: 0 },
+          { q: '要输出的文字通常放在哪里？', options: ['双引号里', '花括号外', '文件名里'], answer: 0 },
+          { q: 'printf("Hi\\n"); 运行后会怎样？', options: ['显示 Hi 并换行', '定义变量 Hi', '创建文件 Hi'], answer: 0 }
         ]
       },
       {
@@ -968,12 +973,14 @@
           prompt: '让 age 这个变量保存 18。',
           code: 'int age = ____;',
           answer: '18',
-          placeholder: '输入数字'
+          options: ['18', 'age', '%d']
         },
         test: [
           { q: '变量最像什么？', options: ['有名字的数据盒子', '一张壁纸', '一个浏览器'], answer: 0 },
           { q: 'age = 18 更接近什么？', options: ['把 18 放进 age 里', '判断 age 是否等于 18', '打印 age'], answer: 0 },
-          { q: '为什么需要变量？', options: ['数据会变化，方便复用', '为了让代码更长', '为了不能运行'], answer: 0 }
+          { q: '为什么需要变量？', options: ['数据会变化，方便复用', '为了让代码更长', '为了不能运行'], answer: 0 },
+          { q: 'printf 里的 %d 常用来放什么？', options: ['整数位置', '图片位置', '网页地址'], answer: 0 },
+          { q: 'int age = 18; 里 age 是什么？', options: ['变量名', '文件名', '函数名'], answer: 0 }
         ]
       },
       {
@@ -989,12 +996,14 @@
           prompt: '1.75 是小数，应该用哪个类型？',
           code: '____ height = 1.75;',
           answer: 'double',
-          placeholder: '输入类型名'
+          options: ['double', 'int', 'char']
         },
         test: [
           { q: 'int 通常适合存什么？', options: ['整数', '一整段文章', '图片'], answer: 0 },
           { q: 'double 通常适合存什么？', options: ['小数', '单个字符', '文件夹'], answer: 0 },
-          { q: 'char 通常适合存什么？', options: ['单个字符', '一组成绩', '网页'], answer: 0 }
+          { q: 'char 通常适合存什么？', options: ['单个字符', '一组成绩', '网页'], answer: 0 },
+          { q: "'A' 更适合用哪种类型？", options: ['char', 'double', 'int 数组'], answer: 0 },
+          { q: '刚入门理解数据类型时，重点是什么？', options: ['什么数据放进什么盒子', '先背所有范围', '不用区分任何数据'], answer: 0 }
         ]
       },
       {
@@ -1010,12 +1019,14 @@
           prompt: '分数大于等于 60 时进入 if。',
           code: 'if (score ____ 60) {',
           answer: '>=',
-          placeholder: '输入运算符'
+          options: ['>=', '==', '=']
         },
         test: [
           { q: 'if / else 让程序具备什么能力？', options: ['做选择', '自动变漂亮', '关闭电脑'], answer: 0 },
           { q: '判断相等应该用什么？', options: ['=', '==', '==='], answer: 1 },
-          { q: '= 在 C 里主要表示什么？', options: ['赋值', '判断相等', '循环'], answer: 0 }
+          { q: '= 在 C 里主要表示什么？', options: ['赋值', '判断相等', '循环'], answer: 0 },
+          { q: 'else 通常表示什么？', options: ['否则', '重复', '输出'], answer: 0 },
+          { q: 'score >= 60 为真时，程序会走哪边？', options: ['if 里的代码', 'else 里的代码', '完全跳过程序'], answer: 0 }
         ]
       },
       {
@@ -1031,12 +1042,14 @@
           prompt: '让循环从 1 跑到 5。',
           code: 'for (int i = 1; i <= ____; i++)',
           answer: '5',
-          placeholder: '输入结束数字'
+          options: ['5', '1', 'i++']
         },
         test: [
           { q: '循环适合处理什么？', options: ['重复的事情', '只做一次的事情', '完全不用做的事情'], answer: 0 },
           { q: 'i++ 大概表示什么？', options: ['i 增加 1', 'i 变成 0', 'i 被删除'], answer: 0 },
-          { q: '循环条件永远成立可能导致什么？', options: ['死循环', '自动通过测试', '屏幕变暗'], answer: 0 }
+          { q: '循环条件永远成立可能导致什么？', options: ['死循环', '自动通过测试', '屏幕变暗'], answer: 0 },
+          { q: 'for (int i = 1; i <= 5; i++) 大约会执行几次？', options: ['5 次', '1 次', '永远不停'], answer: 0 },
+          { q: 'while 更依赖什么来决定是否继续？', options: ['循环条件', '文件颜色', '屏幕大小'], answer: 0 }
         ]
       },
       {
@@ -1051,12 +1064,14 @@
           prompt: '数组第一个元素的下标是多少？',
           code: 'scores[____]',
           answer: '0',
-          placeholder: '输入下标'
+          options: ['0', '1', '5']
         },
         test: [
           { q: '数组可以先理解成什么？', options: ['一排同类型盒子', '一个按钮', '一个网页地址'], answer: 0 },
           { q: '数组下标从几开始？', options: ['0', '1', '10'], answer: 0 },
-          { q: '长度为 5 的数组，最后一个合法下标是？', options: ['5', '4', '6'], answer: 1 }
+          { q: '长度为 5 的数组，最后一个合法下标是？', options: ['5', '4', '6'], answer: 1 },
+          { q: 'scores[0] 表示什么？', options: ['第一个元素', '第零个文件', '数组长度'], answer: 0 },
+          { q: '数组里的元素通常有什么共同点？', options: ['同一种类型', '必须都是图片', '必须都不同名'], answer: 0 }
         ]
       },
       {
@@ -1071,12 +1086,14 @@
           prompt: '让 add 函数返回 a 和 b 的和。',
           code: 'return a ____ b;',
           answer: '+',
-          placeholder: '输入运算符'
+          options: ['+', '-', 'printf']
         },
         test: [
           { q: '函数可以先理解成什么？', options: ['打包好的小工具', '一个颜色', '一个文件夹图标'], answer: 0 },
           { q: 'return 通常表示什么？', options: ['返回结果', '打印文字', '开始循环'], answer: 0 },
-          { q: '函数的好处是什么？', options: ['减少重复、方便复用', '让代码一定报错', '让电脑变慢'], answer: 0 }
+          { q: '函数的好处是什么？', options: ['减少重复、方便复用', '让代码一定报错', '让电脑变慢'], answer: 0 },
+          { q: 'add(3, 5) 里的 3 和 5 是什么？', options: ['传给函数的数据', '函数名字', '文件路径'], answer: 0 },
+          { q: '把重复代码做成函数，通常会让代码怎样？', options: ['更容易复用', '只能运行一次', '不能写参数'], answer: 0 }
         ]
       },
       {
@@ -1091,12 +1108,14 @@
           prompt: '要读取 s1 里的年龄，点号后面应该写什么？',
           code: 's1.____',
           answer: 'age',
-          placeholder: '输入成员名'
+          options: ['age', 'Student', 'printf']
         },
         test: [
           { q: '结构体适合做什么？', options: ['把一组相关信息打包', '只存一个整数', '专门换行'], answer: 0 },
           { q: 's1.age 表示什么？', options: ['s1 里面的 age 成员', '把 s1 删除', '判断 s1 是否存在'], answer: 0 },
-          { q: '描述一个学生时，结构体可以放哪些信息？', options: ['姓名、年龄、分数', '只能放一个字符', '只能放网页链接'], answer: 0 }
+          { q: '描述一个学生时，结构体可以放哪些信息？', options: ['姓名、年龄、分数', '只能放一个字符', '只能放网页链接'], answer: 0 },
+          { q: 'struct Student 更像在定义什么？', options: ['一种学生信息模板', '一个循环次数', '一个换行符'], answer: 0 },
+          { q: '访问结构体成员常用哪个符号？', options: ['点号 .', '加号 +', '百分号 %'], answer: 0 }
         ]
       },
       {
@@ -1112,12 +1131,14 @@
           prompt: 'p 要保存 x 的地址，等号右边应该写什么？',
           code: 'int *p = ____;',
           answer: '&x',
-          placeholder: '输入表达式'
+          options: ['&x', '*x', 'x++']
         },
         test: [
           { q: '指针可以先理解成什么？', options: ['存地址的变量', '一个循环', '一种颜色'], answer: 0 },
           { q: '&x 表示什么？', options: ['x 的地址', 'x 的分数', 'x 的名字'], answer: 0 },
-          { q: '*p 可以先理解成什么？', options: ['顺着地址找到值', '把 p 变成图片', '结束程序'], answer: 0 }
+          { q: '*p 可以先理解成什么？', options: ['顺着地址找到值', '把 p 变成图片', '结束程序'], answer: 0 },
+          { q: 'int *p 里 p 主要用来存什么？', options: ['地址', '小数', '一整段文章'], answer: 0 },
+          { q: '刚学指针时最先要分清什么？', options: ['值、地址、指针', '颜色、大小、字体', '网页、图片、音乐'], answer: 0 }
         ]
       }
     ];
@@ -1265,10 +1286,15 @@
       openPage('course');
     }
 
+    function getPassScore(course) {
+      return Math.ceil(course.test.length * 0.7);
+    }
+
     function renderPractice(course) {
       if (!course.practice) return '';
       const practice = course.practice;
       const done = completedPractices.has(course.id);
+      const options = practice.options || (Array.isArray(practice.answer) ? practice.answer : [practice.answer]);
       return `
         <div class="practice-card ${done ? 'done' : ''}" data-practice-card="${course.id}">
           <div class="practice-title">
@@ -1277,10 +1303,15 @@
           </div>
           <p class="small">${escapeHtml(practice.prompt)}</p>
           <code class="practice-code">${escapeHtml(practice.code)}</code>
-          <div class="practice-row">
-            <input class="practice-input" data-practice-input="${course.id}" type="text" placeholder="${escapeHtml(practice.placeholder || '输入答案')}">
-            <button class="mini-action test" type="button" data-action="practice" data-lesson="${course.id}">检查</button>
+          <div class="practice-options">
+            ${options.map((option, optionIndex) => `
+              <label class="practice-option">
+                <input type="radio" name="practice-${course.id}" value="${escapeHtml(option)}" ${done && optionIndex === 0 ? 'checked' : ''}>
+                <span>${escapeHtml(option)}</span>
+              </label>
+            `).join('')}
           </div>
+          <button class="ios-button blue" style="width:100%;margin-top:10px;" type="button" data-action="practice" data-lesson="${course.id}">检查练习</button>
           <div class="practice-result" data-practice-result="${course.id}">${done ? '这道动手练习已经完成，可以继续复习。' : ''}</div>
         </div>
       `;
@@ -1367,16 +1398,16 @@
       const course = getCourse(lessonId);
       if (!course.practice) return;
 
-      const input = lessonContainer.querySelector(`[data-practice-input="${lessonId}"]`);
+      const selected = lessonContainer.querySelector(`input[name="practice-${lessonId}"]:checked`);
       const result = lessonContainer.querySelector(`[data-practice-result="${lessonId}"]`);
       const card = lessonContainer.querySelector(`[data-practice-card="${lessonId}"]`);
       const status = card ? card.querySelector('.practice-status') : null;
-      const value = input ? input.value : '';
+      const value = selected ? selected.value : '';
       const answers = Array.isArray(course.practice.answer) ? course.practice.answer : [course.practice.answer];
       const correct = answers.some((answer) => normalizeAnswer(answer) === normalizeAnswer(value));
 
-      if (!value.trim()) {
-        if (result) result.textContent = '先填一个答案再检查。';
+      if (!selected) {
+        if (result) result.textContent = '先选一个答案再检查。';
         return;
       }
 
@@ -1444,8 +1475,9 @@
       renderCourseDashboard();
       updateProgress();
       const course = getCourse(lessonId);
+      const passScore = getPassScore(course);
       testTitle.textContent = `第 ${course.no} 课测试`;
-      testDesc.textContent = '共 3 题，答对 2 题及以上算及格。及格后，这一课会标记为“已掌握”。';
+      testDesc.textContent = `共 ${course.test.length} 题，答对 ${passScore} 题及以上算及格。及格后，这一课会标记为“已掌握”。`;
       testBody.innerHTML = course.test.map((item, qIndex) => `
         <div class="test-question">
           <strong>${qIndex + 1}. ${item.q}</strong>
@@ -1463,12 +1495,13 @@
     submitTest.addEventListener('click', () => {
       if (!activeTestLesson) return;
       const course = getCourse(activeTestLesson);
+      const passScore = getPassScore(course);
       let score = 0;
       course.test.forEach((item, qIndex) => {
         const selected = testBody.querySelector(`input[name="q${qIndex}"]:checked`);
         if (selected && Number(selected.value) === item.answer) score++;
       });
-      if (score >= 2) {
+      if (score >= passScore) {
         passedLessons.add(activeTestLesson);
         savePassedLessons();
         updateProgress();
@@ -1477,7 +1510,7 @@
         closeSheets();
         showToast(`测试通过：${score}/${course.test.length}，这一课已掌握`);
       } else {
-        showToast(`还没及格：${score}/${course.test.length}，可以回去看一眼再测`);
+        showToast(`还没及格：${score}/${course.test.length}，本课需要答对 ${passScore} 题`);
       }
     });
 
