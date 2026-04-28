@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="一份像 iOS 原生 App 一样使用的 C 语言零基础入门教程。三文件 PWA 部署，支持 GitHub Pages 托管、版本检查、基础缓存、手机添加到桌面。" />
+  <meta name="description" content="像 iOS 原生 App 一样使用的 C 语言零基础入门教程。支持 GitHub Pages、PWA、自动更新、课程测试与学习进度。" />
   <meta name="theme-color" content="#f7f8fc" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -12,34 +12,24 @@
   <title>C 语言零基础入门</title>
   <style>
     :root {
-      --bg0: #f7f8fc;
-      --bg1: #eef2ff;
-      --card: rgba(255, 255, 255, 0.78);
-      --card-strong: rgba(255, 255, 255, 0.92);
       --text: #101828;
       --text2: #475467;
       --text3: #667085;
-      --line: rgba(148, 163, 184, 0.24);
       --blue: #2563eb;
-      --blue2: #60a5fa;
       --purple: #7c3aed;
       --orange: #f97316;
       --green: #16a34a;
       --red: #ef4444;
-      --glass: rgba(255, 255, 255, 0.62);
+      --card: rgba(255, 255, 255, 0.78);
+      --card-strong: rgba(255, 255, 255, 0.92);
+      --line: rgba(148, 163, 184, 0.22);
       --shadow: 0 24px 70px rgba(15, 23, 42, 0.13);
       --shadow2: 0 10px 32px rgba(15, 23, 42, 0.10);
-      --radius-xl: 32px;
-      --radius-lg: 24px;
-      --radius-md: 18px;
       --safe-top: env(safe-area-inset-top);
       --safe-bottom: env(safe-area-inset-bottom);
-      --nav-height: 72px;
-      --tab-height: 76px;
     }
 
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -48,10 +38,10 @@
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       background:
-        radial-gradient(circle at 16% -5%, rgba(96, 165, 250, 0.42), transparent 34%),
-        radial-gradient(circle at 88% 2%, rgba(249, 115, 22, 0.22), transparent 28%),
-        radial-gradient(circle at 50% 52%, rgba(124, 58, 237, 0.12), transparent 40%),
-        linear-gradient(180deg, #f8fbff 0%, #f6f7fb 42%, #eef2ff 100%);
+        radial-gradient(circle at 14% -5%, rgba(96, 165, 250, 0.42), transparent 34%),
+        radial-gradient(circle at 92% 2%, rgba(249, 115, 22, 0.22), transparent 30%),
+        radial-gradient(circle at 50% 56%, rgba(124, 58, 237, 0.12), transparent 42%),
+        linear-gradient(180deg, #f8fbff 0%, #f6f7fb 44%, #eef2ff 100%);
       line-height: 1.78;
       -webkit-tap-highlight-color: transparent;
       overflow-x: hidden;
@@ -61,22 +51,34 @@
       content: "";
       position: fixed;
       inset: 0;
+      z-index: -1;
       pointer-events: none;
       background-image:
         linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px);
       background-size: 38px 38px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.18), transparent 48%);
-      z-index: -1;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.18), transparent 50%);
     }
 
     a { color: inherit; text-decoration: none; }
     button, input { font: inherit; }
+    button { -webkit-user-select: none; user-select: none; }
 
-    .app-shell {
-      width: min(100%, 920px);
-      margin: 0 auto;
-      padding: calc(var(--safe-top) + 78px) 14px calc(var(--safe-bottom) + 102px);
+    .read-progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 200;
+      background: transparent;
+    }
+    .read-progress span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #f97316);
+      box-shadow: 0 0 18px rgba(37, 99, 235, 0.32);
     }
 
     .topbar {
@@ -86,9 +88,8 @@
       transform: translateX(-50%);
       width: min(100%, 920px);
       padding: calc(var(--safe-top) + 10px) 14px 10px;
-      z-index: 100;
+      z-index: 120;
     }
-
     .topbar-inner {
       height: 58px;
       display: flex;
@@ -103,14 +104,18 @@
       -webkit-backdrop-filter: blur(28px) saturate(1.6);
       box-shadow: 0 16px 48px rgba(15, 23, 42, 0.12);
     }
-
     .brand {
       display: flex;
       align-items: center;
       gap: 10px;
       min-width: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      color: inherit;
+      text-align: left;
     }
-
     .app-icon {
       width: 38px;
       height: 38px;
@@ -123,7 +128,6 @@
       background: linear-gradient(135deg, #0f172a, #2563eb 52%, #7c3aed);
       box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
     }
-
     .brand-title { min-width: 0; }
     .brand-title strong {
       display: block;
@@ -146,7 +150,6 @@
     }
 
     .version-pill {
-      position: relative;
       border: 0;
       display: inline-flex;
       align-items: center;
@@ -161,7 +164,6 @@
       font-size: 13px;
       white-space: nowrap;
     }
-
     .status-dot {
       width: 8px;
       height: 8px;
@@ -169,28 +171,19 @@
       background: var(--green);
       box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
     }
-
     .version-pill.has-update .status-dot {
       background: var(--orange);
       box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
     }
 
-    .read-progress {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 3px;
-      z-index: 130;
-      background: transparent;
+    .app-shell {
+      width: min(100%, 920px);
+      margin: 0 auto;
+      padding: calc(var(--safe-top) + 78px) 14px calc(var(--safe-bottom) + 92px);
     }
-    .read-progress span {
-      display: block;
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #2563eb, #f97316);
-      box-shadow: 0 0 18px rgba(37, 99, 235, 0.28);
-    }
+
+    .page { display: none; }
+    .page.active { display: block; }
 
     .hero {
       position: relative;
@@ -206,7 +199,6 @@
       box-shadow: var(--shadow);
       min-height: 252px;
     }
-
     .hero::before {
       content: "";
       position: absolute;
@@ -216,9 +208,7 @@
       top: -90px;
       border-radius: 50%;
       background: rgba(255,255,255,0.16);
-      filter: blur(0.2px);
     }
-
     .hero::after {
       content: "C";
       position: absolute;
@@ -230,9 +220,7 @@
       letter-spacing: -14px;
       color: rgba(255,255,255,0.08);
     }
-
     .hero-content { position: relative; z-index: 2; }
-
     .eyebrow {
       display: inline-flex;
       gap: 6px;
@@ -246,21 +234,18 @@
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
     }
-
     h1 {
       margin: 18px 0 10px;
       font-size: clamp(34px, 10.2vw, 62px);
       line-height: 1.02;
       letter-spacing: -1.8px;
     }
-
     .hero p {
       margin: 0;
       max-width: 680px;
-      color: rgba(255,255,255,0.82);
+      color: rgba(255,255,255,0.84);
       font-size: 16px;
     }
-
     .hero-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -280,14 +265,13 @@
       cursor: pointer;
       font-weight: 1000;
       font-size: 14px;
-      transition: transform 0.14s ease, filter 0.14s ease;
+      transition: transform 0.14s ease;
     }
     .ios-button:active { transform: scale(0.98); }
     .ios-button.primary { color: #0f172a; background: rgba(255,255,255,0.92); }
     .ios-button.ghost { color: white; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.20); }
     .ios-button.blue { color: white; background: linear-gradient(135deg, #2563eb, #7c3aed); }
     .ios-button.light { color: #1d4ed8; background: #eff6ff; }
-    .ios-button.warn { color: white; background: linear-gradient(135deg, #f97316, #ef4444); }
 
     .quick-grid {
       display: grid;
@@ -295,7 +279,6 @@
       gap: 10px;
       margin: 14px 0;
     }
-
     .quick-card {
       padding: 14px 12px;
       min-height: 90px;
@@ -316,14 +299,13 @@
       position: relative;
       margin: 14px 0;
       padding: 20px 16px;
-      border-radius: var(--radius-xl);
+      border-radius: 32px;
       background: var(--card-strong);
       border: 1px solid rgba(255,255,255,0.72);
       box-shadow: var(--shadow2);
       backdrop-filter: blur(22px) saturate(1.45);
       -webkit-backdrop-filter: blur(22px) saturate(1.45);
     }
-
     .section-head {
       display: grid;
       grid-template-columns: 48px 1fr;
@@ -331,7 +313,6 @@
       align-items: start;
       margin-bottom: 10px;
     }
-
     .lesson-num {
       width: 48px;
       height: 48px;
@@ -343,30 +324,22 @@
       background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
       box-shadow: 0 12px 24px rgba(37, 99, 235, 0.20);
     }
-
     h2 {
       margin: 0;
       font-size: clamp(24px, 6.4vw, 36px);
       line-height: 1.18;
       letter-spacing: -0.7px;
     }
-
     h3 {
       margin: 24px 0 9px;
       font-size: 20px;
       line-height: 1.3;
       letter-spacing: -0.2px;
     }
-
-    h4 {
-      margin: 18px 0 7px;
-      font-size: 16px;
-      color: #1f2937;
-    }
-
+    h4 { margin: 18px 0 7px; font-size: 16px; }
     p { margin: 10px 0; }
     .lead { color: var(--text2); font-size: 16px; margin-top: 8px; }
-    .muted { color: var(--text3); }
+    .small { color: var(--text3); font-size: 13px; }
 
     .pill {
       display: inline-flex;
@@ -380,7 +353,6 @@
       background: rgba(219, 234, 254, 0.8);
       box-shadow: inset 0 0 0 1px rgba(37,99,235,0.08);
     }
-
     .callout {
       margin: 14px 0;
       padding: 14px 15px;
@@ -495,7 +467,6 @@
     .fn { color: #f0abfc; }
     .str { color: #86efac; }
     .num { color: #fdba74; }
-    .com { color: #94a3b8; }
 
     .table-wrap {
       overflow-x: auto;
@@ -510,37 +481,25 @@
     th { color: #1e3a8a; background: rgba(239,246,255,0.86); }
     tr:last-child td { border-bottom: 0; }
 
-    details {
-      margin: 12px 0;
-      padding: 14px;
-      border-radius: 20px;
-      background: rgba(248,250,252,0.80);
-      border: 1px solid rgba(148,163,184,0.18);
-    }
-    summary { cursor: pointer; font-weight: 1000; }
-
-    .lesson-map {
-      display: grid;
-      gap: 10px;
-      margin: 14px 0;
-    }
-    .map-item {
-      display: grid;
+    .lesson-map, .course-dashboard { display: grid; gap: 10px; margin: 14px 0; }
+    .map-item, .course-card {
       width: 100%;
       text-align: left;
       font: inherit;
       color: inherit;
       cursor: pointer;
-      grid-template-columns: 42px 1fr;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
       gap: 11px;
       align-items: center;
-      min-height: 70px;
+      min-height: 74px;
       padding: 12px;
       border-radius: 22px;
       background: rgba(255,255,255,0.68);
       border: 1px solid rgba(148,163,184,0.18);
     }
-    .map-item .bubble {
+    .map-item { grid-template-columns: 42px 1fr; border: 0; }
+    .bubble, .course-index {
       width: 42px;
       height: 42px;
       display: grid;
@@ -550,48 +509,35 @@
       font-weight: 1000;
       background: linear-gradient(135deg, #2563eb, #7c3aed);
     }
-    .map-item strong { display: block; line-height: 1.35; }
-    .map-item span { color: var(--text3); font-size: 13px; }
-
-    .quiz {
-      margin: 16px 0 2px;
-      padding: 14px;
-      border-radius: 22px;
-      background: rgba(248,250,252,0.86);
-      border: 1px solid rgba(148,163,184,0.18);
+    .map-item strong, .course-title strong { display: block; line-height: 1.35; }
+    .map-item span, .course-title span { color: var(--text3); font-size: 13px; line-height: 1.35; }
+    .course-status {
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: #64748b;
+      background: rgba(241,245,249,0.92);
+      font-size: 12px;
+      font-weight: 1000;
+      white-space: nowrap;
     }
-    .quiz-title { font-weight: 1000; margin-bottom: 10px; }
-    .options { display: grid; gap: 9px; }
-    .option {
-      border: 1px solid rgba(148,163,184,0.24);
+    .course-status.done { color: #166534; background: rgba(220,252,231,0.94); }
+
+    .course-actions {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    .mini-action {
+      border: 0;
+      min-height: 42px;
       border-radius: 16px;
-      background: rgba(255,255,255,0.82);
-      padding: 12px;
       cursor: pointer;
-      text-align: left;
-      color: var(--text);
+      font-weight: 1000;
+      color: #1d4ed8;
+      background: rgba(239,246,255,0.92);
     }
-    .option.correct { border-color: rgba(22,163,74,0.45); background: rgba(220,252,231,0.88); color: #14532d; font-weight: 900; }
-    .option.wrong { border-color: rgba(239,68,68,0.45); background: rgba(254,226,226,0.88); color: #7f1d1d; }
-    .answer { margin-top: 10px; font-weight: 1000; }
-
-    .checklist { display: grid; gap: 9px; margin: 14px 0; }
-    .checkitem {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      padding: 12px;
-      border-radius: 18px;
-      background: rgba(248,250,252,0.78);
-      border: 1px solid rgba(148,163,184,0.18);
-    }
-    .checkitem input {
-      margin-top: 5px;
-      width: 19px;
-      height: 19px;
-      accent-color: var(--blue);
-      flex: 0 0 auto;
-    }
+    .mini-action.test { color: white; background: linear-gradient(135deg, #2563eb, #7c3aed); }
 
     .progress-card {
       margin: 14px 0;
@@ -602,25 +548,33 @@
       box-shadow: 0 18px 42px rgba(37,99,235,0.18);
     }
     .progress-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 1000; }
-    .progressbar {
-      height: 10px;
-      margin-top: 11px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.18);
-    }
+    .progressbar { height: 10px; margin-top: 11px; border-radius: 999px; overflow: hidden; background: rgba(255,255,255,0.18); }
     .progressfill { height: 100%; width: 0%; background: linear-gradient(90deg, #ffffff, #fed7aa); border-radius: 999px; }
 
-    .tab-page-hidden {
-      display: none !important;
+    .test-question {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(248,250,252,0.86);
+      border: 1px solid rgba(148,163,184,0.18);
     }
+    .test-question strong { display: block; margin-bottom: 8px; }
+    .test-option {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 9px 0;
+      color: var(--text2);
+      font-size: 14px;
+    }
+    .test-option input { margin-top: 5px; accent-color: var(--blue); }
 
     .bottom-tabs {
       position: fixed;
       left: 50%;
       transform: translateX(-50%);
       bottom: 0;
-      z-index: 95;
+      z-index: 100;
       width: min(100%, 920px);
       padding: 7px 14px calc(var(--safe-bottom) + 2px);
       pointer-events: none;
@@ -628,7 +582,7 @@
     .tabs-inner {
       pointer-events: auto;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
       padding: 8px;
       border-radius: 28px;
@@ -657,7 +611,7 @@
     .sheet-mask {
       position: fixed;
       inset: 0;
-      z-index: 200;
+      z-index: 220;
       display: none;
       background: rgba(15,23,42,0.22);
       backdrop-filter: blur(8px);
@@ -669,16 +623,18 @@
       left: 50%;
       bottom: 0;
       transform: translateX(-50%) translateY(104%);
-      z-index: 210;
+      z-index: 230;
       width: min(100%, 920px);
       padding: 10px 14px calc(var(--safe-bottom) + 14px);
       transition: transform 0.24s ease;
     }
     .sheet.show { transform: translateX(-50%) translateY(0); }
     .sheet-panel {
+      max-height: min(82vh, 760px);
+      overflow: auto;
       padding: 12px;
       border-radius: 34px 34px 28px 28px;
-      background: rgba(255,255,255,0.82);
+      background: rgba(255,255,255,0.84);
       border: 1px solid rgba(255,255,255,0.84);
       box-shadow: 0 -22px 70px rgba(15,23,42,0.20);
       backdrop-filter: blur(30px) saturate(1.7);
@@ -709,14 +665,14 @@
       left: 50%;
       top: calc(var(--safe-top) + 82px);
       transform: translateX(-50%) translateY(-14px);
-      z-index: 240;
+      z-index: 260;
       opacity: 0;
       pointer-events: none;
       width: min(calc(100% - 28px), 620px);
       padding: 12px 14px;
       border-radius: 18px;
       color: #0f172a;
-      background: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.90);
       border: 1px solid rgba(255,255,255,0.78);
       backdrop-filter: blur(24px) saturate(1.5);
       -webkit-backdrop-filter: blur(24px) saturate(1.5);
@@ -726,7 +682,6 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .small { color: var(--text3); font-size: 13px; }
     .footer { padding: 26px 8px 6px; text-align: center; color: var(--text3); font-size: 13px; }
 
     @media (min-width: 720px) {
@@ -741,13 +696,11 @@
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg0: #0b1020;
         --card: rgba(15, 23, 42, 0.62);
         --card-strong: rgba(15, 23, 42, 0.78);
         --text: #f8fafc;
         --text2: #cbd5e1;
         --text3: #94a3b8;
-        --line: rgba(255,255,255,0.10);
       }
       body {
         background:
@@ -756,16 +709,10 @@
           linear-gradient(180deg, #020617 0%, #0b1020 60%, #111827 100%);
       }
       .topbar-inner, .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
-      .version-pill, .concept, .step, .map-item, .checkitem, details, .callout, .info-row { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
+      .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
       code, .kbd { color: #e2e8f0; background: rgba(30,41,59,0.95); border-color: rgba(255,255,255,0.10); }
       .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
       .close-btn { background: rgba(30,41,59,0.9); color: #e2e8f0; }
-    }
-
-    @media print {
-      .topbar, .bottom-tabs, .read-progress, .sheet, .sheet-mask, .toast, .copy, .quiz { display: none !important; }
-      .app-shell { padding: 12px; }
-      .section-card, .hero { box-shadow: none; break-inside: avoid; }
     }
   </style>
 </head>
@@ -774,336 +721,121 @@
 
   <header class="topbar">
     <div class="topbar-inner">
-      <a class="brand" href="#home" aria-label="返回首页">
+      <button class="brand" type="button" data-tab="home">
         <div class="app-icon">C</div>
         <div class="brand-title">
           <strong>C 语言入门</strong>
           <span id="subtitleStatus">循序渐进 · 零基础</span>
         </div>
-      </a>
+      </button>
       <button class="version-pill" id="versionButton" type="button" aria-label="打开版本管理">
         <span class="status-dot"></span>
-        <span id="versionText">v2.0.0</span>
+        <span id="versionText">v2.1.0</span>
       </button>
     </div>
   </header>
 
-  <main class="app-shell" id="home">
-    <section class="hero" data-tab-page="home">
-      <div class="hero-content">
-        <div class="eyebrow">像 App 一样学 · 不背术语 · 先建立感觉</div>
-        <h1>从让电脑说一句话开始</h1>
-        <p>这份教程不会一上来扔给你一堆“变量、数组、结构体、指针”。我们只在真正需要它们的时候再介绍。先让你知道：程序是什么，代码为什么要这么写，然后一步一步往下走。</p>
-        <div class="hero-actions">
-          <button class="ios-button primary" type="button" data-open-tab="course" data-scroll-target="lesson1">开始学习</button>
-          <button class="ios-button ghost" type="button" id="checkUpdateHero">检查更新</button>
+  <main class="app-shell">
+    <section class="page active" id="page-home" data-page="home">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="eyebrow">像 App 一样学 · 不背术语 · 测试过关</div>
+          <h1>从让电脑说一句话开始</h1>
+          <p>这份教程不会一上来扔给你一堆“变量、数组、结构体、指针”。每一课只讲一个核心点，学完可以测试，通过后才算掌握。</p>
+          <div class="hero-actions">
+            <button class="ios-button primary" type="button" data-action="learn" data-lesson="lesson1">开始学习</button>
+            <button class="ios-button ghost" type="button" id="checkUpdateHero">检查更新</button>
+          </div>
         </div>
       </div>
-    </section>
 
-    <section class="quick-grid" aria-label="学习概览" data-tab-page="home">
-      <div class="quick-card"><b>12</b><span>节渐进课程</span></div>
-      <div class="quick-card"><b id="quickProgress">0%</b><span>学习进度</span></div>
-      <div class="quick-card"><b>3</b><span>个文件即可托管</span></div>
-    </section>
+      <div class="quick-grid">
+        <div class="quick-card"><b>10</b><span>节渐进课程</span></div>
+        <div class="quick-card"><b id="quickProgress">0%</b><span>掌握进度</span></div>
+        <div class="quick-card"><b>2/3</b><span>测试及格线</span></div>
+      </div>
 
-    <section class="section-card" id="roadmap" data-tab-page="home">
-      <div class="section-head">
-        <div class="lesson-num">图</div>
-        <div>
-          <h2>学习路线：先会走，再学跑</h2>
-          <p class="lead">这一版按纯小白的理解顺序来，不提前剧透太多术语。</p>
+      <section class="section-card">
+        <div class="section-head">
+          <div class="lesson-num">图</div>
+          <div>
+            <h2>学习路线：先会走，再学跑</h2>
+            <p class="lead">每一课都能直接学，上一课没通过也不影响下一课。</p>
+          </div>
         </div>
-      </div>
-      <div class="lesson-map">
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson1"><div class="bubble">1</div><div><strong>程序是什么</strong><span>先理解“给电脑写说明书”这件事</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson2"><div class="bubble">2</div><div><strong>让电脑说一句话</strong><span>只认识 printf、分号、换行</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson3"><div class="bubble">3</div><div><strong>为什么需要名字</strong><span>从“内容会变化”自然引出变量</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson4"><div class="bubble">4</div><div><strong>不同的数据</strong><span>数字、文字、字符为什么要分类型</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson5"><div class="bubble">5</div><div><strong>让程序做选择</strong><span>if / else：如果这样，就那样</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson6"><div class="bubble">6</div><div><strong>让程序重复做事</strong><span>循环：重复劳动交给电脑</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson7"><div class="bubble">7</div><div><strong>一次放很多个值</strong><span>当一个盒子不够用，再引出数组</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson8"><div class="bubble">8</div><div><strong>把重复代码打包</strong><span>函数：让代码更像积木</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson9"><div class="bubble">9</div><div><strong>把一组信息打包</strong><span>结构体：描述一个完整对象</span></div></button>
-        <button class="map-item" type="button" data-open-tab="course" data-scroll-target="lesson10"><div class="bubble">10</div><div><strong>地址和指针</strong><span>最后再碰 C 语言最核心的底层概念</span></div></button>
-      </div>
+        <div class="lesson-map" id="homeLessonMap"></div>
+      </section>
     </section>
 
-    <section class="section-card" id="lesson1" data-tab-page="course">
-      <div class="section-head">
-        <div class="lesson-num">1</div>
-        <div>
-          <h2>程序是什么？</h2>
-          <p class="lead">先别管 C 语言。任何编程语言，第一件事都是：把你想让电脑做的事写清楚。</p>
+    <section class="page" id="page-course" data-page="course">
+      <section class="section-card" id="lessonContainer"></section>
+    </section>
+
+    <section class="page" id="page-mine" data-page="mine">
+      <section class="section-card">
+        <div class="section-head">
+          <div class="lesson-num">课</div>
+          <div>
+            <h2>我的课程</h2>
+            <p class="lead">点击任意课程即可学习；学完做测试，答对 2 题及以上才会标记为已掌握。</p>
+          </div>
         </div>
-      </div>
-      <span class="pill">先建立感觉</span>
-      <h3>电脑很快，但它不会猜</h3>
-      <p>你对人说“帮我煮个泡面”，人可能知道大概怎么做。电脑不行。电脑需要你把步骤写得非常明确。</p>
-      <div class="step-list">
-        <div class="step"><div><strong>拿锅</strong><br>如果你没说拿锅，电脑不会自动脑补。</div></div>
-        <div class="step"><div><strong>倒水</strong><br>如果你没说倒多少水，它也不会猜。</div></div>
-        <div class="step"><div><strong>加热</strong><br>如果你没说什么时候停，它可能一直煮。</div></div>
-      </div>
-      <div class="callout blue"><strong>一句话记住：</strong>程序就是一份写给电脑的精确操作说明书。</div>
-      <h3>代码是什么？</h3>
-      <p>代码就是这份说明书的文字版本。C 语言代码就是用 C 的规则写出来的说明书。</p>
-      <div class="quiz" data-answer="b">
-        <div class="quiz-title">小测：程序最像什么？</div>
-        <div class="options">
-          <button class="option" data-choice="a">A. 一张漂亮海报</button>
-          <button class="option" data-choice="b">B. 一份非常精确的操作说明书</button>
-          <button class="option" data-choice="c">C. 一段随便写的聊天记录</button>
+        <div class="progress-card">
+          <div class="progress-meta"><span>已掌握课程</span><span id="progressText">0%</span></div>
+          <div class="progressbar"><div class="progressfill" id="progressFill"></div></div>
         </div>
-        <div class="answer"></div>
-      </div>
+        <div class="course-dashboard" id="courseDashboard"></div>
+      </section>
+      <footer class="footer">iOS 风格 · 渐进式课程 · 测试通过才算掌握</footer>
     </section>
-
-    <section class="section-card" id="lesson2" data-tab-page="course">
-      <div class="section-head">
-        <div class="lesson-num">2</div>
-        <div>
-          <h2>先让电脑说一句话</h2>
-          <p class="lead">这一节只做一件事：让屏幕显示一句话。不要急着理解所有细节。</p>
-        </div>
-      </div>
-      <div class="codebox">
-        <div class="codebar"><span><span class="dotline"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i></span>hello.c</span><button class="copy">复制</button></div>
-        <pre><span class="kw">#include</span> &lt;stdio.h&gt;
-
-<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
-    <span class="fn">printf</span>(<span class="str">"你好，C 语言！\n"</span>);
-    <span class="kw">return</span> <span class="num">0</span>;
-}</pre>
-      </div>
-      <h3>先只看最重要的一行</h3>
-      <p><code>printf("你好，C 语言！\n");</code></p>
-      <p>它的意思是：把双引号里的内容显示出来。</p>
-      <div class="concept-grid">
-        <div class="concept"><b><code>printf</code></b>你可以先理解成“打印到屏幕”。</div>
-        <div class="concept"><b><code>"你好，C 语言！"</code></b>双引号里面是要显示的文字。</div>
-        <div class="concept"><b><code>\n</code></b>表示换行。不是显示两个字符，而是让光标去下一行。</div>
-        <div class="concept"><b><code>;</code></b>分号像一句话的句号，告诉 C：这一句结束了。</div>
-      </div>
-      <details><summary>那其他几行先怎么理解？</summary><p><code>#include &lt;stdio.h&gt;</code> 可以先理解成“我要用显示文字的工具”；<code>main</code> 是程序开始的地方；<code>return 0</code> 表示正常结束。现在不用深挖。</p></details>
-    </section>
-
-    <section class="section-card" id="lesson3" data-tab-page="course">
-      <div class="section-head">
-        <div class="lesson-num">3</div>
-        <div>
-          <h2>为什么需要变量？</h2>
-          <p class="lead">先不背定义。我们从一个麻烦开始：如果内容会变，难道每次都手改文字吗？</p>
-        </div>
-      </div>
-      <h3>没有变量的时候</h3>
-      <p>假设你要显示年龄：</p>
-      <div class="codebox"><div class="codebar"><span>写死内容</span><button class="copy">复制</button></div><pre><span class="fn">printf</span>(<span class="str">"我今年 18 岁\n"</span>);</pre></div>
-      <p>如果年龄变成 19，你得手动改文字。数据一多，就会很乱。</p>
-      <h3>变量就是有名字的盒子</h3>
-      <div class="codebox"><div class="codebar"><span>使用变量</span><button class="copy">复制</button></div><pre><span class="kw">int</span> age = <span class="num">18</span>;
-<span class="fn">printf</span>(<span class="str">"我今年 %d 岁\n"</span>, age);</pre></div>
-      <div class="callout green"><strong>人话理解：</strong><code>age</code> 是盒子的名字，<code>18</code> 是盒子里的值。后面要用年龄，就用 <code>age</code> 这个名字。</div>
-      <h3><code>%d</code> 是空位</h3>
-      <p><code>%d</code> 像一个占位空格，后面的 <code>age</code> 会被填进去。</p>
-      <div class="quiz" data-answer="a"><div class="quiz-title">小测：变量最像什么？</div><div class="options"><button class="option" data-choice="a">A. 贴了名字的数据盒子</button><button class="option" data-choice="b">B. 一张图片</button><button class="option" data-choice="c">C. 键盘上的一个按键</button></div><div class="answer"></div></div>
-    </section>
-
-    <section class="section-card" id="lesson4" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">4</div><div><h2>为什么数据要分类型？</h2><p class="lead">现在变量已经出现了。下一步才是：盒子也分用途，有的放整数，有的放小数，有的放单个字符。</p></div></div>
-      <h3>先看几个不同的数据</h3>
-      <div class="concept-grid three">
-        <div class="concept"><b>18</b>这是整数，适合用 <code>int</code>。</div>
-        <div class="concept"><b>1.75</b>这是小数，适合用 <code>double</code>。</div>
-        <div class="concept"><b>'A'</b>这是一个字符，适合用 <code>char</code>。</div>
-      </div>
-      <div class="codebox"><div class="codebar"><span>types.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> age = <span class="num">18</span>;
-<span class="kw">double</span> height = <span class="num">1.75</span>;
-<span class="kw">char</span> grade = <span class="str">'A'</span>;
-
-<span class="fn">printf</span>(<span class="str">"年龄：%d\n"</span>, age);
-<span class="fn">printf</span>(<span class="str">"身高：%.2f\n"</span>, height);
-<span class="fn">printf</span>(<span class="str">"等级：%c\n"</span>, grade);</pre></div>
-      <div class="table-wrap"><table><tr><th>类型</th><th>先这样理解</th><th>常用打印</th></tr><tr><td><code>int</code></td><td>放整数</td><td><code>%d</code></td></tr><tr><td><code>double</code></td><td>放小数</td><td><code>%f</code></td></tr><tr><td><code>char</code></td><td>放单个字符</td><td><code>%c</code></td></tr></table></div>
-      <div class="callout orange"><strong>别急着背范围：</strong>刚入门先知道“放什么数据用什么类型”就够了，范围和精度后面再慢慢加。</div>
-    </section>
-
-    <section class="section-card" id="lesson5" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">5</div><div><h2>让程序做选择</h2><p class="lead">人会判断：如果下雨就带伞，否则不带。程序也需要这种能力。</p></div></div>
-      <h3>if / else：如果……否则……</h3>
-      <div class="codebox"><div class="codebar"><span>if_else.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> score = <span class="num">75</span>;
-
-<span class="kw">if</span> (score &gt;= <span class="num">60</span>) {
-    <span class="fn">printf</span>(<span class="str">"及格\n"</span>);
-} <span class="kw">else</span> {
-    <span class="fn">printf</span>(<span class="str">"不及格\n"</span>);
-}</pre></div>
-      <p>翻译成人话：如果分数大于等于 60，就显示“及格”；否则显示“不及格”。</p>
-      <div class="callout red"><strong>最容易写错：</strong><code>=</code> 是“赋值”，<code>==</code> 才是“判断相等”。这俩不是一回事。</div>
-      <div class="table-wrap"><table><tr><th>写法</th><th>意思</th></tr><tr><td><code>&gt;</code></td><td>大于</td></tr><tr><td><code>&lt;</code></td><td>小于</td></tr><tr><td><code>&gt;=</code></td><td>大于等于</td></tr><tr><td><code>&lt;=</code></td><td>小于等于</td></tr><tr><td><code>==</code></td><td>判断是否相等</td></tr><tr><td><code>!=</code></td><td>判断是否不相等</td></tr></table></div>
-    </section>
-
-    <section class="section-card" id="lesson6" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">6</div><div><h2>让程序重复做事</h2><p class="lead">打印 100 句话，你不应该写 100 行。重复劳动是电脑的强项。</p></div></div>
-      <h3>for：知道重复几次时很好用</h3>
-      <div class="codebox"><div class="codebar"><span>for.c</span><button class="copy">复制</button></div><pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++) {
-    <span class="fn">printf</span>(<span class="str">"第 %d 次：我在学 C\n"</span>, i);
-}</pre></div>
-      <div class="step-list"><div class="step"><div><strong><code>int i = 1</code></strong><br>从 1 开始数。</div></div><div class="step"><div><strong><code>i &lt;= 5</code></strong><br>只要还没超过 5，就继续。</div></div><div class="step"><div><strong><code>i++</code></strong><br>每做完一次，i 增加 1。</div></div></div>
-      <h3>while：只要条件成立就继续</h3>
-      <div class="codebox"><div class="codebar"><span>while.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> count = <span class="num">1</span>;
-
-<span class="kw">while</span> (count &lt;= <span class="num">5</span>) {
-    <span class="fn">printf</span>(<span class="str">"count = %d\n"</span>, count);
-    count++;
-}</pre></div>
-      <div class="callout red"><strong>死循环：</strong>如果条件永远成立，程序会一直跑。循环里通常要有机会改变条件。</div>
-    </section>
-
-    <section class="section-card" id="lesson7" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">7</div><div><h2>一个变量不够用怎么办？</h2><p class="lead">现在才讲数组，因为你已经知道变量是一个盒子。数组就是一排同类型盒子。</p></div></div>
-      <p>假设你有 5 个成绩，写 5 个变量很麻烦：</p>
-      <div class="codebox"><div class="codebar"><span>array.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> scores[<span class="num">5</span>] = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">70</span>, <span class="num">88</span>, <span class="num">100</span>};
-
-<span class="fn">printf</span>(<span class="str">"第一个成绩：%d\n"</span>, scores[<span class="num">0</span>]);</pre></div>
-      <div class="callout orange"><strong>重点：</strong>数组下标从 0 开始。5 个元素的位置是 0、1、2、3、4，不是 1 到 5。</div>
-      <h3>用循环看完整个数组</h3>
-      <div class="codebox"><div class="codebar"><span>array_loop.c</span><button class="copy">复制</button></div><pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) {
-    <span class="fn">printf</span>(<span class="str">"scores[%d] = %d\n"</span>, i, scores[i]);
-}</pre></div>
-    </section>
-
-    <section class="section-card" id="lesson8" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">8</div><div><h2>重复代码太多怎么办？</h2><p class="lead">这时候再讲函数。函数就是把一段代码打包成一个小工具，想用时叫它一下。</p></div></div>
-      <div class="codebox"><div class="codebar"><span>function.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
-    <span class="kw">return</span> a + b;
-}
-
-<span class="kw">int</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>);</pre></div>
-      <div class="concept-grid three"><div class="concept"><b>函数名</b><code>add</code>，这个工具叫什么。</div><div class="concept"><b>参数</b><code>a</code> 和 <code>b</code>，给工具的输入。</div><div class="concept"><b>返回值</b><code>return</code> 后面的结果。</div></div>
-      <div class="callout green"><strong>人话理解：</strong>函数像一个小机器，把 3 和 5 放进去，它吐出 8。</div>
-    </section>
-
-    <section class="section-card" id="lesson9" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">9</div><div><h2>一组信息想放在一起怎么办？</h2><p class="lead">现在才讲结构体。因为你已经知道变量和数组了，结构体就是把不同类型的信息打包。</p></div></div>
-      <p>一个学生不只有一个成绩，还可能有姓名、年龄、分数。它们应该属于同一个“学生”。</p>
-      <div class="codebox"><div class="codebar"><span>struct.c</span><button class="copy">复制</button></div><pre><span class="kw">struct</span> Student {
-    <span class="kw">char</span> name[<span class="num">20</span>];
-    <span class="kw">int</span> age;
-    <span class="kw">double</span> score;
-};
-
-<span class="kw">struct</span> Student s1 = {<span class="str">"Tom"</span>, <span class="num">18</span>, <span class="num">92.5</span>};</pre></div>
-      <p><code>s1.age</code> 的意思就是：<code>s1</code> 这个学生里面的 <code>age</code>。</p>
-    </section>
-
-    <section class="section-card" id="lesson10" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">10</div><div><h2>最后再碰指针：地址的纸条</h2><p class="lead">指针一开始很吓人，是因为它直接碰到了内存地址。现在你已经有一点基础，可以轻轻碰一下。</p></div></div>
-      <h3>变量住在内存里</h3>
-      <p>你可以把内存想象成很多小房间。变量是房间里的东西，地址是房间门牌号。</p>
-      <div class="concept-grid three"><div class="concept"><b>变量</b>房间里的东西。</div><div class="concept"><b>地址</b>房间的门牌号。</div><div class="concept"><b>指针</b>一张写着门牌号的纸条。</div></div>
-      <div class="codebox"><div class="codebar"><span>pointer.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> x = <span class="num">10</span>;
-<span class="kw">int</span> *p = &x;
-
-<span class="fn">printf</span>(<span class="str">"x = %d\n"</span>, x);
-<span class="fn">printf</span>(<span class="str">"*p = %d\n"</span>, *p);</pre></div>
-      <div class="callout blue"><strong>先这样记：</strong><code>&x</code> 是 x 的地址；<code>p</code> 存着地址；<code>*p</code> 是顺着地址找到值。</div>
-      <div class="callout red"><strong>为什么危险：</strong>如果纸条上的地址错了，程序可能找错地方，甚至改坏别的数据。</div>
-    </section>
-
-    <section class="section-card" id="practice" data-tab-page="course">
-      <div class="section-head"><div class="lesson-num">练</div><div><h2>小练习：不要只看，要动手</h2><p class="lead">每学一点，写一个十几行的小程序。C 语言不是看会的，是敲会的。</p></div></div>
-      <div class="concept-grid two"><div class="concept"><b>练习 1：打印自我介绍</b>输出姓名、年龄、喜欢什么。</div><div class="concept"><b>练习 2：年龄判断</b>输入年龄，判断是否成年。</div><div class="concept"><b>练习 3：1 到 100 求和</b>用循环累加。</div><div class="concept"><b>练习 4：成绩列表</b>用数组存几个成绩，求平均值。</div></div>
-      <h3>示例：猜数字</h3>
-      <div class="codebox"><div class="codebar"><span>guess.c</span><button class="copy">复制</button></div><pre><span class="kw">#include</span> &lt;stdio.h&gt;
-
-<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
-    <span class="kw">int</span> answer = <span class="num">42</span>;
-    <span class="kw">int</span> guess;
-
-    <span class="kw">while</span> (<span class="num">1</span>) {
-        <span class="fn">printf</span>(<span class="str">"请输入你猜的数字："</span>);
-        <span class="fn">scanf</span>(<span class="str">"%d"</span>, &guess);
-
-        <span class="kw">if</span> (guess &gt; answer) {
-            <span class="fn">printf</span>(<span class="str">"太大了\n"</span>);
-        } <span class="kw">else if</span> (guess &lt; answer) {
-            <span class="fn">printf</span>(<span class="str">"太小了\n"</span>);
-        } <span class="kw">else</span> {
-            <span class="fn">printf</span>(<span class="str">"猜对了\n"</span>);
-            <span class="kw">break</span>;
-        }
-    }
-
-    <span class="kw">return</span> <span class="num">0</span>;
-}</pre></div>
-    </section>
-
-    <section class="section-card" id="progress" data-tab-page="progress">
-      <div class="section-head"><div class="lesson-num">✓</div><div><h2>学习进度</h2><p class="lead">勾到 80%，就已经不是“完全小白”了。</p></div></div>
-      <div class="progress-card"><div class="progress-meta"><span>当前完成度</span><span id="progressText">0%</span></div><div class="progressbar"><div class="progressfill" id="progressFill"></div></div></div>
-      <div class="checklist">
-        <label class="checkitem"><input class="task" type="checkbox">我知道程序是一份精确说明书。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我知道 <code>printf</code> 是用来输出内容的。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我知道分号 <code>;</code> 像一句话的结束。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我知道变量是有名字的数据盒子。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我知道整数、小数、字符要用不同类型。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我能看懂一个简单的 <code>if / else</code>。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我能看懂一个简单循环。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我知道数组下标从 0 开始。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我知道函数是把一段代码打包。</label>
-        <label class="checkitem"><input class="task" type="checkbox">我初步知道指针和地址有关。</label>
-      </div>
-    </section>
-
-    <section class="section-card" id="deploy" data-tab-page="deploy">
-      <div class="section-head"><div class="lesson-num">发</div><div><h2>GitHub 托管方式</h2><p class="lead">终极版建议用 3 个文件：<code>index.html</code>、<code>manifest.json</code>、<code>sw.js</code>。这样手机添加到桌面更像 App，也能支持基础缓存。</p></div></div>
-      <div class="callout green"><strong>推荐结构：</strong>仓库根目录放 <code>index.html</code>、<code>manifest.json</code>、<code>sw.js</code> 三个文件。GitHub Pages 打开后，手机 Safari / Chrome 可以添加到桌面。</div>
-      <div class="codebox"><div class="codebar"><span>项目结构</span><button class="copy">复制</button></div><pre>c-language-guide/
-├── index.html
-├── manifest.json
-└── sw.js</pre></div>
-      <div class="step-list"><div class="step"><div><strong>创建仓库</strong><br>GitHub 右上角 <code>+</code> → <code>New repository</code>，名字例如 <code>c-language-guide</code>。</div></div><div class="step"><div><strong>上传文件</strong><br>把这个 HTML 保存为 <code>index.html</code>，再把 <code>manifest.json</code> 和 <code>sw.js</code> 一起上传到仓库根目录。</div></div><div class="step"><div><strong>开启 Pages</strong><br>进入 <code>Settings</code> → <code>Pages</code>，选择 <code>Deploy from a branch</code>，分支选 <code>main</code>，目录选 <code>/(root)</code>。</div></div><div class="step"><div><strong>手机打开</strong><br>访问 <code>https://你的用户名.github.io/c-language-guide/</code>，然后添加到主屏幕。</div></div></div>
-      <div class="callout orange"><strong>更新检查说明：</strong>页面会每次打开请求 GitHub 上最新的 <code>index.html</code>，从里面读取版本号。如果 GitHub 上版本更高，会提示“发现更新”。<code>sw.js</code> 负责基础缓存和 Service Worker 更新。</div>
-    </section>
-
-    <footer class="footer">三文件 PWA 版 · iOS 风格 · GitHub Pages 友好 · 适合手机添加到桌面</footer>
   </main>
 
   <nav class="bottom-tabs" aria-label="底部导航">
     <div class="tabs-inner">
       <button class="tab active" type="button" data-tab="home"><b>⌂</b><span>首页</span></button>
-      <button class="tab" type="button" data-tab="course"><b>◇</b><span>课程</span></button>
-      <button class="tab" type="button" data-tab="progress"><b>✓</b><span>进度</span></button>
-      <button class="tab" type="button" data-tab="deploy"><b>↗</b><span>发布</span></button>
+      <button class="tab" type="button" data-tab="course"><b>◇</b><span>学习</span></button>
+      <button class="tab" type="button" data-tab="mine"><b>✓</b><span>我的</span></button>
     </div>
   </nav>
 
   <div class="sheet-mask" id="sheetMask"></div>
+
   <aside class="sheet" id="versionSheet" aria-label="版本管理面板">
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
-      <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeSheet" type="button">×</button></div>
+      <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeVersionSheet" type="button">×</button></div>
       <div class="info-list">
-        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.0.0</span></div>
+        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.1.0</span></div>
         <div class="info-row"><span>GitHub 最新版本</span><span id="remoteVersion">未检查</span></div>
-        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 22:10</span></div>
+        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 23:20</span></div>
         <div class="info-row"><span>上次检查时间</span><span id="lastCheckTime">未检查</span></div>
         <div class="info-row"><span>更新状态</span><span id="updateStatus">准备检查</span></div>
       </div>
       <h4>本版更新</h4>
-      <ul class="release-notes" id="releaseNotes">
-        <li>重构为 iOS 原生 App 风格 UI。</li>
-        <li>内容顺序改为纯小白渐进式，不再开头堆术语。</li>
-        <li>升级为 index.html + manifest.json + sw.js 三文件 PWA 版。</li>
-        <li>每次打开自动检查 GitHub 上的 index.html 是否有更新。</li>
-        <li>新增 Service Worker 基础缓存与更新检测能力。</li>
+      <ul class="release-notes">
+        <li>删除发布页，底部只保留：首页、学习、我的。</li>
+        <li>“我的”改为课程列表，每课可学习、可测试。</li>
+        <li>测试答对 2/3 题才算掌握。</li>
+        <li>检测到 GitHub 新版本后自动刷新到最新版。</li>
       </ul>
       <div class="sheet-actions">
         <button class="ios-button light" id="manualCheck" type="button">检查更新</button>
-        <button class="ios-button blue" id="reloadLatest" type="button">刷新最新版</button>
+        <button class="ios-button blue" id="reloadLatest" type="button">强制刷新</button>
       </div>
-      <p class="small">提示：单文件版不会做真正离线缓存；如果以后需要离线能力，再额外加 service worker 文件。</p>
+      <p class="small">提示：更新检测通过读取 GitHub 上最新 index.html 内的 APP_META.version 完成。</p>
+    </div>
+  </aside>
+
+  <aside class="sheet" id="testSheet" aria-label="课程测试面板">
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title"><h3 id="testTitle">课程测试</h3><button class="close-btn" id="closeTestSheet" type="button">×</button></div>
+      <p class="small" id="testDesc">共 3 题，答对 2 题及以上算掌握。</p>
+      <div id="testBody"></div>
+      <div class="sheet-actions">
+        <button class="ios-button light" id="cancelTest" type="button">稍后再做</button>
+        <button class="ios-button blue" id="submitTest" type="button">提交测试</button>
+      </div>
     </div>
   </aside>
 
@@ -1111,16 +843,152 @@
 
   <script>
     const APP_META = {
-      version: '2.0.0',
-      buildTime: '2026-04-28 22:10',
-      notes: [
-        '重构为 iOS 原生 App 风格 UI。',
-        '内容顺序改为纯小白渐进式，不再开头堆术语。',
-        '升级为 index.html + manifest.json + sw.js 三文件 PWA 版。',
-        '每次打开自动检查 GitHub 上的 index.html 是否有更新。',
-        '新增 Service Worker 基础缓存与更新检测能力。'
-      ]
+      version: '2.1.0',
+      buildTime: '2026-04-28 23:20',
+      autoUpdate: true
     };
+
+    const courses = [
+      {
+        id: 'lesson1', no: 1, title: '程序是什么？', desc: '先理解程序是写给电脑的说明书。',
+        content: `
+          <span class="pill">先建立感觉</span>
+          <h3>电脑很快，但它不会猜</h3>
+          <p>你对人说“帮我煮个泡面”，人可能知道大概怎么做。电脑不行。电脑需要你把步骤写得非常明确。</p>
+          <div class="step-list"><div class="step"><div><strong>拿锅</strong><br>如果你没说拿锅，电脑不会自动脑补。</div></div><div class="step"><div><strong>倒水</strong><br>如果你没说倒多少水，它也不会猜。</div></div><div class="step"><div><strong>加热</strong><br>如果你没说什么时候停，它可能一直煮。</div></div></div>
+          <div class="callout blue"><strong>一句话记住：</strong>程序就是一份写给电脑的精确操作说明书。</div>
+          <h3>代码是什么？</h3><p>代码就是这份说明书的文字版本。C 语言代码就是用 C 的规则写出来的说明书。</p>
+        `,
+        test: [
+          { q: '程序最像什么？', options: ['一份精确说明书', '一张图片', '一个随机文件'], answer: 0 },
+          { q: '电脑会自动猜你的意图吗？', options: ['会', '不会，必须写清楚', '只在晚上会'], answer: 1 },
+          { q: '代码是什么？', options: ['程序说明书的文字形式', '只能给人看的文章', '浏览器收藏夹'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson2', no: 2, title: '让电脑说一句话', desc: '认识 printf、分号和换行。',
+        content: `
+          <p class="lead">这一节只做一件事：让屏幕显示一句话。不要急着理解所有细节。</p>
+          <div class="codebox"><div class="codebar"><span><span class="dotline"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i></span>hello.c</span><button class="copy">复制</button></div><pre><span class="kw">#include</span> &lt;stdio.h&gt;\n\n<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {\n    <span class="fn">printf</span>(<span class="str">"你好，C 语言！\\n"</span>);\n    <span class="kw">return</span> <span class="num">0</span>;\n}</pre></div>
+          <h3>先只看最重要的一行</h3><p><code>printf("你好，C 语言！\\n");</code> 的意思是：把双引号里的内容显示出来。</p>
+          <div class="concept-grid"><div class="concept"><b><code>printf</code></b>先理解成“打印到屏幕”。</div><div class="concept"><b><code>"你好，C 语言！"</code></b>双引号里面是要显示的文字。</div><div class="concept"><b><code>\\n</code></b>表示换行。</div><div class="concept"><b><code>;</code></b>像一句话的句号。</div></div>
+        `,
+        test: [
+          { q: 'printf 主要用来做什么？', options: ['输出内容', '删除文件', '连接网络'], answer: 0 },
+          { q: '\\n 表示什么？', options: ['换行', '乘法', '结束程序'], answer: 0 },
+          { q: 'C 语言里很多语句后面要写什么？', options: ['分号 ;', '句号 。', '问号 ?'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson3', no: 3, title: '为什么需要变量？', desc: '从内容会变化，引出变量。',
+        content: `
+          <h3>没有变量的时候</h3><p>如果年龄从 18 变成 19，你总不能每次手改一整句话。</p>
+          <div class="codebox"><div class="codebar"><span>使用变量</span><button class="copy">复制</button></div><pre><span class="kw">int</span> age = <span class="num">18</span>;\n<span class="fn">printf</span>(<span class="str">"我今年 %d 岁\\n"</span>, age);</pre></div>
+          <div class="callout green"><strong>人话理解：</strong><code>age</code> 是盒子的名字，<code>18</code> 是盒子里的值。后面要用年龄，就用 <code>age</code>。</div>
+          <h3><code>%d</code> 是空位</h3><p><code>%d</code> 像一个占位空格，后面的 <code>age</code> 会被填进去。</p>
+        `,
+        test: [
+          { q: '变量最像什么？', options: ['有名字的数据盒子', '一张壁纸', '一个浏览器'], answer: 0 },
+          { q: 'age = 18 更接近什么？', options: ['把 18 放进 age 里', '判断 age 是否等于 18', '打印 age'], answer: 0 },
+          { q: '为什么需要变量？', options: ['数据会变化，方便复用', '为了让代码更长', '为了不能运行'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson4', no: 4, title: '为什么数据要分类型？', desc: '理解整数、小数、字符的区别。',
+        content: `
+          <h3>盒子也分用途</h3>
+          <div class="concept-grid three"><div class="concept"><b>18</b>整数，适合 <code>int</code>。</div><div class="concept"><b>1.75</b>小数，适合 <code>double</code>。</div><div class="concept"><b>'A'</b>单个字符，适合 <code>char</code>。</div></div>
+          <div class="codebox"><div class="codebar"><span>types.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> age = <span class="num">18</span>;\n<span class="kw">double</span> height = <span class="num">1.75</span>;\n<span class="kw">char</span> grade = <span class="str">'A'</span>;</pre></div>
+          <div class="callout orange"><strong>别急着背范围：</strong>刚入门先知道“放什么数据用什么类型”就够了。</div>
+        `,
+        test: [
+          { q: 'int 通常适合存什么？', options: ['整数', '一整段文章', '图片'], answer: 0 },
+          { q: 'double 通常适合存什么？', options: ['小数', '单个字符', '文件夹'], answer: 0 },
+          { q: 'char 通常适合存什么？', options: ['单个字符', '一组成绩', '网页'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson5', no: 5, title: '让程序做选择', desc: '学习 if / else。',
+        content: `
+          <h3>if / else：如果……否则……</h3>
+          <div class="codebox"><div class="codebar"><span>if_else.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> score = <span class="num">75</span>;\n\n<span class="kw">if</span> (score &gt;= <span class="num">60</span>) {\n    <span class="fn">printf</span>(<span class="str">"及格\\n"</span>);\n} <span class="kw">else</span> {\n    <span class="fn">printf</span>(<span class="str">"不及格\\n"</span>);\n}</pre></div>
+          <p>翻译成人话：如果分数大于等于 60，就显示“及格”；否则显示“不及格”。</p>
+          <div class="callout red"><strong>最容易写错：</strong><code>=</code> 是赋值，<code>==</code> 才是判断相等。</div>
+        `,
+        test: [
+          { q: 'if / else 让程序具备什么能力？', options: ['做选择', '自动变漂亮', '关闭电脑'], answer: 0 },
+          { q: '判断相等应该用什么？', options: ['=', '==', '==='], answer: 1 },
+          { q: '= 在 C 里主要表示什么？', options: ['赋值', '判断相等', '循环'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson6', no: 6, title: '让程序重复做事', desc: '学习 for 和 while。',
+        content: `
+          <h3>for：知道重复几次时很好用</h3>
+          <div class="codebox"><div class="codebar"><span>for.c</span><button class="copy">复制</button></div><pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++) {\n    <span class="fn">printf</span>(<span class="str">"第 %d 次：我在学 C\\n"</span>, i);\n}</pre></div>
+          <div class="step-list"><div class="step"><div><strong><code>int i = 1</code></strong><br>从 1 开始数。</div></div><div class="step"><div><strong><code>i &lt;= 5</code></strong><br>只要还没超过 5，就继续。</div></div><div class="step"><div><strong><code>i++</code></strong><br>每做完一次，i 增加 1。</div></div></div>
+          <div class="callout red"><strong>死循环：</strong>如果条件永远成立，程序会一直跑。</div>
+        `,
+        test: [
+          { q: '循环适合处理什么？', options: ['重复的事情', '只做一次的事情', '完全不用做的事情'], answer: 0 },
+          { q: 'i++ 大概表示什么？', options: ['i 增加 1', 'i 变成 0', 'i 被删除'], answer: 0 },
+          { q: '循环条件永远成立可能导致什么？', options: ['死循环', '自动通过测试', '屏幕变暗'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson7', no: 7, title: '一个变量不够用怎么办？', desc: '理解数组是一排同类型盒子。',
+        content: `
+          <p>如果你有 5 个成绩，写 5 个变量很麻烦。这时可以用数组。</p>
+          <div class="codebox"><div class="codebar"><span>array.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> scores[<span class="num">5</span>] = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">70</span>, <span class="num">88</span>, <span class="num">100</span>};\n<span class="fn">printf</span>(<span class="str">"第一个成绩：%d\\n"</span>, scores[<span class="num">0</span>]);</pre></div>
+          <div class="callout orange"><strong>重点：</strong>数组下标从 0 开始。5 个元素的位置是 0、1、2、3、4。</div>
+        `,
+        test: [
+          { q: '数组可以先理解成什么？', options: ['一排同类型盒子', '一个按钮', '一个网页地址'], answer: 0 },
+          { q: '数组下标从几开始？', options: ['0', '1', '10'], answer: 0 },
+          { q: '长度为 5 的数组，最后一个合法下标是？', options: ['5', '4', '6'], answer: 1 }
+        ]
+      },
+      {
+        id: 'lesson8', no: 8, title: '重复代码太多怎么办？', desc: '理解函数是小工具。',
+        content: `
+          <p>函数就是把一段代码打包成一个小工具，想用时叫它一下。</p>
+          <div class="codebox"><div class="codebar"><span>function.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {\n    <span class="kw">return</span> a + b;\n}\n\n<span class="kw">int</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>);</pre></div>
+          <div class="callout green"><strong>人话理解：</strong>函数像一个小机器，把 3 和 5 放进去，它吐出 8。</div>
+        `,
+        test: [
+          { q: '函数可以先理解成什么？', options: ['打包好的小工具', '一个颜色', '一个文件夹图标'], answer: 0 },
+          { q: 'return 通常表示什么？', options: ['返回结果', '打印文字', '开始循环'], answer: 0 },
+          { q: '函数的好处是什么？', options: ['减少重复、方便复用', '让代码一定报错', '让电脑变慢'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson9', no: 9, title: '一组信息想放在一起怎么办？', desc: '理解结构体是数据打包。',
+        content: `
+          <p>一个学生不只有一个成绩，还可能有姓名、年龄、分数。结构体可以把它们打包。</p>
+          <div class="codebox"><div class="codebar"><span>struct.c</span><button class="copy">复制</button></div><pre><span class="kw">struct</span> Student {\n    <span class="kw">char</span> name[<span class="num">20</span>];\n    <span class="kw">int</span> age;\n    <span class="kw">double</span> score;\n};\n\n<span class="kw">struct</span> Student s1 = {<span class="str">"Tom"</span>, <span class="num">18</span>, <span class="num">92.5</span>};</pre></div>
+          <p><code>s1.age</code> 的意思就是：<code>s1</code> 这个学生里面的 <code>age</code>。</p>
+        `,
+        test: [
+          { q: '结构体适合做什么？', options: ['把一组相关信息打包', '只存一个整数', '专门换行'], answer: 0 },
+          { q: 's1.age 表示什么？', options: ['s1 里面的 age 成员', '把 s1 删除', '判断 s1 是否存在'], answer: 0 },
+          { q: '描述一个学生时，结构体可以放哪些信息？', options: ['姓名、年龄、分数', '只能放一个字符', '只能放网页链接'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson10', no: 10, title: '最后再碰指针', desc: '理解地址和指针的第一层含义。',
+        content: `
+          <p>你可以把内存想象成很多小房间。变量是房间里的东西，地址是房间门牌号，指针是一张写着门牌号的纸条。</p>
+          <div class="concept-grid three"><div class="concept"><b>变量</b>房间里的东西。</div><div class="concept"><b>地址</b>房间的门牌号。</div><div class="concept"><b>指针</b>写着门牌号的纸条。</div></div>
+          <div class="codebox"><div class="codebar"><span>pointer.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> x = <span class="num">10</span>;\n<span class="kw">int</span> *p = &x;\n\n<span class="fn">printf</span>(<span class="str">"x = %d\\n"</span>, x);\n<span class="fn">printf</span>(<span class="str">"*p = %d\\n"</span>, *p);</pre></div>
+          <div class="callout blue"><strong>先这样记：</strong><code>&x</code> 是 x 的地址；<code>p</code> 存着地址；<code>*p</code> 是顺着地址找到值。</div>
+        `,
+        test: [
+          { q: '指针可以先理解成什么？', options: ['存地址的变量', '一个循环', '一种颜色'], answer: 0 },
+          { q: '&x 表示什么？', options: ['x 的地址', 'x 的分数', 'x 的名字'], answer: 0 },
+          { q: '*p 可以先理解成什么？', options: ['顺着地址找到值', '把 p 变成图片', '结束程序'], answer: 0 }
+        ]
+      }
+    ];
 
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -1132,14 +1000,33 @@
     const buildTime = $('#buildTime');
     const lastCheckTime = $('#lastCheckTime');
     const updateStatus = $('#updateStatus');
-    const versionSheet = $('#versionSheet');
     const sheetMask = $('#sheetMask');
-    const closeSheet = $('#closeSheet');
+    const versionSheet = $('#versionSheet');
+    const testSheet = $('#testSheet');
+    const closeVersionSheet = $('#closeVersionSheet');
+    const closeTestSheet = $('#closeTestSheet');
+    const cancelTest = $('#cancelTest');
+    const submitTest = $('#submitTest');
+    const testTitle = $('#testTitle');
+    const testDesc = $('#testDesc');
+    const testBody = $('#testBody');
     const manualCheck = $('#manualCheck');
     const reloadLatest = $('#reloadLatest');
     const checkUpdateHero = $('#checkUpdateHero');
     const toast = $('#toast');
     const subtitleStatus = $('#subtitleStatus');
+    const lessonContainer = $('#lessonContainer');
+    const homeLessonMap = $('#homeLessonMap');
+    const courseDashboard = $('#courseDashboard');
+    const progressText = $('#progressText');
+    const progressFill = $('#progressFill');
+    const quickProgress = $('#quickProgress');
+    const readProgress = $('#readProgress');
+
+    let passedLessons = new Set(JSON.parse(localStorage.getItem('cguide_passed_lessons') || '[]'));
+    let currentLessonId = localStorage.getItem('cguide_current_lesson') || 'lesson1';
+    let activeTestLesson = null;
+    let autoReloading = false;
 
     versionText.textContent = 'v' + APP_META.version;
     localVersion.textContent = 'v' + APP_META.version;
@@ -1152,19 +1039,167 @@
       showToast.timer = setTimeout(() => toast.classList.remove('show'), 2300);
     }
 
-    function openSheet() {
-      sheetMask.classList.add('show');
-      versionSheet.classList.add('show');
+    function getCourse(id) {
+      return courses.find((item) => item.id === id) || courses[0];
     }
 
-    function closeVersionSheet() {
+    function openPage(pageName) {
+      $$('.page').forEach((page) => page.classList.toggle('active', page.dataset.page === pageName));
+      $$('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === pageName));
+      localStorage.setItem('cguide_active_page', pageName);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      updateReadProgress();
+    }
+
+    function openLesson(lessonId) {
+      currentLessonId = lessonId;
+      localStorage.setItem('cguide_current_lesson', lessonId);
+      renderLesson(lessonId);
+      openPage('course');
+    }
+
+    function renderLesson(lessonId) {
+      const course = getCourse(lessonId);
+      const index = courses.findIndex((item) => item.id === course.id);
+      const prev = courses[index - 1];
+      const next = courses[index + 1];
+      const done = passedLessons.has(course.id);
+      lessonContainer.innerHTML = `
+        <div class="section-head">
+          <div class="lesson-num">${course.no}</div>
+          <div>
+            <h2>${course.title}</h2>
+            <p class="lead">${course.desc}</p>
+          </div>
+        </div>
+        <div class="callout ${done ? 'green' : 'blue'}"><strong>${done ? '这一课已掌握' : '学习模式'}</strong>${done ? '你已经通过测试。仍然可以重新学习或重新测试。' : '你可以直接学习，也可以先去测试；不要求按顺序解锁。'}</div>
+        ${course.content}
+        <div class="sheet-actions">
+          <button class="ios-button light" type="button" ${prev ? `data-action="learn" data-lesson="${prev.id}"` : 'disabled'}>${prev ? '上一课' : '已经是第一课'}</button>
+          <button class="ios-button blue" type="button" data-action="test" data-lesson="${course.id}">${done ? '重新测试' : '做本课测试'}</button>
+        </div>
+        ${next ? `<button class="ios-button primary" style="width:100%;margin-top:10px;background:rgba(239,246,255,0.96);color:#1d4ed8;" type="button" data-action="learn" data-lesson="${next.id}">继续下一课：${next.title}</button>` : ''}
+      `;
+      bindDynamicActions(lessonContainer);
+      bindCopyButtons(lessonContainer);
+    }
+
+    function renderHomeMap() {
+      homeLessonMap.innerHTML = courses.map((course) => `
+        <button class="map-item" type="button" data-action="learn" data-lesson="${course.id}">
+          <div class="bubble">${course.no}</div>
+          <div><strong>${course.title}</strong><span>${course.desc}</span></div>
+        </button>
+      `).join('');
+      bindDynamicActions(homeLessonMap);
+    }
+
+    function renderCourseDashboard() {
+      courseDashboard.innerHTML = courses.map((course) => {
+        const done = passedLessons.has(course.id);
+        return `
+          <article class="course-card">
+            <div class="course-index">${course.no}</div>
+            <div class="course-title"><strong>${course.title}</strong><span>${course.desc}</span></div>
+            <div class="course-status ${done ? 'done' : ''}">${done ? '已掌握' : '未通过'}</div>
+            <div class="course-actions">
+              <button class="mini-action" type="button" data-action="learn" data-lesson="${course.id}">学习这一课</button>
+              <button class="mini-action test" type="button" data-action="test" data-lesson="${course.id}">${done ? '重新测试' : '开始测试'}</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+      bindDynamicActions(courseDashboard);
+    }
+
+    function updateProgress() {
+      const done = passedLessons.size;
+      const total = courses.length;
+      const percent = total ? Math.round(done / total * 100) : 0;
+      progressText.textContent = percent + '% · ' + done + '/' + total;
+      progressFill.style.width = percent + '%';
+      quickProgress.textContent = percent + '%';
+    }
+
+    function savePassedLessons() {
+      localStorage.setItem('cguide_passed_lessons', JSON.stringify(Array.from(passedLessons)));
+    }
+
+    function bindDynamicActions(root = document) {
+      root.querySelectorAll('[data-action="learn"]').forEach((btn) => {
+        btn.addEventListener('click', () => openLesson(btn.dataset.lesson));
+      });
+      root.querySelectorAll('[data-action="test"]').forEach((btn) => {
+        btn.addEventListener('click', () => startLessonTest(btn.dataset.lesson));
+      });
+    }
+
+    function bindCopyButtons(root = document) {
+      root.querySelectorAll('.copy').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const code = btn.closest('.codebox').querySelector('pre').innerText;
+          try {
+            await navigator.clipboard.writeText(code);
+            const old = btn.textContent;
+            btn.textContent = '已复制';
+            setTimeout(() => btn.textContent = old, 1000);
+          } catch (e) {
+            showToast('复制失败');
+          }
+        });
+      });
+    }
+
+    function openSheet(sheet) {
+      sheetMask.classList.add('show');
+      sheet.classList.add('show');
+    }
+
+    function closeSheets() {
       sheetMask.classList.remove('show');
       versionSheet.classList.remove('show');
+      testSheet.classList.remove('show');
     }
 
-    versionButton.addEventListener('click', openSheet);
-    closeSheet.addEventListener('click', closeVersionSheet);
-    sheetMask.addEventListener('click', closeVersionSheet);
+    function startLessonTest(lessonId) {
+      activeTestLesson = lessonId;
+      const course = getCourse(lessonId);
+      testTitle.textContent = `第 ${course.no} 课测试`;
+      testDesc.textContent = '共 3 题，答对 2 题及以上算及格。及格后，这一课会标记为“已掌握”。';
+      testBody.innerHTML = course.test.map((item, qIndex) => `
+        <div class="test-question">
+          <strong>${qIndex + 1}. ${item.q}</strong>
+          ${item.options.map((option, oIndex) => `
+            <label class="test-option">
+              <input type="radio" name="q${qIndex}" value="${oIndex}">
+              <span>${option}</span>
+            </label>
+          `).join('')}
+        </div>
+      `).join('');
+      openSheet(testSheet);
+    }
+
+    submitTest.addEventListener('click', () => {
+      if (!activeTestLesson) return;
+      const course = getCourse(activeTestLesson);
+      let score = 0;
+      course.test.forEach((item, qIndex) => {
+        const selected = testBody.querySelector(`input[name="q${qIndex}"]:checked`);
+        if (selected && Number(selected.value) === item.answer) score++;
+      });
+      if (score >= 2) {
+        passedLessons.add(activeTestLesson);
+        savePassedLessons();
+        updateProgress();
+        renderCourseDashboard();
+        renderLesson(currentLessonId);
+        closeSheets();
+        showToast(`测试通过：${score}/${course.test.length}，这一课已掌握`);
+      } else {
+        showToast(`还没及格：${score}/${course.test.length}，可以回去看一眼再测`);
+      }
+    });
 
     function compareVersions(a, b) {
       const pa = String(a).split('.').map(Number);
@@ -1182,26 +1217,28 @@
     function parseRemoteMeta(html) {
       const versionMatch = html.match(/version:\s*['\"]([^'\"]+)['\"]/);
       const buildMatch = html.match(/buildTime:\s*['\"]([^'\"]+)['\"]/);
-      return {
-        version: versionMatch ? versionMatch[1] : null,
-        buildTime: buildMatch ? buildMatch[1] : null
-      };
+      return { version: versionMatch ? versionMatch[1] : null, buildTime: buildMatch ? buildMatch[1] : null };
     }
 
-    async function checkForUpdate({ silent = false } = {}) {
+    function hardReload() {
+      if (autoReloading) return;
+      autoReloading = true;
+      const clean = location.href.split('#')[0].split('?')[0];
+      location.replace(clean + '?autoUpdate=' + Date.now());
+    }
+
+    async function checkForUpdate({ silent = false, auto = false } = {}) {
       const now = new Date();
       const timeText = now.toLocaleString('zh-CN', { hour12: false });
       lastCheckTime.textContent = timeText;
       localStorage.setItem('cguide_last_check_time', timeText);
       updateStatus.textContent = '正在检查...';
       subtitleStatus.textContent = '正在检查 GitHub 更新...';
-
       try {
         const url = location.href.split('#')[0].split('?')[0] + '?check=' + Date.now();
         const res = await fetch(url, { cache: 'no-store' });
         const html = await res.text();
         const meta = parseRemoteMeta(html);
-
         if (!meta.version) {
           remoteVersion.textContent = '无法识别';
           updateStatus.textContent = '未找到远端版本号';
@@ -1209,17 +1246,17 @@
           if (!silent) showToast('没有识别到远端版本号');
           return;
         }
-
         remoteVersion.textContent = 'v' + meta.version + (meta.buildTime ? ' · ' + meta.buildTime : '');
         const cmp = compareVersions(APP_META.version, meta.version);
         if (cmp < 0) {
-          updateStatus.textContent = '发现新版本';
           versionButton.classList.add('has-update');
+          updateStatus.textContent = auto ? '发现新版本，正在自动更新...' : '发现新版本';
           subtitleStatus.textContent = '发现 GitHub 新版本';
-          showToast('发现新版本：v' + meta.version);
+          showToast('发现新版本 v' + meta.version + '，正在更新');
+          setTimeout(hardReload, 700);
         } else {
-          updateStatus.textContent = '已经是最新版本';
           versionButton.classList.remove('has-update');
+          updateStatus.textContent = '已经是最新版本';
           subtitleStatus.textContent = '已是最新 · 零基础';
           if (!silent) showToast('已经是最新版本');
         }
@@ -1231,141 +1268,54 @@
       }
     }
 
-    manualCheck.addEventListener('click', () => checkForUpdate({ silent: false }));
-    checkUpdateHero.addEventListener('click', () => { openSheet(); checkForUpdate({ silent: false }); });
-    reloadLatest.addEventListener('click', () => {
-      const clean = location.href.split('#')[0].split('?')[0];
-      location.href = clean + '?reload=' + Date.now();
-    });
-
-    window.addEventListener('load', () => {
-      const saved = localStorage.getItem('cguide_last_check_time');
-      if (saved) lastCheckTime.textContent = saved;
-      setTimeout(() => checkForUpdate({ silent: true }), 350);
-    });
-
-    const readProgress = $('#readProgress');
     function updateReadProgress() {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - window.innerHeight;
       const percent = height > 0 ? Math.max(0, Math.min(100, scrollTop / height * 100)) : 0;
       readProgress.style.width = percent + '%';
     }
+
+    $$('.tab').forEach((tab) => tab.addEventListener('click', () => openPage(tab.dataset.tab)));
+    $$('.brand').forEach((brand) => brand.addEventListener('click', () => openPage('home')));
+    versionButton.addEventListener('click', () => openSheet(versionSheet));
+    closeVersionSheet.addEventListener('click', closeSheets);
+    closeTestSheet.addEventListener('click', closeSheets);
+    cancelTest.addEventListener('click', closeSheets);
+    sheetMask.addEventListener('click', closeSheets);
+    manualCheck.addEventListener('click', () => checkForUpdate({ silent: false }));
+    checkUpdateHero.addEventListener('click', () => { openSheet(versionSheet); checkForUpdate({ silent: false }); });
+    reloadLatest.addEventListener('click', hardReload);
     window.addEventListener('scroll', updateReadProgress, { passive: true });
     window.addEventListener('resize', updateReadProgress);
-    updateReadProgress();
 
-    $$('.copy').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const code = btn.closest('.codebox').querySelector('pre').innerText;
-        try {
-          await navigator.clipboard.writeText(code);
-          const old = btn.textContent;
-          btn.textContent = '已复制';
-          setTimeout(() => btn.textContent = old, 1000);
-        } catch (e) {
-          showToast('复制失败');
-        }
-      });
-    });
-
-    $$('.quiz').forEach((quiz) => {
-      const answer = quiz.dataset.answer;
-      const answerBox = quiz.querySelector('.answer');
-      quiz.querySelectorAll('.option').forEach((option) => {
-        option.addEventListener('click', () => {
-          quiz.querySelectorAll('.option').forEach((item) => item.classList.remove('correct', 'wrong'));
-          if (option.dataset.choice === answer) {
-            option.classList.add('correct');
-            answerBox.textContent = '答对了。这个理解很关键。';
-            answerBox.style.color = '#16a34a';
-          } else {
-            option.classList.add('wrong');
-            answerBox.textContent = '还不对，回到上面那段人话解释再看一下。';
-            answerBox.style.color = '#ef4444';
-          }
-        });
-      });
-    });
-
-    const tasks = $$('.task');
-    const progressText = $('#progressText');
-    const progressFill = $('#progressFill');
-    const quickProgress = $('#quickProgress');
-
-    function updateProgress() {
-      const done = tasks.filter((task) => task.checked).length;
-      const total = tasks.length;
-      const percent = total ? Math.round(done / total * 100) : 0;
-      progressText.textContent = percent + '% · ' + done + '/' + total;
-      progressFill.style.width = percent + '%';
-      quickProgress.textContent = percent + '%';
-      localStorage.setItem('cguide_tasks', JSON.stringify(tasks.map((task) => task.checked)));
-    }
-
-    try {
-      const savedTasks = JSON.parse(localStorage.getItem('cguide_tasks') || '[]');
-      tasks.forEach((task, index) => {
-        task.checked = !!savedTasks[index];
-        task.addEventListener('change', updateProgress);
-      });
-    } catch (e) {
-      tasks.forEach((task) => task.addEventListener('change', updateProgress));
-    }
+    renderHomeMap();
+    renderLesson(currentLessonId);
+    renderCourseDashboard();
     updateProgress();
+    bindDynamicActions(document);
+    bindCopyButtons(document);
 
-    const tabs = $$('.tab');
-    const pages = $$('[data-tab-page]');
+    const savedPage = localStorage.getItem('cguide_active_page') || 'home';
+    openPage(['home', 'course', 'mine'].includes(savedPage) ? savedPage : 'home');
+    const savedCheckTime = localStorage.getItem('cguide_last_check_time');
+    if (savedCheckTime) lastCheckTime.textContent = savedCheckTime;
 
-    function openTab(tabName, scrollTarget) {
-      pages.forEach((page) => {
-        page.classList.toggle('tab-page-hidden', page.dataset.tabPage !== tabName);
-      });
-      tabs.forEach((tab) => {
-        tab.classList.toggle('active', tab.dataset.tab === tabName);
-      });
-
-      const target = scrollTarget ? document.getElementById(scrollTarget) : document.getElementById('home');
-      if (target) {
-        setTimeout(() => {
-          const top = Math.max(0, target.offsetTop - 92);
-          window.scrollTo({ top, behavior: 'smooth' });
-          updateReadProgress();
-        }, 20);
-      }
-
-      localStorage.setItem('cguide_active_tab', tabName);
-    }
-
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => openTab(tab.dataset.tab));
+    window.addEventListener('load', () => {
+      setTimeout(() => checkForUpdate({ silent: true, auto: true }), 350);
     });
-
-    $$('[data-open-tab]').forEach((item) => {
-      item.addEventListener('click', () => {
-        openTab(item.dataset.openTab, item.dataset.scrollTarget);
-      });
-    });
-
-    const initialTab = localStorage.getItem('cguide_active_tab') || 'home';
-    openTab(initialTab);
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
         try {
           const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-          reg.update();
-
-          if (reg.waiting) {
-            showToast('发现缓存更新，点击版本面板刷新最新版');
-          }
-
+          await reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             if (!newWorker) return;
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                showToast('新版本缓存已准备好，可刷新使用');
+                showToast('缓存已更新，正在刷新');
+                setTimeout(hardReload, 700);
               }
             });
           });
