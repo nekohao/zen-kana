@@ -247,8 +247,8 @@
       font-size: 16px;
     }
     .hero-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       margin-top: 22px;
     }
@@ -272,28 +272,6 @@
     .ios-button.ghost { color: white; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.20); }
     .ios-button.blue { color: white; background: linear-gradient(135deg, #2563eb, #7c3aed); }
     .ios-button.light { color: #1d4ed8; background: #eff6ff; }
-
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin: 14px 0;
-    }
-    .quick-card {
-      padding: 14px 12px;
-      min-height: 90px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-radius: 24px;
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.72);
-      backdrop-filter: blur(22px) saturate(1.4);
-      -webkit-backdrop-filter: blur(22px) saturate(1.4);
-      box-shadow: var(--shadow2);
-    }
-    .quick-card b { font-size: 22px; line-height: 1; }
-    .quick-card span { font-size: 12px; color: var(--text3); font-weight: 800; line-height: 1.35; }
 
     .section-card {
       position: relative;
@@ -511,6 +489,12 @@
     }
     .map-item strong, .course-title strong { display: block; line-height: 1.35; }
     .map-item span, .course-title span { color: var(--text3); font-size: 13px; line-height: 1.35; }
+    .course-meta {
+      margin-top: 6px;
+      color: var(--text3);
+      font-size: 12px;
+      line-height: 1.35;
+    }
     .course-status {
       padding: 6px 9px;
       border-radius: 999px;
@@ -521,6 +505,7 @@
       white-space: nowrap;
     }
     .course-status.done { color: #166534; background: rgba(220,252,231,0.94); }
+    .course-status.started { color: #9a3412; background: rgba(255,237,213,0.94); }
 
     .course-actions {
       grid-column: 1 / -1;
@@ -538,6 +523,7 @@
       background: rgba(239,246,255,0.92);
     }
     .mini-action.test { color: white; background: linear-gradient(135deg, #2563eb, #7c3aed); }
+    .mini-action.secondary { color: #475467; background: rgba(241,245,249,0.92); }
 
     .progress-card {
       margin: 14px 0;
@@ -568,6 +554,69 @@
       font-size: 14px;
     }
     .test-option input { margin-top: 5px; accent-color: var(--blue); }
+
+    .practice-card {
+      margin: 16px 0;
+      padding: 15px;
+      border-radius: 24px;
+      background: rgba(239, 246, 255, 0.84);
+      border: 1px solid rgba(37, 99, 235, 0.14);
+    }
+    .practice-card.done { background: rgba(240, 253, 244, 0.88); border-color: rgba(22, 163, 74, 0.18); }
+    .practice-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 1000;
+    }
+    .practice-status {
+      flex: 0 0 auto;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 1000;
+    }
+    .practice-card.done .practice-status { color: #166534; }
+    .practice-code {
+      display: block;
+      margin: 10px 0;
+      padding: 11px 12px;
+      border-radius: 16px;
+      color: #dbeafe;
+      background: #0b1020;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .practice-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 9px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .practice-input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      border-radius: 15px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: rgba(255,255,255,0.88);
+      outline: none;
+      font-weight: 800;
+    }
+    .practice-input:focus {
+      border-color: rgba(37, 99, 235, 0.58);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+    .practice-result {
+      min-height: 20px;
+      margin-top: 8px;
+      color: var(--text3);
+      font-size: 13px;
+      font-weight: 800;
+    }
 
     .bottom-tabs {
       position: fixed;
@@ -605,7 +654,15 @@
       font-weight: 1000;
       cursor: pointer;
     }
-    .tab b { font-size: 19px; line-height: 1; }
+    .tab-icon {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      stroke-width: 2.3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
     .tab.active { color: #1d4ed8; background: rgba(239,246,255,0.86); }
 
     .sheet-mask {
@@ -690,7 +747,7 @@
       .section-card { padding: 30px; }
       .concept-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .concept-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .hero-actions { grid-template-columns: 170px 170px; justify-content: start; }
+      .hero-actions .ios-button { min-width: 170px; }
       pre { font-size: 14.5px; }
     }
 
@@ -709,7 +766,7 @@
           linear-gradient(180deg, #020617 0%, #0b1020 60%, #111827 100%);
       }
       .topbar-inner, .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
-      .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
+      .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-input { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
       code, .kbd { color: #e2e8f0; background: rgba(30,41,59,0.95); border-color: rgba(255,255,255,0.10); }
       .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
       .close-btn { background: rgba(30,41,59,0.9); color: #e2e8f0; }
@@ -730,7 +787,7 @@
       </button>
       <button class="version-pill" id="versionButton" type="button" aria-label="打开版本管理">
         <span class="status-dot"></span>
-        <span id="versionText">v2.1.0</span>
+        <span id="versionText">v2.2.0</span>
       </button>
     </div>
   </header>
@@ -743,16 +800,9 @@
           <h1>从让电脑说一句话开始</h1>
           <p>这份教程不会一上来扔给你一堆“变量、数组、结构体、指针”。每一课只讲一个核心点，学完可以测试，通过后才算掌握。</p>
           <div class="hero-actions">
-            <button class="ios-button primary" type="button" data-action="learn" data-lesson="lesson1">开始学习</button>
-            <button class="ios-button ghost" type="button" id="checkUpdateHero">检查更新</button>
+            <button class="ios-button primary" type="button" data-action="choose-course">开始学习</button>
           </div>
         </div>
-      </div>
-
-      <div class="quick-grid">
-        <div class="quick-card"><b>10</b><span>节渐进课程</span></div>
-        <div class="quick-card"><b id="quickProgress">0%</b><span>掌握进度</span></div>
-        <div class="quick-card"><b>2/3</b><span>测试及格线</span></div>
       </div>
 
       <section class="section-card">
@@ -792,9 +842,18 @@
 
   <nav class="bottom-tabs" aria-label="底部导航">
     <div class="tabs-inner">
-      <button class="tab active" type="button" data-tab="home"><b>⌂</b><span>首页</span></button>
-      <button class="tab" type="button" data-tab="course"><b>◇</b><span>学习</span></button>
-      <button class="tab" type="button" data-tab="mine"><b>✓</b><span>我的</span></button>
+      <button class="tab active" type="button" data-tab="home" aria-label="首页">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg>
+        <span>首页</span>
+      </button>
+      <button class="tab" type="button" data-tab="course" aria-label="学习">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a4 4 0 0 1 4 4v12H8a3 3 0 0 0-3 3V4Z"></path><path d="M5 20a3 3 0 0 1 3-3h11"></path><path d="M9 8h6"></path><path d="M9 12h4"></path></svg>
+        <span>学习</span>
+      </button>
+      <button class="tab" type="button" data-tab="mine" aria-label="我的">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path><path d="M4 21a8 8 0 0 1 16 0"></path><path d="m15 17 1.4 1.4L20 15"></path></svg>
+        <span>我的</span>
+      </button>
     </div>
   </nav>
 
@@ -805,18 +864,18 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeVersionSheet" type="button">×</button></div>
       <div class="info-list">
-        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.1.0</span></div>
+        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.2.0</span></div>
         <div class="info-row"><span>GitHub 最新版本</span><span id="remoteVersion">未检查</span></div>
-        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 23:20</span></div>
+        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 14:31</span></div>
         <div class="info-row"><span>上次检查时间</span><span id="lastCheckTime">未检查</span></div>
         <div class="info-row"><span>更新状态</span><span id="updateStatus">准备检查</span></div>
       </div>
       <h4>本版更新</h4>
       <ul class="release-notes">
-        <li>删除发布页，底部只保留：首页、学习、我的。</li>
-        <li>“我的”改为课程列表，每课可学习、可测试。</li>
-        <li>测试答对 2/3 题才算掌握。</li>
-        <li>检测到 GitHub 新版本后自动刷新到最新版。</li>
+        <li>首页开始学习改为进入“我的课程”，由你选择学习内容。</li>
+        <li>课程增加动手练习，学习记录会保存最近学习时间。</li>
+        <li>底部导航换成统一线性图标。</li>
+        <li>同步缓存版本并优化离线兜底。</li>
       </ul>
       <div class="sheet-actions">
         <button class="ios-button light" id="manualCheck" type="button">检查更新</button>
@@ -843,8 +902,8 @@
 
   <script>
     const APP_META = {
-      version: '2.1.0',
-      buildTime: '2026-04-28 23:20',
+      version: '2.2.0',
+      buildTime: '2026-04-28 14:31',
       autoUpdate: true
     };
 
@@ -859,6 +918,13 @@
           <div class="callout blue"><strong>一句话记住：</strong>程序就是一份写给电脑的精确操作说明书。</div>
           <h3>代码是什么？</h3><p>代码就是这份说明书的文字版本。C 语言代码就是用 C 的规则写出来的说明书。</p>
         `,
+        practice: {
+          title: '补完整一句定义',
+          prompt: '把空白补完整：程序是一份写给电脑的____。',
+          code: '程序 = 写给电脑的 ____',
+          answer: ['精确操作说明书', '精确说明书', '操作说明书'],
+          placeholder: '输入你的答案'
+        },
         test: [
           { q: '程序最像什么？', options: ['一份精确说明书', '一张图片', '一个随机文件'], answer: 0 },
           { q: '电脑会自动猜你的意图吗？', options: ['会', '不会，必须写清楚', '只在晚上会'], answer: 1 },
@@ -873,6 +939,13 @@
           <h3>先只看最重要的一行</h3><p><code>printf("你好，C 语言！\\n");</code> 的意思是：把双引号里的内容显示出来。</p>
           <div class="concept-grid"><div class="concept"><b><code>printf</code></b>先理解成“打印到屏幕”。</div><div class="concept"><b><code>"你好，C 语言！"</code></b>双引号里面是要显示的文字。</div><div class="concept"><b><code>\\n</code></b>表示换行。</div><div class="concept"><b><code>;</code></b>像一句话的句号。</div></div>
         `,
+        practice: {
+          title: '改一句输出内容',
+          prompt: '把空白处补成要显示的文字。',
+          code: 'printf("____\\n");',
+          answer: ['你好，C 语言！', '你好，C语言！', '你好，C 语言', '你好，C语言'],
+          placeholder: '例如：你好，C 语言！'
+        },
         test: [
           { q: 'printf 主要用来做什么？', options: ['输出内容', '删除文件', '连接网络'], answer: 0 },
           { q: '\\n 表示什么？', options: ['换行', '乘法', '结束程序'], answer: 0 },
@@ -887,6 +960,13 @@
           <div class="callout green"><strong>人话理解：</strong><code>age</code> 是盒子的名字，<code>18</code> 是盒子里的值。后面要用年龄，就用 <code>age</code>。</div>
           <h3><code>%d</code> 是空位</h3><p><code>%d</code> 像一个占位空格，后面的 <code>age</code> 会被填进去。</p>
         `,
+        practice: {
+          title: '给变量放一个值',
+          prompt: '让 age 这个变量保存 18。',
+          code: 'int age = ____;',
+          answer: '18',
+          placeholder: '输入数字'
+        },
         test: [
           { q: '变量最像什么？', options: ['有名字的数据盒子', '一张壁纸', '一个浏览器'], answer: 0 },
           { q: 'age = 18 更接近什么？', options: ['把 18 放进 age 里', '判断 age 是否等于 18', '打印 age'], answer: 0 },
@@ -901,6 +981,13 @@
           <div class="codebox"><div class="codebar"><span>types.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> age = <span class="num">18</span>;\n<span class="kw">double</span> height = <span class="num">1.75</span>;\n<span class="kw">char</span> grade = <span class="str">'A'</span>;</pre></div>
           <div class="callout orange"><strong>别急着背范围：</strong>刚入门先知道“放什么数据用什么类型”就够了。</div>
         `,
+        practice: {
+          title: '选择合适的数据类型',
+          prompt: '1.75 是小数，应该用哪个类型？',
+          code: '____ height = 1.75;',
+          answer: 'double',
+          placeholder: '输入类型名'
+        },
         test: [
           { q: 'int 通常适合存什么？', options: ['整数', '一整段文章', '图片'], answer: 0 },
           { q: 'double 通常适合存什么？', options: ['小数', '单个字符', '文件夹'], answer: 0 },
@@ -915,6 +1002,13 @@
           <p>翻译成人话：如果分数大于等于 60，就显示“及格”；否则显示“不及格”。</p>
           <div class="callout red"><strong>最容易写错：</strong><code>=</code> 是赋值，<code>==</code> 才是判断相等。</div>
         `,
+        practice: {
+          title: '补一个判断条件',
+          prompt: '分数大于等于 60 时进入 if。',
+          code: 'if (score ____ 60) {',
+          answer: '>=',
+          placeholder: '输入运算符'
+        },
         test: [
           { q: 'if / else 让程序具备什么能力？', options: ['做选择', '自动变漂亮', '关闭电脑'], answer: 0 },
           { q: '判断相等应该用什么？', options: ['=', '==', '==='], answer: 1 },
@@ -929,6 +1023,13 @@
           <div class="step-list"><div class="step"><div><strong><code>int i = 1</code></strong><br>从 1 开始数。</div></div><div class="step"><div><strong><code>i &lt;= 5</code></strong><br>只要还没超过 5，就继续。</div></div><div class="step"><div><strong><code>i++</code></strong><br>每做完一次，i 增加 1。</div></div></div>
           <div class="callout red"><strong>死循环：</strong>如果条件永远成立，程序会一直跑。</div>
         `,
+        practice: {
+          title: '控制循环次数',
+          prompt: '让循环从 1 跑到 5。',
+          code: 'for (int i = 1; i <= ____; i++)',
+          answer: '5',
+          placeholder: '输入结束数字'
+        },
         test: [
           { q: '循环适合处理什么？', options: ['重复的事情', '只做一次的事情', '完全不用做的事情'], answer: 0 },
           { q: 'i++ 大概表示什么？', options: ['i 增加 1', 'i 变成 0', 'i 被删除'], answer: 0 },
@@ -942,6 +1043,13 @@
           <div class="codebox"><div class="codebar"><span>array.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> scores[<span class="num">5</span>] = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">70</span>, <span class="num">88</span>, <span class="num">100</span>};\n<span class="fn">printf</span>(<span class="str">"第一个成绩：%d\\n"</span>, scores[<span class="num">0</span>]);</pre></div>
           <div class="callout orange"><strong>重点：</strong>数组下标从 0 开始。5 个元素的位置是 0、1、2、3、4。</div>
         `,
+        practice: {
+          title: '找到第一个元素',
+          prompt: '数组第一个元素的下标是多少？',
+          code: 'scores[____]',
+          answer: '0',
+          placeholder: '输入下标'
+        },
         test: [
           { q: '数组可以先理解成什么？', options: ['一排同类型盒子', '一个按钮', '一个网页地址'], answer: 0 },
           { q: '数组下标从几开始？', options: ['0', '1', '10'], answer: 0 },
@@ -955,6 +1063,13 @@
           <div class="codebox"><div class="codebar"><span>function.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {\n    <span class="kw">return</span> a + b;\n}\n\n<span class="kw">int</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>);</pre></div>
           <div class="callout green"><strong>人话理解：</strong>函数像一个小机器，把 3 和 5 放进去，它吐出 8。</div>
         `,
+        practice: {
+          title: '补上返回结果',
+          prompt: '让 add 函数返回 a 和 b 的和。',
+          code: 'return a ____ b;',
+          answer: '+',
+          placeholder: '输入运算符'
+        },
         test: [
           { q: '函数可以先理解成什么？', options: ['打包好的小工具', '一个颜色', '一个文件夹图标'], answer: 0 },
           { q: 'return 通常表示什么？', options: ['返回结果', '打印文字', '开始循环'], answer: 0 },
@@ -968,6 +1083,13 @@
           <div class="codebox"><div class="codebar"><span>struct.c</span><button class="copy">复制</button></div><pre><span class="kw">struct</span> Student {\n    <span class="kw">char</span> name[<span class="num">20</span>];\n    <span class="kw">int</span> age;\n    <span class="kw">double</span> score;\n};\n\n<span class="kw">struct</span> Student s1 = {<span class="str">"Tom"</span>, <span class="num">18</span>, <span class="num">92.5</span>};</pre></div>
           <p><code>s1.age</code> 的意思就是：<code>s1</code> 这个学生里面的 <code>age</code>。</p>
         `,
+        practice: {
+          title: '访问结构体成员',
+          prompt: '要读取 s1 里的年龄，点号后面应该写什么？',
+          code: 's1.____',
+          answer: 'age',
+          placeholder: '输入成员名'
+        },
         test: [
           { q: '结构体适合做什么？', options: ['把一组相关信息打包', '只存一个整数', '专门换行'], answer: 0 },
           { q: 's1.age 表示什么？', options: ['s1 里面的 age 成员', '把 s1 删除', '判断 s1 是否存在'], answer: 0 },
@@ -982,6 +1104,13 @@
           <div class="codebox"><div class="codebar"><span>pointer.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> x = <span class="num">10</span>;\n<span class="kw">int</span> *p = &x;\n\n<span class="fn">printf</span>(<span class="str">"x = %d\\n"</span>, x);\n<span class="fn">printf</span>(<span class="str">"*p = %d\\n"</span>, *p);</pre></div>
           <div class="callout blue"><strong>先这样记：</strong><code>&x</code> 是 x 的地址；<code>p</code> 存着地址；<code>*p</code> 是顺着地址找到值。</div>
         `,
+        practice: {
+          title: '把地址交给指针',
+          prompt: 'p 要保存 x 的地址，等号右边应该写什么？',
+          code: 'int *p = ____;',
+          answer: '&x',
+          placeholder: '输入表达式'
+        },
         test: [
           { q: '指针可以先理解成什么？', options: ['存地址的变量', '一个循环', '一种颜色'], answer: 0 },
           { q: '&x 表示什么？', options: ['x 的地址', 'x 的分数', 'x 的名字'], answer: 0 },
@@ -1012,7 +1141,6 @@
     const testBody = $('#testBody');
     const manualCheck = $('#manualCheck');
     const reloadLatest = $('#reloadLatest');
-    const checkUpdateHero = $('#checkUpdateHero');
     const toast = $('#toast');
     const subtitleStatus = $('#subtitleStatus');
     const lessonContainer = $('#lessonContainer');
@@ -1020,11 +1148,41 @@
     const courseDashboard = $('#courseDashboard');
     const progressText = $('#progressText');
     const progressFill = $('#progressFill');
-    const quickProgress = $('#quickProgress');
     const readProgress = $('#readProgress');
 
-    let passedLessons = new Set(JSON.parse(localStorage.getItem('cguide_passed_lessons') || '[]'));
-    let currentLessonId = localStorage.getItem('cguide_current_lesson') || 'lesson1';
+    const STORAGE_KEYS = {
+      passedLessons: 'cguide_passed_lessons',
+      visitedLessons: 'cguide_visited_lessons',
+      completedPractices: 'cguide_completed_practices',
+      studyLog: 'cguide_study_log',
+      currentLesson: 'cguide_current_lesson',
+      activePage: 'cguide_active_page',
+      lastCheckTime: 'cguide_last_check_time'
+    };
+
+    function readStoredArray(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(value) ? value : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function readStoredObject(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || '{}');
+        return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    let passedLessons = new Set(readStoredArray(STORAGE_KEYS.passedLessons));
+    let visitedLessons = new Set(readStoredArray(STORAGE_KEYS.visitedLessons));
+    let completedPractices = new Set(readStoredArray(STORAGE_KEYS.completedPractices));
+    let studyLog = readStoredObject(STORAGE_KEYS.studyLog);
+    let currentLessonId = localStorage.getItem(STORAGE_KEYS.currentLesson) || 'lesson1';
     let activeTestLesson = null;
     let autoReloading = false;
 
@@ -1043,19 +1201,86 @@
       return courses.find((item) => item.id === id) || courses[0];
     }
 
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function normalizeAnswer(value) {
+      return String(value)
+        .trim()
+        .replace(/[；]/g, ';')
+        .replace(/\s+/g, '')
+        .toLowerCase();
+    }
+
+    function getTimeText() {
+      const now = new Date();
+      const pad = (value) => String(value).padStart(2, '0');
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+
+    function saveSet(key, set) {
+      localStorage.setItem(key, JSON.stringify(Array.from(set)));
+    }
+
+    function saveStudyLog() {
+      localStorage.setItem(STORAGE_KEYS.studyLog, JSON.stringify(studyLog));
+    }
+
+    function markLessonVisited(lessonId) {
+      visitedLessons.add(lessonId);
+      studyLog[lessonId] = getTimeText();
+      saveSet(STORAGE_KEYS.visitedLessons, visitedLessons);
+      saveStudyLog();
+    }
+
     function openPage(pageName) {
       $$('.page').forEach((page) => page.classList.toggle('active', page.dataset.page === pageName));
       $$('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === pageName));
-      localStorage.setItem('cguide_active_page', pageName);
+      localStorage.setItem(STORAGE_KEYS.activePage, pageName);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       updateReadProgress();
     }
 
+    function openCoursePicker() {
+      openPage('mine');
+      showToast('请选择你想学习的课程');
+    }
+
     function openLesson(lessonId) {
       currentLessonId = lessonId;
-      localStorage.setItem('cguide_current_lesson', lessonId);
+      localStorage.setItem(STORAGE_KEYS.currentLesson, lessonId);
+      markLessonVisited(lessonId);
       renderLesson(lessonId);
+      renderCourseDashboard();
+      updateProgress();
       openPage('course');
+    }
+
+    function renderPractice(course) {
+      if (!course.practice) return '';
+      const practice = course.practice;
+      const done = completedPractices.has(course.id);
+      return `
+        <div class="practice-card ${done ? 'done' : ''}" data-practice-card="${course.id}">
+          <div class="practice-title">
+            <span>${escapeHtml(practice.title)}</span>
+            <span class="practice-status">${done ? '已完成' : '待练习'}</span>
+          </div>
+          <p class="small">${escapeHtml(practice.prompt)}</p>
+          <code class="practice-code">${escapeHtml(practice.code)}</code>
+          <div class="practice-row">
+            <input class="practice-input" data-practice-input="${course.id}" type="text" placeholder="${escapeHtml(practice.placeholder || '输入答案')}">
+            <button class="mini-action test" type="button" data-action="practice" data-lesson="${course.id}">检查</button>
+          </div>
+          <div class="practice-result" data-practice-result="${course.id}">${done ? '这道动手练习已经完成，可以继续复习。' : ''}</div>
+        </div>
+      `;
     }
 
     function renderLesson(lessonId) {
@@ -1074,6 +1299,7 @@
         </div>
         <div class="callout ${done ? 'green' : 'blue'}"><strong>${done ? '这一课已掌握' : '学习模式'}</strong>${done ? '你已经通过测试。仍然可以重新学习或重新测试。' : '你可以直接学习，也可以先去测试；不要求按顺序解锁。'}</div>
         ${course.content}
+        ${renderPractice(course)}
         <div class="sheet-actions">
           <button class="ios-button light" type="button" ${prev ? `data-action="learn" data-lesson="${prev.id}"` : 'disabled'}>${prev ? '上一课' : '已经是第一课'}</button>
           <button class="ios-button blue" type="button" data-action="test" data-lesson="${course.id}">${done ? '重新测试' : '做本课测试'}</button>
@@ -1097,11 +1323,20 @@
     function renderCourseDashboard() {
       courseDashboard.innerHTML = courses.map((course) => {
         const done = passedLessons.has(course.id);
+        const started = visitedLessons.has(course.id);
+        const practiced = completedPractices.has(course.id);
+        const statusText = done ? '已掌握' : started ? '学过' : '未学习';
+        const statusClass = done ? 'done' : started ? 'started' : '';
+        const lastStudy = studyLog[course.id] ? `最近学习：${studyLog[course.id]}` : '还没有学习记录';
         return `
           <article class="course-card">
             <div class="course-index">${course.no}</div>
-            <div class="course-title"><strong>${course.title}</strong><span>${course.desc}</span></div>
-            <div class="course-status ${done ? 'done' : ''}">${done ? '已掌握' : '未通过'}</div>
+            <div class="course-title">
+              <strong>${course.title}</strong>
+              <span>${course.desc}</span>
+              <div class="course-meta">${lastStudy} · 练习${practiced ? '已完成' : '未完成'}</div>
+            </div>
+            <div class="course-status ${statusClass}">${statusText}</div>
             <div class="course-actions">
               <button class="mini-action" type="button" data-action="learn" data-lesson="${course.id}">学习这一课</button>
               <button class="mini-action test" type="button" data-action="test" data-lesson="${course.id}">${done ? '重新测试' : '开始测试'}</button>
@@ -1114,28 +1349,65 @@
 
     function updateProgress() {
       const done = passedLessons.size;
+      const learned = visitedLessons.size;
       const total = courses.length;
       const percent = total ? Math.round(done / total * 100) : 0;
-      progressText.textContent = percent + '% · ' + done + '/' + total;
+      progressText.textContent = `已学习 ${learned}/${total} · 已掌握 ${done}/${total}`;
       progressFill.style.width = percent + '%';
-      quickProgress.textContent = percent + '%';
     }
 
     function savePassedLessons() {
-      localStorage.setItem('cguide_passed_lessons', JSON.stringify(Array.from(passedLessons)));
+      saveSet(STORAGE_KEYS.passedLessons, passedLessons);
+    }
+
+    function checkPracticeAnswer(lessonId) {
+      const course = getCourse(lessonId);
+      if (!course.practice) return;
+
+      const input = lessonContainer.querySelector(`[data-practice-input="${lessonId}"]`);
+      const result = lessonContainer.querySelector(`[data-practice-result="${lessonId}"]`);
+      const card = lessonContainer.querySelector(`[data-practice-card="${lessonId}"]`);
+      const status = card ? card.querySelector('.practice-status') : null;
+      const value = input ? input.value : '';
+      const answers = Array.isArray(course.practice.answer) ? course.practice.answer : [course.practice.answer];
+      const correct = answers.some((answer) => normalizeAnswer(answer) === normalizeAnswer(value));
+
+      if (!value.trim()) {
+        if (result) result.textContent = '先填一个答案再检查。';
+        return;
+      }
+
+      if (correct) {
+        completedPractices.add(lessonId);
+        saveSet(STORAGE_KEYS.completedPractices, completedPractices);
+        if (card) card.classList.add('done');
+        if (status) status.textContent = '已完成';
+        if (result) result.textContent = '答对了，这个知识点已经能动手用了。';
+        renderCourseDashboard();
+        showToast('动手练习完成');
+      } else if (result) {
+        result.textContent = '还差一点，看看上面的例子再试一次。';
+      }
     }
 
     function bindDynamicActions(root = document) {
-      root.querySelectorAll('[data-action="learn"]').forEach((btn) => {
-        btn.addEventListener('click', () => openLesson(btn.dataset.lesson));
-      });
-      root.querySelectorAll('[data-action="test"]').forEach((btn) => {
-        btn.addEventListener('click', () => startLessonTest(btn.dataset.lesson));
+      root.querySelectorAll('[data-action]').forEach((btn) => {
+        if (btn.dataset.boundAction === 'true') return;
+        btn.dataset.boundAction = 'true';
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          if (action === 'learn') openLesson(btn.dataset.lesson);
+          if (action === 'test') startLessonTest(btn.dataset.lesson);
+          if (action === 'choose-course') openCoursePicker();
+          if (action === 'practice') checkPracticeAnswer(btn.dataset.lesson);
+        });
       });
     }
 
     function bindCopyButtons(root = document) {
       root.querySelectorAll('.copy').forEach((btn) => {
+        if (btn.dataset.boundCopy === 'true') return;
+        btn.dataset.boundCopy = 'true';
         btn.addEventListener('click', async () => {
           const code = btn.closest('.codebox').querySelector('pre').innerText;
           try {
@@ -1163,6 +1435,11 @@
 
     function startLessonTest(lessonId) {
       activeTestLesson = lessonId;
+      currentLessonId = lessonId;
+      localStorage.setItem(STORAGE_KEYS.currentLesson, lessonId);
+      markLessonVisited(lessonId);
+      renderCourseDashboard();
+      updateProgress();
       const course = getCourse(lessonId);
       testTitle.textContent = `第 ${course.no} 课测试`;
       testDesc.textContent = '共 3 题，答对 2 题及以上算及格。及格后，这一课会标记为“已掌握”。';
@@ -1231,7 +1508,7 @@
       const now = new Date();
       const timeText = now.toLocaleString('zh-CN', { hour12: false });
       lastCheckTime.textContent = timeText;
-      localStorage.setItem('cguide_last_check_time', timeText);
+      localStorage.setItem(STORAGE_KEYS.lastCheckTime, timeText);
       updateStatus.textContent = '正在检查...';
       subtitleStatus.textContent = '正在检查 GitHub 更新...';
       try {
@@ -1275,7 +1552,17 @@
       readProgress.style.width = percent + '%';
     }
 
-    $$('.tab').forEach((tab) => tab.addEventListener('click', () => openPage(tab.dataset.tab)));
+    function openTab(pageName) {
+      if (pageName === 'course') {
+        markLessonVisited(currentLessonId);
+        renderLesson(currentLessonId);
+        renderCourseDashboard();
+        updateProgress();
+      }
+      openPage(pageName);
+    }
+
+    $$('.tab').forEach((tab) => tab.addEventListener('click', () => openTab(tab.dataset.tab)));
     $$('.brand').forEach((brand) => brand.addEventListener('click', () => openPage('home')));
     versionButton.addEventListener('click', () => openSheet(versionSheet));
     closeVersionSheet.addEventListener('click', closeSheets);
@@ -1283,7 +1570,6 @@
     cancelTest.addEventListener('click', closeSheets);
     sheetMask.addEventListener('click', closeSheets);
     manualCheck.addEventListener('click', () => checkForUpdate({ silent: false }));
-    checkUpdateHero.addEventListener('click', () => { openSheet(versionSheet); checkForUpdate({ silent: false }); });
     reloadLatest.addEventListener('click', hardReload);
     window.addEventListener('scroll', updateReadProgress, { passive: true });
     window.addEventListener('resize', updateReadProgress);
@@ -1295,9 +1581,9 @@
     bindDynamicActions(document);
     bindCopyButtons(document);
 
-    const savedPage = localStorage.getItem('cguide_active_page') || 'home';
+    const savedPage = localStorage.getItem(STORAGE_KEYS.activePage) || 'home';
     openPage(['home', 'course', 'mine'].includes(savedPage) ? savedPage : 'home');
-    const savedCheckTime = localStorage.getItem('cguide_last_check_time');
+    const savedCheckTime = localStorage.getItem(STORAGE_KEYS.lastCheckTime);
     if (savedCheckTime) lastCheckTime.textContent = savedCheckTime;
 
     window.addEventListener('load', () => {

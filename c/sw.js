@@ -1,9 +1,9 @@
 /* C 语言入门 App - Service Worker
-   版本：2.0.0
+   版本：2.2.0
    用法：和 index.html、manifest.json 放在 GitHub Pages 仓库根目录。
 */
 
-const CACHE_NAME = 'c-language-guide-v2.0.0';
+const CACHE_NAME = 'c-language-guide-v2.2.0';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -92,7 +92,12 @@ async function staleWhileRevalidate(request) {
     })
     .catch(() => null);
 
-  return cached || freshPromise || new Response(
+  if (cached) {
+    return cached;
+  }
+
+  const fresh = await freshPromise;
+  return fresh || new Response(
     '资源暂时不可用。',
     {
       status: 503,
