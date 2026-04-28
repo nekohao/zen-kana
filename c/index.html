@@ -84,25 +84,26 @@
     .topbar {
       position: fixed;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(100%, 920px);
-      padding: calc(var(--safe-top) + 10px) 14px 10px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: var(--safe-top) 0 0;
       z-index: 120;
+      background: rgba(247, 248, 252, 0.76);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      backdrop-filter: blur(26px) saturate(1.55);
+      -webkit-backdrop-filter: blur(26px) saturate(1.55);
+      box-shadow: 0 10px 34px rgba(15, 23, 42, 0.08);
     }
     .topbar-inner {
-      height: 58px;
+      width: min(100%, 920px);
+      height: 60px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 9px 10px 9px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.72);
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.62);
-      backdrop-filter: blur(28px) saturate(1.6);
-      -webkit-backdrop-filter: blur(28px) saturate(1.6);
-      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.12);
+      padding: 9px 14px;
     }
     .brand {
       display: flex;
@@ -179,7 +180,7 @@
     .app-shell {
       width: min(100%, 920px);
       margin: 0 auto;
-      padding: calc(var(--safe-top) + 78px) 14px calc(var(--safe-bottom) + 92px);
+      padding: calc(var(--safe-top) + 70px) 14px calc(var(--safe-bottom) + 92px);
     }
 
     .page { display: none; }
@@ -765,7 +766,9 @@
           radial-gradient(circle at 88% 2%, rgba(249, 115, 22, 0.14), transparent 28%),
           linear-gradient(180deg, #020617 0%, #0b1020 60%, #111827 100%);
       }
-      .topbar-inner, .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
+      .topbar { background: rgba(15,23,42,0.78); border-color: rgba(255,255,255,0.10); }
+      .topbar-inner { background: transparent; }
+      .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
       .version-pill, .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-input { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
       code, .kbd { color: #e2e8f0; background: rgba(30,41,59,0.95); border-color: rgba(255,255,255,0.10); }
       .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
