@@ -1,9 +1,9 @@
 /* C 语言入门 App - Service Worker
-   版本：2.5.0
+   版本：2.5.1
    用法：和 index.html、manifest.json 放在 GitHub Pages 仓库根目录。
 */
 
-const CACHE_NAME = 'c-language-guide-v2.5.0';
+const CACHE_NAME = 'c-language-guide-v2.5.1';
 const CORE_ASSETS = [
   './',
   './index.html',
