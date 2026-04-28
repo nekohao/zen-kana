@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="像 iOS 原生 App 一样使用的 C 语言零基础入门教程。支持 GitHub Pages、PWA、自动更新、课程测试与学习进度。" />
+  <meta name="theme-color" content="#f7f8fc" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="C语言入门" />
+  <link rel="manifest" href="./manifest.json" />
+  <title>C 语言零基础入门</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #101828;
+      --text2: #475467;
+      --text3: #667085;
+      --blue: #2563eb;
+      --purple: #7c3aed;
+      --orange: #f97316;
+      --green: #16a34a;
+      --red: #ef4444;
+      --card: rgba(255, 255, 255, 0.78);
+      --card-strong: rgba(255, 255, 255, 0.92);
+      --line: rgba(148, 163, 184, 0.22);
+      --shadow: 0 24px 70px rgba(15, 23, 42, 0.13);
+      --shadow2: 0 10px 32px rgba(15, 23, 42, 0.10);
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 14% -5%, rgba(96, 165, 250, 0.42), transparent 34%),
+        radial-gradient(circle at 92% 2%, rgba(249, 115, 22, 0.22), transparent 30%),
+        radial-gradient(circle at 50% 56%, rgba(124, 58, 237, 0.12), transparent 42%),
+        linear-gradient(180deg, #f8fbff 0%, #f6f7fb 44%, #eef2ff 100%);
+      line-height: 1.78;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.22) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.18), transparent 50%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button { -webkit-user-select: none; user-select: none; }
+
+    .read-progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 200;
+      background: transparent;
+    }
+    .read-progress span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #f97316);
+      box-shadow: 0 0 18px rgba(37, 99, 235, 0.32);
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: var(--safe-top) 0 0;
+      z-index: 120;
+      background: rgba(247, 248, 252, 0.76);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      backdrop-filter: blur(26px) saturate(1.55);
+      -webkit-backdrop-filter: blur(26px) saturate(1.55);
+      box-shadow: 0 10px 34px rgba(15, 23, 42, 0.08);
+    }
+    .topbar-inner {
+      width: min(100%, 920px);
+      height: 60px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 14px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      color: inherit;
+      text-align: left;
+    }
+    .app-icon {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 1000;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #0f172a, #2563eb 52%, #7c3aed);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+    }
+    .brand-title { min-width: 0; }
+    .brand-title strong {
+      display: block;
+      line-height: 1.1;
+      font-size: 16px;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand-title span {
+      display: block;
+      margin-top: 2px;
+      color: var(--text3);
+      font-size: 12px;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .version-pill {
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 12px 26px rgba(37, 99, 235, 0.18);
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .version-pill span:last-child { color: #fff; }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+    }
+    .version-pill.has-update .status-dot {
+      background: var(--orange);
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+    }
+
+    .app-shell {
+      width: min(100%, 920px);
+      margin: 0 auto;
+      padding: calc(var(--safe-top) + 70px) 14px calc(var(--safe-bottom) + 92px);
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin: 6px 0 14px;
+      padding: 26px 20px;
+      border-radius: 34px;
+      color: white;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255,255,255,0.28), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(249,115,22,0.40), transparent 32%),
+        linear-gradient(135deg, #0f172a 0%, #1d4ed8 50%, #7c3aed 100%);
+      box-shadow: var(--shadow);
+      min-height: 252px;
+    }
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      gap: 18px;
+      align-items: center;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      right: -110px;
+      top: -90px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.16);
+    }
+    .hero::after {
+      content: "C";
+      position: absolute;
+      right: 18px;
+      bottom: -44px;
+      font-size: 190px;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -14px;
+      color: rgba(255,255,255,0.08);
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-lab {
+      position: relative;
+      min-height: 226px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)),
+        rgba(15,23,42,0.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 24px 60px rgba(15,23,42,0.20);
+      overflow: hidden;
+      backdrop-filter: blur(24px) saturate(1.25);
+      -webkit-backdrop-filter: blur(24px) saturate(1.25);
+    }
+    .hero-lab::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity: 0.28;
+    }
+    .hero-code-card {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 18px;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(2, 6, 23, 0.72);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 18px 36px rgba(2,6,23,0.24);
+      animation: floatY 5.6s ease-in-out infinite;
+    }
+    .hero-code-card .codebar { height: 32px; margin: -12px -12px 10px; border-radius: 20px 20px 0 0; }
+    .hero-lines {
+      display: grid;
+      gap: 7px;
+      color: #dbeafe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .hero-lines span:nth-child(2) { color: #86efac; }
+    .hero-lines span:nth-child(3) { color: #fdba74; }
+    .orbital {
+      position: absolute;
+      width: 86px;
+      height: 86px;
+      right: 22px;
+      bottom: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.22);
+      animation: spinSlow 13s linear infinite;
+    }
+    .orbital::before,
+    .orbital::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f97316;
+      box-shadow: 0 0 20px rgba(249,115,22,0.55);
+    }
+    .orbital::before { left: 4px; top: 10px; }
+    .orbital::after { right: 6px; bottom: 8px; background: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.50); }
+    .hero-chip {
+      position: absolute;
+      left: 22px;
+      bottom: 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .hero-chip i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34,197,94,0.14);
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(34px, 10.2vw, 62px);
+      line-height: 1.02;
+      letter-spacing: -1.8px;
+    }
+    .hero p {
+      margin: 0;
+      max-width: 680px;
+      color: rgba(255,255,255,0.84);
+      font-size: 16px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .ios-button {
+      border: 0;
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: 1000;
+      font-size: 14px;
+      transition: transform 0.14s ease;
+    }
+    .ios-button:active { transform: scale(0.98); }
+    .ios-button.primary { color: #0f172a; background: rgba(255,255,255,0.92); }
+    .ios-button.ghost { color: white; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.20); }
+    .ios-button.blue { color: white; background: linear-gradient(135deg, #2563eb, #7c3aed); }
+    .ios-button.light { color: #1d4ed8; background: #eff6ff; }
+
+    .section-card {
+      position: relative;
+      margin: 14px 0;
+      padding: 20px 16px;
+      border-radius: 32px;
+      background: var(--card-strong);
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(22px) saturate(1.45);
+      -webkit-backdrop-filter: blur(22px) saturate(1.45);
+    }
+    .section-head {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+    .lesson-num {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: white;
+      font-weight: 1000;
+      background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.20);
+    }
+    h2 {
+      margin: 0;
+      font-size: clamp(24px, 6.4vw, 36px);
+      line-height: 1.18;
+      letter-spacing: -0.7px;
+    }
+    h3 {
+      margin: 24px 0 9px;
+      font-size: 20px;
+      line-height: 1.3;
+      letter-spacing: -0.2px;
+    }
+    h4 { margin: 18px 0 7px; font-size: 16px; }
+    p { margin: 10px 0; }
+    .lead { color: var(--text2); font-size: 16px; margin-top: 8px; }
+    .small { color: var(--text3); font-size: 13px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 1000;
+      color: #1d4ed8;
+      background: rgba(219, 234, 254, 0.8);
+      box-shadow: inset 0 0 0 1px rgba(37,99,235,0.08);
+    }
+    .callout {
+      margin: 14px 0;
+      padding: 14px 15px;
+      border-radius: 22px;
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.20);
+    }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .callout.blue { background: rgba(239, 246, 255, 0.9); color: #1e3a8a; }
+    .callout.orange { background: rgba(255, 247, 237, 0.9); color: #7c2d12; }
+    .callout.green { background: rgba(240, 253, 244, 0.92); color: #14532d; }
+    .callout.red { background: rgba(254, 242, 242, 0.92); color: #7f1d1d; }
+
+    .step-list {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0;
+      counter-reset: steps;
+    }
+    .step {
+      counter-increment: steps;
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px;
+      border-radius: 20px;
+      background: rgba(248,250,252,0.78);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .step::before {
+      content: counter(steps);
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(219,234,254,0.9);
+      color: #1d4ed8;
+      font-weight: 1000;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .concept {
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(248,250,252,0.78);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .concept b { display: block; margin-bottom: 4px; }
+
+    .visual-lab {
+      position: relative;
+      overflow: hidden;
+      margin: 16px 0;
+      padding: 16px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 8% 6%, rgba(34,197,94,0.16), transparent 28%),
+        radial-gradient(circle at 86% 0%, rgba(249,115,22,0.16), transparent 30%),
+        rgba(255,255,255,0.72);
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 18px 44px rgba(15,23,42,0.10);
+    }
+    .visual-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 1000;
+    }
+    .visual-title span {
+      color: var(--text3);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .flow-graph {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .flow-node {
+      position: relative;
+      padding: 13px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .flow-node b { display: block; margin-bottom: 3px; }
+    .flow-node.accent { color: #1e3a8a; background: rgba(219,234,254,0.82); }
+    .memory-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .mem-cell {
+      min-height: 64px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      padding: 8px;
+      border-radius: 18px;
+      color: #0f172a;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(148,163,184,0.18);
+      text-align: center;
+      font-weight: 1000;
+      animation: softPulse 4.2s ease-in-out infinite;
+    }
+    .mem-cell small { color: var(--text3); font-size: 11px; font-weight: 900; }
+    .mem-cell:nth-child(2) { animation-delay: 0.4s; }
+    .mem-cell:nth-child(3) { animation-delay: 0.8s; }
+    .mem-cell:nth-child(4) { animation-delay: 1.2s; }
+    .type-orbit {
+      position: relative;
+      min-height: 170px;
+      display: grid;
+      place-items: center;
+    }
+    .type-core {
+      width: 86px;
+      height: 86px;
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #2563eb);
+      font-weight: 1000;
+      box-shadow: 0 20px 45px rgba(37,99,235,0.22);
+    }
+    .type-chip {
+      position: absolute;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(148,163,184,0.18);
+      font-size: 12px;
+      font-weight: 1000;
+    }
+    .type-chip:nth-child(2) { top: 8px; left: 10%; }
+    .type-chip:nth-child(3) { top: 36px; right: 8%; }
+    .type-chip:nth-child(4) { bottom: 12px; left: 22%; }
+    .trace-panel {
+      display: grid;
+      gap: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    .trace-row {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 10px;
+      border-radius: 16px;
+      background: rgba(15,23,42,0.88);
+      color: #dbeafe;
+    }
+    .trace-row b {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: rgba(37,99,235,0.42);
+      color: white;
+    }
+    .code-gallery {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .mini-code {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      background: #0b1020;
+      border: 1px solid rgba(15,23,42,0.28);
+      box-shadow: 0 16px 36px rgba(15,23,42,0.14);
+    }
+    .mini-code h4 {
+      margin: 0;
+      padding: 10px 12px;
+      color: #cbd5e1;
+      background: rgba(17,24,39,0.95);
+      font-size: 12px;
+    }
+    .mini-code .codebar {
+      height: 38px;
+      position: relative;
+      z-index: 1;
+    }
+    .code-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: #bfdbfe;
+      background: rgba(37,99,235,0.20);
+      border: 1px solid rgba(147,197,253,0.18);
+      font-size: 11px;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+    .mini-code pre { padding: 12px; font-size: 12.5px; }
+    .codebox::after,
+    .mini-code::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.055) 42%, transparent 62%);
+      transform: translateX(-120%);
+      animation: sheen 8s ease-in-out infinite;
+    }
+    .code-output {
+      margin: 0 12px 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      color: #bbf7d0;
+      background: rgba(22, 101, 52, 0.18);
+      border: 1px solid rgba(34,197,94,0.18);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    .sparkline {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+      align-items: end;
+      height: 86px;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(15,23,42,0.88);
+    }
+    .sparkline i {
+      display: block;
+      border-radius: 999px 999px 4px 4px;
+      background: linear-gradient(180deg, #60a5fa, #22c55e);
+      animation: barDance 3.6s ease-in-out infinite;
+    }
+    .sparkline i:nth-child(2n) { animation-delay: 0.3s; background: linear-gradient(180deg, #f97316, #fde68a); }
+    .sparkline i:nth-child(3n) { animation-delay: 0.6s; }
+
+    .gentle-guide {
+      overflow: hidden;
+      margin: 16px 0;
+      border-radius: 30px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.86), rgba(239,246,255,0.72)),
+        radial-gradient(circle at 90% 12%, rgba(34,197,94,0.14), transparent 28%);
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 20px 54px rgba(15,23,42,0.11);
+    }
+    .guide-hero {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+    }
+    .guide-picture {
+      position: relative;
+      min-height: 150px;
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(15,23,42,0.92), rgba(37,99,235,0.74)),
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.22), transparent 26%);
+    }
+    .guide-picture::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background:
+        linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+      animation: floatY 6s ease-in-out infinite;
+    }
+    .guide-picture::after {
+      content: attr(data-symbol);
+      position: absolute;
+      right: 20px;
+      bottom: 4px;
+      color: rgba(255,255,255,0.16);
+      font-size: 92px;
+      font-weight: 1000;
+      line-height: 1;
+    }
+    .guide-copy h3 { margin-top: 0; }
+    .guide-copy p { color: var(--text2); }
+    .guide-steps {
+      display: grid;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+    .guide-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.70);
+      border: 1px solid rgba(148,163,184,0.16);
+    }
+    .guide-step b {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+    .guide-step span {
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .codebox {
+      position: relative;
+      overflow: hidden;
+      margin: 14px 0;
+      border-radius: 22px;
+      background: #0b1020;
+      border: 1px solid rgba(15, 23, 42, 0.28);
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16);
+    }
+    .codebar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      height: 40px;
+      padding: 0 10px 0 14px;
+      background: rgba(17,24,39,0.95);
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .dotline { display: inline-flex; gap: 6px; margin-right: 8px; vertical-align: middle; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #ffbd2e; }
+    .dot.g { background: #28c840; }
+    .copy {
+      border: 0;
+      padding: 6px 9px;
+      border-radius: 10px;
+      color: #e5e7eb;
+      background: rgba(255,255,255,0.10);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    pre {
+      position: relative;
+      margin: 0;
+      padding: 15px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      color: #dbeafe;
+      font-size: 13.5px;
+      line-height: 1.68;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .codebox pre,
+    .mini-code pre {
+      border-left: 3px solid rgba(96,165,250,0.56);
+    }
+    code, .kbd {
+      padding: 2px 6px;
+      border-radius: 8px;
+      color: #0f172a;
+      background: rgba(241,245,249,0.95);
+      border: 1px solid rgba(148,163,184,0.24);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.92em;
+    }
+    .kw { color: #93c5fd; }
+    .fn { color: #f0abfc; }
+    .str { color: #86efac; }
+    .num { color: #fdba74; }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 14px 0;
+      border-radius: 20px;
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(255,255,255,0.62);
+    }
+    table { width: 100%; min-width: 560px; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid rgba(148,163,184,0.18); text-align: left; vertical-align: top; font-size: 14px; }
+    th { color: #1e3a8a; background: rgba(239,246,255,0.86); }
+    tr:last-child td { border-bottom: 0; }
+
+    .lesson-map, .course-dashboard { display: grid; gap: 10px; margin: 14px 0; }
+    .map-item, .course-card {
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 11px;
+      align-items: center;
+      min-height: 74px;
+      padding: 12px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .map-item { grid-template-columns: 42px 1fr; border: 0; }
+    .bubble, .course-index {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: white;
+      font-weight: 1000;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+    .map-item strong, .course-title strong { display: block; line-height: 1.35; }
+    .map-item span, .course-title span { color: var(--text3); font-size: 13px; line-height: 1.35; }
+    .course-meta {
+      margin-top: 6px;
+      color: var(--text3);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .course-status {
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: #64748b;
+      background: rgba(241,245,249,0.92);
+      font-size: 12px;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+    .course-status.done { color: #166534; background: rgba(220,252,231,0.94); }
+    .course-status.started { color: #9a3412; background: rgba(255,237,213,0.94); }
+
+    .course-actions {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    .mini-action {
+      border: 0;
+      min-height: 42px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: 1000;
+      color: #1d4ed8;
+      background: rgba(239,246,255,0.92);
+    }
+    .mini-action.test { color: white; background: linear-gradient(135deg, #2563eb, #7c3aed); }
+    .mini-action.secondary { color: #475467; background: rgba(241,245,249,0.92); }
+
+    .progress-card {
+      margin: 14px 0;
+      padding: 15px;
+      border-radius: 24px;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
+      box-shadow: 0 18px 42px rgba(37,99,235,0.18);
+    }
+    .progress-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 1000; }
+    .progressbar { height: 10px; margin-top: 11px; border-radius: 999px; overflow: hidden; background: rgba(255,255,255,0.18); }
+    .progressfill { height: 100%; width: 0%; background: linear-gradient(90deg, #ffffff, #fed7aa); border-radius: 999px; }
+
+    .test-question {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(248,250,252,0.86);
+      border: 1px solid rgba(148,163,184,0.18);
+    }
+    .test-question strong { display: block; margin-bottom: 8px; }
+    .test-option {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 9px 0;
+      color: var(--text2);
+      font-size: 14px;
+    }
+    .test-option input { margin-top: 5px; accent-color: var(--blue); }
+
+    .practice-card {
+      margin: 16px 0;
+      padding: 15px;
+      border-radius: 24px;
+      background: rgba(239, 246, 255, 0.84);
+      border: 1px solid rgba(37, 99, 235, 0.14);
+    }
+    .practice-card.done { background: rgba(240, 253, 244, 0.88); border-color: rgba(22, 163, 74, 0.18); }
+    .practice-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 1000;
+    }
+    .practice-status {
+      flex: 0 0 auto;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 1000;
+    }
+    .practice-card.done .practice-status { color: #166534; }
+    .practice-code {
+      display: block;
+      margin: 10px 0;
+      padding: 11px 12px;
+      border-radius: 16px;
+      color: #dbeafe;
+      background: #0b1020;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .practice-options {
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+    .practice-option {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      border-radius: 15px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      color: var(--text);
+      background: rgba(255,255,255,0.88);
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .practice-option input {
+      margin-top: 5px;
+      accent-color: var(--blue);
+    }
+    .practice-result {
+      min-height: 20px;
+      margin-top: 8px;
+      color: var(--text3);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .bottom-tabs {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      z-index: 100;
+      width: min(100%, 920px);
+      padding: 7px 14px calc(var(--safe-bottom) + 2px);
+      pointer-events: none;
+    }
+    .tabs-inner {
+      pointer-events: auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 8px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(255,255,255,0.78);
+      backdrop-filter: blur(30px) saturate(1.6);
+      -webkit-backdrop-filter: blur(30px) saturate(1.6);
+      box-shadow: 0 18px 54px rgba(15,23,42,0.16);
+    }
+    .tab {
+      border: 0;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      min-height: 50px;
+      border-radius: 20px;
+      background: transparent;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 1000;
+      cursor: pointer;
+    }
+    .tab-icon {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      stroke-width: 2.3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+    .tab.active { color: #1d4ed8; background: rgba(239,246,255,0.86); }
+
+    .sheet-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 220;
+      display: none;
+      background: rgba(15,23,42,0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .sheet-mask.show { display: block; }
+    .sheet {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%) translateY(104%);
+      z-index: 230;
+      width: min(100%, 920px);
+      padding: 10px 14px calc(var(--safe-bottom) + 14px);
+      transition: transform 0.24s ease;
+    }
+    .sheet.show { transform: translateX(-50%) translateY(0); }
+    .sheet-panel {
+      max-height: min(82vh, 760px);
+      overflow: auto;
+      padding: 12px;
+      border-radius: 34px 34px 28px 28px;
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(255,255,255,0.84);
+      box-shadow: 0 -22px 70px rgba(15,23,42,0.20);
+      backdrop-filter: blur(30px) saturate(1.7);
+      -webkit-backdrop-filter: blur(30px) saturate(1.7);
+    }
+    .sheet-handle { width: 44px; height: 5px; margin: 4px auto 14px; border-radius: 999px; background: rgba(100,116,139,0.35); }
+    .sheet-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 4px 10px; }
+    .sheet-title h3 { margin: 0; font-size: 21px; }
+    .close-btn { border: 0; width: 34px; height: 34px; border-radius: 50%; background: rgba(241,245,249,0.9); color: #334155; cursor: pointer; font-weight: 1000; }
+    .info-list { display: grid; gap: 8px; margin: 12px 0; }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(248,250,252,0.80);
+      border: 1px solid rgba(148,163,184,0.18);
+      font-size: 14px;
+    }
+    .info-row span:first-child { color: var(--text3); }
+    .info-row span:last-child { font-weight: 1000; text-align: right; }
+    .release-notes { margin: 12px 0; padding-left: 20px; color: var(--text2); }
+    .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: calc(var(--safe-top) + 82px);
+      transform: translateX(-50%) translateY(-14px);
+      z-index: 260;
+      opacity: 0;
+      pointer-events: none;
+      width: min(calc(100% - 28px), 620px);
+      padding: 12px 14px;
+      border-radius: 18px;
+      color: #0f172a;
+      background: rgba(255,255,255,0.90);
+      border: 1px solid rgba(255,255,255,0.78);
+      backdrop-filter: blur(24px) saturate(1.5);
+      -webkit-backdrop-filter: blur(24px) saturate(1.5);
+      box-shadow: 0 18px 50px rgba(15,23,42,0.15);
+      font-weight: 900;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .footer { padding: 26px 8px 6px; text-align: center; color: var(--text3); font-size: 13px; }
+
+    @media (min-width: 720px) {
+      .app-shell { padding-left: 22px; padding-right: 22px; }
+      .hero { padding: 42px; }
+      .hero-grid { grid-template-columns: minmax(0, 1.05fr) minmax(290px, 0.95fr); }
+      .section-card { padding: 30px; }
+      .concept-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .flow-graph { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .code-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .guide-hero { grid-template-columns: 0.85fr 1.15fr; align-items: center; }
+      .guide-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero-actions .ios-button { min-width: 170px; }
+      pre { font-size: 14.5px; }
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        color-scheme: light;
+        --text: #101828;
+        --text2: #475467;
+        --text3: #667085;
+        --card: rgba(255, 255, 255, 0.78);
+        --card-strong: rgba(255, 255, 255, 0.93);
+        --line: rgba(148, 163, 184, 0.22);
+        --shadow: 0 24px 70px rgba(15, 23, 42, 0.13);
+        --shadow2: 0 10px 32px rgba(15, 23, 42, 0.10);
+      }
+      body {
+        background:
+          radial-gradient(circle at 14% -5%, rgba(96, 165, 250, 0.42), transparent 34%),
+          radial-gradient(circle at 92% 2%, rgba(249, 115, 22, 0.22), transparent 30%),
+          radial-gradient(circle at 50% 56%, rgba(124, 58, 237, 0.12), transparent 42%),
+          linear-gradient(180deg, #f8fbff 0%, #f6f7fb 44%, #eef2ff 100%);
+      }
+      .topbar {
+        background: rgba(247, 248, 252, 0.78);
+        border-color: rgba(148, 163, 184, 0.18);
+      }
+      .tabs-inner, .sheet-panel, .toast {
+        background: rgba(255,255,255,0.72);
+        border-color: rgba(255,255,255,0.78);
+      }
+      .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option, .visual-lab, .flow-node, .mem-cell, .type-chip, .gentle-guide, .guide-step {
+        background: rgba(255,255,255,0.72);
+        border-color: rgba(148,163,184,0.18);
+      }
+      .version-pill {
+        color: #fff;
+        background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
+      }
+      .version-pill span:last-child { color: #fff; }
+      code, .kbd {
+        color: #0f172a;
+        background: rgba(241,245,249,0.95);
+        border-color: rgba(148,163,184,0.24);
+      }
+      .tab.active { background: rgba(239,246,255,0.86); color: #1d4ed8; }
+      .close-btn { background: rgba(241,245,249,0.9); color: #334155; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --card: rgba(15, 23, 42, 0.62);
+        --card-strong: rgba(15, 23, 42, 0.78);
+        --text: #f8fafc;
+        --text2: #cbd5e1;
+        --text3: #94a3b8;
+      }
+      body {
+        background:
+          radial-gradient(circle at 16% -5%, rgba(37, 99, 235, 0.34), transparent 34%),
+          radial-gradient(circle at 88% 2%, rgba(249, 115, 22, 0.14), transparent 28%),
+          linear-gradient(180deg, #020617 0%, #0b1020 60%, #111827 100%);
+      }
+      .topbar { background: rgba(15,23,42,0.78); border-color: rgba(255,255,255,0.10); }
+      .topbar-inner { background: transparent; }
+      .tabs-inner, .sheet-panel, .toast { background: rgba(15,23,42,0.72); border-color: rgba(255,255,255,0.10); }
+      .concept, .step, .map-item, .course-card, .callout, .info-row, .test-question, .practice-card, .practice-option, .visual-lab, .flow-node, .mem-cell, .type-chip, .gentle-guide, .guide-step { background: rgba(15,23,42,0.60); border-color: rgba(255,255,255,0.10); }
+      .version-pill {
+        color: #fff;
+        background: linear-gradient(135deg, #0f172a, #2563eb 58%, #7c3aed);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16), 0 14px 30px rgba(37,99,235,0.24);
+      }
+      .version-pill span:last-child { color: #fff; }
+      code, .kbd { color: #e2e8f0; background: rgba(30,41,59,0.95); border-color: rgba(255,255,255,0.10); }
+      .tab.active { background: rgba(37,99,235,0.18); color: #93c5fd; }
+      .close-btn { background: rgba(30,41,59,0.9); color: #e2e8f0; }
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes softPulse {
+      0%, 100% { transform: translateY(0); box-shadow: 0 0 0 rgba(37,99,235,0); }
+      50% { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(37,99,235,0.10); }
+    }
+    @keyframes barDance {
+      0%, 100% { transform: scaleY(0.72); opacity: 0.82; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }
+    @keyframes sheen {
+      0%, 18% { transform: translateX(-120%); }
+      34%, 100% { transform: translateX(120%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="read-progress" aria-hidden="true"><span id="readProgress"></span></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="brand" type="button" data-tab="home">
+        <div class="app-icon">C</div>
+        <div class="brand-title">
+          <strong>C 语言入门</strong>
+          <span id="subtitleStatus">循序渐进 · 零基础</span>
+        </div>
+      </button>
+      <button class="version-pill" id="versionButton" type="button" aria-label="打开版本管理">
+        <span class="status-dot"></span>
+        <span id="versionText">v2.5.1</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="page active" id="page-home" data-page="home">
+      <div class="hero">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="eyebrow">像 App 一样学 · 不背术语 · 测试过关</div>
+            <h1>从让电脑说一句话开始</h1>
+            <p>这份教程不会一上来扔给你一堆“变量、数组、结构体、指针”。每一课只讲一个核心点，学完可以测试，通过后才算掌握。</p>
+            <div class="hero-actions">
+              <button class="ios-button primary" type="button" data-action="choose-course">开始学习</button>
+            </div>
+          </div>
+          <div class="hero-lab" aria-hidden="true">
+            <div class="hero-code-card">
+              <div class="codebar"><span><span class="dotline"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i></span>learn.c</span></div>
+              <div class="hero-lines">
+                <span>#include &lt;stdio.h&gt;</span>
+                <span>printf("Hello, C\\n");</span>
+                <span>return 0;</span>
+              </div>
+            </div>
+            <div class="orbital"></div>
+            <div class="hero-chip"><i></i>编译思维在线</div>
+          </div>
+        </div>
+      </div>
+
+      <section class="section-card">
+        <div class="section-head">
+          <div class="lesson-num">C</div>
+          <div>
+            <h2>代码会越来越有形</h2>
+            <p class="lead">从输出、变量到数组和指针，每一步都会配合图形、轨迹和代码片段一起理解。</p>
+          </div>
+        </div>
+        <div class="visual-lab">
+          <div class="visual-title">学习能量流 <span>concept → code → test</span></div>
+          <div class="sparkline" aria-hidden="true">
+            <i style="height:42%"></i><i style="height:68%"></i><i style="height:36%"></i><i style="height:82%"></i><i style="height:58%"></i>
+            <i style="height:74%"></i><i style="height:48%"></i><i style="height:92%"></i><i style="height:62%"></i><i style="height:78%"></i>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <div class="section-head">
+          <div class="lesson-num">图</div>
+          <div>
+            <h2>学习路线：先会走，再学跑</h2>
+            <p class="lead">每一课都能直接学，上一课没通过也不影响下一课。</p>
+          </div>
+        </div>
+        <div class="lesson-map" id="homeLessonMap"></div>
+      </section>
+    </section>
+
+    <section class="page" id="page-course" data-page="course">
+      <section class="section-card" id="lessonContainer"></section>
+    </section>
+
+    <section class="page" id="page-mine" data-page="mine">
+      <section class="section-card">
+        <div class="section-head">
+          <div class="lesson-num">课</div>
+          <div>
+            <h2>我的课程</h2>
+            <p class="lead">点击任意课程即可学习；学完做测试，达到本课及格线后会标记为已掌握。</p>
+          </div>
+        </div>
+        <div class="progress-card">
+          <div class="progress-meta"><span>已掌握课程</span><span id="progressText">0%</span></div>
+          <div class="progressbar"><div class="progressfill" id="progressFill"></div></div>
+        </div>
+        <div class="course-dashboard" id="courseDashboard"></div>
+      </section>
+      <footer class="footer">iOS 风格 · 渐进式课程 · 测试通过才算掌握</footer>
+    </section>
+  </main>
+
+  <nav class="bottom-tabs" aria-label="底部导航">
+    <div class="tabs-inner">
+      <button class="tab active" type="button" data-tab="home" aria-label="首页">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg>
+        <span>首页</span>
+      </button>
+      <button class="tab" type="button" data-tab="course" aria-label="学习">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a4 4 0 0 1 4 4v12H8a3 3 0 0 0-3 3V4Z"></path><path d="M5 20a3 3 0 0 1 3-3h11"></path><path d="M9 8h6"></path><path d="M9 12h4"></path></svg>
+        <span>学习</span>
+      </button>
+      <button class="tab" type="button" data-tab="mine" aria-label="我的">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path><path d="M4 21a8 8 0 0 1 16 0"></path><path d="m15 17 1.4 1.4L20 15"></path></svg>
+        <span>我的</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="sheet-mask" id="sheetMask"></div>
+
+  <aside class="sheet" id="versionSheet" aria-label="版本管理面板">
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title"><h3>版本管理</h3><button class="close-btn" id="closeVersionSheet" type="button">×</button></div>
+      <div class="info-list">
+        <div class="info-row"><span>当前本地版本</span><span id="localVersion">v2.5.1</span></div>
+        <div class="info-row"><span>GitHub 最新版本</span><span id="remoteVersion">未检查</span></div>
+        <div class="info-row"><span>页面更新时间</span><span id="buildTime">2026-04-28 21:08</span></div>
+        <div class="info-row"><span>上次检查时间</span><span id="lastCheckTime">未检查</span></div>
+        <div class="info-row"><span>更新状态</span><span id="updateStatus">准备检查</span></div>
+      </div>
+      <h4>本版更新</h4>
+      <ul class="release-notes">
+        <li>课程增强区的小示例统一升级为高级代码窗。</li>
+        <li>“人话版本 / 代码思维版本”等示例现在也有顶部栏、圆点和徽标。</li>
+        <li>小示例代码块支持复制。</li>
+        <li>继续保留现有视觉模型、动画和零基础讲解卡。</li>
+      </ul>
+      <div class="sheet-actions">
+        <button class="ios-button light" id="manualCheck" type="button">检查更新</button>
+        <button class="ios-button blue" id="reloadLatest" type="button">强制刷新</button>
+      </div>
+      <p class="small">提示：更新检测通过读取 GitHub 上最新 index.html 内的 APP_META.version 完成。</p>
+    </div>
+  </aside>
+
+  <aside class="sheet" id="testSheet" aria-label="课程测试面板">
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title"><h3 id="testTitle">课程测试</h3><button class="close-btn" id="closeTestSheet" type="button">×</button></div>
+      <p class="small" id="testDesc">完成本课测试并达到及格线后，会标记为已掌握。</p>
+      <div id="testBody"></div>
+      <div class="sheet-actions">
+        <button class="ios-button light" id="cancelTest" type="button">稍后再做</button>
+        <button class="ios-button blue" id="submitTest" type="button">提交测试</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast">提示</div>
+
+  <script>
+    const APP_META = {
+      version: '2.5.1',
+      buildTime: '2026-04-28 21:08',
+      autoUpdate: true
+    };
+
+    const courses = [
+      {
+        id: 'lesson1', no: 1, title: '程序是什么？', desc: '先理解程序是写给电脑的说明书。',
+        content: `
+          <span class="pill">先建立感觉</span>
+          <h3>电脑很快，但它不会猜</h3>
+          <p>你对人说“帮我煮个泡面”，人可能知道大概怎么做。电脑不行。电脑需要你把步骤写得非常明确。</p>
+          <div class="step-list"><div class="step"><div><strong>拿锅</strong><br>如果你没说拿锅，电脑不会自动脑补。</div></div><div class="step"><div><strong>倒水</strong><br>如果你没说倒多少水，它也不会猜。</div></div><div class="step"><div><strong>加热</strong><br>如果你没说什么时候停，它可能一直煮。</div></div></div>
+          <div class="callout blue"><strong>一句话记住：</strong>程序就是一份写给电脑的精确操作说明书。</div>
+          <h3>代码是什么？</h3><p>代码就是这份说明书的文字版本。C 语言代码就是用 C 的规则写出来的说明书。</p>
+        `,
+        practice: {
+          title: '补完整一句定义',
+          prompt: '把空白补完整：程序是一份写给电脑的____。',
+          code: '程序 = 写给电脑的 ____',
+          answer: ['精确操作说明书', '精确说明书', '操作说明书'],
+          options: ['精确操作说明书', '随机文件', '电脑壁纸']
+        },
+        test: [
+          { q: '程序最像什么？', options: ['一份精确说明书', '一张图片', '一个随机文件'], answer: 0 },
+          { q: '电脑会自动猜你的意图吗？', options: ['会', '不会，必须写清楚', '只在晚上会'], answer: 1 },
+          { q: '代码是什么？', options: ['程序说明书的文字形式', '只能给人看的文章', '浏览器收藏夹'], answer: 0 },
+          { q: '写程序时，步骤应该怎样？', options: ['尽量明确', '越模糊越好', '只写标题'], answer: 0 },
+          { q: 'C 语言代码主要是写给谁执行的？', options: ['电脑', '纸质笔记本', '图片软件'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson2', no: 2, title: '让电脑说一句话', desc: '认识 printf、分号和换行。',
+        content: `
+          <p class="lead">这一节只做一件事：让屏幕显示一句话。不要急着理解所有细节。</p>
+          <div class="codebox"><div class="codebar"><span><span class="dotline"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i></span>hello.c</span><button class="copy">复制</button></div><pre><span class="kw">#include</span> &lt;stdio.h&gt;\n\n<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {\n    <span class="fn">printf</span>(<span class="str">"你好，C 语言！\\n"</span>);\n    <span class="kw">return</span> <span class="num">0</span>;\n}</pre></div>
+          <h3>先只看最重要的一行</h3><p><code>printf("你好，C 语言！\\n");</code> 的意思是：把双引号里的内容显示出来。</p>
+          <div class="concept-grid"><div class="concept"><b><code>printf</code></b>先理解成“打印到屏幕”。</div><div class="concept"><b><code>"你好，C 语言！"</code></b>双引号里面是要显示的文字。</div><div class="concept"><b><code>\\n</code></b>表示换行。</div><div class="concept"><b><code>;</code></b>像一句话的句号。</div></div>
+        `,
+        practice: {
+          title: '改一句输出内容',
+          prompt: '把空白处补成要显示的文字。',
+          code: 'printf("____\\n");',
+          answer: ['你好，C 语言！', '你好，C语言！', '你好，C 语言', '你好，C语言'],
+          options: ['你好，C 语言！', 'return 0', '#include']
+        },
+        test: [
+          { q: 'printf 主要用来做什么？', options: ['输出内容', '删除文件', '连接网络'], answer: 0 },
+          { q: '\\n 表示什么？', options: ['换行', '乘法', '结束程序'], answer: 0 },
+          { q: 'C 语言里很多语句后面要写什么？', options: ['分号 ;', '句号 。', '问号 ?'], answer: 0 },
+          { q: '要输出的文字通常放在哪里？', options: ['双引号里', '花括号外', '文件名里'], answer: 0 },
+          { q: 'printf("Hi\\n"); 运行后会怎样？', options: ['显示 Hi 并换行', '定义变量 Hi', '创建文件 Hi'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson3', no: 3, title: '为什么需要变量？', desc: '从内容会变化，引出变量。',
+        content: `
+          <h3>没有变量的时候</h3><p>如果年龄从 18 变成 19，你总不能每次手改一整句话。</p>
+          <div class="codebox"><div class="codebar"><span>使用变量</span><button class="copy">复制</button></div><pre><span class="kw">int</span> age = <span class="num">18</span>;\n<span class="fn">printf</span>(<span class="str">"我今年 %d 岁\\n"</span>, age);</pre></div>
+          <div class="callout green"><strong>人话理解：</strong><code>age</code> 是盒子的名字，<code>18</code> 是盒子里的值。后面要用年龄，就用 <code>age</code>。</div>
+          <h3><code>%d</code> 是空位</h3><p><code>%d</code> 像一个占位空格，后面的 <code>age</code> 会被填进去。</p>
+        `,
+        practice: {
+          title: '给变量放一个值',
+          prompt: '让 age 这个变量保存 18。',
+          code: 'int age = ____;',
+          answer: '18',
+          options: ['18', 'age', '%d']
+        },
+        test: [
+          { q: '变量最像什么？', options: ['有名字的数据盒子', '一张壁纸', '一个浏览器'], answer: 0 },
+          { q: 'age = 18 更接近什么？', options: ['把 18 放进 age 里', '判断 age 是否等于 18', '打印 age'], answer: 0 },
+          { q: '为什么需要变量？', options: ['数据会变化，方便复用', '为了让代码更长', '为了不能运行'], answer: 0 },
+          { q: 'printf 里的 %d 常用来放什么？', options: ['整数位置', '图片位置', '网页地址'], answer: 0 },
+          { q: 'int age = 18; 里 age 是什么？', options: ['变量名', '文件名', '函数名'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson4', no: 4, title: '为什么数据要分类型？', desc: '理解整数、小数、字符的区别。',
+        content: `
+          <h3>盒子也分用途</h3>
+          <div class="concept-grid three"><div class="concept"><b>18</b>整数，适合 <code>int</code>。</div><div class="concept"><b>1.75</b>小数，适合 <code>double</code>。</div><div class="concept"><b>'A'</b>单个字符，适合 <code>char</code>。</div></div>
+          <div class="codebox"><div class="codebar"><span>types.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> age = <span class="num">18</span>;\n<span class="kw">double</span> height = <span class="num">1.75</span>;\n<span class="kw">char</span> grade = <span class="str">'A'</span>;</pre></div>
+          <div class="callout orange"><strong>别急着背范围：</strong>刚入门先知道“放什么数据用什么类型”就够了。</div>
+        `,
+        practice: {
+          title: '选择合适的数据类型',
+          prompt: '1.75 是小数，应该用哪个类型？',
+          code: '____ height = 1.75;',
+          answer: 'double',
+          options: ['double', 'int', 'char']
+        },
+        test: [
+          { q: 'int 通常适合存什么？', options: ['整数', '一整段文章', '图片'], answer: 0 },
+          { q: 'double 通常适合存什么？', options: ['小数', '单个字符', '文件夹'], answer: 0 },
+          { q: 'char 通常适合存什么？', options: ['单个字符', '一组成绩', '网页'], answer: 0 },
+          { q: "'A' 更适合用哪种类型？", options: ['char', 'double', 'int 数组'], answer: 0 },
+          { q: '刚入门理解数据类型时，重点是什么？', options: ['什么数据放进什么盒子', '先背所有范围', '不用区分任何数据'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson5', no: 5, title: '让程序做选择', desc: '学习 if / else。',
+        content: `
+          <h3>if / else：如果……否则……</h3>
+          <div class="codebox"><div class="codebar"><span>if_else.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> score = <span class="num">75</span>;\n\n<span class="kw">if</span> (score &gt;= <span class="num">60</span>) {\n    <span class="fn">printf</span>(<span class="str">"及格\\n"</span>);\n} <span class="kw">else</span> {\n    <span class="fn">printf</span>(<span class="str">"不及格\\n"</span>);\n}</pre></div>
+          <p>翻译成人话：如果分数大于等于 60，就显示“及格”；否则显示“不及格”。</p>
+          <div class="callout red"><strong>最容易写错：</strong><code>=</code> 是赋值，<code>==</code> 才是判断相等。</div>
+        `,
+        practice: {
+          title: '补一个判断条件',
+          prompt: '分数大于等于 60 时进入 if。',
+          code: 'if (score ____ 60) {',
+          answer: '>=',
+          options: ['>=', '==', '=']
+        },
+        test: [
+          { q: 'if / else 让程序具备什么能力？', options: ['做选择', '自动变漂亮', '关闭电脑'], answer: 0 },
+          { q: '判断相等应该用什么？', options: ['=', '==', '==='], answer: 1 },
+          { q: '= 在 C 里主要表示什么？', options: ['赋值', '判断相等', '循环'], answer: 0 },
+          { q: 'else 通常表示什么？', options: ['否则', '重复', '输出'], answer: 0 },
+          { q: 'score >= 60 为真时，程序会走哪边？', options: ['if 里的代码', 'else 里的代码', '完全跳过程序'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson6', no: 6, title: '让程序重复做事', desc: '学习 for 和 while。',
+        content: `
+          <h3>for：知道重复几次时很好用</h3>
+          <div class="codebox"><div class="codebar"><span>for.c</span><button class="copy">复制</button></div><pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++) {\n    <span class="fn">printf</span>(<span class="str">"第 %d 次：我在学 C\\n"</span>, i);\n}</pre></div>
+          <div class="step-list"><div class="step"><div><strong><code>int i = 1</code></strong><br>从 1 开始数。</div></div><div class="step"><div><strong><code>i &lt;= 5</code></strong><br>只要还没超过 5，就继续。</div></div><div class="step"><div><strong><code>i++</code></strong><br>每做完一次，i 增加 1。</div></div></div>
+          <div class="callout red"><strong>死循环：</strong>如果条件永远成立，程序会一直跑。</div>
+        `,
+        practice: {
+          title: '控制循环次数',
+          prompt: '让循环从 1 跑到 5。',
+          code: 'for (int i = 1; i <= ____; i++)',
+          answer: '5',
+          options: ['5', '1', 'i++']
+        },
+        test: [
+          { q: '循环适合处理什么？', options: ['重复的事情', '只做一次的事情', '完全不用做的事情'], answer: 0 },
+          { q: 'i++ 大概表示什么？', options: ['i 增加 1', 'i 变成 0', 'i 被删除'], answer: 0 },
+          { q: '循环条件永远成立可能导致什么？', options: ['死循环', '自动通过测试', '屏幕变暗'], answer: 0 },
+          { q: 'for (int i = 1; i <= 5; i++) 大约会执行几次？', options: ['5 次', '1 次', '永远不停'], answer: 0 },
+          { q: 'while 更依赖什么来决定是否继续？', options: ['循环条件', '文件颜色', '屏幕大小'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson7', no: 7, title: '一个变量不够用怎么办？', desc: '理解数组是一排同类型盒子。',
+        content: `
+          <p>如果你有 5 个成绩，写 5 个变量很麻烦。这时可以用数组。</p>
+          <div class="codebox"><div class="codebar"><span>array.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> scores[<span class="num">5</span>] = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">70</span>, <span class="num">88</span>, <span class="num">100</span>};\n<span class="fn">printf</span>(<span class="str">"第一个成绩：%d\\n"</span>, scores[<span class="num">0</span>]);</pre></div>
+          <div class="callout orange"><strong>重点：</strong>数组下标从 0 开始。5 个元素的位置是 0、1、2、3、4。</div>
+        `,
+        practice: {
+          title: '找到第一个元素',
+          prompt: '数组第一个元素的下标是多少？',
+          code: 'scores[____]',
+          answer: '0',
+          options: ['0', '1', '5']
+        },
+        test: [
+          { q: '数组可以先理解成什么？', options: ['一排同类型盒子', '一个按钮', '一个网页地址'], answer: 0 },
+          { q: '数组下标从几开始？', options: ['0', '1', '10'], answer: 0 },
+          { q: '长度为 5 的数组，最后一个合法下标是？', options: ['5', '4', '6'], answer: 1 },
+          { q: 'scores[0] 表示什么？', options: ['第一个元素', '第零个文件', '数组长度'], answer: 0 },
+          { q: '数组里的元素通常有什么共同点？', options: ['同一种类型', '必须都是图片', '必须都不同名'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson8', no: 8, title: '重复代码太多怎么办？', desc: '理解函数是小工具。',
+        content: `
+          <p>函数就是把一段代码打包成一个小工具，想用时叫它一下。</p>
+          <div class="codebox"><div class="codebar"><span>function.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {\n    <span class="kw">return</span> a + b;\n}\n\n<span class="kw">int</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>);</pre></div>
+          <div class="callout green"><strong>人话理解：</strong>函数像一个小机器，把 3 和 5 放进去，它吐出 8。</div>
+        `,
+        practice: {
+          title: '补上返回结果',
+          prompt: '让 add 函数返回 a 和 b 的和。',
+          code: 'return a ____ b;',
+          answer: '+',
+          options: ['+', '-', 'printf']
+        },
+        test: [
+          { q: '函数可以先理解成什么？', options: ['打包好的小工具', '一个颜色', '一个文件夹图标'], answer: 0 },
+          { q: 'return 通常表示什么？', options: ['返回结果', '打印文字', '开始循环'], answer: 0 },
+          { q: '函数的好处是什么？', options: ['减少重复、方便复用', '让代码一定报错', '让电脑变慢'], answer: 0 },
+          { q: 'add(3, 5) 里的 3 和 5 是什么？', options: ['传给函数的数据', '函数名字', '文件路径'], answer: 0 },
+          { q: '把重复代码做成函数，通常会让代码怎样？', options: ['更容易复用', '只能运行一次', '不能写参数'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson9', no: 9, title: '一组信息想放在一起怎么办？', desc: '理解结构体是数据打包。',
+        content: `
+          <p>一个学生不只有一个成绩，还可能有姓名、年龄、分数。结构体可以把它们打包。</p>
+          <div class="codebox"><div class="codebar"><span>struct.c</span><button class="copy">复制</button></div><pre><span class="kw">struct</span> Student {\n    <span class="kw">char</span> name[<span class="num">20</span>];\n    <span class="kw">int</span> age;\n    <span class="kw">double</span> score;\n};\n\n<span class="kw">struct</span> Student s1 = {<span class="str">"Tom"</span>, <span class="num">18</span>, <span class="num">92.5</span>};</pre></div>
+          <p><code>s1.age</code> 的意思就是：<code>s1</code> 这个学生里面的 <code>age</code>。</p>
+        `,
+        practice: {
+          title: '访问结构体成员',
+          prompt: '要读取 s1 里的年龄，点号后面应该写什么？',
+          code: 's1.____',
+          answer: 'age',
+          options: ['age', 'Student', 'printf']
+        },
+        test: [
+          { q: '结构体适合做什么？', options: ['把一组相关信息打包', '只存一个整数', '专门换行'], answer: 0 },
+          { q: 's1.age 表示什么？', options: ['s1 里面的 age 成员', '把 s1 删除', '判断 s1 是否存在'], answer: 0 },
+          { q: '描述一个学生时，结构体可以放哪些信息？', options: ['姓名、年龄、分数', '只能放一个字符', '只能放网页链接'], answer: 0 },
+          { q: 'struct Student 更像在定义什么？', options: ['一种学生信息模板', '一个循环次数', '一个换行符'], answer: 0 },
+          { q: '访问结构体成员常用哪个符号？', options: ['点号 .', '加号 +', '百分号 %'], answer: 0 }
+        ]
+      },
+      {
+        id: 'lesson10', no: 10, title: '最后再碰指针', desc: '理解地址和指针的第一层含义。',
+        content: `
+          <p>你可以把内存想象成很多小房间。变量是房间里的东西，地址是房间门牌号，指针是一张写着门牌号的纸条。</p>
+          <div class="concept-grid three"><div class="concept"><b>变量</b>房间里的东西。</div><div class="concept"><b>地址</b>房间的门牌号。</div><div class="concept"><b>指针</b>写着门牌号的纸条。</div></div>
+          <div class="codebox"><div class="codebar"><span>pointer.c</span><button class="copy">复制</button></div><pre><span class="kw">int</span> x = <span class="num">10</span>;\n<span class="kw">int</span> *p = &x;\n\n<span class="fn">printf</span>(<span class="str">"x = %d\\n"</span>, x);\n<span class="fn">printf</span>(<span class="str">"*p = %d\\n"</span>, *p);</pre></div>
+          <div class="callout blue"><strong>先这样记：</strong><code>&x</code> 是 x 的地址；<code>p</code> 存着地址；<code>*p</code> 是顺着地址找到值。</div>
+        `,
+        practice: {
+          title: '把地址交给指针',
+          prompt: 'p 要保存 x 的地址，等号右边应该写什么？',
+          code: 'int *p = ____;',
+          answer: '&x',
+          options: ['&x', '*x', 'x++']
+        },
+        test: [
+          { q: '指针可以先理解成什么？', options: ['存地址的变量', '一个循环', '一种颜色'], answer: 0 },
+          { q: '&x 表示什么？', options: ['x 的地址', 'x 的分数', 'x 的名字'], answer: 0 },
+          { q: '*p 可以先理解成什么？', options: ['顺着地址找到值', '把 p 变成图片', '结束程序'], answer: 0 },
+          { q: 'int *p 里 p 主要用来存什么？', options: ['地址', '小数', '一整段文章'], answer: 0 },
+          { q: '刚学指针时最先要分清什么？', options: ['值、地址、指针', '颜色、大小、字体', '网页、图片、音乐'], answer: 0 }
+        ]
+      }
+    ];
+
+    const courseEnhancements = {
+      lesson1: {
+        title: '从想法到程序',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node accent"><b>想法</b>把人话变成清楚目标。</div>
+            <div class="flow-node"><b>步骤</b>拆成电脑能照做的小动作。</div>
+            <div class="flow-node"><b>代码</b>用 C 的规则写成可执行文本。</div>
+          </div>
+        `,
+        examples: [
+          { title: '人话版本', code: '先准备水\\n再加热\\n最后显示完成' },
+          { title: '代码思维版本', code: 'prepare_water();\\nheat_water();\\nprintf("完成\\\\n");' }
+        ]
+      },
+      lesson2: {
+        title: '输出管线',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>文字</b>"你好，C 语言！"</div>
+            <div class="flow-node accent"><b>printf</b>把文字送到屏幕。</div>
+            <div class="flow-node"><b>屏幕</b>显示结果并换行。</div>
+          </div>
+        `,
+        examples: [
+          { title: '输出多行', code: 'printf("第一行\\\\n");\\nprintf("第二行\\\\n");', output: '第一行\\n第二行' },
+          { title: '输出数字', code: 'int count = 3;\\nprintf("今天练习 %d 次\\\\n", count);' }
+        ]
+      },
+      lesson3: {
+        title: '变量像有名字的格子',
+        visual: `
+          <div class="memory-strip">
+            <div class="mem-cell"><small>name</small>age</div>
+            <div class="mem-cell"><small>value</small>18</div>
+            <div class="mem-cell"><small>format</small>%d</div>
+            <div class="mem-cell"><small>output</small>18</div>
+          </div>
+        `,
+        examples: [
+          { title: '变量更新', code: 'int age = 18;\\nage = 19;\\nprintf("%d\\\\n", age);', output: '19' },
+          { title: '多个变量', code: 'int apples = 3;\\nint oranges = 2;\\nprintf("%d\\\\n", apples + oranges);', output: '5' }
+        ]
+      },
+      lesson4: {
+        title: '数据类型星图',
+        visual: `
+          <div class="type-orbit">
+            <div class="type-core">DATA</div>
+            <div class="type-chip">int · 整数</div>
+            <div class="type-chip">double · 小数</div>
+            <div class="type-chip">char · 字符</div>
+          </div>
+        `,
+        examples: [
+          { title: '类型组合', code: "int year = 2026;\\ndouble price = 9.9;\\nchar level = 'A';" },
+          { title: '格式占位', code: 'printf("%d %.1f %c\\\\n", year, price, level);', output: '2026 9.9 A' }
+        ]
+      },
+      lesson5: {
+        title: '判断分流',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>条件</b>score >= 60</div>
+            <div class="flow-node accent"><b>true</b>输出“及格”。</div>
+            <div class="flow-node"><b>false</b>输出“不及格”。</div>
+          </div>
+        `,
+        examples: [
+          { title: '判断奇偶', code: 'if (num % 2 == 0) {\\n    printf("偶数\\\\n");\\n} else {\\n    printf("奇数\\\\n");\\n}' },
+          { title: '多条件', code: 'if (score >= 90) printf("优秀\\\\n");\\nelse if (score >= 60) printf("及格\\\\n");\\nelse printf("继续练\\\\n");' }
+        ]
+      },
+      lesson6: {
+        title: '循环执行轨迹',
+        visual: `
+          <div class="trace-panel">
+            <div class="trace-row"><b>1</b><span>i = 1，打印一次。</span></div>
+            <div class="trace-row"><b>2</b><span>i++，继续检查条件。</span></div>
+            <div class="trace-row"><b>3</b><span>超过终点，循环结束。</span></div>
+          </div>
+        `,
+        examples: [
+          { title: '累加求和', code: 'int sum = 0;\\nfor (int i = 1; i <= 5; i++) {\\n    sum += i;\\n}' },
+          { title: 'while 倒计时', code: 'int n = 3;\\nwhile (n > 0) {\\n    printf("%d\\\\n", n);\\n    n--;\\n}' }
+        ]
+      },
+      lesson7: {
+        title: '数组像连续格子',
+        visual: `
+          <div class="memory-strip">
+            <div class="mem-cell"><small>[0]</small>90</div>
+            <div class="mem-cell"><small>[1]</small>85</div>
+            <div class="mem-cell"><small>[2]</small>70</div>
+            <div class="mem-cell"><small>[3]</small>88</div>
+          </div>
+        `,
+        examples: [
+          { title: '遍历数组', code: 'for (int i = 0; i < 5; i++) {\\n    printf("%d\\\\n", scores[i]);\\n}' },
+          { title: '找最大值', code: 'int max = scores[0];\\nfor (int i = 1; i < 5; i++) {\\n    if (scores[i] > max) max = scores[i];\\n}' }
+        ]
+      },
+      lesson8: {
+        title: '函数输入输出',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>参数</b>a = 3, b = 5</div>
+            <div class="flow-node accent"><b>函数</b>add(a, b)</div>
+            <div class="flow-node"><b>返回</b>8</div>
+          </div>
+        `,
+        examples: [
+          { title: '判断及格函数', code: 'int passed(int score) {\\n    return score >= 60;\\n}' },
+          { title: '函数复用', code: 'printf("%d\\\\n", add(1, 2));\\nprintf("%d\\\\n", add(10, 20));', output: '3\\n30' }
+        ]
+      },
+      lesson9: {
+        title: '结构体信息卡',
+        visual: `
+          <div class="flow-graph">
+            <div class="flow-node"><b>name</b>Tom</div>
+            <div class="flow-node"><b>age</b>18</div>
+            <div class="flow-node accent"><b>score</b>92.5</div>
+          </div>
+        `,
+        examples: [
+          { title: '创建学生', code: 'struct Student s = {"Ann", 19, 88.5};\\nprintf("%s\\\\n", s.name);' },
+          { title: '修改成员', code: 's.score = 96.0;\\nprintf("%.1f\\\\n", s.score);' }
+        ]
+      },
+      lesson10: {
+        title: '地址与指针地图',
+        visual: `
+          <div class="memory-strip">
+            <div class="mem-cell"><small>变量</small>x</div>
+            <div class="mem-cell"><small>值</small>10</div>
+            <div class="mem-cell"><small>地址</small>&x</div>
+            <div class="mem-cell"><small>指针</small>p</div>
+          </div>
+        `,
+        examples: [
+          { title: '通过指针改值', code: 'int x = 10;\\nint *p = &x;\\n*p = 20;', output: 'x 变成 20' },
+          { title: '打印地址', code: 'printf("%p\\\\n", (void *)&x);\\nprintf("%p\\\\n", (void *)p);' }
+        ]
+      }
+    };
+
+    const courseGuides = {
+      lesson1: {
+        symbol: '01',
+        title: '先别急着写代码，先学会“讲清楚”',
+        analogy: '把程序想成一张非常细的备忘清单。你写得越清楚，电脑越不容易走错。',
+        steps: ['先说目标：要让电脑做什么。', '再拆步骤：每一步只做一件小事。', '最后翻译：把步骤换成 C 语言。']
+      },
+      lesson2: {
+        symbol: 'Hi',
+        title: 'printf 就像屏幕上的小喇叭',
+        analogy: '你把一句话放进双引号里，printf 负责把它“念”到屏幕上。',
+        steps: ['双引号里写想显示的文字。', '\\n 表示换到下一行。', '分号表示这句话写完了。']
+      },
+      lesson3: {
+        symbol: '18',
+        title: '变量是贴了名字的收纳盒',
+        analogy: 'age 这个盒子里放 18。以后想用年龄，不用重新写 18，直接叫 age。',
+        steps: ['先选类型，比如 int。', '再取名字，比如 age。', '最后把值放进去，比如 18。']
+      },
+      lesson4: {
+        symbol: 'T',
+        title: '类型是盒子的形状',
+        analogy: '整数、小数、字符不适合放在同一种盒子里。类型就是告诉电脑：这个盒子准备装什么。',
+        steps: ['int 装整数。', 'double 装小数。', 'char 装单个字符。']
+      },
+      lesson5: {
+        symbol: 'IF',
+        title: 'if / else 是岔路口',
+        analogy: '满足条件就走左边，不满足就走右边。程序不是猜，而是按条件分路。',
+        steps: ['先写条件。', '条件成立时执行 if。', '条件不成立时执行 else。']
+      },
+      lesson6: {
+        symbol: 'LOOP',
+        title: '循环是自动重复的小节拍器',
+        analogy: '重复抄 5 次不用写 5 行，让循环帮你数：1、2、3、4、5。',
+        steps: ['设定从哪里开始。', '设定什么时候停。', '每次结束后更新计数。']
+      },
+      lesson7: {
+        symbol: '[ ]',
+        title: '数组是一排编号抽屉',
+        analogy: '很多同类东西可以排成一排。第一个抽屉不是 1 号，而是 0 号。',
+        steps: ['先确定数组能放几个。', '用下标拿其中一个。', '用循环把一排都看一遍。']
+      },
+      lesson8: {
+        symbol: 'ƒ',
+        title: '函数是可以反复使用的小工具',
+        analogy: '把常用动作做成按钮。以后需要时按一下，不用每次重写。',
+        steps: ['给工具起名字。', '把需要的数据当参数传进去。', '用 return 交回结果。']
+      },
+      lesson9: {
+        symbol: '{}',
+        title: '结构体是一张信息卡',
+        analogy: '一个学生有姓名、年龄、分数。结构体把这些相关信息放进同一张卡片。',
+        steps: ['先定义卡片模板。', '再创建一张具体卡片。', '用点号读取卡片里的项目。']
+      },
+      lesson10: {
+        symbol: '&',
+        title: '指针先理解成地址纸条',
+        analogy: '变量住在内存房间里。地址是门牌号，指针就是写着门牌号的纸条。',
+        steps: ['&x 取到 x 的地址。', 'p 保存这个地址。', '*p 顺着地址找到里面的值。']
+      }
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    const versionButton = $('#versionButton');
+    const versionText = $('#versionText');
+    const localVersion = $('#localVersion');
+    const remoteVersion = $('#remoteVersion');
+    const buildTime = $('#buildTime');
+    const lastCheckTime = $('#lastCheckTime');
+    const updateStatus = $('#updateStatus');
+    const sheetMask = $('#sheetMask');
+    const versionSheet = $('#versionSheet');
+    const testSheet = $('#testSheet');
+    const closeVersionSheet = $('#closeVersionSheet');
+    const closeTestSheet = $('#closeTestSheet');
+    const cancelTest = $('#cancelTest');
+    const submitTest = $('#submitTest');
+    const testTitle = $('#testTitle');
+    const testDesc = $('#testDesc');
+    const testBody = $('#testBody');
+    const manualCheck = $('#manualCheck');
+    const reloadLatest = $('#reloadLatest');
+    const toast = $('#toast');
+    const subtitleStatus = $('#subtitleStatus');
+    const lessonContainer = $('#lessonContainer');
+    const homeLessonMap = $('#homeLessonMap');
+    const courseDashboard = $('#courseDashboard');
+    const progressText = $('#progressText');
+    const progressFill = $('#progressFill');
+    const readProgress = $('#readProgress');
+
+    const STORAGE_KEYS = {
+      passedLessons: 'cguide_passed_lessons',
+      visitedLessons: 'cguide_visited_lessons',
+      completedPractices: 'cguide_completed_practices',
+      studyLog: 'cguide_study_log',
+      currentLesson: 'cguide_current_lesson',
+      activePage: 'cguide_active_page',
+      lastCheckTime: 'cguide_last_check_time'
+    };
+
+    function readStoredArray(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(value) ? value : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function readStoredObject(key) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key) || '{}');
+        return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    let passedLessons = new Set(readStoredArray(STORAGE_KEYS.passedLessons));
+    let visitedLessons = new Set(readStoredArray(STORAGE_KEYS.visitedLessons));
+    let completedPractices = new Set(readStoredArray(STORAGE_KEYS.completedPractices));
+    let studyLog = readStoredObject(STORAGE_KEYS.studyLog);
+    let currentLessonId = localStorage.getItem(STORAGE_KEYS.currentLesson) || 'lesson1';
+    let activeTestLesson = null;
+    let autoReloading = false;
+
+    versionText.textContent = 'v' + APP_META.version;
+    localVersion.textContent = 'v' + APP_META.version;
+    buildTime.textContent = APP_META.buildTime;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 2300);
+    }
+
+    function getCourse(id) {
+      return courses.find((item) => item.id === id) || courses[0];
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function normalizeAnswer(value) {
+      return String(value)
+        .trim()
+        .replace(/[；]/g, ';')
+        .replace(/\s+/g, '')
+        .toLowerCase();
+    }
+
+    function getTimeText() {
+      const now = new Date();
+      const pad = (value) => String(value).padStart(2, '0');
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+
+    function saveSet(key, set) {
+      localStorage.setItem(key, JSON.stringify(Array.from(set)));
+    }
+
+    function saveStudyLog() {
+      localStorage.setItem(STORAGE_KEYS.studyLog, JSON.stringify(studyLog));
+    }
+
+    function markLessonVisited(lessonId) {
+      visitedLessons.add(lessonId);
+      studyLog[lessonId] = getTimeText();
+      saveSet(STORAGE_KEYS.visitedLessons, visitedLessons);
+      saveStudyLog();
+    }
+
+    function openPage(pageName) {
+      $$('.page').forEach((page) => page.classList.toggle('active', page.dataset.page === pageName));
+      $$('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === pageName));
+      localStorage.setItem(STORAGE_KEYS.activePage, pageName);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      updateReadProgress();
+    }
+
+    function openCoursePicker() {
+      openPage('mine');
+      showToast('请选择你想学习的课程');
+    }
+
+    function openLesson(lessonId) {
+      currentLessonId = lessonId;
+      localStorage.setItem(STORAGE_KEYS.currentLesson, lessonId);
+      markLessonVisited(lessonId);
+      renderLesson(lessonId);
+      renderCourseDashboard();
+      updateProgress();
+      openPage('course');
+    }
+
+    function getPassScore(course) {
+      return Math.ceil(course.test.length * 0.7);
+    }
+
+    function renderPractice(course) {
+      if (!course.practice) return '';
+      const practice = course.practice;
+      const done = completedPractices.has(course.id);
+      const options = practice.options || (Array.isArray(practice.answer) ? practice.answer : [practice.answer]);
+      return `
+        <div class="practice-card ${done ? 'done' : ''}" data-practice-card="${course.id}">
+          <div class="practice-title">
+            <span>${escapeHtml(practice.title)}</span>
+            <span class="practice-status">${done ? '已完成' : '待练习'}</span>
+          </div>
+          <p class="small">${escapeHtml(practice.prompt)}</p>
+          <code class="practice-code">${escapeHtml(practice.code)}</code>
+          <div class="practice-options">
+            ${options.map((option, optionIndex) => `
+              <label class="practice-option">
+                <input type="radio" name="practice-${course.id}" value="${escapeHtml(option)}" ${done && optionIndex === 0 ? 'checked' : ''}>
+                <span>${escapeHtml(option)}</span>
+              </label>
+            `).join('')}
+          </div>
+          <button class="ios-button blue" style="width:100%;margin-top:10px;" type="button" data-action="practice" data-lesson="${course.id}">检查练习</button>
+          <div class="practice-result" data-practice-result="${course.id}">${done ? '这道动手练习已经完成，可以继续复习。' : ''}</div>
+        </div>
+      `;
+    }
+
+    function renderEnhancement(course) {
+      const item = courseEnhancements[course.id];
+      if (!item) return '';
+
+      return `
+        <div class="visual-lab">
+          <div class="visual-title">${escapeHtml(item.title)}<span>visual model</span></div>
+          ${item.visual}
+        </div>
+        <div class="code-gallery">
+          ${item.examples.map((example) => `
+            <div class="mini-code">
+              <div class="codebar">
+                <span><span class="dotline"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i></span>${escapeHtml(example.title)}</span>
+                <span class="code-badge">${example.title.includes('人话') ? 'HUMAN' : 'C MODE'}</span>
+                <button class="copy" type="button">复制</button>
+              </div>
+              <pre>${escapeHtml(example.code)}</pre>
+              ${example.output ? `<div class="code-output">${escapeHtml(example.output)}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderGentleGuide(course) {
+      const guide = courseGuides[course.id];
+      if (!guide) return '';
+
+      return `
+        <div class="gentle-guide">
+          <div class="guide-hero">
+            <div class="guide-picture" data-symbol="${escapeHtml(guide.symbol)}"></div>
+            <div class="guide-copy">
+              <h3>${escapeHtml(guide.title)}</h3>
+              <p>${escapeHtml(guide.analogy)}</p>
+            </div>
+          </div>
+          <div class="guide-steps">
+            ${guide.steps.map((step, index) => `
+              <div class="guide-step">
+                <b>${index + 1}</b>
+                <span>${escapeHtml(step)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLesson(lessonId) {
+      const course = getCourse(lessonId);
+      const index = courses.findIndex((item) => item.id === course.id);
+      const prev = courses[index - 1];
+      const next = courses[index + 1];
+      const done = passedLessons.has(course.id);
+      lessonContainer.innerHTML = `
+        <div class="section-head">
+          <div class="lesson-num">${course.no}</div>
+          <div>
+            <h2>${course.title}</h2>
+            <p class="lead">${course.desc}</p>
+          </div>
+        </div>
+        <div class="callout ${done ? 'green' : 'blue'}"><strong>${done ? '这一课已掌握' : '学习模式'}</strong>${done ? '你已经通过测试。仍然可以重新学习或重新测试。' : '你可以直接学习，也可以先去测试；不要求按顺序解锁。'}</div>
+        ${course.content}
+        ${renderEnhancement(course)}
+        ${renderGentleGuide(course)}
+        ${renderPractice(course)}
+        <div class="sheet-actions">
+          <button class="ios-button light" type="button" ${prev ? `data-action="learn" data-lesson="${prev.id}"` : 'disabled'}>${prev ? '上一课' : '已经是第一课'}</button>
+          <button class="ios-button blue" type="button" data-action="test" data-lesson="${course.id}">${done ? '重新测试' : '做本课测试'}</button>
+        </div>
+        ${next ? `<button class="ios-button primary" style="width:100%;margin-top:10px;background:rgba(239,246,255,0.96);color:#1d4ed8;" type="button" data-action="learn" data-lesson="${next.id}">继续下一课：${next.title}</button>` : ''}
+      `;
+      bindDynamicActions(lessonContainer);
+      bindCopyButtons(lessonContainer);
+    }
+
+    function renderHomeMap() {
+      homeLessonMap.innerHTML = courses.map((course) => `
+        <button class="map-item" type="button" data-action="learn" data-lesson="${course.id}">
+          <div class="bubble">${course.no}</div>
+          <div><strong>${course.title}</strong><span>${course.desc}</span></div>
+        </button>
+      `).join('');
+      bindDynamicActions(homeLessonMap);
+    }
+
+    function renderCourseDashboard() {
+      courseDashboard.innerHTML = courses.map((course) => {
+        const done = passedLessons.has(course.id);
+        const started = visitedLessons.has(course.id);
+        const practiced = completedPractices.has(course.id);
+        const statusText = done ? '已掌握' : started ? '学过' : '未学习';
+        const statusClass = done ? 'done' : started ? 'started' : '';
+        const lastStudy = studyLog[course.id] ? `最近学习：${studyLog[course.id]}` : '还没有学习记录';
+        return `
+          <article class="course-card">
+            <div class="course-index">${course.no}</div>
+            <div class="course-title">
+              <strong>${course.title}</strong>
+              <span>${course.desc}</span>
+              <div class="course-meta">${lastStudy} · 练习${practiced ? '已完成' : '未完成'}</div>
+            </div>
+            <div class="course-status ${statusClass}">${statusText}</div>
+            <div class="course-actions">
+              <button class="mini-action" type="button" data-action="learn" data-lesson="${course.id}">学习这一课</button>
+              <button class="mini-action test" type="button" data-action="test" data-lesson="${course.id}">${done ? '重新测试' : '开始测试'}</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+      bindDynamicActions(courseDashboard);
+    }
+
+    function updateProgress() {
+      const done = passedLessons.size;
+      const learned = visitedLessons.size;
+      const total = courses.length;
+      const percent = total ? Math.round(done / total * 100) : 0;
+      progressText.textContent = `已学习 ${learned}/${total} · 已掌握 ${done}/${total}`;
+      progressFill.style.width = percent + '%';
+    }
+
+    function savePassedLessons() {
+      saveSet(STORAGE_KEYS.passedLessons, passedLessons);
+    }
+
+    function checkPracticeAnswer(lessonId) {
+      const course = getCourse(lessonId);
+      if (!course.practice) return;
+
+      const selected = lessonContainer.querySelector(`input[name="practice-${lessonId}"]:checked`);
+      const result = lessonContainer.querySelector(`[data-practice-result="${lessonId}"]`);
+      const card = lessonContainer.querySelector(`[data-practice-card="${lessonId}"]`);
+      const status = card ? card.querySelector('.practice-status') : null;
+      const value = selected ? selected.value : '';
+      const answers = Array.isArray(course.practice.answer) ? course.practice.answer : [course.practice.answer];
+      const correct = answers.some((answer) => normalizeAnswer(answer) === normalizeAnswer(value));
+
+      if (!selected) {
+        if (result) result.textContent = '先选一个答案再检查。';
+        return;
+      }
+
+      if (correct) {
+        completedPractices.add(lessonId);
+        saveSet(STORAGE_KEYS.completedPractices, completedPractices);
+        if (card) card.classList.add('done');
+        if (status) status.textContent = '已完成';
+        if (result) result.textContent = '答对了，这个知识点已经能动手用了。';
+        renderCourseDashboard();
+        showToast('动手练习完成');
+      } else if (result) {
+        result.textContent = '还差一点，看看上面的例子再试一次。';
+      }
+    }
+
+    function bindDynamicActions(root = document) {
+      root.querySelectorAll('[data-action]').forEach((btn) => {
+        if (btn.dataset.boundAction === 'true') return;
+        btn.dataset.boundAction = 'true';
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          if (action === 'learn') openLesson(btn.dataset.lesson);
+          if (action === 'test') startLessonTest(btn.dataset.lesson);
+          if (action === 'choose-course') openCoursePicker();
+          if (action === 'practice') checkPracticeAnswer(btn.dataset.lesson);
+        });
+      });
+    }
+
+    function bindCopyButtons(root = document) {
+      root.querySelectorAll('.copy').forEach((btn) => {
+        if (btn.dataset.boundCopy === 'true') return;
+        btn.dataset.boundCopy = 'true';
+        btn.addEventListener('click', async () => {
+          const codeBlock = btn.closest('.codebox, .mini-code');
+          const code = codeBlock.querySelector('pre').innerText;
+          try {
+            await navigator.clipboard.writeText(code);
+            const old = btn.textContent;
+            btn.textContent = '已复制';
+            setTimeout(() => btn.textContent = old, 1000);
+          } catch (e) {
+            showToast('复制失败');
+          }
+        });
+      });
+    }
+
+    function openSheet(sheet) {
+      sheetMask.classList.add('show');
+      sheet.classList.add('show');
+    }
+
+    function closeSheets() {
+      sheetMask.classList.remove('show');
+      versionSheet.classList.remove('show');
+      testSheet.classList.remove('show');
+    }
+
+    function startLessonTest(lessonId) {
+      activeTestLesson = lessonId;
+      currentLessonId = lessonId;
+      localStorage.setItem(STORAGE_KEYS.currentLesson, lessonId);
+      markLessonVisited(lessonId);
+      renderCourseDashboard();
+      updateProgress();
+      const course = getCourse(lessonId);
+      const passScore = getPassScore(course);
+      testTitle.textContent = `第 ${course.no} 课测试`;
+      testDesc.textContent = `共 ${course.test.length} 题，答对 ${passScore} 题及以上算及格。及格后，这一课会标记为“已掌握”。`;
+      testBody.innerHTML = course.test.map((item, qIndex) => `
+        <div class="test-question">
+          <strong>${qIndex + 1}. ${item.q}</strong>
+          ${item.options.map((option, oIndex) => `
+            <label class="test-option">
+              <input type="radio" name="q${qIndex}" value="${oIndex}">
+              <span>${option}</span>
+            </label>
+          `).join('')}
+        </div>
+      `).join('');
+      openSheet(testSheet);
+    }
+
+    submitTest.addEventListener('click', () => {
+      if (!activeTestLesson) return;
+      const course = getCourse(activeTestLesson);
+      const passScore = getPassScore(course);
+      let score = 0;
+      course.test.forEach((item, qIndex) => {
+        const selected = testBody.querySelector(`input[name="q${qIndex}"]:checked`);
+        if (selected && Number(selected.value) === item.answer) score++;
+      });
+      if (score >= passScore) {
+        passedLessons.add(activeTestLesson);
+        savePassedLessons();
+        updateProgress();
+        renderCourseDashboard();
+        renderLesson(currentLessonId);
+        closeSheets();
+        showToast(`测试通过：${score}/${course.test.length}，这一课已掌握`);
+      } else {
+        showToast(`还没及格：${score}/${course.test.length}，本课需要答对 ${passScore} 题`);
+      }
+    });
+
+    function compareVersions(a, b) {
+      const pa = String(a).split('.').map(Number);
+      const pb = String(b).split('.').map(Number);
+      const len = Math.max(pa.length, pb.length);
+      for (let i = 0; i < len; i++) {
+        const na = pa[i] || 0;
+        const nb = pb[i] || 0;
+        if (na > nb) return 1;
+        if (na < nb) return -1;
+      }
+      return 0;
+    }
+
+    function parseRemoteMeta(html) {
+      const versionMatch = html.match(/version:\s*['\"]([^'\"]+)['\"]/);
+      const buildMatch = html.match(/buildTime:\s*['\"]([^'\"]+)['\"]/);
+      return { version: versionMatch ? versionMatch[1] : null, buildTime: buildMatch ? buildMatch[1] : null };
+    }
+
+    function hardReload() {
+      if (autoReloading) return;
+      autoReloading = true;
+      const clean = location.href.split('#')[0].split('?')[0];
+      location.replace(clean + '?autoUpdate=' + Date.now());
+    }
+
+    async function checkForUpdate({ silent = false, auto = false } = {}) {
+      const now = new Date();
+      const timeText = now.toLocaleString('zh-CN', { hour12: false });
+      lastCheckTime.textContent = timeText;
+      localStorage.setItem(STORAGE_KEYS.lastCheckTime, timeText);
+      updateStatus.textContent = '正在检查...';
+      subtitleStatus.textContent = '正在检查 GitHub 更新...';
+      try {
+        const url = location.href.split('#')[0].split('?')[0] + '?check=' + Date.now();
+        const res = await fetch(url, { cache: 'no-store' });
+        const html = await res.text();
+        const meta = parseRemoteMeta(html);
+        if (!meta.version) {
+          remoteVersion.textContent = '无法识别';
+          updateStatus.textContent = '未找到远端版本号';
+          subtitleStatus.textContent = '版本检查未完成';
+          if (!silent) showToast('没有识别到远端版本号');
+          return;
+        }
+        remoteVersion.textContent = 'v' + meta.version + (meta.buildTime ? ' · ' + meta.buildTime : '');
+        const cmp = compareVersions(APP_META.version, meta.version);
+        if (cmp < 0) {
+          versionButton.classList.add('has-update');
+          updateStatus.textContent = auto ? '发现新版本，正在自动更新...' : '发现新版本';
+          subtitleStatus.textContent = '发现 GitHub 新版本';
+          showToast('发现新版本 v' + meta.version + '，正在更新');
+          setTimeout(hardReload, 700);
+        } else {
+          versionButton.classList.remove('has-update');
+          updateStatus.textContent = '已经是最新版本';
+          subtitleStatus.textContent = '已是最新 · 零基础';
+          if (!silent) showToast('已经是最新版本');
+        }
+      } catch (error) {
+        remoteVersion.textContent = '检查失败';
+        updateStatus.textContent = '网络或缓存导致检查失败';
+        subtitleStatus.textContent = '离线或检查失败';
+        if (!silent) showToast('检查失败，可能是网络问题');
+      }
+    }
+
+    function updateReadProgress() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = height > 0 ? Math.max(0, Math.min(100, scrollTop / height * 100)) : 0;
+      readProgress.style.width = percent + '%';
+    }
+
+    function openTab(pageName) {
+      if (pageName === 'course') {
+        markLessonVisited(currentLessonId);
+        renderLesson(currentLessonId);
+        renderCourseDashboard();
+        updateProgress();
+      }
+      openPage(pageName);
+    }
+
+    $$('.tab').forEach((tab) => tab.addEventListener('click', () => openTab(tab.dataset.tab)));
+    $$('.brand').forEach((brand) => brand.addEventListener('click', () => openPage('home')));
+    versionButton.addEventListener('click', () => openSheet(versionSheet));
+    closeVersionSheet.addEventListener('click', closeSheets);
+    closeTestSheet.addEventListener('click', closeSheets);
+    cancelTest.addEventListener('click', closeSheets);
+    sheetMask.addEventListener('click', closeSheets);
+    manualCheck.addEventListener('click', () => checkForUpdate({ silent: false }));
+    reloadLatest.addEventListener('click', hardReload);
+    window.addEventListener('scroll', updateReadProgress, { passive: true });
+    window.addEventListener('resize', updateReadProgress);
+
+    renderHomeMap();
+    renderLesson(currentLessonId);
+    renderCourseDashboard();
+    updateProgress();
+    bindDynamicActions(document);
+    bindCopyButtons(document);
+
+    const savedPage = localStorage.getItem(STORAGE_KEYS.activePage) || 'home';
+    openPage(['home', 'course', 'mine'].includes(savedPage) ? savedPage : 'home');
+    const savedCheckTime = localStorage.getItem(STORAGE_KEYS.lastCheckTime);
+    if (savedCheckTime) lastCheckTime.textContent = savedCheckTime;
+
+    window.addEventListener('load', () => {
+      setTimeout(() => checkForUpdate({ silent: true, auto: true }), 350);
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+          await reg.update();
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showToast('缓存已更新，正在刷新');
+                setTimeout(hardReload, 700);
+              }
+            });
+          });
+        } catch (error) {
+          console.warn('Service Worker 注册失败：', error);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
