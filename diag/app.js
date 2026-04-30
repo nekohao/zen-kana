@@ -340,6 +340,7 @@
             </div>
             <div class="learn-actions">
               <button class="action-btn ${isDone ? 'done' : 'primary'}" id="completeBtn" type="button">${isDone ? '已完成' : '完成本讲'}</button>
+              <a class="action-btn" href="#/quiz/${encodeURIComponent(lesson.id)}">本讲测验</a>
               ${next ? `<button class="action-btn" id="nextBtn" type="button">下一讲</button>` : ''}
             </div>
           </div>
@@ -378,10 +379,168 @@
     }
   }
 
-  function renderQuiz(quizId){
+  function cleanText(value){
+    return String(value || '')
+      .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function uniqueList(items){
+    const seen = new Set();
+    return (items || []).map((item) => cleanText(item)).filter((item) => {
+      if (!item || item.length < 2 || seen.has(item)) return false;
+      seen.add(item);
+      return true;
+    });
+  }
+
+  function extractHeadings(lesson){
+    return uniqueList(Array.from(String(lesson.html || '').matchAll(/<h[23][^>]*>([\s\S]*?)<\/h[23]>/gi)).map((match) => match[1]));
+  }
+
+  function extractKeywords(lesson){
+    const html = String(lesson.html || '');
+    const codes = Array.from(html.matchAll(/\b0x[0-9a-fA-F]{2,8}\b/g)).map((match) => match[0].toUpperCase());
+    const terms = Array.from(cleanText(html).matchAll(/\b(UDS|ISO-TP|CAN-FD|CAN|DID|RID|DTC|NRC|DCM|DEM|OBD-II|Seed\/Key|Session|Security|Bootloader|Callout|NvM|CanTp|S3server|P2\*?)\b/gi)).map((match) => match[0]);
+    const funcs = Array.from(html.matchAll(/\b[A-Za-z][A-Za-z0-9_]{5,}\(\)/g)).map((match) => match[0]);
+    return uniqueList([...codes, ...terms, ...funcs]);
+  }
+
+  function makeOptions(correct, pool, seed){
+    const fallback = ['UDS 诊断报文', 'ISO-TP 分帧传输', 'DID 数据访问', 'DTC 故障管理', 'DCM 服务分发', 'Session/Security 权限'];
+    const answer = cleanText(correct) || '本讲核心概念';
+    const distractors = uniqueList([...(pool || []), ...fallback]).filter((item) => item !== answer).slice(0, 3);
+    fallback.forEach((item) => {
+      if (distractors.length < 3 && item !== answer && !distractors.includes(item)) distractors.push(item);
+    });
+    const options = distractors.slice(0, 3);
+    const correctIndex = Math.abs(seed || 0) % 4;
+    options.splice(correctIndex, 0, answer);
+    return { options, correct: correctIndex };
+  }
+
+  function buildLessonQuiz(lesson){
+    const index = getLessonIndex(lesson.id);
+    const headings = extractHeadings(lesson);
+    const keywords = extractKeywords(lesson);
+    const titlePool = lessons.filter((item) => item.id !== lesson.id).map((item) => item.title);
+    const headingPool = lessons.filter((item) => item.id !== lesson.id).flatMap(extractHeadings);
+    const subtitlePool = lessons.filter((item) => item.id !== lesson.id).map((item) => item.subtitle || item.title);
+    const keywordPool = lessons.filter((item) => item.id !== lesson.id).flatMap(extractKeywords);
+    const topic = makeOptions(lesson.title, titlePool, index);
+    const section = makeOptions(headings[0] || lesson.subtitle || lesson.title, headingPool, index + 1);
+    const keyword = makeOptions(keywords[0] || headings[0] || lesson.title, keywordPool, index + 2);
+    const target = makeOptions(lesson.subtitle || headings[1] || headings[0] || lesson.title, subtitlePool.concat(headingPool), index + 3);
+
+    return {
+      id: lesson.id,
+      lessonId: lesson.id,
+      title: `第 ${index + 1} 讲测验：${lesson.title}`,
+      questions: [
+        {
+          q: '本讲主要围绕哪一项展开？',
+          options: topic.options,
+          correct: topic.correct,
+          explanation: `本讲标题是「${lesson.title}」，测验聚焦这一讲。`
+        },
+        {
+          q: '下面哪一项最接近本讲的核心章节？',
+          options: section.options,
+          correct: section.correct,
+          explanation: `本讲正文首先展开的是「${section.options[section.correct]}」。`
+        },
+        {
+          q: '本讲正文中重点出现的诊断关键词是哪一个？',
+          options: keyword.options,
+          correct: keyword.correct,
+          explanation: `「${keyword.options[keyword.correct]}」来自本讲正文的服务号、术语或代码入口。`
+        },
+        {
+          q: '学完本讲后，最应该能解释哪类内容？',
+          options: target.options,
+          correct: target.correct,
+          explanation: `这对应本讲的学习目标：${target.options[target.correct]}。`
+        }
+      ]
+    };
+  }
+
+  function getQuizForId(quizId){
     const quizzes = Array.isArray(LESSONS.quizzes) ? LESSONS.quizzes : [];
-    const quiz = quizzes.find((q) => q.id === quizId) || quizzes[0];
-    if (!quiz) { renderCourses(); return; }
+    const id = quizId ? decodeURIComponent(quizId) : '';
+    const explicit = quizzes.find((q) => q.id === id);
+    if (explicit) return explicit;
+    const lesson = lessonMap.get(id);
+    return lesson ? buildLessonQuiz(lesson) : null;
+  }
+
+  function renderQuizCatalog(){
+    activeRoute = 'quiz';
+    setActiveNav('quiz');
+    const quizzes = Array.isArray(LESSONS.quizzes) ? LESSONS.quizzes : [];
+    const done = readCompleted();
+    const groupMarkup = groups.map((group) => {
+      const groupLessons = group.lessons.map((id) => lessonMap.get(id)).filter(Boolean);
+      return `
+        <section class="course-card quiz-group">
+          <div class="course-title">
+            <h2>${escapeHTML(group.title)}</h2>
+            <span>${groupLessons.length} 个测验</span>
+          </div>
+          <div class="quiz-list">
+            ${groupLessons.map((lesson) => {
+              const index = getLessonIndex(lesson.id);
+              return `
+                <a class="quiz-row ${done.has(lesson.id) ? 'done' : ''}" href="#/quiz/${encodeURIComponent(lesson.id)}">
+                  <span class="lesson-index">${String(index + 1).padStart(2,'0')}</span>
+                  <span class="quiz-row-main">
+                    <span class="lesson-name">${escapeHTML(lesson.title)}</span>
+                    <span class="lesson-sub">${escapeHTML(lesson.subtitle || '本讲知识点测验')}</span>
+                  </span>
+                  <span class="quiz-badge">4 题</span>
+                </a>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }).join('');
+
+    stage.innerHTML = `
+      <section class="page quiz-page">
+        <div class="courses-head">
+          <div>
+            <h1 class="section-title">测验</h1>
+            <p class="section-subtitle">每一讲都有独立测验；进入课程页也可以直接点“本讲测验”。</p>
+          </div>
+          ${quizzes.length ? `<a class="primary-cta" href="#/quiz/${encodeURIComponent(quizzes[0].id)}">综合测验 ${icons.arrow}</a>` : '<a class="secondary-cta" href="#/courses">返回课程</a>'}
+        </div>
+        <div class="quiz-catalog">
+          ${groupMarkup}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderQuiz(quizId){
+    if (!quizId) {
+      renderQuizCatalog();
+      return;
+    }
+    const quiz = getQuizForId(quizId);
+    if (!quiz) {
+      renderQuizCatalog();
+      return;
+    }
     activeRoute = 'quiz';
     setActiveNav('quiz');
 
@@ -389,6 +548,9 @@
     let answers = new Array(quiz.questions.length).fill(-1);
     let submitted = false;
     let score = 0;
+    const backHref = quiz.lessonId ? `#/learn/${encodeURIComponent(quiz.lessonId)}` : '#/quiz';
+    const doneHref = quiz.lessonId ? backHref : '#/quiz';
+    const backText = quiz.lessonId ? '返回本讲' : '返回测验目录';
 
     function buildQuiz(){
       const q = quiz.questions[current];
@@ -413,7 +575,7 @@
               <h1 class="section-title">测验</h1>
               <p class="section-subtitle">${escapeHTML(quiz.title)}</p>
             </div>
-            <a class="secondary-cta" href="#/courses">返回课程</a>
+            <a class="secondary-cta" href="${backHref}">${backText}</a>
           </div>
           <div class="read-meter"><span style="width:${progress}%"></span></div>
           <div class="quiz-nav">${navHtml}</div>
@@ -429,7 +591,7 @@
               ${current > 0 ? `<button class="action-btn" id="prevQ" type="button">上一题</button>` : '<span></span>'}
               ${!submitted ? `<button class="action-btn primary" id="submitQ" type="button">提交答案</button>` : ''}
               ${submitted && current < quiz.questions.length - 1 ? `<button class="action-btn primary" id="nextQ" type="button">下一题</button>` : ''}
-              ${submitted && current === quiz.questions.length - 1 ? `<a class="action-btn primary" href="#/courses">完成测验</a>` : ''}
+              ${submitted && current === quiz.questions.length - 1 ? `<a class="action-btn primary" href="${doneHref}">完成测验</a>` : ''}
             </div>
           </article>
         </section>
@@ -555,65 +717,130 @@
     return (items || []).map((item) => `<span class="svc-tag">${escapeHTML(item)}</span>`).join('');
   }
 
-  function sourceRef(ref){
-    return ref ? `<span class="source-ref">${escapeHTML(ref.file)}:${ref.line}</span>` : '<span class="source-ref muted">未定位到定义</span>';
+  function shortFile(path){
+    return String(path || '').split(/[\\/]/).pop() || path || '';
   }
 
-  function renderCode(code){
-    return `<pre class="svc-code"><code>${escapeHTML(code || '')}</code></pre>`;
+  function sourceRef(ref){
+    if (!ref) return '<span class="source-ref muted">未定位到定义</span>';
+    const full = `${ref.file}:${ref.line}`;
+    return `<span class="source-ref" title="${escapeHTML(full)}">${escapeHTML(shortFile(ref.file))}:${ref.line}</span>`;
+  }
+
+  function operationLabel(type){
+    return ({
+      read: '读取',
+      write: '写入',
+      ioctl: 'IO 控制',
+    })[type] || type;
+  }
+
+  function handlerLabel(value){
+    return value ? `<code>${escapeHTML(value)}()</code>` : '<span class="svc-small">由 DCM 内部处理</span>';
+  }
+
+  function renderConditionGrid(items){
+    return `
+      <div class="svc-meta">
+        ${items.map((item) => `
+          <div>
+            <b>${escapeHTML(item.label)}</b>
+            ${tagList(item.values && item.values.length ? item.values : ['任意'])}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function codeTone(line){
+    const text = line.trim();
+    if (text.startsWith('->')) return ' is-call';
+    if (text.includes('sessions=') || text.includes('security=')) return ' is-cond';
+    if (text.includes('//')) return ' is-source';
+    return '';
+  }
+
+  function renderCode(code, title='代码引用'){
+    const lines = String(code || '').split(/\r?\n/);
+    const body = lines.map((line, index) => `
+      <span class="code-line${codeTone(line)}">
+        <span class="code-no">${index + 1}</span>
+        <span class="code-text">${escapeHTML(line || ' ')}</span>
+      </span>
+    `).join('');
+    return `
+      <div class="svc-code">
+        <div class="code-head"><span>${escapeHTML(title)}</span><span>${lines.length} 行</span></div>
+        <pre class="code-lines"><code>${body}</code></pre>
+      </div>
+    `;
   }
 
   function renderServiceCatalog(services, filter){
     const visible = services.filter((service) => matchesFilter(service, filter));
     if (!visible.length) return '<div class="empty-state">没有匹配的服务</div>';
     return `
-      <div class="service-grid">
+      <div class="svc-tree">
         ${visible.map((service) => `
-          <article class="svc-card">
-            <div class="svc-card-head">
-              <div>
-                <span class="svc-sid">${escapeHTML(service.sid)}</span>
-                <h2>${escapeHTML(service.name)}</h2>
-              </div>
-              <span class="svc-handler">${escapeHTML(service.handler || '-')}</span>
+          <details class="tree-node svc-node">
+            <summary class="tree-summary">
+              <span class="tree-caret"></span>
+              <span class="tree-id">${escapeHTML(service.sid)}</span>
+              <span class="tree-main">
+                <span class="tree-title">${escapeHTML(service.name)}</span>
+                <span class="tree-sub">${escapeHTML(service.summary)}</span>
+              </span>
+              <span class="tree-count">${(service.subservices || []).length || 0} 子服务</span>
+              <span class="tree-handler">${escapeHTML(service.handler || 'DCM 内部')}</span>
+            </summary>
+            <div class="tree-body">
+              ${renderConditionGrid([
+                { label:'服务级 Session', values:service.sessionsText },
+                { label:'服务级 Security', values:service.securityText },
+              ])}
+              ${service.dependencies ? `<div class="svc-impact"><b>影响关系</b>${escapeHTML(service.dependencies)}</div>` : ''}
+              ${renderSubserviceTree(service)}
+              <details class="inner-details">
+                <summary>查看服务配置代码</summary>
+                ${renderCode(service.code, `${service.sid} ${service.name}`)}
+              </details>
             </div>
-            <p>${escapeHTML(service.summary)}</p>
-            <div class="svc-meta">
-              <div><b>服务级 Session</b>${tagList(service.sessionsText)}</div>
-              <div><b>服务级 Security</b>${tagList(service.securityText)}</div>
-            </div>
-            ${service.dependencies ? `<div class="svc-impact">${escapeHTML(service.dependencies)}</div>` : ''}
-            ${renderSubserviceTable(service)}
-            <details class="svc-details">
-              <summary>配置代码块</summary>
-              ${renderCode(service.code)}
-            </details>
-          </article>
+          </details>
         `).join('')}
       </div>
     `;
   }
 
-  function renderSubserviceTable(service){
+  function renderSubserviceTree(service){
     if (!service.subservices || !service.subservices.length) {
       return '<div class="svc-empty-line">无子服务：权限直接看服务级条件。</div>';
     }
     return `
-      <div class="svc-table-wrap compact">
-        <table class="svc-table">
-          <thead><tr><th>子服务</th><th>含义</th><th>额外 Session</th><th>额外 Security</th><th>处理函数</th></tr></thead>
-          <tbody>
-            ${service.subservices.map((sub) => `
-              <tr>
-                <td><code>${escapeHTML(sub.id)}</code> ${escapeHTML(sub.name || '')}</td>
-                <td>${escapeHTML(sub.meaning || '')}</td>
-                <td>${tagList(sub.sessionsText)}</td>
-                <td>${tagList(sub.securityText)}</td>
-                <td><code>${escapeHTML(sub.externalHandler || sub.internalHandler || '-')}</code></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+      <div class="sub-tree">
+        <div class="tree-section-title">子服务目录</div>
+        ${service.subservices.map((sub) => `
+          <details class="tree-node sub-node">
+            <summary class="tree-summary compact">
+              <span class="tree-caret"></span>
+              <span class="tree-id">${escapeHTML(sub.id)}</span>
+              <span class="tree-main">
+                <span class="tree-title">${escapeHTML(sub.name || 'SubFunction')}</span>
+                <span class="tree-sub">${escapeHTML(sub.meaning || '查看该子服务的权限和处理入口')}</span>
+              </span>
+              <span class="tree-count">${escapeHTML((sub.securityText || ['任意']).join(' / '))}</span>
+            </summary>
+            <div class="tree-body compact">
+              ${renderConditionGrid([
+                { label:'额外 Session', values:sub.sessionsText },
+                { label:'额外 Security', values:sub.securityText },
+              ])}
+              <div class="fn-ref">
+                <b>处理入口</b>
+                ${handlerLabel(sub.externalHandler || sub.internalHandler)}
+              </div>
+            </div>
+          </details>
+        `).join('')}
       </div>
     `;
   }
@@ -622,73 +849,129 @@
     const visible = dids.filter((did) => matchesFilter(did, filter));
     if (!visible.length) return '<div class="empty-state">没有匹配的 DID</div>';
     return `
-      <div class="svc-table-wrap">
-        <table class="svc-table did-table">
-          <thead>
-            <tr><th>DID</th><th>名称</th><th>长度</th><th>可用服务</th><th>有效条件</th><th>代码入口</th></tr>
-          </thead>
-          <tbody>
-            ${visible.map((did) => `
-              <tr>
-                <td><code>${escapeHTML(did.did)}</code></td>
-                <td>${escapeHTML(did.name)}<span class="svc-small">${did.sync ? '同步 DID' : '异步 DID'}</span></td>
-                <td>${escapeHTML(did.sizeText)}</td>
-                <td>${did.operations.map((op) => `<span class="svc-op">${escapeHTML(op.service)} ${escapeHTML(op.type)}</span>`).join('')}</td>
-                <td>${did.operations.map((op) => `
-                  <div class="svc-cond"><b>${escapeHTML(op.service)}</b> ${escapeHTML(op.sessionsText.join(' / '))} · ${escapeHTML(op.securityText.join(' / '))}</div>
-                `).join('')}</td>
-                <td>
-                  ${did.operations.map((op) => renderOperationRefs(op)).join('')}
-                  <details class="svc-details inline"><summary>代码块</summary>${renderCode(did.code)}</details>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+      <div class="svc-tree">
+        ${visible.map((did) => `
+          <details class="tree-node did-node">
+            <summary class="tree-summary">
+              <span class="tree-caret"></span>
+              <span class="tree-id">${escapeHTML(did.did)}</span>
+              <span class="tree-main">
+                <span class="tree-title">${escapeHTML(did.name)}</span>
+                <span class="tree-sub">${escapeHTML(did.sizeText)} · ${did.sync ? '同步 DID' : '异步 DID'}</span>
+              </span>
+              <span class="tree-count">${did.operations.length} 个入口</span>
+              <span class="tree-handler">${did.operations.map((op) => `${op.service} ${operationLabel(op.type)}`).join(' / ')}</span>
+            </summary>
+            <div class="tree-body">
+              <div class="op-tree">
+                ${did.operations.map((op) => renderOperationNode(op)).join('')}
+              </div>
+              <details class="inner-details">
+                <summary>查看 DID 配置代码</summary>
+                ${renderCode(did.code, `${did.did} ${did.name}`)}
+              </details>
+            </div>
+          </details>
+        `).join('')}
       </div>
     `;
   }
 
+  function renderOperationNode(op){
+    const io = op.ioSubservices && op.ioSubservices.length
+      ? `<div class="svc-impact light"><b>IO 子功能</b>${tagList(op.ioSubservices)}</div>`
+      : '';
+    return `
+      <details class="tree-node sub-node op-node">
+        <summary class="tree-summary compact">
+          <span class="tree-caret"></span>
+          <span class="tree-id">${escapeHTML(op.service)}</span>
+          <span class="tree-main">
+            <span class="tree-title">${escapeHTML(operationLabel(op.type))}</span>
+            <span class="tree-sub">${escapeHTML(op.sessionsText.join(' / '))} · ${escapeHTML(op.securityText.join(' / '))}</span>
+          </span>
+          <span class="tree-count">${(op.functions || []).length || 0} 函数</span>
+        </summary>
+        <div class="tree-body compact">
+          ${renderConditionGrid([
+            { label:'有效 Session', values:op.sessionsText },
+            { label:'有效 Security', values:op.securityText },
+          ])}
+          ${io}
+          ${renderOperationRefs(op)}
+        </div>
+      </details>
+    `;
+  }
+
   function renderOperationRefs(op){
-    const io = op.ioSubservices && op.ioSubservices.length ? `<div class="svc-small">${escapeHTML(op.ioSubservices.join(' / '))}</div>` : '';
     const fns = (op.functions || []).map((fn) => `
-      <div class="fn-ref"><code>${escapeHTML(fn.fn)}()</code>${sourceRef(fn.ref)}</div>
+      <div class="fn-ref">
+        <b>${escapeHTML(fn.comment || fn.kind || 'callout')}</b>
+        <code>${escapeHTML(fn.fn)}()</code>
+        ${sourceRef(fn.ref)}
+      </div>
     `).join('');
-    return `<div class="op-ref"><b>${escapeHTML(op.service)} ${escapeHTML(op.type)}</b>${io}${fns || '<span class="svc-small">由 DCM 内部处理</span>'}</div>`;
+    return fns || '<div class="fn-ref"><b>处理入口</b><span class="svc-small">由 DCM 内部处理</span></div>';
   }
 
   function renderRoutineCatalog(routines, filter){
     const visible = routines.filter((routine) => matchesFilter(routine, filter));
     if (!visible.length) return '<div class="empty-state">没有匹配的 RID</div>';
     return `
-      <div class="service-grid routine-grid">
+      <div class="svc-tree">
         ${visible.map((routine) => `
-          <article class="svc-card">
-            <div class="svc-card-head">
-              <div>
-                <span class="svc-sid">${escapeHTML(routine.rid)}</span>
-                <h2>${escapeHTML(routine.name)}</h2>
+          <details class="tree-node rid-node">
+            <summary class="tree-summary">
+              <span class="tree-caret"></span>
+              <span class="tree-id">${escapeHTML(routine.rid)}</span>
+              <span class="tree-main">
+                <span class="tree-title">${escapeHTML(routine.name)}</span>
+                <span class="tree-sub">0x31 RoutineControl · ${escapeHTML(routine.sessionsText.join(' / '))} · ${escapeHTML(routine.securityText.join(' / '))}</span>
+              </span>
+              <span class="tree-count">${routine.subservices.length} 子服务</span>
+              <span class="tree-handler">0x31</span>
+            </summary>
+            <div class="tree-body">
+              ${renderConditionGrid([
+                { label:'RID Session', values:routine.sessionsText },
+                { label:'RID Security', values:routine.securityText },
+              ])}
+              <div class="sub-tree">
+                <div class="tree-section-title">RID 子服务目录</div>
+                ${routine.subservices.map((sub) => `
+                  <details class="tree-node sub-node">
+                    <summary class="tree-summary compact">
+                      <span class="tree-caret"></span>
+                      <span class="tree-id">${escapeHTML(sub.id)}</span>
+                      <span class="tree-main">
+                        <span class="tree-title">${escapeHTML(sub.name)}</span>
+                        <span class="tree-sub">${escapeHTML(sub.wrapper)}()</span>
+                      </span>
+                      <span class="tree-count">${sub.calls.length} callout</span>
+                    </summary>
+                    <div class="tree-body compact">
+                      <div class="fn-ref">
+                        <b>DCM wrapper</b>
+                        <code>${escapeHTML(sub.wrapper)}()</code>
+                      </div>
+                      ${sub.calls.map((call) => `
+                        <div class="fn-ref">
+                          <b>应用 callout</b>
+                          <code>${escapeHTML(call.fn)}()</code>
+                          ${sourceRef(call.ref)}
+                        </div>
+                      `).join('')}
+                    </div>
+                  </details>
+                `).join('')}
               </div>
-              <span class="svc-handler">0x31</span>
+              <details class="inner-details">
+                <summary>查看 RID 配置代码</summary>
+                ${renderCode(routine.code, `${routine.rid} ${routine.name}`)}
+              </details>
             </div>
-            <div class="svc-meta">
-              <div><b>RID Session</b>${tagList(routine.sessionsText)}</div>
-              <div><b>RID Security</b>${tagList(routine.securityText)}</div>
-            </div>
-            <div class="routine-subs">
-              ${routine.subservices.map((sub) => `
-                <div class="routine-sub">
-                  <span class="svc-op">${escapeHTML(sub.id)} ${escapeHTML(sub.name)}</span>
-                  <code>${escapeHTML(sub.wrapper)}()</code>
-                  ${sub.calls.map((call) => `<div class="fn-ref"><code>${escapeHTML(call.fn)}()</code>${sourceRef(call.ref)}</div>`).join('')}
-                </div>
-              `).join('')}
-            </div>
-            <details class="svc-details">
-              <summary>配置代码块</summary>
-              ${renderCode(routine.code)}
-            </details>
-          </article>
+          </details>
         `).join('')}
       </div>
     `;
@@ -698,36 +981,60 @@
     const security = serviceData.security && Array.isArray(serviceData.security.levels) ? serviceData.security.levels[0] : null;
     const memory = serviceData.memory || {};
     return `
-      <div class="flow-grid">
-        <section class="flow-panel">
-          <h2>服务互相影响</h2>
-          <div class="flow-list">
-            ${sequences.map((seq) => `
-              <article class="flow-card">
-                <h3>${escapeHTML(seq.title)}</h3>
-                <div class="flow-steps">${seq.steps.map((step) => `<code>${escapeHTML(step)}</code>`).join('<span>→</span>')}</div>
-                <p>${escapeHTML(seq.why)}</p>
-              </article>
-            `).join('')}
-          </div>
-        </section>
-        <section class="flow-panel">
-          <h2>Security L1</h2>
-          ${security ? `
-            <div class="svc-meta">
-              <div><b>Seed/Key</b>${tagList([`${security.seedSize}B Seed`, `${security.keySize}B Key`])}</div>
-              <div><b>失败延时</b>${tagList([`${security.attemptsUntilDelay} 次后延时`, `${security.delayTimeMs} ms`])}</div>
+      <div class="svc-tree">
+        ${sequences.map((seq) => `
+          <details class="tree-node flow-node">
+            <summary class="tree-summary">
+              <span class="tree-caret"></span>
+              <span class="tree-id">FLOW</span>
+              <span class="tree-main">
+                <span class="tree-title">${escapeHTML(seq.title)}</span>
+                <span class="tree-sub">${seq.steps.map((step) => escapeHTML(step)).join(' -> ')}</span>
+              </span>
+              <span class="tree-count">${seq.steps.length} 步</span>
+            </summary>
+            <div class="tree-body">
+              <div class="flow-steps">${seq.steps.map((step) => `<code>${escapeHTML(step)}</code>`).join('<span>→</span>')}</div>
+              <p class="flow-note">${escapeHTML(seq.why)}</p>
             </div>
-            <div class="fn-ref"><code>${escapeHTML(security.getSeed.fn)}()</code>${sourceRef(security.getSeed.ref)}</div>
-            <div class="fn-ref"><code>${escapeHTML(security.compareKey.fn)}()</code>${sourceRef(security.compareKey.ref)}</div>
-            ${renderCode(security.code)}
-          ` : '<div class="empty-state">无 Security 配置</div>'}
-        </section>
-        <section class="flow-panel wide">
-          <h2>内存服务范围</h2>
-          <p class="section-subtitle">0x23 / 0x3D 只允许访问 DCM 生成表中的范围。</p>
-          ${renderCode(memory.code || '')}
-        </section>
+          </details>
+        `).join('')}
+        <details class="tree-node flow-node">
+          <summary class="tree-summary">
+            <span class="tree-caret"></span>
+            <span class="tree-id">L1</span>
+            <span class="tree-main">
+              <span class="tree-title">Security L1</span>
+              <span class="tree-sub">${security ? `${security.seedSize}B Seed / ${security.keySize}B Key` : '无 Security 配置'}</span>
+            </span>
+            <span class="tree-count">0x27</span>
+          </summary>
+          <div class="tree-body">
+            ${security ? `
+              ${renderConditionGrid([
+                { label:'Seed/Key', values:[`${security.seedSize}B Seed`, `${security.keySize}B Key`] },
+                { label:'失败延时', values:[`${security.attemptsUntilDelay} 次后延时`, `${security.delayTimeMs} ms`] },
+              ])}
+              <div class="fn-ref"><b>获取 Seed</b><code>${escapeHTML(security.getSeed.fn)}()</code>${sourceRef(security.getSeed.ref)}</div>
+              <div class="fn-ref"><b>比较 Key</b><code>${escapeHTML(security.compareKey.fn)}()</code>${sourceRef(security.compareKey.ref)}</div>
+              ${renderCode(security.code, 'Security L1 配置')}
+            ` : '<div class="empty-state">无 Security 配置</div>'}
+          </div>
+        </details>
+        <details class="tree-node flow-node">
+          <summary class="tree-summary">
+            <span class="tree-caret"></span>
+            <span class="tree-id">MEM</span>
+            <span class="tree-main">
+              <span class="tree-title">内存服务范围</span>
+              <span class="tree-sub">0x23 / 0x3D 只允许访问 DCM 生成表中的范围</span>
+            </span>
+            <span class="tree-count">range</span>
+          </summary>
+          <div class="tree-body">
+            ${renderCode(memory.code || '', '0x23 / 0x3D 内存范围')}
+          </div>
+        </details>
       </div>
     `;
   }

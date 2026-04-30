@@ -2886,7 +2886,7 @@ PT-CAN  Ch-CAN  Infotainment-CAN
 
   // 暴露 + 占位（后续追加用）
   window.LESSONS = {
-    appVersion: '1.5.0',
+    appVersion: '1.6.2',
     groups: G,
     lessons: L,
     quizzes: QUIZZES
