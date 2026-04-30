@@ -1,18 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#3a86ff"/>
-      <stop offset="1" stop-color="#8338ec"/>
+    <linearGradient id="g" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A84FF"/>
+      <stop offset="1" stop-color="#5856D6"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="96" fill="url(#g)"/>
-  <g fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
-    <!-- ECU box -->
-    <rect x="116" y="160" width="280" height="180" rx="22"/>
-    <!-- pins -->
-    <path d="M150 340v34M210 340v34M270 340v34M330 340v34M376 340v34"/>
-    <!-- diag waveform (UDS frame) -->
-    <path d="M148 250 H190 V222 H222 V270 H260 V230 H300 V260 H340 V234 H372"/>
+  <rect width="1024" height="1024" rx="240" fill="url(#g)"/>
+  <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="512" cy="512" r="220" stroke-width="52"/>
+    <circle cx="512" cy="512" r="72" stroke-width="36"/>
   </g>
-  <text x="256" y="430" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-weight="700" font-size="64" fill="#fff">UDS</text>
 </svg>

@@ -17,8 +17,10 @@
 ## 主要特性
 
 - ✅ **PWA** — 离线可用，iOS Safari "添加到主屏幕"后变成桌面 App，全屏体验
-- ✅ **右上角双按钮**：自适应/移动版/桌面版排版切换；ⓘ 查看本地版本 / 云端版本
+- ✅ **三段式学习流程**：默认进入首页，课程页选课，学习页专注阅读
+- ✅ **自动设备模式**：打开时按屏幕宽度自动切换电脑模式 / 手机模式
 - ✅ **学习进度**：支持完成状态、继续学习、课程搜索和阅读进度条
+- ✅ **iOS 风格 UI**：玻璃材质、底部 Tab、SVG 图形、流畅页面动效
 - ✅ **自动更新** — 每次启动 fetch `version.json` 比对，发现新版本自动清缓存 + 刷新（带 Toast 提示）
 - ✅ **零依赖** — 纯原生 HTML/CSS/JS，单文件托管即可
 
@@ -91,7 +93,7 @@ gh api -X POST /repos/{owner}/diag-tutor/pages -f "source[branch]=main" -f "sour
 diag-tutor/
 ├── index.html              # 主页面容器
 ├── styles.css              # App Shell、毛玻璃视觉、响应式布局和动效
-├── app.js                  # 路由、学习进度、搜索、版本检测、Service Worker 注册、视图切换
+├── app.js                  # 首页/课程/学习路由、学习进度、搜索、版本检测、Service Worker 注册
 ├── lessons.js              # 全部课程内容（最常更新）
 ├── sw.js                   # Service Worker（缓存策略、自动更新）
 ├── manifest.webmanifest    # PWA 元数据
