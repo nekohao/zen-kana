@@ -3,173 +3,49 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#0b1020"/>
+<meta name="theme-color" content="#101417"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="DiagTutor"/>
 <link rel="apple-touch-icon" href="icon.svg"/>
 <link rel="icon" href="icon.svg"/>
 <link rel="manifest" href="manifest.webmanifest"/>
-<title>诊断学习手册 · DFXY</title>
-<style>
-  :root{
-    --bg:#0b1020; --bg2:#11173a; --card:#161c44; --line:#26306b;
-    --fg:#e8ecff; --fg2:#a8b0d8; --accent:#7aa2ff; --accent2:#9d7bff;
-    --ok:#38d39f; --warn:#ffb454; --err:#ff5d6c; --code:#0d1330;
-    --max:880px;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:linear-gradient(180deg,#080d22 0%,#0b1020 50%,#0a0f28 100%);color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","SF Pro Text","PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
-    -webkit-tap-highlight-color:transparent;
-    padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom);
-    overflow-x:hidden;
-  }
-  a{color:var(--accent);text-decoration:none}
-  a:hover{text-decoration:underline}
-  /* ====== App shell ====== */
-  .app{display:flex;flex-direction:column;min-height:100vh}
-  header.topbar{
-    position:sticky;top:0;z-index:30;
-    background:rgba(8,13,34,.85);backdrop-filter:saturate(150%) blur(14px);
-    -webkit-backdrop-filter:saturate(150%) blur(14px);
-    border-bottom:1px solid var(--line);
-    display:flex;align-items:center;gap:8px;padding:10px 12px;
-    padding-top:calc(10px + env(safe-area-inset-top));
-  }
-  .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
-  .brand .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 12px var(--accent)}
-  .spacer{flex:1}
-  .icon-btn{
-    background:var(--card);border:1px solid var(--line);color:var(--fg);
-    width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;
-    font-size:16px;cursor:pointer;transition:transform .15s ease,background .15s ease;
-  }
-  .icon-btn:hover{background:var(--bg2)}
-  .icon-btn:active{transform:scale(.94)}
-  .icon-btn.badge{position:relative}
-  .icon-btn.badge::after{content:"";position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);display:none}
-  .icon-btn.badge.has-update::after{display:block}
-
-  /* ====== Layout ====== */
-  main{flex:1;display:flex;width:100%;max-width:1280px;margin:0 auto}
-  .sidebar{
-    width:280px;flex:0 0 280px;border-right:1px solid var(--line);
-    padding:14px 10px 40px;overflow-y:auto;
-    height:calc(100vh - 57px);position:sticky;top:57px;
-  }
-  .sidebar h3{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--fg2);margin:14px 8px 6px;text-transform:uppercase}
-  .nav-item{
-    display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;
-    color:var(--fg);cursor:pointer;font-size:14px;line-height:1.3;
-  }
-  .nav-item:hover{background:rgba(122,162,255,.08)}
-  .nav-item.active{background:linear-gradient(90deg,rgba(122,162,255,.18),rgba(157,123,255,.10));color:#fff;box-shadow:inset 0 0 0 1px var(--line)}
-  .nav-item .num{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:12px;min-width:22px}
-  .content{flex:1;min-width:0;padding:18px 22px 80px}
-
-  /* ====== Mobile mode ====== */
-  body.mobile main{flex-direction:column;max-width:560px}
-  body.mobile .sidebar{
-    position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line);
-    padding:8px 10px;
-  }
-  body.mobile .sidebar.collapsed{display:none}
-  body.mobile .content{padding:14px 14px 80px}
-  /* auto: small screen behaves like mobile */
-  @media (max-width: 900px){
-    body:not(.desktop) main{flex-direction:column;max-width:100%}
-    body:not(.desktop) .sidebar{
-      position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:8px 10px;
-    }
-    body:not(.desktop) .sidebar.collapsed{display:none}
-    body:not(.desktop) .content{padding:14px 14px 80px}
-  }
-
-  /* ====== Lesson body ====== */
-  .lesson h1{font-size:24px;margin:6px 0 10px;line-height:1.25}
-  .lesson h2{font-size:18px;margin:24px 0 8px;border-left:3px solid var(--accent);padding-left:10px}
-  .lesson h3{font-size:15px;margin:18px 0 6px;color:#cfd6ff}
-  .lesson p{line-height:1.75;color:#dde2ff;margin:8px 0}
-  .lesson ul,.lesson ol{padding-left:22px;line-height:1.85}
-  .lesson li{margin:4px 0}
-  .lesson code{background:var(--code);padding:1px 6px;border-radius:5px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;color:#a6e3ff;border:1px solid var(--line)}
-  .lesson pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;font-size:12.5px;line-height:1.65}
-  .lesson pre code{background:transparent;border:none;padding:0;color:#cfe8ff}
-  .lesson blockquote{margin:10px 0;padding:10px 14px;background:rgba(122,162,255,.08);border-left:3px solid var(--accent);border-radius:8px;color:#dde2ff}
-  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--fg2);margin-right:6px}
-  .tag.ok{color:var(--ok);border-color:rgba(56,211,159,.4)}
-  .tag.warn{color:var(--warn);border-color:rgba(255,180,84,.4)}
-  .tag.err{color:var(--err);border-color:rgba(255,93,108,.4)}
-  table.t{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
-  table.t th,table.t td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
-  table.t th{background:var(--bg2);color:#cfd6ff;font-weight:600}
-  table.t tr:nth-child(even) td{background:rgba(255,255,255,.02)}
-  .pager{display:flex;justify-content:space-between;gap:10px;margin-top:36px;border-top:1px solid var(--line);padding-top:20px}
-  .pager a{
-    flex:1;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card);
-    color:var(--fg);display:block;font-size:13px;line-height:1.4;
-  }
-  .pager a:hover{background:var(--bg2);text-decoration:none}
-  .pager .arrow{color:var(--fg2);font-size:11px;margin-bottom:3px;display:block}
-
-  /* ====== Modal ====== */
-  .mask{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:none;align-items:center;justify-content:center;padding:18px}
-  .mask.show{display:flex}
-  .modal{
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    width:100%;max-width:420px;padding:18px 18px 14px;color:var(--fg);
-  }
-  .modal h3{margin:0 0 10px;font-size:16px}
-  .kv{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
-  .kv:last-child{border:none}
-  .kv .k{color:var(--fg2)}
-  .kv .v{font-variant-numeric:tabular-nums}
-  .modal .row{display:flex;gap:8px;margin-top:12px}
-  .btn{
-    flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);
-    color:var(--fg);cursor:pointer;font-size:13px;
-  }
-  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#0b1020;font-weight:600}
-
-  /* ====== Toast ====== */
-  .toast{
-    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);
-    background:var(--card);border:1px solid var(--line);padding:10px 16px;border-radius:999px;
-    color:var(--fg);font-size:13px;box-shadow:0 10px 40px rgba(0,0,0,.4);z-index:60;
-    transition:transform .35s cubic-bezier(.2,.9,.3,1.2),opacity .25s;opacity:0;pointer-events:none;
-  }
-  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-  /* scrollbar */
-  ::-webkit-scrollbar{width:8px;height:8px}
-  ::-webkit-scrollbar-thumb{background:#1f2858;border-radius:8px}
-  ::-webkit-scrollbar-thumb:hover{background:#2a356f}
-</style>
+<link rel="stylesheet" href="styles.css"/>
+<title>诊断学习手册 · Diag Tutor</title>
 </head>
 <body>
 <div class="app">
-  <header class="topbar">
+  <div class="scroll-meter" id="scrollMeter"></div>
+
+  <header class="topbar glass">
     <button id="menuBtn" class="icon-btn" title="目录" aria-label="目录">☰</button>
-    <div class="brand"><span class="dot"></span>诊断学习手册</div>
+    <a class="brand" href="#/" aria-label="Diag Tutor 首页">
+      <span class="brand-mark">UDS</span>
+      <span>
+        <span class="brand-title">Diag Tutor</span>
+        <span class="brand-subtitle">车载诊断学习手册</span>
+      </span>
+    </a>
+    <div class="top-progress" id="topProgress">0 / 0</div>
     <div class="spacer"></div>
-    <button id="viewBtn" class="icon-btn" title="切换视图" aria-label="切换视图">📱</button>
+    <button id="viewBtn" class="icon-btn" title="切换视图" aria-label="切换视图">◧</button>
     <button id="verBtn" class="icon-btn badge" title="版本信息" aria-label="版本信息">ⓘ</button>
   </header>
-  <main>
+
+  <main class="app-main">
     <aside class="sidebar" id="sidebar"></aside>
-    <article class="content lesson" id="content">加载中…</article>
+    <article class="content lesson" id="content">加载中...</article>
   </main>
 </div>
 
 <div class="mask" id="verMask">
-  <div class="modal">
-    <h3>版本信息</h3>
+  <div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="verTitle">
+    <h3 id="verTitle">版本信息</h3>
     <div class="kv"><span class="k">本地版本</span><span class="v" id="verLocal">-</span></div>
-    <div class="kv"><span class="k">云端版本</span><span class="v" id="verRemote">检测中…</span></div>
+    <div class="kv"><span class="k">云端版本</span><span class="v" id="verRemote">检测中...</span></div>
     <div class="kv"><span class="k">本地构建时间</span><span class="v" id="verLocalTime">-</span></div>
     <div class="kv"><span class="k">云端构建时间</span><span class="v" id="verRemoteTime">-</span></div>
-    <div class="kv"><span class="k">更新说明</span><span class="v" id="verNotes" style="text-align:right;max-width:60%">-</span></div>
+    <div class="kv"><span class="k">更新说明</span><span class="v notes" id="verNotes">-</span></div>
     <div class="row">
       <button class="btn" id="verClose">关闭</button>
       <button class="btn primary" id="verUpdate">立即更新</button>

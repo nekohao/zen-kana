@@ -17,7 +17,8 @@
 ## 主要特性
 
 - ✅ **PWA** — 离线可用，iOS Safari "添加到主屏幕"后变成桌面 App，全屏体验
-- ✅ **右上角双按钮**：📱/💻 切换移动版/桌面版排版；ⓘ 查看本地版本 / 云端版本
+- ✅ **右上角双按钮**：自适应/移动版/桌面版排版切换；ⓘ 查看本地版本 / 云端版本
+- ✅ **学习进度**：支持完成状态、继续学习、课程搜索和阅读进度条
 - ✅ **自动更新** — 每次启动 fetch `version.json` 比对，发现新版本自动清缓存 + 刷新（带 Toast 提示）
 - ✅ **零依赖** — 纯原生 HTML/CSS/JS，单文件托管即可
 
@@ -88,8 +89,9 @@ gh api -X POST /repos/{owner}/diag-tutor/pages -f "source[branch]=main" -f "sour
 
 ```
 diag-tutor/
-├── index.html              # 主页面 (UI 容器 + 内联 CSS)
-├── app.js                  # 路由、版本检测、Service Worker 注册、视图切换
+├── index.html              # 主页面容器
+├── styles.css              # App Shell、毛玻璃视觉、响应式布局和动效
+├── app.js                  # 路由、学习进度、搜索、版本检测、Service Worker 注册、视图切换
 ├── lessons.js              # 全部课程内容（最常更新）
 ├── sw.js                   # Service Worker（缓存策略、自动更新）
 ├── manifest.webmanifest    # PWA 元数据
@@ -124,7 +126,6 @@ L.push({
 
 - 当前 30 讲覆盖核心，但可继续追加：DTC 详细位掩码、DEM Debounce 策略、CAN-FD 帧编排、Bootloader 协议细节、UDS over DoIP 等
 - 目前没做夜间/白天切换（已默认深色，符合大多数工程师审美）
-- 没有搜索框（章节足够时再加）
 - 没有作业 / 测验交互（可在 v2 加）
 
 如果想扩内容，告诉我具体方向，我会按这个结构继续追加。

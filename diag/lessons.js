@@ -1298,7 +1298,7 @@ Std_ReturnType DiagDidData_VIN_Write(
 
   // 暴露 + 占位（后续追加用）
   window.LESSONS = {
-    appVersion: '1.0.0',
+    appVersion: '1.1.0',
     groups: G,
     lessons: L
   };

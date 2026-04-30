@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
-  "buildTime": "2026-04-30T02:14:00Z",
-  "notes": "首发版本：诊断总览、CAN/ISO-TP、UDS 报文结构、NRC、Session/Security、DID/RID 实战、DTC/DEM、DCM 架构、DFXY 项目导览。"
+  "version": "1.1.0",
+  "buildTime": "2026-04-30T03:01:00Z",
+  "notes": "UI 与学习流程升级：新增毛玻璃界面、课程搜索、学习进度、完成状态、继续学习、阅读进度条和更适合 iPhone 的响应式布局。"
 }

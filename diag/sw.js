@@ -10,6 +10,7 @@ let CACHE_NAME = CACHE_PREFIX + 'bootstrap';
 const CORE_ASSETS = [
   './',
   './index.html',
+  './styles.css',
   './app.js',
   './lessons.js',
   './manifest.webmanifest',
