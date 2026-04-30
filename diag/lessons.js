@@ -96,12 +96,12 @@
   // ============================================================
   // GROUP 2 — 物理与传输层（你最想搞懂的：单帧/多帧/流控帧）
   // ============================================================
-  G.push({ title:'第二部分 · 传输层（ISO-TP）', lessons:['can','isotp_intro','isotp_sf','isotp_mf','isotp_fc','addressing','cantp_impl'] });
+  G.push({ title:'第二部分 · 传输层（ISO-TP）', lessons:['can','isotp_intro','isotp_frames','cantp_impl'] });
 
   L.push({
     id:'can',
-    title:'3. CAN / CAN-FD 帧速览',
-    subtitle:'你做通信熟，这里只把诊断关心的点拎出来',
+    title:'3. CAN / CAN-FD 帧与诊断寻址',
+    subtitle:'帧结构、ID 与寻址方式一站式掌握',
     html: `
       <h2>诊断只关心数据帧的两件事</h2>
       <ol>
@@ -124,6 +124,19 @@
 #define DCM_TOTAL_CONFIGURED_BUFFER_SIZE   2110U
 #define DCM_TOTAL_RX_CONFIGURED_BUFFER_SIZE 1087U</code></pre>
       <p>这意味着：项目支持 <b>物理寻址 + 功能寻址两个接收通道</b>，发送通道一个，最大单条 UDS 报文 ~1KB（典型够用）。</p>
+
+      <h2>物理寻址 vs 功能寻址</h2>
+      <table class="t">
+        <tr><th></th><th>物理寻址 Physical</th><th>功能寻址 Functional</th></tr>
+        <tr><td>对象</td><td>点对点 — 仅一个 ECU</td><td>广播 — 所有支持的 ECU</td></tr>
+        <tr><td>11 位 ID 例</td><td>0x7E0 → 仅发动机</td><td>0x7DF → 所有 ECU</td></tr>
+        <tr><td>能否走多帧</td><td>✅ 完整 ISO-TP</td><td>❌ 只能 SF（≤7B）</td></tr>
+        <tr><td>典型用途</td><td>读写 DID、刷写、Routine</td><td>0x10/0x3E/0x11/0x14 这类广播服务</td></tr>
+      </table>
+
+      <h2>项目里的体现</h2>
+      <p>DFXY 配置 <b>RX PduId = 2</b>，正是物理 + 功能两个独立通道。诊断仪发 0x7DF（或厂家广播 ID）时，多个 ECU 同时收到、同时回。所以你不能用 0x7DF 去读 17 字节 VIN（因为它会被多 ECU 同时应答撞车），必须用物理寻址 0x7Ex。</p>
+      <blockquote>记住：<b>"广播只能短，长报文必物理"</b>。</blockquote>
     `
   });
 
@@ -150,9 +163,9 @@
   });
 
   L.push({
-    id:'isotp_sf',
-    title:'5. 单帧 SF — 一帧装得下的情况',
-    subtitle:'看懂 02 10 03 这种"短诊断报文"',
+    id:'isotp_frames',
+    title:'5. ISO-TP 帧详解：SF / FF / CF / FC',
+    subtitle:'单帧、多帧首帧、连续帧、流控帧一次讲透',
     html: `
       <h2>SF 字节结构（经典 CAN，DLC=8）</h2>
       <pre><code>Byte0 (PCI):  0x0L         L = 真实数据长度（1~7）
@@ -183,14 +196,7 @@ Byte后面:    0x55 / 0xAA / 0x00 等填充字节（不解析）</code></pre>
 Byte1:  L                // 实际数据长度（最多 62）
 Byte2..: UDS 数据</code></pre>
       <p>DFXY 用经典 CAN（看 Dcm 缓冲区配置和 PduId 数量），所以以经典 SF/FF/CF 为主。</p>
-    `
-  });
 
-  L.push({
-    id:'isotp_mf',
-    title:'6. 多帧 FF + CF — 长报文怎么拆',
-    subtitle:'读 VIN、读 DTC、刷写都靠它',
-    html: `
       <h2>FF（First Frame）字节结构</h2>
       <pre><code>Byte0 (PCI 高 4bit=1):  0x1X    X = 总长度高 4bit
 Byte1:                  YY      总长度低 8bit
@@ -208,15 +214,8 @@ Byte1..7:    UDS 数据后续 7 字节</code></pre>
       <pre><code>FF: 10 14 62 F1 90 4C 42 56     ← 0x14=20字节总长，'L''B''V'
 CF: 21 48 41 31 32 33 34 35     ← 序号1：'H''A''1''2''3''4''5'
 CF: 22 36 37 58 59 5A 41 42     ← 序号2：'6''7''X''Y''Z''A''B'</code></pre>
-      <p>但是！发送方发完 FF 后<b>不能直接发 CF</b>，必须先<b>等接收方发 FC</b>批准。下一讲讲 FC。</p>
-    `
-  });
+      <p>但是！发送方发完 FF 后<b>不能直接发 CF</b>，必须先<b>等接收方发 FC</b>批准。下一节讲 FC。</p>
 
-  L.push({
-    id:'isotp_fc',
-    title:'7. 流控帧 FC — 接收方的"红绿灯"',
-    subtitle:'Block Size 与 STmin 是什么意思',
-    html: `
       <h2>什么时候出现 FC？</h2>
       <p>当发送方发出 FF 后，<b>接收方必须先回复 FC</b>，才能开始发 CF。这是 ISO-TP 的握手节奏。</p>
 
@@ -250,30 +249,10 @@ Tester  → ECU:   22 36 37 58 59 5A 41 42     [CF2]   ← 全部送达</code></
     `
   });
 
-  L.push({
-    id:'addressing',
-    title:'8. 物理寻址 vs 功能寻址',
-    subtitle:'为什么 DFXY 要配 2 个 RxPduId',
-    html: `
-      <h2>两种寻址</h2>
-      <table class="t">
-        <tr><th></th><th>物理寻址 Physical</th><th>功能寻址 Functional</th></tr>
-        <tr><td>对象</td><td>点对点 — 仅一个 ECU</td><td>广播 — 所有支持的 ECU</td></tr>
-        <tr><td>11 位 ID 例</td><td>0x7E0 → 仅发动机</td><td>0x7DF → 所有 ECU</td></tr>
-        <tr><td>能否走多帧</td><td>✅ 完整 ISO-TP</td><td>❌ 只能 SF（≤7B）</td></tr>
-        <tr><td>典型用途</td><td>读写 DID、刷写、Routine</td><td>0x10/0x3E/0x11/0x14 这类广播服务</td></tr>
-      </table>
-
-      <h2>项目里的体现</h2>
-      <p>DFXY 配置 <b>RX PduId = 2</b>，正是物理 + 功能两个独立通道。诊断仪发 0x7DF（或厂家广播 ID）时，多个 ECU 同时收到、同时回。所以你不能用 0x7DF 去读 17 字节 VIN（因为它会被多 ECU 同时应答撞车），必须用物理寻址 0x7Ex。</p>
-      <blockquote>记住：<b>"广播只能短，长报文必物理"</b>。</blockquote>
-    `
-  });
-
   // ============================================================
   // GROUP 3 — UDS 协议核心
   // ============================================================
-  G.push({ title:'第三部分 · UDS 协议核心', lessons:['uds_frame','suppress','nrc','session','security','misc_services','p2_timer','uds_auth'] });
+  G.push({ title:'第三部分 · UDS 协议核心', lessons:['uds_frame','nrc','session','security','misc_services','p2_timer','uds_auth'] });
 
   L.push({
     id:'uds_frame',
@@ -314,14 +293,7 @@ Tester  → ECU:   22 36 37 58 59 5A 41 42     [CF2]   ← 全部送达</code></
         <tr><td>0x85</td><td>ControlDTCSetting</td><td>暂停/恢复 DTC 监控</td></tr>
       </table>
       <blockquote>规律：<b>正应答 = 请求 SID 加 0x40</b>。0x10→0x50，0x22→0x62，0x27→0x67，0x31→0x71。看到 0x7F 就是出错了。</blockquote>
-    `
-  });
 
-  L.push({
-    id:'suppress',
-    title:'10. 子功能 & SuppressPosRspMsgIndicationBit',
-    subtitle:'第二字节最高位为什么有时是 0x80',
-    html: `
       <h2>子功能（Sub-function）</h2>
       <p>许多服务在 SID 后面跟 1 字节子功能。例如：</p>
       <ul>
@@ -339,7 +311,7 @@ Tester  → ECU:   22 36 37 58 59 5A 41 42     [CF2]   ← 全部送达</code></
       <h2>怎么判断</h2>
       <ul>
         <li>子功能 = <code>0x03</code> → 想要正向应答</li>
-        <li>子功能 = <code>0x83</code> → 同样的子功能，但抑制正应答（0x83 = 0x80 \| 0x03）</li>
+        <li>子功能 = <code>0x83</code> → 同样的子功能，但抑制正应答（0x83 = 0x80 | 0x03）</li>
       </ul>
     `
   });
@@ -555,7 +527,7 @@ if (StaticSeed_Flag == 0u) {
   // ============================================================
   // GROUP 4 — 数据访问与刷写
   // ============================================================
-  G.push({ title:'第四部分 · 数据访问与刷写', lessons:['did_read','did_write','io_control','routine','dtc','clear_dtc','flash','bootloader_deep','rdtc_ext'] });
+  G.push({ title:'第四部分 · 数据访问与刷写', lessons:['did_read','did_write','io_control','routine','dtc','flash','bootloader_deep','rdtc_ext'] });
 
   L.push({
     id:'did_read',
@@ -789,15 +761,8 @@ SAE 标准故障 = 0x0xxx；厂家自定义 = 0x1xxx 起</code></pre>
 
       <h2>项目里 DTC 来源 — DEM</h2>
       <p>0x19 是 Dcm 提供的"接口"，<b>DTC 真正的"产生地"是 DEM 模块</b>。应用层每检测到故障就调用 <code>Dem_SetEventStatus(EventId, DEM_EVENT_STATUS_FAILED)</code>。DEM 根据 debounce / aging 策略把事件升级成 confirmed DTC，存 NvM。Dcm 处理 0x19 时直接调 DEM API 取数据。</p>
-    `
-  });
 
-  L.push({
-    id:'clear_dtc',
-    title:'20. 0x14 ClearDiagnosticInformation',
-    subtitle:'清 DTC',
-    html: `
-      <h2>请求/应答</h2>
+      <h2>清除 DTC — 0x14 ClearDiagnosticInformation</h2>
       <pre><code>请求：04 14 FF FF FF 00 00 00       ← 清所有
 应答：01 54 00 00 00 00 00 00       ← 完成
 
@@ -2817,10 +2782,113 @@ PT-CAN  Ch-CAN  Infotainment-CAN
     `
   });
 
+  // ============================================================
+  // QUIZZES — 综合测验
+  // ============================================================
+  const QUIZZES = [
+    {
+      id: 'final',
+      title: '诊断知识总测验',
+      questions: [
+        {
+          q: 'ISO-TP 中，单帧 SF 的 PCI 首字节高 4bit 是什么？',
+          options: ['0', '1', '2', '3'],
+          correct: 0,
+          explanation: 'SF = Single Frame，PCI 类型码为 0（高 4bit=0），低 4bit=数据长度。'
+        },
+        {
+          q: 'CAN-FD 的最大数据域长度（DLC）是多少字节？',
+          options: ['8', '16', '32', '64'],
+          correct: 3,
+          explanation: '经典 CAN 最多 8B，CAN-FD 最多 64B。'
+        },
+        {
+          q: 'UDS 正向应答 SID 的计算方式是什么？',
+          options: ['请求 SID + 0x20', '请求 SID + 0x40', '请求 SID ^ 0x7F', '请求 SID + 0x10'],
+          correct: 1,
+          explanation: '正应答 = 请求 SID + 0x40。例如 0x10 → 0x50，0x22 → 0x62。'
+        },
+        {
+          q: 'SuppressPosRspMsgIndicationBit 位于子功能字节的哪一位？',
+          options: ['bit0', 'bit3', 'bit7', 'bit15'],
+          correct: 2,
+          explanation: '子功能字节的最高位 bit7 = 1 时抑制正应答，仅失败时回 0x7F NRC。'
+        },
+        {
+          q: 'ISO-TP 流控帧 FC 的 PCI 类型码高 4bit 是什么？',
+          options: ['0', '1', '2', '3'],
+          correct: 3,
+          explanation: 'FC = Flow Control，PCI 类型码为 3（高 4bit=3）。'
+        },
+        {
+          q: 'DTC 3 字节编码中，首字节高 2bit 为 0b01 代表哪个系统？',
+          options: ['P (动力总成)', 'C (底盘)', 'B (车身)', 'U (网络)'],
+          correct: 1,
+          explanation: '高 2bit：00=P，01=C，10=B，11=U。DFXY 的 IBC 属于底盘系统，因此高 2bit=01。'
+        },
+        {
+          q: '以下哪个 NRC 表示"请求报文长度或格式不正确"？',
+          options: ['0x11', '0x12', '0x13', '0x31'],
+          correct: 2,
+          explanation: '0x13 = incorrectMessageLengthOrInvalidFormat，表示长度对不上或格式错误。'
+        },
+        {
+          q: '进入编程会话（Programming Session）的 UDS 请求是什么？',
+          options: ['02 10 01', '02 10 02', '02 10 03', '02 10 04'],
+          correct: 1,
+          explanation: '0x10 02 是 ProgrammingSession，用于刷写和 Bootloader。'
+        },
+        {
+          q: '物理寻址与功能寻址的最大区别是什么？',
+          options: ['物理寻址更快', '功能寻址只能发单帧（SF）', '物理寻址使用 29 位 ID', '功能寻址只支持 UDS'],
+          correct: 1,
+          explanation: '功能寻址是广播，只能走单帧（≤7B），不能进行 ISO-TP 多帧长报文传输。'
+        },
+        {
+          q: '刷写流程中，请求下载（RequestDownload）的服务 ID 是什么？',
+          options: ['0x31', '0x34', '0x36', '0x37'],
+          correct: 1,
+          explanation: '0x34 = RequestDownload，0x36 = TransferData，0x37 = RequestTransferExit，0x31 = RoutineControl。'
+        },
+        {
+          q: 'DEM 模块中，confirmed DTC 的 bit3 状态表示什么？',
+          options: ['当前测试失败', '故障已确认并存入 NvM', '故障待定', '测试未完成'],
+          correct: 1,
+          explanation: 'confirmedDTC（bit3）表示故障已经过多次验证，被确认并存储到 NvM。'
+        },
+        {
+          q: '0x27 安全访问的 Seed/Key 流程中，请求 Seed 的子功能一般是多少？',
+          options: ['0x01', '0x02', '0x03', '0x04'],
+          correct: 0,
+          explanation: '0x27 01 请求 Seed（奇数），0x27 02 发送 Key（偶数），以此类推。'
+        },
+        {
+          q: '以下哪种服务不需要扩展会话即可执行？',
+          options: ['0x22 读 DID', '0x2E 写 DID', '0x2F IO 控制', '0x10 会话切换'],
+          correct: 0,
+          explanation: '0x22 读 DID 在默认会话即可执行；写 DID、IO 控制、Routine 通常需要扩展会话+解锁。'
+        },
+        {
+          q: 'ISO-TP 多帧传输中，发送方发完 FF 后下一步必须等待什么？',
+          options: ['FC（流控帧）', '下一个 CF', 'ACK 信号', 'P2 超时'],
+          correct: 0,
+          explanation: 'FF 之后发送方必须等待接收方回 FC（Flow Control），才能继续发送 CF。'
+        },
+        {
+          q: 'DID 0xF190 在 ISO 14229 中通常代表什么数据？',
+          options: ['软件版本号', 'VIN 车辆识别码', 'ECU 硬件版本', '生产日期'],
+          correct: 1,
+          explanation: '0xF190 是 ISO 规定的 VIN DID，全球统一语义。'
+        }
+      ]
+    }
+  ];
+
   // 暴露 + 占位（后续追加用）
   window.LESSONS = {
-    appVersion: '1.3.0',
+    appVersion: '1.5.0',
     groups: G,
-    lessons: L
+    lessons: L,
+    quizzes: QUIZZES
   };
 })();

@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
-  "buildTime": "2026-05-01T10:00:00Z",
-  "notes": "v1.4 补充 9 讲加餐专题：① CanTp 源码级收发链路（SF/FF/CF/FC + N_Bs/N_Cr 超时）；② P2/P2*/S3server 计时器详解（诊断超时与保活机制）；③ UDS 0x29 网络安全认证（PKI/证书/双向认证趋势）；④ Bootloader 深入与 A/B 分区切换（Version_Switchover 与回滚机制）；⑤ 0x19 子功能补全（0x03/07/0B/0C/0D/0E/14/19 等）；⑥ DEM Event→DTC 完整配置链（Debounce/EnableCondition/OperationCycle/FreezeFrame）；⑦ 0x2A 周期性 DID 读取；⑧ 整车诊断网络与 Gateway 转发（DoIP 简介）；⑨ 诊断一致性测试与法规认证（CANoe Test Module / GB18352.6）。课程从 38 讲扩到 47 讲。"
+  "version": "1.6.0",
+  "buildTime": "2026-04-30T09:40:00Z",
+  "notes": "v1.6 新增 DFXY 服务表：基于 EB 生成的 Dcm/DF_XY_A 配置和 BSW/DIAG callout 自动生成 17 个启用 UDS 服务、87 个 DID、17 个 RID 的查询表，展示子服务、Session/Security、服务互相影响、关键调用函数和代码位置；底部导航新增「服务表」入口。"
 }

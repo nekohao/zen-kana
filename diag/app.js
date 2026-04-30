@@ -15,9 +15,12 @@
 
   const lessons = Array.isArray(LESSONS.lessons) ? LESSONS.lessons : [];
   const groups = Array.isArray(LESSONS.groups) ? LESSONS.groups : [];
+  const serviceData = window.DFXY_SERVICE_DATA || { services: [], dids: [], routines: [], sequences: [] };
   const lessonMap = new Map(lessons.map((lesson) => [lesson.id, lesson]));
   let activeRoute = 'home';
   let courseFilter = '';
+  let serviceFilter = '';
+  let serviceTab = 'services';
   let remoteVersion = null;
   let toastTimer = null;
 
@@ -25,6 +28,8 @@
     home: '<svg class="nav-icon tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 10l7-6 7 6v9a1 1 0 0 1-1 1h-4v-6h-4v6H6a1 1 0 0 1-1-1v-9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
     courses: '<svg class="nav-icon tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v13H7a1.5 1.5 0 0 0 0 3h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 4v11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
     learn: '<svg class="nav-icon tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 6c2.5 0 5 .6 7 1.8 2-1.2 4.5-1.8 7-1.8v11c-2.5 0-5 .6-7 1.8-2-1.2-4.5-1.8-7-1.8V6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 7.8v11.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    services: '<svg class="nav-icon tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8 4v4M14 10v4M10 16v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    quiz: '<svg class="nav-icon tab-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 11h6m-9 4h3m-3-8h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M15 15h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
     search: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m20 20-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
     arrow: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5.5-5.5L18 12l-4.5 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   };
@@ -138,13 +143,17 @@
     $('navHome').innerHTML = navItem('home', '首页', icons.home);
     $('navCourses').innerHTML = navItem('courses', '课程', icons.courses);
     $('navLearn').innerHTML = navItem('learn', '学习', icons.learn);
+    $('navServices').innerHTML = navItem('services', '服务表', icons.services);
+    $('navQuiz').innerHTML = navItem('quiz', '测验', icons.quiz);
     $('bottomHome').innerHTML = navItem('home', '首页', icons.home);
     $('bottomCourses').innerHTML = navItem('courses', '课程', icons.courses);
     $('bottomLearn').innerHTML = navItem('learn', '学习', icons.learn);
+    $('bottomServices').innerHTML = navItem('services', '服务表', icons.services);
+    $('bottomQuiz').innerHTML = navItem('quiz', '测验', icons.quiz);
   }
 
   function setActiveNav(route){
-    const ids = ['Home','Courses','Learn'];
+    const ids = ['Home','Courses','Learn','Services','Quiz'];
     ids.forEach((name) => {
       const key = name.toLowerCase();
       $(`nav${name}`).classList.toggle('active', key === route);
@@ -369,6 +378,360 @@
     }
   }
 
+  function renderQuiz(quizId){
+    const quizzes = Array.isArray(LESSONS.quizzes) ? LESSONS.quizzes : [];
+    const quiz = quizzes.find((q) => q.id === quizId) || quizzes[0];
+    if (!quiz) { renderCourses(); return; }
+    activeRoute = 'quiz';
+    setActiveNav('quiz');
+
+    let current = 0;
+    let answers = new Array(quiz.questions.length).fill(-1);
+    let submitted = false;
+    let score = 0;
+
+    function buildQuiz(){
+      const q = quiz.questions[current];
+      const optionsHtml = q.options.map((opt, i) => `
+        <button class="quiz-opt ${answers[current] === i ? 'selected' : ''} ${submitted ? (i === q.correct ? 'correct' : (answers[current] === i ? 'wrong' : '')) : ''}" type="button" data-opt="${i}" ${submitted ? 'disabled' : ''}>
+          <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
+          <span class="opt-text">${escapeHTML(opt)}</span>
+        </button>
+      `).join('');
+
+      const progress = Math.round(((current + 1) / quiz.questions.length) * 100);
+      const navHtml = quiz.questions.map((_, i) => `
+        <button class="quiz-dot ${i === current ? 'active' : ''} ${answers[i] !== -1 ? 'done' : ''} ${submitted ? (answers[i] === quiz.questions[i].correct ? 'ok' : 'bad') : ''}" data-idx="${i}" type="button"></button>
+      `).join('');
+
+      const scoreHtml = submitted ? `<div class="score-board">得分：${score} / ${quiz.questions.length}</div>` : '';
+
+      stage.innerHTML = `
+        <section class="page quiz-page">
+          <div class="learn-head">
+            <div>
+              <h1 class="section-title">测验</h1>
+              <p class="section-subtitle">${escapeHTML(quiz.title)}</p>
+            </div>
+            <a class="secondary-cta" href="#/courses">返回课程</a>
+          </div>
+          <div class="read-meter"><span style="width:${progress}%"></span></div>
+          <div class="quiz-nav">${navHtml}</div>
+          <article class="lesson-panel quiz-panel">
+            <div class="quiz-question">
+              <span class="pill">第 ${current + 1} / ${quiz.questions.length} 题</span>
+              <h2>${escapeHTML(q.q)}</h2>
+            </div>
+            <div class="quiz-options">${optionsHtml}</div>
+            ${submitted && q.explanation ? `<div class="quiz-explanation">${escapeHTML(q.explanation)}</div>` : ''}
+            ${scoreHtml}
+            <div class="quiz-actions">
+              ${current > 0 ? `<button class="action-btn" id="prevQ" type="button">上一题</button>` : '<span></span>'}
+              ${!submitted ? `<button class="action-btn primary" id="submitQ" type="button">提交答案</button>` : ''}
+              ${submitted && current < quiz.questions.length - 1 ? `<button class="action-btn primary" id="nextQ" type="button">下一题</button>` : ''}
+              ${submitted && current === quiz.questions.length - 1 ? `<a class="action-btn primary" href="#/courses">完成测验</a>` : ''}
+            </div>
+          </article>
+        </section>
+      `;
+
+      if (!submitted) {
+        stage.querySelectorAll('.quiz-opt').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            answers[current] = parseInt(btn.dataset.opt, 10);
+            buildQuiz();
+          });
+        });
+        const submitBtn = $('submitQ');
+        if (submitBtn) {
+          submitBtn.addEventListener('click', () => {
+            if (answers[current] === -1) { showToast('请先选择一个答案'); return; }
+            if (current < quiz.questions.length - 1) {
+              current += 1;
+              buildQuiz();
+            } else {
+              submitted = true;
+              score = quiz.questions.reduce((acc, q, i) => acc + (answers[i] === q.correct ? 1 : 0), 0);
+              buildQuiz();
+              showToast('测验完成！得分：' + score + ' / ' + quiz.questions.length);
+            }
+          });
+        }
+      } else {
+        stage.querySelectorAll('.quiz-dot').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            current = parseInt(btn.dataset.idx, 10);
+            buildQuiz();
+          });
+        });
+        const nextBtn = $('nextQ');
+        if (nextBtn) nextBtn.addEventListener('click', () => { current += 1; buildQuiz(); });
+      }
+      const prevBtn = $('prevQ');
+      if (prevBtn) prevBtn.addEventListener('click', () => { current -= 1; buildQuiz(); });
+    }
+
+    buildQuiz();
+  }
+
+  function renderServices(){
+    const services = Array.isArray(serviceData.services) ? serviceData.services : [];
+    const dids = Array.isArray(serviceData.dids) ? serviceData.dids : [];
+    const routines = Array.isArray(serviceData.routines) ? serviceData.routines : [];
+    const sequences = Array.isArray(serviceData.sequences) ? serviceData.sequences : [];
+    const filter = serviceFilter.trim().toLowerCase();
+    activeRoute = 'services';
+    setActiveNav('services');
+
+    const didStats = dids.reduce((acc, did) => {
+      did.operations.forEach((op) => { acc[op.type] = (acc[op.type] || 0) + 1; });
+      return acc;
+    }, { read:0, write:0, ioctl:0 });
+
+    const tabs = [
+      ['services', '服务'],
+      ['dids', 'DID'],
+      ['routines', 'RID'],
+      ['flows', '关系'],
+    ];
+
+    stage.innerHTML = `
+      <section class="page service-page">
+        <div class="courses-head service-head">
+          <div>
+            <h1 class="section-title">DFXY 服务表</h1>
+            <p class="section-subtitle">来源：EB 生成的 DCM 配置 + DFXY callout。权限按服务级和对象级合并后展示。</p>
+          </div>
+          <label class="search-box service-search">
+            ${icons.search}
+            <input id="serviceSearch" type="search" value="${escapeHTML(serviceFilter)}" placeholder="搜索 SID / DID / RID / 函数">
+          </label>
+        </div>
+
+        <div class="service-stats">
+          <div><span>启用服务</span><b>${services.length}</b></div>
+          <div><span>DID</span><b>${dids.length}</b></div>
+          <div><span>RID</span><b>${routines.length}</b></div>
+          <div><span>读/写/控制</span><b>${didStats.read}/${didStats.write}/${didStats.ioctl}</b></div>
+        </div>
+
+        <div class="service-tabs">
+          ${tabs.map(([id, label]) => `<button class="service-tab ${serviceTab === id ? 'active' : ''}" type="button" data-service-tab="${id}">${label}</button>`).join('')}
+        </div>
+
+        ${renderServiceTabContent(serviceTab, filter, { services, dids, routines, sequences })}
+      </section>
+    `;
+
+    $('serviceSearch').addEventListener('input', (event) => {
+      serviceFilter = event.target.value;
+      renderServices();
+      const input = $('serviceSearch');
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    });
+
+    stage.querySelectorAll('[data-service-tab]').forEach((button) => {
+      button.addEventListener('click', () => {
+        serviceTab = button.dataset.serviceTab;
+        renderServices();
+      });
+    });
+  }
+
+  function renderServiceTabContent(tab, filter, data){
+    if (tab === 'dids') return renderDidCatalog(data.dids, filter);
+    if (tab === 'routines') return renderRoutineCatalog(data.routines, filter);
+    if (tab === 'flows') return renderServiceFlows(data.sequences);
+    return renderServiceCatalog(data.services, filter);
+  }
+
+  function matchesFilter(item, filter){
+    if (!filter) return true;
+    return JSON.stringify(item).toLowerCase().includes(filter);
+  }
+
+  function tagList(items){
+    return (items || []).map((item) => `<span class="svc-tag">${escapeHTML(item)}</span>`).join('');
+  }
+
+  function sourceRef(ref){
+    return ref ? `<span class="source-ref">${escapeHTML(ref.file)}:${ref.line}</span>` : '<span class="source-ref muted">未定位到定义</span>';
+  }
+
+  function renderCode(code){
+    return `<pre class="svc-code"><code>${escapeHTML(code || '')}</code></pre>`;
+  }
+
+  function renderServiceCatalog(services, filter){
+    const visible = services.filter((service) => matchesFilter(service, filter));
+    if (!visible.length) return '<div class="empty-state">没有匹配的服务</div>';
+    return `
+      <div class="service-grid">
+        ${visible.map((service) => `
+          <article class="svc-card">
+            <div class="svc-card-head">
+              <div>
+                <span class="svc-sid">${escapeHTML(service.sid)}</span>
+                <h2>${escapeHTML(service.name)}</h2>
+              </div>
+              <span class="svc-handler">${escapeHTML(service.handler || '-')}</span>
+            </div>
+            <p>${escapeHTML(service.summary)}</p>
+            <div class="svc-meta">
+              <div><b>服务级 Session</b>${tagList(service.sessionsText)}</div>
+              <div><b>服务级 Security</b>${tagList(service.securityText)}</div>
+            </div>
+            ${service.dependencies ? `<div class="svc-impact">${escapeHTML(service.dependencies)}</div>` : ''}
+            ${renderSubserviceTable(service)}
+            <details class="svc-details">
+              <summary>配置代码块</summary>
+              ${renderCode(service.code)}
+            </details>
+          </article>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderSubserviceTable(service){
+    if (!service.subservices || !service.subservices.length) {
+      return '<div class="svc-empty-line">无子服务：权限直接看服务级条件。</div>';
+    }
+    return `
+      <div class="svc-table-wrap compact">
+        <table class="svc-table">
+          <thead><tr><th>子服务</th><th>含义</th><th>额外 Session</th><th>额外 Security</th><th>处理函数</th></tr></thead>
+          <tbody>
+            ${service.subservices.map((sub) => `
+              <tr>
+                <td><code>${escapeHTML(sub.id)}</code> ${escapeHTML(sub.name || '')}</td>
+                <td>${escapeHTML(sub.meaning || '')}</td>
+                <td>${tagList(sub.sessionsText)}</td>
+                <td>${tagList(sub.securityText)}</td>
+                <td><code>${escapeHTML(sub.externalHandler || sub.internalHandler || '-')}</code></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function renderDidCatalog(dids, filter){
+    const visible = dids.filter((did) => matchesFilter(did, filter));
+    if (!visible.length) return '<div class="empty-state">没有匹配的 DID</div>';
+    return `
+      <div class="svc-table-wrap">
+        <table class="svc-table did-table">
+          <thead>
+            <tr><th>DID</th><th>名称</th><th>长度</th><th>可用服务</th><th>有效条件</th><th>代码入口</th></tr>
+          </thead>
+          <tbody>
+            ${visible.map((did) => `
+              <tr>
+                <td><code>${escapeHTML(did.did)}</code></td>
+                <td>${escapeHTML(did.name)}<span class="svc-small">${did.sync ? '同步 DID' : '异步 DID'}</span></td>
+                <td>${escapeHTML(did.sizeText)}</td>
+                <td>${did.operations.map((op) => `<span class="svc-op">${escapeHTML(op.service)} ${escapeHTML(op.type)}</span>`).join('')}</td>
+                <td>${did.operations.map((op) => `
+                  <div class="svc-cond"><b>${escapeHTML(op.service)}</b> ${escapeHTML(op.sessionsText.join(' / '))} · ${escapeHTML(op.securityText.join(' / '))}</div>
+                `).join('')}</td>
+                <td>
+                  ${did.operations.map((op) => renderOperationRefs(op)).join('')}
+                  <details class="svc-details inline"><summary>代码块</summary>${renderCode(did.code)}</details>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function renderOperationRefs(op){
+    const io = op.ioSubservices && op.ioSubservices.length ? `<div class="svc-small">${escapeHTML(op.ioSubservices.join(' / '))}</div>` : '';
+    const fns = (op.functions || []).map((fn) => `
+      <div class="fn-ref"><code>${escapeHTML(fn.fn)}()</code>${sourceRef(fn.ref)}</div>
+    `).join('');
+    return `<div class="op-ref"><b>${escapeHTML(op.service)} ${escapeHTML(op.type)}</b>${io}${fns || '<span class="svc-small">由 DCM 内部处理</span>'}</div>`;
+  }
+
+  function renderRoutineCatalog(routines, filter){
+    const visible = routines.filter((routine) => matchesFilter(routine, filter));
+    if (!visible.length) return '<div class="empty-state">没有匹配的 RID</div>';
+    return `
+      <div class="service-grid routine-grid">
+        ${visible.map((routine) => `
+          <article class="svc-card">
+            <div class="svc-card-head">
+              <div>
+                <span class="svc-sid">${escapeHTML(routine.rid)}</span>
+                <h2>${escapeHTML(routine.name)}</h2>
+              </div>
+              <span class="svc-handler">0x31</span>
+            </div>
+            <div class="svc-meta">
+              <div><b>RID Session</b>${tagList(routine.sessionsText)}</div>
+              <div><b>RID Security</b>${tagList(routine.securityText)}</div>
+            </div>
+            <div class="routine-subs">
+              ${routine.subservices.map((sub) => `
+                <div class="routine-sub">
+                  <span class="svc-op">${escapeHTML(sub.id)} ${escapeHTML(sub.name)}</span>
+                  <code>${escapeHTML(sub.wrapper)}()</code>
+                  ${sub.calls.map((call) => `<div class="fn-ref"><code>${escapeHTML(call.fn)}()</code>${sourceRef(call.ref)}</div>`).join('')}
+                </div>
+              `).join('')}
+            </div>
+            <details class="svc-details">
+              <summary>配置代码块</summary>
+              ${renderCode(routine.code)}
+            </details>
+          </article>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderServiceFlows(sequences){
+    const security = serviceData.security && Array.isArray(serviceData.security.levels) ? serviceData.security.levels[0] : null;
+    const memory = serviceData.memory || {};
+    return `
+      <div class="flow-grid">
+        <section class="flow-panel">
+          <h2>服务互相影响</h2>
+          <div class="flow-list">
+            ${sequences.map((seq) => `
+              <article class="flow-card">
+                <h3>${escapeHTML(seq.title)}</h3>
+                <div class="flow-steps">${seq.steps.map((step) => `<code>${escapeHTML(step)}</code>`).join('<span>→</span>')}</div>
+                <p>${escapeHTML(seq.why)}</p>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+        <section class="flow-panel">
+          <h2>Security L1</h2>
+          ${security ? `
+            <div class="svc-meta">
+              <div><b>Seed/Key</b>${tagList([`${security.seedSize}B Seed`, `${security.keySize}B Key`])}</div>
+              <div><b>失败延时</b>${tagList([`${security.attemptsUntilDelay} 次后延时`, `${security.delayTimeMs} ms`])}</div>
+            </div>
+            <div class="fn-ref"><code>${escapeHTML(security.getSeed.fn)}()</code>${sourceRef(security.getSeed.ref)}</div>
+            <div class="fn-ref"><code>${escapeHTML(security.compareKey.fn)}()</code>${sourceRef(security.compareKey.ref)}</div>
+            ${renderCode(security.code)}
+          ` : '<div class="empty-state">无 Security 配置</div>'}
+        </section>
+        <section class="flow-panel wide">
+          <h2>内存服务范围</h2>
+          <p class="section-subtitle">0x23 / 0x3D 只允许访问 DCM 生成表中的范围。</p>
+          ${renderCode(memory.code || '')}
+        </section>
+      </div>
+    `;
+  }
+
   function parseRoute(){
     const hash = location.hash || '#/home';
     const clean = hash.replace(/^#\/?/, '');
@@ -377,6 +740,8 @@
     if (parts[0] === 'home') return { name:'home' };
     if (parts[0] === 'courses') return { name:'courses' };
     if (parts[0] === 'learn') return { name:'learn', id: parts[1] };
+    if (parts[0] === 'services') return { name:'services' };
+    if (parts[0] === 'quiz') return { name:'quiz', id: parts[1] };
     return { name:'home' };
   }
 
@@ -388,6 +753,8 @@
       const lesson = target.id ? getLesson(decodeURIComponent(target.id)) : getCurrentLearnLesson();
       renderLearn(lesson.id);
     }
+    if (target.name === 'services') renderServices();
+    if (target.name === 'quiz') renderQuiz(target.id);
     stage.scrollTo({ top:0, behavior:'instant' });
     window.scrollTo({ top:0, behavior:'instant' });
     updateScrollMeter();

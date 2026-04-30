@@ -13,6 +13,7 @@ const CORE_ASSETS = [
   './styles.css',
   './app.js',
   './lessons.js',
+  './services.js',
   './manifest.webmanifest',
   './icon.svg'
 ];
