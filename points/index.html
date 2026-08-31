@@ -17,6 +17,47 @@
       }
     })();
   </script>
+
+  <!-- ============================================================
+       AUTO UPDATE MODULE START
+       Same-origin one-time fresh reload on a new app/page open.
+       It does not clear localStorage, so Supabase persistSession survives.
+       Safe to remove as one independent block.
+       ============================================================ -->
+  <script>
+    (() => {
+      try {
+        const FRESH_PARAM = "__points_fresh";
+        const current = new URL(window.location.href);
+
+        // The cache-busting reload has already happened. Remove the temporary
+        // query parameter without another navigation, preventing refresh loops.
+        if (current.searchParams.has(FRESH_PARAM)) {
+          current.searchParams.delete(FRESH_PARAM);
+          const cleanQuery = current.searchParams.toString();
+          const cleanUrl = `${current.pathname}${cleanQuery ? `?${cleanQuery}` : ""}${current.hash}`;
+          window.history.replaceState(window.history.state, "", cleanUrl);
+          return;
+        }
+
+        // A manual browser reload is already a fresh navigation; do not cause
+        // an additional second reload in that case. New opens/navigations get
+        // exactly one cache-busting reload so GitHub Pages serves the latest HTML.
+        const navEntry = window.performance?.getEntriesByType?.("navigation")?.[0];
+        if (navEntry?.type === "reload") return;
+
+        const freshUrl = new URL(window.location.href);
+        freshUrl.searchParams.set(FRESH_PARAM, String(Date.now()));
+        window.location.replace(freshUrl.href);
+      } catch (err) {
+        console.warn("autoUpdateModule:", err);
+      }
+    })();
+  </script>
+  <!-- ============================================================
+       AUTO UPDATE MODULE END
+       ============================================================ -->
+
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="积分小本本" />
@@ -2165,6 +2206,184 @@
       .eyebrow { margin-bottom: 13px; }
     }
 
+
+    /* ============================================================
+       WORK SCHEDULE MODULE START
+       Independent schedule-registration styles. Safe to remove as a block.
+       ============================================================ */
+    #workScheduleLayer,
+    #workScheduleOverviewLayer {
+      padding: 0;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(45,54,70,.075);
+    }
+
+    :root[data-theme="dark"] #workScheduleLayer,
+    :root[data-theme="dark"] #workScheduleOverviewLayer {
+      background: rgba(0,0,0,.22);
+    }
+
+    #workScheduleLayer .work-schedule-sheet,
+    #workScheduleOverviewLayer .work-schedule-sheet {
+      width: min(calc(100% - 8px), 620px);
+      height: auto;
+      max-height: calc(100% - max(calc(var(--safe-top) + 72px), 86px));
+      margin: 0 auto;
+      padding: 0 16px calc(var(--safe-bottom) + 20px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      border: 1px solid var(--glass-border);
+      border-bottom: 0;
+      border-radius: 30px 30px 0 0;
+      transform: translate3d(0,calc(100% + 28px),0);
+      transition: transform .46s cubic-bezier(.18,.84,.24,1);
+      will-change: transform;
+    }
+
+    #workScheduleLayer .work-schedule-sheet::-webkit-scrollbar,
+    #workScheduleOverviewLayer .work-schedule-sheet::-webkit-scrollbar {
+      display: none;
+    }
+
+    #workScheduleLayer.open .work-schedule-sheet,
+    #workScheduleOverviewLayer.open .work-schedule-sheet {
+      transform: translate3d(0,0,0);
+    }
+
+    .work-schedule-form {
+      display: grid;
+      gap: 13px;
+    }
+
+    .work-schedule-field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .work-schedule-field-label {
+      padding-left: 3px;
+      font-size: 12px;
+      font-weight: 650;
+      color: var(--secondary);
+    }
+
+    .work-schedule-time-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .work-schedule-control {
+      min-height: 52px;
+      color: var(--ink);
+      color-scheme: inherit;
+    }
+
+    .work-schedule-control option {
+      color: #111;
+      background: #fff;
+    }
+
+    :root[data-theme="dark"] .work-schedule-control option {
+      color: #fff;
+      background: #20252f;
+    }
+
+    .work-schedule-hint {
+      margin: -2px 3px 1px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--tertiary);
+    }
+
+    .work-schedule-overview-button {
+      margin-top: 2px;
+    }
+
+    .work-schedule-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .work-schedule-row {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto;
+      align-items: center;
+      gap: 14px;
+      min-height: 66px;
+      padding: 12px 14px;
+      border: 1px solid var(--hairline);
+      border-radius: 18px;
+      background: rgba(255,255,255,.085);
+    }
+
+    .work-schedule-date {
+      min-width: 0;
+      font-size: 15px;
+      line-height: 1.25;
+      font-weight: 700;
+      letter-spacing: -.015em;
+    }
+
+    .work-schedule-date-meta {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--tertiary);
+    }
+
+    .work-schedule-time {
+      flex: 0 0 auto;
+      font-size: 15px;
+      font-weight: 730;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      color: var(--blue);
+    }
+
+    .work-schedule-actions {
+      display: grid;
+      justify-items: end;
+      gap: 7px;
+    }
+
+    .work-schedule-delete {
+      min-width: 48px;
+      min-height: 30px;
+      padding: 4px 10px;
+      border: 0;
+      border-radius: 12px;
+      background: rgba(255,69,58,.10);
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .work-schedule-delete:active {
+      transform: scale(.95);
+    }
+
+    .work-schedule-empty {
+      padding: 30px 12px 26px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--secondary);
+    }
+
+    .work-schedule-loading {
+      opacity: .62;
+    }
+
+    /* ============================================================
+       WORK SCHEDULE MODULE END
+       ============================================================ */
+
   </style>
 </head>
 
@@ -2375,7 +2594,18 @@
                 <span class="chevron">›</span>
               </button>
             </div>
+
           </div>
+
+          <!-- WORK SCHEDULE MODULE START: settings entry -->
+          <div class="settings-label">排班</div>
+          <div class="settings-group">
+            <button id="openWorkScheduleBtn" class="settings-row pressable" type="button">
+              <span>排班登记</span>
+              <span class="chevron">›</span>
+            </button>
+          </div>
+          <!-- WORK SCHEDULE MODULE END: settings entry -->
 
           <div class="settings-label">外观</div>
           <div class="settings-group">
@@ -2411,6 +2641,85 @@
         </div>
       </div>
     </div>
+
+
+    <!-- ============================================================
+         WORK SCHEDULE MODULE START
+         Independent schedule registration / overview sheets.
+         ============================================================ -->
+    <div id="workScheduleLayer" class="modal-layer" aria-hidden="true">
+      <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="workScheduleTitle">
+        <header class="unified-sheet-header">
+          <div class="grabber" aria-hidden="true"></div>
+          <div id="workScheduleTitle" class="sheet-title">排班登记</div>
+        </header>
+        <div class="unified-sheet-body">
+          <div class="sheet-subtitle" style="text-align:center">选择日期与上下班整点时间，保存后同一日期再次登记会更新原记录。</div>
+
+          <div class="work-schedule-form">
+            <label class="work-schedule-field">
+              <span class="work-schedule-field-label">日期</span>
+              <input id="workScheduleDate" class="field work-schedule-control" type="date" />
+            </label>
+
+            <div class="work-schedule-time-grid">
+              <label class="work-schedule-field">
+                <span class="work-schedule-field-label">上班时间</span>
+                <select id="workScheduleStartHour" class="field work-schedule-control" aria-label="上班时间"></select>
+              </label>
+
+              <label class="work-schedule-field">
+                <span class="work-schedule-field-label">下班时间</span>
+                <select id="workScheduleEndHour" class="field work-schedule-control" aria-label="下班时间"></select>
+              </label>
+            </div>
+
+            <div class="work-schedule-hint">可选时间为 08:00–22:00 的整点；下班时间必须晚于上班时间。</div>
+
+            <button id="openWorkScheduleOverviewBtn" class="sheet-button pressable full-width work-schedule-overview-button" type="button">排班总览</button>
+
+            <div class="sheet-actions">
+              <button id="cancelWorkScheduleBtn" class="sheet-button pressable" type="button">取消</button>
+              <button id="saveWorkScheduleBtn" class="sheet-button primary pressable" type="button">保存排班</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="workScheduleOverviewLayer" class="modal-layer" aria-hidden="true">
+      <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="workScheduleOverviewTitle">
+        <header class="unified-sheet-header">
+          <div class="grabber" aria-hidden="true"></div>
+          <div id="workScheduleOverviewTitle" class="sheet-title">排班总览</div>
+        </header>
+        <div class="unified-sheet-body">
+          <div class="sheet-subtitle" style="text-align:center">仅显示已登记日期，并按距离今天由近到远排列。</div>
+          <ul id="workScheduleList" class="work-schedule-list"></ul>
+          <div id="workScheduleEmpty" class="work-schedule-empty" hidden>还没有登记任何排班</div>
+          <div class="sheet-actions">
+            <button id="backToWorkScheduleBtn" class="sheet-button pressable" type="button">返回登记</button>
+            <button id="closeWorkScheduleOverviewBtn" class="sheet-button primary pressable" type="button">完成</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="workScheduleDeleteLayer" class="modal-layer alert-layer" aria-hidden="true">
+      <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="workScheduleDeleteTitle">
+        <div class="alert-content">
+          <div id="workScheduleDeleteTitle" class="alert-title">删除排班</div>
+          <div id="workScheduleDeleteMessage" class="alert-message">确定删除这条排班吗？</div>
+        </div>
+        <div class="alert-actions">
+          <button id="cancelWorkScheduleDeleteBtn" class="alert-button pressable" type="button">取消</button>
+          <button id="confirmWorkScheduleDeleteBtn" class="alert-button destructive pressable" type="button">删除</button>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================
+         WORK SCHEDULE MODULE END
+         ============================================================ -->
 
     <!-- Version / optimization info -->
     <div id="releaseNotesLayer" class="modal-layer" aria-hidden="true">
@@ -4075,6 +4384,315 @@
           setLayer(els.loginLayer, false);
         }
       }
+
+
+      // ============================================================
+      // WORK SCHEDULE MODULE START
+      // Fully independent from score / gift tables and RPCs.
+      // Database objects used only by this module:
+      //   public.work_schedule
+      //   public.work_schedule_list()
+      //   public.work_schedule_upsert(date, int, int)
+      //   public.work_schedule_delete(bigint)
+      // Guest and administrator modes share the same schedule records.
+      // Remove this whole block + the marked HTML/CSS blocks to uninstall UI.
+      // ============================================================
+      const workScheduleModule = (() => {
+        const scheduleEls = {
+          openBtn: $("#openWorkScheduleBtn"),
+          layer: $("#workScheduleLayer"),
+          date: $("#workScheduleDate"),
+          startHour: $("#workScheduleStartHour"),
+          endHour: $("#workScheduleEndHour"),
+          overviewBtn: $("#openWorkScheduleOverviewBtn"),
+          cancelBtn: $("#cancelWorkScheduleBtn"),
+          saveBtn: $("#saveWorkScheduleBtn"),
+          overviewLayer: $("#workScheduleOverviewLayer"),
+          list: $("#workScheduleList"),
+          empty: $("#workScheduleEmpty"),
+          backBtn: $("#backToWorkScheduleBtn"),
+          closeOverviewBtn: $("#closeWorkScheduleOverviewBtn"),
+          deleteLayer: $("#workScheduleDeleteLayer"),
+          deleteMessage: $("#workScheduleDeleteMessage"),
+          cancelDeleteBtn: $("#cancelWorkScheduleDeleteBtn"),
+          confirmDeleteBtn: $("#confirmWorkScheduleDeleteBtn")
+        };
+
+        let rowsById = new Map();
+        let pendingDeleteId = null;
+
+        function localDateKey(date = new Date()) {
+          const y = date.getFullYear();
+          const m = String(date.getMonth() + 1).padStart(2, "0");
+          const d = String(date.getDate()).padStart(2, "0");
+          return `${y}-${m}-${d}`;
+        }
+
+        function parseLocalDate(dateKey) {
+          const [y, m, d] = String(dateKey).split("-").map(Number);
+          return new Date(y, m - 1, d);
+        }
+
+        function formatHour(hour) {
+          return `${String(Number(hour)).padStart(2, "0")}:00`;
+        }
+
+        function populateHourOptions() {
+          const options = [];
+          for (let hour = 8; hour <= 22; hour += 1) {
+            options.push(`<option value="${hour}">${formatHour(hour)}</option>`);
+          }
+          const html = options.join("");
+          scheduleEls.startHour.innerHTML = html;
+          scheduleEls.endHour.innerHTML = html;
+          scheduleEls.startHour.value = "9";
+          scheduleEls.endHour.value = "18";
+        }
+
+        function resetForm() {
+          scheduleEls.date.value = localDateKey();
+          scheduleEls.startHour.value = "9";
+          scheduleEls.endHour.value = "18";
+        }
+
+        function openRegistration() {
+          resetForm();
+          setLayer(els.settingsLayer, false);
+          setLayer(scheduleEls.overviewLayer, false);
+          setLayer(scheduleEls.deleteLayer, false);
+          setLayer(scheduleEls.layer, true);
+          vibrate(8);
+        }
+
+        function closeRegistration() {
+          setLayer(scheduleEls.layer, false);
+        }
+
+        function isRpcMissing(message) {
+          return /work_schedule|Could not find the function|PGRST202|schema cache|relation/i.test(String(message || ""));
+        }
+
+        async function saveSchedule() {
+          const workDate = scheduleEls.date.value;
+          const startHour = Number(scheduleEls.startHour.value);
+          const endHour = Number(scheduleEls.endHour.value);
+
+          if (!workDate) {
+            showToast("请选择日期");
+            return;
+          }
+          if (!Number.isInteger(startHour) || startHour < 8 || startHour > 22 ||
+              !Number.isInteger(endHour) || endHour < 8 || endHour > 22) {
+            showToast("请选择 08:00–22:00 的整点时间");
+            return;
+          }
+          if (endHour <= startHour) {
+            showToast("下班时间必须晚于上班时间");
+            return;
+          }
+
+          setBusy(scheduleEls.saveBtn, true);
+          try {
+            const { error } = await db.rpc("work_schedule_upsert", {
+              p_work_date: workDate,
+              p_start_hour: startHour,
+              p_end_hour: endHour
+            });
+            if (error) throw error;
+
+            vibrate(14);
+            showToast("排班已保存");
+          } catch (err) {
+            console.error("workSchedule.saveSchedule:", err);
+            showToast(isRpcMissing(err?.message)
+              ? "请先运行新版排班 SQL"
+              : "排班保存失败");
+          } finally {
+            setBusy(scheduleEls.saveBtn, false);
+          }
+        }
+
+        function sortNearToFar(rows) {
+          const today = parseLocalDate(localDateKey()).getTime();
+          return [...rows].sort((a, b) => {
+            const ta = parseLocalDate(a.work_date).getTime();
+            const tb = parseLocalDate(b.work_date).getTime();
+            const da = Math.abs(ta - today);
+            const dbDistance = Math.abs(tb - today);
+            if (da !== dbDistance) return da - dbDistance;
+            const aFuture = ta >= today;
+            const bFuture = tb >= today;
+            if (aFuture !== bFuture) return aFuture ? -1 : 1;
+            return aFuture ? ta - tb : tb - ta;
+          });
+        }
+
+        function formatScheduleDate(dateKey) {
+          const date = parseLocalDate(dateKey);
+          return new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            weekday: "short"
+          }).format(date);
+        }
+
+        function relativeDateText(dateKey) {
+          const today = parseLocalDate(localDateKey()).getTime();
+          const target = parseLocalDate(dateKey).getTime();
+          const diff = Math.round((target - today) / 86400000);
+          if (diff === 0) return "今天";
+          if (diff === 1) return "明天";
+          if (diff === -1) return "昨天";
+          if (diff > 1) return `${diff} 天后`;
+          return `${Math.abs(diff)} 天前`;
+        }
+
+        function renderOverview(rows) {
+          const sorted = sortNearToFar(Array.isArray(rows) ? rows : []);
+          rowsById = new Map(sorted.map(row => [Number(row.id), row]));
+          scheduleEls.empty.hidden = sorted.length > 0;
+          scheduleEls.list.innerHTML = sorted.map(row => `
+            <li class="work-schedule-row">
+              <div class="work-schedule-date">
+                ${escapeHTML(formatScheduleDate(row.work_date))}
+                <span class="work-schedule-date-meta">${escapeHTML(relativeDateText(row.work_date))}</span>
+              </div>
+              <div class="work-schedule-actions">
+                <div class="work-schedule-time">${escapeHTML(formatHour(row.start_hour))}–${escapeHTML(formatHour(row.end_hour))}</div>
+                <button class="work-schedule-delete pressable" type="button" data-work-schedule-delete-id="${Number(row.id)}">删除</button>
+              </div>
+            </li>
+          `).join("");
+        }
+
+        async function loadOverview() {
+          scheduleEls.list.classList.add("work-schedule-loading");
+          scheduleEls.empty.hidden = true;
+          try {
+            const { data, error } = await db.rpc("work_schedule_list");
+            if (error) throw error;
+            renderOverview(data || []);
+          } catch (err) {
+            console.error("workSchedule.loadOverview:", err);
+            renderOverview([]);
+            showToast(isRpcMissing(err?.message)
+              ? "请先运行新版排班 SQL"
+              : "读取排班失败");
+          } finally {
+            scheduleEls.list.classList.remove("work-schedule-loading");
+          }
+        }
+
+        async function openOverview() {
+          setLayer(scheduleEls.layer, false);
+          setLayer(scheduleEls.overviewLayer, true);
+          vibrate(8);
+          await loadOverview();
+        }
+
+        function backToRegistration() {
+          setLayer(scheduleEls.overviewLayer, false);
+          setLayer(scheduleEls.layer, true);
+        }
+
+        function closeOverview() {
+          setLayer(scheduleEls.deleteLayer, false);
+          setLayer(scheduleEls.overviewLayer, false);
+        }
+
+        function requestDelete(id) {
+          const numericId = Number(id);
+          const row = rowsById.get(numericId);
+          if (!row) return;
+
+          pendingDeleteId = numericId;
+          scheduleEls.deleteMessage.textContent = `${formatScheduleDate(row.work_date)} ${formatHour(row.start_hour)}–${formatHour(row.end_hour)}，删除后无法恢复。`;
+          setLayer(scheduleEls.deleteLayer, true);
+          vibrate(8);
+        }
+
+        function cancelDelete() {
+          pendingDeleteId = null;
+          setLayer(scheduleEls.deleteLayer, false);
+        }
+
+        async function confirmDelete() {
+          if (!Number.isInteger(pendingDeleteId)) return;
+          const deletingId = pendingDeleteId;
+          setBusy(scheduleEls.confirmDeleteBtn, true);
+
+          try {
+            const { data, error } = await db.rpc("work_schedule_delete", { p_id: deletingId });
+            if (error) throw error;
+            if (data !== true) throw new Error("Schedule row not found");
+
+            pendingDeleteId = null;
+            setLayer(scheduleEls.deleteLayer, false);
+            vibrate(14);
+            showToast("排班已删除");
+            await loadOverview();
+          } catch (err) {
+            console.error("workSchedule.confirmDelete:", err);
+            showToast(isRpcMissing(err?.message)
+              ? "请先运行新版排班 SQL"
+              : "删除排班失败");
+          } finally {
+            setBusy(scheduleEls.confirmDeleteBtn, false);
+          }
+        }
+
+        populateHourOptions();
+        resetForm();
+
+        scheduleEls.openBtn.addEventListener("click", openRegistration);
+        scheduleEls.cancelBtn.addEventListener("click", closeRegistration);
+        scheduleEls.saveBtn.addEventListener("click", saveSchedule);
+        scheduleEls.overviewBtn.addEventListener("click", openOverview);
+        scheduleEls.backBtn.addEventListener("click", backToRegistration);
+        scheduleEls.closeOverviewBtn.addEventListener("click", closeOverview);
+        scheduleEls.cancelDeleteBtn.addEventListener("click", cancelDelete);
+        scheduleEls.confirmDeleteBtn.addEventListener("click", confirmDelete);
+
+        scheduleEls.list.addEventListener("click", (e) => {
+          const button = e.target.closest("[data-work-schedule-delete-id]");
+          if (!button) return;
+          requestDelete(button.dataset.workScheduleDeleteId);
+        });
+
+        scheduleEls.layer.addEventListener("click", (e) => {
+          if (e.target === scheduleEls.layer) closeRegistration();
+        });
+        scheduleEls.overviewLayer.addEventListener("click", (e) => {
+          if (e.target === scheduleEls.overviewLayer) closeOverview();
+        });
+        scheduleEls.deleteLayer.addEventListener("click", (e) => {
+          if (e.target === scheduleEls.deleteLayer) cancelDelete();
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key !== "Escape") return;
+          if (scheduleEls.deleteLayer.classList.contains("open")) {
+            e.stopImmediatePropagation();
+            cancelDelete();
+            return;
+          }
+          if (scheduleEls.overviewLayer.classList.contains("open")) {
+            e.stopImmediatePropagation();
+            closeOverview();
+            return;
+          }
+          if (scheduleEls.layer.classList.contains("open")) {
+            e.stopImmediatePropagation();
+            closeRegistration();
+          }
+        });
+
+        return Object.freeze({ loadOverview });
+      })();
+      // ============================================================
+      // WORK SCHEDULE MODULE END
+      // ============================================================
 
       // -------------------- Events --------------------
       els.settingsBtn.addEventListener("click", () => {
