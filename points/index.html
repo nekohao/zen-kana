@@ -1,0 +1,3755 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta id="themeColorMeta" name="theme-color" content="#f4f5f9" />
+  <meta name="color-scheme" content="light dark" />
+  <script>
+    (() => {
+      try {
+        const pref = localStorage.getItem("points_theme");
+        if (pref === "light" || pref === "dark") {
+          document.documentElement.dataset.theme = pref;
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="积分" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>积分</title>
+
+  <style>
+    :root {
+      /* Light theme: only the background palette is borrowed from the supplied reference. */
+      --bg-0: #f4f5f9;
+      --bg-1: #f4f5f9;
+      --mesh-1: rgba(99, 102, 241, .15);
+      --mesh-2: rgba(236, 72, 153, .12);
+      --mesh-3: rgba(56, 189, 248, .15);
+
+      --ink: rgba(28, 28, 30, .96);
+      --secondary: rgba(60, 60, 67, .58);
+      --tertiary: rgba(60, 60, 67, .38);
+
+      --glass-fill: rgba(255,255,255,.34);
+      --glass-fill-strong: rgba(255,255,255,.49);
+      --glass-fill-soft: rgba(255,255,255,.22);
+      --glass-border: rgba(255,255,255,.66);
+      --glass-inner: rgba(255,255,255,.30);
+      --glass-shadow: rgba(43, 55, 78, .15);
+
+      --lens-bg: rgba(255, 255, 255, .55);
+      --lens-border: rgba(255, 255, 255, .80);
+      --lens-specular: rgba(255, 255, 255, .95);
+      --lens-shadow: 0 20px 50px rgba(31, 38, 135, .08);
+
+      --home-control-bg: rgba(255,255,255,.65);
+      --home-control-border: rgba(255,255,255,.80);
+      --home-control-shadow: 0 20px 50px rgba(31,38,135,.08);
+      --home-icon-shadow: 0 8px 20px rgba(0,0,0,.06);
+
+      --blue: #0a84ff;
+      --red: #ff453a;
+      --green: #30d158;
+
+      --hairline: rgba(50, 57, 70, .12);
+      --blur: 28px;
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+
+      --ease-ios: cubic-bezier(.22,.78,.24,1);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-0: #0f1218;
+        --bg-1: #171c25;
+        --mesh-1: rgba(107,182,255,.13);
+        --mesh-2: rgba(188,159,255,.10);
+        --mesh-3: rgba(101,218,190,.08);
+
+        --ink: rgba(247,249,253,.96);
+        --secondary: rgba(232,237,246,.59);
+        --tertiary: rgba(232,237,246,.39);
+
+        --glass-fill: rgba(39,45,56,.38);
+        --glass-fill-strong: rgba(49,56,69,.50);
+        --glass-fill-soft: rgba(34,40,50,.26);
+        --glass-border: rgba(255,255,255,.18);
+        --glass-inner: rgba(255,255,255,.08);
+        --glass-shadow: rgba(0,0,0,.34);
+
+        --lens-bg: rgba(25, 27, 38, .55);
+        --lens-border: rgba(255, 255, 255, .12);
+        --lens-specular: rgba(255, 255, 255, .25);
+        --lens-shadow: 0 25px 50px rgba(0, 0, 0, .40);
+
+        --home-control-bg: rgba(30,33,46,.65);
+        --home-control-border: rgba(255,255,255,.12);
+        --home-control-shadow: 0 25px 50px rgba(0,0,0,.40);
+        --home-icon-shadow: 0 8px 20px rgba(0,0,0,.18);
+
+        --hairline: rgba(255,255,255,.10);
+        color-scheme: dark;
+      }
+    }
+
+    /* Manual preference wins over the OS media query. */
+    :root[data-theme="light"] {
+      --bg-0: #f4f5f9;
+      --bg-1: #f4f5f9;
+      --mesh-1: rgba(99, 102, 241, .15);
+      --mesh-2: rgba(236, 72, 153, .12);
+      --mesh-3: rgba(56, 189, 248, .15);
+
+      --ink: rgba(28, 28, 30, .96);
+      --secondary: rgba(60, 60, 67, .58);
+      --tertiary: rgba(60, 60, 67, .38);
+
+      --glass-fill: rgba(255,255,255,.34);
+      --glass-fill-strong: rgba(255,255,255,.49);
+      --glass-fill-soft: rgba(255,255,255,.22);
+      --glass-border: rgba(255,255,255,.66);
+      --glass-inner: rgba(255,255,255,.30);
+      --glass-shadow: rgba(43, 55, 78, .15);
+
+      --lens-bg: rgba(255, 255, 255, .55);
+      --lens-border: rgba(255, 255, 255, .80);
+      --lens-specular: rgba(255, 255, 255, .95);
+      --lens-shadow: 0 20px 50px rgba(31, 38, 135, .08);
+
+      --home-control-bg: rgba(255,255,255,.65);
+      --home-control-border: rgba(255,255,255,.80);
+      --home-control-shadow: 0 20px 50px rgba(31,38,135,.08);
+      --home-icon-shadow: 0 8px 20px rgba(0,0,0,.06);
+
+      --hairline: rgba(50, 57, 70, .12);
+      color-scheme: light;
+    }
+
+    :root[data-theme="dark"] {
+      --bg-0: #0f1218;
+      --bg-1: #171c25;
+      --mesh-1: rgba(107,182,255,.13);
+      --mesh-2: rgba(188,159,255,.10);
+      --mesh-3: rgba(101,218,190,.08);
+
+      --ink: rgba(247,249,253,.96);
+      --secondary: rgba(232,237,246,.59);
+      --tertiary: rgba(232,237,246,.39);
+
+      --glass-fill: rgba(39,45,56,.38);
+      --glass-fill-strong: rgba(49,56,69,.50);
+      --glass-fill-soft: rgba(34,40,50,.26);
+      --glass-border: rgba(255,255,255,.18);
+      --glass-inner: rgba(255,255,255,.08);
+      --glass-shadow: rgba(0,0,0,.34);
+
+      --lens-bg: rgba(25, 27, 38, .55);
+      --lens-border: rgba(255, 255, 255, .12);
+      --lens-specular: rgba(255, 255, 255, .25);
+      --lens-shadow: 0 25px 50px rgba(0, 0, 0, .40);
+
+      --home-control-bg: rgba(30,33,46,.65);
+      --home-control-border: rgba(255,255,255,.12);
+      --home-control-shadow: 0 25px 50px rgba(0,0,0,.40);
+      --home-icon-shadow: 0 8px 20px rgba(0,0,0,.18);
+
+      --hairline: rgba(255,255,255,.10);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+      overscroll-behavior: none;
+      background: var(--bg-0);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow: hidden;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid rgba(10,132,255,.68);
+      outline-offset: 2px;
+    }
+
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      overflow: hidden;
+      background: var(--bg-0);
+      transition: background-color .28s ease;
+    }
+
+    .background::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .ambient {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .80;
+      transform: translateZ(0);
+      pointer-events: none;
+    }
+
+    .ambient.a {
+      width: 320px;
+      height: 320px;
+      top: -50px;
+      left: -50px;
+      background: var(--mesh-1);
+    }
+
+    .ambient.b {
+      width: 380px;
+      height: 380px;
+      bottom: 10%;
+      right: -80px;
+      background: var(--mesh-2);
+    }
+
+    .ambient.c {
+      width: 280px;
+      height: 280px;
+      top: 40%;
+      left: 20%;
+      background: var(--mesh-3);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .ambient { opacity: .52; }
+    }
+
+    :root[data-theme="dark"] .ambient { opacity: .52; }
+    :root[data-theme="light"] .ambient { opacity: .80; }
+
+    .app {
+      height: 100dvh;
+      min-height: 100svh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass {
+      position: relative;
+      isolation: isolate;
+      background:
+        linear-gradient(145deg,
+          rgba(255,255,255,.18),
+          rgba(255,255,255,.04) 44%,
+          rgba(255,255,255,.01)),
+        var(--glass-fill);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        0 18px 48px var(--glass-shadow),
+        inset 0 1px 0 rgba(255,255,255,.40),
+        inset 0 -1px 0 rgba(255,255,255,.10);
+      -webkit-backdrop-filter: saturate(175%) blur(var(--blur));
+      backdrop-filter: saturate(175%) blur(var(--blur));
+    }
+
+    .glass::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      z-index: -1;
+      pointer-events: none;
+      border-radius: inherit;
+      background:
+        linear-gradient(135deg,
+          rgba(255,255,255,.30),
+          rgba(255,255,255,0) 30%,
+          rgba(255,255,255,.04) 65%,
+          rgba(255,255,255,.18));
+      opacity: .72;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 1px;
+    }
+
+    .pressable {
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition:
+        transform .16s var(--ease-ios),
+        opacity .16s ease,
+        background-color .20s ease;
+    }
+
+    .pressable:active {
+      transform: scale(.965);
+      opacity: .78;
+    }
+
+    .home {
+      height: 100%;
+      width: min(100%, 520px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding:
+        calc(var(--safe-top) + 14px)
+        18px
+        calc(var(--safe-bottom) + 18px);
+    }
+
+    .topbar {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .icon-button {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background: var(--home-control-bg);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid var(--home-control-border);
+      box-shadow: var(--home-icon-shadow);
+      color: var(--ink);
+      position: relative;
+      z-index: 15;
+      touch-action: manipulation;
+    }
+
+    .icon-button svg {
+      width: 20px;
+      height: 20px;
+      opacity: 1;
+    }
+
+    .icon-button:active {
+      transform: scale(.92);
+    }
+
+    .hero {
+      align-self: center;
+      justify-self: center;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateY(-1.5vh);
+    }
+
+    .eyebrow {
+      margin-bottom: 25px;
+      font-size: 15px;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: .02em;
+      color: var(--secondary);
+    }
+
+    .score-lens-wrap {
+      position: relative;
+      width: min(64vw, 250px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      border-radius: 50%;
+      outline: none;
+      perspective: 1000px;
+    }
+
+    .score-lens-wrap:focus-visible {
+      box-shadow: 0 0 0 3px rgba(10,132,255,.28);
+    }
+
+    .score-lens-wrap.refreshing .score-lens {
+      animation: scoreRefreshPulse .62s var(--ease-ios);
+    }
+
+    .score-lens-wrap.refreshing .score {
+      animation: scoreRefreshNumber .62s var(--ease-ios);
+    }
+
+    @keyframes scoreRefreshPulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      42% { transform: scale(.972); filter: brightness(1.08); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    @keyframes scoreRefreshNumber {
+      0% { transform: translateX(-.025em) scale(1); opacity: 1; }
+      42% { transform: translateX(-.025em) scale(.93); opacity: .62; }
+      100% { transform: translateX(-.025em) scale(1); opacity: 1; }
+    }
+
+    .score-glow {
+      display: none;
+    }
+
+    .score-lens {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--lens-bg);
+      -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+      backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+      border: 1.5px solid var(--lens-border);
+      box-shadow:
+        var(--lens-shadow),
+        inset 0 2px 3px var(--lens-specular),
+        inset 0 -4px 12px rgba(0,0,0,.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform .30s cubic-bezier(.175,.885,.32,1.275);
+      perspective: 1000px;
+    }
+
+    .score-lens::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle at 35% 25%,
+          rgba(255,255,255,.45) 0%,
+          rgba(255,255,255,0) 60%
+        );
+      pointer-events: none;
+    }
+
+    .score-lens::after {
+      content: none;
+    }
+
+    .score {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(76px, 23vw, 88px);
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -3px;
+      font-variant-numeric: tabular-nums;
+      background: linear-gradient(180deg, var(--ink) 30%, var(--secondary) 115%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 20px rgba(0,0,0,.05);
+      transform: translateX(-.025em);
+    }
+
+    .score.loading {
+      opacity: .32;
+    }
+
+    .admin-controls {
+      height: 67px;
+      margin-top: 29px;
+      display: flex;
+      gap: 13px;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity .28s ease, transform .34s var(--ease-ios), height .34s var(--ease-ios), margin .34s var(--ease-ios);
+    }
+
+    .admin-controls.hidden {
+      height: 0;
+      margin-top: 0;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .score-button {
+      width: 87px;
+      height: 52px;
+      border-radius: 18px;
+      font-size: 18px;
+      font-weight: 650;
+      background-color: var(--glass-fill);
+    }
+
+    .score-button.plus { color: var(--blue); }
+    .score-button.minus { color: var(--red); }
+
+    .bottom-zone {
+      display: flex;
+      justify-content: center;
+    }
+
+    .overview-button {
+      width: auto;
+      min-height: 0;
+      padding: 14px 44px;
+      border-radius: 30px;
+      background: var(--home-control-bg);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid var(--home-control-border);
+      box-shadow: var(--home-control-shadow);
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      touch-action: manipulation;
+    }
+
+    .overview-button:active {
+      transform: scale(.95);
+    }
+
+    .overview-button svg {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+    }
+
+    /* -------- iOS-style draggable Overview Sheet -------- */
+    .home {
+      transform-origin: center 24%;
+      transition:
+        transform .46s cubic-bezier(.22,.78,.24,1),
+        filter .34s ease;
+    }
+
+    body.overview-visible .home {
+      transform: scale(.985);
+      filter: saturate(.96) brightness(.985);
+    }
+
+    .overview {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      visibility: hidden;
+      pointer-events: none;
+      transition: visibility 0s linear .50s;
+    }
+
+    .overview.open {
+      visibility: visible;
+      pointer-events: auto;
+      transition-delay: 0s;
+    }
+
+    .overview-backdrop {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: rgba(11,15,22,.10);
+      -webkit-backdrop-filter: blur(0) saturate(100%);
+      backdrop-filter: blur(0) saturate(100%);
+      transition:
+        opacity .34s ease,
+        backdrop-filter .40s ease,
+        -webkit-backdrop-filter .40s ease;
+    }
+
+    .overview.open .overview-backdrop {
+      opacity: 1;
+      -webkit-backdrop-filter: blur(9px) saturate(112%);
+      backdrop-filter: blur(9px) saturate(112%);
+    }
+
+    :root[data-theme="light"] .overview-backdrop,
+    :root:not([data-theme]) .overview-backdrop {
+      background: rgba(45,54,70,.075);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .overview-backdrop {
+        background: rgba(0,0,0,.22);
+      }
+    }
+
+    :root[data-theme="dark"] .overview-backdrop {
+      background: rgba(0,0,0,.22);
+    }
+
+    :root[data-theme="light"] #settingsLayer,
+    :root:not([data-theme]) #settingsLayer {
+      background: rgba(45,54,70,.075);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) #settingsLayer {
+        background: rgba(0,0,0,.22);
+      }
+    }
+
+    :root[data-theme="dark"] #settingsLayer {
+      background: rgba(0,0,0,.22);
+    }
+
+    .overview-shell {
+      --peek-height: 390px;
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: min(calc(100% - 12px), 620px);
+      height: calc(100% - max(calc(var(--safe-top) + 8px), 12px));
+      margin: 0;
+      padding: 0 16px calc(var(--safe-bottom) + 34px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      scrollbar-width: none;
+      border-radius: 32px 32px 0 0;
+      background:
+        linear-gradient(145deg,
+          rgba(255,255,255,.16),
+          rgba(255,255,255,.035) 42%,
+          rgba(255,255,255,.01)),
+        var(--glass-fill-strong);
+      border: 1px solid var(--glass-border);
+      border-bottom: 0;
+      box-shadow:
+        0 -18px 55px rgba(34,43,62,.16),
+        inset 0 1px 0 rgba(255,255,255,.36);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
+      backdrop-filter: blur(36px) saturate(190%);
+      transform: translate(-50%, calc(100% + 28px));
+      transition:
+        transform .48s cubic-bezier(.18,.84,.24,1),
+        border-radius .32s ease,
+        box-shadow .32s ease;
+      will-change: transform;
+    }
+
+    .overview-shell::-webkit-scrollbar {
+      display: none;
+    }
+
+    .overview.peek .overview-shell {
+      transform: translate(-50%, calc(100% - var(--peek-height)));
+      overflow-y: hidden;
+      touch-action: none;
+    }
+
+    .overview.full .overview-shell {
+      transform: translate(-50%, 0);
+      overflow-y: auto;
+      touch-action: pan-y;
+      border-radius: 28px 28px 0 0;
+      box-shadow:
+        0 -24px 68px rgba(34,43,62,.20),
+        inset 0 1px 0 rgba(255,255,255,.34);
+    }
+
+    .overview.dragging .overview-shell {
+      transition: none !important;
+    }
+
+    .overview-header {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      margin: 0 -16px 20px;
+      padding: 8px 16px 13px;
+      min-height: 67px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
+          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 75%,
+          transparent);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      backdrop-filter: blur(28px) saturate(180%);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .overview-grabber-hitbox {
+      width: 100%;
+      min-height: 28px;
+      display: grid;
+      place-items: center;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .overview-grabber-hitbox:active {
+      cursor: grabbing;
+    }
+
+    .overview-grabber {
+      width: 38px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(118,118,128,.34);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    .overview-title {
+      margin-top: 2px;
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -.015em;
+    }
+
+    @media (max-height: 650px) {
+      .overview-shell {
+        --peek-height: 360px;
+      }
+    }
+
+    .section {
+      margin: 0 0 20px;
+    }
+
+    .section-title {
+      margin: 0 6px 10px;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 730;
+      letter-spacing: -.026em;
+    }
+
+    .card {
+      border-radius: var(--radius-xl);
+      padding: 17px;
+      overflow: hidden;
+    }
+
+    .segmented {
+      height: 38px;
+      padding: 3px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      border-radius: 13px;
+      background: rgba(118,118,128,.10);
+      margin-bottom: 14px;
+    }
+
+    .segment {
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 650;
+      color: var(--secondary);
+    }
+
+    .segment.active {
+      color: var(--ink);
+      background: var(--glass-fill-strong);
+      box-shadow: 0 2px 7px rgba(0,0,0,.08), inset 0 1px rgba(255,255,255,.30);
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      margin-top: 2px;
+    }
+
+    #trendCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .chart-empty {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      color: var(--secondary);
+      pointer-events: none;
+    }
+
+    .chart-caption {
+      margin-top: 4px;
+      text-align: right;
+      font-size: 12px;
+      color: var(--tertiary);
+    }
+
+    /* calendar */
+    .calendar-card { padding: 16px 10px 13px; }
+
+    .calendar-head {
+      display: grid;
+      grid-template-columns: 40px 1fr 40px;
+      align-items: center;
+      margin: 0 3px 12px;
+    }
+
+    .calendar-month {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .small-icon {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      color: var(--secondary);
+      font-size: 20px;
+    }
+
+    .weekdays, .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      width: 100%;
+    }
+
+    .calendar-grid {
+      grid-auto-rows: 60px;
+      min-height: 300px;
+    }
+
+    .weekdays {
+      margin-bottom: 3px;
+    }
+
+    .weekday {
+      padding: 4px 0 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 650;
+      color: var(--tertiary);
+    }
+
+    .day {
+      min-height: 60px;
+      margin: 0;
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      padding: 5px 0 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: var(--ink);
+    }
+
+    .day.placeholder {
+      pointer-events: none;
+      min-height: 60px;
+    }
+
+    .day-number {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+
+    .day.today .day-number {
+      color: white;
+      background: var(--blue);
+      box-shadow: 0 3px 10px rgba(10,132,255,.22);
+    }
+
+    .day.selected:not(.today) .day-number {
+      color: var(--blue);
+      box-shadow: inset 0 0 0 1.4px rgba(10,132,255,.52);
+    }
+
+    .day-movements {
+      min-height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .movement {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      font-size: 10px;
+      line-height: 1;
+      font-weight: 750;
+      letter-spacing: -.02em;
+    }
+
+    .movement.up { color: var(--green); }
+    .movement.down { color: var(--red); }
+
+    .movement-arrow {
+      width: 9px;
+      height: 11px;
+      flex: 0 0 auto;
+      display: block;
+    }
+
+    .movement b {
+      font: inherit;
+      margin-left: 0;
+    }
+
+    .positive { color: var(--green); }
+    .negative { color: var(--red); }
+    .neutral { color: var(--secondary); }
+
+    .day-detail {
+      margin-top: 13px;
+      border-top: 1px solid var(--hairline);
+      padding-top: 5px;
+    }
+
+    .day-detail.hidden { display: none; }
+
+    .detail-title {
+      padding: 8px 7px 4px;
+      font-size: 13px;
+      font-weight: 650;
+      color: var(--secondary);
+    }
+
+    /* lists */
+    .log-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .log-row {
+      display: grid;
+      grid-template-columns: 48px 42px 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 12px 6px;
+    }
+
+    .log-row + .log-row {
+      border-top: 1px solid var(--hairline);
+    }
+
+    .log-time {
+      font-size: 12px;
+      color: var(--secondary);
+      font-variant-numeric: tabular-nums;
+      padding-top: 2px;
+    }
+
+    .log-delta {
+      font-size: 14px;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .log-reason {
+      min-width: 0;
+      font-size: 14px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .log-meta {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--tertiary);
+    }
+
+    .empty-state {
+      padding: 26px 12px;
+      text-align: center;
+      color: var(--secondary);
+      font-size: 14px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      min-height: 94px;
+      padding: 15px;
+      border-radius: 21px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid var(--hairline);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 730;
+      letter-spacing: -.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .reason-table {
+      border-top: 1px solid var(--hairline);
+      padding-top: 6px;
+    }
+
+    .reason-row {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 4px;
+      font-size: 13px;
+    }
+
+    .reason-row + .reason-row {
+      border-top: 1px solid var(--hairline);
+    }
+
+    .reason-name {
+      min-width: 0;
+      color: var(--secondary);
+      overflow-wrap: anywhere;
+    }
+
+    .reason-count {
+      flex: 0 0 auto;
+      font-weight: 700;
+    }
+
+    /* -------- Sheets / alerts -------- */
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px 12px calc(var(--safe-bottom) + 10px);
+      visibility: hidden;
+      opacity: 0;
+      background: rgba(10,14,20,.16);
+      -webkit-backdrop-filter: blur(0);
+      backdrop-filter: blur(0);
+      transition:
+        opacity .24s ease,
+        visibility 0s linear .35s,
+        backdrop-filter .28s ease,
+        -webkit-backdrop-filter .28s ease;
+    }
+
+    .modal-layer.open {
+      visibility: visible;
+      opacity: 1;
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      transition-delay: 0s;
+    }
+
+    .sheet {
+      width: min(100%, 500px);
+      max-height: min(78dvh, 720px);
+      overflow: auto;
+      border-radius: 32px;
+      padding: 9px 16px 18px;
+      transform: translateY(calc(100% + 34px));
+      transition: transform .43s var(--ease-ios);
+    }
+
+    .modal-layer.open .sheet {
+      transform: translateY(0);
+    }
+
+    .grabber {
+      width: 38px;
+      height: 5px;
+      margin: 2px auto 14px;
+      border-radius: 999px;
+      background: rgba(118,118,128,.34);
+    }
+
+    /* Settings uses the exact same material language as Overview,
+       but stays content-fit and never expands to full screen. */
+    #settingsLayer {
+      padding: 0;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(11,15,22,.10);
+    }
+
+    #settingsLayer.open {
+      -webkit-backdrop-filter: blur(9px) saturate(112%);
+      backdrop-filter: blur(9px) saturate(112%);
+    }
+
+    #settingsLayer .settings-sheet {
+      width: min(calc(100% - 12px), 620px);
+      height: auto;
+      max-height: calc(100% - max(calc(var(--safe-top) + 72px), 86px));
+      margin: 0 auto;
+      padding: 0 16px calc(var(--safe-bottom) + 20px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      scrollbar-width: none;
+
+      border-radius: 32px 32px 0 0;
+      background:
+        linear-gradient(145deg,
+          rgba(255,255,255,.16),
+          rgba(255,255,255,.035) 42%,
+          rgba(255,255,255,.01)),
+        var(--glass-fill-strong);
+      border: 1px solid var(--glass-border);
+      border-bottom: 0;
+      box-shadow:
+        0 -18px 55px rgba(34,43,62,.16),
+        inset 0 1px 0 rgba(255,255,255,.36);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
+      backdrop-filter: blur(36px) saturate(190%);
+
+      transform: translateY(calc(100% + 28px));
+      transition: transform .48s cubic-bezier(.18,.84,.24,1);
+      will-change: transform;
+    }
+
+    #settingsLayer .settings-sheet::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    #settingsLayer.open .settings-sheet {
+      transform: translateY(0);
+    }
+
+    #settingsLayer.dragging .settings-sheet {
+      transition: none !important;
+    }
+
+    .settings-sheet-header {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      margin: 0 -16px 10px;
+      padding: 8px 16px 11px;
+      background:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
+          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 76%,
+          transparent);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      backdrop-filter: blur(28px) saturate(180%);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .settings-grabber-hitbox {
+      width: 100%;
+      min-height: 28px;
+      display: grid;
+      place-items: center;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .settings-grabber-hitbox:active {
+      cursor: grabbing;
+    }
+
+    .settings-sheet-header .grabber {
+      margin: 0;
+    }
+
+    .settings-sheet-header .sheet-title {
+      margin: 5px 0 0;
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -.015em;
+    }
+
+    .settings-sheet-header .login-state {
+      padding: 5px 0 0;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .settings-sheet-content {
+      padding-bottom: 4px;
+    }
+
+    #settingsLayer .settings-group {
+      margin-top: 0;
+    }
+
+    #settingsLayer .settings-row {
+      min-height: 51px;
+    }
+
+    #settingsLayer .theme-setting-row {
+      min-height: 61px;
+    }
+
+    /* Admin login: same content-fit Bottom Sheet language as Settings. */
+    #loginLayer {
+      padding: 0;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(11,15,22,.10);
+    }
+
+    #loginLayer.open {
+      -webkit-backdrop-filter: blur(9px) saturate(112%);
+      backdrop-filter: blur(9px) saturate(112%);
+    }
+
+    #loginLayer .login-sheet {
+      width: min(calc(100% - 12px), 620px);
+      height: auto;
+      max-height: calc(100% - max(calc(var(--safe-top) + 96px), 110px));
+      margin: 0 auto;
+      padding: 0 16px calc(var(--safe-bottom) + 20px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      scrollbar-width: none;
+
+      border-radius: 32px 32px 0 0;
+      background:
+        linear-gradient(145deg,
+          rgba(255,255,255,.16),
+          rgba(255,255,255,.035) 42%,
+          rgba(255,255,255,.01)),
+        var(--glass-fill-strong);
+      border: 1px solid var(--glass-border);
+      border-bottom: 0;
+      box-shadow:
+        0 -18px 55px rgba(34,43,62,.16),
+        inset 0 1px 0 rgba(255,255,255,.36);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
+      backdrop-filter: blur(36px) saturate(190%);
+
+      transform: translateY(calc(100% + 28px));
+      transition: transform .48s cubic-bezier(.18,.84,.24,1);
+      will-change: transform;
+    }
+
+    #loginLayer .login-sheet::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    #loginLayer.open .login-sheet {
+      transform: translateY(0);
+    }
+
+    #loginLayer.dragging .login-sheet {
+      transition: none !important;
+    }
+
+    .login-sheet-header {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      margin: 0 -16px 12px;
+      padding: 8px 16px 10px;
+      background:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
+          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 76%,
+          transparent);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      backdrop-filter: blur(28px) saturate(180%);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .login-grabber-hitbox {
+      width: 100%;
+      min-height: 28px;
+      display: grid;
+      place-items: center;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .login-grabber-hitbox:active {
+      cursor: grabbing;
+    }
+
+    .login-sheet-header .grabber {
+      margin: 0;
+    }
+
+    .login-sheet-header .sheet-title {
+      margin: 5px 0 0;
+      text-align: center;
+      font-size: 17px;
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -.015em;
+    }
+
+    .login-sheet-body {
+      padding: 0 0 4px;
+    }
+
+    .login-sheet-body .sheet-subtitle {
+      margin: 0 4px 14px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    #loginLayer .field {
+      min-height: 52px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.12);
+    }
+
+    #loginLayer .sheet-actions {
+      margin-top: 14px;
+      padding-bottom: 0;
+    }
+
+    @media (max-width: 520px) {
+      #loginLayer .login-sheet {
+        width: calc(100% - 8px);
+        border-radius: 30px 30px 0 0;
+      }
+    }
+
+    :root[data-theme="light"] #loginLayer,
+    :root:not([data-theme]) #loginLayer {
+      background: rgba(45,54,70,.075);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) #loginLayer {
+        background: rgba(0,0,0,.22);
+      }
+    }
+
+    :root[data-theme="dark"] #loginLayer {
+      background: rgba(0,0,0,.22);
+    }
+
+    @media (max-width: 520px) {
+      #settingsLayer .settings-sheet {
+        width: calc(100% - 8px);
+        border-radius: 30px 30px 0 0;
+      }
+    }
+    }
+
+    .sheet-title {
+      margin: 4px 3px 4px;
+      font-size: 21px;
+      font-weight: 730;
+      letter-spacing: -.026em;
+    }
+
+    .sheet-subtitle {
+      margin: 0 3px 18px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--secondary);
+    }
+
+    .field {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid var(--hairline);
+      border-radius: 16px;
+      padding: 13px 14px;
+      color: var(--ink);
+      background: rgba(255,255,255,.17);
+      outline: none;
+    }
+
+    textarea.field {
+      min-height: 102px;
+      resize: none;
+      line-height: 1.45;
+    }
+
+    .field::placeholder {
+      color: var(--tertiary);
+    }
+
+    .field + .field {
+      margin-top: 10px;
+    }
+
+    .sheet-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .sheet-button {
+      min-height: 50px;
+      border: 0;
+      border-radius: 17px;
+      font-size: 16px;
+      font-weight: 680;
+      background: rgba(118,118,128,.12);
+    }
+
+    .sheet-button.primary {
+      color: white;
+      background: var(--blue);
+    }
+
+    .sheet-button.destructive {
+      color: var(--red);
+    }
+
+    .settings-group {
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(255,255,255,.11);
+      border: 1px solid var(--hairline);
+      margin-top: 10px;
+    }
+
+    .settings-row {
+      width: 100%;
+      min-height: 54px;
+      border: 0;
+      padding: 0 15px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    .settings-row + .settings-row {
+      border-top: 1px solid var(--hairline);
+    }
+
+    .settings-row .chevron {
+      color: var(--tertiary);
+      font-size: 22px;
+      font-weight: 300;
+    }
+
+    .settings-row.destructive { color: var(--red); }
+
+    .login-state {
+      padding: 5px 4px 3px;
+      color: var(--secondary);
+      font-size: 12px;
+    }
+
+    .alert-layer {
+      align-items: center;
+      padding-bottom: 12px;
+    }
+
+    .alert {
+      width: min(calc(100% - 28px), 320px);
+      border-radius: 27px;
+      overflow: hidden;
+      transform: scale(.88);
+      opacity: 0;
+      transition: transform .28s var(--ease-ios), opacity .20s ease;
+    }
+
+    .modal-layer.open .alert {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .alert-content {
+      padding: 22px 20px 18px;
+      text-align: center;
+    }
+
+    .alert-title {
+      font-size: 17px;
+      font-weight: 730;
+      margin-bottom: 7px;
+    }
+
+    .alert-message {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--secondary);
+    }
+
+    .alert-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .alert-button {
+      min-height: 49px;
+      border: 0;
+      background: transparent;
+      font-size: 16px;
+      color: var(--blue);
+    }
+
+    .alert-button + .alert-button {
+      border-left: 1px solid var(--hairline);
+    }
+
+    .alert-button.destructive {
+      color: var(--red);
+      font-weight: 650;
+    }
+
+    /* -------- Toast -------- */
+    .toast {
+      position: fixed;
+      z-index: 120;
+      left: 50%;
+      top: calc(var(--safe-top) + 18px);
+      max-width: calc(100% - 36px);
+      min-height: 42px;
+      padding: 10px 15px;
+      border-radius: 16px;
+      transform: translate(-50%, -18px);
+      opacity: 0;
+      pointer-events: none;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      transition: opacity .22s ease, transform .34s var(--ease-ios);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .busy {
+      opacity: .60 !important;
+      pointer-events: none !important;
+    }
+
+
+    /* -------- Refined motion -------- */
+    @keyframes ambientDriftA {
+      0%,100% { transform: translate3d(0,0,0) scale(1); }
+      50% { transform: translate3d(28px,18px,0) scale(1.05); }
+    }
+
+    @keyframes ambientDriftB {
+      0%,100% { transform: translate3d(0,0,0) scale(1); }
+      50% { transform: translate3d(-24px,30px,0) scale(.96); }
+    }
+
+    @keyframes lensFloat {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-5px) scale(1.006); }
+    }
+
+    @keyframes lensSheen {
+      0%, 72%, 100% { transform: translate3d(-24%, -5%, 0) rotate(-10deg); opacity: .08; }
+      82% { transform: translate3d(17%, 3%, 0) rotate(-10deg); opacity: .22; }
+      92% { transform: translate3d(42%, 7%, 0) rotate(-10deg); opacity: .06; }
+    }
+
+    @keyframes scorePop {
+      0% { transform: translateX(-.025em) scale(1); }
+      35% { transform: translateX(-.025em) scale(1.085); }
+      100% { transform: translateX(-.025em) scale(1); }
+    }
+
+    .ambient.a { animation: ambientDriftA 14s ease-in-out infinite; }
+    .ambient.b { animation: ambientDriftB 17s ease-in-out infinite; }
+    .ambient.c { animation: ambientDriftA 20s ease-in-out infinite reverse; }
+
+    .score-lens-wrap {
+      animation: lensFloat 6.4s ease-in-out infinite;
+    }
+
+    .score.score-pop {
+      animation: scorePop .48s var(--ease-ios);
+    }
+
+    .overview.open .section {
+      animation: sectionRise .46s var(--ease-ios) both;
+    }
+
+    .overview.open .section:nth-of-type(2) { animation-delay: .035s; }
+    .overview.open .section:nth-of-type(3) { animation-delay: .07s; }
+    .overview.open .section:nth-of-type(4) { animation-delay: .105s; }
+
+    @keyframes sectionRise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* -------- Settings information -------- */
+    .settings-label {
+      margin: 18px 5px 7px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .01em;
+      color: var(--tertiary);
+    }
+
+    .settings-row.static {
+      cursor: default;
+    }
+
+    .theme-setting-row {
+      min-height: 66px;
+      padding-top: 9px;
+      padding-bottom: 9px;
+      gap: 12px;
+    }
+
+    .theme-picker {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      padding: 3px;
+      border-radius: 12px;
+      background: rgba(118,118,128,.11);
+    }
+
+    .theme-choice {
+      min-width: 52px;
+      min-height: 34px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--secondary);
+      font-size: 12px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, transform .14s ease;
+    }
+
+    .theme-choice:active {
+      transform: scale(.95);
+    }
+
+    .theme-choice.active {
+      color: var(--ink);
+      background: var(--glass-fill-strong);
+      box-shadow:
+        0 2px 8px rgba(0,0,0,.08),
+        inset 0 1px 0 rgba(255,255,255,.28);
+    }
+
+    @media (max-width: 390px) {
+      .theme-setting-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .theme-picker {
+        width: 100%;
+      }
+
+      .theme-choice {
+        min-height: 38px;
+      }
+    }
+
+    .settings-value {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--secondary);
+      font-size: 13px;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .release-block {
+      margin-top: 13px;
+      padding: 15px 16px;
+      border: 1px solid var(--hairline);
+      border-radius: 20px;
+      background: rgba(255,255,255,.10);
+    }
+
+    .release-block.previous {
+      opacity: .82;
+    }
+
+    .release-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .release-head strong {
+      font-size: 17px;
+      font-weight: 730;
+    }
+
+    .release-head span,
+    .release-date {
+      font-size: 11px;
+      color: var(--tertiary);
+    }
+
+    .release-date {
+      margin-top: 3px;
+    }
+
+    .release-list {
+      margin: 12px 0 0;
+      padding-left: 19px;
+      color: var(--secondary);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .release-list li + li {
+      margin-top: 5px;
+    }
+
+    .full-width {
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    @media (max-height: 700px) {
+      .score-lens-wrap { width: min(54vw, 232px); }
+      .eyebrow { margin-bottom: 18px; }
+      .admin-controls { margin-top: 20px; }
+      .score { font-size: clamp(72px, 23vw, 104px); }
+    }
+
+    @media (min-width: 700px) {
+      .home { padding-left: 24px; padding-right: 24px; }
+      .score-lens-wrap { width: 250px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+        animation-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background" aria-hidden="true">
+    <div class="ambient a"></div>
+    <div class="ambient b"></div>
+    <div class="ambient c"></div>
+  </div>
+
+  <main class="app">
+    <section class="home" aria-label="积分首页">
+      <header class="topbar">
+        <button id="settingsBtn" class="icon-button pressable" type="button" aria-label="设置">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </header>
+
+      <div class="hero">
+        <div class="eyebrow">当前分数</div>
+
+        <div id="scoreRefreshBtn" class="score-lens-wrap pressable" role="button" tabindex="0" aria-label="手动刷新当前分数">
+          <div class="score-glow" aria-hidden="true"></div>
+          <div class="score-lens">
+            <div id="scoreValue" class="score loading" aria-live="polite">—</div>
+          </div>
+        </div>
+
+        <div id="adminControls" class="admin-controls hidden" aria-hidden="true">
+          <button class="score-button minus glass pressable" type="button" data-delta="-1">−1</button>
+          <button class="score-button plus glass pressable" type="button" data-delta="1">+1</button>
+        </div>
+      </div>
+
+      <div class="bottom-zone">
+        <button id="overviewBtn" class="overview-button pressable" type="button">
+          <span>总览</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Overview -->
+    <section id="overview" class="overview" aria-hidden="true">
+      <div class="overview-backdrop"></div>
+
+      <div class="overview-shell">
+        <header class="overview-header">
+          <div id="overviewGrabberHitbox" class="overview-grabber-hitbox" aria-label="下拉关闭总览">
+            <div class="overview-grabber" aria-hidden="true"></div>
+          </div>
+          <div class="overview-title">总览</div>
+        </header>
+
+        <section class="section">
+          <h2 class="section-title">趋势</h2>
+          <div class="card glass">
+            <div id="trendSegments" class="segmented" aria-label="趋势范围">
+              <button class="segment pressable active" type="button" data-range="7d">7天</button>
+              <button class="segment pressable" type="button" data-range="week">按周</button>
+              <button class="segment pressable" type="button" data-range="month">按月</button>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="trendCanvas"></canvas>
+              <div id="chartEmpty" class="chart-empty" hidden>暂无数据</div>
+            </div>
+            <div id="chartCaption" class="chart-caption"></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">日历</h2>
+          <div class="card glass calendar-card">
+            <div class="calendar-head">
+              <button id="prevMonthBtn" class="small-icon pressable" type="button" aria-label="上个月">‹</button>
+              <div id="calendarMonth" class="calendar-month"></div>
+              <button id="nextMonthBtn" class="small-icon pressable" type="button" aria-label="下个月">›</button>
+            </div>
+
+            <div class="weekdays" aria-hidden="true">
+              <div class="weekday">日</div>
+              <div class="weekday">一</div>
+              <div class="weekday">二</div>
+              <div class="weekday">三</div>
+              <div class="weekday">四</div>
+              <div class="weekday">五</div>
+              <div class="weekday">六</div>
+            </div>
+
+            <div id="calendarGrid" class="calendar-grid"></div>
+
+            <div id="dayDetail" class="day-detail hidden">
+              <div id="dayDetailTitle" class="detail-title"></div>
+              <ul id="dayDetailList" class="log-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">记录</h2>
+          <div class="card glass">
+            <div id="recordSegments" class="segmented" aria-label="记录范围">
+              <button class="segment pressable active" type="button" data-record-range="week">本周</button>
+              <button class="segment pressable" type="button" data-record-range="month">本月</button>
+              <button class="segment pressable" type="button" data-record-range="all">全部</button>
+            </div>
+            <ul id="recordList" class="log-list"></ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">本月总结</h2>
+          <div class="card glass">
+            <div class="summary-grid">
+              <div class="metric">
+                <div class="metric-label">变更次数</div>
+                <div id="monthCount" class="metric-value">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">净变化</div>
+                <div id="monthNet" class="metric-value">0</div>
+              </div>
+            </div>
+            <div id="reasonSummary" class="reason-table"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- Settings Sheet -->
+    <div id="settingsLayer" class="modal-layer" aria-hidden="true">
+      <div id="settingsSheet" class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <header class="settings-sheet-header">
+          <div id="settingsGrabberHitbox" class="settings-grabber-hitbox" aria-label="下拉关闭设置">
+            <div class="grabber" aria-hidden="true"></div>
+          </div>
+          <div id="settingsTitle" class="sheet-title">设置</div>
+          <div id="loginStateText" class="login-state">访客模式</div>
+        </header>
+
+        <div class="settings-sheet-content">
+          <div class="settings-label">账户</div>
+          <div id="guestSettings" class="settings-group">
+            <button id="openLoginBtn" class="settings-row pressable" type="button">
+              <span>管理员登录</span>
+              <span class="chevron">›</span>
+            </button>
+          </div>
+
+          <div id="adminSettings" hidden>
+            <div class="settings-label">积分管理</div>
+            <div class="settings-group">
+              <button id="resetBtn" class="settings-row destructive pressable" type="button">
+                <span>重置积分</span>
+                <span class="settings-value">恢复到 5 <span class="chevron">›</span></span>
+              </button>
+              <button id="logoutBtn" class="settings-row destructive pressable" type="button">
+                <span>退出管理员</span>
+                <span class="chevron">›</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-label">外观</div>
+          <div class="settings-group">
+            <div class="settings-row static theme-setting-row">
+              <span>显示模式</span>
+              <div id="themePicker" class="theme-picker" role="group" aria-label="显示模式">
+                <button class="theme-choice" type="button" data-theme-choice="system">跟随</button>
+                <button class="theme-choice" type="button" data-theme-choice="light">浅色</button>
+                <button class="theme-choice" type="button" data-theme-choice="dark">深色</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-label">信息</div>
+          <div class="settings-group">
+            <div class="settings-row static">
+              <span>数据刷新</span>
+              <span class="settings-value">打开时 + 每 30 分钟</span>
+            </div>
+            <div class="settings-row static">
+              <span>最近同步</span>
+              <span id="lastRefreshText" class="settings-value">尚未同步</span>
+            </div>
+            <div class="settings-row static">
+              <span>当前版本</span>
+              <span class="settings-value">1.4.3</span>
+            </div>
+            <button id="openReleaseNotesBtn" class="settings-row pressable" type="button">
+              <span>版本与优化</span>
+              <span class="chevron">›</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Version / optimization info -->
+    <div id="releaseNotesLayer" class="modal-layer" aria-hidden="true">
+      <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="releaseNotesTitle">
+        <div class="grabber"></div>
+        <div id="releaseNotesTitle" class="sheet-title">版本与优化</div>
+        <div class="sheet-subtitle">保持功能克制，只记录真正影响体验的更新。</div>
+
+        <div class="release-block">
+          <div class="release-head">
+            <strong>1.4.3</strong>
+            <span>当前版本</span>
+          </div>
+          <div class="release-date">2026.08.31</div>
+          <ul class="release-list">
+            <li>管理员登录统一为与设置相同的内容自适应 iOS Bottom Sheet。</li>
+            <li>登录 Sheet 使用同款玻璃材质、蒙层、顶部圆角和居中小横条。</li>
+            <li>支持按住顶部横条向下拖动关闭；不会向上扩展成全屏。</li>
+          </ul>
+        </div>
+
+        <div class="release-block previous">
+          <div class="release-head">
+            <strong>1.4.2</strong>
+            <span>上一版本</span>
+          </div>
+          <div class="release-date">2026.08.31</div>
+          <ul class="release-list">
+            <li>设置 Sheet 改为内容自适应高度：刚好容纳当前项目，不再接近全屏。</li>
+            <li>设置与总览共用同一套玻璃材质、蒙层、圆角、阴影和顶部横条视觉。</li>
+            <li>设置只支持顶部横条向下拖动关闭，不支持向上扩展。</li>
+            <li>全新访问时默认使用浅色模式；用户手动选择的外观仍会被记住。</li>
+          </ul>
+        </div>
+
+        <div class="release-block previous">
+          <div class="release-head">
+            <strong>1.4.1</strong>
+            <span>上一版本</span>
+          </div>
+          <div class="release-date">2026.08.31</div>
+          <ul class="release-list">
+            <li>设置界面统一为与总览相同的 iOS Bottom Sheet 视觉：底部贴边、顶部留空、同款玻璃材质与圆角。</li>
+            <li>移除设置界面可见的浏览器滚动条；内容仍可自然滚动。</li>
+            <li>设置顶部小横条支持向下拖动关闭。</li>
+          </ul>
+        </div>
+
+        <div class="release-block previous">
+          <div class="release-head">
+            <strong>1.4.0</strong>
+            <span>上一版本</span>
+          </div>
+          <div class="release-date">2026.08.31</div>
+          <ul class="release-list">
+            <li>总览改为 iOS 风格可拖拽 Bottom Sheet：初始显示 390px，上滑吸附到全展开。</li>
+            <li>顶部小横条支持向下拖动直接关闭；全展开后内容区恢复正常滚动。</li>
+            <li>首页浅色背景、设置按钮和总览按钮按参考设计移植；深色模式沿用同款按钮材质。</li>
+            <li>iPhone 不启用陀螺仪或倾斜交互；桌面端保留参考设计原本的鼠标 3D 圆盘倾斜。</li>
+          </ul>
+        </div>
+
+        <div class="release-block previous">
+          <div class="release-head">
+            <strong>1.3.0</strong>
+            <span>上一版本</span>
+          </div>
+          <div class="release-date">2026.08.31</div>
+          <ul class="release-list">
+            <li>中央分数镜片改为 Liquid Glass 材质，并加入桌面鼠标跟随 3D 倾斜。</li>
+            <li>新增“跟随系统 / 浅色 / 深色”显示模式，可在设置中随时切换。</li>
+            <li>浅色模式背景改为柔和动态 Mesh 色雾；其余首页与总览结构保持不变。</li>
+          </ul>
+        </div>
+
+        <div class="release-block previous">
+          <div class="release-head">
+            <strong>1.2.0</strong>
+            <span>上一版本</span>
+          </div>
+          <div class="release-date">2026.08.31</div>
+          <ul class="release-list">
+            <li>修复总览首次打开时日历可能为空的问题，月份日期会立即完整呈现。</li>
+            <li>每日加分与扣分分别累计，日期下方以 Retina SVG ↑/↓ 箭头显示。</li>
+            <li>点击首页分数玻璃镜片可立即手动同步当前积分。</li>
+            <li>自动同步策略调整为打开应用立即一次，之后每 30 分钟一次。</li>
+            <li>总览空白区域支持轻点退出。</li>
+          </ul>
+        </div>
+
+        <div class="release-block previous">
+          <div class="release-head">
+            <strong>1.0.0</strong>
+            <span>初始版本</span>
+          </div>
+          <div class="release-date">2026.08.31</div>
+          <ul class="release-list">
+            <li>单一总积分、管理员登录、+1 / -1。</li>
+            <li>趋势、日历、记录、本月总结。</li>
+            <li>Supabase 权限 RPC 与 10 秒自动刷新。</li>
+          </ul>
+        </div>
+
+        <button id="closeReleaseNotesBtn" class="sheet-button primary pressable full-width" type="button">完成</button>
+      </div>
+    </div>
+
+    <!-- Login Sheet -->
+    <div id="loginLayer" class="modal-layer" aria-hidden="true">
+      <div id="loginSheet" class="sheet login-sheet" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+        <header class="login-sheet-header">
+          <div id="loginGrabberHitbox" class="login-grabber-hitbox" aria-label="下拉关闭管理员登录">
+            <div class="grabber" aria-hidden="true"></div>
+          </div>
+          <div id="loginTitle" class="sheet-title">管理员登录</div>
+        </header>
+
+        <div class="login-sheet-body">
+          <div class="sheet-subtitle">使用已创建的管理员账号登录</div>
+
+          <input id="emailInput" class="field" type="email" inputmode="email"
+                 autocomplete="username" placeholder="邮箱" />
+          <input id="passwordInput" class="field" type="password"
+                 autocomplete="current-password" placeholder="密码" />
+
+          <div class="sheet-actions">
+            <button id="cancelLoginBtn" class="sheet-button pressable" type="button">取消</button>
+            <button id="loginBtn" class="sheet-button primary pressable" type="button">登录</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change score sheet -->
+    <div id="changeLayer" class="modal-layer" aria-hidden="true">
+      <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="changeTitle">
+        <div class="grabber"></div>
+        <div id="changeTitle" class="sheet-title">积分变更</div>
+        <div id="changeSubtitle" class="sheet-subtitle"></div>
+
+        <textarea id="reasonInput" class="field" maxlength="500" placeholder="原因（可留空）"></textarea>
+
+        <div class="sheet-actions">
+          <button id="cancelChangeBtn" class="sheet-button pressable" type="button">取消</button>
+          <button id="confirmChangeBtn" class="sheet-button primary pressable" type="button">确认</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset alert -->
+    <div id="resetLayer" class="modal-layer alert-layer" aria-hidden="true">
+      <div class="alert glass" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle">
+        <div class="alert-content">
+          <div id="resetTitle" class="alert-title">重置积分？</div>
+          <div class="alert-message">当前分数将恢复为 5。历史记录不会删除，并会新增一条“重置积分”流水。</div>
+        </div>
+        <div class="alert-actions">
+          <button id="cancelResetBtn" class="alert-button pressable" type="button">取消</button>
+          <button id="confirmResetBtn" class="alert-button destructive pressable" type="button">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast glass" role="status" aria-live="polite"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      // ============================================================
+      // Supabase
+      // Only the Publishable Key is present in frontend code.
+      // All write authorization is enforced again inside PostgreSQL RPCs.
+      // ============================================================
+      const SUPABASE_URL = "https://zrzplqwauuruyssgcwqt.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_YENvfSv64ZLopoXrXNNbqw_se6XJYs3";
+
+      const db = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }
+      );
+
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+      const els = {
+        score: $("#scoreValue"),
+        scoreRefreshBtn: $("#scoreRefreshBtn"),
+        adminControls: $("#adminControls"),
+        settingsBtn: $("#settingsBtn"),
+        overviewBtn: $("#overviewBtn"),
+        overview: $("#overview"),
+        overviewBackdrop: $(".overview-backdrop"),
+        overviewShell: $(".overview-shell"),
+        overviewGrabberHitbox: $("#overviewGrabberHitbox"),
+
+        settingsLayer: $("#settingsLayer"),
+        settingsSheet: $("#settingsSheet"),
+        settingsGrabberHitbox: $("#settingsGrabberHitbox"),
+        guestSettings: $("#guestSettings"),
+        adminSettings: $("#adminSettings"),
+        loginStateText: $("#loginStateText"),
+        openLoginBtn: $("#openLoginBtn"),
+        logoutBtn: $("#logoutBtn"),
+        resetBtn: $("#resetBtn"),
+        lastRefreshText: $("#lastRefreshText"),
+        themePicker: $("#themePicker"),
+        themeColorMeta: $("#themeColorMeta"),
+        openReleaseNotesBtn: $("#openReleaseNotesBtn"),
+        releaseNotesLayer: $("#releaseNotesLayer"),
+        closeReleaseNotesBtn: $("#closeReleaseNotesBtn"),
+
+        loginLayer: $("#loginLayer"),
+        loginSheet: $("#loginSheet"),
+        loginGrabberHitbox: $("#loginGrabberHitbox"),
+        emailInput: $("#emailInput"),
+        passwordInput: $("#passwordInput"),
+        cancelLoginBtn: $("#cancelLoginBtn"),
+        loginBtn: $("#loginBtn"),
+
+        changeLayer: $("#changeLayer"),
+        changeTitle: $("#changeTitle"),
+        changeSubtitle: $("#changeSubtitle"),
+        reasonInput: $("#reasonInput"),
+        cancelChangeBtn: $("#cancelChangeBtn"),
+        confirmChangeBtn: $("#confirmChangeBtn"),
+
+        resetLayer: $("#resetLayer"),
+        cancelResetBtn: $("#cancelResetBtn"),
+        confirmResetBtn: $("#confirmResetBtn"),
+
+        trendSegments: $("#trendSegments"),
+        trendCanvas: $("#trendCanvas"),
+        chartEmpty: $("#chartEmpty"),
+        chartCaption: $("#chartCaption"),
+
+        calendarMonth: $("#calendarMonth"),
+        calendarGrid: $("#calendarGrid"),
+        prevMonthBtn: $("#prevMonthBtn"),
+        nextMonthBtn: $("#nextMonthBtn"),
+        dayDetail: $("#dayDetail"),
+        dayDetailTitle: $("#dayDetailTitle"),
+        dayDetailList: $("#dayDetailList"),
+
+        recordSegments: $("#recordSegments"),
+        recordList: $("#recordList"),
+
+        monthCount: $("#monthCount"),
+        monthNet: $("#monthNet"),
+        reasonSummary: $("#reasonSummary"),
+
+        toast: $("#toast")
+      };
+
+      const state = {
+        score: null,
+        updatedAt: null,
+        session: null,
+        isAdmin: false,
+        changeDelta: null,
+        trendRange: "7d",
+        recordRange: "week",
+        calendarDate: startOfMonth(new Date()),
+        selectedDayKey: null,
+        overviewLogs: [],
+        overviewLoadedAt: 0,
+        refreshInFlight: false,
+        lastRefreshAt: null,
+        themePreference: "system",
+        overviewMode: "closed",
+        toastTimer: null
+      };
+
+      // -------------------- Appearance --------------------
+      const THEME_STORAGE_KEY = "points_theme";
+      const systemThemeMedia = matchMedia("(prefers-color-scheme: dark)");
+
+      function loadThemePreference() {
+        try {
+          const pref = localStorage.getItem(THEME_STORAGE_KEY);
+          if (pref === "light" || pref === "dark" || pref === "system") return pref;
+        } catch (_) {}
+        return "light";
+      }
+
+      function resolvedTheme() {
+        if (state.themePreference === "light" || state.themePreference === "dark") {
+          return state.themePreference;
+        }
+        return systemThemeMedia.matches ? "dark" : "light";
+      }
+
+      function renderThemePicker() {
+        if (!els.themePicker) return;
+        els.themePicker.querySelectorAll("[data-theme-choice]").forEach(btn => {
+          const active = btn.dataset.themeChoice === state.themePreference;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-pressed", String(active));
+        });
+      }
+
+      function applyTheme(pref, { persist = false } = {}) {
+        state.themePreference = ["system", "light", "dark"].includes(pref) ? pref : "system";
+
+        if (state.themePreference === "system") {
+          document.documentElement.removeAttribute("data-theme");
+        } else {
+          document.documentElement.dataset.theme = state.themePreference;
+        }
+
+        if (persist) {
+          try {
+            localStorage.setItem(THEME_STORAGE_KEY, state.themePreference);
+          } catch (_) {}
+        }
+
+        const actual = resolvedTheme();
+        if (els.themeColorMeta) {
+          els.themeColorMeta.setAttribute("content", actual === "dark" ? "#0f1218" : "#f4f5f9");
+        }
+
+        renderThemePicker();
+
+        if (els.overview.classList.contains("open")) {
+          requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
+        }
+      }
+
+      // -------------------- Date helpers --------------------
+      function startOfDay(d) {
+        const x = new Date(d);
+        x.setHours(0,0,0,0);
+        return x;
+      }
+
+      function startOfMonth(d) {
+        return new Date(d.getFullYear(), d.getMonth(), 1, 0, 0, 0, 0);
+      }
+
+      function endOfMonthExclusive(d) {
+        return new Date(d.getFullYear(), d.getMonth() + 1, 1, 0, 0, 0, 0);
+      }
+
+      function startOfWeekMonday(d) {
+        const x = startOfDay(d);
+        const day = x.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        x.setDate(x.getDate() + diff);
+        return x;
+      }
+
+      function addDays(d, n) {
+        const x = new Date(d);
+        x.setDate(x.getDate() + n);
+        return x;
+      }
+
+      function addMonths(d, n) {
+        return new Date(d.getFullYear(), d.getMonth() + n, 1);
+      }
+
+      function dateKey(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,"0");
+        const day = String(d.getDate()).padStart(2,"0");
+        return `${y}-${m}-${day}`;
+      }
+
+      function sameDay(a, b) {
+        return a.getFullYear() === b.getFullYear()
+          && a.getMonth() === b.getMonth()
+          && a.getDate() === b.getDate();
+      }
+
+      function formatTime(iso) {
+        return new Intl.DateTimeFormat("zh-CN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        }).format(new Date(iso));
+      }
+
+      function formatDateShort(iso) {
+        return new Intl.DateTimeFormat("zh-CN", {
+          month: "numeric",
+          day: "numeric"
+        }).format(new Date(iso));
+      }
+
+      function formatMonth(d) {
+        return new Intl.DateTimeFormat("zh-CN", {
+          year: "numeric",
+          month: "long"
+        }).format(d);
+      }
+
+      function formatDayTitle(d) {
+        return new Intl.DateTimeFormat("zh-CN", {
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        }).format(d);
+      }
+
+      function signed(n) {
+        return n > 0 ? `+${n}` : String(n);
+      }
+
+      // -------------------- UI utilities --------------------
+      function vibrate(ms = 8) {
+        try {
+          if ("vibrate" in navigator) navigator.vibrate(ms);
+        } catch (_) {}
+      }
+
+      function showToast(message) {
+        clearTimeout(state.toastTimer);
+        els.toast.textContent = message;
+        els.toast.classList.add("show");
+        state.toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2200);
+      }
+
+      function setLayer(layer, open) {
+        layer.classList.toggle("open", open);
+        layer.setAttribute("aria-hidden", String(!open));
+      }
+
+      function closeAllLayers() {
+        [els.settingsLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.resetLayer]
+          .forEach(layer => setLayer(layer, false));
+      }
+
+      function setBusy(el, busy) {
+        el.classList.toggle("busy", busy);
+        el.disabled = busy;
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "")
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
+      }
+
+      function renderAdminState() {
+        els.adminControls.classList.toggle("hidden", !state.isAdmin);
+        els.adminControls.setAttribute("aria-hidden", String(!state.isAdmin));
+        els.guestSettings.hidden = state.isAdmin;
+        els.adminSettings.hidden = !state.isAdmin;
+
+        if (state.isAdmin) {
+          const email = state.session?.user?.email || "管理员";
+          els.loginStateText.textContent = `管理员 · ${email}`;
+        } else {
+          els.loginStateText.textContent = "访客模式";
+        }
+      }
+
+      function renderScore({ animate = false } = {}) {
+        if (typeof state.score === "number") {
+          els.score.textContent = state.score;
+          els.score.classList.remove("loading");
+          if (animate) {
+            els.score.classList.remove("score-pop");
+            void els.score.offsetWidth;
+            els.score.classList.add("score-pop");
+          }
+        }
+      }
+
+      function markRefreshed() {
+        state.lastRefreshAt = new Date();
+        if (els.lastRefreshText) {
+          els.lastRefreshText.textContent = new Intl.DateTimeFormat("zh-CN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+          }).format(state.lastRefreshAt);
+        }
+      }
+
+      // -------------------- Supabase read/auth --------------------
+      async function loadScore({ silent = false } = {}) {
+        if (state.refreshInFlight) return;
+        state.refreshInFlight = true;
+
+        try {
+          const { data, error } = await db.rpc("points_get_state");
+          if (error) throw error;
+
+          const row = Array.isArray(data) ? data[0] : data;
+          if (!row || typeof row.score !== "number") {
+            throw new Error("未读取到积分数据");
+          }
+
+          state.score = row.score;
+          state.updatedAt = row.updated_at;
+          renderScore();
+          markRefreshed();
+        } catch (err) {
+          console.error("loadScore:", err);
+          if (!silent) showToast("读取积分失败");
+        } finally {
+          state.refreshInFlight = false;
+        }
+      }
+
+      async function refreshAuthState() {
+        try {
+          const { data, error } = await db.auth.getSession();
+          if (error) throw error;
+
+          state.session = data.session;
+          state.isAdmin = false;
+
+          if (state.session) {
+            const { data: adminData, error: adminError } = await db.rpc("points_is_admin");
+            if (adminError) {
+              console.error("points_is_admin:", adminError);
+            } else {
+              state.isAdmin = adminData === true;
+            }
+          }
+
+          renderAdminState();
+        } catch (err) {
+          console.error("refreshAuthState:", err);
+          state.session = null;
+          state.isAdmin = false;
+          renderAdminState();
+        }
+      }
+
+      async function login() {
+        const email = els.emailInput.value.trim();
+        const password = els.passwordInput.value;
+
+        if (!email || !password) {
+          showToast("请输入邮箱和密码");
+          return;
+        }
+
+        setBusy(els.loginBtn, true);
+
+        try {
+          const { data, error } = await db.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+
+          state.session = data.session;
+
+          const { data: adminData, error: adminError } = await db.rpc("points_is_admin");
+          if (adminError) throw adminError;
+
+          if (adminData !== true) {
+            await db.auth.signOut();
+            throw new Error("此账号不是管理员");
+          }
+
+          state.isAdmin = true;
+          els.passwordInput.value = "";
+          setLayer(els.loginLayer, false);
+          renderAdminState();
+          vibrate(12);
+          showToast("管理员已登录");
+        } catch (err) {
+          console.error("login:", err);
+          state.session = null;
+          state.isAdmin = false;
+          renderAdminState();
+          showToast(err?.message === "此账号不是管理员" ? err.message : "登录失败，请检查账号密码");
+        } finally {
+          setBusy(els.loginBtn, false);
+        }
+      }
+
+      async function logout() {
+        try {
+          const { error } = await db.auth.signOut();
+          if (error) throw error;
+          state.session = null;
+          state.isAdmin = false;
+          setLayer(els.settingsLayer, false);
+          renderAdminState();
+          showToast("已退出管理员");
+        } catch (err) {
+          console.error("logout:", err);
+          showToast("退出失败");
+        }
+      }
+
+      // -------------------- Score writes --------------------
+      function openChange(delta) {
+        if (!state.isAdmin) {
+          showToast("需要管理员权限");
+          return;
+        }
+
+        state.changeDelta = delta;
+        els.changeTitle.textContent = delta > 0 ? "增加 1 分" : "减少 1 分";
+        els.changeSubtitle.textContent = `当前 ${state.score ?? "—"} 分，确认后将${delta > 0 ? "增加" : "减少"} 1 分。原因可以不填写。`;
+        els.reasonInput.value = "";
+        setLayer(els.changeLayer, true);
+        setTimeout(() => els.reasonInput.focus(), 280);
+      }
+
+      async function confirmChange() {
+        const delta = state.changeDelta;
+        if (delta !== 1 && delta !== -1) return;
+
+        setBusy(els.confirmChangeBtn, true);
+
+        try {
+          const reason = els.reasonInput.value.trim();
+          const { data, error } = await db.rpc("points_change_score", {
+            p_delta: delta,
+            p_reason: reason === "" ? null : reason
+          });
+
+          if (error) throw error;
+
+          const row = Array.isArray(data) ? data[0] : data;
+          if (row && typeof row.score === "number") {
+            state.score = row.score;
+            state.updatedAt = row.updated_at;
+          } else {
+            await loadScore({ silent: true });
+          }
+
+          renderScore({ animate: true });
+          markRefreshed();
+          setLayer(els.changeLayer, false);
+          state.overviewLoadedAt = 0;
+          vibrate(14);
+          showToast(delta > 0 ? "已增加 1 分" : "已减少 1 分");
+
+          if (els.overview.classList.contains("open")) {
+            await loadOverviewData(true);
+          }
+        } catch (err) {
+          console.error("confirmChange:", err);
+          if (String(err?.message || "").includes("Admin permission required")) {
+            await refreshAuthState();
+            showToast("管理员权限已失效");
+          } else {
+            showToast("积分修改失败");
+          }
+        } finally {
+          setBusy(els.confirmChangeBtn, false);
+        }
+      }
+
+      async function confirmReset() {
+        setBusy(els.confirmResetBtn, true);
+
+        try {
+          const { data, error } = await db.rpc("points_reset_score");
+          if (error) throw error;
+
+          const row = Array.isArray(data) ? data[0] : data;
+          state.score = row?.score ?? 5;
+          state.updatedAt = row?.updated_at ?? new Date().toISOString();
+          renderScore({ animate: true });
+          markRefreshed();
+
+          setLayer(els.resetLayer, false);
+          state.overviewLoadedAt = 0;
+          vibrate(18);
+          showToast("积分已重置为 5");
+
+          if (els.overview.classList.contains("open")) {
+            await loadOverviewData(true);
+          }
+        } catch (err) {
+          console.error("confirmReset:", err);
+          showToast("重置失败");
+        } finally {
+          setBusy(els.confirmResetBtn, false);
+        }
+      }
+
+      // -------------------- Overview data --------------------
+      function getOverviewStart() {
+        // Enough history for:
+        // - recent 7 days
+        // - recent 8 weeks
+        // - recent 6 months
+        // - current/adjacent calendar months
+        const now = new Date();
+        const sixMonthsAgo = addMonths(startOfMonth(now), -6);
+        const calendarStart = addMonths(startOfMonth(state.calendarDate), -1);
+        return sixMonthsAgo < calendarStart ? sixMonthsAgo : calendarStart;
+      }
+
+      async function loadOverviewData(force = false) {
+        const now = Date.now();
+        if (!force && state.overviewLoadedAt && now - state.overviewLoadedAt < 30 * 60 * 1000) {
+          renderOverview();
+          return;
+        }
+
+        // Load the complete history (up to the RPC safety limit) so
+        // “全部”、任意月份日历和长期趋势都基于同一份真实数据。
+        try {
+          const { data, error } = await db.rpc("points_get_logs", {
+            p_from: null,
+            p_to: null,
+            p_limit: 10000
+          });
+
+          if (error) throw error;
+
+          state.overviewLogs = Array.isArray(data) ? data : [];
+          state.overviewLoadedAt = Date.now();
+          markRefreshed();
+          renderOverview();
+        } catch (err) {
+          console.error("loadOverviewData:", err);
+          showToast("读取总览失败");
+        }
+      }
+
+      function logsAscending() {
+        return [...state.overviewLogs].sort((a,b) => {
+          const t = new Date(a.created_at) - new Date(b.created_at);
+          return t || Number(a.id) - Number(b.id);
+        });
+      }
+
+      function logsDescending() {
+        return [...state.overviewLogs].sort((a,b) => {
+          const t = new Date(b.created_at) - new Date(a.created_at);
+          return t || Number(b.id) - Number(a.id);
+        });
+      }
+
+      function renderOverview() {
+        renderTrend();
+        renderCalendar();
+        renderRecords();
+        renderMonthSummary();
+      }
+
+      // -------------------- Trend --------------------
+      function buildTrendPoints(range) {
+        const now = new Date();
+        const logs = logsAscending();
+
+        let boundaries = [];
+        let labels = [];
+
+        if (range === "7d") {
+          const start = addDays(startOfDay(now), -6);
+          for (let i = 0; i < 7; i++) {
+            const d = addDays(start, i);
+            boundaries.push({ start: d, end: addDays(d, 1) });
+            labels.push(`${d.getMonth()+1}/${d.getDate()}`);
+          }
+        } else if (range === "week") {
+          const thisWeek = startOfWeekMonday(now);
+          const first = addDays(thisWeek, -7 * 7);
+          for (let i = 0; i < 8; i++) {
+            const d = addDays(first, i * 7);
+            boundaries.push({ start: d, end: addDays(d, 7) });
+            labels.push(`${d.getMonth()+1}/${d.getDate()}`);
+          }
+        } else {
+          const thisMonth = startOfMonth(now);
+          const first = addMonths(thisMonth, -5);
+          for (let i = 0; i < 6; i++) {
+            const d = addMonths(first, i);
+            boundaries.push({ start: d, end: addMonths(d, 1) });
+            labels.push(`${d.getMonth()+1}月`);
+          }
+        }
+
+        if (!boundaries.length) return [];
+
+        const rangeStart = boundaries[0].start;
+
+        // Baseline score immediately before the first displayed bucket.
+        let scoreAtStart = state.score ?? 5;
+        const inOrAfterStart = logs.filter(l => new Date(l.created_at) >= rangeStart);
+
+        if (inOrAfterStart.length) {
+          scoreAtStart = Number(inOrAfterStart[0].score_before);
+        } else if (logs.length) {
+          const latestBefore = [...logs]
+            .filter(l => new Date(l.created_at) < rangeStart)
+            .at(-1);
+          if (latestBefore) scoreAtStart = Number(latestBefore.score_after);
+        }
+
+        let running = scoreAtStart;
+        const points = [];
+
+        for (let i = 0; i < boundaries.length; i++) {
+          const bucket = boundaries[i];
+          const bucketLogs = logs.filter(l => {
+            const t = new Date(l.created_at);
+            return t >= bucket.start && t < bucket.end;
+          });
+
+          for (const log of bucketLogs) {
+            running = Number(log.score_after);
+          }
+
+          points.push({
+            label: labels[i],
+            value: running,
+            date: bucket.end
+          });
+        }
+
+        return points;
+      }
+
+      function renderTrend() {
+        const points = buildTrendPoints(state.trendRange);
+        drawTrend(points);
+
+        const visibleLogs = (() => {
+          const now = new Date();
+          let start;
+          if (state.trendRange === "7d") start = addDays(startOfDay(now), -6);
+          else if (state.trendRange === "week") start = addDays(startOfWeekMonday(now), -7 * 7);
+          else start = addMonths(startOfMonth(now), -5);
+          return state.overviewLogs.filter(l => new Date(l.created_at) >= start);
+        })();
+
+        els.chartCaption.textContent = visibleLogs.length
+          ? `${visibleLogs.length} 次变更`
+          : "该范围内暂无变更";
+      }
+
+      function drawTrend(points) {
+        const canvas = els.trendCanvas;
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        ctx.clearRect(0,0,rect.width,rect.height);
+
+        if (!points.length) {
+          els.chartEmpty.hidden = false;
+          return;
+        }
+        els.chartEmpty.hidden = true;
+
+        const values = points.map(p => Number(p.value));
+        let min = Math.min(...values);
+        let max = Math.max(...values);
+
+        if (min === max) {
+          min -= 1;
+          max += 1;
+        } else {
+          const pad = Math.max(1, (max - min) * .22);
+          min -= pad;
+          max += pad;
+        }
+
+        const pad = { l: 12, r: 12, t: 18, b: 30 };
+        const w = rect.width - pad.l - pad.r;
+        const h = rect.height - pad.t - pad.b;
+
+        const styles = getComputedStyle(document.documentElement);
+        const ink = styles.getPropertyValue("--ink").trim();
+        const tertiary = styles.getPropertyValue("--tertiary").trim();
+        const hairline = styles.getPropertyValue("--hairline").trim();
+        const blue = styles.getPropertyValue("--blue").trim();
+
+        // horizontal guide lines
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = hairline;
+        for (let i = 0; i < 3; i++) {
+          const y = pad.t + (h * i / 2);
+          ctx.beginPath();
+          ctx.moveTo(pad.l, y + .5);
+          ctx.lineTo(rect.width - pad.r, y + .5);
+          ctx.stroke();
+        }
+
+        const xFor = (i) => points.length === 1
+          ? pad.l + w / 2
+          : pad.l + (w * i / (points.length - 1));
+
+        const yFor = (v) => pad.t + h - ((v - min) / (max - min)) * h;
+
+        // subtle area
+        const gradient = ctx.createLinearGradient(0, pad.t, 0, pad.t + h);
+        gradient.addColorStop(0, "rgba(10,132,255,.20)");
+        gradient.addColorStop(1, "rgba(10,132,255,0)");
+
+        ctx.beginPath();
+        points.forEach((p,i) => {
+          const x = xFor(i);
+          const y = yFor(Number(p.value));
+          if (i === 0) ctx.moveTo(x,y);
+          else ctx.lineTo(x,y);
+        });
+        ctx.lineTo(xFor(points.length-1), pad.t + h);
+        ctx.lineTo(xFor(0), pad.t + h);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // line
+        ctx.beginPath();
+        points.forEach((p,i) => {
+          const x = xFor(i);
+          const y = yFor(Number(p.value));
+          if (i === 0) ctx.moveTo(x,y);
+          else ctx.lineTo(x,y);
+        });
+        ctx.strokeStyle = blue;
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+
+        // points + value for last
+        points.forEach((p,i) => {
+          const x = xFor(i);
+          const y = yFor(Number(p.value));
+          ctx.beginPath();
+          ctx.arc(x,y,3.2,0,Math.PI*2);
+          ctx.fillStyle = blue;
+          ctx.fill();
+        });
+
+        // labels
+        ctx.fillStyle = tertiary;
+        ctx.font = '11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+
+        const showEvery = points.length > 7 ? 2 : 1;
+        points.forEach((p,i) => {
+          if (i % showEvery === 0 || i === points.length - 1) {
+            ctx.fillText(p.label, xFor(i), rect.height - 18);
+          }
+        });
+
+        const last = points.at(-1);
+        ctx.fillStyle = ink;
+        ctx.font = '600 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(`当前 ${last.value}`, rect.width - pad.r, 14);
+      }
+
+      // -------------------- Calendar --------------------
+      function renderCalendar() {
+        const month = state.calendarDate;
+        els.calendarMonth.textContent = formatMonth(month);
+        els.calendarGrid.innerHTML = "";
+
+        const first = startOfMonth(month);
+        const next = endOfMonthExclusive(month);
+        const firstWeekday = first.getDay();
+        const daysInMonth = Math.round((next - first) / 86400000);
+
+        const monthLogs = state.overviewLogs.filter(l => {
+          const t = new Date(l.created_at);
+          return t >= first && t < next;
+        });
+
+        // Calendar intentionally shows positive and negative movement separately.
+        // Example: +1, +1, -1 => green ↑2 and red ↓1 (not a single net +1).
+        const movementByDay = new Map();
+        for (const log of monthLogs) {
+          const k = dateKey(new Date(log.created_at));
+          const delta = Number(log.delta) || 0;
+          const movement = movementByDay.get(k) || { up: 0, down: 0 };
+          if (delta > 0) movement.up += delta;
+          if (delta < 0) movement.down += Math.abs(delta);
+          movementByDay.set(k, movement);
+        }
+
+        for (let i = 0; i < firstWeekday; i++) {
+          const blank = document.createElement("div");
+          blank.className = "day placeholder";
+          els.calendarGrid.appendChild(blank);
+        }
+
+        const today = new Date();
+        const arrowUp = `
+          <svg class="movement-arrow" viewBox="0 0 10 12" aria-hidden="true">
+            <path d="M5 10.5V1.7M1.8 4.8 5 1.5l3.2 3.3"
+                  fill="none" stroke="currentColor" stroke-width="1.55"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`;
+        const arrowDown = `
+          <svg class="movement-arrow" viewBox="0 0 10 12" aria-hidden="true">
+            <path d="M5 1.5v8.8M1.8 7.2 5 10.5l3.2-3.3"
+                  fill="none" stroke="currentColor" stroke-width="1.55"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`;
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const d = new Date(month.getFullYear(), month.getMonth(), day);
+          const key = dateKey(d);
+          const movement = movementByDay.get(key) || { up: 0, down: 0 };
+
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "day pressable";
+          btn.dataset.dateKey = key;
+          btn.setAttribute("aria-label", `${month.getMonth()+1}月${day}日，加分 ${movement.up}，扣分 ${movement.down}`);
+
+          if (sameDay(d, today)) btn.classList.add("today");
+          if (state.selectedDayKey === key) btn.classList.add("selected");
+
+          const upHTML = movement.up > 0
+            ? `<span class="movement up">${arrowUp}<b>${movement.up}</b></span>`
+            : "";
+          const downHTML = movement.down > 0
+            ? `<span class="movement down">${arrowDown}<b>${movement.down}</b></span>`
+            : "";
+
+          btn.innerHTML = `
+            <span class="day-number">${day}</span>
+            <span class="day-movements">${upHTML}${downHTML}</span>
+          `;
+
+          btn.addEventListener("click", () => selectCalendarDay(d));
+          els.calendarGrid.appendChild(btn);
+        }
+
+        // Fill the final week so the calendar is always visually complete.
+        const usedCells = firstWeekday + daysInMonth;
+        const trailing = (7 - (usedCells % 7)) % 7;
+        for (let i = 0; i < trailing; i++) {
+          const blank = document.createElement("div");
+          blank.className = "day placeholder";
+          els.calendarGrid.appendChild(blank);
+        }
+
+        renderSelectedDayDetail();
+      }
+
+      function selectCalendarDay(d) {
+        const key = dateKey(d);
+        state.selectedDayKey = state.selectedDayKey === key ? null : key;
+        renderCalendar();
+      }
+
+      function renderSelectedDayDetail() {
+        if (!state.selectedDayKey) {
+          els.dayDetail.classList.add("hidden");
+          return;
+        }
+
+        const [y,m,d] = state.selectedDayKey.split("-").map(Number);
+        const selected = new Date(y, m-1, d);
+        const start = startOfDay(selected);
+        const end = addDays(start, 1);
+
+        const logs = logsAscending().filter(l => {
+          const t = new Date(l.created_at);
+          return t >= start && t < end;
+        });
+
+        els.dayDetail.classList.remove("hidden");
+        els.dayDetailTitle.textContent = formatDayTitle(selected);
+
+        if (!logs.length) {
+          els.dayDetailList.innerHTML = `<li class="empty-state">当天没有积分变更</li>`;
+          return;
+        }
+
+        els.dayDetailList.innerHTML = logs.map(log => logRowHTML(log, false)).join("");
+      }
+
+      // -------------------- Records --------------------
+      function recordRangeStart() {
+        const now = new Date();
+        if (state.recordRange === "week") return startOfWeekMonday(now);
+        if (state.recordRange === "month") return startOfMonth(now);
+        return null;
+      }
+
+      function renderRecords() {
+        const start = recordRangeStart();
+        let logs = logsDescending();
+
+        if (start) {
+          logs = logs.filter(l => new Date(l.created_at) >= start);
+        }
+
+        if (!logs.length) {
+          els.recordList.innerHTML = `<li class="empty-state">暂无记录</li>`;
+          return;
+        }
+
+        els.recordList.innerHTML = logs.map(log => logRowHTML(log, true)).join("");
+      }
+
+      function logRowHTML(log, showDate) {
+        const delta = Number(log.delta);
+        const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
+        const reason = String(log.reason ?? "").trim() || "未填写原因";
+        const actionMeta = log.action === "reset"
+          ? "重置"
+          : `${log.score_before} → ${log.score_after}`;
+
+        return `
+          <li class="log-row">
+            <div class="log-time">${escapeHTML(formatTime(log.created_at))}</div>
+            <div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div>
+            <div class="log-reason">
+              ${escapeHTML(reason)}
+              <span class="log-meta">${showDate ? escapeHTML(formatDateShort(log.created_at)) + " · " : ""}${escapeHTML(actionMeta)}</span>
+            </div>
+          </li>
+        `;
+      }
+
+      // -------------------- Monthly summary --------------------
+      function renderMonthSummary() {
+        const now = new Date();
+        const start = startOfMonth(now);
+        const end = endOfMonthExclusive(now);
+
+        const logs = state.overviewLogs.filter(l => {
+          const t = new Date(l.created_at);
+          return t >= start && t < end;
+        });
+
+        const count = logs.length;
+        const net = logs.reduce((sum,l) => sum + Number(l.delta), 0);
+
+        els.monthCount.textContent = count;
+        els.monthNet.textContent = signed(net);
+        els.monthNet.className = `metric-value ${net > 0 ? "positive" : net < 0 ? "negative" : ""}`;
+
+        const reasons = new Map();
+        for (const log of logs) {
+          const reason = String(log.reason ?? "").trim() || "未填写原因";
+          reasons.set(reason, (reasons.get(reason) || 0) + 1);
+        }
+
+        const sorted = [...reasons.entries()].sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0], "zh-CN"));
+
+        if (!sorted.length) {
+          els.reasonSummary.innerHTML = `<div class="empty-state">本月暂无原因统计</div>`;
+          return;
+        }
+
+        els.reasonSummary.innerHTML = sorted.map(([reason,count]) => `
+          <div class="reason-row">
+            <div class="reason-name">${escapeHTML(reason)}</div>
+            <div class="reason-count">${count} 次</div>
+          </div>
+        `).join("");
+      }
+
+      // -------------------- Overview sheet --------------------
+      const OVERVIEW_PEEK_HEIGHT = 390;
+      let overviewDrag = null;
+      let suppressOverviewClickUntil = 0;
+
+      function setOverviewMode(mode) {
+        const valid = ["closed", "peek", "full"];
+        state.overviewMode = valid.includes(mode) ? mode : "closed";
+
+        els.overview.classList.remove("open", "peek", "full", "dragging");
+        els.overviewShell.style.transform = "";
+        els.overviewShell.style.removeProperty("--peek-height");
+
+        if (state.overviewMode === "closed") {
+          els.overview.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("overview-visible");
+          els.overviewShell.scrollTop = 0;
+          return;
+        }
+
+        els.overview.classList.add("open", state.overviewMode);
+        els.overview.setAttribute("aria-hidden", "false");
+        els.overviewShell.style.setProperty("--peek-height", `${OVERVIEW_PEEK_HEIGHT}px`);
+        document.body.classList.add("overview-visible");
+
+        if (state.overviewMode === "peek") {
+          els.overviewShell.scrollTop = 0;
+        }
+
+        requestAnimationFrame(() => {
+          drawTrend(buildTrendPoints(state.trendRange));
+        });
+      }
+
+      function openOverviewSheet() {
+        setOverviewMode("peek");
+      }
+
+      function expandOverviewSheet() {
+        if (state.overviewMode !== "closed") {
+          setOverviewMode("full");
+        }
+      }
+
+      function closeOverviewSheet() {
+        setOverviewMode("closed");
+      }
+
+      function overviewPeekTranslate() {
+        const height = els.overviewShell.getBoundingClientRect().height;
+        return Math.max(0, height - OVERVIEW_PEEK_HEIGHT);
+      }
+
+      function beginOverviewDrag(e) {
+        if (state.overviewMode === "closed") return;
+
+        const startedOnHandle = !!e.target.closest("#overviewGrabberHitbox");
+
+        // When fully open, the body is a normal scroll view.
+        // Only the grabber may move/close the entire sheet.
+        if (state.overviewMode === "full" && !startedOnHandle) return;
+
+        overviewDrag = {
+          pointerId: e.pointerId,
+          startY: e.clientY,
+          lastY: e.clientY,
+          startTime: performance.now(),
+          lastTime: performance.now(),
+          startedOnHandle,
+          startMode: state.overviewMode,
+          dragging: false
+        };
+
+        try { els.overviewShell.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+
+      function moveOverviewDrag(e) {
+        if (!overviewDrag || e.pointerId !== overviewDrag.pointerId) return;
+
+        const now = performance.now();
+        const dy = e.clientY - overviewDrag.startY;
+        const absDy = Math.abs(dy);
+
+        if (!overviewDrag.dragging && absDy < 7) return;
+
+        const upwardFromPeek =
+          overviewDrag.startMode === "peek" && dy < 0;
+
+        const downwardFromHandle =
+          overviewDrag.startedOnHandle && dy > 0;
+
+        if (!upwardFromPeek && !downwardFromHandle) return;
+
+        overviewDrag.dragging = true;
+        els.overview.classList.add("dragging");
+
+        const shellHeight = els.overviewShell.getBoundingClientRect().height;
+        let translateY = 0;
+
+        if (overviewDrag.startMode === "peek") {
+          const peekY = overviewPeekTranslate();
+
+          if (dy < 0) {
+            // 1:1 upward tracking, with slight resistance near the fully-open stop.
+            const raw = peekY + dy;
+            translateY = raw < 0 ? raw * .18 : raw;
+          } else {
+            // Only the handle is allowed to drag the peek sheet downward.
+            const raw = peekY + dy;
+            translateY = Math.min(shellHeight, raw);
+          }
+        } else {
+          // Full mode: handle downward closes directly rather than stepping through peek.
+          translateY = dy > 0
+            ? Math.min(shellHeight, dy * .96)
+            : dy * .14;
+        }
+
+        els.overviewShell.style.transform =
+          `translate(-50%, ${translateY}px)`;
+
+        overviewDrag.lastY = e.clientY;
+        overviewDrag.lastTime = now;
+        e.preventDefault();
+      }
+
+      function endOverviewDrag(e) {
+        if (!overviewDrag || e.pointerId !== overviewDrag.pointerId) return;
+
+        const drag = overviewDrag;
+        overviewDrag = null;
+
+        try { els.overviewShell.releasePointerCapture(e.pointerId); } catch (_) {}
+
+        els.overview.classList.remove("dragging");
+        els.overviewShell.style.transform = "";
+
+        if (!drag.dragging) return;
+
+        suppressOverviewClickUntil = performance.now() + 260;
+
+        const totalDy = e.clientY - drag.startY;
+        const dt = Math.max(1, performance.now() - drag.startTime);
+        const velocityY = totalDy / dt; // px/ms
+
+        if (drag.startMode === "peek") {
+          if (drag.startedOnHandle && totalDy > 0) {
+            if (totalDy > 72 || velocityY > .42) {
+              closeOverviewSheet();
+            } else {
+              setOverviewMode("peek");
+            }
+            return;
+          }
+
+          if (totalDy < 0 && (-totalDy > 64 || velocityY < -.34)) {
+            expandOverviewSheet();
+          } else {
+            setOverviewMode("peek");
+          }
+          return;
+        }
+
+        // Full mode starts only from the grabber.
+        if (totalDy > 74 || velocityY > .42) {
+          closeOverviewSheet();
+        } else {
+          setOverviewMode("full");
+        }
+      }
+
+      // -------------------- Settings sheet drag --------------------
+      let settingsDrag = null;
+      let suppressSettingsClickUntil = 0;
+
+      function beginSettingsDrag(e) {
+        if (!els.settingsLayer.classList.contains("open")) return;
+        if (!e.target.closest("#settingsGrabberHitbox")) return;
+
+        settingsDrag = {
+          pointerId: e.pointerId,
+          startY: e.clientY,
+          startTime: performance.now(),
+          dragging: false
+        };
+
+        try { els.settingsSheet.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+
+      function moveSettingsDrag(e) {
+        if (!settingsDrag || e.pointerId !== settingsDrag.pointerId) return;
+
+        const dy = e.clientY - settingsDrag.startY;
+        if (!settingsDrag.dragging && Math.abs(dy) < 7) return;
+        if (dy <= 0) return;
+
+        settingsDrag.dragging = true;
+        els.settingsLayer.classList.add("dragging");
+
+        const sheetHeight = els.settingsSheet.getBoundingClientRect().height;
+        const translateY = Math.min(sheetHeight, dy * .96);
+        els.settingsSheet.style.transform = `translateY(${translateY}px)`;
+
+        e.preventDefault();
+      }
+
+      function endSettingsDrag(e) {
+        if (!settingsDrag || e.pointerId !== settingsDrag.pointerId) return;
+
+        const drag = settingsDrag;
+        settingsDrag = null;
+
+        try { els.settingsSheet.releasePointerCapture(e.pointerId); } catch (_) {}
+
+        els.settingsLayer.classList.remove("dragging");
+        els.settingsSheet.style.transform = "";
+
+        if (!drag.dragging) return;
+
+        suppressSettingsClickUntil = performance.now() + 240;
+
+        const totalDy = e.clientY - drag.startY;
+        const dt = Math.max(1, performance.now() - drag.startTime);
+        const velocityY = totalDy / dt;
+
+        if (totalDy > 76 || velocityY > .42) {
+          setLayer(els.settingsLayer, false);
+        }
+      }
+
+      // -------------------- Login sheet drag --------------------
+      let loginDrag = null;
+      let suppressLoginClickUntil = 0;
+
+      function beginLoginDrag(e) {
+        if (!els.loginLayer.classList.contains("open")) return;
+        if (!e.target.closest("#loginGrabberHitbox")) return;
+
+        loginDrag = {
+          pointerId: e.pointerId,
+          startY: e.clientY,
+          startTime: performance.now(),
+          dragging: false
+        };
+
+        try { els.loginSheet.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+
+      function moveLoginDrag(e) {
+        if (!loginDrag || e.pointerId !== loginDrag.pointerId) return;
+
+        const dy = e.clientY - loginDrag.startY;
+        if (!loginDrag.dragging && Math.abs(dy) < 7) return;
+        if (dy <= 0) return;
+
+        loginDrag.dragging = true;
+        els.loginLayer.classList.add("dragging");
+
+        const sheetHeight = els.loginSheet.getBoundingClientRect().height;
+        const translateY = Math.min(sheetHeight, dy * .96);
+        els.loginSheet.style.transform = `translateY(${translateY}px)`;
+
+        e.preventDefault();
+      }
+
+      function endLoginDrag(e) {
+        if (!loginDrag || e.pointerId !== loginDrag.pointerId) return;
+
+        const drag = loginDrag;
+        loginDrag = null;
+
+        try { els.loginSheet.releasePointerCapture(e.pointerId); } catch (_) {}
+
+        els.loginLayer.classList.remove("dragging");
+        els.loginSheet.style.transform = "";
+
+        if (!drag.dragging) return;
+
+        suppressLoginClickUntil = performance.now() + 240;
+
+        const totalDy = e.clientY - drag.startY;
+        const dt = Math.max(1, performance.now() - drag.startTime);
+        const velocityY = totalDy / dt;
+
+        if (totalDy > 72 || velocityY > .42) {
+          setLayer(els.loginLayer, false);
+        }
+      }
+
+      // -------------------- Events --------------------
+      els.settingsBtn.addEventListener("click", () => {
+        vibrate();
+        setLayer(els.settingsLayer, true);
+      });
+
+      els.settingsLayer.addEventListener("click", (e) => {
+        if (performance.now() < suppressSettingsClickUntil) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        if (e.target === els.settingsLayer) setLayer(els.settingsLayer, false);
+      });
+
+      els.settingsGrabberHitbox.addEventListener("pointerdown", beginSettingsDrag);
+      els.settingsSheet.addEventListener("pointermove", moveSettingsDrag, { passive: false });
+      els.settingsSheet.addEventListener("pointerup", endSettingsDrag);
+      els.settingsSheet.addEventListener("pointercancel", endSettingsDrag);
+
+
+      els.themePicker.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-theme-choice]");
+        if (!btn) return;
+        vibrate(7);
+        applyTheme(btn.dataset.themeChoice, { persist: true });
+      });
+
+      els.openReleaseNotesBtn.addEventListener("click", () => {
+        setLayer(els.settingsLayer, false);
+        setLayer(els.releaseNotesLayer, true);
+      });
+
+      els.releaseNotesLayer.addEventListener("click", (e) => {
+        if (e.target === els.releaseNotesLayer) setLayer(els.releaseNotesLayer, false);
+      });
+
+      els.closeReleaseNotesBtn.addEventListener("click", () => {
+        setLayer(els.releaseNotesLayer, false);
+      });
+
+      els.openLoginBtn.addEventListener("click", () => {
+        setLayer(els.settingsLayer, false);
+        setLayer(els.loginLayer, true);
+        setTimeout(() => els.emailInput.focus(), 280);
+      });
+
+      els.loginLayer.addEventListener("click", (e) => {
+        if (performance.now() < suppressLoginClickUntil) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        if (e.target === els.loginLayer) setLayer(els.loginLayer, false);
+      });
+
+      els.loginGrabberHitbox.addEventListener("pointerdown", beginLoginDrag);
+      els.loginSheet.addEventListener("pointermove", moveLoginDrag, { passive: false });
+      els.loginSheet.addEventListener("pointerup", endLoginDrag);
+      els.loginSheet.addEventListener("pointercancel", endLoginDrag);
+
+      els.cancelLoginBtn.addEventListener("click", () => setLayer(els.loginLayer, false));
+      els.loginBtn.addEventListener("click", login);
+      els.passwordInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") login();
+      });
+
+      els.logoutBtn.addEventListener("click", logout);
+
+      async function manualRefreshScore() {
+        if (state.refreshInFlight) return;
+        vibrate(10);
+        els.scoreRefreshBtn.classList.add("refreshing");
+        try {
+          await loadScore({ silent: false });
+          showToast("已同步最新分数");
+        } finally {
+          setTimeout(() => els.scoreRefreshBtn.classList.remove("refreshing"), 650);
+        }
+      }
+
+      els.scoreRefreshBtn.addEventListener("click", manualRefreshScore);
+      els.scoreRefreshBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          manualRefreshScore();
+        }
+      });
+
+      // Desktop/fine-pointer: use the supplied reference's original 3D coin tilt.
+      // Touch/iPhone does not request orientation permission and stays frontal.
+      const scoreLens = els.scoreRefreshBtn.querySelector(".score-lens");
+      if (scoreLens && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        window.addEventListener("pointermove", (e) => {
+          const rect = scoreLens.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const moveX = (e.clientX - centerX) / 25;
+          const moveY = (e.clientY - centerY) / 25;
+          scoreLens.style.transform =
+            `perspective(600px) rotateX(${-moveY}deg) rotateY(${moveX}deg)`;
+        });
+
+        window.addEventListener("blur", () => {
+          scoreLens.style.transform =
+            "perspective(600px) rotateX(0deg) rotateY(0deg)";
+        });
+      }
+
+
+      $$(".score-button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          vibrate();
+          openChange(Number(btn.dataset.delta));
+        });
+      });
+
+      els.changeLayer.addEventListener("click", (e) => {
+        if (e.target === els.changeLayer) setLayer(els.changeLayer, false);
+      });
+
+      els.cancelChangeBtn.addEventListener("click", () => setLayer(els.changeLayer, false));
+      els.confirmChangeBtn.addEventListener("click", confirmChange);
+
+      els.resetBtn.addEventListener("click", () => {
+        setLayer(els.settingsLayer, false);
+        setLayer(els.resetLayer, true);
+      });
+
+      els.cancelResetBtn.addEventListener("click", () => setLayer(els.resetLayer, false));
+      els.resetLayer.addEventListener("click", (e) => {
+        if (e.target === els.resetLayer) setLayer(els.resetLayer, false);
+      });
+      els.confirmResetBtn.addEventListener("click", confirmReset);
+
+      els.overviewBtn.addEventListener("click", async () => {
+        vibrate();
+        openOverviewSheet();
+
+        // Render immediately; network data fills in afterward.
+        renderOverview();
+        requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
+
+        await loadOverviewData(false);
+      });
+
+      // Tapping outside the sheet closes it.
+      els.overviewBackdrop.addEventListener("click", () => {
+        if (performance.now() < suppressOverviewClickUntil) return;
+        closeOverviewSheet();
+      });
+
+      // Peek state: upward swipe can begin anywhere on the sheet.
+      // Full state: only the top grabber controls the whole sheet.
+      els.overviewShell.addEventListener("pointerdown", beginOverviewDrag);
+      els.overviewShell.addEventListener("pointermove", moveOverviewDrag, { passive: false });
+      els.overviewShell.addEventListener("pointerup", endOverviewDrag);
+      els.overviewShell.addEventListener("pointercancel", endOverviewDrag);
+
+      // Prevent a button/date underneath the finger from firing after a drag.
+      els.overview.addEventListener("click", (e) => {
+        if (performance.now() < suppressOverviewClickUntil) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
+
+      els.trendSegments.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-range]");
+        if (!btn) return;
+
+        state.trendRange = btn.dataset.range;
+        els.trendSegments.querySelectorAll(".segment").forEach(x =>
+          x.classList.toggle("active", x === btn)
+        );
+        renderTrend();
+      });
+
+      els.recordSegments.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-record-range]");
+        if (!btn) return;
+
+        state.recordRange = btn.dataset.recordRange;
+        els.recordSegments.querySelectorAll(".segment").forEach(x =>
+          x.classList.toggle("active", x === btn)
+        );
+        renderRecords();
+      });
+
+      els.prevMonthBtn.addEventListener("click", () => {
+        state.calendarDate = addMonths(state.calendarDate, -1);
+        state.selectedDayKey = null;
+        renderCalendar();
+      });
+
+      els.nextMonthBtn.addEventListener("click", () => {
+        state.calendarDate = addMonths(state.calendarDate, 1);
+        state.selectedDayKey = null;
+        renderCalendar();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
+        if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
+        if (els.changeLayer.classList.contains("open")) return setLayer(els.changeLayer, false);
+        if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
+        if (els.settingsLayer.classList.contains("open")) return setLayer(els.settingsLayer, false);
+        if (state.overviewMode !== "closed") {
+          closeOverviewSheet();
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (els.overview.classList.contains("open")) {
+          drawTrend(buildTrendPoints(state.trendRange));
+        }
+      });
+
+      systemThemeMedia.addEventListener?.("change", () => {
+        if (state.themePreference === "system") {
+          applyTheme("system");
+        }
+      });
+
+      db.auth.onAuthStateChange((_event, session) => {
+        state.session = session;
+        // Avoid doing a nested Supabase request synchronously inside auth callback.
+        setTimeout(refreshAuthState, 0);
+      });
+
+      // -------------------- Boot --------------------
+      async function scheduledDatabaseRefresh() {
+        await loadScore({ silent: true });
+
+        if (els.overview.classList.contains("open")) {
+          await loadOverviewData(true);
+        }
+      }
+
+      async function boot() {
+        applyTheme(loadThemePreference());
+
+        // Opening the app always performs one immediate database read.
+        await Promise.all([
+          loadScore(),
+          refreshAuthState()
+        ]);
+
+        // Then refresh at a low-frequency 30-minute cadence.
+        // iOS may suspend timers while a web app is fully backgrounded, so
+        // visibilitychange below performs the missed refresh immediately on return.
+        setInterval(scheduledDatabaseRefresh, 30 * 60 * 1000);
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState !== "visible") return;
+          const last = state.lastRefreshAt instanceof Date ? state.lastRefreshAt.getTime() : 0;
+          const elapsed = Date.now() - last;
+          if (!last || elapsed >= 30 * 60 * 1000) {
+            scheduledDatabaseRefresh();
+          }
+        });
+
+        window.addEventListener("pageshow", () => {
+          const last = state.lastRefreshAt instanceof Date ? state.lastRefreshAt.getTime() : 0;
+          const elapsed = Date.now() - last;
+          if (!last || elapsed >= 30 * 60 * 1000) {
+            scheduledDatabaseRefresh();
+          }
+        });
+      }
+
+      boot();
+    })();
+  </script>
+</body>
+</html>
