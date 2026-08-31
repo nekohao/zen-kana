@@ -621,7 +621,7 @@
 
     .overview-grabber-hitbox {
       width: 100%;
-      min-height: 28px;
+      min-height: 54px;
       display: grid;
       place-items: center;
       cursor: grab;
@@ -724,6 +724,32 @@
       white-space: nowrap;
     }
 
+    .overview-content-switch {
+      width: min(58%, 210px);
+      height: 34px;
+      margin: 0 auto 17px;
+      padding: 3px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      border-radius: 12px;
+      background: rgba(118,118,128,.10);
+    }
+
+    .overview-content-choice {
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--secondary);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .overview-content-choice.active {
+      color: var(--ink);
+      background: var(--glass-fill-strong);
+      box-shadow: 0 2px 7px rgba(0,0,0,.08), inset 0 1px rgba(255,255,255,.30);
+    }
 
     .overview-section-anchor {
       scroll-margin-top: 92px;
@@ -1795,6 +1821,48 @@
       transform: translateY(-.8vh);
     }
 
+    .admin-schedule-notice {
+      width: min(82vw, 274px);
+      min-height: 48px;
+      margin: 0 auto 12px;
+      padding: 9px 12px;
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.21), rgba(255,255,255,.045)),
+        rgba(255,255,255,.18);
+      box-shadow: 0 8px 20px rgba(43,55,78,.07), inset 0 1px 0 rgba(255,255,255,.38);
+      display: grid;
+      grid-template-columns: 34px minmax(0,1fr) 18px;
+      gap: 9px;
+      align-items: center;
+      text-align: left;
+    }
+
+    .admin-schedule-notice-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: rgba(10,132,255,.10);
+      color: var(--blue);
+    }
+
+    .admin-schedule-notice-icon svg { width: 18px; height: 18px; }
+    .admin-schedule-notice-copy { min-width: 0; }
+    .admin-schedule-notice-title { font-size: 13px; line-height: 1.15; font-weight: 720; }
+    .admin-schedule-notice-meta {
+      margin-top: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--secondary);
+      font-size: 10.5px;
+      line-height: 1.2;
+    }
+    .admin-schedule-notice-chevron { color: var(--tertiary); font-size: 21px; font-weight: 300; text-align: right; }
+
     .metric-switch {
       position: relative;
       width: min(82vw, 274px);
@@ -1905,6 +1973,7 @@
       backdrop-filter: blur(36px) saturate(190%) !important;
     }
 
+    #versionInfoLayer,
     #releaseNotesLayer,
     #changeLayer {
       padding: 0;
@@ -1914,6 +1983,7 @@
     }
 
 
+    #versionInfoLayer .unified-sheet,
     #releaseNotesLayer .unified-sheet,
     #changeLayer .unified-sheet {
       width: min(calc(100% - 8px), 620px);
@@ -1932,9 +2002,11 @@
       will-change: transform;
     }
 
+    #versionInfoLayer .unified-sheet::-webkit-scrollbar,
     #releaseNotesLayer .unified-sheet::-webkit-scrollbar,
     #changeLayer .unified-sheet::-webkit-scrollbar { display: none; }
 
+    #versionInfoLayer.open .unified-sheet,
     #releaseNotesLayer.open .unified-sheet,
     #changeLayer.open .unified-sheet {
       transform: translate3d(0,0,0);
@@ -2084,7 +2156,8 @@
        Independent schedule-registration styles. Safe to remove as a block.
        ============================================================ */
     #workScheduleLayer,
-    #workScheduleOverviewLayer {
+    #workScheduleOverviewLayer,
+    #adminWorkScheduleLayer {
       padding: 0;
       align-items: flex-end;
       justify-content: center;
@@ -2093,7 +2166,8 @@
 
 
     #workScheduleLayer .work-schedule-sheet,
-    #workScheduleOverviewLayer .work-schedule-sheet {
+    #workScheduleOverviewLayer .work-schedule-sheet,
+    #adminWorkScheduleLayer .work-schedule-sheet {
       width: min(calc(100% - 8px), 620px);
       height: auto;
       max-height: calc(100% - max(calc(var(--safe-top) + 72px), 86px));
@@ -2111,12 +2185,14 @@
     }
 
     #workScheduleLayer .work-schedule-sheet::-webkit-scrollbar,
-    #workScheduleOverviewLayer .work-schedule-sheet::-webkit-scrollbar {
+    #workScheduleOverviewLayer .work-schedule-sheet::-webkit-scrollbar,
+    #adminWorkScheduleLayer .work-schedule-sheet::-webkit-scrollbar {
       display: none;
     }
 
     #workScheduleLayer.open .work-schedule-sheet,
-    #workScheduleOverviewLayer.open .work-schedule-sheet {
+    #workScheduleOverviewLayer.open .work-schedule-sheet,
+    #adminWorkScheduleLayer.open .work-schedule-sheet {
       transform: translate3d(0,0,0);
     }
 
@@ -2140,7 +2216,8 @@
     }
 
     #workScheduleLayer.dragging .work-schedule-sheet,
-    #workScheduleOverviewLayer.dragging .work-schedule-sheet {
+    #workScheduleOverviewLayer.dragging .work-schedule-sheet,
+    #adminWorkScheduleLayer.dragging .work-schedule-sheet {
       transition: none !important;
     }
 
@@ -2323,6 +2400,19 @@
       </header>
 
       <div class="hero">
+        <!-- WORK SCHEDULE MODULE START: administrator home reminder -->
+        <button id="adminScheduleNotice" class="admin-schedule-notice pressable" type="button" hidden aria-label="查看未来排班">
+          <span class="admin-schedule-notice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+          </span>
+          <span class="admin-schedule-notice-copy">
+            <span class="admin-schedule-notice-title">有排班</span>
+            <span id="adminScheduleNoticeMeta" class="admin-schedule-notice-meta">查看今天及未来排班</span>
+          </span>
+          <span class="admin-schedule-notice-chevron">›</span>
+        </button>
+        <!-- WORK SCHEDULE MODULE END: administrator home reminder -->
+
         <div id="metricSwitch" class="metric-switch" role="tablist" aria-label="首页数据切换">
           <div class="metric-switch-thumb" aria-hidden="true"></div>
           <button class="metric-option active" type="button" role="tab" aria-selected="true" data-metric="score">
@@ -2393,7 +2483,12 @@
             </nav>
           </div>
 
-          <section id="scoreTrendSection" class="section overview-section-anchor">
+          <div id="overviewContentSwitch" class="overview-content-switch" role="tablist" aria-label="总览内容切换" hidden>
+            <button class="overview-content-choice pressable" type="button" role="tab" data-overview-section="trend">趋势</button>
+            <button class="overview-content-choice pressable" type="button" role="tab" data-overview-section="calendar">日历</button>
+          </div>
+
+          <section id="scoreTrendSection" class="section overview-section-anchor" hidden>
             <h2 class="section-title">趋势统计</h2>
             <div class="card glass">
               <div id="trendSegments" class="segmented" aria-label="趋势范围">
@@ -2409,7 +2504,7 @@
             </div>
           </section>
 
-          <section id="scoreCalendarSection" class="section overview-section-anchor">
+          <section id="scoreCalendarSection" class="section overview-section-anchor" hidden>
             <h2 class="section-title">日历视图</h2>
             <div class="card glass calendar-card">
               <div class="calendar-head">
@@ -2490,20 +2585,8 @@
 
           <div class="settings-label">信息</div>
           <div class="settings-group">
-            <div class="settings-row static">
-              <span>数据刷新</span>
-              <span class="settings-value">打开时 + 每 30 分钟</span>
-            </div>
-            <div class="settings-row static">
-              <span>最近同步</span>
-              <span id="lastRefreshText" class="settings-value">尚未同步</span>
-            </div>
-            <div class="settings-row static">
-              <span>当前版本</span>
-              <span class="settings-value">1.6.1</span>
-            </div>
-            <button id="openReleaseNotesBtn" class="settings-row pressable" type="button">
-              <span>版本与优化</span>
+            <button id="openVersionInfoBtn" class="settings-row pressable" type="button">
+              <span>版本信息</span>
               <span class="chevron">›</span>
             </button>
           </div>
@@ -2583,6 +2666,24 @@
       </div>
     </div>
 
+    <!-- Administrator-only homepage shortcut: current and future schedules only. -->
+    <div id="adminWorkScheduleLayer" class="modal-layer" aria-hidden="true">
+      <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="adminWorkScheduleTitle">
+        <header class="unified-sheet-header">
+          <div id="adminWorkScheduleGrabberHitbox" class="work-schedule-grabber-hitbox" aria-label="下拉关闭未来排班">
+            <div class="grabber" aria-hidden="true"></div>
+          </div>
+          <div id="adminWorkScheduleTitle" class="sheet-title">未来排班</div>
+        </header>
+        <div class="unified-sheet-body">
+          <ul id="adminWorkScheduleList" class="work-schedule-list"></ul>
+          <div id="adminWorkScheduleEmpty" class="work-schedule-empty" hidden>暂无今天或未来排班</div>
+          <button id="closeAdminWorkScheduleBtn" class="sheet-button primary pressable full-width" type="button">完成</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete confirmation belongs only to the schedule module. -->
     <div id="workScheduleDeleteLayer" class="modal-layer alert-layer" aria-hidden="true">
       <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="workScheduleDeleteTitle">
         <div class="alert-content">
@@ -2599,6 +2700,37 @@
          WORK SCHEDULE MODULE END
          ============================================================ -->
 
+    <!-- Compact version information opened from Settings. -->
+    <div id="versionInfoLayer" class="modal-layer" aria-hidden="true">
+      <div class="unified-sheet" role="dialog" aria-modal="true" aria-labelledby="versionInfoTitle">
+        <header class="unified-sheet-header">
+          <div class="grabber" aria-hidden="true"></div>
+          <div id="versionInfoTitle" class="sheet-title">版本信息</div>
+        </header>
+        <div class="unified-sheet-body">
+          <div class="settings-group">
+            <div class="settings-row static">
+              <span>当前版本</span>
+              <span class="settings-value">1.6.2</span>
+            </div>
+            <div class="settings-row static">
+              <span>数据刷新</span>
+              <span class="settings-value">打开时 + 每 30 分钟</span>
+            </div>
+            <div class="settings-row static">
+              <span>最近同步</span>
+              <span id="lastRefreshText" class="settings-value">尚未同步</span>
+            </div>
+            <button id="openReleaseNotesBtn" class="settings-row pressable" type="button">
+              <span>版本与优化</span>
+              <span class="chevron">›</span>
+            </button>
+          </div>
+          <button id="closeVersionInfoBtn" class="sheet-button primary pressable full-width" type="button" style="margin-top:14px">完成</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Version / optimization info -->
     <div id="releaseNotesLayer" class="modal-layer" aria-hidden="true">
       <div class="unified-sheet" role="dialog" aria-modal="true" aria-labelledby="releaseNotesTitle">
@@ -2609,14 +2741,14 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.6.1</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.6.2</strong><span>当前版本</span></div>
             <div class="release-date">2026.08.31</div>
             <ul class="release-list">
-              <li>积分总览精简为趋势统计与日历视图两个并排快捷入口，移除重复的历史记录与数据概览区域。</li>
-              <li>趋势范围改为今天、本周、本月；本月横轴固定覆盖 1 日到月底，未来日期不伪造积分。</li>
-              <li>排班登记默认今天，新增上一天/下一天快速切换，并自动回填已登记日期的上下班时间。</li>
-              <li>切换到已登记日期时显示“本天已经登记”状态，保存后立即刷新登记状态。</li>
-              <li>小礼物流水、排班总览、管理员登录与自动更新逻辑保持不变。</li>
+              <li>积分总览改为趋势或日历单模块显示，展开后可用紧凑的“趋势 / 日历”按钮切换。</li>
+              <li>本周趋势 X 轴直接附带每日积分；本月趋势保持上一版现状。</li>
+              <li>总览顶部拖拽命中区域扩大，单手下拉关闭更容易。</li>
+              <li>设置的信息区收拢为“版本信息”，低频状态进入下一层查看。</li>
+              <li>管理员首页新增今天及未来排班提醒；过期排班不再提醒，但历史记录仍完整保留。</li>
             </ul>
           </div>
 
@@ -2826,6 +2958,7 @@
         overviewTitle: $("#overviewTitle"),
         overviewSubtitle: $("#overviewSubtitle"),
         overviewQuickNav: $("#overviewQuickNav"),
+        overviewContentSwitch: $("#overviewContentSwitch"),
         scoreOverviewContent: $("#scoreOverviewContent"),
         giftOverviewContent: $("#giftOverviewContent"),
         scoreTrendSection: $("#scoreTrendSection"),
@@ -2841,6 +2974,9 @@
         logoutBtn: $("#logoutBtn"),
         resetBtn: $("#resetBtn"),
         lastRefreshText: $("#lastRefreshText"),
+        openVersionInfoBtn: $("#openVersionInfoBtn"),
+        versionInfoLayer: $("#versionInfoLayer"),
+        closeVersionInfoBtn: $("#closeVersionInfoBtn"),
         openReleaseNotesBtn: $("#openReleaseNotesBtn"),
         releaseNotesLayer: $("#releaseNotesLayer"),
         closeReleaseNotesBtn: $("#closeReleaseNotesBtn"),
@@ -2904,6 +3040,7 @@
         refreshInFlight: false,
         lastRefreshAt: null,
         overviewMode: "closed",
+        overviewSection: null,
         toastTimer: null
       };
 
@@ -3007,7 +3144,7 @@
       }
 
       function closeAllLayers() {
-        [els.settingsLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.resetLayer]
+        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.resetLayer]
           .forEach(layer => setLayer(layer, false));
       }
 
@@ -3067,6 +3204,27 @@
         }
       }
 
+      function renderOverviewSectionMode() {
+        if (state.activeMetric !== "score") return;
+        const selected = state.overviewSection;
+        els.overviewQuickNav.closest(".overview-landing").hidden = !!selected;
+        els.overviewContentSwitch.hidden = !selected;
+        els.scoreTrendSection.hidden = selected !== "trend";
+        els.scoreCalendarSection.hidden = selected !== "calendar";
+
+        els.overviewContentSwitch.querySelectorAll("[data-overview-section]").forEach(btn => {
+          const active = btn.dataset.overviewSection === selected;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-selected", String(active));
+        });
+
+        if (selected === "trend") {
+          requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
+        } else if (selected === "calendar") {
+          renderCalendar();
+        }
+      }
+
       function renderOverviewContentMode() {
         const gift = state.activeMetric === "gift";
         els.overview.classList.toggle("gift-mode", gift);
@@ -3078,7 +3236,7 @@
         if (gift) {
           renderGiftOverview();
         } else {
-          requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
+          renderOverviewSectionMode();
         }
       }
 
@@ -3140,11 +3298,14 @@
           }
 
           renderAdminState();
+          if (state.isAdmin) void workScheduleModule.refreshAdminNotice({ forceRefresh: true });
+          else workScheduleModule.hideAdminNotice();
         } catch (err) {
           console.error("refreshAuthState:", err);
           state.session = null;
           state.isAdmin = false;
           renderAdminState();
+          workScheduleModule.hideAdminNotice();
         }
       }
 
@@ -3177,6 +3338,7 @@
           els.passwordInput.value = "";
           setLayer(els.loginLayer, false);
           renderAdminState();
+          void workScheduleModule.refreshAdminNotice({ forceRefresh: true });
           vibrate(12);
           showToast("管理员已登录");
         } catch (err) {
@@ -3198,6 +3360,7 @@
           state.isAdmin = false;
           setLayer(els.settingsLayer, false);
           renderAdminState();
+          workScheduleModule.hideAdminNotice();
           showToast("已退出管理员");
         } catch (err) {
           console.error("logout:", err);
@@ -3472,9 +3635,12 @@
             for (const log of bucketLogs) running = Number(log.score_after);
           }
 
+          const pointValue = isFuture ? null : running;
           points.push({
-            label: range === "week" ? weekLabels[i] : `${dayStart.getDate()}日`,
-            value: isFuture ? null : running,
+            label: range === "week"
+              ? (pointValue === null ? weekLabels[i] : `${weekLabels[i]} ${pointValue}`)
+              : `${dayStart.getDate()}日`,
+            value: pointValue,
             date: dayEnd
           });
         }
@@ -3835,6 +4001,8 @@
       }
 
       function openOverviewSheet() {
+        state.overviewSection = null;
+        renderOverviewContentMode();
         setOverviewMode("peek");
       }
 
@@ -3846,26 +4014,18 @@
 
       function closeOverviewSheet() {
         setOverviewMode("closed");
+        state.overviewSection = null;
       }
 
       function openOverviewSection(target) {
         if (state.activeMetric !== "score") return;
-        const sectionMap = {
-          trend: els.scoreTrendSection,
-          calendar: els.scoreCalendarSection
-        };
-        const section = sectionMap[target];
-        if (!section) return;
-
+        if (target !== "trend" && target !== "calendar") return;
+        state.overviewSection = target;
+        renderOverviewSectionMode();
         expandOverviewSheet();
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            const shellRect = els.overviewShell.getBoundingClientRect();
-            const sectionRect = section.getBoundingClientRect();
-            const headerHeight = els.overview.querySelector(".overview-header")?.offsetHeight || 80;
-            const top = els.overviewShell.scrollTop + (sectionRect.top - shellRect.top) - headerHeight - 10;
-            els.overviewShell.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-          });
+          els.overviewShell.scrollTo({ top: 0, behavior: "smooth" });
+          if (target === "trend") drawTrend(buildTrendPoints(state.trendRange));
         });
       }
 
@@ -3976,6 +4136,10 @@
           }
 
           if (totalDy < 0 && (-totalDy > 64 || velocityY < -.34)) {
+            if (state.activeMetric === "score" && !state.overviewSection) {
+              state.overviewSection = "trend";
+              renderOverviewSectionMode();
+            }
             expandOverviewSheet();
           } else {
             setOverviewMode("peek");
@@ -4140,6 +4304,14 @@
       const workScheduleModule = (() => {
         const scheduleEls = {
           openBtn: $("#openWorkScheduleBtn"),
+          adminNotice: $("#adminScheduleNotice"),
+          adminNoticeMeta: $("#adminScheduleNoticeMeta"),
+          adminLayer: $("#adminWorkScheduleLayer"),
+          adminSheet: $("#adminWorkScheduleLayer .work-schedule-sheet"),
+          adminGrabberHitbox: $("#adminWorkScheduleGrabberHitbox"),
+          adminList: $("#adminWorkScheduleList"),
+          adminEmpty: $("#adminWorkScheduleEmpty"),
+          closeAdminBtn: $("#closeAdminWorkScheduleBtn"),
           layer: $("#workScheduleLayer"),
           sheet: $("#workScheduleLayer .work-schedule-sheet"),
           grabberHitbox: $("#workScheduleGrabberHitbox"),
@@ -4389,6 +4561,7 @@
               await syncRegistrationForCurrentDate({ forceRefresh: true });
             }
 
+            if (state.isAdmin) await refreshAdminNotice({ forceRefresh: false });
             vibrate(14);
             showToast("排班已保存");
           } catch (err) {
@@ -4435,6 +4608,90 @@
           if (diff === -1) return "昨天";
           if (diff > 1) return `${diff} 天后`;
           return `${Math.abs(diff)} 天前`;
+        }
+
+        function upcomingScheduleRows(rows) {
+          const todayKey = localDateKey();
+          return [...(Array.isArray(rows) ? rows : [])]
+            .filter(row => String(row.work_date) >= todayKey)
+            .sort((a, b) => String(a.work_date).localeCompare(String(b.work_date)) || Number(a.id) - Number(b.id));
+        }
+
+        function hideAdminNotice() {
+          scheduleEls.adminNotice.hidden = true;
+          setLayer(scheduleEls.adminLayer, false);
+        }
+
+        function renderAdminNotice(rows) {
+          if (!state.isAdmin) {
+            hideAdminNotice();
+            return [];
+          }
+          const upcoming = upcomingScheduleRows(rows);
+          scheduleEls.adminNotice.hidden = upcoming.length === 0;
+          if (upcoming.length) {
+            const first = upcoming[0];
+            const firstWhen = relativeDateText(first.work_date);
+            scheduleEls.adminNoticeMeta.textContent = `${firstWhen} ${formatHour(first.start_hour)}–${formatHour(first.end_hour)} · 共 ${upcoming.length} 天`;
+          }
+          return upcoming;
+        }
+
+        function renderAdminUpcoming(rows) {
+          const upcoming = renderAdminNotice(rows);
+          scheduleEls.adminEmpty.hidden = upcoming.length > 0;
+          scheduleEls.adminList.innerHTML = upcoming.map(row => `
+            <li class="work-schedule-row">
+              <div class="work-schedule-date">
+                ${escapeHTML(formatScheduleDate(row.work_date))}
+                <span class="work-schedule-date-meta">${escapeHTML(relativeDateText(row.work_date))}</span>
+              </div>
+              <div class="work-schedule-time">${escapeHTML(formatHour(row.start_hour))}–${escapeHTML(formatHour(row.end_hour))}</div>
+            </li>
+          `).join("");
+          return upcoming;
+        }
+
+        async function refreshAdminNotice({ forceRefresh = true } = {}) {
+          if (!state.isAdmin) {
+            hideAdminNotice();
+            return [];
+          }
+          try {
+            const rows = forceRefresh || !scheduleCacheLoaded
+              ? await fetchScheduleRows()
+              : [...rowsById.values()];
+            return renderAdminNotice(rows);
+          } catch (err) {
+            console.error("workSchedule.refreshAdminNotice:", err);
+            hideAdminNotice();
+            return [];
+          }
+        }
+
+        async function openAdminUpcoming() {
+          if (!state.isAdmin) return;
+          setLayer(scheduleEls.adminLayer, true);
+          vibrate(8);
+          scheduleEls.adminList.classList.add("work-schedule-loading");
+          try {
+            const rows = await fetchScheduleRows();
+            const upcoming = renderAdminUpcoming(rows);
+            if (!upcoming.length) {
+              setLayer(scheduleEls.adminLayer, false);
+              showToast("暂无今天或未来排班");
+            }
+          } catch (err) {
+            console.error("workSchedule.openAdminUpcoming:", err);
+            setLayer(scheduleEls.adminLayer, false);
+            showToast(isRpcMissing(err?.message) ? "请先运行新版排班 SQL" : "读取排班失败");
+          } finally {
+            scheduleEls.adminList.classList.remove("work-schedule-loading");
+          }
+        }
+
+        function closeAdminUpcoming() {
+          setLayer(scheduleEls.adminLayer, false);
         }
 
         function renderOverview(rows) {
@@ -4520,6 +4777,7 @@
             vibrate(14);
             showToast("排班已删除");
             await loadOverview();
+            if (state.isAdmin) await refreshAdminNotice({ forceRefresh: false });
           } catch (err) {
             console.error("workSchedule.confirmDelete:", err);
             showToast(isRpcMissing(err?.message)
@@ -4534,6 +4792,8 @@
         resetForm();
 
         scheduleEls.openBtn.addEventListener("click", openRegistration);
+        scheduleEls.adminNotice.addEventListener("click", openAdminUpcoming);
+        scheduleEls.closeAdminBtn.addEventListener("click", closeAdminUpcoming);
         scheduleEls.date.addEventListener("change", () => {
           if (!scheduleEls.date.value) scheduleEls.date.value = localDateKey();
           void syncRegistrationForCurrentDate();
@@ -4568,11 +4828,21 @@
           onClose: closeOverview
         });
 
+        bindPullDownClose({
+          layer: scheduleEls.adminLayer,
+          sheet: scheduleEls.adminSheet,
+          handle: scheduleEls.adminGrabberHitbox,
+          onClose: closeAdminUpcoming
+        });
+
         scheduleEls.layer.addEventListener("click", (e) => {
           if (e.target === scheduleEls.layer) closeRegistration();
         });
         scheduleEls.overviewLayer.addEventListener("click", (e) => {
           if (e.target === scheduleEls.overviewLayer) closeOverview();
+        });
+        scheduleEls.adminLayer.addEventListener("click", (e) => {
+          if (e.target === scheduleEls.adminLayer) closeAdminUpcoming();
         });
         scheduleEls.deleteLayer.addEventListener("click", (e) => {
           if (e.target === scheduleEls.deleteLayer) cancelDelete();
@@ -4583,6 +4853,11 @@
           if (scheduleEls.deleteLayer.classList.contains("open")) {
             e.stopImmediatePropagation();
             cancelDelete();
+            return;
+          }
+          if (scheduleEls.adminLayer.classList.contains("open")) {
+            e.stopImmediatePropagation();
+            closeAdminUpcoming();
             return;
           }
           if (scheduleEls.overviewLayer.classList.contains("open")) {
@@ -4596,7 +4871,11 @@
           }
         });
 
-        return Object.freeze({ loadOverview });
+        return Object.freeze({
+          loadOverview,
+          refreshAdminNotice,
+          hideAdminNotice
+        });
       })();
       // ============================================================
       // WORK SCHEDULE MODULE END
@@ -4623,8 +4902,21 @@
       els.settingsSheet.addEventListener("pointercancel", endSettingsDrag);
 
 
-      els.openReleaseNotesBtn.addEventListener("click", () => {
+      els.openVersionInfoBtn.addEventListener("click", () => {
         setLayer(els.settingsLayer, false);
+        setLayer(els.versionInfoLayer, true);
+      });
+
+      els.versionInfoLayer.addEventListener("click", (e) => {
+        if (e.target === els.versionInfoLayer) setLayer(els.versionInfoLayer, false);
+      });
+
+      els.closeVersionInfoBtn.addEventListener("click", () => {
+        setLayer(els.versionInfoLayer, false);
+      });
+
+      els.openReleaseNotesBtn.addEventListener("click", () => {
+        setLayer(els.versionInfoLayer, false);
         setLayer(els.releaseNotesLayer, true);
       });
 
@@ -4748,6 +5040,13 @@
         openOverviewSection(btn.dataset.overviewTarget);
       });
 
+      els.overviewContentSwitch.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-overview-section]");
+        if (!btn || btn.dataset.overviewSection === state.overviewSection) return;
+        vibrate(6);
+        openOverviewSection(btn.dataset.overviewSection);
+      });
+
       // Tapping outside the sheet closes it.
       els.overviewBackdrop.addEventListener("click", () => {
         if (performance.now() < suppressOverviewClickUntil) return;
@@ -4796,6 +5095,7 @@
         if (e.key !== "Escape") return;
         if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
+        if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
         if (els.changeLayer.classList.contains("open")) return setLayer(els.changeLayer, false);
         if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
         if (els.settingsLayer.classList.contains("open")) return setLayer(els.settingsLayer, false);
@@ -4819,6 +5119,7 @@
       // -------------------- Boot --------------------
       async function scheduledDatabaseRefresh() {
         await loadAppState({ silent: true });
+        if (state.isAdmin) await workScheduleModule.refreshAdminNotice({ forceRefresh: true });
 
         if (els.overview.classList.contains("open")) {
           await loadOverviewData(true);
