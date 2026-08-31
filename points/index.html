@@ -670,8 +670,8 @@
 
     .overview-quick-nav {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
       margin: 0 0 14px;
     }
 
@@ -706,8 +706,6 @@
 
     .overview-quick-card[data-overview-target="trend"] svg { color: var(--blue); }
     .overview-quick-card[data-overview-target="calendar"] svg { color: #7657e8; }
-    .overview-quick-card[data-overview-target="records"] svg { color: var(--green); }
-    .overview-quick-card[data-overview-target="summary"] svg { color: #f06a4d; }
 
     .overview-quick-title {
       max-width: 100%;
@@ -2169,6 +2167,30 @@
       gap: 10px;
     }
 
+    .work-schedule-date-nav {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: -2px;
+    }
+
+    .work-schedule-date-step {
+      min-height: 44px;
+    }
+
+    .work-schedule-existing {
+      margin: -1px 2px 0;
+      padding: 9px 11px;
+      border: 1px solid color-mix(in srgb, var(--green) 22%, transparent);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--green) 8%, transparent);
+      color: var(--green);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 650;
+      text-align: center;
+    }
+
     .work-schedule-control {
       min-height: 52px;
       color: var(--ink);
@@ -2352,7 +2374,7 @@
             <div class="overview-grabber" aria-hidden="true"></div>
           </div>
           <div id="overviewTitle" class="overview-title">总览</div>
-          <div id="overviewSubtitle" class="overview-subtitle">查看统计与历史记录</div>
+          <div id="overviewSubtitle" class="overview-subtitle">查看趋势与日历</div>
         </header>
 
         <div id="scoreOverviewContent">
@@ -2368,16 +2390,6 @@
                 <span class="overview-quick-title">日历视图</span>
                 <span class="overview-quick-copy">查看每日记录</span>
               </button>
-              <button class="overview-quick-card pressable" type="button" data-overview-target="records">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                <span class="overview-quick-title">历史记录</span>
-                <span class="overview-quick-copy">查看所有记录</span>
-              </button>
-              <button class="overview-quick-card pressable" type="button" data-overview-target="summary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A8.5 8.5 0 0 1 20.5 9H15z"/></svg>
-                <span class="overview-quick-title">数据概览</span>
-                <span class="overview-quick-copy">本月数据汇总</span>
-              </button>
             </nav>
           </div>
 
@@ -2385,9 +2397,9 @@
             <h2 class="section-title">趋势统计</h2>
             <div class="card glass">
               <div id="trendSegments" class="segmented" aria-label="趋势范围">
-                <button class="segment pressable active" type="button" data-range="7d">7天</button>
-                <button class="segment pressable" type="button" data-range="week">按周</button>
-                <button class="segment pressable" type="button" data-range="month">按月</button>
+                <button class="segment pressable active" type="button" data-range="today">今天</button>
+                <button class="segment pressable" type="button" data-range="week">本周</button>
+                <button class="segment pressable" type="button" data-range="month">本月</button>
               </div>
               <div class="chart-wrap">
                 <canvas id="trendCanvas"></canvas>
@@ -2417,28 +2429,6 @@
             </div>
           </section>
 
-          <section id="scoreRecordsSection" class="section overview-section-anchor">
-            <h2 class="section-title">历史记录</h2>
-            <div class="card glass">
-              <div id="recordSegments" class="segmented" aria-label="记录范围">
-                <button class="segment pressable active" type="button" data-record-range="week">本周</button>
-                <button class="segment pressable" type="button" data-record-range="month">本月</button>
-                <button class="segment pressable" type="button" data-record-range="all">全部</button>
-              </div>
-              <ul id="recordList" class="log-list"></ul>
-            </div>
-          </section>
-
-          <section id="scoreSummarySection" class="section overview-section-anchor">
-            <h2 class="section-title">数据概览</h2>
-            <div class="card glass">
-              <div class="summary-grid">
-                <div class="metric"><div class="metric-label">变更次数</div><div id="monthCount" class="metric-value">0</div></div>
-                <div class="metric"><div class="metric-label">净变化</div><div id="monthNet" class="metric-value">0</div></div>
-              </div>
-              <div id="reasonSummary" class="reason-table"></div>
-            </div>
-          </section>
         </div>
 
         <div id="giftOverviewContent" hidden>
@@ -2510,7 +2500,7 @@
             </div>
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.6.0</span>
+              <span class="settings-value">1.6.1</span>
             </div>
             <button id="openReleaseNotesBtn" class="settings-row pressable" type="button">
               <span>版本与优化</span>
@@ -2535,13 +2525,18 @@
           <div id="workScheduleTitle" class="sheet-title">排班登记</div>
         </header>
         <div class="unified-sheet-body">
-          <div class="sheet-subtitle" style="text-align:center">选择日期与上下班整点时间，保存后同一日期再次登记会更新原记录。</div>
-
           <div class="work-schedule-form">
             <label class="work-schedule-field">
               <span class="work-schedule-field-label">日期</span>
               <input id="workScheduleDate" class="field work-schedule-control" type="date" />
             </label>
+
+            <div class="work-schedule-date-nav" aria-label="快速切换日期">
+              <button id="workSchedulePrevDayBtn" class="sheet-button pressable work-schedule-date-step" type="button">‹ 上一天</button>
+              <button id="workScheduleNextDayBtn" class="sheet-button pressable work-schedule-date-step" type="button">下一天 ›</button>
+            </div>
+
+            <div id="workScheduleExistingState" class="work-schedule-existing" hidden></div>
 
             <div class="work-schedule-time-grid">
               <label class="work-schedule-field">
@@ -2614,14 +2609,14 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.6.0</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.6.1</strong><span>当前版本</span></div>
             <div class="release-date">2026.08.31</div>
             <ul class="release-list">
-              <li>总览改为首页模式驱动：积分与小礼物不再在总览内二次切换。</li>
-              <li>积分总览新增趋势、日历、历史、数据概览四个快捷入口，可直接上滑展开。</li>
-              <li>小礼物总览精简为完整流水，展示日期时间、原因、增减值及额度前后变化。</li>
-              <li>移除深色/跟随系统外观模式，界面固定为浅色 Liquid Glass。</li>
-              <li>移除桌面鼠标控制首页圆盘 3D 倾斜效果，保留移动端核心交互。</li>
+              <li>积分总览精简为趋势统计与日历视图两个并排快捷入口，移除重复的历史记录与数据概览区域。</li>
+              <li>趋势范围改为今天、本周、本月；本月横轴固定覆盖 1 日到月底，未来日期不伪造积分。</li>
+              <li>排班登记默认今天，新增上一天/下一天快速切换，并自动回填已登记日期的上下班时间。</li>
+              <li>切换到已登记日期时显示“本天已经登记”状态，保存后立即刷新登记状态。</li>
+              <li>小礼物流水、排班总览、管理员登录与自动更新逻辑保持不变。</li>
             </ul>
           </div>
 
@@ -2835,8 +2830,6 @@
         giftOverviewContent: $("#giftOverviewContent"),
         scoreTrendSection: $("#scoreTrendSection"),
         scoreCalendarSection: $("#scoreCalendarSection"),
-        scoreRecordsSection: $("#scoreRecordsSection"),
-        scoreSummarySection: $("#scoreSummarySection"),
 
         settingsLayer: $("#settingsLayer"),
         settingsSheet: $("#settingsSheet"),
@@ -2887,13 +2880,6 @@
         dayDetailTitle: $("#dayDetailTitle"),
         dayDetailList: $("#dayDetailList"),
 
-        recordSegments: $("#recordSegments"),
-        recordList: $("#recordList"),
-
-        monthCount: $("#monthCount"),
-        monthNet: $("#monthNet"),
-        reasonSummary: $("#reasonSummary"),
-
         giftRecordList: $("#giftRecordList"),
 
         toast: $("#toast")
@@ -2909,8 +2895,7 @@
         activeMetric: "score",
         changeTarget: "score",
         changeDelta: null,
-        trendRange: "7d",
-        recordRange: "week",
+        trendRange: "today",
         calendarDate: startOfMonth(new Date()),
         selectedDayKey: null,
         overviewLogs: [],
@@ -3088,7 +3073,7 @@
         els.scoreOverviewContent.hidden = gift;
         els.giftOverviewContent.hidden = !gift;
         els.overviewTitle.textContent = gift ? "小礼物记录" : "总览";
-        els.overviewSubtitle.textContent = gift ? "查看每一次额度变化" : "查看统计与历史记录";
+        els.overviewSubtitle.textContent = gift ? "查看每一次额度变化" : "查看趋势与日历";
 
         if (gift) {
           renderGiftOverview();
@@ -3426,83 +3411,73 @@
       function renderOverview() {
         renderTrend();
         renderCalendar();
-        renderRecords();
-        renderMonthSummary();
         renderGiftOverview();
         renderOverviewContentMode();
       }
 
       // -------------------- Trend --------------------
+      function scoreAtRangeStart(rangeStart, logs) {
+        const firstAtOrAfter = logs.find(log => new Date(log.created_at) >= rangeStart);
+        if (firstAtOrAfter) return Number(firstAtOrAfter.score_before);
+
+        const latestBefore = [...logs].filter(log => new Date(log.created_at) < rangeStart).at(-1);
+        if (latestBefore) return Number(latestBefore.score_after);
+
+        return Number(state.score ?? 5);
+      }
+
       function buildTrendPoints(range) {
         const now = new Date();
         const logs = logsAscending();
 
-        let boundaries = [];
-        let labels = [];
-
-        if (range === "7d") {
-          const start = addDays(startOfDay(now), -6);
-          for (let i = 0; i < 7; i++) {
-            const d = addDays(start, i);
-            boundaries.push({ start: d, end: addDays(d, 1) });
-            labels.push(`${d.getMonth()+1}/${d.getDate()}`);
-          }
-        } else if (range === "week") {
-          const thisWeek = startOfWeekMonday(now);
-          const first = addDays(thisWeek, -7 * 7);
-          for (let i = 0; i < 8; i++) {
-            const d = addDays(first, i * 7);
-            boundaries.push({ start: d, end: addDays(d, 7) });
-            labels.push(`${d.getMonth()+1}/${d.getDate()}`);
-          }
-        } else {
-          const thisMonth = startOfMonth(now);
-          const first = addMonths(thisMonth, -5);
-          for (let i = 0; i < 6; i++) {
-            const d = addMonths(first, i);
-            boundaries.push({ start: d, end: addMonths(d, 1) });
-            labels.push(`${d.getMonth()+1}月`);
-          }
-        }
-
-        if (!boundaries.length) return [];
-
-        const rangeStart = boundaries[0].start;
-
-        // Baseline score immediately before the first displayed bucket.
-        let scoreAtStart = state.score ?? 5;
-        const inOrAfterStart = logs.filter(l => new Date(l.created_at) >= rangeStart);
-
-        if (inOrAfterStart.length) {
-          scoreAtStart = Number(inOrAfterStart[0].score_before);
-        } else if (logs.length) {
-          const latestBefore = [...logs]
-            .filter(l => new Date(l.created_at) < rangeStart)
-            .at(-1);
-          if (latestBefore) scoreAtStart = Number(latestBefore.score_after);
-        }
-
-        let running = scoreAtStart;
-        const points = [];
-
-        for (let i = 0; i < boundaries.length; i++) {
-          const bucket = boundaries[i];
-          const bucketLogs = logs.filter(l => {
-            const t = new Date(l.created_at);
-            return t >= bucket.start && t < bucket.end;
+        if (range === "today") {
+          const start = startOfDay(now);
+          let running = scoreAtRangeStart(start, logs);
+          const todayLogs = logs.filter(log => {
+            const t = new Date(log.created_at);
+            return t >= start && t <= now;
           });
 
-          for (const log of bucketLogs) {
+          const points = [{ label: "00:00", value: running, date: start }];
+          for (const log of todayLogs) {
             running = Number(log.score_after);
+            points.push({ label: formatTime(log.created_at), value: running, date: new Date(log.created_at) });
+          }
+
+          const nowLabel = new Intl.DateTimeFormat("zh-CN", {
+            hour: "2-digit", minute: "2-digit", hour12: false
+          }).format(now);
+          if (points.length === 1 || Number(points.at(-1).date) < Number(now)) {
+            points.push({ label: nowLabel, value: Number(state.score ?? running), date: now });
+          }
+          return points;
+        }
+
+        const start = range === "week" ? startOfWeekMonday(now) : startOfMonth(now);
+        const totalDays = range === "week" ? 7 : new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        const weekLabels = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+        let running = scoreAtRangeStart(start, logs);
+        const points = [];
+
+        for (let i = 0; i < totalDays; i++) {
+          const dayStart = addDays(start, i);
+          const dayEnd = addDays(dayStart, 1);
+          const isFuture = dayStart > now;
+
+          if (!isFuture) {
+            const bucketLogs = logs.filter(log => {
+              const t = new Date(log.created_at);
+              return t >= dayStart && t < dayEnd && t <= now;
+            });
+            for (const log of bucketLogs) running = Number(log.score_after);
           }
 
           points.push({
-            label: labels[i],
-            value: running,
-            date: bucket.end
+            label: range === "week" ? weekLabels[i] : `${dayStart.getDate()}日`,
+            value: isFuture ? null : running,
+            date: dayEnd
           });
         }
-
         return points;
       }
 
@@ -3510,18 +3485,18 @@
         const points = buildTrendPoints(state.trendRange);
         drawTrend(points);
 
-        const visibleLogs = (() => {
-          const now = new Date();
-          let start;
-          if (state.trendRange === "7d") start = addDays(startOfDay(now), -6);
-          else if (state.trendRange === "week") start = addDays(startOfWeekMonday(now), -7 * 7);
-          else start = addMonths(startOfMonth(now), -5);
-          return state.overviewLogs.filter(l => new Date(l.created_at) >= start);
-        })();
-
-        els.chartCaption.textContent = visibleLogs.length
-          ? `${visibleLogs.length} 次变更`
-          : "该范围内暂无变更";
+        const now = new Date();
+        const start = state.trendRange === "today"
+          ? startOfDay(now)
+          : state.trendRange === "week"
+            ? startOfWeekMonday(now)
+            : startOfMonth(now);
+        const visibleLogs = state.overviewLogs.filter(log => {
+          const t = new Date(log.created_at);
+          return t >= start && t <= now;
+        });
+        const rangeLabel = state.trendRange === "today" ? "今天" : state.trendRange === "week" ? "本周" : "本月";
+        els.chartCaption.textContent = visibleLogs.length ? `${rangeLabel} ${visibleLogs.length} 次变更` : `${rangeLabel}暂无变更`;
       }
 
       function drawTrend(points) {
@@ -3536,112 +3511,85 @@
         ctx.setTransform(dpr,0,0,dpr,0,0);
         ctx.clearRect(0,0,rect.width,rect.height);
 
-        if (!points.length) {
+        const valid = points.map((point,index) => ({ point,index }))
+          .filter(item => item.point.value !== null && Number.isFinite(Number(item.point.value)));
+
+        if (!points.length || !valid.length) {
           els.chartEmpty.hidden = false;
           return;
         }
         els.chartEmpty.hidden = true;
 
-        const values = points.map(p => Number(p.value));
+        const values = valid.map(item => Number(item.point.value));
         let min = Math.min(...values);
         let max = Math.max(...values);
-
         if (min === max) {
           min -= 1;
           max += 1;
         } else {
-          const pad = Math.max(1, (max - min) * .22);
-          min -= pad;
-          max += pad;
+          const valuePad = Math.max(1, (max - min) * .22);
+          min -= valuePad;
+          max += valuePad;
         }
 
         const pad = { l: 12, r: 12, t: 18, b: 30 };
         const w = rect.width - pad.l - pad.r;
         const h = rect.height - pad.t - pad.b;
-
         const styles = getComputedStyle(document.documentElement);
         const ink = styles.getPropertyValue("--ink").trim();
         const tertiary = styles.getPropertyValue("--tertiary").trim();
         const hairline = styles.getPropertyValue("--hairline").trim();
         const blue = styles.getPropertyValue("--blue").trim();
 
-        // horizontal guide lines
         ctx.lineWidth = 1;
         ctx.strokeStyle = hairline;
         for (let i = 0; i < 3; i++) {
           const y = pad.t + (h * i / 2);
-          ctx.beginPath();
-          ctx.moveTo(pad.l, y + .5);
-          ctx.lineTo(rect.width - pad.r, y + .5);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(pad.l, y + .5); ctx.lineTo(rect.width - pad.r, y + .5); ctx.stroke();
         }
 
-        const xFor = (i) => points.length === 1
-          ? pad.l + w / 2
-          : pad.l + (w * i / (points.length - 1));
+        const xFor = index => points.length === 1 ? pad.l + w / 2 : pad.l + (w * index / (points.length - 1));
+        const yFor = value => pad.t + h - ((value - min) / (max - min)) * h;
 
-        const yFor = (v) => pad.t + h - ((v - min) / (max - min)) * h;
+        if (valid.length >= 2) {
+          const gradient = ctx.createLinearGradient(0, pad.t, 0, pad.t + h);
+          gradient.addColorStop(0, "rgba(10,132,255,.20)");
+          gradient.addColorStop(1, "rgba(10,132,255,0)");
 
-        // subtle area
-        const gradient = ctx.createLinearGradient(0, pad.t, 0, pad.t + h);
-        gradient.addColorStop(0, "rgba(10,132,255,.20)");
-        gradient.addColorStop(1, "rgba(10,132,255,0)");
-
-        ctx.beginPath();
-        points.forEach((p,i) => {
-          const x = xFor(i);
-          const y = yFor(Number(p.value));
-          if (i === 0) ctx.moveTo(x,y);
-          else ctx.lineTo(x,y);
-        });
-        ctx.lineTo(xFor(points.length-1), pad.t + h);
-        ctx.lineTo(xFor(0), pad.t + h);
-        ctx.closePath();
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        // line
-        ctx.beginPath();
-        points.forEach((p,i) => {
-          const x = xFor(i);
-          const y = yFor(Number(p.value));
-          if (i === 0) ctx.moveTo(x,y);
-          else ctx.lineTo(x,y);
-        });
-        ctx.strokeStyle = blue;
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.stroke();
-
-        // points + value for last
-        points.forEach((p,i) => {
-          const x = xFor(i);
-          const y = yFor(Number(p.value));
           ctx.beginPath();
-          ctx.arc(x,y,3.2,0,Math.PI*2);
-          ctx.fillStyle = blue;
-          ctx.fill();
+          valid.forEach(({point,index},i) => {
+            const x=xFor(index), y=yFor(Number(point.value));
+            if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          });
+          ctx.lineTo(xFor(valid.at(-1).index), pad.t+h);
+          ctx.lineTo(xFor(valid[0].index), pad.t+h);
+          ctx.closePath(); ctx.fillStyle=gradient; ctx.fill();
+
+          ctx.beginPath();
+          valid.forEach(({point,index},i) => {
+            const x=xFor(index), y=yFor(Number(point.value));
+            if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          });
+          ctx.strokeStyle=blue; ctx.lineWidth=2.5; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.stroke();
+        }
+
+        valid.forEach(({point,index}) => {
+          const x=xFor(index), y=yFor(Number(point.value));
+          ctx.beginPath(); ctx.arc(x,y,3.2,0,Math.PI*2); ctx.fillStyle=blue; ctx.fill();
         });
 
-        // labels
-        ctx.fillStyle = tertiary;
-        ctx.font = '11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-
-        const showEvery = points.length > 7 ? 2 : 1;
-        points.forEach((p,i) => {
-          if (i % showEvery === 0 || i === points.length - 1) {
-            ctx.fillText(p.label, xFor(i), rect.height - 18);
-          }
+        ctx.fillStyle=tertiary;
+        ctx.font='11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+        ctx.textAlign="center"; ctx.textBaseline="top";
+        const showEvery = points.length > 20 ? 5 : points.length > 10 ? 2 : 1;
+        points.forEach((point,index) => {
+          if (index % showEvery === 0 || index === points.length - 1) ctx.fillText(point.label, xFor(index), rect.height - 18);
         });
 
-        const last = points.at(-1);
-        ctx.fillStyle = ink;
-        ctx.font = '600 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
-        ctx.textAlign = "right";
-        ctx.textBaseline = "bottom";
+        const last=valid.at(-1).point;
+        ctx.fillStyle=ink;
+        ctx.font='600 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+        ctx.textAlign="right"; ctx.textBaseline="bottom";
         ctx.fillText(`当前 ${last.value}`, rect.width - pad.r, 14);
       }
 
@@ -3768,30 +3716,7 @@
         els.dayDetailList.innerHTML = logs.map(log => logRowHTML(log, false)).join("");
       }
 
-      // -------------------- Records --------------------
-      function recordRangeStart() {
-        const now = new Date();
-        if (state.recordRange === "week") return startOfWeekMonday(now);
-        if (state.recordRange === "month") return startOfMonth(now);
-        return null;
-      }
-
-      function renderRecords() {
-        const start = recordRangeStart();
-        let logs = logsDescending();
-
-        if (start) {
-          logs = logs.filter(l => new Date(l.created_at) >= start);
-        }
-
-        if (!logs.length) {
-          els.recordList.innerHTML = `<li class="empty-state">暂无记录</li>`;
-          return;
-        }
-
-        els.recordList.innerHTML = logs.map(log => logRowHTML(log, true)).join("");
-      }
-
+      // -------------------- Log row helpers --------------------
       function movementIconHTML(delta) {
         if (delta > 0) {
           return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6.5 10.5 12 5l5.5 5.5"/></svg>`;
@@ -3862,45 +3787,6 @@
           : `<li class="empty-state">暂无小礼物额度记录</li>`;
       }
 
-      // -------------------- Monthly summary --------------------
-      function renderMonthSummary() {
-        const now = new Date();
-        const start = startOfMonth(now);
-        const end = endOfMonthExclusive(now);
-
-        const logs = state.overviewLogs.filter(l => {
-          const t = new Date(l.created_at);
-          return t >= start && t < end;
-        });
-
-        const count = logs.length;
-        const net = logs.reduce((sum,l) => sum + Number(l.delta), 0);
-
-        els.monthCount.textContent = count;
-        els.monthNet.textContent = signed(net);
-        els.monthNet.className = `metric-value ${net > 0 ? "positive" : net < 0 ? "negative" : ""}`;
-
-        const reasons = new Map();
-        for (const log of logs) {
-          const reason = String(log.reason ?? "").trim() || "未填写原因";
-          reasons.set(reason, (reasons.get(reason) || 0) + 1);
-        }
-
-        const sorted = [...reasons.entries()].sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0], "zh-CN"));
-
-        if (!sorted.length) {
-          els.reasonSummary.innerHTML = `<div class="empty-state">本月暂无原因统计</div>`;
-          return;
-        }
-
-        els.reasonSummary.innerHTML = sorted.map(([reason,count]) => `
-          <div class="reason-row">
-            <div class="reason-name">${escapeHTML(reason)}</div>
-            <div class="reason-count">${count} 次</div>
-          </div>
-        `).join("");
-      }
-
       // -------------------- Overview sheet --------------------
       const SCORE_OVERVIEW_PEEK_FALLBACK = 300;
       const SCORE_OVERVIEW_PEEK_BOTTOM_GAP = 12;
@@ -3966,9 +3852,7 @@
         if (state.activeMetric !== "score") return;
         const sectionMap = {
           trend: els.scoreTrendSection,
-          calendar: els.scoreCalendarSection,
-          records: els.scoreRecordsSection,
-          summary: els.scoreSummarySection
+          calendar: els.scoreCalendarSection
         };
         const section = sectionMap[target];
         if (!section) return;
@@ -4260,6 +4144,9 @@
           sheet: $("#workScheduleLayer .work-schedule-sheet"),
           grabberHitbox: $("#workScheduleGrabberHitbox"),
           date: $("#workScheduleDate"),
+          prevDayBtn: $("#workSchedulePrevDayBtn"),
+          nextDayBtn: $("#workScheduleNextDayBtn"),
+          existingState: $("#workScheduleExistingState"),
           startHour: $("#workScheduleStartHour"),
           endHour: $("#workScheduleEndHour"),
           overviewBtn: $("#openWorkScheduleOverviewBtn"),
@@ -4279,6 +4166,8 @@
         };
 
         let rowsById = new Map();
+        let rowsByDate = new Map();
+        let scheduleCacheLoaded = false;
         let pendingDeleteId = null;
 
         function bindPullDownClose({ layer, sheet, handle, onClose }) {
@@ -4390,6 +4279,58 @@
           scheduleEls.date.value = localDateKey();
           scheduleEls.startHour.value = "9";
           scheduleEls.endHour.value = "18";
+          scheduleEls.existingState.hidden = true;
+          scheduleEls.existingState.textContent = "";
+        }
+
+        function cacheScheduleRows(rows) {
+          const normalized = Array.isArray(rows) ? rows : [];
+          rowsById = new Map(normalized.map(row => [Number(row.id), row]));
+          rowsByDate = new Map(normalized.map(row => [String(row.work_date), row]));
+          scheduleCacheLoaded = true;
+          return normalized;
+        }
+
+        async function fetchScheduleRows() {
+          const { data, error } = await db.rpc("work_schedule_list");
+          if (error) throw error;
+          return cacheScheduleRows(data || []);
+        }
+
+        function applyScheduleForDate(dateKey) {
+          const row = rowsByDate.get(String(dateKey));
+          if (row) {
+            scheduleEls.startHour.value = String(Number(row.start_hour));
+            scheduleEls.endHour.value = String(Number(row.end_hour));
+            scheduleEls.existingState.textContent = `本天已经登记 · ${formatHour(row.start_hour)}–${formatHour(row.end_hour)}`;
+            scheduleEls.existingState.hidden = false;
+            return;
+          }
+          scheduleEls.startHour.value = "9";
+          scheduleEls.endHour.value = "18";
+          scheduleEls.existingState.hidden = true;
+          scheduleEls.existingState.textContent = "";
+        }
+
+        async function syncRegistrationForCurrentDate({ forceRefresh = false } = {}) {
+          const currentDate = scheduleEls.date.value || localDateKey();
+          if (forceRefresh || !scheduleCacheLoaded) {
+            try {
+              await fetchScheduleRows();
+            } catch (err) {
+              console.error("workSchedule.syncRegistration:", err);
+              if (isRpcMissing(err?.message)) showToast("请先运行新版排班 SQL");
+              return;
+            }
+          }
+          applyScheduleForDate(scheduleEls.date.value || currentDate);
+        }
+
+        function changeRegistrationDate(dayDelta) {
+          const base = parseLocalDate(scheduleEls.date.value || localDateKey());
+          scheduleEls.date.value = localDateKey(addDays(base, dayDelta));
+          applyScheduleForDate(scheduleEls.date.value);
+          vibrate(6);
         }
 
         function openRegistration() {
@@ -4399,6 +4340,7 @@
           setLayer(scheduleEls.deleteLayer, false);
           setLayer(scheduleEls.layer, true);
           vibrate(8);
+          void syncRegistrationForCurrentDate({ forceRefresh: true });
         }
 
         function closeRegistration() {
@@ -4430,12 +4372,22 @@
 
           setBusy(scheduleEls.saveBtn, true);
           try {
-            const { error } = await db.rpc("work_schedule_upsert", {
+            const { data, error } = await db.rpc("work_schedule_upsert", {
               p_work_date: workDate,
               p_start_hour: startHour,
               p_end_hour: endHour
             });
             if (error) throw error;
+
+            const saved = Array.isArray(data) ? data[0] : data;
+            if (saved) {
+              rowsById.set(Number(saved.id), saved);
+              rowsByDate.set(String(saved.work_date), saved);
+              scheduleCacheLoaded = true;
+              applyScheduleForDate(workDate);
+            } else {
+              await syncRegistrationForCurrentDate({ forceRefresh: true });
+            }
 
             vibrate(14);
             showToast("排班已保存");
@@ -4486,8 +4438,8 @@
         }
 
         function renderOverview(rows) {
-          const sorted = sortNearToFar(Array.isArray(rows) ? rows : []);
-          rowsById = new Map(sorted.map(row => [Number(row.id), row]));
+          const normalized = cacheScheduleRows(rows);
+          const sorted = sortNearToFar(normalized);
           scheduleEls.empty.hidden = sorted.length > 0;
           scheduleEls.list.innerHTML = sorted.map(row => `
             <li class="work-schedule-row">
@@ -4507,9 +4459,8 @@
           scheduleEls.list.classList.add("work-schedule-loading");
           scheduleEls.empty.hidden = true;
           try {
-            const { data, error } = await db.rpc("work_schedule_list");
-            if (error) throw error;
-            renderOverview(data || []);
+            const rows = await fetchScheduleRows();
+            renderOverview(rows);
           } catch (err) {
             console.error("workSchedule.loadOverview:", err);
             renderOverview([]);
@@ -4583,6 +4534,12 @@
         resetForm();
 
         scheduleEls.openBtn.addEventListener("click", openRegistration);
+        scheduleEls.date.addEventListener("change", () => {
+          if (!scheduleEls.date.value) scheduleEls.date.value = localDateKey();
+          void syncRegistrationForCurrentDate();
+        });
+        scheduleEls.prevDayBtn.addEventListener("click", () => changeRegistrationDate(-1));
+        scheduleEls.nextDayBtn.addEventListener("click", () => changeRegistrationDate(1));
         scheduleEls.cancelBtn.addEventListener("click", closeRegistration);
         scheduleEls.saveBtn.addEventListener("click", saveSchedule);
         scheduleEls.overviewBtn.addEventListener("click", openOverview);
@@ -4821,17 +4778,6 @@
           x.classList.toggle("active", x === btn)
         );
         renderTrend();
-      });
-
-      els.recordSegments.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-record-range]");
-        if (!btn) return;
-
-        state.recordRange = btn.dataset.recordRange;
-        els.recordSegments.querySelectorAll(".segment").forEach(x =>
-          x.classList.toggle("active", x === btn)
-        );
-        renderRecords();
       });
 
       els.prevMonthBtn.addEventListener("click", () => {
