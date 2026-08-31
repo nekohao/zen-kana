@@ -544,9 +544,10 @@
       left: 50%;
       bottom: 0;
       width: min(calc(100% - 12px), 620px);
-      height: calc(100% - max(calc(var(--safe-top) + 8px), 12px));
+      height: auto;
+      max-height: calc(100% - max(calc(var(--safe-top) + 8px), 12px));
       margin: 0;
-      padding: 0 16px calc(var(--safe-bottom) + 34px);
+      padding: 0 16px calc(var(--safe-bottom) + 18px);
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
@@ -585,6 +586,7 @@
     }
 
     .overview.full .overview-shell {
+      height: auto;
       transform: translate(-50%, 0);
       overflow-y: auto;
       touch-action: pan-y;
@@ -621,7 +623,10 @@
 
     .overview-grabber-hitbox {
       width: 100%;
-      min-height: 54px;
+      min-height: 64px;
+      margin-bottom: -28px;
+      position: relative;
+      z-index: 3;
       display: grid;
       place-items: center;
       cursor: grab;
@@ -755,6 +760,11 @@
       scroll-margin-top: 92px;
     }
 
+    .overview.full #scoreTrendSection,
+    .overview.full #scoreCalendarSection {
+      margin-bottom: 0;
+    }
+
     .overview.gift-mode .overview-header {
       margin-bottom: 14px;
     }
@@ -880,8 +890,7 @@
     }
 
     .calendar-grid {
-      grid-auto-rows: 60px;
-      min-height: 300px;
+      grid-auto-rows: 50px;
     }
 
     .weekdays {
@@ -889,7 +898,7 @@
     }
 
     .weekday {
-      padding: 4px 0 8px;
+      padding: 3px 0 5px;
       text-align: center;
       font-size: 11px;
       font-weight: 650;
@@ -897,12 +906,12 @@
     }
 
     .day {
-      min-height: 60px;
+      min-height: 50px;
       margin: 0;
       border: 0;
       border-radius: 14px;
       background: transparent;
-      padding: 5px 0 3px;
+      padding: 3px 0 2px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -912,7 +921,7 @@
 
     .day.placeholder {
       pointer-events: none;
-      min-height: 60px;
+      min-height: 50px;
     }
 
     .day-number {
@@ -1230,7 +1239,10 @@
 
     .settings-grabber-hitbox {
       width: 100%;
-      min-height: 28px;
+      min-height: 58px;
+      margin-bottom: -30px;
+      position: relative;
+      z-index: 3;
       display: grid;
       place-items: center;
       cursor: grab;
@@ -1352,7 +1364,10 @@
 
     .login-grabber-hitbox {
       width: 100%;
-      min-height: 28px;
+      min-height: 58px;
+      margin-bottom: -30px;
+      position: relative;
+      z-index: 3;
       display: grid;
       place-items: center;
       cursor: grab;
@@ -2029,6 +2044,29 @@
       border-bottom: 1px solid var(--hairline);
     }
 
+    /* Low-frequency unified sheets: make the whole top header a generous drag target. */
+    #versionInfoLayer .unified-sheet-header,
+    #releaseNotesLayer .unified-sheet-header,
+    #changeLayer .unified-sheet-header {
+      min-height: 62px;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #versionInfoLayer .unified-sheet-header:active,
+    #releaseNotesLayer .unified-sheet-header:active,
+    #changeLayer .unified-sheet-header:active {
+      cursor: grabbing;
+    }
+
+    #versionInfoLayer.dragging .unified-sheet,
+    #releaseNotesLayer.dragging .unified-sheet,
+    #changeLayer.dragging .unified-sheet {
+      transition: none !important;
+    }
+
     .unified-sheet-header .grabber { margin: 0 auto 9px; }
     .unified-sheet-header .sheet-title {
       margin: 0;
@@ -2198,7 +2236,10 @@
 
     .work-schedule-grabber-hitbox {
       width: 100%;
-      min-height: 28px;
+      min-height: 58px;
+      margin-bottom: -30px;
+      position: relative;
+      z-index: 3;
       display: grid;
       place-items: center;
       cursor: grab;
@@ -2549,7 +2590,7 @@
         </header>
 
         <div class="settings-sheet-content">
-          <div class="settings-label">账户</div>
+          <div id="guestAccountLabel" class="settings-label">账户</div>
           <div id="guestSettings" class="settings-group">
             <button id="openLoginBtn" class="settings-row pressable" type="button">
               <span>管理员登录</span>
@@ -2711,7 +2752,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.6.2</span>
+              <span class="settings-value">1.6.3</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -2741,12 +2782,22 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.6.2</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.6.3</strong><span>当前版本</span></div>
+            <div class="release-date">2026.08.31</div>
+            <ul class="release-list">
+              <li>趋势与日历总览改为内容自适应高度，移除单模块下方多余空白。</li>
+              <li>日历行距收紧，在保留每日积分上下箭头的同时减少纵向占用。</li>
+              <li>总览、设置、登录与排班窗口扩大顶部拖拽命中区域，单手下拉更容易。</li>
+              <li>管理员状态不再显示空的“账户”分组标题。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.6.2</strong><span>上一版本</span></div>
             <div class="release-date">2026.08.31</div>
             <ul class="release-list">
               <li>积分总览改为趋势或日历单模块显示，展开后可用紧凑的“趋势 / 日历”按钮切换。</li>
               <li>本周趋势 X 轴直接附带每日积分；本月趋势保持上一版现状。</li>
-              <li>总览顶部拖拽命中区域扩大，单手下拉关闭更容易。</li>
               <li>设置的信息区收拢为“版本信息”，低频状态进入下一层查看。</li>
               <li>管理员首页新增今天及未来排班提醒；过期排班不再提醒，但历史记录仍完整保留。</li>
             </ul>
@@ -2967,6 +3018,7 @@
         settingsLayer: $("#settingsLayer"),
         settingsSheet: $("#settingsSheet"),
         settingsGrabberHitbox: $("#settingsGrabberHitbox"),
+        guestAccountLabel: $("#guestAccountLabel"),
         guestSettings: $("#guestSettings"),
         adminSettings: $("#adminSettings"),
         loginStateText: $("#loginStateText"),
@@ -3165,6 +3217,7 @@
       function renderAdminState() {
         els.adminControls.classList.toggle("hidden", !state.isAdmin);
         els.adminControls.setAttribute("aria-hidden", String(!state.isAdmin));
+        els.guestAccountLabel.hidden = state.isAdmin;
         els.guestSettings.hidden = state.isAdmin;
         els.adminSettings.hidden = !state.isAdmin;
 
@@ -3967,7 +4020,9 @@
       }
 
       function currentOverviewPeekHeight() {
-        return state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : scoreOverviewPeekHeight();
+        const desired = state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : scoreOverviewPeekHeight();
+        const actual = Math.ceil(els.overviewShell.scrollHeight || desired);
+        return Math.max(0, Math.min(desired, actual));
       }
       let suppressOverviewClickUntil = 0;
 
@@ -4880,6 +4935,72 @@
       // ============================================================
       // WORK SCHEDULE MODULE END
       // ============================================================
+
+      // Simple downward-to-close drag for compact unified sheets.
+      function bindCompactSheetDrag(layer) {
+        if (!layer) return;
+        const sheet = layer.querySelector(".unified-sheet");
+        const header = layer.querySelector(".unified-sheet-header");
+        if (!sheet || !header) return;
+
+        let drag = null;
+
+        header.addEventListener("pointerdown", (e) => {
+          if (!layer.classList.contains("open")) return;
+          drag = {
+            pointerId: e.pointerId,
+            startY: e.clientY,
+            startTime: performance.now(),
+            pendingY: e.clientY,
+            sheetHeight: sheet.getBoundingClientRect().height,
+            dragging: false,
+            raf: 0
+          };
+          try { sheet.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+
+        sheet.addEventListener("pointermove", (e) => {
+          if (!drag || e.pointerId !== drag.pointerId) return;
+          const dy = e.clientY - drag.startY;
+          if (!drag.dragging && Math.abs(dy) < 7) return;
+          if (dy <= 0) return;
+
+          drag.pendingY = e.clientY;
+          drag.dragging = true;
+          layer.classList.add("dragging");
+          e.preventDefault();
+
+          if (drag.raf) return;
+          drag.raf = requestAnimationFrame(() => {
+            if (!drag) return;
+            drag.raf = 0;
+            const translateY = Math.min(drag.sheetHeight, (drag.pendingY - drag.startY) * .96);
+            sheet.style.transform = `translate3d(0, ${translateY}px, 0)`;
+          });
+        }, { passive: false });
+
+        const finish = (e) => {
+          if (!drag || e.pointerId !== drag.pointerId) return;
+          const finished = drag;
+          if (finished.raf) cancelAnimationFrame(finished.raf);
+          drag = null;
+          layer.classList.remove("dragging");
+          sheet.style.transform = "";
+
+          if (!finished.dragging) return;
+          const totalDy = e.clientY - finished.startY;
+          const dt = Math.max(1, performance.now() - finished.startTime);
+          const velocityY = totalDy / dt;
+          if (totalDy > 76 || velocityY > .42) setLayer(layer, false);
+        };
+
+        sheet.addEventListener("pointerup", finish);
+        sheet.addEventListener("pointercancel", finish);
+      }
+
+      bindCompactSheetDrag(els.versionInfoLayer);
+      bindCompactSheetDrag(els.releaseNotesLayer);
+      bindCompactSheetDrag(els.changeLayer);
 
       // -------------------- Events --------------------
       els.settingsBtn.addEventListener("click", () => {
