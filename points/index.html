@@ -539,7 +539,7 @@
     }
 
     .overview-shell {
-      --peek-height: 390px;
+      --peek-height: 300px;
       position: absolute;
       left: 50%;
       bottom: 0;
@@ -661,7 +661,11 @@
     }
 
     .overview-landing {
-      margin: 0 0 15px;
+      margin: 0;
+    }
+
+    .overview.full .overview-landing {
+      margin-bottom: 15px;
     }
 
     .overview-quick-nav {
@@ -722,13 +726,6 @@
       white-space: nowrap;
     }
 
-    .overview-peek-hint {
-      margin: 2px 0 3px;
-      text-align: center;
-      font-size: 11px;
-      color: var(--tertiary);
-      letter-spacing: .01em;
-    }
 
     .overview-section-anchor {
       scroll-margin-top: 92px;
@@ -748,12 +745,6 @@
       .overview-quick-card svg { width: 25px; height: 25px; }
       .overview-quick-title { font-size: 11px; }
       .overview-quick-copy { font-size: 8.8px; }
-    }
-
-    @media (max-height: 650px) {
-      .overview-shell {
-        --peek-height: 360px;
-      }
     }
 
     .section {
@@ -2388,7 +2379,6 @@
                 <span class="overview-quick-copy">本月数据汇总</span>
               </button>
             </nav>
-            <div class="overview-peek-hint">向上拖动查看完整总览</div>
           </div>
 
           <section id="scoreTrendSection" class="section overview-section-anchor">
@@ -3912,12 +3902,20 @@
       }
 
       // -------------------- Overview sheet --------------------
-      const SCORE_OVERVIEW_PEEK_HEIGHT = 390;
+      const SCORE_OVERVIEW_PEEK_FALLBACK = 300;
+      const SCORE_OVERVIEW_PEEK_BOTTOM_GAP = 12;
       const GIFT_OVERVIEW_PEEK_HEIGHT = 350;
       let overviewDrag = null;
 
+      function scoreOverviewPeekHeight() {
+        const nav = els.overviewQuickNav;
+        if (!nav) return SCORE_OVERVIEW_PEEK_FALLBACK;
+        const bottom = nav.offsetTop + nav.offsetHeight + SCORE_OVERVIEW_PEEK_BOTTOM_GAP;
+        return Number.isFinite(bottom) && bottom > 0 ? Math.ceil(bottom) : SCORE_OVERVIEW_PEEK_FALLBACK;
+      }
+
       function currentOverviewPeekHeight() {
-        return state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : SCORE_OVERVIEW_PEEK_HEIGHT;
+        return state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : scoreOverviewPeekHeight();
       }
       let suppressOverviewClickUntil = 0;
 
