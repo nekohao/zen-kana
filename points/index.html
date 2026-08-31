@@ -9,17 +9,22 @@
     (() => {
       try {
         const pref = localStorage.getItem("points_theme");
-        if (pref === "light" || pref === "dark") {
-          document.documentElement.dataset.theme = pref;
-        }
-      } catch (_) {}
+        if (pref === "dark") document.documentElement.dataset.theme = "dark";
+        else if (pref === "system") document.documentElement.removeAttribute("data-theme");
+        else document.documentElement.dataset.theme = "light";
+      } catch (_) {
+        document.documentElement.dataset.theme = "light";
+      }
     })();
   </script>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="积分" />
+  <meta name="apple-mobile-web-app-title" content="积分小本本" />
   <meta name="format-detection" content="telephone=no" />
-  <title>积分</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>积分小本本</title>
 
   <style>
     :root {
@@ -1810,6 +1815,356 @@
         animation-duration: .001ms !important;
       }
     }
+
+
+    /* ============================================================
+       v1.5.0 — App shell, dual metric switch, unified surfaces
+       Existing confirmed layout/behavior remains intact unless
+       explicitly extended below.
+       ============================================================ */
+
+    .topbar {
+      min-height: 58px;
+      padding: 6px 7px;
+      justify-content: space-between;
+      gap: 10px;
+      border-radius: 20px;
+      background: var(--home-control-bg);
+      border: 1px solid var(--home-control-border);
+      box-shadow: var(--home-icon-shadow);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      backdrop-filter: blur(30px) saturate(180%);
+    }
+
+    .app-brand {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 2px;
+    }
+
+    .app-brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: block;
+      flex: 0 0 auto;
+      box-shadow: 0 4px 12px rgba(31,38,72,.12);
+    }
+
+    .app-brand-title {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -.018em;
+    }
+
+    .topbar .icon-button {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      box-shadow: none;
+      background: rgba(255,255,255,.12);
+      border-color: var(--hairline);
+    }
+
+    .hero {
+      transform: translateY(-.8vh);
+    }
+
+    .metric-switch {
+      position: relative;
+      width: min(82vw, 274px);
+      height: 44px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 4px;
+      border-radius: 15px;
+      background: rgba(118,118,128,.12);
+      border: 1px solid rgba(118,118,128,.07);
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.025);
+      margin-bottom: 16px;
+      isolation: isolate;
+    }
+
+    .metric-switch.compact {
+      width: min(100%, 300px);
+      margin: 0 auto 18px;
+    }
+
+    .metric-switch-thumb {
+      position: absolute;
+      z-index: 0;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      border-radius: 12px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,.04)),
+        var(--glass-fill-strong);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        0 4px 13px rgba(27,34,50,.10),
+        inset 0 1px 0 rgba(255,255,255,.44);
+      transform: translate3d(0,0,0);
+      transition: transform .46s cubic-bezier(.2,1.35,.32,1);
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    .metric-switch.gift-active .metric-switch-thumb {
+      transform: translate3d(100%,0,0);
+    }
+
+    .metric-option {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      height: 100%;
+      border: 0;
+      background: transparent;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 7px;
+      color: var(--secondary);
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+      transition: color .22s ease, opacity .22s ease, transform .22s ease;
+    }
+
+    .metric-option.active {
+      color: var(--ink);
+    }
+
+    .metric-option svg {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 auto;
+      stroke-width: 1.8;
+    }
+
+    .eyebrow {
+      margin-bottom: 17px;
+      transition: opacity .18s ease, transform .28s var(--ease-ios);
+    }
+
+    .score.metric-changing {
+      animation: metricNumberSwap .40s cubic-bezier(.2,.78,.2,1);
+    }
+
+    @keyframes metricNumberSwap {
+      0% { transform: translateX(-.025em) translateY(0) scale(1); opacity: 1; }
+      42% { transform: translateX(-.025em) translateY(5px) scale(.94); opacity: .18; }
+      60% { transform: translateX(-.025em) translateY(-4px) scale(.96); opacity: .35; }
+      100% { transform: translateX(-.025em) translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* The same glass recipe is shared by Overview, Settings, Login,
+       Release Notes and Change Reason sheets. */
+    :where(.overview-shell, .settings-sheet, .login-sheet, .unified-sheet) {
+      background:
+        linear-gradient(145deg,
+          rgba(255,255,255,.16),
+          rgba(255,255,255,.035) 42%,
+          rgba(255,255,255,.01)),
+        var(--glass-fill-strong) !important;
+      border-color: var(--glass-border) !important;
+      box-shadow:
+        0 -18px 55px rgba(34,43,62,.16),
+        inset 0 1px 0 rgba(255,255,255,.36) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+    }
+
+    #releaseNotesLayer,
+    #changeLayer {
+      padding: 0;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(45,54,70,.075);
+    }
+
+    :root[data-theme="dark"] #releaseNotesLayer,
+    :root[data-theme="dark"] #changeLayer {
+      background: rgba(0,0,0,.22);
+    }
+
+    #releaseNotesLayer .unified-sheet,
+    #changeLayer .unified-sheet {
+      width: min(calc(100% - 8px), 620px);
+      height: auto;
+      max-height: calc(100% - max(calc(var(--safe-top) + 72px), 86px));
+      margin: 0 auto;
+      padding: 0 16px calc(var(--safe-bottom) + 20px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      border: 1px solid var(--glass-border);
+      border-bottom: 0;
+      border-radius: 30px 30px 0 0;
+      transform: translate3d(0,calc(100% + 28px),0);
+      transition: transform .46s cubic-bezier(.18,.84,.24,1);
+      will-change: transform;
+    }
+
+    #releaseNotesLayer .unified-sheet::-webkit-scrollbar,
+    #changeLayer .unified-sheet::-webkit-scrollbar { display: none; }
+
+    #releaseNotesLayer.open .unified-sheet,
+    #changeLayer.open .unified-sheet {
+      transform: translate3d(0,0,0);
+    }
+
+    .unified-sheet-header {
+      position: sticky;
+      top: 0;
+      z-index: 8;
+      margin: 0 -16px 12px;
+      padding: 8px 16px 11px;
+      text-align: center;
+      background:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
+          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 76%,
+          transparent);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      backdrop-filter: blur(28px) saturate(180%);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .unified-sheet-header .grabber { margin: 0 auto 9px; }
+    .unified-sheet-header .sheet-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.015em;
+    }
+
+    .unified-sheet-body { padding-bottom: 4px; }
+
+    /* Unified central glass alerts. */
+    .alert {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.035) 46%),
+        var(--glass-fill-strong);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        0 24px 70px rgba(23,30,44,.22),
+        inset 0 1px 0 rgba(255,255,255,.40);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
+      backdrop-filter: blur(36px) saturate(190%);
+    }
+
+    .alert-actions.vertical {
+      grid-template-columns: 1fr;
+    }
+
+    .alert-actions.vertical .alert-button + .alert-button {
+      border-left: 0;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .alert-button.primary-action {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    /* New record visual language — used by both score and gift history. */
+    .log-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .log-row {
+      display: grid;
+      grid-template-columns: 38px minmax(0,1fr) auto;
+      gap: 11px;
+      align-items: center;
+      padding: 11px 12px;
+      border: 1px solid var(--hairline);
+      border-radius: 17px;
+      background: rgba(255,255,255,.085);
+    }
+
+    .log-row + .log-row { border-top: 1px solid var(--hairline); }
+
+    .log-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(118,118,128,.10);
+      color: var(--secondary);
+    }
+
+    .log-icon.positive { background: color-mix(in srgb, var(--green) 12%, transparent); color: var(--green); }
+    .log-icon.negative { background: color-mix(in srgb, var(--red) 11%, transparent); color: var(--red); }
+    .log-icon.neutral { background: rgba(118,118,128,.10); color: var(--secondary); }
+
+    .log-icon svg { width: 17px; height: 17px; }
+    .log-copy { min-width: 0; }
+    .log-reason { font-size: 14px; font-weight: 590; line-height: 1.3; }
+    .log-meta { margin-top: 4px; font-size: 11px; line-height: 1.2; }
+    .log-delta { font-size: 16px; font-weight: 760; padding-left: 6px; }
+
+    .gift-overview-balance {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 94px;
+    }
+
+    .gift-overview-value {
+      font-size: 40px;
+      line-height: 1;
+      font-weight: 750;
+      letter-spacing: -.055em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .gift-overview-unit {
+      color: var(--secondary);
+      font-size: 12px;
+      padding-bottom: 4px;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* High-refresh-rate path: drag animation stays transform-only. */
+    .ambient {
+      will-change: transform;
+      contain: paint;
+      transform: translate3d(0,0,0);
+    }
+
+    .overview-shell,
+    .settings-sheet,
+    .login-sheet,
+    .unified-sheet,
+    .metric-switch-thumb {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    @media (max-height: 700px) {
+      .metric-switch { margin-bottom: 11px; }
+      .eyebrow { margin-bottom: 13px; }
+    }
+
   </style>
 </head>
 
@@ -1821,21 +2176,40 @@
   </div>
 
   <main class="app">
-    <section class="home" aria-label="积分首页">
+    <section class="home" aria-label="积分小本本首页">
       <header class="topbar">
+        <div class="app-brand" aria-label="积分小本本">
+          <img class="app-brand-icon" src="./apple-touch-icon.png" alt="" aria-hidden="true" />
+          <div class="app-brand-title">积分小本本</div>
+        </div>
         <button id="settingsBtn" class="icon-button pressable" type="button" aria-label="设置">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0-.73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
             <circle cx="12" cy="12" r="3"/>
           </svg>
         </button>
       </header>
 
       <div class="hero">
-        <div class="eyebrow">当前分数</div>
+        <div id="metricSwitch" class="metric-switch" role="tablist" aria-label="首页数据切换">
+          <div class="metric-switch-thumb" aria-hidden="true"></div>
+          <button class="metric-option active" type="button" role="tab" aria-selected="true" data-metric="score">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3v18M7.5 7.5h7.1a3.1 3.1 0 0 1 0 6.2H9.4a3.1 3.1 0 0 0 0 6.2h7.1"/>
+            </svg>
+            <span>当前分数</span>
+          </button>
+          <button class="metric-option" type="button" role="tab" aria-selected="false" data-metric="gift">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 9h16v11H4zM3 9h18V6H3zM12 6v14M12 6H8.7A2.7 2.7 0 1 1 12 3.4V6Zm0 0h3.3A2.7 2.7 0 1 0 12 3.4V6Z"/>
+            </svg>
+            <span>小礼物额度</span>
+          </button>
+        </div>
+        <div id="metricEyebrow" class="eyebrow">当前分数</div>
 
-        <div id="scoreRefreshBtn" class="score-lens-wrap pressable" role="button" tabindex="0" aria-label="手动刷新当前分数">
+        <div id="scoreRefreshBtn" class="score-lens-wrap pressable" role="button" tabindex="0" aria-label="手动刷新最新数据">
           <div class="score-glow" aria-hidden="true"></div>
           <div class="score-lens">
             <div id="scoreValue" class="score loading" aria-live="polite">—</div>
@@ -1871,78 +2245,101 @@
           <div class="overview-title">总览</div>
         </header>
 
-        <section class="section">
-          <h2 class="section-title">趋势</h2>
-          <div class="card glass">
-            <div id="trendSegments" class="segmented" aria-label="趋势范围">
-              <button class="segment pressable active" type="button" data-range="7d">7天</button>
-              <button class="segment pressable" type="button" data-range="week">按周</button>
-              <button class="segment pressable" type="button" data-range="month">按月</button>
-            </div>
-            <div class="chart-wrap">
-              <canvas id="trendCanvas"></canvas>
-              <div id="chartEmpty" class="chart-empty" hidden>暂无数据</div>
-            </div>
-            <div id="chartCaption" class="chart-caption"></div>
-          </div>
-        </section>
+        <div id="overviewMetricSwitch" class="metric-switch compact" role="tablist" aria-label="总览数据切换">
+          <div class="metric-switch-thumb" aria-hidden="true"></div>
+          <button class="metric-option active" type="button" role="tab" aria-selected="true" data-overview-metric="score">
+            <span>积分</span>
+          </button>
+          <button class="metric-option" type="button" role="tab" aria-selected="false" data-overview-metric="gift">
+            <span>小礼物</span>
+          </button>
+        </div>
 
-        <section class="section">
-          <h2 class="section-title">日历</h2>
-          <div class="card glass calendar-card">
-            <div class="calendar-head">
-              <button id="prevMonthBtn" class="small-icon pressable" type="button" aria-label="上个月">‹</button>
-              <div id="calendarMonth" class="calendar-month"></div>
-              <button id="nextMonthBtn" class="small-icon pressable" type="button" aria-label="下个月">›</button>
-            </div>
-
-            <div class="weekdays" aria-hidden="true">
-              <div class="weekday">日</div>
-              <div class="weekday">一</div>
-              <div class="weekday">二</div>
-              <div class="weekday">三</div>
-              <div class="weekday">四</div>
-              <div class="weekday">五</div>
-              <div class="weekday">六</div>
-            </div>
-
-            <div id="calendarGrid" class="calendar-grid"></div>
-
-            <div id="dayDetail" class="day-detail hidden">
-              <div id="dayDetailTitle" class="detail-title"></div>
-              <ul id="dayDetailList" class="log-list"></ul>
-            </div>
-          </div>
-        </section>
-
-        <section class="section">
-          <h2 class="section-title">记录</h2>
-          <div class="card glass">
-            <div id="recordSegments" class="segmented" aria-label="记录范围">
-              <button class="segment pressable active" type="button" data-record-range="week">本周</button>
-              <button class="segment pressable" type="button" data-record-range="month">本月</button>
-              <button class="segment pressable" type="button" data-record-range="all">全部</button>
-            </div>
-            <ul id="recordList" class="log-list"></ul>
-          </div>
-        </section>
-
-        <section class="section">
-          <h2 class="section-title">本月总结</h2>
-          <div class="card glass">
-            <div class="summary-grid">
-              <div class="metric">
-                <div class="metric-label">变更次数</div>
-                <div id="monthCount" class="metric-value">0</div>
+        <div id="scoreOverviewContent">
+          <section class="section">
+            <h2 class="section-title">趋势</h2>
+            <div class="card glass">
+              <div id="trendSegments" class="segmented" aria-label="趋势范围">
+                <button class="segment pressable active" type="button" data-range="7d">7天</button>
+                <button class="segment pressable" type="button" data-range="week">按周</button>
+                <button class="segment pressable" type="button" data-range="month">按月</button>
               </div>
-              <div class="metric">
-                <div class="metric-label">净变化</div>
-                <div id="monthNet" class="metric-value">0</div>
+              <div class="chart-wrap">
+                <canvas id="trendCanvas"></canvas>
+                <div id="chartEmpty" class="chart-empty" hidden>暂无数据</div>
+              </div>
+              <div id="chartCaption" class="chart-caption"></div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">日历</h2>
+            <div class="card glass calendar-card">
+              <div class="calendar-head">
+                <button id="prevMonthBtn" class="small-icon pressable" type="button" aria-label="上个月">‹</button>
+                <div id="calendarMonth" class="calendar-month"></div>
+                <button id="nextMonthBtn" class="small-icon pressable" type="button" aria-label="下个月">›</button>
+              </div>
+              <div class="weekdays" aria-hidden="true">
+                <div class="weekday">日</div><div class="weekday">一</div><div class="weekday">二</div>
+                <div class="weekday">三</div><div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div>
+              </div>
+              <div id="calendarGrid" class="calendar-grid"></div>
+              <div id="dayDetail" class="day-detail hidden">
+                <div id="dayDetailTitle" class="detail-title"></div>
+                <ul id="dayDetailList" class="log-list"></ul>
               </div>
             </div>
-            <div id="reasonSummary" class="reason-table"></div>
-          </div>
-        </section>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">记录</h2>
+            <div class="card glass">
+              <div id="recordSegments" class="segmented" aria-label="记录范围">
+                <button class="segment pressable active" type="button" data-record-range="week">本周</button>
+                <button class="segment pressable" type="button" data-record-range="month">本月</button>
+                <button class="segment pressable" type="button" data-record-range="all">全部</button>
+              </div>
+              <ul id="recordList" class="log-list"></ul>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">本月总结</h2>
+            <div class="card glass">
+              <div class="summary-grid">
+                <div class="metric"><div class="metric-label">变更次数</div><div id="monthCount" class="metric-value">0</div></div>
+                <div class="metric"><div class="metric-label">净变化</div><div id="monthNet" class="metric-value">0</div></div>
+              </div>
+              <div id="reasonSummary" class="reason-table"></div>
+            </div>
+          </section>
+        </div>
+
+        <div id="giftOverviewContent" hidden>
+          <section class="section">
+            <h2 class="section-title">可用小礼物额度</h2>
+            <div class="card glass gift-overview-balance">
+              <div>
+                <div id="giftOverviewValue" class="gift-overview-value">0</div>
+                <div class="gift-overview-unit">当前可用额度</div>
+              </div>
+              <div class="gift-overview-unit">最低为 0</div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">额度记录</h2>
+            <div class="card glass">
+              <div id="giftRecordSegments" class="segmented" aria-label="小礼物记录范围">
+                <button class="segment pressable active" type="button" data-gift-record-range="week">本周</button>
+                <button class="segment pressable" type="button" data-gift-record-range="month">本月</button>
+                <button class="segment pressable" type="button" data-gift-record-range="all">全部</button>
+              </div>
+              <ul id="giftRecordList" class="log-list"></ul>
+            </div>
+          </section>
+        </div>
       </div>
     </section>
 
@@ -2004,7 +2401,7 @@
             </div>
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.4.3</span>
+              <span class="settings-value">1.5.0</span>
             </div>
             <button id="openReleaseNotesBtn" class="settings-row pressable" type="button">
               <span>版本与优化</span>
@@ -2017,15 +2414,30 @@
 
     <!-- Version / optimization info -->
     <div id="releaseNotesLayer" class="modal-layer" aria-hidden="true">
-      <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="releaseNotesTitle">
-        <div class="grabber"></div>
-        <div id="releaseNotesTitle" class="sheet-title">版本与优化</div>
-        <div class="sheet-subtitle">保持功能克制，只记录真正影响体验的更新。</div>
+      <div class="unified-sheet" role="dialog" aria-modal="true" aria-labelledby="releaseNotesTitle">
+        <header class="unified-sheet-header">
+          <div class="grabber" aria-hidden="true"></div>
+          <div id="releaseNotesTitle" class="sheet-title">版本与优化</div>
+        </header>
+        <div class="unified-sheet-body">
+          <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
+          <div class="release-block">
+            <div class="release-head"><strong>1.5.0</strong><span>当前版本</span></div>
+            <div class="release-date">2026.08.31</div>
+            <ul class="release-list">
+              <li>App 正式更名为“积分小本本”，加入主屏幕图标与 PWA 配置。</li>
+              <li>首页新增顶部 App 横幅与“当前分数 / 小礼物额度”弹性切换。</li>
+              <li>新增小礼物额度：管理员 ±1、最低 0、独立历史与重置自动结算。</li>
+              <li>重置规则：10 分起每满 10 分 +1 额度；积分 ≤0 时清空额度前二次确认。</li>
+              <li>记录列表、原因输入和确认弹窗统一为同一套 Liquid Glass 设计语言。</li>
+              <li>拖拽和切换动画采用 transform + requestAnimationFrame 的高刷新率路径。</li>
+            </ul>
+          </div>
 
-        <div class="release-block">
+          <div class="release-block">
           <div class="release-head">
             <strong>1.4.3</strong>
-            <span>当前版本</span>
+            <span>上一版本</span>
           </div>
           <div class="release-date">2026.08.31</div>
           <ul class="release-list">
@@ -2117,7 +2529,9 @@
           </ul>
         </div>
 
-        <button id="closeReleaseNotesBtn" class="sheet-button primary pressable full-width" type="button">完成</button>
+        
+          <button id="closeReleaseNotesBtn" class="sheet-button primary pressable full-width" type="button">完成</button>
+        </div>
       </div>
     </div>
 
@@ -2147,32 +2561,35 @@
       </div>
     </div>
 
-    <!-- Change score sheet -->
+    <!-- Score / gift change sheet -->
     <div id="changeLayer" class="modal-layer" aria-hidden="true">
-      <div class="sheet glass" role="dialog" aria-modal="true" aria-labelledby="changeTitle">
-        <div class="grabber"></div>
-        <div id="changeTitle" class="sheet-title">积分变更</div>
-        <div id="changeSubtitle" class="sheet-subtitle"></div>
-
-        <textarea id="reasonInput" class="field" maxlength="500" placeholder="原因（可留空）"></textarea>
-
-        <div class="sheet-actions">
-          <button id="cancelChangeBtn" class="sheet-button pressable" type="button">取消</button>
-          <button id="confirmChangeBtn" class="sheet-button primary pressable" type="button">确认</button>
+      <div class="unified-sheet" role="dialog" aria-modal="true" aria-labelledby="changeTitle">
+        <header class="unified-sheet-header">
+          <div class="grabber" aria-hidden="true"></div>
+          <div id="changeTitle" class="sheet-title">变更</div>
+        </header>
+        <div class="unified-sheet-body">
+          <div id="changeSubtitle" class="sheet-subtitle" style="text-align:center"></div>
+          <textarea id="reasonInput" class="field" maxlength="500" placeholder="原因（可留空）"></textarea>
+          <div class="sheet-actions">
+            <button id="cancelChangeBtn" class="sheet-button pressable" type="button">取消</button>
+            <button id="confirmChangeBtn" class="sheet-button primary pressable" type="button">确认</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Reset alert -->
+    <!-- Reset / gift settlement alert -->
     <div id="resetLayer" class="modal-layer alert-layer" aria-hidden="true">
-      <div class="alert glass" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle">
+      <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle">
         <div class="alert-content">
-          <div id="resetTitle" class="alert-title">重置积分？</div>
-          <div class="alert-message">当前分数将恢复为 5。历史记录不会删除，并会新增一条“重置积分”流水。</div>
+          <div id="resetTitle" class="alert-title">重置积分</div>
+          <div id="resetMessage" class="alert-message"></div>
         </div>
-        <div class="alert-actions">
+        <div id="resetActions" class="alert-actions vertical">
+          <button id="resetAutoBtn" class="alert-button primary-action pressable" type="button">自动结算并重置</button>
+          <button id="resetOnlyBtn" class="alert-button pressable" type="button">仅重置积分</button>
           <button id="cancelResetBtn" class="alert-button pressable" type="button">取消</button>
-          <button id="confirmResetBtn" class="alert-button destructive pressable" type="button">重置</button>
         </div>
       </div>
     </div>
@@ -2211,6 +2628,8 @@
       const els = {
         score: $("#scoreValue"),
         scoreRefreshBtn: $("#scoreRefreshBtn"),
+        metricSwitch: $("#metricSwitch"),
+        metricEyebrow: $("#metricEyebrow"),
         adminControls: $("#adminControls"),
         settingsBtn: $("#settingsBtn"),
         overviewBtn: $("#overviewBtn"),
@@ -2218,6 +2637,9 @@
         overviewBackdrop: $(".overview-backdrop"),
         overviewShell: $(".overview-shell"),
         overviewGrabberHitbox: $("#overviewGrabberHitbox"),
+        overviewMetricSwitch: $("#overviewMetricSwitch"),
+        scoreOverviewContent: $("#scoreOverviewContent"),
+        giftOverviewContent: $("#giftOverviewContent"),
 
         settingsLayer: $("#settingsLayer"),
         settingsSheet: $("#settingsSheet"),
@@ -2251,8 +2673,11 @@
         confirmChangeBtn: $("#confirmChangeBtn"),
 
         resetLayer: $("#resetLayer"),
+        resetTitle: $("#resetTitle"),
+        resetMessage: $("#resetMessage"),
+        resetAutoBtn: $("#resetAutoBtn"),
+        resetOnlyBtn: $("#resetOnlyBtn"),
         cancelResetBtn: $("#cancelResetBtn"),
-        confirmResetBtn: $("#confirmResetBtn"),
 
         trendSegments: $("#trendSegments"),
         trendCanvas: $("#trendCanvas"),
@@ -2274,20 +2699,31 @@
         monthNet: $("#monthNet"),
         reasonSummary: $("#reasonSummary"),
 
+        giftOverviewValue: $("#giftOverviewValue"),
+        giftRecordSegments: $("#giftRecordSegments"),
+        giftRecordList: $("#giftRecordList"),
+
         toast: $("#toast")
       };
 
       const state = {
         score: null,
+        giftBalance: 0,
         updatedAt: null,
+        giftUpdatedAt: null,
         session: null,
         isAdmin: false,
+        activeMetric: "score",
+        overviewMetric: "score",
+        changeTarget: "score",
         changeDelta: null,
         trendRange: "7d",
         recordRange: "week",
+        giftRecordRange: "week",
         calendarDate: startOfMonth(new Date()),
         selectedDayKey: null,
         overviewLogs: [],
+        giftLogs: [],
         overviewLoadedAt: 0,
         refreshInFlight: false,
         lastRefreshAt: null,
@@ -2483,15 +2919,48 @@
         }
       }
 
-      function renderScore({ animate = false } = {}) {
-        if (typeof state.score === "number") {
-          els.score.textContent = state.score;
-          els.score.classList.remove("loading");
-          if (animate) {
-            els.score.classList.remove("score-pop");
-            void els.score.offsetWidth;
-            els.score.classList.add("score-pop");
-          }
+      function activeMetricValue() {
+        return state.activeMetric === "gift" ? state.giftBalance : state.score;
+      }
+
+      function renderMetricSwitch() {
+        const gift = state.activeMetric === "gift";
+        els.metricSwitch.classList.toggle("gift-active", gift);
+        els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
+          const active = btn.dataset.metric === state.activeMetric;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-selected", String(active));
+        });
+        els.metricEyebrow.textContent = gift ? "可用小礼物额度" : "当前分数";
+      }
+
+      function renderPrimaryMetric({ animate = false } = {}) {
+        const value = activeMetricValue();
+        if (typeof value !== "number") return;
+        els.score.textContent = value;
+        els.score.classList.remove("loading");
+        renderMetricSwitch();
+        if (animate) {
+          els.score.classList.remove("metric-changing", "score-pop");
+          void els.score.offsetWidth;
+          els.score.classList.add("metric-changing");
+        }
+      }
+
+      function renderOverviewMetricSwitch() {
+        const gift = state.overviewMetric === "gift";
+        els.overviewMetricSwitch.classList.toggle("gift-active", gift);
+        els.overviewMetricSwitch.querySelectorAll("[data-overview-metric]").forEach(btn => {
+          const active = btn.dataset.overviewMetric === state.overviewMetric;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-selected", String(active));
+        });
+        els.scoreOverviewContent.hidden = gift;
+        els.giftOverviewContent.hidden = !gift;
+        if (gift) {
+          renderGiftOverview();
+        } else {
+          requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
         }
       }
 
@@ -2508,26 +2977,29 @@
       }
 
       // -------------------- Supabase read/auth --------------------
-      async function loadScore({ silent = false } = {}) {
+      async function loadAppState({ silent = false } = {}) {
         if (state.refreshInFlight) return;
         state.refreshInFlight = true;
 
         try {
-          const { data, error } = await db.rpc("points_get_state");
+          const { data, error } = await db.rpc("points_get_app_state");
           if (error) throw error;
 
           const row = Array.isArray(data) ? data[0] : data;
-          if (!row || typeof row.score !== "number") {
-            throw new Error("未读取到积分数据");
+          if (!row || typeof row.score !== "number" || typeof row.gift_balance !== "number") {
+            throw new Error("未读取到完整数据");
           }
 
           state.score = row.score;
-          state.updatedAt = row.updated_at;
-          renderScore();
+          state.giftBalance = row.gift_balance;
+          state.updatedAt = row.score_updated_at;
+          state.giftUpdatedAt = row.gift_updated_at;
+          renderPrimaryMetric();
+          if (els.giftOverviewValue) els.giftOverviewValue.textContent = state.giftBalance;
           markRefreshed();
         } catch (err) {
-          console.error("loadScore:", err);
-          if (!silent) showToast("读取积分失败");
+          console.error("loadAppState:", err);
+          if (!silent) showToast("读取数据失败");
         } finally {
           state.refreshInFlight = false;
         }
@@ -2616,16 +3088,29 @@
         }
       }
 
-      // -------------------- Score writes --------------------
+      // -------------------- Score / gift writes --------------------
       function openChange(delta) {
         if (!state.isAdmin) {
           showToast("需要管理员权限");
           return;
         }
 
+        state.changeTarget = state.activeMetric;
         state.changeDelta = delta;
-        els.changeTitle.textContent = delta > 0 ? "增加 1 分" : "减少 1 分";
-        els.changeSubtitle.textContent = `当前 ${state.score ?? "—"} 分，确认后将${delta > 0 ? "增加" : "减少"} 1 分。原因可以不填写。`;
+
+        if (state.changeTarget === "gift" && delta < 0 && state.giftBalance <= 0) {
+          showToast("当前没有可用小礼物额度");
+          return;
+        }
+
+        if (state.changeTarget === "gift") {
+          els.changeTitle.textContent = delta > 0 ? "增加 1 个小礼物额度" : "减少 1 个小礼物额度";
+          els.changeSubtitle.textContent = `当前额度 ${state.giftBalance}，原因可以不填写。`;
+        } else {
+          els.changeTitle.textContent = delta > 0 ? "增加 1 分" : "减少 1 分";
+          els.changeSubtitle.textContent = `当前 ${state.score ?? "—"} 分，原因可以不填写。`;
+        }
+
         els.reasonInput.value = "";
         setLayer(els.changeLayer, true);
         setTimeout(() => els.reasonInput.focus(), 280);
@@ -2634,75 +3119,122 @@
       async function confirmChange() {
         const delta = state.changeDelta;
         if (delta !== 1 && delta !== -1) return;
-
         setBusy(els.confirmChangeBtn, true);
 
         try {
           const reason = els.reasonInput.value.trim();
-          const { data, error } = await db.rpc("points_change_score", {
+          const isGift = state.changeTarget === "gift";
+          const rpc = isGift ? "points_change_gift" : "points_change_score";
+          const { data, error } = await db.rpc(rpc, {
             p_delta: delta,
             p_reason: reason === "" ? null : reason
           });
-
           if (error) throw error;
 
           const row = Array.isArray(data) ? data[0] : data;
-          if (row && typeof row.score === "number") {
-            state.score = row.score;
-            state.updatedAt = row.updated_at;
+          if (isGift) {
+            if (row && typeof row.gift_balance === "number") {
+              state.giftBalance = row.gift_balance;
+              state.giftUpdatedAt = row.updated_at;
+            } else {
+              await loadAppState({ silent: true });
+            }
           } else {
-            await loadScore({ silent: true });
+            if (row && typeof row.score === "number") {
+              state.score = row.score;
+              state.updatedAt = row.updated_at;
+            } else {
+              await loadAppState({ silent: true });
+            }
           }
 
-          renderScore({ animate: true });
+          renderPrimaryMetric({ animate: true });
           markRefreshed();
           setLayer(els.changeLayer, false);
           state.overviewLoadedAt = 0;
           vibrate(14);
-          showToast(delta > 0 ? "已增加 1 分" : "已减少 1 分");
+          showToast(isGift
+            ? (delta > 0 ? "已增加 1 个小礼物额度" : "已减少 1 个小礼物额度")
+            : (delta > 0 ? "已增加 1 分" : "已减少 1 分"));
 
-          if (els.overview.classList.contains("open")) {
-            await loadOverviewData(true);
-          }
+          if (els.overview.classList.contains("open")) await loadOverviewData(true);
         } catch (err) {
           console.error("confirmChange:", err);
-          if (String(err?.message || "").includes("Admin permission required")) {
+          const message = String(err?.message || "");
+          if (message.includes("Admin permission required")) {
             await refreshAuthState();
             showToast("管理员权限已失效");
+          } else if (message.includes("Gift balance cannot go below zero")) {
+            showToast("小礼物额度不能低于 0");
           } else {
-            showToast("积分修改失败");
+            showToast(state.changeTarget === "gift" ? "额度修改失败" : "积分修改失败");
           }
         } finally {
           setBusy(els.confirmChangeBtn, false);
         }
       }
 
-      async function confirmReset() {
-        setBusy(els.confirmResetBtn, true);
+      function openResetSettlementPrompt() {
+        els.resetTitle.textContent = "重置积分";
+        const projected = state.score >= 10 ? Math.floor(state.score / 10) : 0;
+        els.resetMessage.textContent = state.score >= 10
+          ? `当前 ${state.score} 分。自动结算将增加 ${projected} 个小礼物额度，然后积分恢复为 5。`
+          : state.score <= 0
+            ? `当前 ${state.score} 分。选择自动结算时，可用小礼物额度将按规则清空。`
+            : `当前 ${state.score} 分，不足 10 分。自动结算不会增加小礼物额度，积分将恢复为 5。`;
+        els.resetAutoBtn.textContent = "自动结算并重置";
+        els.resetOnlyBtn.hidden = false;
+        setLayer(els.resetLayer, true);
+      }
+
+      function openGiftClearConfirmation() {
+        els.resetTitle.textContent = "确认清空小礼物额度？";
+        els.resetMessage.textContent = `按照当前规则，积分为 ${state.score} 时自动结算会将当前 ${state.giftBalance} 个小礼物额度清空。是否清空并继续重置积分？`;
+        els.resetAutoBtn.textContent = "清空并重置";
+        els.resetOnlyBtn.hidden = true;
+      }
+
+      async function performReset({ autoSettle, confirmClear = false }) {
+        setBusy(els.resetAutoBtn, true);
+        setBusy(els.resetOnlyBtn, true);
 
         try {
-          const { data, error } = await db.rpc("points_reset_score");
+          const { data, error } = await db.rpc("points_reset_with_gift", {
+            p_auto_settle: autoSettle,
+            p_confirm_clear: confirmClear
+          });
           if (error) throw error;
 
           const row = Array.isArray(data) ? data[0] : data;
-          state.score = row?.score ?? 5;
-          state.updatedAt = row?.updated_at ?? new Date().toISOString();
-          renderScore({ animate: true });
+          state.score = Number(row?.score ?? 5);
+          state.giftBalance = Number(row?.gift_balance ?? state.giftBalance ?? 0);
+          state.updatedAt = row?.score_updated_at ?? new Date().toISOString();
+          state.giftUpdatedAt = row?.gift_updated_at ?? state.giftUpdatedAt;
+          renderPrimaryMetric({ animate: true });
           markRefreshed();
-
           setLayer(els.resetLayer, false);
+          els.resetOnlyBtn.hidden = false;
           state.overviewLoadedAt = 0;
           vibrate(18);
-          showToast("积分已重置为 5");
 
-          if (els.overview.classList.contains("open")) {
-            await loadOverviewData(true);
-          }
+          const giftDelta = Number(row?.gift_delta ?? 0);
+          const giftCleared = row?.gift_cleared === true;
+          if (giftCleared) showToast("积分已重置，小礼物额度已清空");
+          else if (giftDelta > 0) showToast(`积分已重置，小礼物额度 +${giftDelta}`);
+          else showToast("积分已重置为 5");
+
+          if (els.overview.classList.contains("open")) await loadOverviewData(true);
         } catch (err) {
-          console.error("confirmReset:", err);
-          showToast("重置失败");
+          console.error("performReset:", err);
+          const message = String(err?.message || "");
+          if (message.includes("Gift clear confirmation required")) {
+            openGiftClearConfirmation();
+          } else {
+            showToast("重置失败");
+          }
         } finally {
-          setBusy(els.confirmResetBtn, false);
+          setBusy(els.resetAutoBtn, false);
+          setBusy(els.resetOnlyBtn, false);
         }
       }
 
@@ -2726,18 +3258,16 @@
           return;
         }
 
-        // Load the complete history (up to the RPC safety limit) so
-        // “全部”、任意月份日历和长期趋势都基于同一份真实数据。
         try {
-          const { data, error } = await db.rpc("points_get_logs", {
-            p_from: null,
-            p_to: null,
-            p_limit: 10000
-          });
+          const [scoreRes, giftRes] = await Promise.all([
+            db.rpc("points_get_logs", { p_from: null, p_to: null, p_limit: 10000 }),
+            db.rpc("points_get_gift_logs", { p_from: null, p_to: null, p_limit: 10000 })
+          ]);
+          if (scoreRes.error) throw scoreRes.error;
+          if (giftRes.error) throw giftRes.error;
 
-          if (error) throw error;
-
-          state.overviewLogs = Array.isArray(data) ? data : [];
+          state.overviewLogs = Array.isArray(scoreRes.data) ? scoreRes.data : [];
+          state.giftLogs = Array.isArray(giftRes.data) ? giftRes.data : [];
           state.overviewLoadedAt = Date.now();
           markRefreshed();
           renderOverview();
@@ -2766,6 +3296,8 @@
         renderCalendar();
         renderRecords();
         renderMonthSummary();
+        renderGiftOverview();
+        renderOverviewMetricSwitch();
       }
 
       // -------------------- Trend --------------------
@@ -3128,24 +3660,77 @@
         els.recordList.innerHTML = logs.map(log => logRowHTML(log, true)).join("");
       }
 
+      function movementIconHTML(delta) {
+        if (delta > 0) {
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6.5 10.5 12 5l5.5 5.5"/></svg>`;
+        }
+        if (delta < 0) {
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6.5 13.5 12 19l5.5-5.5"/></svg>`;
+        }
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>`;
+      }
+
       function logRowHTML(log, showDate) {
         const delta = Number(log.delta);
         const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
         const reason = String(log.reason ?? "").trim() || "未填写原因";
-        const actionMeta = log.action === "reset"
-          ? "重置"
-          : `${log.score_before} → ${log.score_after}`;
+        const actionMeta = log.action === "reset" ? "重置" : `${log.score_before} → ${log.score_after}`;
+        const timeMeta = `${showDate ? formatDateShort(log.created_at) + " · " : ""}${formatTime(log.created_at)} · ${actionMeta}`;
 
         return `
           <li class="log-row">
-            <div class="log-time">${escapeHTML(formatTime(log.created_at))}</div>
-            <div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div>
-            <div class="log-reason">
-              ${escapeHTML(reason)}
-              <span class="log-meta">${showDate ? escapeHTML(formatDateShort(log.created_at)) + " · " : ""}${escapeHTML(actionMeta)}</span>
+            <div class="log-icon ${deltaClass}">${movementIconHTML(delta)}</div>
+            <div class="log-copy">
+              <div class="log-reason">${escapeHTML(reason)}</div>
+              <span class="log-meta">${escapeHTML(timeMeta)}</span>
             </div>
-          </li>
-        `;
+            <div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div>
+          </li>`;
+      }
+
+      function giftLogsDescending() {
+        return [...state.giftLogs].sort((a,b) => {
+          const t = new Date(b.created_at) - new Date(a.created_at);
+          return t || Number(b.id) - Number(a.id);
+        });
+      }
+
+      function giftRecordRangeStart() {
+        const now = new Date();
+        if (state.giftRecordRange === "week") return startOfWeekMonday(now);
+        if (state.giftRecordRange === "month") return startOfMonth(now);
+        return null;
+      }
+
+      function giftLogRowHTML(log) {
+        const delta = Number(log.delta);
+        const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
+        const reason = String(log.reason ?? "").trim() || "未填写原因";
+        const actionMeta = log.action === "settlement_add"
+          ? "积分重置自动结算"
+          : log.action === "settlement_clear"
+            ? "自动结算 · 额度清空"
+            : `${log.balance_before} → ${log.balance_after}`;
+        const meta = `${formatDateShort(log.created_at)} · ${formatTime(log.created_at)} · ${actionMeta}`;
+        return `
+          <li class="log-row">
+            <div class="log-icon ${deltaClass}">${movementIconHTML(delta)}</div>
+            <div class="log-copy">
+              <div class="log-reason">${escapeHTML(reason)}</div>
+              <span class="log-meta">${escapeHTML(meta)}</span>
+            </div>
+            <div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div>
+          </li>`;
+      }
+
+      function renderGiftOverview() {
+        if (els.giftOverviewValue) els.giftOverviewValue.textContent = state.giftBalance ?? 0;
+        const start = giftRecordRangeStart();
+        let logs = giftLogsDescending();
+        if (start) logs = logs.filter(l => new Date(l.created_at) >= start);
+        els.giftRecordList.innerHTML = logs.length
+          ? logs.map(giftLogRowHTML).join("")
+          : `<li class="empty-state">暂无小礼物额度记录</li>`;
       }
 
       // -------------------- Monthly summary --------------------
@@ -3249,15 +3834,20 @@
         // Only the grabber may move/close the entire sheet.
         if (state.overviewMode === "full" && !startedOnHandle) return;
 
+        const shellHeight = els.overviewShell.getBoundingClientRect().height;
         overviewDrag = {
           pointerId: e.pointerId,
           startY: e.clientY,
           lastY: e.clientY,
+          pendingY: e.clientY,
           startTime: performance.now(),
           lastTime: performance.now(),
           startedOnHandle,
           startMode: state.overviewMode,
-          dragging: false
+          shellHeight,
+          peekY: Math.max(0, shellHeight - OVERVIEW_PEEK_HEIGHT),
+          dragging: false,
+          raf: 0
         };
 
         try { els.overviewShell.setPointerCapture(e.pointerId); } catch (_) {}
@@ -3266,57 +3856,51 @@
       function moveOverviewDrag(e) {
         if (!overviewDrag || e.pointerId !== overviewDrag.pointerId) return;
 
-        const now = performance.now();
+        overviewDrag.pendingY = e.clientY;
         const dy = e.clientY - overviewDrag.startY;
-        const absDy = Math.abs(dy);
+        if (!overviewDrag.dragging && Math.abs(dy) < 7) return;
 
-        if (!overviewDrag.dragging && absDy < 7) return;
-
-        const upwardFromPeek =
-          overviewDrag.startMode === "peek" && dy < 0;
-
-        const downwardFromHandle =
-          overviewDrag.startedOnHandle && dy > 0;
-
+        const upwardFromPeek = overviewDrag.startMode === "peek" && dy < 0;
+        const downwardFromHandle = overviewDrag.startedOnHandle && dy > 0;
         if (!upwardFromPeek && !downwardFromHandle) return;
 
         overviewDrag.dragging = true;
         els.overview.classList.add("dragging");
-
-        const shellHeight = els.overviewShell.getBoundingClientRect().height;
-        let translateY = 0;
-
-        if (overviewDrag.startMode === "peek") {
-          const peekY = overviewPeekTranslate();
-
-          if (dy < 0) {
-            // 1:1 upward tracking, with slight resistance near the fully-open stop.
-            const raw = peekY + dy;
-            translateY = raw < 0 ? raw * .18 : raw;
-          } else {
-            // Only the handle is allowed to drag the peek sheet downward.
-            const raw = peekY + dy;
-            translateY = Math.min(shellHeight, raw);
-          }
-        } else {
-          // Full mode: handle downward closes directly rather than stepping through peek.
-          translateY = dy > 0
-            ? Math.min(shellHeight, dy * .96)
-            : dy * .14;
-        }
-
-        els.overviewShell.style.transform =
-          `translate(-50%, ${translateY}px)`;
-
-        overviewDrag.lastY = e.clientY;
-        overviewDrag.lastTime = now;
         e.preventDefault();
+
+        if (overviewDrag.raf) return;
+        overviewDrag.raf = requestAnimationFrame(() => {
+          if (!overviewDrag) return;
+          overviewDrag.raf = 0;
+          const currentY = overviewDrag.pendingY;
+          const dragDy = currentY - overviewDrag.startY;
+          const shellHeight = overviewDrag.shellHeight;
+          let translateY = 0;
+
+          if (overviewDrag.startMode === "peek") {
+            const peekY = overviewDrag.peekY;
+            if (dragDy < 0) {
+              const raw = peekY + dragDy;
+              translateY = raw < 0 ? raw * .18 : raw;
+            } else {
+              const raw = peekY + dragDy;
+              translateY = Math.min(shellHeight, raw);
+            }
+          } else {
+            translateY = dragDy > 0 ? Math.min(shellHeight, dragDy * .96) : dragDy * .14;
+          }
+
+          els.overviewShell.style.transform = `translate3d(-50%, ${translateY}px, 0)`;
+          overviewDrag.lastY = currentY;
+          overviewDrag.lastTime = performance.now();
+        });
       }
 
       function endOverviewDrag(e) {
         if (!overviewDrag || e.pointerId !== overviewDrag.pointerId) return;
 
         const drag = overviewDrag;
+        if (drag.raf) cancelAnimationFrame(drag.raf);
         overviewDrag = null;
 
         try { els.overviewShell.releasePointerCapture(e.pointerId); } catch (_) {}
@@ -3370,7 +3954,10 @@
           pointerId: e.pointerId,
           startY: e.clientY,
           startTime: performance.now(),
-          dragging: false
+          pendingY: e.clientY,
+          sheetHeight: els.settingsSheet.getBoundingClientRect().height,
+          dragging: false,
+          raf: 0
         };
 
         try { els.settingsSheet.setPointerCapture(e.pointerId); } catch (_) {}
@@ -3378,25 +3965,30 @@
 
       function moveSettingsDrag(e) {
         if (!settingsDrag || e.pointerId !== settingsDrag.pointerId) return;
-
         const dy = e.clientY - settingsDrag.startY;
         if (!settingsDrag.dragging && Math.abs(dy) < 7) return;
         if (dy <= 0) return;
 
+        settingsDrag.pendingY = e.clientY;
         settingsDrag.dragging = true;
         els.settingsLayer.classList.add("dragging");
-
-        const sheetHeight = els.settingsSheet.getBoundingClientRect().height;
-        const translateY = Math.min(sheetHeight, dy * .96);
-        els.settingsSheet.style.transform = `translateY(${translateY}px)`;
-
         e.preventDefault();
+
+        if (settingsDrag.raf) return;
+        settingsDrag.raf = requestAnimationFrame(() => {
+          if (!settingsDrag) return;
+          settingsDrag.raf = 0;
+          const dragDy = settingsDrag.pendingY - settingsDrag.startY;
+          const translateY = Math.min(settingsDrag.sheetHeight, dragDy * .96);
+          els.settingsSheet.style.transform = `translate3d(0, ${translateY}px, 0)`;
+        });
       }
 
       function endSettingsDrag(e) {
         if (!settingsDrag || e.pointerId !== settingsDrag.pointerId) return;
 
         const drag = settingsDrag;
+        if (drag.raf) cancelAnimationFrame(drag.raf);
         settingsDrag = null;
 
         try { els.settingsSheet.releasePointerCapture(e.pointerId); } catch (_) {}
@@ -3429,7 +4021,10 @@
           pointerId: e.pointerId,
           startY: e.clientY,
           startTime: performance.now(),
-          dragging: false
+          pendingY: e.clientY,
+          sheetHeight: els.loginSheet.getBoundingClientRect().height,
+          dragging: false,
+          raf: 0
         };
 
         try { els.loginSheet.setPointerCapture(e.pointerId); } catch (_) {}
@@ -3437,25 +4032,30 @@
 
       function moveLoginDrag(e) {
         if (!loginDrag || e.pointerId !== loginDrag.pointerId) return;
-
         const dy = e.clientY - loginDrag.startY;
         if (!loginDrag.dragging && Math.abs(dy) < 7) return;
         if (dy <= 0) return;
 
+        loginDrag.pendingY = e.clientY;
         loginDrag.dragging = true;
         els.loginLayer.classList.add("dragging");
-
-        const sheetHeight = els.loginSheet.getBoundingClientRect().height;
-        const translateY = Math.min(sheetHeight, dy * .96);
-        els.loginSheet.style.transform = `translateY(${translateY}px)`;
-
         e.preventDefault();
+
+        if (loginDrag.raf) return;
+        loginDrag.raf = requestAnimationFrame(() => {
+          if (!loginDrag) return;
+          loginDrag.raf = 0;
+          const dragDy = loginDrag.pendingY - loginDrag.startY;
+          const translateY = Math.min(loginDrag.sheetHeight, dragDy * .96);
+          els.loginSheet.style.transform = `translate3d(0, ${translateY}px, 0)`;
+        });
       }
 
       function endLoginDrag(e) {
         if (!loginDrag || e.pointerId !== loginDrag.pointerId) return;
 
         const drag = loginDrag;
+        if (drag.raf) cancelAnimationFrame(drag.raf);
         loginDrag = null;
 
         try { els.loginSheet.releasePointerCapture(e.pointerId); } catch (_) {}
@@ -3545,43 +4145,69 @@
 
       els.logoutBtn.addEventListener("click", logout);
 
-      async function manualRefreshScore() {
+      async function manualRefreshApp() {
         if (state.refreshInFlight) return;
         vibrate(10);
         els.scoreRefreshBtn.classList.add("refreshing");
         try {
-          await loadScore({ silent: false });
-          showToast("已同步最新分数");
+          await loadAppState({ silent: false });
+          showToast("已同步最新数据");
         } finally {
           setTimeout(() => els.scoreRefreshBtn.classList.remove("refreshing"), 650);
         }
       }
 
-      els.scoreRefreshBtn.addEventListener("click", manualRefreshScore);
+      els.scoreRefreshBtn.addEventListener("click", manualRefreshApp);
       els.scoreRefreshBtn.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          manualRefreshScore();
+          manualRefreshApp();
         }
       });
 
-      // Desktop/fine-pointer: use the supplied reference's original 3D coin tilt.
-      // Touch/iPhone does not request orientation permission and stays frontal.
+      els.metricSwitch.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-metric]");
+        if (!btn || btn.dataset.metric === state.activeMetric) return;
+        state.activeMetric = btn.dataset.metric;
+        vibrate(7);
+        renderPrimaryMetric({ animate: true });
+      });
+
+      els.overviewMetricSwitch.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-overview-metric]");
+        if (!btn || btn.dataset.overviewMetric === state.overviewMetric) return;
+        state.overviewMetric = btn.dataset.overviewMetric;
+        vibrate(6);
+        renderOverviewMetricSwitch();
+      });
+
+      // Desktop/fine-pointer 3D coin tilt. iPhone/touch stays frontal.
       const scoreLens = els.scoreRefreshBtn.querySelector(".score-lens");
       if (scoreLens && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        let lensRect = null;
+        let tiltRAF = 0;
+        let pendingPointer = null;
+        const updateLensRect = () => { lensRect = scoreLens.getBoundingClientRect(); };
+        updateLensRect();
+        window.addEventListener("resize", updateLensRect, { passive: true });
+        scoreLens.addEventListener("pointerenter", updateLensRect, { passive: true });
         window.addEventListener("pointermove", (e) => {
-          const rect = scoreLens.getBoundingClientRect();
-          const centerX = rect.left + rect.width / 2;
-          const centerY = rect.top + rect.height / 2;
-          const moveX = (e.clientX - centerX) / 25;
-          const moveY = (e.clientY - centerY) / 25;
-          scoreLens.style.transform =
-            `perspective(600px) rotateX(${-moveY}deg) rotateY(${moveX}deg)`;
-        });
-
+          pendingPointer = e;
+          if (tiltRAF) return;
+          tiltRAF = requestAnimationFrame(() => {
+            tiltRAF = 0;
+            if (!pendingPointer || !lensRect) return;
+            const centerX = lensRect.left + lensRect.width / 2;
+            const centerY = lensRect.top + lensRect.height / 2;
+            const moveX = (pendingPointer.clientX - centerX) / 25;
+            const moveY = (pendingPointer.clientY - centerY) / 25;
+            scoreLens.style.transform = `perspective(600px) rotateX(${-moveY}deg) rotateY(${moveX}deg)`;
+          });
+        }, { passive: true });
         window.addEventListener("blur", () => {
-          scoreLens.style.transform =
-            "perspective(600px) rotateX(0deg) rotateY(0deg)";
+          cancelAnimationFrame(tiltRAF);
+          tiltRAF = 0;
+          scoreLens.style.transform = "perspective(600px) rotateX(0deg) rotateY(0deg)";
         });
       }
 
@@ -3602,17 +4228,31 @@
 
       els.resetBtn.addEventListener("click", () => {
         setLayer(els.settingsLayer, false);
-        setLayer(els.resetLayer, true);
+        openResetSettlementPrompt();
       });
 
-      els.cancelResetBtn.addEventListener("click", () => setLayer(els.resetLayer, false));
-      els.resetLayer.addEventListener("click", (e) => {
-        if (e.target === els.resetLayer) setLayer(els.resetLayer, false);
+      els.cancelResetBtn.addEventListener("click", () => {
+        els.resetOnlyBtn.hidden = false;
+        setLayer(els.resetLayer, false);
       });
-      els.confirmResetBtn.addEventListener("click", confirmReset);
+      els.resetLayer.addEventListener("click", (e) => {
+        if (e.target === els.resetLayer) {
+          els.resetOnlyBtn.hidden = false;
+          setLayer(els.resetLayer, false);
+        }
+      });
+      els.resetOnlyBtn.addEventListener("click", () => performReset({ autoSettle: false }));
+      els.resetAutoBtn.addEventListener("click", () => {
+        if (state.score <= 0 && !els.resetOnlyBtn.hidden) {
+          openGiftClearConfirmation();
+          return;
+        }
+        performReset({ autoSettle: true, confirmClear: state.score <= 0 });
+      });
 
       els.overviewBtn.addEventListener("click", async () => {
         vibrate();
+        state.overviewMetric = state.activeMetric;
         openOverviewSheet();
 
         // Render immediately; network data fills in afterward.
@@ -3665,6 +4305,16 @@
         renderRecords();
       });
 
+      els.giftRecordSegments.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-gift-record-range]");
+        if (!btn) return;
+        state.giftRecordRange = btn.dataset.giftRecordRange;
+        els.giftRecordSegments.querySelectorAll(".segment").forEach(x =>
+          x.classList.toggle("active", x === btn)
+        );
+        renderGiftOverview();
+      });
+
       els.prevMonthBtn.addEventListener("click", () => {
         state.calendarDate = addMonths(state.calendarDate, -1);
         state.selectedDayKey = null;
@@ -3709,7 +4359,7 @@
 
       // -------------------- Boot --------------------
       async function scheduledDatabaseRefresh() {
-        await loadScore({ silent: true });
+        await loadAppState({ silent: true });
 
         if (els.overview.classList.contains("open")) {
           await loadOverviewData(true);
@@ -3721,7 +4371,7 @@
 
         // Opening the app always performs one immediate database read.
         await Promise.all([
-          loadScore(),
+          loadAppState(),
           refreshAuthState()
         ]);
 
