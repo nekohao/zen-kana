@@ -2252,6 +2252,30 @@
       transform: translate3d(0,0,0);
     }
 
+    .work-schedule-grabber-hitbox {
+      width: 100%;
+      min-height: 28px;
+      display: grid;
+      place-items: center;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .work-schedule-grabber-hitbox:active {
+      cursor: grabbing;
+    }
+
+    .work-schedule-grabber-hitbox .grabber {
+      margin: 0;
+    }
+
+    #workScheduleLayer.dragging .work-schedule-sheet,
+    #workScheduleOverviewLayer.dragging .work-schedule-sheet {
+      transition: none !important;
+    }
+
     .work-schedule-form {
       display: grid;
       gap: 13px;
@@ -2650,7 +2674,9 @@
     <div id="workScheduleLayer" class="modal-layer" aria-hidden="true">
       <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="workScheduleTitle">
         <header class="unified-sheet-header">
-          <div class="grabber" aria-hidden="true"></div>
+          <div id="workScheduleGrabberHitbox" class="work-schedule-grabber-hitbox" aria-label="下拉关闭排班登记">
+            <div class="grabber" aria-hidden="true"></div>
+          </div>
           <div id="workScheduleTitle" class="sheet-title">排班登记</div>
         </header>
         <div class="unified-sheet-body">
@@ -2690,7 +2716,9 @@
     <div id="workScheduleOverviewLayer" class="modal-layer" aria-hidden="true">
       <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="workScheduleOverviewTitle">
         <header class="unified-sheet-header">
-          <div class="grabber" aria-hidden="true"></div>
+          <div id="workScheduleOverviewGrabberHitbox" class="work-schedule-grabber-hitbox" aria-label="下拉关闭排班总览">
+            <div class="grabber" aria-hidden="true"></div>
+          </div>
           <div id="workScheduleOverviewTitle" class="sheet-title">排班总览</div>
         </header>
         <div class="unified-sheet-body">
@@ -4401,6 +4429,8 @@
         const scheduleEls = {
           openBtn: $("#openWorkScheduleBtn"),
           layer: $("#workScheduleLayer"),
+          sheet: $("#workScheduleLayer .work-schedule-sheet"),
+          grabberHitbox: $("#workScheduleGrabberHitbox"),
           date: $("#workScheduleDate"),
           startHour: $("#workScheduleStartHour"),
           endHour: $("#workScheduleEndHour"),
@@ -4408,6 +4438,8 @@
           cancelBtn: $("#cancelWorkScheduleBtn"),
           saveBtn: $("#saveWorkScheduleBtn"),
           overviewLayer: $("#workScheduleOverviewLayer"),
+          overviewSheet: $("#workScheduleOverviewLayer .work-schedule-sheet"),
+          overviewGrabberHitbox: $("#workScheduleOverviewGrabberHitbox"),
           list: $("#workScheduleList"),
           empty: $("#workScheduleEmpty"),
           backBtn: $("#backToWorkScheduleBtn"),
@@ -4420,6 +4452,83 @@
 
         let rowsById = new Map();
         let pendingDeleteId = null;
+
+        function bindPullDownClose({ layer, sheet, handle, onClose }) {
+          let drag = null;
+          let suppressClickUntil = 0;
+
+          function begin(e) {
+            if (!layer.classList.contains("open")) return;
+            if (!e.target.closest(".work-schedule-grabber-hitbox")) return;
+
+            drag = {
+              pointerId: e.pointerId,
+              startY: e.clientY,
+              startTime: performance.now(),
+              pendingY: e.clientY,
+              sheetHeight: sheet.getBoundingClientRect().height,
+              dragging: false,
+              raf: 0
+            };
+
+            try { sheet.setPointerCapture(e.pointerId); } catch (_) {}
+          }
+
+          function move(e) {
+            if (!drag || e.pointerId !== drag.pointerId) return;
+            const dy = e.clientY - drag.startY;
+            if (!drag.dragging && Math.abs(dy) < 7) return;
+            if (dy <= 0) return;
+
+            drag.pendingY = e.clientY;
+            drag.dragging = true;
+            layer.classList.add("dragging");
+            e.preventDefault();
+
+            if (drag.raf) return;
+            drag.raf = requestAnimationFrame(() => {
+              if (!drag) return;
+              drag.raf = 0;
+              const dragDy = drag.pendingY - drag.startY;
+              const translateY = Math.min(drag.sheetHeight, dragDy * .96);
+              sheet.style.transform = `translate3d(0, ${translateY}px, 0)`;
+            });
+          }
+
+          function end(e) {
+            if (!drag || e.pointerId !== drag.pointerId) return;
+
+            const finished = drag;
+            if (finished.raf) cancelAnimationFrame(finished.raf);
+            drag = null;
+
+            try { sheet.releasePointerCapture(e.pointerId); } catch (_) {}
+
+            layer.classList.remove("dragging");
+            sheet.style.transform = "";
+
+            if (!finished.dragging) return;
+            suppressClickUntil = performance.now() + 240;
+
+            const totalDy = e.clientY - finished.startY;
+            const dt = Math.max(1, performance.now() - finished.startTime);
+            const velocityY = totalDy / dt;
+
+            if (totalDy > 76 || velocityY > .42) onClose();
+          }
+
+          handle.addEventListener("pointerdown", begin);
+          sheet.addEventListener("pointermove", move, { passive: false });
+          sheet.addEventListener("pointerup", end);
+          sheet.addEventListener("pointercancel", end);
+
+          layer.addEventListener("click", (e) => {
+            if (performance.now() < suppressClickUntil) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }, true);
+        }
 
         function localDateKey(date = new Date()) {
           const y = date.getFullYear();
@@ -4658,6 +4767,20 @@
           const button = e.target.closest("[data-work-schedule-delete-id]");
           if (!button) return;
           requestDelete(button.dataset.workScheduleDeleteId);
+        });
+
+        bindPullDownClose({
+          layer: scheduleEls.layer,
+          sheet: scheduleEls.sheet,
+          handle: scheduleEls.grabberHitbox,
+          onClose: closeRegistration
+        });
+
+        bindPullDownClose({
+          layer: scheduleEls.overviewLayer,
+          sheet: scheduleEls.overviewSheet,
+          handle: scheduleEls.overviewGrabberHitbox,
+          onClose: closeOverview
         });
 
         scheduleEls.layer.addEventListener("click", (e) => {
