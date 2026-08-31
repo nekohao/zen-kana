@@ -58,11 +58,15 @@
   <style>
     :root {
       /* Light theme: only the background palette is borrowed from the supplied reference. */
-      --bg-0: #f4f5f9;
-      --bg-1: #f4f5f9;
-      --mesh-1: rgba(99, 102, 241, .15);
-      --mesh-2: rgba(236, 72, 153, .12);
-      --mesh-3: rgba(56, 189, 248, .15);
+      --bg-0: #fbf8fc;
+      --bg-1: #fffaf7;
+      --mesh-1: rgba(196, 181, 253, .22);
+      --mesh-2: rgba(251, 182, 206, .22);
+      --mesh-3: rgba(186, 230, 253, .20);
+      --cute-pink: #d987aa;
+      --cute-pink-soft: rgba(244, 184, 210, .20);
+      --cute-lilac-soft: rgba(205, 190, 255, .18);
+      --cute-peach-soft: rgba(255, 214, 185, .18);
 
       --ink: rgba(28, 28, 30, .96);
       --secondary: rgba(60, 60, 67, .58);
@@ -150,8 +154,31 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: transparent;
+      background:
+        radial-gradient(circle at 16% 12%, rgba(255,255,255,.86), transparent 30%),
+        radial-gradient(circle at 84% 22%, rgba(255,236,245,.44), transparent 30%),
+        radial-gradient(circle at 22% 82%, rgba(240,234,255,.40), transparent 32%),
+        linear-gradient(145deg, rgba(255,250,246,.36), rgba(255,255,255,.04) 48%, rgba(244,249,255,.30));
     }
+
+    .cute-doodle {
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+      user-select: none;
+      color: rgba(205, 137, 174, .20);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1;
+      filter: blur(.05px);
+      text-shadow: 0 4px 14px rgba(203,151,183,.08);
+      animation: cuteDoodleFloat 8s ease-in-out infinite;
+    }
+    .cute-doodle.d1 { top: 14%; left: 7%; font-size: 22px; transform: rotate(-12deg); }
+    .cute-doodle.d2 { top: 19%; right: 8%; font-size: 17px; animation-delay: -2.4s; }
+    .cute-doodle.d3 { top: 48%; left: 5%; font-size: 15px; color: rgba(147,162,222,.18); animation-delay: -4.6s; }
+    .cute-doodle.d4 { top: 54%; right: 7%; font-size: 23px; color: rgba(212,151,190,.17); animation-delay: -1.1s; }
+    .cute-doodle.d5 { bottom: 12%; left: 13%; font-size: 17px; color: rgba(169,150,218,.16); animation-delay: -5.2s; }
+    .cute-doodle.d6 { bottom: 15%; right: 13%; font-size: 18px; animation-delay: -3.2s; }
 
     .ambient {
       position: absolute;
@@ -1638,6 +1665,11 @@
       50% { transform: translate3d(-24px,30px,0) scale(.96); }
     }
 
+    @keyframes cuteDoodleFloat {
+      0%,100% { translate: 0 0; opacity: .76; }
+      50% { translate: 0 -7px; opacity: 1; }
+    }
+
     @keyframes lensFloat {
       0%,100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-5px) scale(1.006); }
@@ -1832,6 +1864,27 @@
       border-color: var(--hairline);
     }
 
+    .topbar {
+      border-color: rgba(255,255,255,.84);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.58), rgba(255,244,249,.27)),
+        var(--home-control-bg);
+      box-shadow: 0 12px 32px rgba(189, 139, 172, .09), inset 0 1px 0 rgba(255,255,255,.72);
+    }
+
+    .app-brand-title::after {
+      content: "  ♡";
+      color: rgba(213,126,165,.72);
+      font-size: 12px;
+      font-weight: 700;
+      vertical-align: 1px;
+    }
+
+    .topbar .icon-button {
+      background: rgba(255,255,255,.42);
+      border-color: rgba(230,205,220,.40);
+    }
+
     .hero {
       transform: translateY(-.8vh);
     }
@@ -1887,10 +1940,10 @@
       align-items: center;
       padding: 4px;
       border-radius: 15px;
-      background: rgba(118,118,128,.12);
-      border: 1px solid rgba(118,118,128,.07);
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.025);
-      margin-bottom: 16px;
+      background: rgba(255,255,255,.35);
+      border: 1px solid rgba(232,207,224,.48);
+      box-shadow: 0 8px 24px rgba(181,141,172,.07), inset 0 1px 1px rgba(255,255,255,.55);
+      margin-bottom: 14px;
       isolation: isolate;
     }
 
@@ -1908,9 +1961,9 @@
       height: calc(100% - 8px);
       border-radius: 12px;
       background:
-        linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,.04)),
+        linear-gradient(145deg, rgba(255,255,255,.76), rgba(244,239,255,.30)),
         var(--glass-fill-strong);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255,255,255,.82);
       box-shadow:
         0 4px 13px rgba(27,34,50,.10),
         inset 0 1px 0 rgba(255,255,255,.44);
@@ -1922,6 +1975,19 @@
 
     .metric-switch.gift-active .metric-switch-thumb {
       transform: translate3d(100%,0,0);
+    }
+
+    .metric-switch.gift-active .metric-switch-thumb {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.82), rgba(255,226,239,.44)),
+        rgba(255,255,255,.48);
+      box-shadow:
+        0 6px 18px rgba(220,137,173,.13),
+        inset 0 1px 0 rgba(255,255,255,.72);
+    }
+
+    .metric-switch.gift-active .metric-option.active {
+      color: #ae5f82;
     }
 
     .metric-option {
@@ -1958,6 +2024,86 @@
     .eyebrow {
       margin-bottom: 17px;
       transition: opacity .18s ease, transform .28s var(--ease-ios);
+    }
+
+    .reward-message {
+      width: min(92vw, 390px);
+      min-height: 0;
+      margin: 0 auto 15px;
+      padding: 8px 13px 9px;
+      border-radius: 18px;
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.44), rgba(255,239,247,.23)),
+        rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: 0 8px 24px rgba(205,143,176,.07), inset 0 1px 0 rgba(255,255,255,.58);
+      -webkit-backdrop-filter: blur(18px) saturate(145%);
+      backdrop-filter: blur(18px) saturate(145%);
+      animation: rewardMessageIn .38s var(--ease-ios) both;
+    }
+
+    .reward-message[hidden] { display: none !important; }
+
+    .reward-line-primary,
+    .reward-line-secondary {
+      display: block;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .reward-line-primary {
+      color: rgba(126,73,99,.92);
+      font-size: clamp(11px, 3.25vw, 13px);
+      line-height: 1.5;
+      font-weight: 680;
+      letter-spacing: -.012em;
+    }
+
+    .reward-line-secondary {
+      margin-top: 1px;
+      color: rgba(159,99,130,.76);
+      font-size: clamp(10.5px, 3.05vw, 12.5px);
+      line-height: 1.45;
+      font-weight: 610;
+    }
+
+    @keyframes rewardMessageIn {
+      from { opacity: 0; transform: translateY(5px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .home.gift-active .score-lens {
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.72), transparent 48%),
+        rgba(255,244,249,.52);
+      border-color: rgba(255,255,255,.92);
+      box-shadow:
+        0 24px 58px rgba(218,137,174,.14),
+        inset 0 2px 4px rgba(255,255,255,.88),
+        inset 0 -4px 14px rgba(215,135,173,.055);
+    }
+
+    .home.gift-active .score {
+      background: linear-gradient(180deg, #8e5572 18%, #c4789b 108%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .overview-button {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.62), rgba(255,240,248,.26)),
+        var(--home-control-bg);
+      border-color: rgba(255,255,255,.84);
+      box-shadow: 0 14px 34px rgba(190,139,171,.09), inset 0 1px 0 rgba(255,255,255,.62);
+    }
+
+    .overview-button::before {
+      content: "✦";
+      color: rgba(210,126,165,.74);
+      font-size: 11px;
+      line-height: 1;
     }
 
     .score.metric-changing {
@@ -2422,6 +2568,12 @@
     <div class="ambient a"></div>
     <div class="ambient b"></div>
     <div class="ambient c"></div>
+    <span class="cute-doodle d1">♡</span>
+    <span class="cute-doodle d2">✦</span>
+    <span class="cute-doodle d3">✧</span>
+    <span class="cute-doodle d4">♡</span>
+    <span class="cute-doodle d5">✦</span>
+    <span class="cute-doodle d6">✧</span>
   </div>
 
   <main class="app">
@@ -2469,7 +2621,7 @@
             <span>小礼物额度</span>
           </button>
         </div>
-        <div id="metricEyebrow" class="eyebrow">当前分数</div>
+        <div id="metricEyebrow" class="eyebrow reward-message" aria-live="polite" hidden></div>
 
         <div id="scoreRefreshBtn" class="score-lens-wrap pressable" role="button" tabindex="0" aria-label="手动刷新最新数据">
           <div class="score-glow" aria-hidden="true"></div>
@@ -2752,7 +2904,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.6.3</span>
+              <span class="settings-value">1.6.4</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -2782,7 +2934,17 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.6.3</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.6.4</strong><span>当前版本</span></div>
+            <div class="release-date">2026.08.31</div>
+            <ul class="release-list">
+              <li>首页移除“当前分数”重复说明，小礼物模式改为按额度动态计算的两行奖励文案。</li>
+              <li>首页加入轻量奶油粉、淡紫与婴儿蓝的 ins 风背景及低透明度可爱装饰。</li>
+              <li>小礼物圆环、切换开关与总览按钮加入克制的粉色玻璃高光，保持原有功能与布局逻辑。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.6.3</strong><span>上一版本</span></div>
             <div class="release-date">2026.08.31</div>
             <ul class="release-list">
               <li>趋势与日历总览改为内容自适应高度，移除单模块下方多余空白。</li>
@@ -2995,6 +3157,7 @@
       const $$ = (selector) => [...document.querySelectorAll(selector)];
 
       const els = {
+        home: $(".home"),
         score: $("#scoreValue"),
         scoreRefreshBtn: $("#scoreRefreshBtn"),
         metricSwitch: $("#metricSwitch"),
@@ -3236,12 +3399,38 @@
       function renderMetricSwitch() {
         const gift = state.activeMetric === "gift";
         els.metricSwitch.classList.toggle("gift-active", gift);
+        els.home?.classList.toggle("gift-active", gift);
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === state.activeMetric;
           btn.classList.toggle("active", active);
           btn.setAttribute("aria-selected", String(active));
         });
-        els.metricEyebrow.textContent = gift ? "可用小礼物额度" : "当前分数";
+
+        // The switch already says “当前分数”, so score mode intentionally has
+        // no duplicated explanatory line. Gift mode uses a two-line, dynamic
+        // kawaii reward message based on the current available gift balance.
+        if (!gift) {
+          els.metricEyebrow.hidden = true;
+          els.metricEyebrow.replaceChildren();
+          return;
+        }
+
+        const balance = Math.max(0, Number(state.giftBalance ?? 0));
+        const primary = document.createElement("span");
+        const secondary = document.createElement("span");
+        primary.className = "reward-line-primary";
+        secondary.className = "reward-line-secondary";
+
+        if (balance > 0) {
+          primary.textContent = `₊˚🎀 恭喜宝宝 ♡ 获得等价 ${40 * balance} 元奖励 🎁`;
+          secondary.textContent = `可折现 ${30 * balance} 元 ✧˖°`;
+        } else {
+          primary.textContent = "₊˚🌷 目前还没有奖励哦 ♡";
+          secondary.textContent = "继续加油获得小礼物额度吧宝宝！🎀✨";
+        }
+
+        els.metricEyebrow.replaceChildren(primary, secondary);
+        els.metricEyebrow.hidden = false;
       }
 
       function renderPrimaryMetric({ animate = false } = {}) {
