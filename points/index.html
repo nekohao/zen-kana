@@ -4,19 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta id="themeColorMeta" name="theme-color" content="#f4f5f9" />
-  <meta name="color-scheme" content="light dark" />
-  <script>
-    (() => {
-      try {
-        const pref = localStorage.getItem("points_theme");
-        if (pref === "dark") document.documentElement.dataset.theme = "dark";
-        else if (pref === "system") document.documentElement.removeAttribute("data-theme");
-        else document.documentElement.dataset.theme = "light";
-      } catch (_) {
-        document.documentElement.dataset.theme = "light";
-      }
-    })();
-  </script>
+  <meta name="color-scheme" content="light" />
 
   <!-- ============================================================
        AUTO UPDATE MODULE START
@@ -113,104 +101,6 @@
       color-scheme: light;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-0: #0f1218;
-        --bg-1: #171c25;
-        --mesh-1: rgba(107,182,255,.13);
-        --mesh-2: rgba(188,159,255,.10);
-        --mesh-3: rgba(101,218,190,.08);
-
-        --ink: rgba(247,249,253,.96);
-        --secondary: rgba(232,237,246,.59);
-        --tertiary: rgba(232,237,246,.39);
-
-        --glass-fill: rgba(39,45,56,.38);
-        --glass-fill-strong: rgba(49,56,69,.50);
-        --glass-fill-soft: rgba(34,40,50,.26);
-        --glass-border: rgba(255,255,255,.18);
-        --glass-inner: rgba(255,255,255,.08);
-        --glass-shadow: rgba(0,0,0,.34);
-
-        --lens-bg: rgba(25, 27, 38, .55);
-        --lens-border: rgba(255, 255, 255, .12);
-        --lens-specular: rgba(255, 255, 255, .25);
-        --lens-shadow: 0 25px 50px rgba(0, 0, 0, .40);
-
-        --home-control-bg: rgba(30,33,46,.65);
-        --home-control-border: rgba(255,255,255,.12);
-        --home-control-shadow: 0 25px 50px rgba(0,0,0,.40);
-        --home-icon-shadow: 0 8px 20px rgba(0,0,0,.18);
-
-        --hairline: rgba(255,255,255,.10);
-        color-scheme: dark;
-      }
-    }
-
-    /* Manual preference wins over the OS media query. */
-    :root[data-theme="light"] {
-      --bg-0: #f4f5f9;
-      --bg-1: #f4f5f9;
-      --mesh-1: rgba(99, 102, 241, .15);
-      --mesh-2: rgba(236, 72, 153, .12);
-      --mesh-3: rgba(56, 189, 248, .15);
-
-      --ink: rgba(28, 28, 30, .96);
-      --secondary: rgba(60, 60, 67, .58);
-      --tertiary: rgba(60, 60, 67, .38);
-
-      --glass-fill: rgba(255,255,255,.34);
-      --glass-fill-strong: rgba(255,255,255,.49);
-      --glass-fill-soft: rgba(255,255,255,.22);
-      --glass-border: rgba(255,255,255,.66);
-      --glass-inner: rgba(255,255,255,.30);
-      --glass-shadow: rgba(43, 55, 78, .15);
-
-      --lens-bg: rgba(255, 255, 255, .55);
-      --lens-border: rgba(255, 255, 255, .80);
-      --lens-specular: rgba(255, 255, 255, .95);
-      --lens-shadow: 0 20px 50px rgba(31, 38, 135, .08);
-
-      --home-control-bg: rgba(255,255,255,.65);
-      --home-control-border: rgba(255,255,255,.80);
-      --home-control-shadow: 0 20px 50px rgba(31,38,135,.08);
-      --home-icon-shadow: 0 8px 20px rgba(0,0,0,.06);
-
-      --hairline: rgba(50, 57, 70, .12);
-      color-scheme: light;
-    }
-
-    :root[data-theme="dark"] {
-      --bg-0: #0f1218;
-      --bg-1: #171c25;
-      --mesh-1: rgba(107,182,255,.13);
-      --mesh-2: rgba(188,159,255,.10);
-      --mesh-3: rgba(101,218,190,.08);
-
-      --ink: rgba(247,249,253,.96);
-      --secondary: rgba(232,237,246,.59);
-      --tertiary: rgba(232,237,246,.39);
-
-      --glass-fill: rgba(39,45,56,.38);
-      --glass-fill-strong: rgba(49,56,69,.50);
-      --glass-fill-soft: rgba(34,40,50,.26);
-      --glass-border: rgba(255,255,255,.18);
-      --glass-inner: rgba(255,255,255,.08);
-      --glass-shadow: rgba(0,0,0,.34);
-
-      --lens-bg: rgba(25, 27, 38, .55);
-      --lens-border: rgba(255, 255, 255, .12);
-      --lens-specular: rgba(255, 255, 255, .25);
-      --lens-shadow: 0 25px 50px rgba(0, 0, 0, .40);
-
-      --home-control-bg: rgba(30,33,46,.65);
-      --home-control-border: rgba(255,255,255,.12);
-      --home-control-shadow: 0 25px 50px rgba(0,0,0,.40);
-      --home-icon-shadow: 0 8px 20px rgba(0,0,0,.18);
-
-      --hairline: rgba(255,255,255,.10);
-      color-scheme: dark;
-    }
 
     * {
       box-sizing: border-box;
@@ -296,12 +186,7 @@
       background: var(--mesh-3);
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) .ambient { opacity: .52; }
-    }
-
-    :root[data-theme="dark"] .ambient { opacity: .52; }
-    :root[data-theme="light"] .ambient { opacity: .80; }
+    .ambient { opacity: .80; }
 
     .app {
       height: 100dvh;
@@ -648,34 +533,9 @@
       backdrop-filter: blur(9px) saturate(112%);
     }
 
-    :root[data-theme="light"] .overview-backdrop,
-    :root:not([data-theme]) .overview-backdrop {
+    .overview-backdrop,
+    #settingsLayer {
       background: rgba(45,54,70,.075);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) .overview-backdrop {
-        background: rgba(0,0,0,.22);
-      }
-    }
-
-    :root[data-theme="dark"] .overview-backdrop {
-      background: rgba(0,0,0,.22);
-    }
-
-    :root[data-theme="light"] #settingsLayer,
-    :root:not([data-theme]) #settingsLayer {
-      background: rgba(45,54,70,.075);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) #settingsLayer {
-        background: rgba(0,0,0,.22);
-      }
-    }
-
-    :root[data-theme="dark"] #settingsLayer {
-      background: rgba(0,0,0,.22);
     }
 
     .overview-shell {
@@ -789,6 +649,105 @@
       line-height: 1.15;
       font-weight: 700;
       letter-spacing: -.015em;
+    }
+
+    .overview-subtitle {
+      margin-top: 5px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 500;
+      color: var(--secondary);
+    }
+
+    .overview-landing {
+      margin: 0 0 15px;
+    }
+
+    .overview-quick-nav {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+
+    .overview-quick-card {
+      min-width: 0;
+      min-height: 108px;
+      padding: 13px 5px 11px;
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.20), rgba(255,255,255,.045)),
+        rgba(255,255,255,.18);
+      box-shadow:
+        0 10px 24px rgba(43,55,78,.07),
+        inset 0 1px 0 rgba(255,255,255,.42);
+      -webkit-backdrop-filter: blur(24px) saturate(175%);
+      backdrop-filter: blur(24px) saturate(175%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--ink);
+    }
+
+    .overview-quick-card svg {
+      width: 27px;
+      height: 27px;
+      margin-bottom: 10px;
+      stroke-width: 1.9;
+    }
+
+    .overview-quick-card[data-overview-target="trend"] svg { color: var(--blue); }
+    .overview-quick-card[data-overview-target="calendar"] svg { color: #7657e8; }
+    .overview-quick-card[data-overview-target="records"] svg { color: var(--green); }
+    .overview-quick-card[data-overview-target="summary"] svg { color: #f06a4d; }
+
+    .overview-quick-title {
+      max-width: 100%;
+      font-size: 12px;
+      line-height: 1.15;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .overview-quick-copy {
+      max-width: 100%;
+      margin-top: 5px;
+      font-size: 9.5px;
+      line-height: 1.2;
+      color: var(--secondary);
+      white-space: nowrap;
+    }
+
+    .overview-peek-hint {
+      margin: 2px 0 3px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--tertiary);
+      letter-spacing: .01em;
+    }
+
+    .overview-section-anchor {
+      scroll-margin-top: 92px;
+    }
+
+    .overview.gift-mode .overview-header {
+      margin-bottom: 14px;
+    }
+
+    .overview.gift-mode #giftOverviewContent {
+      padding-top: 1px;
+    }
+
+    @media (max-width: 370px) {
+      .overview-quick-nav { gap: 6px; }
+      .overview-quick-card { min-height: 102px; padding-left: 3px; padding-right: 3px; border-radius: 20px; }
+      .overview-quick-card svg { width: 25px; height: 25px; }
+      .overview-quick-title { font-size: 11px; }
+      .overview-quick-copy { font-size: 8.8px; }
     }
 
     @media (max-height: 650px) {
@@ -1300,9 +1259,6 @@
       min-height: 51px;
     }
 
-    #settingsLayer .theme-setting-row {
-      min-height: 61px;
-    }
 
     /* Admin login: same content-fit Bottom Sheet language as Settings. */
     #loginLayer {
@@ -1436,19 +1392,8 @@
       }
     }
 
-    :root[data-theme="light"] #loginLayer,
-    :root:not([data-theme]) #loginLayer {
+    #loginLayer {
       background: rgba(45,54,70,.075);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) #loginLayer {
-        background: rgba(0,0,0,.22);
-      }
-    }
-
-    :root[data-theme="dark"] #loginLayer {
-      background: rgba(0,0,0,.22);
     }
 
     @media (max-width: 520px) {
@@ -1718,64 +1663,6 @@
       cursor: default;
     }
 
-    .theme-setting-row {
-      min-height: 66px;
-      padding-top: 9px;
-      padding-bottom: 9px;
-      gap: 12px;
-    }
-
-    .theme-picker {
-      flex: 0 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      padding: 3px;
-      border-radius: 12px;
-      background: rgba(118,118,128,.11);
-    }
-
-    .theme-choice {
-      min-width: 52px;
-      min-height: 34px;
-      padding: 0 9px;
-      border: 0;
-      border-radius: 9px;
-      background: transparent;
-      color: var(--secondary);
-      font-size: 12px;
-      font-weight: 650;
-      cursor: pointer;
-      transition: background .18s ease, color .18s ease, transform .14s ease;
-    }
-
-    .theme-choice:active {
-      transform: scale(.95);
-    }
-
-    .theme-choice.active {
-      color: var(--ink);
-      background: var(--glass-fill-strong);
-      box-shadow:
-        0 2px 8px rgba(0,0,0,.08),
-        inset 0 1px 0 rgba(255,255,255,.28);
-    }
-
-    @media (max-width: 390px) {
-      .theme-setting-row {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .theme-picker {
-        width: 100%;
-      }
-
-      .theme-choice {
-        min-height: 38px;
-      }
-    }
-
     .settings-value {
       display: inline-flex;
       align-items: center;
@@ -2037,10 +1924,6 @@
       background: rgba(45,54,70,.075);
     }
 
-    :root[data-theme="dark"] #releaseNotesLayer,
-    :root[data-theme="dark"] #changeLayer {
-      background: rgba(0,0,0,.22);
-    }
 
     #releaseNotesLayer .unified-sheet,
     #changeLayer .unified-sheet {
@@ -2219,10 +2102,6 @@
       background: rgba(45,54,70,.075);
     }
 
-    :root[data-theme="dark"] #workScheduleLayer,
-    :root[data-theme="dark"] #workScheduleOverviewLayer {
-      background: rgba(0,0,0,.22);
-    }
 
     #workScheduleLayer .work-schedule-sheet,
     #workScheduleOverviewLayer .work-schedule-sheet {
@@ -2310,10 +2189,6 @@
       background: #fff;
     }
 
-    :root[data-theme="dark"] .work-schedule-control option {
-      color: #fff;
-      background: #20252f;
-    }
 
     .work-schedule-hint {
       margin: -2px 3px 1px;
@@ -2485,22 +2360,39 @@
           <div id="overviewGrabberHitbox" class="overview-grabber-hitbox" aria-label="下拉关闭总览">
             <div class="overview-grabber" aria-hidden="true"></div>
           </div>
-          <div class="overview-title">总览</div>
+          <div id="overviewTitle" class="overview-title">总览</div>
+          <div id="overviewSubtitle" class="overview-subtitle">查看统计与历史记录</div>
         </header>
 
-        <div id="overviewMetricSwitch" class="metric-switch compact" role="tablist" aria-label="总览数据切换">
-          <div class="metric-switch-thumb" aria-hidden="true"></div>
-          <button class="metric-option active" type="button" role="tab" aria-selected="true" data-overview-metric="score">
-            <span>积分</span>
-          </button>
-          <button class="metric-option" type="button" role="tab" aria-selected="false" data-overview-metric="gift">
-            <span>小礼物</span>
-          </button>
-        </div>
-
         <div id="scoreOverviewContent">
-          <section class="section">
-            <h2 class="section-title">趋势</h2>
+          <div class="overview-landing">
+            <nav id="overviewQuickNav" class="overview-quick-nav" aria-label="总览快捷入口">
+              <button class="overview-quick-card pressable" type="button" data-overview-target="trend">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l5-5 4 3 7-8"/><path d="M15 7h5v5"/></svg>
+                <span class="overview-quick-title">趋势统计</span>
+                <span class="overview-quick-copy">分数变化趋势</span>
+              </button>
+              <button class="overview-quick-card pressable" type="button" data-overview-target="calendar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                <span class="overview-quick-title">日历视图</span>
+                <span class="overview-quick-copy">查看每日记录</span>
+              </button>
+              <button class="overview-quick-card pressable" type="button" data-overview-target="records">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span class="overview-quick-title">历史记录</span>
+                <span class="overview-quick-copy">查看所有记录</span>
+              </button>
+              <button class="overview-quick-card pressable" type="button" data-overview-target="summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A8.5 8.5 0 0 1 20.5 9H15z"/></svg>
+                <span class="overview-quick-title">数据概览</span>
+                <span class="overview-quick-copy">本月数据汇总</span>
+              </button>
+            </nav>
+            <div class="overview-peek-hint">向上拖动查看完整总览</div>
+          </div>
+
+          <section id="scoreTrendSection" class="section overview-section-anchor">
+            <h2 class="section-title">趋势统计</h2>
             <div class="card glass">
               <div id="trendSegments" class="segmented" aria-label="趋势范围">
                 <button class="segment pressable active" type="button" data-range="7d">7天</button>
@@ -2515,8 +2407,8 @@
             </div>
           </section>
 
-          <section class="section">
-            <h2 class="section-title">日历</h2>
+          <section id="scoreCalendarSection" class="section overview-section-anchor">
+            <h2 class="section-title">日历视图</h2>
             <div class="card glass calendar-card">
               <div class="calendar-head">
                 <button id="prevMonthBtn" class="small-icon pressable" type="button" aria-label="上个月">‹</button>
@@ -2535,8 +2427,8 @@
             </div>
           </section>
 
-          <section class="section">
-            <h2 class="section-title">记录</h2>
+          <section id="scoreRecordsSection" class="section overview-section-anchor">
+            <h2 class="section-title">历史记录</h2>
             <div class="card glass">
               <div id="recordSegments" class="segmented" aria-label="记录范围">
                 <button class="segment pressable active" type="button" data-record-range="week">本周</button>
@@ -2547,8 +2439,8 @@
             </div>
           </section>
 
-          <section class="section">
-            <h2 class="section-title">本月总结</h2>
+          <section id="scoreSummarySection" class="section overview-section-anchor">
+            <h2 class="section-title">数据概览</h2>
             <div class="card glass">
               <div class="summary-grid">
                 <div class="metric"><div class="metric-label">变更次数</div><div id="monthCount" class="metric-value">0</div></div>
@@ -2560,25 +2452,9 @@
         </div>
 
         <div id="giftOverviewContent" hidden>
-          <section class="section">
-            <h2 class="section-title">可用小礼物额度</h2>
-            <div class="card glass gift-overview-balance">
-              <div>
-                <div id="giftOverviewValue" class="gift-overview-value">0</div>
-                <div class="gift-overview-unit">当前可用额度</div>
-              </div>
-              <div class="gift-overview-unit">最低为 0</div>
-            </div>
-          </section>
-
-          <section class="section">
-            <h2 class="section-title">额度记录</h2>
+          <section class="section overview-section-anchor">
+            <h2 class="section-title">小礼物历史</h2>
             <div class="card glass">
-              <div id="giftRecordSegments" class="segmented" aria-label="小礼物记录范围">
-                <button class="segment pressable active" type="button" data-gift-record-range="week">本周</button>
-                <button class="segment pressable" type="button" data-gift-record-range="month">本月</button>
-                <button class="segment pressable" type="button" data-gift-record-range="all">全部</button>
-              </div>
               <ul id="giftRecordList" class="log-list"></ul>
             </div>
           </section>
@@ -2631,17 +2507,6 @@
           </div>
           <!-- WORK SCHEDULE MODULE END: settings entry -->
 
-          <div class="settings-label">外观</div>
-          <div class="settings-group">
-            <div class="settings-row static theme-setting-row">
-              <span>显示模式</span>
-              <div id="themePicker" class="theme-picker" role="group" aria-label="显示模式">
-                <button class="theme-choice" type="button" data-theme-choice="system">跟随</button>
-                <button class="theme-choice" type="button" data-theme-choice="light">浅色</button>
-                <button class="theme-choice" type="button" data-theme-choice="dark">深色</button>
-              </div>
-            </div>
-          </div>
 
           <div class="settings-label">信息</div>
           <div class="settings-group">
@@ -2655,7 +2520,7 @@
             </div>
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.5.0</span>
+              <span class="settings-value">1.6.0</span>
             </div>
             <button id="openReleaseNotesBtn" class="settings-row pressable" type="button">
               <span>版本与优化</span>
@@ -2759,15 +2624,14 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.5.0</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.6.0</strong><span>当前版本</span></div>
             <div class="release-date">2026.08.31</div>
             <ul class="release-list">
-              <li>App 正式更名为“积分小本本”，加入主屏幕图标与 PWA 配置。</li>
-              <li>首页新增顶部 App 横幅与“当前分数 / 小礼物额度”弹性切换。</li>
-              <li>新增小礼物额度：管理员 ±1、最低 0、独立历史与重置自动结算。</li>
-              <li>重置规则：10 分起每满 10 分 +1 额度；积分 ≤0 时清空额度前二次确认。</li>
-              <li>记录列表、原因输入和确认弹窗统一为同一套 Liquid Glass 设计语言。</li>
-              <li>拖拽和切换动画采用 transform + requestAnimationFrame 的高刷新率路径。</li>
+              <li>总览改为首页模式驱动：积分与小礼物不再在总览内二次切换。</li>
+              <li>积分总览新增趋势、日历、历史、数据概览四个快捷入口，可直接上滑展开。</li>
+              <li>小礼物总览精简为完整流水，展示日期时间、原因、增减值及额度前后变化。</li>
+              <li>移除深色/跟随系统外观模式，界面固定为浅色 Liquid Glass。</li>
+              <li>移除桌面鼠标控制首页圆盘 3D 倾斜效果，保留移动端核心交互。</li>
             </ul>
           </div>
 
@@ -2974,9 +2838,15 @@
         overviewBackdrop: $(".overview-backdrop"),
         overviewShell: $(".overview-shell"),
         overviewGrabberHitbox: $("#overviewGrabberHitbox"),
-        overviewMetricSwitch: $("#overviewMetricSwitch"),
+        overviewTitle: $("#overviewTitle"),
+        overviewSubtitle: $("#overviewSubtitle"),
+        overviewQuickNav: $("#overviewQuickNav"),
         scoreOverviewContent: $("#scoreOverviewContent"),
         giftOverviewContent: $("#giftOverviewContent"),
+        scoreTrendSection: $("#scoreTrendSection"),
+        scoreCalendarSection: $("#scoreCalendarSection"),
+        scoreRecordsSection: $("#scoreRecordsSection"),
+        scoreSummarySection: $("#scoreSummarySection"),
 
         settingsLayer: $("#settingsLayer"),
         settingsSheet: $("#settingsSheet"),
@@ -2988,8 +2858,6 @@
         logoutBtn: $("#logoutBtn"),
         resetBtn: $("#resetBtn"),
         lastRefreshText: $("#lastRefreshText"),
-        themePicker: $("#themePicker"),
-        themeColorMeta: $("#themeColorMeta"),
         openReleaseNotesBtn: $("#openReleaseNotesBtn"),
         releaseNotesLayer: $("#releaseNotesLayer"),
         closeReleaseNotesBtn: $("#closeReleaseNotesBtn"),
@@ -3036,8 +2904,6 @@
         monthNet: $("#monthNet"),
         reasonSummary: $("#reasonSummary"),
 
-        giftOverviewValue: $("#giftOverviewValue"),
-        giftRecordSegments: $("#giftRecordSegments"),
         giftRecordList: $("#giftRecordList"),
 
         toast: $("#toast")
@@ -3051,12 +2917,10 @@
         session: null,
         isAdmin: false,
         activeMetric: "score",
-        overviewMetric: "score",
         changeTarget: "score",
         changeDelta: null,
         trendRange: "7d",
         recordRange: "week",
-        giftRecordRange: "week",
         calendarDate: startOfMonth(new Date()),
         selectedDayKey: null,
         overviewLogs: [],
@@ -3064,65 +2928,9 @@
         overviewLoadedAt: 0,
         refreshInFlight: false,
         lastRefreshAt: null,
-        themePreference: "system",
         overviewMode: "closed",
         toastTimer: null
       };
-
-      // -------------------- Appearance --------------------
-      const THEME_STORAGE_KEY = "points_theme";
-      const systemThemeMedia = matchMedia("(prefers-color-scheme: dark)");
-
-      function loadThemePreference() {
-        try {
-          const pref = localStorage.getItem(THEME_STORAGE_KEY);
-          if (pref === "light" || pref === "dark" || pref === "system") return pref;
-        } catch (_) {}
-        return "light";
-      }
-
-      function resolvedTheme() {
-        if (state.themePreference === "light" || state.themePreference === "dark") {
-          return state.themePreference;
-        }
-        return systemThemeMedia.matches ? "dark" : "light";
-      }
-
-      function renderThemePicker() {
-        if (!els.themePicker) return;
-        els.themePicker.querySelectorAll("[data-theme-choice]").forEach(btn => {
-          const active = btn.dataset.themeChoice === state.themePreference;
-          btn.classList.toggle("active", active);
-          btn.setAttribute("aria-pressed", String(active));
-        });
-      }
-
-      function applyTheme(pref, { persist = false } = {}) {
-        state.themePreference = ["system", "light", "dark"].includes(pref) ? pref : "system";
-
-        if (state.themePreference === "system") {
-          document.documentElement.removeAttribute("data-theme");
-        } else {
-          document.documentElement.dataset.theme = state.themePreference;
-        }
-
-        if (persist) {
-          try {
-            localStorage.setItem(THEME_STORAGE_KEY, state.themePreference);
-          } catch (_) {}
-        }
-
-        const actual = resolvedTheme();
-        if (els.themeColorMeta) {
-          els.themeColorMeta.setAttribute("content", actual === "dark" ? "#0f1218" : "#f4f5f9");
-        }
-
-        renderThemePicker();
-
-        if (els.overview.classList.contains("open")) {
-          requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
-        }
-      }
 
       // -------------------- Date helpers --------------------
       function startOfDay(d) {
@@ -3284,16 +3092,14 @@
         }
       }
 
-      function renderOverviewMetricSwitch() {
-        const gift = state.overviewMetric === "gift";
-        els.overviewMetricSwitch.classList.toggle("gift-active", gift);
-        els.overviewMetricSwitch.querySelectorAll("[data-overview-metric]").forEach(btn => {
-          const active = btn.dataset.overviewMetric === state.overviewMetric;
-          btn.classList.toggle("active", active);
-          btn.setAttribute("aria-selected", String(active));
-        });
+      function renderOverviewContentMode() {
+        const gift = state.activeMetric === "gift";
+        els.overview.classList.toggle("gift-mode", gift);
         els.scoreOverviewContent.hidden = gift;
         els.giftOverviewContent.hidden = !gift;
+        els.overviewTitle.textContent = gift ? "小礼物记录" : "总览";
+        els.overviewSubtitle.textContent = gift ? "查看每一次额度变化" : "查看统计与历史记录";
+
         if (gift) {
           renderGiftOverview();
         } else {
@@ -3332,7 +3138,6 @@
           state.updatedAt = row.score_updated_at;
           state.giftUpdatedAt = row.gift_updated_at;
           renderPrimaryMetric();
-          if (els.giftOverviewValue) els.giftOverviewValue.textContent = state.giftBalance;
           markRefreshed();
         } catch (err) {
           console.error("loadAppState:", err);
@@ -3634,7 +3439,7 @@
         renderRecords();
         renderMonthSummary();
         renderGiftOverview();
-        renderOverviewMetricSwitch();
+        renderOverviewContentMode();
       }
 
       // -------------------- Trend --------------------
@@ -4032,39 +3837,36 @@
         });
       }
 
-      function giftRecordRangeStart() {
-        const now = new Date();
-        if (state.giftRecordRange === "week") return startOfWeekMonday(now);
-        if (state.giftRecordRange === "month") return startOfMonth(now);
-        return null;
-      }
-
       function giftLogRowHTML(log) {
         const delta = Number(log.delta);
         const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
         const reason = String(log.reason ?? "").trim() || "未填写原因";
-        const actionMeta = log.action === "settlement_add"
+        const before = Number(log.balance_before ?? 0);
+        const after = Number(log.balance_after ?? before + delta);
+        const actionLabel = log.action === "settlement_add"
           ? "积分重置自动结算"
           : log.action === "settlement_clear"
             ? "自动结算 · 额度清空"
-            : `${log.balance_before} → ${log.balance_after}`;
-        const meta = `${formatDateShort(log.created_at)} · ${formatTime(log.created_at)} · ${actionMeta}`;
+            : "";
+        const metaParts = [
+          formatDateShort(log.created_at),
+          formatTime(log.created_at),
+          `${before} → ${after}`
+        ];
+        if (actionLabel) metaParts.push(actionLabel);
         return `
           <li class="log-row">
             <div class="log-icon ${deltaClass}">${movementIconHTML(delta)}</div>
             <div class="log-copy">
               <div class="log-reason">${escapeHTML(reason)}</div>
-              <span class="log-meta">${escapeHTML(meta)}</span>
+              <span class="log-meta">${escapeHTML(metaParts.join(" · "))}</span>
             </div>
             <div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div>
           </li>`;
       }
 
       function renderGiftOverview() {
-        if (els.giftOverviewValue) els.giftOverviewValue.textContent = state.giftBalance ?? 0;
-        const start = giftRecordRangeStart();
-        let logs = giftLogsDescending();
-        if (start) logs = logs.filter(l => new Date(l.created_at) >= start);
+        const logs = giftLogsDescending();
         els.giftRecordList.innerHTML = logs.length
           ? logs.map(giftLogRowHTML).join("")
           : `<li class="empty-state">暂无小礼物额度记录</li>`;
@@ -4110,8 +3912,13 @@
       }
 
       // -------------------- Overview sheet --------------------
-      const OVERVIEW_PEEK_HEIGHT = 390;
+      const SCORE_OVERVIEW_PEEK_HEIGHT = 390;
+      const GIFT_OVERVIEW_PEEK_HEIGHT = 350;
       let overviewDrag = null;
+
+      function currentOverviewPeekHeight() {
+        return state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : SCORE_OVERVIEW_PEEK_HEIGHT;
+      }
       let suppressOverviewClickUntil = 0;
 
       function setOverviewMode(mode) {
@@ -4131,7 +3938,7 @@
 
         els.overview.classList.add("open", state.overviewMode);
         els.overview.setAttribute("aria-hidden", "false");
-        els.overviewShell.style.setProperty("--peek-height", `${OVERVIEW_PEEK_HEIGHT}px`);
+        els.overviewShell.style.setProperty("--peek-height", `${currentOverviewPeekHeight()}px`);
         document.body.classList.add("overview-visible");
 
         if (state.overviewMode === "peek") {
@@ -4157,9 +3964,32 @@
         setOverviewMode("closed");
       }
 
+      function openOverviewSection(target) {
+        if (state.activeMetric !== "score") return;
+        const sectionMap = {
+          trend: els.scoreTrendSection,
+          calendar: els.scoreCalendarSection,
+          records: els.scoreRecordsSection,
+          summary: els.scoreSummarySection
+        };
+        const section = sectionMap[target];
+        if (!section) return;
+
+        expandOverviewSheet();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const shellRect = els.overviewShell.getBoundingClientRect();
+            const sectionRect = section.getBoundingClientRect();
+            const headerHeight = els.overview.querySelector(".overview-header")?.offsetHeight || 80;
+            const top = els.overviewShell.scrollTop + (sectionRect.top - shellRect.top) - headerHeight - 10;
+            els.overviewShell.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+          });
+        });
+      }
+
       function overviewPeekTranslate() {
         const height = els.overviewShell.getBoundingClientRect().height;
-        return Math.max(0, height - OVERVIEW_PEEK_HEIGHT);
+        return Math.max(0, height - currentOverviewPeekHeight());
       }
 
       function beginOverviewDrag(e) {
@@ -4182,7 +4012,7 @@
           startedOnHandle,
           startMode: state.overviewMode,
           shellHeight,
-          peekY: Math.max(0, shellHeight - OVERVIEW_PEEK_HEIGHT),
+          peekY: Math.max(0, shellHeight - currentOverviewPeekHeight()),
           dragging: false,
           raf: 0
         };
@@ -4838,13 +4668,6 @@
       els.settingsSheet.addEventListener("pointercancel", endSettingsDrag);
 
 
-      els.themePicker.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-theme-choice]");
-        if (!btn) return;
-        vibrate(7);
-        applyTheme(btn.dataset.themeChoice, { persist: true });
-      });
-
       els.openReleaseNotesBtn.addEventListener("click", () => {
         setLayer(els.settingsLayer, false);
         setLayer(els.releaseNotesLayer, true);
@@ -4914,45 +4737,6 @@
         renderPrimaryMetric({ animate: true });
       });
 
-      els.overviewMetricSwitch.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-overview-metric]");
-        if (!btn || btn.dataset.overviewMetric === state.overviewMetric) return;
-        state.overviewMetric = btn.dataset.overviewMetric;
-        vibrate(6);
-        renderOverviewMetricSwitch();
-      });
-
-      // Desktop/fine-pointer 3D coin tilt. iPhone/touch stays frontal.
-      const scoreLens = els.scoreRefreshBtn.querySelector(".score-lens");
-      if (scoreLens && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-        let lensRect = null;
-        let tiltRAF = 0;
-        let pendingPointer = null;
-        const updateLensRect = () => { lensRect = scoreLens.getBoundingClientRect(); };
-        updateLensRect();
-        window.addEventListener("resize", updateLensRect, { passive: true });
-        scoreLens.addEventListener("pointerenter", updateLensRect, { passive: true });
-        window.addEventListener("pointermove", (e) => {
-          pendingPointer = e;
-          if (tiltRAF) return;
-          tiltRAF = requestAnimationFrame(() => {
-            tiltRAF = 0;
-            if (!pendingPointer || !lensRect) return;
-            const centerX = lensRect.left + lensRect.width / 2;
-            const centerY = lensRect.top + lensRect.height / 2;
-            const moveX = (pendingPointer.clientX - centerX) / 25;
-            const moveY = (pendingPointer.clientY - centerY) / 25;
-            scoreLens.style.transform = `perspective(600px) rotateX(${-moveY}deg) rotateY(${moveX}deg)`;
-          });
-        }, { passive: true });
-        window.addEventListener("blur", () => {
-          cancelAnimationFrame(tiltRAF);
-          tiltRAF = 0;
-          scoreLens.style.transform = "perspective(600px) rotateX(0deg) rotateY(0deg)";
-        });
-      }
-
-
       $$(".score-button").forEach(btn => {
         btn.addEventListener("click", () => {
           vibrate();
@@ -4993,7 +4777,6 @@
 
       els.overviewBtn.addEventListener("click", async () => {
         vibrate();
-        state.overviewMetric = state.activeMetric;
         openOverviewSheet();
 
         // Render immediately; network data fills in afterward.
@@ -5001,6 +4784,13 @@
         requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
 
         await loadOverviewData(false);
+      });
+
+      els.overviewQuickNav.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-overview-target]");
+        if (!btn) return;
+        vibrate(6);
+        openOverviewSection(btn.dataset.overviewTarget);
       });
 
       // Tapping outside the sheet closes it.
@@ -5046,16 +4836,6 @@
         renderRecords();
       });
 
-      els.giftRecordSegments.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-gift-record-range]");
-        if (!btn) return;
-        state.giftRecordRange = btn.dataset.giftRecordRange;
-        els.giftRecordSegments.querySelectorAll(".segment").forEach(x =>
-          x.classList.toggle("active", x === btn)
-        );
-        renderGiftOverview();
-      });
-
       els.prevMonthBtn.addEventListener("click", () => {
         state.calendarDate = addMonths(state.calendarDate, -1);
         state.selectedDayKey = null;
@@ -5086,12 +4866,6 @@
         }
       });
 
-      systemThemeMedia.addEventListener?.("change", () => {
-        if (state.themePreference === "system") {
-          applyTheme("system");
-        }
-      });
-
       db.auth.onAuthStateChange((_event, session) => {
         state.session = session;
         // Avoid doing a nested Supabase request synchronously inside auth callback.
@@ -5108,8 +4882,6 @@
       }
 
       async function boot() {
-        applyTheme(loadThemePreference());
-
         // Opening the app always performs one immediate database read.
         await Promise.all([
           loadAppState(),
