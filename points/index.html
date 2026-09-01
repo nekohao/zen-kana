@@ -3767,13 +3767,13 @@
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
-    .wheel-prize-10 { left: 57.8%; top: 22.8%; font-size: 10px; }
-    .wheel-prize-20 { left: 79.0%; top: 50.0%; font-size: 14px; }
-    .wheel-prize-30 { left: 40.2%; top: 78.6%; font-size: 14px; }
-    .wheel-prize-50 { left: 21.5%; top: 48.2%; font-size: 11px; }
-    .wheel-prize-60 { left: 31.2%; top: 25.8%; font-size: 10px; }
-    .wheel-prize-80 { left: 41.4%; top: 18.8%; font-size: 8.5px; }
-    .wheel-prize-100 { left: 47.8%; top: 13.7%; font-size: 7.7px; }
+    .wheel-prize-10  { left: 59.8%; top: 21.7%; font-size: 9.4px; }
+    .wheel-prize-20  { left: 81.0%; top: 50.0%; font-size: 13.5px; }
+    .wheel-prize-30  { left: 40.4%; top: 79.5%; font-size: 13.5px; }
+    .wheel-prize-50  { left: 19.3%; top: 48.1%; font-size: 10.4px; }
+    .wheel-prize-60  { left: 27.7%; top: 29.1%; font-size: 9.4px; }
+    .wheel-prize-80  { left: 39.1%; top: 21.5%; font-size: 7.9px; }
+    .wheel-prize-100 { left: 48.1%; top: 21.0%; font-size: 7.0px; letter-spacing: -.06em; }
     .wheel-hub {
       position: absolute;
       z-index: 6;
@@ -4116,6 +4116,151 @@
       width: 100%;
       height: 44px;
       flex: 0 0 auto;
+    }
+
+  
+    /* ============================================================
+       v1.8.3 — bright cream wheel-admin surfaces
+       ============================================================ */
+    #wheelProbabilityLayer,
+    #wheelProbabilityHistoryLayer {
+      background: rgba(91,70,44,.055) !important;
+      -webkit-backdrop-filter: blur(2px) !important;
+      backdrop-filter: blur(2px) !important;
+    }
+
+    #wheelProbabilityLayer .alert,
+    #wheelProbabilityHistoryLayer .alert {
+      color: #544b40;
+      background:
+        radial-gradient(circle at 18% 5%, rgba(255,255,255,.98), transparent 35%),
+        linear-gradient(155deg, #fffdf8 0%, #fff8eb 57%, #fff4e5 100%) !important;
+      border: 1px solid rgba(237,210,170,.72) !important;
+      box-shadow:
+        0 22px 54px rgba(148,105,52,.13),
+        inset 0 1px 0 rgba(255,255,255,.98) !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    #wheelProbabilityLayer .alert-content,
+    #wheelProbabilityHistoryLayer .alert-content {
+      padding: 20px 18px 16px !important;
+    }
+
+    #wheelProbabilityLayer .change-icon,
+    #wheelProbabilityHistoryLayer .change-icon {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto 8px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      background: linear-gradient(145deg, #fffdf7, #ffe8bd);
+      border: 1px solid rgba(255,255,255,.95);
+      box-shadow: 0 7px 17px rgba(180,126,56,.10);
+    }
+
+    #wheelProbabilityLayer .alert-title,
+    #wheelProbabilityHistoryLayer .alert-title {
+      color: #5f4a31;
+      font-weight: 780;
+    }
+
+    #wheelProbabilityLayer .alert-message,
+    #wheelProbabilityHistoryLayer .alert-message {
+      color: #9a8267;
+    }
+
+    #wheelProbabilityLayer .wheel-probability-grid {
+      margin-top: 12px;
+      padding: 5px 10px;
+      border-radius: 17px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(239,215,180,.68);
+      box-shadow: 0 7px 20px rgba(169,121,59,.055);
+    }
+
+    #wheelProbabilityLayer .wheel-probability-grid label {
+      min-height: 38px;
+      border-bottom-color: rgba(181,139,86,.10);
+      color: #67513a;
+    }
+
+    #wheelProbabilityLayer .prob-input-wrap {
+      background: #fff8e9;
+      border-color: rgba(235,205,161,.78);
+      box-shadow: inset 0 1px 2px rgba(152,108,50,.035);
+    }
+
+    #wheelProbabilityLayer .prob-input-wrap input {
+      color: #a46b25;
+    }
+
+    #wheelProbabilityLayer .prob-input-wrap em {
+      color: #bd8a4c;
+    }
+
+    #wheelProbabilityLayer .wheel-probability-total {
+      color: #5e7e64;
+      background: #eef8ee;
+      border-color: rgba(198,225,198,.88);
+      box-shadow: none;
+    }
+
+    #wheelProbabilityLayer .wheel-probability-total.invalid {
+      color: #a65d63;
+      background: #fff0f1;
+      border-color: rgba(236,196,199,.88);
+    }
+
+    #wheelProbabilityLayer .wheel-probability-default-note {
+      color: #af9270;
+    }
+
+    #wheelProbabilityLayer .alert-actions,
+    #wheelProbabilityHistoryLayer .alert-actions {
+      background: rgba(255,250,240,.92);
+      border-top-color: rgba(219,190,151,.42);
+    }
+
+    #wheelProbabilityLayer .alert-button,
+    #wheelProbabilityHistoryLayer .alert-button {
+      color: #84643f;
+      background: rgba(255,252,246,.86);
+      border-color: rgba(219,190,151,.34) !important;
+    }
+
+    #wheelProbabilityLayer .alert-button.primary-action,
+    #wheelProbabilityHistoryLayer .alert-button.primary-action {
+      color: #8d5d22 !important;
+      background: linear-gradient(135deg, #fff9e9, #f8dfad) !important;
+      font-weight: 760;
+    }
+
+    #wheelProbabilityHistoryLayer .wheel-probability-history-list {
+      gap: 7px;
+    }
+
+    #wheelProbabilityHistoryLayer .wheel-probability-history-item {
+      background: #fffaf0;
+      border-color: rgba(235,208,170,.66);
+      box-shadow: 0 6px 17px rgba(160,111,48,.055);
+    }
+
+    #wheelProbabilityHistoryLayer .wheel-probability-history-time {
+      color: #ac9273;
+    }
+
+    #wheelProbabilityHistoryLayer .wheel-probability-history-chip {
+      background: #fff0d5;
+      color: #8f6230;
+    }
+
+    /* Administrator section is never interactable outside admin mode. */
+    #adminSettings[hidden] {
+      display: none !important;
     }
 
   </style>
@@ -4570,7 +4715,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.8.2</span>
+              <span class="settings-value">1.8.3</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -4600,7 +4745,18 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.8.2</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.8.3</strong><span>当前版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>修复点击大转盘同时触发外层“同步最新数据”的事件冒泡；现在仅执行静默同步后转盘。</li>
+              <li>正式/试玩转动结束后再次静默同步，不显示同步 Toast 或刷新动画。</li>
+              <li>管理员大转盘概率设置与修改记录改为明亮奶油卡片风；访客模式彻底隐藏并禁用管理员模块。</li>
+              <li>重新按固定扇区几何中心校正 7 个金额标签位置，顶部窄扇区避开指针并减少重叠。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.8.2</strong><span>上一版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
               <li>移除独立“转动大转盘”按钮，直接点击中央大转盘即可开始正式转动或进入试玩提示。</li>
@@ -5375,6 +5531,13 @@
         els.guestAccountLabel.hidden = state.isAdmin;
         els.guestSettings.hidden = state.isAdmin;
         els.adminSettings.hidden = !state.isAdmin;
+        els.adminSettings.inert = !state.isAdmin;
+        els.adminSettings.setAttribute("aria-hidden", String(!state.isAdmin));
+
+        if (!state.isAdmin) {
+          if (els.wheelProbabilityLayer.classList.contains("open")) setLayer(els.wheelProbabilityLayer, false);
+          if (els.wheelProbabilityHistoryLayer.classList.contains("open")) setLayer(els.wheelProbabilityHistoryLayer, false);
+        }
 
         if (state.isAdmin) {
           const email = state.session?.user?.email || "管理员";
@@ -5404,6 +5567,11 @@
           btn.classList.toggle("active", active);
           btn.setAttribute("aria-selected", String(active));
         });
+
+        els.scoreRefreshBtn.setAttribute(
+          "aria-label",
+          wheel ? "大转盘区域，点击中央转盘开始转动" : "手动刷新最新数据"
+        );
 
         const primary = document.createElement("span");
         const secondary = document.createElement("span");
@@ -6271,6 +6439,49 @@
         setLayer(els.wheelResultLayer, true);
       }
 
+
+      async function silentSyncBeforeWheelSpin() {
+        try {
+          const [appRes, wheelRes] = await Promise.all([
+            db.rpc("points_get_app_state"),
+            db.rpc("points_get_wheel_state")
+          ]);
+
+          if (!appRes.error) {
+            const row = Array.isArray(appRes.data) ? appRes.data[0] : appRes.data;
+            if (row && typeof row.score === "number" && typeof row.gift_balance === "number") {
+              state.score = row.score;
+              state.giftBalance = row.gift_balance;
+              state.updatedAt = row.score_updated_at;
+              state.giftUpdatedAt = row.gift_updated_at;
+            }
+          }
+
+          if (!wheelRes.error) {
+            const wheelRow = Array.isArray(wheelRes.data) ? wheelRes.data[0] : wheelRes.data;
+            if (wheelRow) {
+              state.wheelChances = Number(wheelRow.spin_chances ?? state.wheelChances ?? 0);
+              state.wheelCashBalance = Number(wheelRow.cash_balance ?? state.wheelCashBalance ?? 0);
+              state.wheelUpdatedAt = wheelRow.updated_at ?? state.wheelUpdatedAt ?? null;
+            }
+          }
+
+          renderPrimaryMetric();
+          return true;
+        } catch (err) {
+          console.debug("silentSyncBeforeWheelSpin:", err);
+          return false;
+        }
+      }
+
+      async function silentSyncAfterWheelSpin() {
+        try {
+          await loadAppState({ silent: true });
+        } catch (err) {
+          console.debug("silentSyncAfterWheelSpin:", err);
+        }
+      }
+
       async function performFormalWheelSpin() {
         if (state.wheelSpinning) return;
         if (state.wheelChances <= 0) return openWheelPreviewPrompt();
@@ -6288,6 +6499,7 @@
           renderPrimaryMetric();
           await animateWheelToPrize(prize, roll);
           renderPrimaryMetric();
+          await silentSyncAfterWheelSpin();
           showWheelResult({ prize, preview: false, cashBefore, cashAfter: state.wheelCashBalance });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
@@ -6316,6 +6528,7 @@
           const roll = Number(row?.roll);
           setLayer(els.wheelPreviewLayer, false);
           await animateWheelToPrize(prize, roll);
+          await silentSyncAfterWheelSpin();
           showWheelResult({ prize, preview: true });
         } catch (err) {
           console.error("performPreviewWheelSpin:", err);
@@ -8237,10 +8450,14 @@
         }
       }
 
-      els.scoreRefreshBtn.addEventListener("click", manualRefreshApp);
+      els.scoreRefreshBtn.addEventListener("click", (e) => {
+        if (state.activeMetric === "wheel") return;
+        manualRefreshApp();
+      });
       els.scoreRefreshBtn.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
+          if (state.activeMetric === "wheel") return;
           manualRefreshApp();
         }
       });
@@ -8267,18 +8484,28 @@
         openWheelRedeemPrompt();
       });
 
-      function triggerWheelFromDisc() {
+      async function triggerWheelFromDisc() {
         if (state.wheelSpinning) return;
         vibrate(8);
-        if (state.wheelChances > 0) performFormalWheelSpin();
+
+        // The wheel lives inside the legacy refresh lens, but wheel mode owns this click.
+        // Refresh latest state silently first so chance/cash decisions use server truth.
+        await silentSyncBeforeWheelSpin();
+
+        if (state.wheelChances > 0) await performFormalWheelSpin();
         else openWheelPreviewPrompt();
       }
 
-      els.wheelStage.addEventListener("click", triggerWheelFromDisc);
+      els.wheelStage.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        void triggerWheelFromDisc();
+      });
       els.wheelStage.addEventListener("keydown", (e) => {
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
-        triggerWheelFromDisc();
+        e.stopPropagation();
+        void triggerWheelFromDisc();
       });
 
       els.wheelRedeemLayer.addEventListener("click", (e) => {
