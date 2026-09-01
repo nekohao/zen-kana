@@ -4569,7 +4569,54 @@
       .wheel-assets-grid.three b { font-size: 15px; }
     }
 
-  </style>
+  
+
+    /* ============================================================
+       v2.2 — Third homepage mode: Work Schedule
+       ============================================================ */
+    .metric-switch { width:min(94vw,356px) !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
+    .metric-switch-thumb { width:calc((100% - 8px)/3) !important; }
+    .metric-switch.wheel-active .metric-switch-thumb { transform:translate3d(100%,0,0) !important; }
+    .metric-switch.schedule-active .metric-switch-thumb {
+      transform:translate3d(200%,0,0) !important;
+      background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(225,242,255,.50)),rgba(248,252,255,.58) !important;
+      box-shadow:0 6px 18px rgba(93,151,193,.13),inset 0 1px 0 rgba(255,255,255,.80) !important;
+    }
+    .metric-switch.schedule-active .metric-option.active { color:#5685a6 !important; }
+    .metric-option { font-size:11px !important; gap:4px !important; }
+
+    .schedule-stage { position:absolute; inset:0; z-index:5; display:grid; place-items:center; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .28s ease,visibility 0s linear .28s; }
+    .home.schedule-active .schedule-stage { opacity:1; visibility:visible; pointer-events:auto; transition-delay:0s; }
+    .home.schedule-active .score { opacity:0 !important; visibility:hidden !important; }
+    .home.schedule-active .wheel-stage { opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
+    .home.schedule-active .score-lens {
+      background:radial-gradient(circle at 34% 24%,rgba(255,255,255,.88),transparent 44%),rgba(235,247,255,.58) !important;
+      box-shadow:0 24px 60px rgba(91,143,182,.13),inset 0 2px 4px rgba(255,255,255,.94),inset 0 -4px 16px rgba(93,151,193,.05) !important;
+    }
+    .home.schedule-active .score-lens::after { opacity:0 !important; }
+    .home.schedule-active .reward-message { box-shadow:0 10px 28px rgba(91,143,182,.08),inset 0 1px 0 rgba(255,255,255,.50) !important; }
+
+    .schedule-time-ring { width:calc(100% - 22px); aspect-ratio:1; border-radius:50%; padding:7px; background:conic-gradient(from -90deg,rgba(111,177,220,.74) 0deg,rgba(111,177,220,.74) var(--work-span,0deg),rgba(214,231,242,.34) var(--work-span,0deg) 360deg); box-shadow:0 10px 28px rgba(82,137,176,.10),inset 0 1px 0 rgba(255,255,255,.65); transform:rotate(var(--work-start,0deg)); transition:transform .35s ease,background .3s ease; }
+    .schedule-ring-inner { width:100%; height:100%; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(242,249,255,.70)); border:1px solid rgba(255,255,255,.82); transform:rotate(calc(-1 * var(--work-start,0deg))); box-shadow:inset 0 2px 4px rgba(255,255,255,.92),inset 0 -5px 18px rgba(91,143,182,.05); transition:transform .35s ease; }
+    .schedule-date-main { font-size:26px; line-height:1; font-weight:760; letter-spacing:-.04em; color:var(--ink); }
+    .schedule-weekday { margin-top:7px; font-size:13px; font-weight:650; color:#6c91aa; }
+    .schedule-time-main { margin-top:19px; font-size:27px; line-height:1; font-weight:780; letter-spacing:-.045em; font-variant-numeric:tabular-nums; color:#466f8b; }
+    .schedule-status { margin-top:9px; font-size:11.5px; font-weight:600; color:var(--secondary); }
+    .schedule-time-ring.no-schedule { background:conic-gradient(rgba(207,224,235,.38) 0 360deg); }
+
+    .metric-action-slot > .schedule-actions { grid-area:1/1; margin:0 !important; }
+    .schedule-actions { width:min(88vw,340px); height:104px; display:grid; grid-template-rows:38px 54px; gap:8px; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .22s ease,visibility 0s linear .22s; }
+    .home.schedule-active .schedule-actions { opacity:1; visibility:visible; pointer-events:auto; transition-delay:0s; }
+    .home.schedule-active .score-redeem-button,.home.schedule-active .admin-controls,.home.schedule-active .wheel-actions { opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
+    .schedule-day-nav { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .schedule-nav-button,.schedule-overview-home-button,.schedule-primary-button { border:1px solid rgba(255,255,255,.80); border-radius:16px; font-weight:680; background:linear-gradient(145deg,rgba(255,255,255,.68),rgba(232,245,253,.42)),rgba(255,255,255,.34); box-shadow:0 8px 22px rgba(82,137,176,.08),inset 0 1px 0 rgba(255,255,255,.72); color:#557c97; }
+    .schedule-nav-button { font-size:12px; }
+    .schedule-main-actions { display:grid; grid-template-columns:1.25fr .75fr; gap:8px; }
+    .schedule-primary-button { color:white; background:linear-gradient(145deg,#78afd0,#6598b8); font-size:14px; }
+    .schedule-overview-home-button { font-size:13px; }
+    .home.schedule-active #overviewBtn { opacity:0; visibility:hidden; pointer-events:none; }
+    .admin-schedule-notice { display:none !important; }
+</style>
 </head>
 <body>
 <div aria-hidden="true" class="background">
@@ -4616,14 +4663,20 @@
 <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
 <path d="M12 3v18M7.5 7.5h7.1a3.1 3.1 0 0 1 0 6.2H9.4a3.1 3.1 0 0 0 0 6.2h7.1"></path>
 </svg>
-<span>当前分数</span>
+<span>分数</span>
 </button>
 <button aria-selected="false" class="metric-option" data-metric="wheel" role="tab" type="button">
 <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
 <circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="2"></circle>
 <path d="M12 3.5v6.5M19.36 7.75l-5.63 3.25M19.36 16.25l-5.63-3.25M12 20.5V14M4.64 16.25l5.63-3.25M4.64 7.75l5.63 3.25"></path>
 </svg>
-<span>幸运大转盘</span>
+<span>大转盘</span>
+</button>
+<button aria-selected="false" class="metric-option" data-metric="schedule" role="tab" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<rect height="16" rx="3" width="18" x="3" y="5"></rect><path d="M8 3v4M16 3v4M3 10h18"></path><path d="M8 14h3M13 14h3M8 18h3"></path>
+</svg>
+<span>排班</span>
 </button>
 </div>
 <div aria-live="polite" class="eyebrow reward-message" hidden="" id="metricEyebrow"></div>
@@ -4648,6 +4701,16 @@
 <span aria-hidden="true" class="wheel-hub">✦</span>
 </div>
 </div>
+<div aria-hidden="true" class="schedule-stage" id="scheduleStage">
+<div class="schedule-time-ring" id="scheduleTimeRing">
+<div class="schedule-ring-inner">
+<div class="schedule-date-main" id="scheduleDateMain">9月1日</div>
+<div class="schedule-weekday" id="scheduleWeekday">周二</div>
+<div class="schedule-time-main" id="scheduleTimeMain">暂无排班</div>
+<div class="schedule-status" id="scheduleStatus">点击下方按钮登记 ♡</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div aria-label="当前数据操作" class="metric-action-slot">
@@ -4668,6 +4731,16 @@
 <small>开始</small>
 </span>
 </button>
+</div>
+<div aria-hidden="true" class="schedule-actions" id="scheduleActions">
+<div class="schedule-day-nav">
+<button class="schedule-nav-button pressable" id="schedulePrevHomeBtn" type="button">‹ 前一天</button>
+<button class="schedule-nav-button pressable" id="scheduleNextHomeBtn" type="button">后一天 ›</button>
+</div>
+<div class="schedule-main-actions">
+<button class="schedule-primary-button pressable" id="scheduleEditHomeBtn" type="button">＋ 登记排班</button>
+<button class="schedule-overview-home-button pressable" id="scheduleOverviewHomeBtn" type="button">排班总览</button>
+</div>
 </div>
 </div>
 </div>
@@ -4840,15 +4913,6 @@
 </button>
 </div>
 </div>
-<!-- WORK SCHEDULE MODULE START: settings entry -->
-<div class="settings-label">排班</div>
-<div class="settings-group">
-<button class="settings-row pressable" id="openWorkScheduleBtn" type="button">
-<span>排班登记</span>
-<span class="chevron">›</span>
-</button>
-</div>
-<!-- WORK SCHEDULE MODULE END: settings entry -->
 <div class="settings-label">信息</div>
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
@@ -5724,10 +5788,13 @@
 
       function renderMetricSwitch() {
         const wheel = state.activeMetric === "wheel";
+        const schedule = state.activeMetric === "schedule";
         els.metricSwitch.classList.remove("gift-active");
         els.home?.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
         els.home?.classList.toggle("wheel-active", wheel);
+        els.metricSwitch.classList.toggle("schedule-active", schedule);
+        els.home?.classList.toggle("schedule-active", schedule);
 
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === state.activeMetric;
@@ -5735,14 +5802,19 @@
           btn.setAttribute("aria-selected", String(active));
         });
 
-        els.scoreRefreshBtn.setAttribute("aria-label", wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据");
+        els.scoreRefreshBtn.setAttribute("aria-label", schedule ? "刷新当前排班" : (wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据"));
 
         const primary = document.createElement("span");
         const secondary = document.createElement("span");
         primary.className = "reward-line-primary";
         secondary.className = "reward-line-secondary";
 
-        if (wheel) {
+        if (schedule) {
+          const info = workScheduleModule.getHomeSummary();
+          primary.textContent = `₊˚📅 ${info.relative}的排班 ♡`;
+          secondary.textContent = info.hasSchedule ? `${info.time} · 切换日期看看其他安排 ✨` : `这一天还没有登记排班 · 可以随时补上 🌷`;
+          els.wheelActions.setAttribute("aria-hidden", "true");
+        } else if (wheel) {
           const chances = Math.max(0, Number(state.wheelChances ?? 0));
           const cash = Math.max(0, Number(state.wheelCashBalance ?? 0));
           if (state.isAdmin) {
@@ -5778,6 +5850,11 @@
           els.score.classList.remove("loading");
           return;
         }
+        if (state.activeMetric === "schedule") {
+          els.score.classList.remove("loading");
+          workScheduleModule.renderHomeSchedule();
+          return;
+        }
         const value = activeMetricValue();
         if (typeof value !== "number") return;
         els.score.textContent = value;
@@ -5795,8 +5872,10 @@
 
       function previewMetricSwitch(nextMetric) {
         const wheel = nextMetric === "wheel";
+        const schedule = nextMetric === "schedule";
         els.metricSwitch.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
+        els.metricSwitch.classList.toggle("schedule-active", schedule);
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === nextMetric;
           btn.classList.toggle("active", active);
@@ -5805,7 +5884,7 @@
       }
 
       function switchMetric(nextMetric) {
-        if (!["score", "wheel"].includes(nextMetric) || nextMetric === state.activeMetric) return;
+        if (!["score", "wheel", "schedule"].includes(nextMetric) || nextMetric === state.activeMetric) return;
         if (state.wheelSpinning) {
           showToast("🎠 转盘还在转呀，等它停稳一下 ♡");
           return;
@@ -5824,7 +5903,8 @@
           if (token !== metricSwitchToken) return;
           state.activeMetric = nextMetric;
           renderPrimaryMetric({ animate: false });
-          renderOverviewContentMode();
+          if (nextMetric !== "schedule") renderOverviewContentMode();
+          else void workScheduleModule.refreshHome(false);
           home?.classList.remove("metric-fading-out");
           void home?.offsetWidth;
           home?.classList.add("metric-fading-in");
@@ -7510,6 +7590,15 @@
       const workScheduleModule = (() => {
         const scheduleEls = {
           openBtn: $("#openWorkScheduleBtn"),
+          homeRing: $("#scheduleTimeRing"),
+          homeDateMain: $("#scheduleDateMain"),
+          homeWeekday: $("#scheduleWeekday"),
+          homeTimeMain: $("#scheduleTimeMain"),
+          homeStatus: $("#scheduleStatus"),
+          homePrevBtn: $("#schedulePrevHomeBtn"),
+          homeNextBtn: $("#scheduleNextHomeBtn"),
+          homeEditBtn: $("#scheduleEditHomeBtn"),
+          homeOverviewBtn: $("#scheduleOverviewHomeBtn"),
           adminNotice: $("#adminScheduleNotice"),
           adminNoticeMeta: $("#adminScheduleNoticeMeta"),
           adminLayer: $("#adminWorkScheduleLayer"),
@@ -7547,6 +7636,62 @@
         let rowsByDate = new Map();
         let scheduleCacheLoaded = false;
         let pendingDeleteId = null;
+        let homeDateKey = null;
+
+        function ensureHomeDateKey() {
+          if (!homeDateKey) homeDateKey = localDateKey();
+          return homeDateKey;
+        }
+        function homeRow() { return rowsByDate.get(String(ensureHomeDateKey())) || null; }
+        function homeDateParts() {
+          const date = parseLocalDate(ensureHomeDateKey());
+          return { dateLabel:`${date.getMonth()+1}月${date.getDate()}日`, weekday:new Intl.DateTimeFormat("zh-CN",{weekday:"long"}).format(date), relative:relativeDateText(ensureHomeDateKey()) };
+        }
+        function getHomeSummary() {
+          const row=homeRow(), parts=homeDateParts();
+          return {...parts,hasSchedule:!!row,time:row?`${formatHour(row.start_hour)}–${formatHour(row.end_hour)}`:"暂无排班"};
+        }
+        function renderHomeSchedule() {
+          if (!scheduleEls.homeRing) return;
+          const row=homeRow(), parts=homeDateParts();
+          scheduleEls.homeDateMain.textContent=parts.dateLabel;
+          scheduleEls.homeWeekday.textContent=parts.weekday;
+          scheduleEls.homeRing.classList.toggle("no-schedule",!row);
+          if (row) {
+            const start=Number(row.start_hour), end=Number(row.end_hour);
+            scheduleEls.homeTimeMain.textContent=`${formatHour(start)}–${formatHour(end)}`;
+            scheduleEls.homeStatus.textContent=`${parts.relative} · 已登记 ✓`;
+            scheduleEls.homeEditBtn.textContent="修改排班";
+            scheduleEls.homeRing.style.setProperty("--work-start",`${(start/24)*360}deg`);
+            scheduleEls.homeRing.style.setProperty("--work-span",`${((end-start)/24)*360}deg`);
+          } else {
+            scheduleEls.homeTimeMain.textContent="暂无排班";
+            scheduleEls.homeStatus.textContent=`${parts.relative} · 点击下方按钮登记 ♡`;
+            scheduleEls.homeEditBtn.textContent="＋ 登记排班";
+            scheduleEls.homeRing.style.setProperty("--work-start","0deg");
+            scheduleEls.homeRing.style.setProperty("--work-span","0deg");
+          }
+        }
+        async function refreshHome(forceRefresh=true) {
+          try {
+            if (forceRefresh || !scheduleCacheLoaded) await fetchScheduleRows();
+            renderHomeSchedule();
+            if (state.activeMetric === "schedule") renderMetricSwitch();
+          } catch(err) {
+            console.error("workSchedule.refreshHome:",err);
+            renderHomeSchedule();
+            if (isRpcMissing(err?.message)) showToast("请先运行新版排班 SQL");
+          }
+        }
+        function shiftHomeDate(delta) {
+          homeDateKey=localDateKey(addDays(parseLocalDate(ensureHomeDateKey()),delta));
+          renderHomeSchedule(); renderMetricSwitch(); vibrate(6);
+        }
+        function openHomeRegistration() {
+          resetForm(); scheduleEls.date.value=ensureHomeDateKey(); applyScheduleForDate(scheduleEls.date.value);
+          setLayer(scheduleEls.overviewLayer,false); setLayer(scheduleEls.deleteLayer,false); setLayer(scheduleEls.layer,true);
+          vibrate(8); void syncRegistrationForCurrentDate({forceRefresh:true});
+        }
 
         function bindPullDownClose({ layer, sheet, handle, onClose }) {
           let drag = null;
@@ -7768,6 +7913,9 @@
             }
 
             if (state.isAdmin) await refreshAdminNotice({ forceRefresh: false });
+            homeDateKey = workDate;
+            renderHomeSchedule();
+            if (state.activeMetric === "schedule") renderMetricSwitch();
             vibrate(14);
             showToast("排班已保存");
           } catch (err) {
@@ -7983,6 +8131,8 @@
             vibrate(14);
             showToast("排班已删除");
             await loadOverview();
+            renderHomeSchedule();
+            if (state.activeMetric === "schedule") renderMetricSwitch();
             if (state.isAdmin) await refreshAdminNotice({ forceRefresh: false });
           } catch (err) {
             console.error("workSchedule.confirmDelete:", err);
@@ -7997,7 +8147,11 @@
         populateHourOptions();
         resetForm();
 
-        scheduleEls.openBtn.addEventListener("click", openRegistration);
+        scheduleEls.openBtn?.addEventListener("click", openRegistration);
+        scheduleEls.homePrevBtn?.addEventListener("click", () => shiftHomeDate(-1));
+        scheduleEls.homeNextBtn?.addEventListener("click", () => shiftHomeDate(1));
+        scheduleEls.homeEditBtn?.addEventListener("click", openHomeRegistration);
+        scheduleEls.homeOverviewBtn?.addEventListener("click", openOverview);
         scheduleEls.adminNotice.addEventListener("click", openAdminUpcoming);
         scheduleEls.closeAdminBtn.addEventListener("click", closeAdminUpcoming);
         scheduleEls.date.addEventListener("change", () => {
@@ -8080,7 +8234,13 @@
         return Object.freeze({
           loadOverview,
           refreshAdminNotice,
-          hideAdminNotice
+          hideAdminNotice,
+          renderHomeSchedule,
+          refreshHome,
+          getHomeSummary,
+          shiftHomeDate,
+          openHomeRegistration,
+          openOverview
         });
       })();
       // ============================================================
@@ -8206,9 +8366,16 @@
           showToast("已同步最新数据");
         } finally { setTimeout(() => els.scoreRefreshBtn.classList.remove("refreshing"), 650); }
       }
-      els.scoreRefreshBtn.addEventListener("click", manualRefreshApp);
+      els.scoreRefreshBtn.addEventListener("click", () => {
+        if (state.activeMetric === "schedule") void workScheduleModule.refreshHome(true);
+        else manualRefreshApp();
+      });
       els.scoreRefreshBtn.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); manualRefreshApp(); }
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (state.activeMetric === "schedule") void workScheduleModule.refreshHome(true);
+          else manualRefreshApp();
+        }
       });
 
       els.metricSwitch.addEventListener("click", (e) => {
@@ -8269,6 +8436,7 @@
       els.resetConfirmBtn.addEventListener("click", performReset);
 
       els.overviewBtn.addEventListener("click", async () => {
+        if (state.activeMetric === "schedule") return workScheduleModule.openOverview();
         vibrate(); openOverviewSheet(); renderOverview();
         requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
         await loadOverviewData(false);
@@ -8340,6 +8508,7 @@
       async function scheduledDatabaseRefresh() {
         await loadAppState({ silent: true });
         if (state.isAdmin) await workScheduleModule.refreshAdminNotice({ forceRefresh: true });
+        if (state.activeMetric === "schedule") await workScheduleModule.refreshHome(true);
 
         if (els.overview.classList.contains("open")) {
           await loadOverviewData(true);
