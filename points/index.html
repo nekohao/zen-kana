@@ -1,18 +1,18 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <meta id="themeColorMeta" name="theme-color" content="#f4f5f9" />
-  <meta name="color-scheme" content="light" />
-
-  <!-- ============================================================
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
+<meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
+<meta content="light" name="color-scheme"/>
+<!-- ============================================================
        AUTO UPDATE MODULE START
        Same-origin one-time fresh reload on a new app/page open.
        It does not clear localStorage, so Supabase persistSession survives.
        Safe to remove as one independent block.
        ============================================================ -->
-  <script>
+<script>
     (() => {
       try {
         const FRESH_PARAM = "__points_fresh";
@@ -42,20 +42,18 @@
       }
     })();
   </script>
-  <!-- ============================================================
+<!-- ============================================================
        AUTO UPDATE MODULE END
        ============================================================ -->
-
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="积分小本本" />
-  <meta name="format-detection" content="telephone=no" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <title>积分小本本</title>
-
-  <style>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="积分小本本" name="apple-mobile-web-app-title"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="./apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="./icon-512.png" rel="icon" sizes="512x512" type="image/png"/>
+<link href="./manifest.webmanifest" rel="manifest"/>
+<title>积分小本本</title>
+<style>
     :root {
       /* Light theme: only the background palette is borrowed from the supplied reference. */
       --bg-0: #fbf8fc;
@@ -4385,940 +4383,975 @@
       .wheel-side-copy strong { font-size: 10.8px; }
     }
 
+
+    /* ============================================================
+       v2.0 — Direct rewards + withdrawal settlement workflow
+       ============================================================ */
+    .metric-switch {
+      width: min(86vw, 300px) !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+    .metric-switch-thumb {
+      width: calc(50% - 4px) !important;
+    }
+    .metric-switch.wheel-active .metric-switch-thumb {
+      transform: translate3d(100%,0,0) !important;
+    }
+    .metric-option { font-size: 11.5px !important; }
+
+    .home.admin-mode.wheel-active #redeemWheelChanceBtn {
+      display: none !important;
+    }
+    .home.admin-mode.wheel-active #spinWheelActionBtn {
+      width: min(72vw, 225px) !important;
+      flex-basis: 225px !important;
+    }
+
+    .reward-choice-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .reward-choice-card {
+      width: 100%;
+      min-height: 74px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: 19px;
+      display: grid;
+      grid-template-columns: 38px minmax(0,1fr) auto;
+      gap: 10px;
+      align-items: center;
+      text-align: left;
+      background: rgba(255,255,255,.26);
+      box-shadow: 0 9px 24px rgba(46,55,74,.07), inset 0 1px 0 rgba(255,255,255,.62);
+    }
+    .reward-choice-card .reward-choice-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(255,255,255,.54);
+      font-size: 21px;
+    }
+    .reward-choice-card strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 760;
+      line-height: 1.15;
+    }
+    .reward-choice-card small {
+      display: block;
+      margin-top: 5px;
+      color: var(--secondary);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .reward-choice-card .reward-choice-arrow {
+      color: var(--tertiary);
+      font-size: 22px;
+    }
+    .reward-choice-card.cash { color: #a66d35; }
+    .reward-choice-card.wheel { color: #aa607f; }
+
+    .wheel-assets-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .wheel-assets-grid.three > div {
+      min-width: 0;
+      padding-left: 7px;
+      padding-right: 7px;
+    }
+    .wheel-assets-grid.three span {
+      white-space: nowrap;
+      font-size: 10px;
+    }
+    .wheel-assets-grid.three b {
+      font-size: 17px;
+    }
+
+    .withdrawal-notice {
+      margin: 13px 0 0;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: 19px;
+      background: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,236,221,.26));
+      box-shadow: 0 10px 26px rgba(179,119,78,.08), inset 0 1px 0 rgba(255,255,255,.65);
+    }
+    .withdrawal-notice.admin-pending {
+      border-color: rgba(239,184,155,.56);
+      background: linear-gradient(145deg, rgba(255,255,255,.66), rgba(255,225,211,.37));
+    }
+    .withdrawal-notice-title {
+      font-size: 13px;
+      font-weight: 780;
+      line-height: 1.3;
+      color: #a7644b;
+    }
+    .withdrawal-notice-copy {
+      margin-top: 5px;
+      color: var(--secondary);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .pending-withdrawal-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .pending-withdrawal-item {
+      padding: 10px 11px;
+      border-radius: 15px;
+      background: rgba(255,255,255,.42);
+      border: 1px solid rgba(255,255,255,.70);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .pending-withdrawal-item strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .pending-withdrawal-item small {
+      display: block;
+      margin-top: 4px;
+      color: var(--secondary);
+      font-size: 10px;
+    }
+    .settle-withdrawal-button {
+      min-height: 34px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 12px;
+      color: #9c5f49;
+      background: rgba(255,239,231,.82);
+      font-size: 11px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .withdrawal-status-line {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--secondary);
+    }
+    .withdrawal-status-line.settled { color: #5d8368; font-weight: 650; }
+    .withdrawal-status-line.pending { color: #a57845; font-weight: 650; }
+
+    .movement.reward-chance-day { color: #a7627f; }
+    .movement.reward-cash-day { color: #a46d32; }
+    .movement.withdrawal-day { color: #aa704d; }
+
+    #settleWithdrawalLayer {
+      padding: 0 0 12px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(45,54,70,.075);
+    }
+    #settleWithdrawalLayer .alert {
+      width: min(calc(100% - 28px), 334px);
+      border-color: rgba(255,255,255,.88);
+      background: linear-gradient(145deg, rgba(255,255,255,.42), rgba(255,229,216,.18) 48%), var(--glass-fill-strong);
+      box-shadow: 0 24px 72px rgba(169,99,66,.14), inset 0 1px 0 rgba(255,255,255,.58);
+    }
+    #settleWithdrawalLayer .primary-action {
+      color: #9b5f49 !important;
+      background: linear-gradient(135deg, rgba(255,250,246,.95), rgba(249,212,193,.68)) !important;
+    }
+
+    @media (max-width: 365px) {
+      .wheel-assets-grid.three { gap: 6px; }
+      .wheel-assets-grid.three span { font-size: 9px; }
+      .wheel-assets-grid.three b { font-size: 15px; }
+    }
+
   </style>
 </head>
-
 <body>
-  <div class="background" aria-hidden="true">
-    <div class="ambient a"></div>
-    <div class="ambient b"></div>
-    <div class="ambient c"></div>
-    <span class="cute-doodle d1">♡</span>
-    <span class="cute-doodle d2">✦</span>
-    <span class="cute-doodle d3">✧</span>
-    <span class="cute-doodle d4">♡</span>
-    <span class="cute-doodle d5">✦</span>
-    <span class="cute-doodle d6">✧</span>
-  </div>
-
-  <main class="app">
-    <section class="home" aria-label="积分小本本首页">
-      <header class="topbar">
-        <div class="app-brand" aria-label="积分小本本">
-          <img class="app-brand-icon" src="./apple-touch-icon.png" alt="" aria-hidden="true" />
-          <div class="app-brand-title">积分小本本</div>
-        </div>
-        <button id="settingsBtn" class="icon-button pressable" type="button" aria-label="设置">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0-.73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-        </button>
-      </header>
-
-      <div class="hero">
-        <!-- WORK SCHEDULE MODULE START: administrator home reminder -->
-        <button id="adminScheduleNotice" class="admin-schedule-notice pressable" type="button" hidden aria-label="查看未来排班">
-          <span class="admin-schedule-notice-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-          </span>
-          <span class="admin-schedule-notice-copy">
-            <span class="admin-schedule-notice-title">有排班</span>
-            <span id="adminScheduleNoticeMeta" class="admin-schedule-notice-meta">查看今天及未来排班</span>
-          </span>
-          <span class="admin-schedule-notice-chevron">›</span>
-        </button>
-        <!-- WORK SCHEDULE MODULE END: administrator home reminder -->
-
-        <div id="metricSwitch" class="metric-switch" role="tablist" aria-label="首页数据切换">
-          <div class="metric-switch-thumb" aria-hidden="true"></div>
-          <button class="metric-option active" type="button" role="tab" aria-selected="true" data-metric="score">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 3v18M7.5 7.5h7.1a3.1 3.1 0 0 1 0 6.2H9.4a3.1 3.1 0 0 0 0 6.2h7.1"/>
-            </svg>
-            <span>当前分数</span>
-          </button>
-          <button class="metric-option" type="button" role="tab" aria-selected="false" data-metric="gift">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 9h16v11H4zM3 9h18V6H3zM12 6v14M12 6H8.7A2.7 2.7 0 1 1 12 3.4V6Zm0 0h3.3A2.7 2.7 0 1 0 12 3.4V6Z"/>
-            </svg>
-            <span>小礼物额度</span>
-          </button>
-          <button class="metric-option" type="button" role="tab" aria-selected="false" data-metric="wheel">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/>
-              <path d="M12 3.5v6.5M19.36 7.75l-5.63 3.25M19.36 16.25l-5.63-3.25M12 20.5V14M4.64 16.25l5.63-3.25M4.64 7.75l5.63 3.25"/>
-            </svg>
-            <span>大转盘</span>
-          </button>
-        </div>
-        <div id="metricEyebrow" class="eyebrow reward-message" aria-live="polite" hidden></div>
-
-        <div id="scoreRefreshBtn" class="score-lens-wrap pressable" role="button" tabindex="0" aria-label="手动刷新最新数据">
-          <div class="score-glow" aria-hidden="true"></div>
-          <div class="score-lens">
-            <div id="metricGhostValue" class="metric-ghost-value" aria-hidden="true"></div>
-            <div id="scoreValue" class="score loading" aria-live="polite">—</div>
-
-            <div id="wheelStage" class="wheel-stage" aria-hidden="true">
-              <div class="wheel-pointer" aria-hidden="true">
-                <span class="wheel-pointer-gem">♡</span>
-                <span class="wheel-pointer-tip"></span>
-              </div>
-              <div id="wheelDisk" class="wheel-disk">
-                <span class="wheel-prize wheel-prize-10">¥10</span>
-                <span class="wheel-prize wheel-prize-20">¥20</span>
-                <span class="wheel-prize wheel-prize-30">¥30</span>
-                <span class="wheel-prize wheel-prize-50">¥50</span>
-                <span class="wheel-prize wheel-prize-60">¥60</span>
-                <span class="wheel-prize wheel-prize-80">¥80</span>
-                <span class="wheel-prize wheel-prize-100">¥100</span>
-                <span class="wheel-hub" aria-hidden="true">✦</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="metric-action-slot" aria-label="当前数据操作">
-          <button id="redeemGiftBtn" class="redeem-button score-redeem-button pressable" type="button">
-            <span aria-hidden="true">🎁</span>
-            <span>兑换小礼物额度</span>
-            <span class="redeem-button-meta">10 分 / 次</span>
-          </button>
-
-          <button id="useGiftBtn" class="redeem-button use-gift-button pressable" type="button">
-            <span aria-hidden="true">🎀</span>
-            <span>使用小礼物额度</span>
-            <span id="useGiftBtnMeta" class="redeem-button-meta">剩余 0 次</span>
-          </button>
-
-          <div id="adminControls" class="admin-controls hidden" aria-hidden="true">
-            <button class="score-button minus pressable" type="button" data-delta="-1">−1</button>
-            <button class="score-button plus pressable" type="button" data-delta="1">+1</button>
-          </div>
-
-          <div id="wheelActions" class="wheel-actions" aria-hidden="true">
-            <button id="redeemWheelChanceBtn" class="wheel-side-button wheel-side-redeem pressable" type="button">
-              <span class="wheel-side-icon" aria-hidden="true">🎁</span>
-              <span class="wheel-side-copy">
-                <strong>兑换大转盘</strong>
-                <small>机会</small>
-              </span>
-            </button>
-            <button id="spinWheelActionBtn" class="wheel-side-button wheel-side-spin pressable" type="button">
-              <span class="wheel-side-icon" aria-hidden="true">🎠</span>
-              <span class="wheel-side-copy">
-                <strong>转动大转盘</strong>
-                <small>开始</small>
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="bottom-zone">
-        <button id="overviewBtn" class="overview-button pressable" type="button">
-          <span>总览</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- Overview -->
-    <section id="overview" class="overview" aria-hidden="true">
-      <div class="overview-backdrop"></div>
-
-      <div class="overview-shell">
-        <header class="overview-header">
-          <div id="overviewGrabberHitbox" class="overview-grabber-hitbox" aria-label="下拉关闭总览">
-            <div class="overview-grabber" aria-hidden="true"></div>
-          </div>
-          <div id="overviewTitle" class="overview-title">总览</div>
-          <div id="overviewSubtitle" class="overview-subtitle">查看趋势与日历</div>
-        </header>
-
-        <div id="scoreOverviewContent">
-          <div class="overview-landing">
-            <nav id="overviewQuickNav" class="overview-quick-nav" aria-label="总览快捷入口">
-              <button class="overview-quick-card pressable" type="button" data-overview-target="trend">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l5-5 4 3 7-8"/><path d="M15 7h5v5"/></svg>
-                <span class="overview-quick-title">趋势统计</span>
-                <span class="overview-quick-copy">分数变化趋势</span>
-              </button>
-              <button class="overview-quick-card pressable" type="button" data-overview-target="calendar">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-                <span class="overview-quick-title">日历视图</span>
-                <span class="overview-quick-copy">查看每日记录</span>
-              </button>
-            </nav>
-          </div>
-
-          <div id="overviewContentSwitch" class="overview-content-switch" role="tablist" aria-label="总览内容切换" hidden>
-            <button class="overview-content-choice pressable" type="button" role="tab" data-overview-section="trend">趋势</button>
-            <button class="overview-content-choice pressable" type="button" role="tab" data-overview-section="calendar">日历</button>
-          </div>
-
-          <section id="scoreTrendSection" class="section overview-section-anchor" hidden>
-            <h2 class="section-title">趋势统计</h2>
-            <div class="card glass trend-card">
-              <div id="trendSegments" class="segmented" aria-label="趋势范围">
-                <button class="segment pressable active" type="button" data-range="today">今天</button>
-                <button class="segment pressable" type="button" data-range="week">本周</button>
-                <div class="trend-month-control">
-                  <button id="trendMonthBtn" class="segment pressable" type="button"
-                          aria-haspopup="menu" aria-expanded="false">
-                    <span id="trendMonthLabel">本月</span>
-                    <span class="trend-month-chevron" aria-hidden="true">⌄</span>
-                  </button>
-                  <div id="trendMonthMenu" class="trend-month-menu" role="menu"
-                       aria-label="选择本月周次" hidden>
-                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="1">
-                      <span>本月第一周</span><small>1–7 日</small>
-                    </button>
-                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="2">
-                      <span>本月第二周</span><small>8–14 日</small>
-                    </button>
-                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="3">
-                      <span>本月第三周</span><small>15–21 日</small>
-                    </button>
-                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="4">
-                      <span>本月第四周</span><small>22 日–月底</small>
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div class="chart-wrap">
-                <canvas id="trendCanvas"></canvas>
-                <div id="chartEmpty" class="chart-empty" hidden>暂无数据</div>
-              </div>
-              <div id="chartCaption" class="chart-caption"></div>
-            </div>
-          </section>
-
-          <section id="scoreCalendarSection" class="section overview-section-anchor" hidden>
-            <h2 class="section-title">日历视图</h2>
-            <div class="card glass calendar-card">
-              <div class="calendar-head">
-                <button id="prevMonthBtn" class="small-icon pressable" type="button" aria-label="上个月">‹</button>
-                <div id="calendarMonth" class="calendar-month"></div>
-                <button id="nextMonthBtn" class="small-icon pressable" type="button" aria-label="下个月">›</button>
-              </div>
-              <div class="weekdays" aria-hidden="true">
-                <div class="weekday">日</div><div class="weekday">一</div><div class="weekday">二</div>
-                <div class="weekday">三</div><div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div>
-              </div>
-              <div id="calendarGrid" class="calendar-grid"></div>
-              <div id="dayDetail" class="day-detail hidden">
-                <div id="dayDetailTitle" class="detail-title"></div>
-                <ul id="dayDetailList" class="log-list"></ul>
-              </div>
-            </div>
-          </section>
-
-        </div>
-
-        <div id="giftOverviewContent" hidden>
-          <section class="section overview-section-anchor">
-            <h2 class="section-title">小礼物历史</h2>
-            <div class="card glass">
-              <ul id="giftRecordList" class="log-list"></ul>
-            </div>
-          </section>
-        </div>
-
-        <div id="wheelOverviewContent" hidden>
-          <section class="section overview-section-anchor wheel-assets-section">
-            <h2 class="section-title">大转盘资产</h2>
-            <div class="card glass wheel-assets-card">
-              <div class="wheel-balance-main">
-                <span class="wheel-balance-label">可提现余额</span>
-                <strong id="wheelOverviewCash">¥0</strong>
-                <span id="wheelOverviewChance" class="wheel-balance-sub">当前 0 次正式机会</span>
-              </div>
-              <div class="wheel-assets-grid">
-                <div><span>累计中奖</span><b id="wheelOverviewWon">¥0</b></div>
-                <div><span>已提现</span><b id="wheelOverviewWithdrawn">¥0</b></div>
-              </div>
-              <button id="withdrawWheelBtn" class="wheel-withdraw-button pressable" type="button">💰 提现</button>
-            </div>
-          </section>
-          <section class="section overview-section-anchor wheel-history-section">
-            <h2 class="section-title">转盘记录</h2>
-            <div class="card glass">
-              <ul id="wheelRecordList" class="log-list"></ul>
-            </div>
-          </section>
-        </div>
-      </div>
-    </section>
-
-    <!-- Settings Sheet -->
-    <div id="settingsLayer" class="modal-layer" aria-hidden="true">
-      <div id="settingsSheet" class="sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-        <header class="settings-sheet-header">
-          <div id="settingsGrabberHitbox" class="settings-grabber-hitbox" aria-label="下拉关闭设置">
-            <div class="grabber" aria-hidden="true"></div>
-          </div>
-          <div id="settingsTitle" class="sheet-title">设置</div>
-          <div id="loginStateText" class="login-state">访客模式</div>
-        </header>
-
-        <div class="settings-sheet-content">
-          <div id="guestAccountLabel" class="settings-label">账户</div>
-          <div id="guestSettings" class="settings-group">
-            <button id="openLoginBtn" class="settings-row pressable" type="button">
-              <span>管理员登录</span>
-              <span class="chevron">›</span>
-            </button>
-          </div>
-
-          <div id="adminSettings" hidden>
-            <div class="settings-label">积分管理</div>
-            <div class="settings-group">
-              <button id="resetBtn" class="settings-row destructive pressable" type="button">
-                <span>重置积分</span>
-                <span class="settings-value">恢复到 5 <span class="chevron">›</span></span>
-              </button>
-            </div>
-
-            <div class="settings-label">大转盘管理</div>
-            <div class="settings-group">
-              <button id="openWheelProbabilityBtn" class="settings-row pressable" type="button">
-                <span>奖项概率设置</span>
-                <span class="settings-value">管理员专用 <span class="chevron">›</span></span>
-              </button>
-              <button id="openWheelProbabilityHistoryBtn" class="settings-row pressable" type="button">
-                <span>概率修改记录</span>
-                <span class="chevron">›</span>
-              </button>
-            </div>
-
-            <div class="settings-label">账户</div>
-            <div class="settings-group">
-              <button id="logoutBtn" class="settings-row destructive pressable" type="button">
-                <span>退出管理员</span>
-                <span class="chevron">›</span>
-              </button>
-            </div>
-
-          </div>
-
-          <!-- WORK SCHEDULE MODULE START: settings entry -->
-          <div class="settings-label">排班</div>
-          <div class="settings-group">
-            <button id="openWorkScheduleBtn" class="settings-row pressable" type="button">
-              <span>排班登记</span>
-              <span class="chevron">›</span>
-            </button>
-          </div>
-          <!-- WORK SCHEDULE MODULE END: settings entry -->
-
-
-          <div class="settings-label">信息</div>
-          <div class="settings-group">
-            <button id="openVersionInfoBtn" class="settings-row pressable" type="button">
-              <span>版本信息</span>
-              <span class="chevron">›</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ============================================================
+<div aria-hidden="true" class="background">
+<div class="ambient a"></div>
+<div class="ambient b"></div>
+<div class="ambient c"></div>
+<span class="cute-doodle d1">♡</span>
+<span class="cute-doodle d2">✦</span>
+<span class="cute-doodle d3">✧</span>
+<span class="cute-doodle d4">♡</span>
+<span class="cute-doodle d5">✦</span>
+<span class="cute-doodle d6">✧</span>
+</div>
+<main class="app">
+<section aria-label="积分小本本首页" class="home">
+<header class="topbar">
+<div aria-label="积分小本本" class="app-brand">
+<img alt="" aria-hidden="true" class="app-brand-icon" src="./apple-touch-icon.png"/>
+<div class="app-brand-title">积分小本本</div>
+</div>
+<button aria-label="设置" class="icon-button pressable" id="settingsBtn" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0-.73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</button>
+</header>
+<div class="hero">
+<!-- WORK SCHEDULE MODULE START: administrator home reminder -->
+<button aria-label="查看未来排班" class="admin-schedule-notice pressable" hidden="" id="adminScheduleNotice" type="button">
+<span aria-hidden="true" class="admin-schedule-notice-icon">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" viewbox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="5"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+</span>
+<span class="admin-schedule-notice-copy">
+<span class="admin-schedule-notice-title">有排班</span>
+<span class="admin-schedule-notice-meta" id="adminScheduleNoticeMeta">查看今天及未来排班</span>
+</span>
+<span class="admin-schedule-notice-chevron">›</span>
+</button>
+<!-- WORK SCHEDULE MODULE END: administrator home reminder -->
+<div aria-label="首页数据切换" class="metric-switch" id="metricSwitch" role="tablist">
+<div aria-hidden="true" class="metric-switch-thumb"></div>
+<button aria-selected="true" class="metric-option active" data-metric="score" role="tab" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<path d="M12 3v18M7.5 7.5h7.1a3.1 3.1 0 0 1 0 6.2H9.4a3.1 3.1 0 0 0 0 6.2h7.1"></path>
+</svg>
+<span>当前分数</span>
+</button>
+<button aria-selected="false" class="metric-option" data-metric="wheel" role="tab" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="2"></circle>
+<path d="M12 3.5v6.5M19.36 7.75l-5.63 3.25M19.36 16.25l-5.63-3.25M12 20.5V14M4.64 16.25l5.63-3.25M4.64 7.75l5.63 3.25"></path>
+</svg>
+<span>幸运大转盘</span>
+</button>
+</div>
+<div aria-live="polite" class="eyebrow reward-message" hidden="" id="metricEyebrow"></div>
+<div aria-label="手动刷新最新数据" class="score-lens-wrap pressable" id="scoreRefreshBtn" role="button" tabindex="0">
+<div aria-hidden="true" class="score-glow"></div>
+<div class="score-lens">
+<div aria-hidden="true" class="metric-ghost-value" id="metricGhostValue"></div>
+<div aria-live="polite" class="score loading" id="scoreValue">—</div>
+<div aria-hidden="true" class="wheel-stage" id="wheelStage">
+<div aria-hidden="true" class="wheel-pointer">
+<span class="wheel-pointer-gem">♡</span>
+<span class="wheel-pointer-tip"></span>
+</div>
+<div class="wheel-disk" id="wheelDisk">
+<span class="wheel-prize wheel-prize-10">¥10</span>
+<span class="wheel-prize wheel-prize-20">¥20</span>
+<span class="wheel-prize wheel-prize-30">¥30</span>
+<span class="wheel-prize wheel-prize-50">¥50</span>
+<span class="wheel-prize wheel-prize-60">¥60</span>
+<span class="wheel-prize wheel-prize-80">¥80</span>
+<span class="wheel-prize wheel-prize-100">¥100</span>
+<span aria-hidden="true" class="wheel-hub">✦</span>
+</div>
+</div>
+</div>
+</div>
+<div aria-label="当前数据操作" class="metric-action-slot">
+<button class="redeem-button score-redeem-button pressable" id="redeemRewardBtn" type="button">
+<span aria-hidden="true">🎁</span>
+<span>兑换奖励</span>
+<span class="redeem-button-meta">10 分 / 次</span>
+</button>
+<div aria-hidden="true" class="admin-controls hidden" id="adminControls">
+<button class="score-button minus pressable" data-delta="-1" type="button">−1</button>
+<button class="score-button plus pressable" data-delta="1" type="button">+1</button>
+</div>
+<div aria-hidden="true" class="wheel-actions" id="wheelActions">
+<button class="wheel-side-button wheel-side-redeem pressable" id="redeemWheelChanceBtn" type="button">
+<span aria-hidden="true" class="wheel-side-icon">🎁</span>
+<span class="wheel-side-copy">
+<strong>10分兑机会</strong>
+<small>兑换奖励</small>
+</span>
+</button>
+<button class="wheel-side-button wheel-side-spin pressable" id="spinWheelActionBtn" type="button">
+<span aria-hidden="true" class="wheel-side-icon">🎠</span>
+<span class="wheel-side-copy">
+<strong>转动大转盘</strong>
+<small>开始</small>
+</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bottom-zone">
+<button class="overview-button pressable" id="overviewBtn" type="button">
+<span>总览</span>
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</button>
+</div>
+</section>
+<!-- Overview -->
+<section aria-hidden="true" class="overview" id="overview">
+<div class="overview-backdrop"></div>
+<div class="overview-shell">
+<header class="overview-header">
+<div aria-label="下拉关闭总览" class="overview-grabber-hitbox" id="overviewGrabberHitbox">
+<div aria-hidden="true" class="overview-grabber"></div>
+</div>
+<div class="overview-title" id="overviewTitle">总览</div>
+<div class="overview-subtitle" id="overviewSubtitle">查看趋势与日历</div>
+</header>
+<div id="scoreOverviewContent">
+<div class="overview-landing">
+<nav aria-label="总览快捷入口" class="overview-quick-nav" id="overviewQuickNav">
+<button class="overview-quick-card pressable" data-overview-target="trend" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24"><path d="M4 17l5-5 4 3 7-8"></path><path d="M15 7h5v5"></path></svg>
+<span class="overview-quick-title">趋势统计</span>
+<span class="overview-quick-copy">分数变化趋势</span>
+</button>
+<button class="overview-quick-card pressable" data-overview-target="calendar" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="5"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+<span class="overview-quick-title">日历视图</span>
+<span class="overview-quick-copy">查看每日记录</span>
+</button>
+</nav>
+</div>
+<div aria-label="总览内容切换" class="overview-content-switch" hidden="" id="overviewContentSwitch" role="tablist">
+<button class="overview-content-choice pressable" data-overview-section="trend" role="tab" type="button">趋势</button>
+<button class="overview-content-choice pressable" data-overview-section="calendar" role="tab" type="button">日历</button>
+</div>
+<section class="section overview-section-anchor" hidden="" id="scoreTrendSection">
+<h2 class="section-title">趋势统计</h2>
+<div class="card glass trend-card">
+<div aria-label="趋势范围" class="segmented" id="trendSegments">
+<button class="segment pressable active" data-range="today" type="button">今天</button>
+<button class="segment pressable" data-range="week" type="button">本周</button>
+<div class="trend-month-control">
+<button aria-expanded="false" aria-haspopup="menu" class="segment pressable" id="trendMonthBtn" type="button">
+<span id="trendMonthLabel">本月</span>
+<span aria-hidden="true" class="trend-month-chevron">⌄</span>
+</button>
+<div aria-label="选择本月周次" class="trend-month-menu" hidden="" id="trendMonthMenu" role="menu">
+<button class="trend-month-option pressable" data-month-week="1" role="menuitem" type="button">
+<span>本月第一周</span><small>1–7 日</small>
+</button>
+<button class="trend-month-option pressable" data-month-week="2" role="menuitem" type="button">
+<span>本月第二周</span><small>8–14 日</small>
+</button>
+<button class="trend-month-option pressable" data-month-week="3" role="menuitem" type="button">
+<span>本月第三周</span><small>15–21 日</small>
+</button>
+<button class="trend-month-option pressable" data-month-week="4" role="menuitem" type="button">
+<span>本月第四周</span><small>22 日–月底</small>
+</button>
+</div>
+</div>
+</div>
+<div class="chart-wrap">
+<canvas id="trendCanvas"></canvas>
+<div class="chart-empty" hidden="" id="chartEmpty">暂无数据</div>
+</div>
+<div class="chart-caption" id="chartCaption"></div>
+</div>
+</section>
+<section class="section overview-section-anchor" hidden="" id="scoreCalendarSection">
+<h2 class="section-title">日历视图</h2>
+<div class="card glass calendar-card">
+<div class="calendar-head">
+<button aria-label="上个月" class="small-icon pressable" id="prevMonthBtn" type="button">‹</button>
+<div class="calendar-month" id="calendarMonth"></div>
+<button aria-label="下个月" class="small-icon pressable" id="nextMonthBtn" type="button">›</button>
+</div>
+<div aria-hidden="true" class="weekdays">
+<div class="weekday">日</div><div class="weekday">一</div><div class="weekday">二</div>
+<div class="weekday">三</div><div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div>
+</div>
+<div class="calendar-grid" id="calendarGrid"></div>
+<div class="day-detail hidden" id="dayDetail">
+<div class="detail-title" id="dayDetailTitle"></div>
+<ul class="log-list" id="dayDetailList"></ul>
+</div>
+</div>
+</section>
+</div>
+<div hidden="" id="wheelOverviewContent">
+<section class="section overview-section-anchor wheel-assets-section">
+<h2 class="section-title" id="wheelAssetsTitle">大转盘资产</h2>
+<div class="card glass wheel-assets-card">
+<div class="wheel-balance-main">
+<span class="wheel-balance-label">可提现余额</span>
+<strong id="wheelOverviewCash">¥0</strong>
+<span class="wheel-balance-sub" id="wheelOverviewChance">当前 0 次正式机会</span>
+</div>
+<div class="wheel-assets-grid three">
+<div><span>待兑现</span><b id="wheelOverviewPending">¥0</b></div>
+<div><span>累计中奖</span><b id="wheelOverviewWon">¥0</b></div>
+<div><span>已兑现</span><b id="wheelOverviewSettled">¥0</b></div>
+</div>
+<div class="withdrawal-notice" hidden="" id="withdrawalNotice">
+<div class="withdrawal-notice-title" id="withdrawalNoticeTitle"></div>
+<div class="withdrawal-notice-copy" id="withdrawalNoticeCopy"></div>
+<div class="pending-withdrawal-list" id="pendingWithdrawalList"></div>
+</div>
+<button class="wheel-withdraw-button pressable" id="withdrawWheelBtn" type="button">💰 申请提现</button>
+</div>
+</section>
+<section class="section overview-section-anchor wheel-history-section">
+<h2 class="section-title">奖励与提现记录</h2>
+<div class="card glass">
+<ul class="log-list" id="wheelRecordList"></ul>
+</div>
+</section>
+</div>
+</div>
+</section>
+<!-- Settings Sheet -->
+<div aria-hidden="true" class="modal-layer" id="settingsLayer">
+<div aria-labelledby="settingsTitle" aria-modal="true" class="sheet settings-sheet" id="settingsSheet" role="dialog">
+<header class="settings-sheet-header">
+<div aria-label="下拉关闭设置" class="settings-grabber-hitbox" id="settingsGrabberHitbox">
+<div aria-hidden="true" class="grabber"></div>
+</div>
+<div class="sheet-title" id="settingsTitle">设置</div>
+<div class="login-state" id="loginStateText">访客模式</div>
+</header>
+<div class="settings-sheet-content">
+<div class="settings-label" id="guestAccountLabel">账户</div>
+<div class="settings-group" id="guestSettings">
+<button class="settings-row pressable" id="openLoginBtn" type="button">
+<span>管理员登录</span>
+<span class="chevron">›</span>
+</button>
+</div>
+<div hidden="" id="adminSettings">
+<div class="settings-label">积分管理</div>
+<div class="settings-group">
+<button class="settings-row destructive pressable" id="resetBtn" type="button">
+<span>重置积分</span>
+<span class="settings-value">恢复到 5 <span class="chevron">›</span></span>
+</button>
+</div>
+<div class="settings-label">大转盘管理</div>
+<div class="settings-group">
+<button class="settings-row pressable" id="openWheelProbabilityBtn" type="button">
+<span>奖项概率设置</span>
+<span class="settings-value">管理员专用 <span class="chevron">›</span></span>
+</button>
+<button class="settings-row pressable" id="openWheelProbabilityHistoryBtn" type="button">
+<span>概率修改记录</span>
+<span class="chevron">›</span>
+</button>
+</div>
+<div class="settings-label">账户</div>
+<div class="settings-group">
+<button class="settings-row destructive pressable" id="logoutBtn" type="button">
+<span>退出管理员</span>
+<span class="chevron">›</span>
+</button>
+</div>
+</div>
+<!-- WORK SCHEDULE MODULE START: settings entry -->
+<div class="settings-label">排班</div>
+<div class="settings-group">
+<button class="settings-row pressable" id="openWorkScheduleBtn" type="button">
+<span>排班登记</span>
+<span class="chevron">›</span>
+</button>
+</div>
+<!-- WORK SCHEDULE MODULE END: settings entry -->
+<div class="settings-label">信息</div>
+<div class="settings-group">
+<button class="settings-row pressable" id="openVersionInfoBtn" type="button">
+<span>版本信息</span>
+<span class="chevron">›</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================================
          WORK SCHEDULE MODULE START
          Independent schedule registration / overview sheets.
          ============================================================ -->
-    <div id="workScheduleLayer" class="modal-layer" aria-hidden="true">
-      <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="workScheduleTitle">
-        <header class="unified-sheet-header">
-          <div id="workScheduleGrabberHitbox" class="work-schedule-grabber-hitbox" aria-label="下拉关闭排班登记">
-            <div class="grabber" aria-hidden="true"></div>
-          </div>
-          <div id="workScheduleTitle" class="sheet-title">排班登记</div>
-        </header>
-        <div class="unified-sheet-body">
-          <div class="work-schedule-form">
-            <label class="work-schedule-field">
-              <span class="work-schedule-field-label">日期</span>
-              <input id="workScheduleDate" class="field work-schedule-control" type="date" />
-            </label>
-
-            <div class="work-schedule-date-nav" aria-label="快速切换日期">
-              <button id="workSchedulePrevDayBtn" class="sheet-button pressable work-schedule-date-step" type="button">‹ 上一天</button>
-              <button id="workScheduleNextDayBtn" class="sheet-button pressable work-schedule-date-step" type="button">下一天 ›</button>
-            </div>
-
-            <div id="workScheduleExistingState" class="work-schedule-existing" hidden></div>
-
-            <div class="work-schedule-time-grid">
-              <label class="work-schedule-field">
-                <span class="work-schedule-field-label">上班时间</span>
-                <select id="workScheduleStartHour" class="field work-schedule-control" aria-label="上班时间"></select>
-              </label>
-
-              <label class="work-schedule-field">
-                <span class="work-schedule-field-label">下班时间</span>
-                <select id="workScheduleEndHour" class="field work-schedule-control" aria-label="下班时间"></select>
-              </label>
-            </div>
-
-            <div class="work-schedule-hint">可选时间为 08:00–22:00 的整点；下班时间必须晚于上班时间。</div>
-
-            <button id="openWorkScheduleOverviewBtn" class="sheet-button pressable full-width work-schedule-overview-button" type="button">排班总览</button>
-
-            <div class="sheet-actions">
-              <button id="cancelWorkScheduleBtn" class="sheet-button pressable" type="button">取消</button>
-              <button id="saveWorkScheduleBtn" class="sheet-button primary pressable" type="button">保存排班</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="workScheduleOverviewLayer" class="modal-layer" aria-hidden="true">
-      <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="workScheduleOverviewTitle">
-        <header class="unified-sheet-header">
-          <div id="workScheduleOverviewGrabberHitbox" class="work-schedule-grabber-hitbox" aria-label="下拉关闭排班总览">
-            <div class="grabber" aria-hidden="true"></div>
-          </div>
-          <div id="workScheduleOverviewTitle" class="sheet-title">排班总览</div>
-        </header>
-        <div class="unified-sheet-body">
-          <div class="sheet-subtitle" style="text-align:center">仅显示已登记日期，并按距离今天由近到远排列。</div>
-          <ul id="workScheduleList" class="work-schedule-list"></ul>
-          <div id="workScheduleEmpty" class="work-schedule-empty" hidden>还没有登记任何排班</div>
-          <div class="sheet-actions">
-            <button id="backToWorkScheduleBtn" class="sheet-button pressable" type="button">返回登记</button>
-            <button id="closeWorkScheduleOverviewBtn" class="sheet-button primary pressable" type="button">完成</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Administrator-only homepage shortcut: current and future schedules only. -->
-    <div id="adminWorkScheduleLayer" class="modal-layer" aria-hidden="true">
-      <div class="unified-sheet work-schedule-sheet" role="dialog" aria-modal="true" aria-labelledby="adminWorkScheduleTitle">
-        <header class="unified-sheet-header">
-          <div id="adminWorkScheduleGrabberHitbox" class="work-schedule-grabber-hitbox" aria-label="下拉关闭未来排班">
-            <div class="grabber" aria-hidden="true"></div>
-          </div>
-          <div id="adminWorkScheduleTitle" class="sheet-title">未来排班</div>
-        </header>
-        <div class="unified-sheet-body">
-          <ul id="adminWorkScheduleList" class="work-schedule-list"></ul>
-          <div id="adminWorkScheduleEmpty" class="work-schedule-empty" hidden>暂无今天或未来排班</div>
-          <button id="closeAdminWorkScheduleBtn" class="sheet-button primary pressable full-width" type="button">完成</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Delete confirmation belongs only to the schedule module. -->
-    <div id="workScheduleDeleteLayer" class="modal-layer alert-layer" aria-hidden="true">
-      <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="workScheduleDeleteTitle">
-        <div class="alert-content">
-          <div id="workScheduleDeleteTitle" class="alert-title">删除排班</div>
-          <div id="workScheduleDeleteMessage" class="alert-message">确定删除这条排班吗？</div>
-        </div>
-        <div class="alert-actions">
-          <button id="cancelWorkScheduleDeleteBtn" class="alert-button pressable" type="button">取消</button>
-          <button id="confirmWorkScheduleDeleteBtn" class="alert-button destructive pressable" type="button">删除</button>
-        </div>
-      </div>
-    </div>
-    <!-- ============================================================
+<div aria-hidden="true" class="modal-layer" id="workScheduleLayer">
+<div aria-labelledby="workScheduleTitle" aria-modal="true" class="unified-sheet work-schedule-sheet" role="dialog">
+<header class="unified-sheet-header">
+<div aria-label="下拉关闭排班登记" class="work-schedule-grabber-hitbox" id="workScheduleGrabberHitbox">
+<div aria-hidden="true" class="grabber"></div>
+</div>
+<div class="sheet-title" id="workScheduleTitle">排班登记</div>
+</header>
+<div class="unified-sheet-body">
+<div class="work-schedule-form">
+<label class="work-schedule-field">
+<span class="work-schedule-field-label">日期</span>
+<input class="field work-schedule-control" id="workScheduleDate" type="date"/>
+</label>
+<div aria-label="快速切换日期" class="work-schedule-date-nav">
+<button class="sheet-button pressable work-schedule-date-step" id="workSchedulePrevDayBtn" type="button">‹ 上一天</button>
+<button class="sheet-button pressable work-schedule-date-step" id="workScheduleNextDayBtn" type="button">下一天 ›</button>
+</div>
+<div class="work-schedule-existing" hidden="" id="workScheduleExistingState"></div>
+<div class="work-schedule-time-grid">
+<label class="work-schedule-field">
+<span class="work-schedule-field-label">上班时间</span>
+<select aria-label="上班时间" class="field work-schedule-control" id="workScheduleStartHour"></select>
+</label>
+<label class="work-schedule-field">
+<span class="work-schedule-field-label">下班时间</span>
+<select aria-label="下班时间" class="field work-schedule-control" id="workScheduleEndHour"></select>
+</label>
+</div>
+<div class="work-schedule-hint">可选时间为 08:00–22:00 的整点；下班时间必须晚于上班时间。</div>
+<button class="sheet-button pressable full-width work-schedule-overview-button" id="openWorkScheduleOverviewBtn" type="button">排班总览</button>
+<div class="sheet-actions">
+<button class="sheet-button pressable" id="cancelWorkScheduleBtn" type="button">取消</button>
+<button class="sheet-button primary pressable" id="saveWorkScheduleBtn" type="button">保存排班</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="modal-layer" id="workScheduleOverviewLayer">
+<div aria-labelledby="workScheduleOverviewTitle" aria-modal="true" class="unified-sheet work-schedule-sheet" role="dialog">
+<header class="unified-sheet-header">
+<div aria-label="下拉关闭排班总览" class="work-schedule-grabber-hitbox" id="workScheduleOverviewGrabberHitbox">
+<div aria-hidden="true" class="grabber"></div>
+</div>
+<div class="sheet-title" id="workScheduleOverviewTitle">排班总览</div>
+</header>
+<div class="unified-sheet-body">
+<div class="sheet-subtitle" style="text-align:center">仅显示已登记日期，并按距离今天由近到远排列。</div>
+<ul class="work-schedule-list" id="workScheduleList"></ul>
+<div class="work-schedule-empty" hidden="" id="workScheduleEmpty">还没有登记任何排班</div>
+<div class="sheet-actions">
+<button class="sheet-button pressable" id="backToWorkScheduleBtn" type="button">返回登记</button>
+<button class="sheet-button primary pressable" id="closeWorkScheduleOverviewBtn" type="button">完成</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Administrator-only homepage shortcut: current and future schedules only. -->
+<div aria-hidden="true" class="modal-layer" id="adminWorkScheduleLayer">
+<div aria-labelledby="adminWorkScheduleTitle" aria-modal="true" class="unified-sheet work-schedule-sheet" role="dialog">
+<header class="unified-sheet-header">
+<div aria-label="下拉关闭未来排班" class="work-schedule-grabber-hitbox" id="adminWorkScheduleGrabberHitbox">
+<div aria-hidden="true" class="grabber"></div>
+</div>
+<div class="sheet-title" id="adminWorkScheduleTitle">未来排班</div>
+</header>
+<div class="unified-sheet-body">
+<ul class="work-schedule-list" id="adminWorkScheduleList"></ul>
+<div class="work-schedule-empty" hidden="" id="adminWorkScheduleEmpty">暂无今天或未来排班</div>
+<button class="sheet-button primary pressable full-width" id="closeAdminWorkScheduleBtn" type="button">完成</button>
+</div>
+</div>
+</div>
+<!-- Delete confirmation belongs only to the schedule module. -->
+<div aria-hidden="true" class="modal-layer alert-layer" id="workScheduleDeleteLayer">
+<div aria-labelledby="workScheduleDeleteTitle" aria-modal="true" class="alert" role="alertdialog">
+<div class="alert-content">
+<div class="alert-title" id="workScheduleDeleteTitle">删除排班</div>
+<div class="alert-message" id="workScheduleDeleteMessage">确定删除这条排班吗？</div>
+</div>
+<div class="alert-actions">
+<button class="alert-button pressable" id="cancelWorkScheduleDeleteBtn" type="button">取消</button>
+<button class="alert-button destructive pressable" id="confirmWorkScheduleDeleteBtn" type="button">删除</button>
+</div>
+</div>
+</div>
+<!-- ============================================================
          WORK SCHEDULE MODULE END
          ============================================================ -->
+<!-- Compact version information opened from Settings. -->
+<div aria-hidden="true" class="modal-layer" id="versionInfoLayer">
+<div aria-labelledby="versionInfoTitle" aria-modal="true" class="unified-sheet" role="dialog">
+<header class="unified-sheet-header">
+<div aria-hidden="true" class="grabber"></div>
+<div class="sheet-title" id="versionInfoTitle">版本信息</div>
+</header>
+<div class="unified-sheet-body">
+<div class="settings-group">
+<div class="settings-row static">
+<span>当前版本</span>
+<span class="settings-value">2.0.0</span>
+</div>
+<div class="settings-row static">
+<span>数据刷新</span>
+<span class="settings-value">打开时 + 每 30 分钟</span>
+</div>
+<div class="settings-row static">
+<span>最近同步</span>
+<span class="settings-value" id="lastRefreshText">尚未同步</span>
+</div>
+<button class="settings-row pressable" id="openReleaseNotesBtn" type="button">
+<span>版本与优化</span>
+<span class="chevron">›</span>
+</button>
+</div>
+<button class="sheet-button primary pressable full-width" id="closeVersionInfoBtn" style="margin-top:14px" type="button">完成</button>
+</div>
+</div>
+</div>
+<!-- Version / optimization info -->
+<div aria-hidden="true" class="modal-layer" id="releaseNotesLayer">
+<div aria-labelledby="releaseNotesTitle" aria-modal="true" class="unified-sheet" role="dialog">
+<header class="unified-sheet-header">
+<div aria-hidden="true" class="grabber"></div>
+<div class="sheet-title" id="releaseNotesTitle">版本与优化</div>
+</header>
+<div class="unified-sheet-body">
+<div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
+<div class="release-block">
+<div class="release-head"><strong>2.0.0</strong><span>当前版本</span></div>
+<div class="release-date">2026.09.01</div>
+<ul class="release-list">
+<li>彻底移除小礼物额度中转：每 10 分可直接兑换 1 次正式大转盘机会，或直接兑换 ¥30 可提现余额。</li>
+<li>大转盘资产固定为游客唯一资产；管理员可查看与试玩，但不能正式兑换、正式抽奖或申请提现。</li>
+<li>提现新增“待兑现 → 已兑现”流程；管理员确认后，游客历史会显示“管理员已经兑现提现申请。请查收。”</li>
+<li>管理员重置积分不再自动替游客兑换奖励；可兑换积分会在重置前明确警告。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>1.8.4</strong><span>上一版本</span></div>
+<div class="release-date">2026.09.01</div>
+<ul class="release-list">
+<li>修复大转盘视觉可见但仍被旧样式 <code>pointer-events:none</code> 阻止点击的问题。</li>
+<li>大转盘模式激活时才开放点击/键盘操作，切出转盘后同步关闭交互。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>1.8.3</strong><span>上一版本</span></div>
+<div class="release-date">2026.09.01</div>
+<ul class="release-list">
+<li>修复点击大转盘同时触发外层“同步最新数据”的事件冒泡；现在仅执行静默同步后转盘。</li>
+<li>正式/试玩转动结束后再次静默同步，不显示同步 Toast 或刷新动画。</li>
+<li>管理员大转盘概率设置与修改记录改为明亮奶油卡片风；访客模式彻底隐藏并禁用管理员模块。</li>
+<li>重新按固定扇区几何中心校正 7 个金额标签位置，顶部窄扇区避开指针并减少重叠。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>1.8.2</strong><span>上一版本</span></div>
+<div class="release-date">2026.09.01</div>
+<ul class="release-list">
+<li>移除独立“转动大转盘”按钮，直接点击中央大转盘即可开始正式转动或进入试玩提示。</li>
+<li>大转盘模式仅保留“兑换大转盘机会”次操作按钮，三种首页模式继续共用固定布局槽位。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>1.8.1</strong><span>上一版本</span></div>
+<div class="release-date">2026.09.01</div>
+<ul class="release-list">
+<li>大转盘默认视觉档位升级为 ¥10 / ¥20 / ¥30 / ¥50 / ¥60 / ¥80 / ¥100。</li>
+<li>管理员设置新增真实抽取概率配置与修改记录；两个入口均仅管理员可用。</li>
+<li>转盘分区固定为装饰展示，实际抽取结果由数据库当前概率配置决定。</li>
+</ul>
+</div>
 
-    <!-- Compact version information opened from Settings. -->
-    <div id="versionInfoLayer" class="modal-layer" aria-hidden="true">
-      <div class="unified-sheet" role="dialog" aria-modal="true" aria-labelledby="versionInfoTitle">
-        <header class="unified-sheet-header">
-          <div class="grabber" aria-hidden="true"></div>
-          <div id="versionInfoTitle" class="sheet-title">版本信息</div>
-        </header>
-        <div class="unified-sheet-body">
-          <div class="settings-group">
-            <div class="settings-row static">
-              <span>当前版本</span>
-              <span class="settings-value">1.8.5</span>
-            </div>
-            <div class="settings-row static">
-              <span>数据刷新</span>
-              <span class="settings-value">打开时 + 每 30 分钟</span>
-            </div>
-            <div class="settings-row static">
-              <span>最近同步</span>
-              <span id="lastRefreshText" class="settings-value">尚未同步</span>
-            </div>
-            <button id="openReleaseNotesBtn" class="settings-row pressable" type="button">
-              <span>版本与优化</span>
-              <span class="chevron">›</span>
-            </button>
-          </div>
-          <button id="closeVersionInfoBtn" class="sheet-button primary pressable full-width" type="button" style="margin-top:14px">完成</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Version / optimization info -->
-    <div id="releaseNotesLayer" class="modal-layer" aria-hidden="true">
-      <div class="unified-sheet" role="dialog" aria-modal="true" aria-labelledby="releaseNotesTitle">
-        <header class="unified-sheet-header">
-          <div class="grabber" aria-hidden="true"></div>
-          <div id="releaseNotesTitle" class="sheet-title">版本与优化</div>
-        </header>
-        <div class="unified-sheet-body">
-          <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
-          <div class="release-block">
-            <div class="release-head"><strong>1.8.5</strong><span>当前版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>大转盘恢复与分数/礼物一致的中间圆圈同步逻辑，点击转盘本体只刷新最新数据。</li>
-              <li>大转盘操作区改成左右两个统一玻璃按钮：左“兑换大转盘机会”，右“转动大转盘”。</li>
-              <li>转动按钮仍会静默校验服务器最新机会数，再进入正式转盘或试玩提示。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.8.4</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>修复大转盘视觉可见但仍被旧样式 <code>pointer-events:none</code> 阻止点击的问题。</li>
-              <li>大转盘模式激活时才开放点击/键盘操作，切出转盘后同步关闭交互。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.8.3</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>修复点击大转盘同时触发外层“同步最新数据”的事件冒泡；现在仅执行静默同步后转盘。</li>
-              <li>正式/试玩转动结束后再次静默同步，不显示同步 Toast 或刷新动画。</li>
-              <li>管理员大转盘概率设置与修改记录改为明亮奶油卡片风；访客模式彻底隐藏并禁用管理员模块。</li>
-              <li>重新按固定扇区几何中心校正 7 个金额标签位置，顶部窄扇区避开指针并减少重叠。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.8.2</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>移除独立“转动大转盘”按钮，直接点击中央大转盘即可开始正式转动或进入试玩提示。</li>
-              <li>大转盘模式仅保留“兑换大转盘机会”次操作按钮，三种首页模式继续共用固定布局槽位。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.8.1</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>大转盘默认视觉档位升级为 ¥10 / ¥20 / ¥30 / ¥50 / ¥60 / ¥80 / ¥100。</li>
-              <li>管理员设置新增真实抽取概率配置与修改记录；两个入口均仅管理员可用。</li>
-              <li>转盘分区固定为装饰展示，实际抽取结果由数据库当前概率配置决定。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.8.0</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>首页新增第三模式“幸运大转盘”：真实概率扇区、固定指针、惯性减速动画。</li>
-              <li>1 个小礼物额度可兑换 1 次正式转盘机会；正式中奖进入可提现余额并写历史。</li>
-              <li>没有正式机会仍可免费试玩；试玩同样使用后端随机，但不记账、不写中奖历史。</li>
-              <li>总览新增转盘资产、累计中奖、已提现、提现入口和完整转盘记录。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.7.5</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>趋势图“今天 / 本周 / 本月周视图”的每个有效蓝点上方直接显示对应积分数字。</li>
-              <li>“本月”改为四周下拉：1–7 日、8–14 日、15–21 日、22 日至月底全部归第四周。</li>
-              <li>本周与本月周视图保留每日连续积分点；当前最新点稍大，便于快速定位。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.7.4</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>设置页改为读取当前访客 / 管理员实际内容高度，内容多少就弹多少，超出屏幕时才内部滚动。</li>
-              <li>访客小礼物页新增“使用小礼物额度”，确认后原子扣除 1 个额度。</li>
-              <li>0 额度、仅剩 1 次和多次额度均使用动态可爱提示；使用记录独立标记为 gift_use。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.7.2</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>分数 / 小礼物切换改为纯渐隐渐现，不再使用位移、缩放、模糊或扫光合成层。</li>
-              <li>圆环主题采用圆形内部透明叠色渐变，切换时不会出现矩形图层边界。</li>
-              <li>设置页对齐总览的 Bottom Sheet、标题、分组标题与 Glass Card 设计体系。</li>
-              <li>管理员登录、版本信息、更新日志和排班页同步统一总览材质语言。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.7.1</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>管理员当前分数页隐藏访客兑换入口；访客仍可正常使用 10 分兑换。</li>
-              <li>首页分数/礼物切换改为固定操作槽位，避免切换时按钮和总览上下跳动。</li>
-              <li>管理员积分 ±1 / 礼物 ±1 的按钮与确认弹窗统一为同一套玻璃组件。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.7.0</strong><span>上一版本</span></div>
-            <div class="release-date">2026.09.01</div>
-            <ul class="release-list">
-              <li>新增 10 分兑换 1 个小礼物额度，并联动积分历史、小礼物历史与日历记录。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.6.4</strong><span>上一版本</span></div>
-            <div class="release-date">2026.08.31</div>
-            <ul class="release-list">
-              <li>首页移除“当前分数”重复说明，小礼物模式改为按额度动态计算的两行奖励文案。</li>
-              <li>首页加入轻量奶油粉、淡紫与婴儿蓝的 ins 风背景及低透明度可爱装饰。</li>
-              <li>小礼物圆环、切换开关与总览按钮加入克制的粉色玻璃高光，保持原有功能与布局逻辑。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.6.3</strong><span>上一版本</span></div>
-            <div class="release-date">2026.08.31</div>
-            <ul class="release-list">
-              <li>趋势与日历总览改为内容自适应高度，移除单模块下方多余空白。</li>
-              <li>日历行距收紧，在保留每日积分上下箭头的同时减少纵向占用。</li>
-              <li>总览、设置、登录与排班窗口扩大顶部拖拽命中区域，单手下拉更容易。</li>
-              <li>管理员状态不再显示空的“账户”分组标题。</li>
-            </ul>
-          </div>
-
-          <div class="release-block previous">
-            <div class="release-head"><strong>1.6.2</strong><span>上一版本</span></div>
-            <div class="release-date">2026.08.31</div>
-            <ul class="release-list">
-              <li>积分总览改为趋势或日历单模块显示，展开后可用紧凑的“趋势 / 日历”按钮切换。</li>
-              <li>本周趋势 X 轴直接附带每日积分；本月趋势保持上一版现状。</li>
-              <li>设置的信息区收拢为“版本信息”，低频状态进入下一层查看。</li>
-              <li>管理员首页新增今天及未来排班提醒；过期排班不再提醒，但历史记录仍完整保留。</li>
-            </ul>
-          </div>
-
-          <div class="release-block">
-          <div class="release-head">
-            <strong>1.4.3</strong>
-            <span>上一版本</span>
-          </div>
-          <div class="release-date">2026.08.31</div>
-          <ul class="release-list">
-            <li>管理员登录统一为与设置相同的内容自适应 iOS Bottom Sheet。</li>
-            <li>登录 Sheet 使用同款玻璃材质、蒙层、顶部圆角和居中小横条。</li>
-            <li>支持按住顶部横条向下拖动关闭；不会向上扩展成全屏。</li>
-          </ul>
-        </div>
-
-        <div class="release-block previous">
-          <div class="release-head">
-            <strong>1.4.2</strong>
-            <span>上一版本</span>
-          </div>
-          <div class="release-date">2026.08.31</div>
-          <ul class="release-list">
-            <li>设置 Sheet 改为内容自适应高度：刚好容纳当前项目，不再接近全屏。</li>
-            <li>设置与总览共用同一套玻璃材质、蒙层、圆角、阴影和顶部横条视觉。</li>
-            <li>设置只支持顶部横条向下拖动关闭，不支持向上扩展。</li>
-            <li>全新访问时默认使用浅色模式；用户手动选择的外观仍会被记住。</li>
-          </ul>
-        </div>
-
-        <div class="release-block previous">
-          <div class="release-head">
-            <strong>1.4.1</strong>
-            <span>上一版本</span>
-          </div>
-          <div class="release-date">2026.08.31</div>
-          <ul class="release-list">
-            <li>设置界面统一为与总览相同的 iOS Bottom Sheet 视觉：底部贴边、顶部留空、同款玻璃材质与圆角。</li>
-            <li>移除设置界面可见的浏览器滚动条；内容仍可自然滚动。</li>
-            <li>设置顶部小横条支持向下拖动关闭。</li>
-          </ul>
-        </div>
-
-        <div class="release-block previous">
-          <div class="release-head">
-            <strong>1.4.0</strong>
-            <span>上一版本</span>
-          </div>
-          <div class="release-date">2026.08.31</div>
-          <ul class="release-list">
-            <li>总览改为 iOS 风格可拖拽 Bottom Sheet：初始显示 390px，上滑吸附到全展开。</li>
-            <li>顶部小横条支持向下拖动直接关闭；全展开后内容区恢复正常滚动。</li>
-            <li>首页浅色背景、设置按钮和总览按钮按参考设计移植；深色模式沿用同款按钮材质。</li>
-            <li>iPhone 不启用陀螺仪或倾斜交互；桌面端保留参考设计原本的鼠标 3D 圆盘倾斜。</li>
-          </ul>
-        </div>
-
-        <div class="release-block previous">
-          <div class="release-head">
-            <strong>1.3.0</strong>
-            <span>上一版本</span>
-          </div>
-          <div class="release-date">2026.08.31</div>
-          <ul class="release-list">
-            <li>中央分数镜片改为 Liquid Glass 材质，并加入桌面鼠标跟随 3D 倾斜。</li>
-            <li>新增“跟随系统 / 浅色 / 深色”显示模式，可在设置中随时切换。</li>
-            <li>浅色模式背景改为柔和动态 Mesh 色雾；其余首页与总览结构保持不变。</li>
-          </ul>
-        </div>
-
-        <div class="release-block previous">
-          <div class="release-head">
-            <strong>1.2.0</strong>
-            <span>上一版本</span>
-          </div>
-          <div class="release-date">2026.08.31</div>
-          <ul class="release-list">
-            <li>修复总览首次打开时日历可能为空的问题，月份日期会立即完整呈现。</li>
-            <li>每日加分与扣分分别累计，日期下方以 Retina SVG ↑/↓ 箭头显示。</li>
-            <li>点击首页分数玻璃镜片可立即手动同步当前积分。</li>
-            <li>自动同步策略调整为打开应用立即一次，之后每 30 分钟一次。</li>
-            <li>总览空白区域支持轻点退出。</li>
-          </ul>
-        </div>
-
-        <div class="release-block previous">
-          <div class="release-head">
-            <strong>1.0.0</strong>
-            <span>初始版本</span>
-          </div>
-          <div class="release-date">2026.08.31</div>
-          <ul class="release-list">
-            <li>单一总积分、管理员登录、+1 / -1。</li>
-            <li>趋势、日历、记录、本月总结。</li>
-            <li>Supabase 权限 RPC 与 10 秒自动刷新。</li>
-          </ul>
-        </div>
-
-        
-          <button id="closeReleaseNotesBtn" class="sheet-button primary pressable full-width" type="button">完成</button>
-        </div>
-      </div>
-    </div>
+<div class="release-block previous">
+<div class="release-head"><strong>1.7.5</strong><span>上一版本</span></div>
+<div class="release-date">2026.09.01</div>
+<ul class="release-list">
+<li>趋势图“今天 / 本周 / 本月周视图”的每个有效蓝点上方直接显示对应积分数字。</li>
+<li>“本月”改为四周下拉：1–7 日、8–14 日、15–21 日、22 日至月底全部归第四周。</li>
+<li>本周与本月周视图保留每日连续积分点；当前最新点稍大，便于快速定位。</li>
+</ul>
+</div>
 
 
-    <!-- Admin-only wheel probability settings -->
-    <div id="wheelProbabilityLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
-      <div class="alert wheel-probability-alert" role="dialog" aria-modal="true" aria-labelledby="wheelProbabilityTitle">
-        <div class="alert-content">
-          <div class="change-icon" aria-hidden="true">🎛️</div>
-          <div id="wheelProbabilityTitle" class="alert-title">大转盘概率设置</div>
-          <div class="alert-message">仅管理员可查看和修改实际抽取概率。保存后下一次正式转盘与试玩立即生效。</div>
-          <div id="wheelProbabilityGrid" class="wheel-probability-grid">
-            <label><span>¥10</span><span class="prob-input-wrap"><input data-wheel-prob="10" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
-            <label><span>¥20</span><span class="prob-input-wrap"><input data-wheel-prob="20" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
-            <label><span>¥30</span><span class="prob-input-wrap"><input data-wheel-prob="30" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
-            <label><span>¥50</span><span class="prob-input-wrap"><input data-wheel-prob="50" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
-            <label><span>¥60</span><span class="prob-input-wrap"><input data-wheel-prob="60" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
-            <label><span>¥80</span><span class="prob-input-wrap"><input data-wheel-prob="80" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
-            <label><span>¥100</span><span class="prob-input-wrap"><input data-wheel-prob="100" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
-          </div>
-          <div id="wheelProbabilityTotal" class="wheel-probability-total">总概率 100%</div>
-          <div class="wheel-probability-default-note">默认：10% / 30% / 30% / 12% / 10% / 5% / 3%</div>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="saveWheelProbabilityBtn" class="alert-button primary-action pressable" type="button">保存并生效</button>
-          <button id="resetWheelProbabilityDefaultBtn" class="alert-button pressable" type="button">恢复默认数值</button>
-          <button id="closeWheelProbabilityBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- Admin-only probability change history -->
-    <div id="wheelProbabilityHistoryLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
-      <div class="alert wheel-probability-history-alert" role="dialog" aria-modal="true" aria-labelledby="wheelProbabilityHistoryTitle">
-        <div class="alert-content">
-          <div class="change-icon" aria-hidden="true">🗂️</div>
-          <div id="wheelProbabilityHistoryTitle" class="alert-title">概率修改记录</div>
-          <div class="alert-message">仅管理员可见。记录每一次真正保存成功的概率调整。</div>
-          <div id="wheelProbabilityHistoryList" class="wheel-probability-history-list"></div>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="closeWheelProbabilityHistoryBtn" class="alert-button primary-action pressable" type="button">完成</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- Login Sheet -->
-    <div id="loginLayer" class="modal-layer" aria-hidden="true">
-      <div id="loginSheet" class="sheet login-sheet" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-        <header class="login-sheet-header">
-          <div id="loginGrabberHitbox" class="login-grabber-hitbox" aria-label="下拉关闭管理员登录">
-            <div class="grabber" aria-hidden="true"></div>
-          </div>
-          <div id="loginTitle" class="sheet-title">管理员登录</div>
-        </header>
 
-        <div class="login-sheet-body">
-          <div class="sheet-subtitle">使用已创建的管理员账号登录</div>
-
-          <input id="emailInput" class="field" type="email" inputmode="email"
-                 autocomplete="username" placeholder="邮箱" />
-          <input id="passwordInput" class="field" type="password"
-                 autocomplete="current-password" placeholder="密码" />
-
-          <div class="sheet-actions">
-            <button id="cancelLoginBtn" class="sheet-button pressable" type="button">取消</button>
-            <button id="loginBtn" class="sheet-button primary pressable" type="button">登录</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Unified admin score / gift change alert -->
-    <div id="changeLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="score">
-      <div class="alert change-alert" role="alertdialog" aria-modal="true" aria-labelledby="changeTitle">
-        <div class="alert-content">
-          <div id="changeIcon" class="change-icon" aria-hidden="true">✨</div>
-          <div id="changeTitle" class="alert-title">变更</div>
-          <div id="changeSubtitle" class="alert-message"></div>
-          <div id="changePreview" class="change-preview"></div>
-          <textarea id="reasonInput" class="change-reason-field" maxlength="500" placeholder="写下这次变化的原因 ♡（可留空）"></textarea>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="confirmChangeBtn" class="alert-button primary-action pressable" type="button">确认</button>
-          <button id="cancelChangeBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Score -> gift redemption confirmation -->
-    <div id="redeemLayer" class="modal-layer alert-layer" aria-hidden="true">
-      <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="redeemTitle">
-        <div class="alert-content">
-          <div id="redeemTitle" class="alert-title">兑换小礼物额度</div>
-          <div id="redeemMessage" class="alert-message"></div>
-        </div>
-        <div id="redeemActions" class="alert-actions vertical">
-          <button id="redeemConfirmBtn" class="alert-button primary-action pressable" type="button">确认兑换</button>
-          <button id="redeemForceBtn" class="alert-button pressable" type="button" hidden>管理员强制 +1</button>
-          <button id="cancelRedeemBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Guest gift usage confirmation -->
-    <div id="useGiftLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="gift">
-      <div class="alert use-gift-alert" role="alertdialog" aria-modal="true" aria-labelledby="useGiftTitle">
-        <div class="alert-content">
-          <div id="useGiftIcon" class="change-icon" aria-hidden="true">🎀</div>
-          <div id="useGiftTitle" class="alert-title">使用小礼物额度</div>
-          <div id="useGiftMessage" class="alert-message"></div>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="useGiftConfirmBtn" class="alert-button primary-action pressable" type="button">使用一次 🎁</button>
-          <button id="cancelUseGiftBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Wheel chance redemption -->
-    <div id="wheelRedeemLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
-      <div class="alert wheel-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelRedeemTitle">
-        <div class="alert-content">
-          <div id="wheelRedeemIcon" class="change-icon" aria-hidden="true">🎠</div>
-          <div id="wheelRedeemTitle" class="alert-title">兑换大转盘机会</div>
-          <div id="wheelRedeemMessage" class="alert-message"></div>
-          <div id="wheelRedeemPreview" class="change-preview"></div>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="wheelRedeemConfirmBtn" class="alert-button primary-action pressable" type="button">兑换一次 🎀</button>
-          <button id="wheelRedeemCancelBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- No formal chance: preview spin confirmation -->
-    <div id="wheelPreviewLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
-      <div class="alert wheel-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelPreviewTitle">
-        <div class="alert-content">
-          <div class="change-icon" aria-hidden="true">🎠</div>
-          <div id="wheelPreviewTitle" class="alert-title">今天也想转一转嘛 ♡</div>
-          <div id="wheelPreviewMessage" class="alert-message"></div>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="wheelPreviewConfirmBtn" class="alert-button primary-action pressable" type="button">试玩一次 🎠</button>
-          <button id="wheelPreviewCancelBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Wheel result -->
-    <div id="wheelResultLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
-      <div class="alert wheel-result-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelResultTitle">
-        <div class="alert-content">
-          <div id="wheelResultIcon" class="wheel-result-icon" aria-hidden="true">🎉</div>
-          <div id="wheelResultTitle" class="alert-title">转盘结果</div>
-          <div id="wheelResultPrize" class="wheel-result-prize">¥0</div>
-          <div id="wheelResultMessage" class="alert-message"></div>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="wheelResultDoneBtn" class="alert-button primary-action pressable" type="button">开心收下 ✨</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Wheel cash withdrawal bookkeeping -->
-    <div id="wheelWithdrawLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
-      <div class="alert wheel-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelWithdrawTitle">
-        <div class="alert-content">
-          <div class="change-icon" aria-hidden="true">💰</div>
-          <div id="wheelWithdrawTitle" class="alert-title">提现余额</div>
-          <div id="wheelWithdrawMessage" class="alert-message"></div>
-          <div class="wheel-withdraw-field-wrap">
-            <span>¥</span>
-            <input id="wheelWithdrawAmount" class="wheel-withdraw-field" type="number" inputmode="numeric" min="1" step="1" placeholder="输入提现金额" />
-          </div>
-          <button id="wheelWithdrawAllBtn" class="wheel-withdraw-all pressable" type="button">全部提现</button>
-        </div>
-        <div class="alert-actions vertical">
-          <button id="wheelWithdrawConfirmBtn" class="alert-button primary-action pressable" type="button">确认提现</button>
-          <button id="wheelWithdrawCancelBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Reset / gift settlement alert -->
-    <div id="resetLayer" class="modal-layer alert-layer" aria-hidden="true">
-      <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle">
-        <div class="alert-content">
-          <div id="resetTitle" class="alert-title">重置积分</div>
-          <div id="resetMessage" class="alert-message"></div>
-        </div>
-        <div id="resetActions" class="alert-actions vertical">
-          <button id="resetAutoBtn" class="alert-button primary-action pressable" type="button">自动结算并重置</button>
-          <button id="resetOnlyBtn" class="alert-button pressable" type="button">仅重置积分</button>
-          <button id="cancelResetBtn" class="alert-button pressable" type="button">取消</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="toast" class="toast glass" role="status" aria-live="polite"></div>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
+<div class="release-block previous">
+<div class="release-head"><strong>1.6.3</strong><span>上一版本</span></div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>趋势与日历总览改为内容自适应高度，移除单模块下方多余空白。</li>
+<li>日历行距收紧，在保留每日积分上下箭头的同时减少纵向占用。</li>
+<li>总览、设置、登录与排班窗口扩大顶部拖拽命中区域，单手下拉更容易。</li>
+<li>管理员状态不再显示空的“账户”分组标题。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>1.6.2</strong><span>上一版本</span></div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>积分总览改为趋势或日历单模块显示，展开后可用紧凑的“趋势 / 日历”按钮切换。</li>
+<li>本周趋势 X 轴直接附带每日积分；本月趋势保持上一版现状。</li>
+<li>设置的信息区收拢为“版本信息”，低频状态进入下一层查看。</li>
+<li>管理员首页新增今天及未来排班提醒；过期排班不再提醒，但历史记录仍完整保留。</li>
+</ul>
+</div>
+<div class="release-block">
+<div class="release-head">
+<strong>1.4.3</strong>
+<span>上一版本</span>
+</div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>管理员登录统一为与设置相同的内容自适应 iOS Bottom Sheet。</li>
+<li>登录 Sheet 使用同款玻璃材质、蒙层、顶部圆角和居中小横条。</li>
+<li>支持按住顶部横条向下拖动关闭；不会向上扩展成全屏。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head">
+<strong>1.4.2</strong>
+<span>上一版本</span>
+</div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>设置 Sheet 改为内容自适应高度：刚好容纳当前项目，不再接近全屏。</li>
+<li>设置与总览共用同一套玻璃材质、蒙层、圆角、阴影和顶部横条视觉。</li>
+<li>设置只支持顶部横条向下拖动关闭，不支持向上扩展。</li>
+<li>全新访问时默认使用浅色模式；用户手动选择的外观仍会被记住。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head">
+<strong>1.4.1</strong>
+<span>上一版本</span>
+</div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>设置界面统一为与总览相同的 iOS Bottom Sheet 视觉：底部贴边、顶部留空、同款玻璃材质与圆角。</li>
+<li>移除设置界面可见的浏览器滚动条；内容仍可自然滚动。</li>
+<li>设置顶部小横条支持向下拖动关闭。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head">
+<strong>1.4.0</strong>
+<span>上一版本</span>
+</div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>总览改为 iOS 风格可拖拽 Bottom Sheet：初始显示 390px，上滑吸附到全展开。</li>
+<li>顶部小横条支持向下拖动直接关闭；全展开后内容区恢复正常滚动。</li>
+<li>首页浅色背景、设置按钮和总览按钮按参考设计移植；深色模式沿用同款按钮材质。</li>
+<li>iPhone 不启用陀螺仪或倾斜交互；桌面端保留参考设计原本的鼠标 3D 圆盘倾斜。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head">
+<strong>1.3.0</strong>
+<span>上一版本</span>
+</div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>中央分数镜片改为 Liquid Glass 材质，并加入桌面鼠标跟随 3D 倾斜。</li>
+<li>新增“跟随系统 / 浅色 / 深色”显示模式，可在设置中随时切换。</li>
+<li>浅色模式背景改为柔和动态 Mesh 色雾；其余首页与总览结构保持不变。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head">
+<strong>1.2.0</strong>
+<span>上一版本</span>
+</div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>修复总览首次打开时日历可能为空的问题，月份日期会立即完整呈现。</li>
+<li>每日加分与扣分分别累计，日期下方以 Retina SVG ↑/↓ 箭头显示。</li>
+<li>点击首页分数玻璃镜片可立即手动同步当前积分。</li>
+<li>自动同步策略调整为打开应用立即一次，之后每 30 分钟一次。</li>
+<li>总览空白区域支持轻点退出。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head">
+<strong>1.0.0</strong>
+<span>初始版本</span>
+</div>
+<div class="release-date">2026.08.31</div>
+<ul class="release-list">
+<li>单一总积分、管理员登录、+1 / -1。</li>
+<li>趋势、日历、记录、本月总结。</li>
+<li>Supabase 权限 RPC 与 10 秒自动刷新。</li>
+</ul>
+</div>
+<button class="sheet-button primary pressable full-width" id="closeReleaseNotesBtn" type="button">完成</button>
+</div>
+</div>
+</div>
+<!-- Admin-only wheel probability settings -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelProbabilityLayer">
+<div aria-labelledby="wheelProbabilityTitle" aria-modal="true" class="alert wheel-probability-alert" role="dialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">🎛️</div>
+<div class="alert-title" id="wheelProbabilityTitle">大转盘概率设置</div>
+<div class="alert-message">仅管理员可查看和修改实际抽取概率。保存后下一次正式转盘与试玩立即生效。</div>
+<div class="wheel-probability-grid" id="wheelProbabilityGrid">
+<label><span>¥10</span><span class="prob-input-wrap"><input data-wheel-prob="10" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+<label><span>¥20</span><span class="prob-input-wrap"><input data-wheel-prob="20" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+<label><span>¥30</span><span class="prob-input-wrap"><input data-wheel-prob="30" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+<label><span>¥50</span><span class="prob-input-wrap"><input data-wheel-prob="50" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+<label><span>¥60</span><span class="prob-input-wrap"><input data-wheel-prob="60" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+<label><span>¥80</span><span class="prob-input-wrap"><input data-wheel-prob="80" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+<label><span>¥100</span><span class="prob-input-wrap"><input data-wheel-prob="100" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+</div>
+<div class="wheel-probability-total" id="wheelProbabilityTotal">总概率 100%</div>
+<div class="wheel-probability-default-note">默认：10% / 30% / 30% / 12% / 10% / 5% / 3%</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="saveWheelProbabilityBtn" type="button">保存并生效</button>
+<button class="alert-button pressable" id="resetWheelProbabilityDefaultBtn" type="button">恢复默认数值</button>
+<button class="alert-button pressable" id="closeWheelProbabilityBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- Admin-only probability change history -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelProbabilityHistoryLayer">
+<div aria-labelledby="wheelProbabilityHistoryTitle" aria-modal="true" class="alert wheel-probability-history-alert" role="dialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">🗂️</div>
+<div class="alert-title" id="wheelProbabilityHistoryTitle">概率修改记录</div>
+<div class="alert-message">仅管理员可见。记录每一次真正保存成功的概率调整。</div>
+<div class="wheel-probability-history-list" id="wheelProbabilityHistoryList"></div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="closeWheelProbabilityHistoryBtn" type="button">完成</button>
+</div>
+</div>
+</div>
+<!-- Login Sheet -->
+<div aria-hidden="true" class="modal-layer" id="loginLayer">
+<div aria-labelledby="loginTitle" aria-modal="true" class="sheet login-sheet" id="loginSheet" role="dialog">
+<header class="login-sheet-header">
+<div aria-label="下拉关闭管理员登录" class="login-grabber-hitbox" id="loginGrabberHitbox">
+<div aria-hidden="true" class="grabber"></div>
+</div>
+<div class="sheet-title" id="loginTitle">管理员登录</div>
+</header>
+<div class="login-sheet-body">
+<div class="sheet-subtitle">使用已创建的管理员账号登录</div>
+<input autocomplete="username" class="field" id="emailInput" inputmode="email" placeholder="邮箱" type="email">
+<input autocomplete="current-password" class="field" id="passwordInput" placeholder="密码" type="password">
+<div class="sheet-actions">
+<button class="sheet-button pressable" id="cancelLoginBtn" type="button">取消</button>
+<button class="sheet-button primary pressable" id="loginBtn" type="button">登录</button>
+</div>
+</input></input></div>
+</div>
+</div>
+<!-- Administrator score change -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="changeLayer">
+<div aria-labelledby="changeTitle" aria-modal="true" class="alert change-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon" id="changeIcon">✨</div>
+<div class="alert-title" id="changeTitle">变更积分</div>
+<div class="alert-message" id="changeSubtitle"></div>
+<div class="change-preview" id="changePreview"></div>
+<textarea class="change-reason-field" id="reasonInput" maxlength="200" placeholder="写下这次积分变化的原因 ♡（可留空）"></textarea>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="confirmChangeBtn" type="button">确认</button>
+<button class="alert-button pressable" id="cancelChangeBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- 10 points -> direct reward choice -->
+<div aria-hidden="true" class="modal-layer alert-layer" id="redeemLayer">
+<div aria-labelledby="redeemTitle" aria-modal="true" class="alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">🎁</div>
+<div class="alert-title" id="redeemTitle">兑换奖励</div>
+<div class="alert-message" id="redeemMessage"></div>
+<div class="reward-choice-grid" id="rewardChoiceGrid">
+<button class="reward-choice-card wheel pressable" id="redeemWheelConfirmBtn" type="button">
+<span aria-hidden="true" class="reward-choice-icon">🎠</span>
+<span><strong>1 次正式大转盘机会</strong><small>消耗 10 分 · 正式中奖可提现</small></span>
+<span class="reward-choice-arrow">›</span>
+</button>
+<button class="reward-choice-card cash pressable" id="redeemCashConfirmBtn" type="button">
+<span aria-hidden="true" class="reward-choice-icon">💰</span>
+<span><strong>¥30 可提现余额</strong><small>消耗 10 分 · 直接进入可提现余额</small></span>
+<span class="reward-choice-arrow">›</span>
+</button>
+</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button pressable" id="cancelRedeemBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- Preview spin confirmation -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelPreviewLayer">
+<div aria-labelledby="wheelPreviewTitle" aria-modal="true" class="alert wheel-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">🎠</div>
+<div class="alert-title" id="wheelPreviewTitle">试玩大转盘 ♡</div>
+<div class="alert-message" id="wheelPreviewMessage"></div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="wheelPreviewConfirmBtn" type="button">试玩一次 🎠</button>
+<button class="alert-button pressable" id="wheelPreviewCancelBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- Wheel result -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelResultLayer">
+<div aria-labelledby="wheelResultTitle" aria-modal="true" class="alert wheel-result-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="wheel-result-icon" id="wheelResultIcon">🎉</div>
+<div class="alert-title" id="wheelResultTitle">转盘结果</div>
+<div class="wheel-result-prize" id="wheelResultPrize">¥0</div>
+<div class="alert-message" id="wheelResultMessage"></div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="wheelResultDoneBtn" type="button">开心收下 ✨</button>
+</div>
+</div>
+</div>
+<!-- Guest withdrawal request -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelWithdrawLayer">
+<div aria-labelledby="wheelWithdrawTitle" aria-modal="true" class="alert wheel-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">💰</div>
+<div class="alert-title" id="wheelWithdrawTitle">申请提现</div>
+<div class="alert-message" id="wheelWithdrawMessage"></div>
+<div class="wheel-withdraw-field-wrap">
+<span>¥</span>
+<input class="wheel-withdraw-field" id="wheelWithdrawAmount" inputmode="numeric" min="1" placeholder="输入提现金额" step="1" type="number">
+</input></div>
+<button class="wheel-withdraw-all pressable" id="wheelWithdrawAllBtn" type="button">全部申请</button>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="wheelWithdrawConfirmBtn" type="button">提交提现申请</button>
+<button class="alert-button pressable" id="wheelWithdrawCancelBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- Administrator settlement confirmation -->
+<div aria-hidden="true" class="modal-layer alert-layer" id="settleWithdrawalLayer">
+<div aria-labelledby="settleWithdrawalTitle" aria-modal="true" class="alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">✅</div>
+<div class="alert-title" id="settleWithdrawalTitle">确认已经兑现？</div>
+<div class="alert-message" id="settleWithdrawalMessage"></div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="settleWithdrawalConfirmBtn" type="button">已经兑现</button>
+<button class="alert-button pressable" id="settleWithdrawalCancelBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- Reset score confirmation -->
+<div aria-hidden="true" class="modal-layer alert-layer" id="resetLayer">
+<div aria-labelledby="resetTitle" aria-modal="true" class="alert" role="alertdialog">
+<div class="alert-content">
+<div class="alert-title" id="resetTitle">重置积分</div>
+<div class="alert-message" id="resetMessage"></div>
+</div>
+<div class="alert-actions vertical" id="resetActions">
+<button class="alert-button primary-action pressable" id="resetConfirmBtn" type="button">确认重置</button>
+<button class="alert-button pressable" id="cancelResetBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<div aria-live="polite" class="toast glass" id="toast" role="status"></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
     (() => {
       "use strict";
 
@@ -5352,9 +5385,7 @@
         metricSwitch: $("#metricSwitch"),
         metricEyebrow: $("#metricEyebrow"),
         metricGhostValue: $("#metricGhostValue"),
-        redeemGiftBtn: $("#redeemGiftBtn"),
-        useGiftBtn: $("#useGiftBtn"),
-        useGiftBtnMeta: $("#useGiftBtnMeta"),
+        redeemRewardBtn: $("#redeemRewardBtn"),
         wheelStage: $("#wheelStage"),
         wheelDisk: $("#wheelDisk"),
         wheelActions: $("#wheelActions"),
@@ -5372,12 +5403,17 @@
         overviewQuickNav: $("#overviewQuickNav"),
         overviewContentSwitch: $("#overviewContentSwitch"),
         scoreOverviewContent: $("#scoreOverviewContent"),
-        giftOverviewContent: $("#giftOverviewContent"),
         wheelOverviewContent: $("#wheelOverviewContent"),
+        wheelAssetsTitle: $("#wheelAssetsTitle"),
         wheelOverviewCash: $("#wheelOverviewCash"),
         wheelOverviewChance: $("#wheelOverviewChance"),
+        wheelOverviewPending: $("#wheelOverviewPending"),
         wheelOverviewWon: $("#wheelOverviewWon"),
-        wheelOverviewWithdrawn: $("#wheelOverviewWithdrawn"),
+        wheelOverviewSettled: $("#wheelOverviewSettled"),
+        withdrawalNotice: $("#withdrawalNotice"),
+        withdrawalNoticeTitle: $("#withdrawalNoticeTitle"),
+        withdrawalNoticeCopy: $("#withdrawalNoticeCopy"),
+        pendingWithdrawalList: $("#pendingWithdrawalList"),
         wheelRecordList: $("#wheelRecordList"),
         withdrawWheelBtn: $("#withdrawWheelBtn"),
         scoreTrendSection: $("#scoreTrendSection"),
@@ -5432,23 +5468,11 @@
         redeemLayer: $("#redeemLayer"),
         redeemTitle: $("#redeemTitle"),
         redeemMessage: $("#redeemMessage"),
-        redeemConfirmBtn: $("#redeemConfirmBtn"),
-        redeemForceBtn: $("#redeemForceBtn"),
+        rewardChoiceGrid: $("#rewardChoiceGrid"),
+        redeemWheelConfirmBtn: $("#redeemWheelConfirmBtn"),
+        redeemCashConfirmBtn: $("#redeemCashConfirmBtn"),
         cancelRedeemBtn: $("#cancelRedeemBtn"),
-        useGiftLayer: $("#useGiftLayer"),
-        useGiftIcon: $("#useGiftIcon"),
-        useGiftTitle: $("#useGiftTitle"),
-        useGiftMessage: $("#useGiftMessage"),
-        useGiftConfirmBtn: $("#useGiftConfirmBtn"),
-        cancelUseGiftBtn: $("#cancelUseGiftBtn"),
 
-        wheelRedeemLayer: $("#wheelRedeemLayer"),
-        wheelRedeemIcon: $("#wheelRedeemIcon"),
-        wheelRedeemTitle: $("#wheelRedeemTitle"),
-        wheelRedeemMessage: $("#wheelRedeemMessage"),
-        wheelRedeemPreview: $("#wheelRedeemPreview"),
-        wheelRedeemConfirmBtn: $("#wheelRedeemConfirmBtn"),
-        wheelRedeemCancelBtn: $("#wheelRedeemCancelBtn"),
         wheelPreviewLayer: $("#wheelPreviewLayer"),
         wheelPreviewMessage: $("#wheelPreviewMessage"),
         wheelPreviewConfirmBtn: $("#wheelPreviewConfirmBtn"),
@@ -5465,12 +5489,15 @@
         wheelWithdrawAllBtn: $("#wheelWithdrawAllBtn"),
         wheelWithdrawConfirmBtn: $("#wheelWithdrawConfirmBtn"),
         wheelWithdrawCancelBtn: $("#wheelWithdrawCancelBtn"),
+        settleWithdrawalLayer: $("#settleWithdrawalLayer"),
+        settleWithdrawalMessage: $("#settleWithdrawalMessage"),
+        settleWithdrawalConfirmBtn: $("#settleWithdrawalConfirmBtn"),
+        settleWithdrawalCancelBtn: $("#settleWithdrawalCancelBtn"),
 
         resetLayer: $("#resetLayer"),
         resetTitle: $("#resetTitle"),
         resetMessage: $("#resetMessage"),
-        resetAutoBtn: $("#resetAutoBtn"),
-        resetOnlyBtn: $("#resetOnlyBtn"),
+        resetConfirmBtn: $("#resetConfirmBtn"),
         cancelResetBtn: $("#cancelResetBtn"),
 
         trendSegments: $("#trendSegments"),
@@ -5489,14 +5516,11 @@
         dayDetailTitle: $("#dayDetailTitle"),
         dayDetailList: $("#dayDetailList"),
 
-        giftRecordList: $("#giftRecordList"),
-
         toast: $("#toast")
       };
 
       const state = {
         score: null,
-        giftBalance: 0,
         wheelChances: 0,
         wheelCashBalance: 0,
         wheelUpdatedAt: null,
@@ -5505,19 +5529,18 @@
         wheelAdminConfig: null,
         wheelProbabilityHistory: [],
         updatedAt: null,
-        giftUpdatedAt: null,
         session: null,
         isAdmin: false,
         activeMetric: "score",
-        changeTarget: "score",
         changeDelta: null,
+        pendingSettlementId: null,
         trendRange: "today",
         trendMonthWeek: Math.min(4, Math.floor((new Date().getDate() - 1) / 7) + 1),
         calendarDate: startOfMonth(new Date()),
         selectedDayKey: null,
         overviewLogs: [],
-        giftLogs: [],
         wheelLogs: [],
+        withdrawals: [],
         overviewLoadedAt: 0,
         refreshInFlight: false,
         lastRefreshAt: null,
@@ -5608,9 +5631,7 @@
 
       // -------------------- UI utilities --------------------
       function vibrate(ms = 8) {
-        try {
-          if ("vibrate" in navigator) navigator.vibrate(ms);
-        } catch (_) {}
+        try { if ("vibrate" in navigator) navigator.vibrate(ms); } catch (_) {}
       }
 
       function showToast(message) {
@@ -5623,19 +5644,13 @@
       function fitSettingsSheet() {
         const sheet = els.settingsSheet;
         if (!sheet) return;
-
-        // Measure the actual visible visitor/admin content every time.
-        // The sheet grows only as much as its current content requires.
         const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
         const maxHeight = Math.max(250, Math.min(viewportHeight - 120, Math.round(viewportHeight * 0.72)));
-
         sheet.style.height = "auto";
         sheet.style.maxHeight = "none";
         sheet.style.overflowY = "visible";
-
         const naturalHeight = Math.ceil(sheet.scrollHeight);
         const targetHeight = Math.min(naturalHeight, maxHeight);
-
         sheet.style.height = `${targetHeight}px`;
         sheet.style.maxHeight = `${maxHeight}px`;
         sheet.style.overflowY = naturalHeight > maxHeight ? "auto" : "hidden";
@@ -5651,17 +5666,23 @@
       }
 
       function setLayer(layer, open) {
+        if (!layer) return;
         layer.classList.toggle("open", open);
         layer.setAttribute("aria-hidden", String(!open));
         if (open && layer === els.settingsLayer) scheduleSettingsFit();
       }
 
       function closeAllLayers() {
-        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.useGiftLayer, els.wheelRedeemLayer, els.wheelPreviewLayer, els.wheelResultLayer, els.wheelWithdrawLayer, els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer, els.resetLayer]
-          .forEach(layer => setLayer(layer, false));
+        [
+          els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer,
+          els.changeLayer, els.redeemLayer, els.wheelPreviewLayer, els.wheelResultLayer,
+          els.wheelWithdrawLayer, els.settleWithdrawalLayer,
+          els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer, els.resetLayer
+        ].filter(Boolean).forEach(layer => setLayer(layer, false));
       }
 
       function setBusy(el, busy) {
+        if (!el) return;
         el.classList.toggle("busy", busy);
         el.disabled = busy;
       }
@@ -5688,41 +5709,45 @@
         if (!state.isAdmin) {
           if (els.wheelProbabilityLayer.classList.contains("open")) setLayer(els.wheelProbabilityLayer, false);
           if (els.wheelProbabilityHistoryLayer.classList.contains("open")) setLayer(els.wheelProbabilityHistoryLayer, false);
+          if (els.settleWithdrawalLayer.classList.contains("open")) setLayer(els.settleWithdrawalLayer, false);
         }
 
         if (state.isAdmin) {
           const email = state.session?.user?.email || "管理员";
           els.loginStateText.textContent = `管理员 · ${email}`;
+          els.redeemWheelChanceBtn.hidden = true;
+          els.spinWheelActionBtn.querySelector("strong").textContent = "试玩大转盘";
+          els.spinWheelActionBtn.querySelector("small").textContent = "不影响游客资产";
         } else {
           els.loginStateText.textContent = "访客模式";
+          els.redeemWheelChanceBtn.hidden = false;
+          els.spinWheelActionBtn.querySelector("strong").textContent = "转动大转盘";
+          els.spinWheelActionBtn.querySelector("small").textContent = "开始";
         }
 
+        renderPrimaryMetric();
+        if (state.overviewMode !== "closed") renderWheelOverview();
         if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
       }
 
       function activeMetricValue() {
-        if (state.activeMetric === "gift") return state.giftBalance;
-        if (state.activeMetric === "wheel") return null;
-        return state.score;
+        return state.activeMetric === "score" ? state.score : null;
       }
 
       function renderMetricSwitch() {
-        const gift = state.activeMetric === "gift";
         const wheel = state.activeMetric === "wheel";
-        els.metricSwitch.classList.toggle("gift-active", gift);
+        els.metricSwitch.classList.remove("gift-active");
+        els.home?.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
-        els.home?.classList.toggle("gift-active", gift);
         els.home?.classList.toggle("wheel-active", wheel);
+
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === state.activeMetric;
           btn.classList.toggle("active", active);
           btn.setAttribute("aria-selected", String(active));
         });
 
-        els.scoreRefreshBtn.setAttribute(
-          "aria-label",
-          wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据"
-        );
+        els.scoreRefreshBtn.setAttribute("aria-label", wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据");
 
         const primary = document.createElement("span");
         const secondary = document.createElement("span");
@@ -5732,31 +5757,27 @@
         if (wheel) {
           const chances = Math.max(0, Number(state.wheelChances ?? 0));
           const cash = Math.max(0, Number(state.wheelCashBalance ?? 0));
-          primary.textContent = chances > 0
-            ? `₊˚🎠 幸运大转盘准备好啦 ♡ 还有 ${chances} 次正式机会`
-            : "₊˚🎠 幸运大转盘在等宝宝来转一转 ♡";
-          secondary.textContent = chances > 0
-            ? `当前可提现余额 ¥${cash} · 转盘分区仅作视觉展示 ✨`
-            : `暂时没有正式机会 · 也可以先试玩哦 ♡ · 分区仅作视觉展示`;
-          els.wheelActions.setAttribute("aria-hidden", "false");
-        } else if (gift) {
-          const balance = Math.max(0, Number(state.giftBalance ?? 0));
-          els.useGiftBtnMeta.textContent = `剩余 ${balance} 次`;
-          els.useGiftBtn.setAttribute("aria-label", `使用小礼物额度，当前剩余 ${balance} 次`);
-          if (balance > 0) {
-            primary.textContent = `₊˚🎀 恭喜宝宝 ♡ 获得等价 ${40 * balance} 元奖励 🎁`;
-            secondary.textContent = `可折现 ${30 * balance} 元 ✧˖°`;
+          if (state.isAdmin) {
+            primary.textContent = `₊˚🎠 游客的大转盘资产 ♡ 正式机会 ${chances} 次`;
+            secondary.textContent = `可提现余额 ¥${cash} · 管理员只能试玩，不会改变游客资产 ✨`;
           } else {
-            primary.textContent = "₊˚🌷 目前还没有奖励哦 ♡";
-            secondary.textContent = "继续加油获得小礼物额度吧宝宝！🎀✨";
+            primary.textContent = chances > 0
+              ? `₊˚🎠 幸运大转盘准备好啦 ♡ 还有 ${chances} 次正式机会`
+              : "₊˚🎠 幸运大转盘在等宝宝来转一转 ♡";
+            secondary.textContent = chances > 0
+              ? `当前可提现余额 ¥${cash} · 也可以继续用 10 分兑换奖励 ✨`
+              : `当前可提现余额 ¥${cash} · 没有正式机会也可以先试玩哦 ♡`;
           }
+          els.wheelActions.setAttribute("aria-hidden", "false");
         } else {
-          const score = Number(state.score ?? 0);
-          const redeemable = Math.max(0, Math.floor(score / 10));
-          primary.textContent = `₊˚🧁 现在已经 ${score} 分了哦 ♡`;
+          const score = Math.max(0, Number(state.score ?? 0));
+          const redeemable = Math.floor(score / 10);
+          primary.textContent = state.isAdmin
+            ? `₊˚🧁 游客当前 ${score} 分 ♡`
+            : `₊˚🧁 现在已经 ${score} 分了哦 ♡`;
           secondary.textContent = redeemable > 0
-            ? `已经可以兑换 ${redeemable} 次小礼物额度啦！🎁✨`
-            : `还有 ${Math.max(0, 10 - score)} 分就可以兑换一次小礼物额度啦！加油宝宝 🌼✨`;
+            ? `可兑换 ${redeemable} 次奖励 · 每 10 分换 1 次转盘机会或 ¥30 🎁✨`
+            : `还有 ${Math.max(0, 10 - score)} 分就能兑换：1 次转盘机会或 ¥30 🌼✨`;
         }
 
         els.metricEyebrow.replaceChildren(primary, secondary);
@@ -5785,9 +5806,8 @@
       let metricSwitchToken = 0;
 
       function previewMetricSwitch(nextMetric) {
-        const gift = nextMetric === "gift";
         const wheel = nextMetric === "wheel";
-        els.metricSwitch.classList.toggle("gift-active", gift);
+        els.metricSwitch.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === nextMetric;
@@ -5797,7 +5817,7 @@
       }
 
       function switchMetric(nextMetric) {
-        if (!["score", "gift", "wheel"].includes(nextMetric) || nextMetric === state.activeMetric) return;
+        if (!["score", "wheel"].includes(nextMetric) || nextMetric === state.activeMetric) return;
         if (state.wheelSpinning) {
           showToast("🎠 转盘还在转呀，等它停稳一下 ♡");
           return;
@@ -5806,28 +5826,20 @@
         const token = ++metricSwitchToken;
         clearTimeout(metricSwitchTimer);
         clearTimeout(metricSwitchInTimer);
-
         const home = els.home;
-        home?.classList.remove(
-          "metric-switching", "metric-to-gift", "metric-to-score",
-          "metric-fading-in", "metric-fading-out"
-        );
-
+        home?.classList.remove("metric-switching", "metric-to-score", "metric-fading-in", "metric-fading-out");
         previewMetricSwitch(nextMetric);
         void home?.offsetWidth;
         home?.classList.add("metric-fading-out");
 
         metricSwitchTimer = window.setTimeout(() => {
           if (token !== metricSwitchToken) return;
-
           state.activeMetric = nextMetric;
           renderPrimaryMetric({ animate: false });
           renderOverviewContentMode();
-
           home?.classList.remove("metric-fading-out");
           void home?.offsetWidth;
           home?.classList.add("metric-fading-in");
-
           metricSwitchInTimer = window.setTimeout(() => {
             if (token !== metricSwitchToken) return;
             home?.classList.remove("metric-fading-in");
@@ -5842,35 +5854,28 @@
         els.overviewContentSwitch.hidden = !selected;
         els.scoreTrendSection.hidden = selected !== "trend";
         els.scoreCalendarSection.hidden = selected !== "calendar";
-
         els.overviewContentSwitch.querySelectorAll("[data-overview-section]").forEach(btn => {
           const active = btn.dataset.overviewSection === selected;
           btn.classList.toggle("active", active);
           btn.setAttribute("aria-selected", String(active));
         });
-
-        if (selected === "trend") {
-          requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
-        } else if (selected === "calendar") {
-          renderCalendar();
-        }
+        if (selected === "trend") requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
+        else if (selected === "calendar") renderCalendar();
       }
 
       function renderOverviewContentMode() {
-        const gift = state.activeMetric === "gift";
         const wheel = state.activeMetric === "wheel";
-        els.overview.classList.toggle("gift-mode", gift);
+        els.overview.classList.remove("gift-mode");
         els.overview.classList.toggle("wheel-mode", wheel);
-        els.scoreOverviewContent.hidden = gift || wheel;
-        els.giftOverviewContent.hidden = !gift;
+        els.scoreOverviewContent.hidden = wheel;
         els.wheelOverviewContent.hidden = !wheel;
-        els.overviewTitle.textContent = wheel ? "幸运大转盘" : gift ? "小礼物记录" : "总览";
+        els.overviewTitle.textContent = wheel
+          ? (state.isAdmin ? "游客 · 大转盘资产" : "幸运大转盘")
+          : "总览";
         els.overviewSubtitle.textContent = wheel
-          ? "查看奖金、机会与每一次幸运记录"
-          : gift ? "查看每一次额度变化" : "查看趋势与日历";
-
+          ? (state.isAdmin ? "查看游客资产、提现待办与奖励历史" : "查看奖金、提现状态与每一次幸运记录")
+          : "查看趋势与日历";
         if (wheel) renderWheelOverview();
-        else if (gift) renderGiftOverview();
         else renderOverviewSectionMode();
       }
 
@@ -5878,10 +5883,7 @@
         state.lastRefreshAt = new Date();
         if (els.lastRefreshText) {
           els.lastRefreshText.textContent = new Intl.DateTimeFormat("zh-CN", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false
+            hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
           }).format(state.lastRefreshAt);
         }
       }
@@ -5890,25 +5892,20 @@
       async function loadAppState({ silent = false } = {}) {
         if (state.refreshInFlight) return;
         state.refreshInFlight = true;
-
         try {
-          const [appRes, wheelRes] = await Promise.all([
-            db.rpc("points_get_app_state"),
+          const [scoreRes, wheelRes] = await Promise.all([
+            db.rpc("points_get_state"),
             db.rpc("points_get_wheel_state")
           ]);
-          if (appRes.error) throw appRes.error;
+          if (scoreRes.error) throw scoreRes.error;
           if (wheelRes.error) throw wheelRes.error;
 
-          const row = Array.isArray(appRes.data) ? appRes.data[0] : appRes.data;
+          const row = Array.isArray(scoreRes.data) ? scoreRes.data[0] : scoreRes.data;
           const wheelRow = Array.isArray(wheelRes.data) ? wheelRes.data[0] : wheelRes.data;
-          if (!row || typeof row.score !== "number" || typeof row.gift_balance !== "number") {
-            throw new Error("未读取到完整数据");
-          }
+          if (!row || typeof row.score !== "number") throw new Error("未读取到积分数据");
 
-          state.score = row.score;
-          state.giftBalance = row.gift_balance;
-          state.updatedAt = row.score_updated_at;
-          state.giftUpdatedAt = row.gift_updated_at;
+          state.score = Number(row.score);
+          state.updatedAt = row.updated_at ?? null;
           state.wheelChances = Number(wheelRow?.spin_chances ?? 0);
           state.wheelCashBalance = Number(wheelRow?.cash_balance ?? 0);
           state.wheelUpdatedAt = wheelRow?.updated_at ?? null;
@@ -5926,22 +5923,19 @@
         try {
           const { data, error } = await db.auth.getSession();
           if (error) throw error;
-
           state.session = data.session;
           state.isAdmin = false;
 
           if (state.session) {
             const { data: adminData, error: adminError } = await db.rpc("points_is_admin");
-            if (adminError) {
-              console.error("points_is_admin:", adminError);
-            } else {
-              state.isAdmin = adminData === true;
-            }
+            if (adminError) console.error("points_is_admin:", adminError);
+            else state.isAdmin = adminData === true;
           }
 
           renderAdminState();
           if (state.isAdmin) void workScheduleModule.refreshAdminNotice({ forceRefresh: true });
           else workScheduleModule.hideAdminNotice();
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           console.error("refreshAuthState:", err);
           state.session = null;
@@ -5954,28 +5948,18 @@
       async function login() {
         const email = els.emailInput.value.trim();
         const password = els.passwordInput.value;
-
-        if (!email || !password) {
-          showToast("请输入邮箱和密码");
-          return;
-        }
-
+        if (!email || !password) return showToast("请输入邮箱和密码");
         setBusy(els.loginBtn, true);
-
         try {
           const { data, error } = await db.auth.signInWithPassword({ email, password });
           if (error) throw error;
-
           state.session = data.session;
-
           const { data: adminData, error: adminError } = await db.rpc("points_is_admin");
           if (adminError) throw adminError;
-
           if (adminData !== true) {
             await db.auth.signOut();
             throw new Error("此账号不是管理员");
           }
-
           state.isAdmin = true;
           els.passwordInput.value = "";
           setLayer(els.loginLayer, false);
@@ -6003,6 +5987,7 @@
           setLayer(els.settingsLayer, false);
           renderAdminState();
           workScheduleModule.hideAdminNotice();
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
           showToast("已退出管理员");
         } catch (err) {
           console.error("logout:", err);
@@ -6010,41 +5995,19 @@
         }
       }
 
-      // -------------------- Score / gift writes --------------------
+      // -------------------- Score writes / direct reward redemption --------------------
       function openChange(delta) {
-        if (!state.isAdmin) {
-          showToast("需要管理员权限");
-          return;
-        }
-
-        state.changeTarget = state.activeMetric;
+        if (!state.isAdmin) return showToast("需要管理员权限");
         state.changeDelta = delta;
-
-        if (state.changeTarget === "gift" && delta < 0 && state.giftBalance <= 0) {
-          showToast("当前没有可用小礼物额度");
-          return;
-        }
-
-        const isGift = state.changeTarget === "gift";
-        const current = Number(isGift ? state.giftBalance : state.score ?? 0);
+        const current = Number(state.score ?? 0);
         const next = current + delta;
-        els.changeLayer.dataset.theme = isGift ? "gift" : "score";
-        els.changeIcon.textContent = isGift
-          ? (delta > 0 ? "🎁" : "🌷")
-          : (delta > 0 ? "✨" : "🌙");
-        els.changeTitle.textContent = isGift
-          ? (delta > 0 ? "小礼物额度 +1" : "小礼物额度 −1")
-          : (delta > 0 ? "增加 1 分" : "减少 1 分");
-        els.changeSubtitle.textContent = isGift
-          ? "管理员操作 · 会立即写入小礼物历史"
-          : "管理员操作 · 会立即写入积分历史";
-        els.changePreview.textContent = isGift
-          ? `当前 ${current} 个  →  ${next} 个`
-          : `当前 ${current} 分  →  ${next} 分`;
+        els.changeLayer.dataset.theme = "score";
+        els.changeIcon.textContent = delta > 0 ? "✨" : "🌙";
+        els.changeTitle.textContent = delta > 0 ? "增加 1 分" : "减少 1 分";
+        els.changeSubtitle.textContent = "管理员操作 · 会立即写入积分历史";
+        els.changePreview.textContent = `当前 ${current} 分  →  ${next} 分`;
         els.confirmChangeBtn.textContent = delta > 0 ? "确认 +1" : "确认 −1";
-        els.reasonInput.placeholder = isGift
-          ? "写下这次额度变化的原因 ♡（可留空）"
-          : "写下这次积分变化的原因 ♡（可留空）";
+        els.reasonInput.placeholder = "写下这次积分变化的原因 ♡（可留空）";
         els.reasonInput.value = "";
         setLayer(els.changeLayer, true);
         setTimeout(() => els.reasonInput.focus(), 240);
@@ -6054,304 +6017,95 @@
         const delta = state.changeDelta;
         if (delta !== 1 && delta !== -1) return;
         setBusy(els.confirmChangeBtn, true);
-
         try {
           const reason = els.reasonInput.value.trim();
-          const isGift = state.changeTarget === "gift";
-          const rpc = isGift ? "points_change_gift" : "points_change_score";
-          const { data, error } = await db.rpc(rpc, {
+          const { data, error } = await db.rpc("points_change_score", {
             p_delta: delta,
             p_reason: reason === "" ? null : reason
           });
           if (error) throw error;
-
           const row = Array.isArray(data) ? data[0] : data;
-          if (isGift) {
-            if (row && typeof row.gift_balance === "number") {
-              state.giftBalance = row.gift_balance;
-              state.giftUpdatedAt = row.updated_at;
-            } else {
-              await loadAppState({ silent: true });
-            }
+          if (row && typeof row.score === "number") {
+            state.score = Number(row.score);
+            state.updatedAt = row.updated_at;
           } else {
-            if (row && typeof row.score === "number") {
-              state.score = row.score;
-              state.updatedAt = row.updated_at;
-            } else {
-              await loadAppState({ silent: true });
-            }
+            await loadAppState({ silent: true });
           }
-
           renderPrimaryMetric({ animate: true });
           markRefreshed();
           setLayer(els.changeLayer, false);
           state.overviewLoadedAt = 0;
           vibrate(14);
-          showToast(isGift
-            ? (delta > 0 ? "已增加 1 个小礼物额度" : "已减少 1 个小礼物额度")
-            : (delta > 0 ? "已增加 1 分" : "已减少 1 分"));
-
-          if (els.overview.classList.contains("open")) await loadOverviewData(true);
+          showToast(delta > 0 ? "已增加 1 分" : "已减少 1 分");
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           console.error("confirmChange:", err);
-          const message = String(err?.message || "");
-          if (message.includes("Admin permission required")) {
+          if (/permission|admin/i.test(String(err?.message || ""))) {
             await refreshAuthState();
             showToast("管理员权限已失效");
-          } else if (message.includes("Gift balance cannot go below zero")) {
-            showToast("小礼物额度不能低于 0");
-          } else {
-            showToast(state.changeTarget === "gift" ? "额度修改失败" : "积分修改失败");
-          }
+          } else showToast("积分修改失败");
         } finally {
           setBusy(els.confirmChangeBtn, false);
         }
       }
 
-      function isGiftRedemptionAction(action) {
-        return ["score_redeem", "redeem_gift", "gift_redeem", "redemption"].includes(String(action || ""));
-      }
-
-      function isGiftUseAction(action) {
-        return ["gift_use", "use_gift", "gift_used"].includes(String(action || ""));
-      }
-
-      function openUseGiftPrompt() {
-        if (state.isAdmin) return;
-
-        const balance = Math.max(0, Number(state.giftBalance ?? 0));
-        els.useGiftLayer.dataset.theme = "gift";
-
-        if (balance <= 0) {
-          els.useGiftIcon.textContent = "🌷";
-          els.useGiftTitle.textContent = "还没有小礼物额度哦";
-          els.useGiftMessage.textContent = "₊˚🎀 宝宝你目前还没有小礼物额度哦 ♡ 加油获取吧！🎁✨";
-          els.useGiftConfirmBtn.hidden = true;
-          els.cancelUseGiftBtn.textContent = "知道啦 ♡";
+      function openRedeemPrompt() {
+        if (state.isAdmin) return showToast("管理员不能兑换游客奖励");
+        const score = Math.max(0, Number(state.score ?? 0));
+        els.redeemTitle.textContent = "兑换奖励";
+        if (score < 10) {
+          els.redeemMessage.textContent = `宝宝现在有 ${score} 分 ♡ 还差 ${10 - score} 分就可以兑换一次奖励啦！`;
+          els.rewardChoiceGrid.hidden = true;
+          els.cancelRedeemBtn.textContent = "知道啦 ♡";
         } else {
-          els.useGiftIcon.textContent = "🎀";
-          els.useGiftTitle.textContent = "使用小礼物额度";
-          els.useGiftMessage.textContent = balance === 1
-            ? "₊˚🎁 宝宝目前还剩下 1 次小礼物额度哦 ♡ 这次使用后额度就会变成 0 啦，确定要使用一次吗？🌷"
-            : `₊˚🎁 宝宝目前还剩下 ${balance} 次小礼物额度哦 ♡ 使用后还会剩下 ${balance - 1} 次 ✨ 是否使用一次小礼物额度？`;
-          els.useGiftConfirmBtn.hidden = false;
-          els.useGiftConfirmBtn.textContent = "使用一次 🎁";
-          els.cancelUseGiftBtn.textContent = "取消";
-        }
-
-        setLayer(els.useGiftLayer, true);
-      }
-
-      async function performGiftUse() {
-        const balance = Math.max(0, Number(state.giftBalance ?? 0));
-        if (balance <= 0) {
-          openUseGiftPrompt();
-          return;
-        }
-
-        setBusy(els.useGiftConfirmBtn, true);
-        try {
-          const { data, error } = await db.rpc("points_use_gift");
-          if (error) throw error;
-
-          const row = Array.isArray(data) ? data[0] : data;
-          if (row && typeof row.gift_balance === "number") {
-            state.giftBalance = row.gift_balance;
-            state.giftUpdatedAt = row.gift_updated_at ?? row.updated_at ?? state.giftUpdatedAt;
-          } else {
-            await loadAppState({ silent: true });
-          }
-
-          renderPrimaryMetric({ animate: true });
-          markRefreshed();
-          state.overviewLoadedAt = 0;
-          setLayer(els.useGiftLayer, false);
-          vibrate(16);
-          showToast("🎀 已使用 1 次小礼物额度 ♡");
-          if (els.overview.classList.contains("open")) await loadOverviewData(true);
-        } catch (err) {
-          console.error("performGiftUse:", err);
-          const message = String(err?.message || "");
-          if (/points_use_gift|Could not find the function|PGRST202|schema cache/i.test(message)) {
-            showToast("使用接口尚未安装，请先部署 points_use_gift RPC");
-          } else if (/No gift balance|Gift balance.*zero|no.*gift/i.test(message)) {
-            await loadAppState({ silent: true });
-            renderPrimaryMetric();
-            openUseGiftPrompt();
-          } else {
-            showToast("使用小礼物额度失败，请稍后重试");
-          }
-        } finally {
-          setBusy(els.useGiftConfirmBtn, false);
-        }
-      }
-
-      function openRedeemPrompt({ source = "score" } = {}) {
-        els.redeemLayer.dataset.theme = source === "gift" ? "gift" : "score";
-        const score = Number(state.score ?? 0);
-        const redeemable = Math.max(0, Math.floor(score / 10));
-        const canRedeem = score >= 10;
-        const adminForceAllowed = state.isAdmin && source === "gift" && !canRedeem;
-
-        els.redeemTitle.textContent = canRedeem ? "🎁 兑换小礼物额度" : "🌼 还差一点点哦";
-        if (canRedeem) {
-          els.redeemMessage.textContent = `当前 ${score} 分，可兑换 ${redeemable} 次小礼物额度。本次兑换 1 次将扣除 10 分，兑换后剩余 ${score - 10} 分，小礼物额度 +1。是否兑换？`;
-          els.redeemConfirmBtn.hidden = false;
-          els.redeemConfirmBtn.textContent = "确认兑换";
-          els.redeemForceBtn.hidden = true;
-        } else {
-          const need = Math.max(0, 10 - score);
-          els.redeemMessage.textContent = adminForceAllowed
-            ? `当前只有 ${score} 分，还差 ${need} 分才能正常兑换。你是管理员，可以取消，或强制增加 1 个小礼物额度（不会扣积分）。`
-            : `当前 ${score} 分，还差 ${need} 分就可以兑换一次小礼物额度啦。继续加油宝宝！`;
-          els.redeemConfirmBtn.hidden = true;
-          els.redeemForceBtn.hidden = !adminForceAllowed;
+          const times = Math.floor(score / 10);
+          els.redeemMessage.textContent = `当前 ${score} 分，可兑换 ${times} 次奖励 ♡ 每次消耗 10 分，请选择这一次想要的奖励。`;
+          els.rewardChoiceGrid.hidden = false;
+          els.cancelRedeemBtn.textContent = "取消";
         }
         setLayer(els.redeemLayer, true);
       }
 
-      async function performGiftRedemption() {
-        const score = Number(state.score ?? 0);
-        if (score < 10) {
-          openRedeemPrompt({ source: state.activeMetric });
-          return;
-        }
-
-        setBusy(els.redeemConfirmBtn, true);
+      async function performRewardRedemption(kind) {
+        if (state.isAdmin) return showToast("管理员不能兑换游客奖励");
+        const isWheel = kind === "wheel";
+        setBusy(els.redeemWheelConfirmBtn, true);
+        setBusy(els.redeemCashConfirmBtn, true);
         try {
-          // One server-side transaction must deduct 10 score, add 1 gift and write both logs.
-          const { data, error } = await db.rpc("points_redeem_gift");
+          const rpc = isWheel ? "points_redeem_wheel_chance" : "points_redeem_cash";
+          const { data, error } = await db.rpc(rpc);
           if (error) throw error;
-
           const row = Array.isArray(data) ? data[0] : data;
-          if (row && typeof row.score === "number" && typeof row.gift_balance === "number") {
-            state.score = row.score;
-            state.giftBalance = row.gift_balance;
-            state.updatedAt = row.score_updated_at ?? row.updated_at ?? state.updatedAt;
-            state.giftUpdatedAt = row.gift_updated_at ?? row.updated_at ?? state.giftUpdatedAt;
-          } else {
-            await loadAppState({ silent: true });
-          }
-
-          renderPrimaryMetric({ animate: true });
-          markRefreshed();
+          state.score = Number(row?.score ?? Math.max(0, Number(state.score || 0) - 10));
+          state.wheelChances = Number(row?.spin_chances ?? state.wheelChances);
+          state.wheelCashBalance = Number(row?.cash_balance ?? state.wheelCashBalance + (isWheel ? 0 : 30));
+          state.updatedAt = row?.score_updated_at ?? new Date().toISOString();
+          state.wheelUpdatedAt = row?.wheel_updated_at ?? state.wheelUpdatedAt;
           state.overviewLoadedAt = 0;
           setLayer(els.redeemLayer, false);
+          renderPrimaryMetric({ animate: state.activeMetric === "score" });
           vibrate(18);
-          showToast("🎁 兑换成功：积分 −10，小礼物额度 +1");
-          if (els.overview.classList.contains("open")) await loadOverviewData(true);
+          showToast(isWheel ? "🎠 兑换成功：10 分 → 1 次正式大转盘机会" : "💰 兑换成功：10 分 → ¥30 可提现余额");
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
-          console.error("performGiftRedemption:", err);
+          console.error("performRewardRedemption:", err);
           const message = String(err?.message || "");
-          if (/points_redeem_gift|Could not find the function|PGRST202|schema cache/i.test(message)) {
-            showToast("兑换接口尚未安装，请先部署 points_redeem_gift RPC");
-          } else if (/Insufficient score|score.*10|not enough/i.test(message)) {
+          if (/Insufficient score|at least 10/i.test(message)) {
             await loadAppState({ silent: true });
-            renderPrimaryMetric();
-            openRedeemPrompt({ source: state.activeMetric });
-          } else {
-            showToast("兑换失败，请稍后重试");
-          }
+            openRedeemPrompt();
+          } else if (/Guest mode required|permission/i.test(message)) {
+            await refreshAuthState();
+            showToast("当前不是游客模式，不能兑换奖励");
+          } else if (/PGRST202|schema cache|Could not find/i.test(message)) {
+            showToast("请先运行 v2.0 数据库迁移 SQL");
+          } else showToast("兑换失败，请稍后重试");
         } finally {
-          setBusy(els.redeemConfirmBtn, false);
-        }
-      }
-
-      async function forceAddGiftByAdmin() {
-        if (!state.isAdmin) return;
-        setBusy(els.redeemForceBtn, true);
-        try {
-          const { data, error } = await db.rpc("points_change_gift", {
-            p_delta: 1,
-            p_reason: "管理员强制增加小礼物额度"
-          });
-          if (error) throw error;
-          const row = Array.isArray(data) ? data[0] : data;
-          if (row && typeof row.gift_balance === "number") {
-            state.giftBalance = row.gift_balance;
-            state.giftUpdatedAt = row.updated_at;
-          } else {
-            await loadAppState({ silent: true });
-          }
-          renderPrimaryMetric({ animate: true });
-          markRefreshed();
-          state.overviewLoadedAt = 0;
-          setLayer(els.redeemLayer, false);
-          vibrate(16);
-          showToast("管理员已强制增加 1 个小礼物额度");
-          if (els.overview.classList.contains("open")) await loadOverviewData(true);
-        } catch (err) {
-          console.error("forceAddGiftByAdmin:", err);
-          showToast("强制增加额度失败");
-        } finally {
-          setBusy(els.redeemForceBtn, false);
+          setBusy(els.redeemWheelConfirmBtn, false);
+          setBusy(els.redeemCashConfirmBtn, false);
         }
       }
 
       // -------------------- Lucky wheel --------------------
-      function isGiftWheelRedeemAction(action) {
-        return ["wheel_redeem", "redeem_wheel", "wheel_chance_redeem"].includes(String(action || ""));
-      }
-
-      function openWheelRedeemPrompt() {
-        const gifts = Math.max(0, Number(state.giftBalance ?? 0));
-        const chances = Math.max(0, Number(state.wheelChances ?? 0));
-        els.wheelRedeemLayer.dataset.theme = "wheel";
-
-        if (gifts <= 0) {
-          els.wheelRedeemIcon.textContent = "🌷";
-          els.wheelRedeemTitle.textContent = "还没有可兑换的额度哦";
-          els.wheelRedeemMessage.textContent = "₊˚🎀 宝宝目前还没有小礼物额度 ♡ 先去攒一个小礼物额度，再来换一次幸运机会吧！🎁✨";
-          els.wheelRedeemPreview.textContent = "1 个小礼物额度 = 1 次正式大转盘机会";
-          els.wheelRedeemConfirmBtn.hidden = true;
-          els.wheelRedeemCancelBtn.textContent = "知道啦 ♡";
-        } else {
-          els.wheelRedeemIcon.textContent = "🎠";
-          els.wheelRedeemTitle.textContent = "兑换大转盘机会";
-          els.wheelRedeemMessage.textContent = `₊˚🎁 宝宝现在有 ${gifts} 次小礼物额度 ♡ 兑换一次幸运机会会消耗 1 次额度，确定要兑换吗？✨`;
-          els.wheelRedeemPreview.textContent = `小礼物 ${gifts} → ${gifts - 1}  ·  转盘机会 ${chances} → ${chances + 1}`;
-          els.wheelRedeemConfirmBtn.hidden = false;
-          els.wheelRedeemConfirmBtn.textContent = "兑换一次 🎀";
-          els.wheelRedeemCancelBtn.textContent = "取消";
-        }
-        setLayer(els.wheelRedeemLayer, true);
-      }
-
-      async function performWheelChanceRedemption() {
-        if (state.giftBalance <= 0) return openWheelRedeemPrompt();
-        setBusy(els.wheelRedeemConfirmBtn, true);
-        try {
-          const { data, error } = await db.rpc("points_redeem_wheel_chance");
-          if (error) throw error;
-          const row = Array.isArray(data) ? data[0] : data;
-          state.giftBalance = Number(row?.gift_balance ?? state.giftBalance - 1);
-          state.wheelChances = Number(row?.spin_chances ?? state.wheelChances + 1);
-          state.wheelCashBalance = Number(row?.cash_balance ?? state.wheelCashBalance);
-          state.giftUpdatedAt = row?.gift_updated_at ?? state.giftUpdatedAt;
-          state.wheelUpdatedAt = row?.wheel_updated_at ?? state.wheelUpdatedAt;
-          state.overviewLoadedAt = 0;
-          renderPrimaryMetric({ animate: true });
-          setLayer(els.wheelRedeemLayer, false);
-          vibrate(16);
-          showToast("🎠 幸运机会 +1 啦 ♡");
-          if (state.overviewMode !== "closed") await loadOverviewData(true);
-        } catch (err) {
-          console.error("performWheelChanceRedemption:", err);
-          const message = String(err?.message || "");
-          if (/No gift balance/i.test(message)) {
-            await loadAppState({ silent: true });
-            openWheelRedeemPrompt();
-          } else if (/points_redeem_wheel_chance|PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v1.8.1 大转盘 SQL ♡");
-          } else {
-            showToast("兑换转盘机会失败");
-          }
-        } finally {
-          setBusy(els.wheelRedeemConfirmBtn, false);
-        }
-      }
-
-
       const WHEEL_DEFAULT_PROBABILITIES = {
         10: 10,
         20: 30,
@@ -6513,8 +6267,11 @@
         }
       }
 
+
       function openWheelPreviewPrompt() {
-        els.wheelPreviewMessage.textContent = "宝宝现在还没有正式的大转盘机会哦～不过可以先偷偷试玩一次 ✨ 试玩结果只负责开心，不会加入可提现余额，也不会保存中奖记录哦 ♡";
+        els.wheelPreviewMessage.textContent = state.isAdmin
+          ? "管理员试玩使用当前真实概率，但不会消耗游客正式机会、不会产生可提现余额，也不会留下中奖记录。"
+          : "宝宝现在还没有正式的大转盘机会哦～可以先试玩一次 ✨ 试玩不会加入可提现余额，也不会保存中奖记录 ♡";
         setLayer(els.wheelPreviewLayer, true);
       }
 
@@ -6593,23 +6350,20 @@
       }
 
 
+
       async function silentSyncBeforeWheelSpin() {
         try {
-          const [appRes, wheelRes] = await Promise.all([
-            db.rpc("points_get_app_state"),
+          const [scoreRes, wheelRes] = await Promise.all([
+            db.rpc("points_get_state"),
             db.rpc("points_get_wheel_state")
           ]);
-
-          if (!appRes.error) {
-            const row = Array.isArray(appRes.data) ? appRes.data[0] : appRes.data;
-            if (row && typeof row.score === "number" && typeof row.gift_balance === "number") {
-              state.score = row.score;
-              state.giftBalance = row.gift_balance;
-              state.updatedAt = row.score_updated_at;
-              state.giftUpdatedAt = row.gift_updated_at;
+          if (!scoreRes.error) {
+            const row = Array.isArray(scoreRes.data) ? scoreRes.data[0] : scoreRes.data;
+            if (row && typeof row.score === "number") {
+              state.score = Number(row.score);
+              state.updatedAt = row.updated_at ?? state.updatedAt;
             }
           }
-
           if (!wheelRes.error) {
             const wheelRow = Array.isArray(wheelRes.data) ? wheelRes.data[0] : wheelRes.data;
             if (wheelRow) {
@@ -6618,7 +6372,6 @@
               state.wheelUpdatedAt = wheelRow.updated_at ?? state.wheelUpdatedAt ?? null;
             }
           }
-
           renderPrimaryMetric();
           return true;
         } catch (err) {
@@ -6628,15 +6381,13 @@
       }
 
       async function silentSyncAfterWheelSpin() {
-        try {
-          await loadAppState({ silent: true });
-        } catch (err) {
-          console.debug("silentSyncAfterWheelSpin:", err);
-        }
+        try { await loadAppState({ silent: true }); }
+        catch (err) { console.debug("silentSyncAfterWheelSpin:", err); }
       }
 
       async function performFormalWheelSpin() {
         if (state.wheelSpinning) return;
+        if (state.isAdmin) return openWheelPreviewPrompt();
         if (state.wheelChances <= 0) return openWheelPreviewPrompt();
         const cashBefore = Number(state.wheelCashBalance || 0);
         try {
@@ -6660,13 +6411,13 @@
           const message = String(err?.message || "");
           if (/No wheel chance/i.test(message)) {
             await loadAppState({ silent: true });
-            renderPrimaryMetric();
             openWheelPreviewPrompt();
-          } else if (/points_spin_wheel|PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v1.8.1 大转盘 SQL ♡");
-          } else {
-            showToast("转盘暂时没有转起来，再试一次吧");
-          }
+          } else if (/Guest mode required|permission/i.test(message)) {
+            await refreshAuthState();
+            openWheelPreviewPrompt();
+          } else if (/PGRST202|schema cache|Could not find/i.test(message)) {
+            showToast("请先运行 v2.0 数据库迁移 SQL");
+          } else showToast("转盘暂时没有转起来，再试一次吧");
         }
       }
 
@@ -6685,9 +6436,8 @@
           showWheelResult({ prize, preview: true });
         } catch (err) {
           console.error("performPreviewWheelSpin:", err);
-          const message = String(err?.message || "");
-          showToast(/points_preview_wheel|PGRST202|schema cache|Could not find/i.test(message)
-            ? "请先运行 v1.8.1 大转盘 SQL ♡"
+          showToast(/PGRST202|schema cache|Could not find/i.test(String(err?.message || ""))
+            ? "请先运行 v2.0 数据库迁移 SQL"
             : "试玩转盘暂时没有转起来");
         } finally {
           setBusy(els.wheelPreviewConfirmBtn, false);
@@ -6695,12 +6445,10 @@
       }
 
       function openWheelWithdrawPrompt() {
+        if (state.isAdmin) return showToast("管理员不能替游客申请提现");
         const cash = Math.max(0, Number(state.wheelCashBalance ?? 0));
-        if (cash <= 0) {
-          showToast("💰 目前还没有可提现余额哦 ♡");
-          return;
-        }
-        els.wheelWithdrawMessage.textContent = `当前可提现余额 ¥${cash} ♡ 输入本次要提现的金额。`;
+        if (cash <= 0) return showToast("💰 目前还没有可提现余额哦 ♡");
+        els.wheelWithdrawMessage.textContent = `当前可提现余额 ¥${cash} ♡ 提交后金额会立即从可提现余额中扣除，并进入“等待管理员兑现”。`;
         els.wheelWithdrawAmount.value = "";
         els.wheelWithdrawAmount.max = String(cash);
         setLayer(els.wheelWithdrawLayer, true);
@@ -6708,19 +6456,14 @@
       }
 
       async function performWheelWithdraw() {
+        if (state.isAdmin) return showToast("管理员不能替游客申请提现");
         const amount = Number(els.wheelWithdrawAmount.value);
         const cashBefore = Math.max(0, Number(state.wheelCashBalance ?? 0));
-        if (!Number.isInteger(amount) || amount <= 0) {
-          showToast("请输入正确的提现金额");
-          return;
-        }
-        if (amount > cashBefore) {
-          showToast(`最多可以提现 ¥${cashBefore}`);
-          return;
-        }
+        if (!Number.isInteger(amount) || amount <= 0) return showToast("请输入正确的提现金额");
+        if (amount > cashBefore) return showToast(`最多可以申请 ¥${cashBefore}`);
         setBusy(els.wheelWithdrawConfirmBtn, true);
         try {
-          const { data, error } = await db.rpc("points_withdraw_wheel", { p_amount: amount });
+          const { data, error } = await db.rpc("points_request_withdrawal", { p_amount: amount });
           if (error) throw error;
           const row = Array.isArray(data) ? data[0] : data;
           state.wheelChances = Number(row?.spin_chances ?? state.wheelChances);
@@ -6729,98 +6472,111 @@
           state.overviewLoadedAt = 0;
           setLayer(els.wheelWithdrawLayer, false);
           renderPrimaryMetric();
-          renderWheelOverview();
           vibrate(18);
-          showToast(`💰 已记录提现 ¥${amount}`);
-          if (state.overviewMode !== "closed") await loadOverviewData(true);
+          showToast(`💰 已提交 ¥${amount} 提现申请，等待管理员兑现`);
+          await loadOverviewData(true);
         } catch (err) {
           console.error("performWheelWithdraw:", err);
           const message = String(err?.message || "");
           if (/exceeds cash balance/i.test(message)) {
             await loadAppState({ silent: true });
-            renderPrimaryMetric();
             showToast("余额刚刚发生变化，请重新输入");
-          } else if (/points_withdraw_wheel|PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v1.8.1 大转盘 SQL ♡");
-          } else {
-            showToast("提现记录失败");
-          }
+          } else if (/Guest mode required|permission/i.test(message)) {
+            await refreshAuthState();
+            showToast("当前不是游客模式，不能申请提现");
+          } else if (/PGRST202|schema cache|Could not find/i.test(message)) {
+            showToast("请先运行 v2.0 数据库迁移 SQL");
+          } else showToast("提现申请提交失败");
         } finally {
           setBusy(els.wheelWithdrawConfirmBtn, false);
         }
       }
 
-      function openResetSettlementPrompt() {
+      function openSettlementPrompt(id) {
+        if (!state.isAdmin) return showToast("只有管理员可以确认兑现");
+        const row = state.withdrawals.find(item => Number(item.id) === Number(id));
+        if (!row || row.status !== "pending") return showToast("这笔提现已经处理或不存在");
+        state.pendingSettlementId = Number(row.id);
+        els.settleWithdrawalMessage.textContent = `游客申请提现 ¥${Number(row.amount)}。请确认你已经实际完成兑现；确认后该申请会从待办消失，并在双方历史中显示“管理员已经兑现提现申请。请查收。”`;
+        els.settleWithdrawalConfirmBtn.textContent = `已经兑现 ¥${Number(row.amount)}`;
+        setLayer(els.settleWithdrawalLayer, true);
+      }
+
+      async function settleWithdrawal() {
+        if (!state.isAdmin || !state.pendingSettlementId) return;
+        setBusy(els.settleWithdrawalConfirmBtn, true);
+        try {
+          const { error } = await db.rpc("points_admin_settle_withdrawal", {
+            p_withdrawal_id: state.pendingSettlementId
+          });
+          if (error) throw error;
+          setLayer(els.settleWithdrawalLayer, false);
+          state.pendingSettlementId = null;
+          state.overviewLoadedAt = 0;
+          vibrate(18);
+          showToast("✅ 已确认兑现，游客会在历史中看到到账提醒");
+          await loadOverviewData(true);
+        } catch (err) {
+          console.error("settleWithdrawal:", err);
+          const message = String(err?.message || "");
+          if (/already settled/i.test(message)) showToast("这笔提现已经兑现");
+          else if (/Admin permission|required|permission/i.test(message)) {
+            await refreshAuthState();
+            showToast("管理员权限已失效");
+          } else showToast("确认兑现失败");
+        } finally {
+          setBusy(els.settleWithdrawalConfirmBtn, false);
+        }
+      }
+
+      function openResetPrompt() {
+        if (!state.isAdmin) return;
+        const score = Number(state.score ?? 0);
+        const redeemable = Math.max(0, Math.floor(score / 10));
         els.resetTitle.textContent = "重置积分";
-        const projected = state.score >= 10 ? Math.floor(state.score / 10) : 0;
-        els.resetMessage.textContent = state.score >= 10
-          ? `当前 ${state.score} 分。自动结算将增加 ${projected} 个小礼物额度，然后积分恢复为 5。`
-          : state.score <= 0
-            ? `当前 ${state.score} 分。选择自动结算时，可用小礼物额度将按规则清空。`
-            : `当前 ${state.score} 分，不足 10 分。自动结算不会增加小礼物额度，积分将恢复为 5。`;
-        els.resetAutoBtn.textContent = "自动结算并重置";
-        els.resetOnlyBtn.hidden = false;
+        if (score >= 10) {
+          els.resetMessage.textContent = `⚠️ 游客当前 ${score} 分，其中 ${redeemable * 10} 分可兑换 ${redeemable} 次大转盘机会，或 ¥${redeemable * 30} 可提现余额。重置后这些可兑换积分会被清除，确定仍然重置到 5 分吗？`;
+          els.resetConfirmBtn.textContent = "仍然重置";
+        } else {
+          els.resetMessage.textContent = `当前 ${score} 分。重置后积分将恢复为 5；不会影响游客的大转盘机会、可提现余额或提现记录。`;
+          els.resetConfirmBtn.textContent = "确认重置";
+        }
         setLayer(els.resetLayer, true);
       }
 
-      function openGiftClearConfirmation() {
-        els.resetTitle.textContent = "确认清空小礼物额度？";
-        els.resetMessage.textContent = `按照当前规则，积分为 ${state.score} 时自动结算会将当前 ${state.giftBalance} 个小礼物额度清空。是否清空并继续重置积分？`;
-        els.resetAutoBtn.textContent = "清空并重置";
-        els.resetOnlyBtn.hidden = true;
-      }
-
-      async function performReset({ autoSettle, confirmClear = false }) {
-        setBusy(els.resetAutoBtn, true);
-        setBusy(els.resetOnlyBtn, true);
-
+      async function performReset() {
+        setBusy(els.resetConfirmBtn, true);
         try {
-          const { data, error } = await db.rpc("points_reset_with_gift", {
-            p_auto_settle: autoSettle,
-            p_confirm_clear: confirmClear
+          const { data, error } = await db.rpc("points_reset_score", {
+            p_confirm_discard: Number(state.score ?? 0) >= 10
           });
           if (error) throw error;
-
           const row = Array.isArray(data) ? data[0] : data;
           state.score = Number(row?.score ?? 5);
-          state.giftBalance = Number(row?.gift_balance ?? state.giftBalance ?? 0);
-          state.updatedAt = row?.score_updated_at ?? new Date().toISOString();
-          state.giftUpdatedAt = row?.gift_updated_at ?? state.giftUpdatedAt;
+          state.updatedAt = row?.updated_at ?? new Date().toISOString();
+          setLayer(els.resetLayer, false);
+          state.overviewLoadedAt = 0;
           renderPrimaryMetric({ animate: true });
           markRefreshed();
-          setLayer(els.resetLayer, false);
-          els.resetOnlyBtn.hidden = false;
-          state.overviewLoadedAt = 0;
           vibrate(18);
-
-          const giftDelta = Number(row?.gift_delta ?? 0);
-          const giftCleared = row?.gift_cleared === true;
-          if (giftCleared) showToast("积分已重置，小礼物额度已清空");
-          else if (giftDelta > 0) showToast(`积分已重置，小礼物额度 +${giftDelta}`);
-          else showToast("积分已重置为 5");
-
-          if (els.overview.classList.contains("open")) await loadOverviewData(true);
+          showToast("积分已重置为 5");
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           console.error("performReset:", err);
           const message = String(err?.message || "");
-          if (message.includes("Gift clear confirmation required")) {
-            openGiftClearConfirmation();
-          } else {
-            showToast("重置失败");
-          }
+          if (/Discard redeemable score confirmation required/i.test(message)) {
+            openResetPrompt();
+          } else if (/Admin permission|required|permission/i.test(message)) {
+            await refreshAuthState();
+            showToast("管理员权限已失效");
+          } else showToast("重置失败");
         } finally {
-          setBusy(els.resetAutoBtn, false);
-          setBusy(els.resetOnlyBtn, false);
+          setBusy(els.resetConfirmBtn, false);
         }
       }
 
       // -------------------- Overview data --------------------
       function getOverviewStart() {
-        // Enough history for:
-        // - recent 7 days
-        // - recent 8 weeks
-        // - recent 6 months
-        // - current/adjacent calendar months
         const now = new Date();
         const sixMonthsAgo = addMonths(startOfMonth(now), -6);
         const calendarStart = addMonths(startOfMonth(state.calendarDate), -1);
@@ -6833,26 +6589,26 @@
           renderOverview();
           return;
         }
-
         try {
-          const [scoreRes, giftRes, wheelRes] = await Promise.all([
+          const [scoreRes, wheelRes, withdrawalRes] = await Promise.all([
             db.rpc("points_get_logs", { p_from: null, p_to: null, p_limit: 10000 }),
-            db.rpc("points_get_gift_logs", { p_from: null, p_to: null, p_limit: 10000 }),
-            db.rpc("points_get_wheel_logs", { p_from: null, p_to: null, p_limit: 10000 })
+            db.rpc("points_get_wheel_logs", { p_from: null, p_to: null, p_limit: 10000 }),
+            db.rpc("points_get_withdrawals", { p_limit: 10000 })
           ]);
           if (scoreRes.error) throw scoreRes.error;
-          if (giftRes.error) throw giftRes.error;
           if (wheelRes.error) throw wheelRes.error;
-
+          if (withdrawalRes.error) throw withdrawalRes.error;
           state.overviewLogs = Array.isArray(scoreRes.data) ? scoreRes.data : [];
-          state.giftLogs = Array.isArray(giftRes.data) ? giftRes.data : [];
           state.wheelLogs = Array.isArray(wheelRes.data) ? wheelRes.data : [];
+          state.withdrawals = Array.isArray(withdrawalRes.data) ? withdrawalRes.data : [];
           state.overviewLoadedAt = Date.now();
           markRefreshed();
           renderOverview();
         } catch (err) {
           console.error("loadOverviewData:", err);
-          showToast("读取总览失败");
+          showToast(/points_get_withdrawals|PGRST202|schema cache|Could not find/i.test(String(err?.message || ""))
+            ? "请先运行 v2.0 数据库迁移 SQL"
+            : "读取总览失败");
         }
       }
 
@@ -6873,7 +6629,6 @@
       function renderOverview() {
         renderTrend();
         renderCalendar();
-        renderGiftOverview();
         renderWheelOverview();
         renderOverviewContentMode();
       }
@@ -7190,34 +6945,17 @@
         const next = endOfMonthExclusive(month);
         const firstWeekday = first.getDay();
         const daysInMonth = Math.round((next - first) / 86400000);
-
-        const monthLogs = state.overviewLogs.filter(l => {
-          const t = new Date(l.created_at);
-          return t >= first && t < next;
-        });
-
-        // Calendar intentionally shows positive and negative movement separately.
-        // Example: +1, +1, -1 => green ↑2 and red ↓1 (not a single net +1).
         const movementByDay = new Map();
-        for (const log of monthLogs) {
-          const k = dateKey(new Date(log.created_at));
-          const delta = Number(log.delta) || 0;
-          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
-          if (delta > 0) movement.up += delta;
-          if (delta < 0) movement.down += Math.abs(delta);
-          movementByDay.set(k, movement);
-        }
+        const blankMovement = () => ({ up: 0, down: 0, rewardChance: 0, rewardCash: 0, wheelWin: 0, withdrawal: 0 });
 
-        // Redemption is one atomic business action: score −10 and gift +1.
-        // Only redemption gift logs are mirrored into the score calendar.
-        for (const log of state.giftLogs) {
-          if (!isGiftRedemptionAction(log.action)) continue;
+        for (const log of state.overviewLogs) {
           const t = new Date(log.created_at);
           if (t < first || t >= next) continue;
           const k = dateKey(t);
-          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
+          const movement = movementByDay.get(k) || blankMovement();
           const delta = Number(log.delta) || 0;
-          if (delta > 0) movement.giftUp += delta;
+          if (delta > 0) movement.up += delta;
+          if (delta < 0) movement.down += Math.abs(delta);
           movementByDay.set(k, movement);
         }
 
@@ -7225,9 +6963,20 @@
           const t = new Date(log.created_at);
           if (t < first || t >= next) continue;
           const k = dateKey(t);
-          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
-          if (String(log.action) === "spin_win") movement.wheelWin += Math.max(0, Number(log.prize_amount ?? 0));
-          if (String(log.action) === "withdraw") movement.wheelWithdraw += Math.abs(Math.min(0, Number(log.cash_delta ?? 0)));
+          const movement = movementByDay.get(k) || blankMovement();
+          const action = String(log.action || "");
+          if (action === "spin_win") movement.wheelWin += Math.max(0, Number(log.prize_amount ?? 0));
+          if (action === "chance_redeem") movement.rewardChance += Math.max(0, Number(log.chance_delta ?? 0));
+          if (action === "cash_redeem") movement.rewardCash += Math.max(0, Number(log.cash_delta ?? 0));
+          movementByDay.set(k, movement);
+        }
+
+        for (const row of state.withdrawals) {
+          const t = new Date(row.requested_at);
+          if (t < first || t >= next) continue;
+          const k = dateKey(t);
+          const movement = movementByDay.get(k) || blankMovement();
+          movement.withdrawal += Math.max(0, Number(row.amount ?? 0));
           movementByDay.set(k, movement);
         }
 
@@ -7238,59 +6987,32 @@
         }
 
         const today = new Date();
-        const arrowUp = `
-          <svg class="movement-arrow" viewBox="0 0 10 12" aria-hidden="true">
-            <path d="M5 10.5V1.7M1.8 4.8 5 1.5l3.2 3.3"
-                  fill="none" stroke="currentColor" stroke-width="1.55"
-                  stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`;
-        const arrowDown = `
-          <svg class="movement-arrow" viewBox="0 0 10 12" aria-hidden="true">
-            <path d="M5 1.5v8.8M1.8 7.2 5 10.5l3.2-3.3"
-                  fill="none" stroke="currentColor" stroke-width="1.55"
-                  stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>`;
+        const arrowUp = `<svg class="movement-arrow" viewBox="0 0 10 12" aria-hidden="true"><path d="M5 10.5V1.7M1.8 4.8 5 1.5l3.2 3.3" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        const arrowDown = `<svg class="movement-arrow" viewBox="0 0 10 12" aria-hidden="true"><path d="M5 1.5v8.8M1.8 7.2 5 10.5l3.2-3.3" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
         for (let day = 1; day <= daysInMonth; day++) {
           const d = new Date(month.getFullYear(), month.getMonth(), day);
           const key = dateKey(d);
-          const movement = movementByDay.get(key) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
-
+          const movement = movementByDay.get(key) || blankMovement();
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "day pressable";
           btn.dataset.dateKey = key;
-          btn.setAttribute("aria-label", `${month.getMonth()+1}月${day}日，加分 ${movement.up}，扣分 ${movement.down}，兑换小礼物 ${movement.giftUp}，转盘中奖 ${movement.wheelWin} 元，提现 ${movement.wheelWithdraw} 元`);
-
+          btn.setAttribute("aria-label", `${month.getMonth()+1}月${day}日，加分 ${movement.up}，扣分 ${movement.down}，兑换转盘机会 ${movement.rewardChance} 次，直接兑换现金 ${movement.rewardCash} 元，转盘中奖 ${movement.wheelWin} 元，提现申请 ${movement.withdrawal} 元`);
           if (sameDay(d, today)) btn.classList.add("today");
           if (state.selectedDayKey === key) btn.classList.add("selected");
 
-          const upHTML = movement.up > 0
-            ? `<span class="movement up">${arrowUp}<b>${movement.up}</b></span>`
-            : "";
-          const downHTML = movement.down > 0
-            ? `<span class="movement down">${arrowDown}<b>${movement.down}</b></span>`
-            : "";
-          const giftHTML = movement.giftUp > 0
-            ? `<span class="movement gift"><span class="movement-gift-emoji">🎁</span>${arrowUp}<b>${movement.giftUp}</b></span>`
-            : "";
-          const wheelHTML = movement.wheelWin > 0
-            ? `<span class="movement wheel-win-day">🎠<b>+¥${movement.wheelWin}</b></span>`
-            : "";
-          const withdrawHTML = movement.wheelWithdraw > 0
-            ? `<span class="movement wheel-withdraw-day">💰<b>−¥${movement.wheelWithdraw}</b></span>`
-            : "";
-
-          btn.innerHTML = `
-            <span class="day-number">${day}</span>
-            <span class="day-movements">${upHTML}${downHTML}${giftHTML}${wheelHTML}${withdrawHTML}</span>
-          `;
-
+          const upHTML = movement.up > 0 ? `<span class="movement up">${arrowUp}<b>${movement.up}</b></span>` : "";
+          const downHTML = movement.down > 0 ? `<span class="movement down">${arrowDown}<b>${movement.down}</b></span>` : "";
+          const chanceHTML = movement.rewardChance > 0 ? `<span class="movement reward-chance-day">🎟️<b>+${movement.rewardChance}</b></span>` : "";
+          const cashHTML = movement.rewardCash > 0 ? `<span class="movement reward-cash-day">💰<b>+¥${movement.rewardCash}</b></span>` : "";
+          const wheelHTML = movement.wheelWin > 0 ? `<span class="movement wheel-win-day">🎠<b>+¥${movement.wheelWin}</b></span>` : "";
+          const withdrawHTML = movement.withdrawal > 0 ? `<span class="movement withdrawal-day">💸<b>¥${movement.withdrawal}</b></span>` : "";
+          btn.innerHTML = `<span class="day-number">${day}</span><span class="day-movements">${upHTML}${downHTML}${chanceHTML}${cashHTML}${wheelHTML}${withdrawHTML}</span>`;
           btn.addEventListener("click", () => selectCalendarDay(d));
           els.calendarGrid.appendChild(btn);
         }
 
-        // Fill the final week so the calendar is always visually complete.
         const usedCells = firstWeekday + daysInMonth;
         const trailing = (7 - (usedCells % 7)) % 7;
         for (let i = 0; i < trailing; i++) {
@@ -7298,7 +7020,6 @@
           blank.className = "day placeholder";
           els.calendarGrid.appendChild(blank);
         }
-
         renderSelectedDayDetail();
       }
 
@@ -7313,119 +7034,54 @@
           els.dayDetail.classList.add("hidden");
           return;
         }
-
         const [y,m,d] = state.selectedDayKey.split("-").map(Number);
         const selected = new Date(y, m-1, d);
         const start = startOfDay(selected);
         const end = addDays(start, 1);
-
         const scoreDayLogs = logsAscending().filter(l => {
-          const t = new Date(l.created_at);
-          return t >= start && t < end;
+          const t = new Date(l.created_at); return t >= start && t < end;
         });
         const wheelDayLogs = state.wheelLogs.filter(l => {
-          const t = new Date(l.created_at);
-          return t >= start && t < end;
+          const t = new Date(l.created_at); return t >= start && t < end;
+        });
+        const withdrawalDayLogs = state.withdrawals.filter(l => {
+          const t = new Date(l.requested_at); return t >= start && t < end;
         });
         const timeline = [
           ...scoreDayLogs.map(log => ({ created_at: log.created_at, html: logRowHTML(log, false) })),
-          ...wheelDayLogs.map(log => ({ created_at: log.created_at, html: wheelLogRowHTML(log) }))
+          ...wheelDayLogs.map(log => ({ created_at: log.created_at, html: wheelLogRowHTML(log) })),
+          ...withdrawalDayLogs.map(log => ({ created_at: log.requested_at, html: withdrawalLogRowHTML(log) }))
         ].sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
-
         els.dayDetail.classList.remove("hidden");
         els.dayDetailTitle.textContent = formatDayTitle(selected);
-
-        if (!timeline.length) {
-          els.dayDetailList.innerHTML = `<li class="empty-state">当天还没有积分或转盘记录</li>`;
-          return;
-        }
-
-        els.dayDetailList.innerHTML = timeline.map(item => item.html).join("");
+        els.dayDetailList.innerHTML = timeline.length
+          ? timeline.map(item => item.html).join("")
+          : `<li class="empty-state">当天还没有积分、奖励或提现记录</li>`;
       }
 
       // -------------------- Log row helpers --------------------
       function movementIconHTML(delta) {
-        if (delta > 0) {
-          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6.5 10.5 12 5l5.5 5.5"/></svg>`;
-        }
-        if (delta < 0) {
-          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6.5 13.5 12 19l5.5-5.5"/></svg>`;
-        }
+        if (delta > 0) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6.5 10.5 12 5l5.5 5.5"/></svg>`;
+        if (delta < 0) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6.5 13.5 12 19l5.5-5.5"/></svg>`;
         return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>`;
       }
 
       function logRowHTML(log, showDate) {
         const delta = Number(log.delta);
         const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
-        const isRedeem = isGiftRedemptionAction(log.action);
-        const reason = String(log.reason ?? "").trim() || (isRedeem ? "兑换小礼物额度" : "未填写原因");
-        const actionMeta = log.action === "reset"
+        const action = String(log.action || "");
+        const reason = String(log.reason ?? "").trim() || "未填写原因";
+        const actionMeta = action === "reset"
           ? "重置"
-          : isRedeem
-            ? `兑换小礼物 · ${log.score_before} → ${log.score_after}`
-            : `${log.score_before} → ${log.score_after}`;
+          : action === "wheel_chance_redeem"
+            ? `10 分兑换转盘机会 · ${log.score_before} → ${log.score_after}`
+            : action === "cash_redeem"
+              ? `10 分兑换 ¥30 · ${log.score_before} → ${log.score_after}`
+              : action === "legacy_redeem"
+                ? `旧版兑换记录 · ${log.score_before} → ${log.score_after}`
+                : `${log.score_before} → ${log.score_after}`;
         const timeMeta = `${showDate ? formatDateShort(log.created_at) + " · " : ""}${formatTime(log.created_at)} · ${actionMeta}`;
-
-        return `
-          <li class="log-row">
-            <div class="log-icon ${deltaClass}">${movementIconHTML(delta)}</div>
-            <div class="log-copy">
-              <div class="log-reason">${escapeHTML(reason)}</div>
-              <span class="log-meta">${escapeHTML(timeMeta)}</span>
-            </div>
-            <div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div>
-          </li>`;
-      }
-
-      function giftLogsDescending() {
-        return [...state.giftLogs].sort((a,b) => {
-          const t = new Date(b.created_at) - new Date(a.created_at);
-          return t || Number(b.id) - Number(a.id);
-        });
-      }
-
-      function giftLogRowHTML(log) {
-        const delta = Number(log.delta);
-        const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
-        const isRedeem = isGiftRedemptionAction(log.action);
-        const isUse = isGiftUseAction(log.action);
-        const isWheelRedeem = isGiftWheelRedeemAction(log.action);
-        const reason = String(log.reason ?? "").trim() || (isRedeem ? "积分兑换小礼物额度" : isUse ? "使用小礼物额度" : isWheelRedeem ? "兑换大转盘机会" : "未填写原因");
-        const before = Number(log.balance_before ?? 0);
-        const after = Number(log.balance_after ?? before + delta);
-        const actionLabel = isRedeem
-          ? "积分兑换 · 10 分换 1 个额度"
-          : isUse
-            ? "使用小礼物 · 使用 1 个额度"
-            : isWheelRedeem
-              ? "兑换转盘机会 · 1 个额度换 1 次机会"
-              : log.action === "settlement_add"
-            ? "积分重置自动结算"
-            : log.action === "settlement_clear"
-              ? "自动结算 · 额度清空"
-              : "";
-        const metaParts = [
-          formatDateShort(log.created_at),
-          formatTime(log.created_at),
-          `${before} → ${after}`
-        ];
-        if (actionLabel) metaParts.push(actionLabel);
-        return `
-          <li class="log-row">
-            <div class="log-icon ${deltaClass}">${movementIconHTML(delta)}</div>
-            <div class="log-copy">
-              <div class="log-reason">${escapeHTML(reason)}</div>
-              <span class="log-meta">${escapeHTML(metaParts.join(" · "))}</span>
-            </div>
-            <div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div>
-          </li>`;
-      }
-
-      function renderGiftOverview() {
-        const logs = giftLogsDescending();
-        els.giftRecordList.innerHTML = logs.length
-          ? logs.map(giftLogRowHTML).join("")
-          : `<li class="empty-state">暂无小礼物额度记录</li>`;
+        return `<li class="log-row"><div class="log-icon ${deltaClass}">${movementIconHTML(delta)}</div><div class="log-copy"><div class="log-reason">${escapeHTML(reason)}</div><span class="log-meta">${escapeHTML(timeMeta)}</span></div><div class="log-delta ${deltaClass}">${escapeHTML(signed(delta))}</div></li>`;
       }
 
       function wheelLogsDescending() {
@@ -7445,65 +7101,77 @@
         const cashDelta = Number(log.cash_delta ?? 0);
 
         if (action === "spin_win") {
-          return `
-            <li class="log-row wheel-log-row">
-              <div class="log-icon wheel-win">🎠</div>
-              <div class="log-copy">
-                <div class="log-reason">转动大转盘 · 抽中 ¥${escapeHTML(prize)}</div>
-                <span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter} · 余额 ¥${cashBefore} → ¥${cashAfter}</span>
-              </div>
-              <div class="log-delta wheel-cash-positive">+¥${escapeHTML(prize)}</div>
-            </li>`;
+          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-win">🎠</div><div class="log-copy"><div class="log-reason">转动大转盘 · 抽中 ¥${escapeHTML(prize)}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter} · 余额 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(prize)}</div></li>`;
         }
-
-        if (action === "withdraw") {
-          const amount = Math.abs(cashDelta);
-          return `
-            <li class="log-row wheel-log-row">
-              <div class="log-icon wheel-withdraw">💰</div>
-              <div class="log-copy">
-                <div class="log-reason">提现</div>
-                <span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 可提现 ¥${cashBefore} → ¥${cashAfter}</span>
-              </div>
-              <div class="log-delta wheel-cash-negative">−¥${escapeHTML(amount)}</div>
-            </li>`;
+        if (action === "cash_redeem") {
+          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">💰</div><div class="log-copy"><div class="log-reason">10 分兑换 ¥30 可提现余额</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 可提现 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(Math.max(0, cashDelta))}</div></li>`;
         }
+        if (action === "chance_redeem") {
+          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">🎟️</div><div class="log-copy"><div class="log-reason">10 分兑换 1 次正式大转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 1))}</div></li>`;
+        }
+        if (action === "legacy_balance_migration") {
+          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">✨</div><div class="log-copy"><div class="log-reason">旧版奖励余额已迁移为正式转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 0))}</div></li>`;
+        }
+        return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">🎟️</div><div class="log-copy"><div class="log-reason">旧版奖励兑换大转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 1))}</div></li>`;
+      }
 
-        return `
-          <li class="log-row wheel-log-row">
-            <div class="log-icon wheel-chance">🎁</div>
-            <div class="log-copy">
-              <div class="log-reason">兑换大转盘机会</div>
-              <span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 小礼物 ${Number(log.gift_before ?? 0)} → ${Number(log.gift_after ?? 0)} · 机会 ${chanceBefore} → ${chanceAfter}</span>
-            </div>
-            <div class="log-delta wheel-chance-positive">+1</div>
-          </li>`;
+      function withdrawalLogRowHTML(row) {
+        const amount = Math.max(0, Number(row.amount ?? 0));
+        const pending = String(row.status) === "pending";
+        const requested = `${formatDateShort(row.requested_at)} · ${formatTime(row.requested_at)}`;
+        const settled = row.settled_at ? `${formatDateShort(row.settled_at)} · ${formatTime(row.settled_at)}` : "";
+        return `<li class="log-row wheel-log-row"><div class="log-icon wheel-withdraw">${pending ? "⏳" : "✅"}</div><div class="log-copy"><div class="log-reason">提现 ¥${escapeHTML(amount)}</div><span class="withdrawal-status-line ${pending ? "pending" : "settled"}">${pending ? "等待管理员兑现" : "管理员已经兑现提现申请。请查收。"}</span><span class="log-meta">申请 ${escapeHTML(requested)}${pending ? "" : ` · 兑现 ${escapeHTML(settled)}`}</span></div><div class="log-delta wheel-cash-negative">−¥${escapeHTML(amount)}</div></li>`;
       }
 
       function renderWheelOverview() {
         if (!els.wheelOverviewContent) return;
         const logs = wheelLogsDescending();
-        const won = logs
-          .filter(log => String(log.action) === "spin_win")
+        const withdrawals = [...state.withdrawals];
+        const won = logs.filter(log => String(log.action) === "spin_win")
           .reduce((sum, log) => sum + Math.max(0, Number(log.prize_amount ?? 0)), 0);
-        const withdrawn = logs
-          .filter(log => String(log.action) === "withdraw")
-          .reduce((sum, log) => sum + Math.abs(Math.min(0, Number(log.cash_delta ?? 0))), 0);
+        const pendingRows = withdrawals.filter(row => String(row.status) === "pending");
+        const settledRows = withdrawals.filter(row => String(row.status) === "settled");
+        const pendingAmount = pendingRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
+        const settledAmount = settledRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
 
+        els.wheelAssetsTitle.textContent = state.isAdmin ? "游客 · 大转盘资产" : "大转盘资产";
         els.wheelOverviewCash.textContent = `¥${Math.max(0, Number(state.wheelCashBalance ?? 0))}`;
         els.wheelOverviewChance.textContent = `当前 ${Math.max(0, Number(state.wheelChances ?? 0))} 次正式机会`;
+        els.wheelOverviewPending.textContent = `¥${pendingAmount}`;
         els.wheelOverviewWon.textContent = `¥${won}`;
-        els.wheelOverviewWithdrawn.textContent = `¥${withdrawn}`;
-        els.withdrawWheelBtn.disabled = Number(state.wheelCashBalance ?? 0) <= 0;
-        els.wheelRecordList.innerHTML = logs.length
-          ? logs.map(wheelLogRowHTML).join("")
-          : `<li class="empty-state">还没有正式转盘记录哦 ♡<br><small>试玩结果不会出现在这里</small></li>`;
+        els.wheelOverviewSettled.textContent = `¥${settledAmount}`;
+
+        els.withdrawWheelBtn.hidden = state.isAdmin;
+        els.withdrawWheelBtn.disabled = state.isAdmin || Number(state.wheelCashBalance ?? 0) <= 0;
+
+        els.withdrawalNotice.hidden = pendingRows.length === 0;
+        els.withdrawalNotice.classList.toggle("admin-pending", state.isAdmin && pendingRows.length > 0);
+        if (pendingRows.length) {
+          if (state.isAdmin) {
+            els.withdrawalNoticeTitle.textContent = `🔔 游客有 ${pendingRows.length} 笔提现待兑现 · 共 ¥${pendingAmount}`;
+            els.withdrawalNoticeCopy.textContent = "请及时实际完成兑现；点击“已经兑现”后，这笔申请才会从待办移除。";
+            els.pendingWithdrawalList.innerHTML = pendingRows.map(row => `<div class="pending-withdrawal-item"><span><strong>提现 ¥${escapeHTML(row.amount)}</strong><small>${escapeHTML(formatDateShort(row.requested_at))} · ${escapeHTML(formatTime(row.requested_at))}</small></span><button class="settle-withdrawal-button pressable" type="button" data-settle-withdrawal="${escapeHTML(row.id)}">已经兑现</button></div>`).join("");
+          } else {
+            els.withdrawalNoticeTitle.textContent = `⏳ 已有 ${pendingRows.length} 笔提现申请等待兑现 · 共 ¥${pendingAmount}`;
+            els.withdrawalNoticeCopy.textContent = "管理员兑现后，这里会自动取消待处理状态，并在历史中提示你查收。";
+            els.pendingWithdrawalList.innerHTML = "";
+          }
+        } else {
+          els.pendingWithdrawalList.innerHTML = "";
+        }
+
+        const history = [
+          ...logs.map(log => ({ time: log.created_at, html: wheelLogRowHTML(log) })),
+          ...withdrawals.map(row => ({ time: row.requested_at, html: withdrawalLogRowHTML(row) }))
+        ].sort((a,b) => new Date(b.time) - new Date(a.time));
+        els.wheelRecordList.innerHTML = history.length
+          ? history.map(item => item.html).join("")
+          : `<li class="empty-state">还没有正式奖励或提现记录哦 ♡<br><small>试玩结果不会出现在这里</small></li>`;
       }
 
       // -------------------- Overview sheet --------------------
       const SCORE_OVERVIEW_PEEK_FALLBACK = 300;
       const SCORE_OVERVIEW_PEEK_BOTTOM_GAP = 12;
-      const GIFT_OVERVIEW_PEEK_HEIGHT = 350;
       const WHEEL_OVERVIEW_PEEK_HEIGHT = 455;
       let overviewDrag = null;
 
@@ -7517,7 +7185,7 @@
       function currentOverviewPeekHeight() {
         const desired = state.activeMetric === "wheel"
           ? WHEEL_OVERVIEW_PEEK_HEIGHT
-          : state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : scoreOverviewPeekHeight();
+          : scoreOverviewPeekHeight();
         const actual = Math.ceil(els.overviewShell.scrollHeight || desired);
         return Math.max(0, Math.min(desired, actual));
       }
@@ -7844,7 +7512,7 @@
 
       // ============================================================
       // WORK SCHEDULE MODULE START
-      // Fully independent from score / gift tables and RPCs.
+      // Fully independent from score / reward tables and RPCs.
       // Database objects used only by this module:
       //   public.work_schedule
       //   public.work_schedule_list()
@@ -8499,96 +8167,47 @@
       bindCompactSheetDrag(els.releaseNotesLayer);
 
       // -------------------- Events --------------------
-      els.settingsBtn.addEventListener("click", () => {
-        vibrate();
-        setLayer(els.settingsLayer, true);
-      });
-
+      els.settingsBtn.addEventListener("click", () => { vibrate(); setLayer(els.settingsLayer, true); });
       els.settingsLayer.addEventListener("click", (e) => {
-        if (performance.now() < suppressSettingsClickUntil) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
+        if (performance.now() < suppressSettingsClickUntil) { e.preventDefault(); e.stopPropagation(); return; }
         if (e.target === els.settingsLayer) setLayer(els.settingsLayer, false);
       });
-
       els.settingsGrabberHitbox.addEventListener("pointerdown", beginSettingsDrag);
       els.settingsSheet.addEventListener("pointermove", moveSettingsDrag, { passive: false });
       els.settingsSheet.addEventListener("pointerup", endSettingsDrag);
       els.settingsSheet.addEventListener("pointercancel", endSettingsDrag);
 
-
-      els.openVersionInfoBtn.addEventListener("click", () => {
-        setLayer(els.settingsLayer, false);
-        setLayer(els.versionInfoLayer, true);
-      });
-
+      els.openVersionInfoBtn.addEventListener("click", () => { setLayer(els.settingsLayer, false); setLayer(els.versionInfoLayer, true); });
       els.openWheelProbabilityBtn.addEventListener("click", openWheelProbabilitySettings);
       els.openWheelProbabilityHistoryBtn.addEventListener("click", openWheelProbabilityHistory);
-
       els.wheelProbabilityGrid.addEventListener("input", updateWheelProbabilityTotal);
-      els.resetWheelProbabilityDefaultBtn.addEventListener("click", () => {
-        setWheelProbabilityInputs(WHEEL_DEFAULT_PROBABILITIES);
-        vibrate(8);
-      });
+      els.resetWheelProbabilityDefaultBtn.addEventListener("click", () => { setWheelProbabilityInputs(WHEEL_DEFAULT_PROBABILITIES); vibrate(8); });
       els.saveWheelProbabilityBtn.addEventListener("click", saveWheelProbability);
       els.closeWheelProbabilityBtn.addEventListener("click", () => setLayer(els.wheelProbabilityLayer, false));
-      els.wheelProbabilityLayer.addEventListener("click", (e) => {
-        if (e.target === els.wheelProbabilityLayer) setLayer(els.wheelProbabilityLayer, false);
-      });
+      els.wheelProbabilityLayer.addEventListener("click", (e) => { if (e.target === els.wheelProbabilityLayer) setLayer(els.wheelProbabilityLayer, false); });
       els.closeWheelProbabilityHistoryBtn.addEventListener("click", () => setLayer(els.wheelProbabilityHistoryLayer, false));
-      els.wheelProbabilityHistoryLayer.addEventListener("click", (e) => {
-        if (e.target === els.wheelProbabilityHistoryLayer) setLayer(els.wheelProbabilityHistoryLayer, false);
-      });
-
-      els.versionInfoLayer.addEventListener("click", (e) => {
-        if (e.target === els.versionInfoLayer) setLayer(els.versionInfoLayer, false);
-      });
-
-      els.closeVersionInfoBtn.addEventListener("click", () => {
-        setLayer(els.versionInfoLayer, false);
-      });
-
-      els.openReleaseNotesBtn.addEventListener("click", () => {
-        setLayer(els.versionInfoLayer, false);
-        setLayer(els.releaseNotesLayer, true);
-      });
-
-      els.releaseNotesLayer.addEventListener("click", (e) => {
-        if (e.target === els.releaseNotesLayer) setLayer(els.releaseNotesLayer, false);
-      });
-
-      els.closeReleaseNotesBtn.addEventListener("click", () => {
-        setLayer(els.releaseNotesLayer, false);
-      });
+      els.wheelProbabilityHistoryLayer.addEventListener("click", (e) => { if (e.target === els.wheelProbabilityHistoryLayer) setLayer(els.wheelProbabilityHistoryLayer, false); });
+      els.versionInfoLayer.addEventListener("click", (e) => { if (e.target === els.versionInfoLayer) setLayer(els.versionInfoLayer, false); });
+      els.closeVersionInfoBtn.addEventListener("click", () => setLayer(els.versionInfoLayer, false));
+      els.openReleaseNotesBtn.addEventListener("click", () => { setLayer(els.versionInfoLayer, false); setLayer(els.releaseNotesLayer, true); });
+      els.releaseNotesLayer.addEventListener("click", (e) => { if (e.target === els.releaseNotesLayer) setLayer(els.releaseNotesLayer, false); });
+      els.closeReleaseNotesBtn.addEventListener("click", () => setLayer(els.releaseNotesLayer, false));
 
       els.openLoginBtn.addEventListener("click", () => {
-        setLayer(els.settingsLayer, false);
-        setLayer(els.loginLayer, true);
+        setLayer(els.settingsLayer, false); setLayer(els.loginLayer, true);
         setTimeout(() => els.emailInput.focus(), 280);
       });
-
       els.loginLayer.addEventListener("click", (e) => {
-        if (performance.now() < suppressLoginClickUntil) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
+        if (performance.now() < suppressLoginClickUntil) { e.preventDefault(); e.stopPropagation(); return; }
         if (e.target === els.loginLayer) setLayer(els.loginLayer, false);
       });
-
       els.loginGrabberHitbox.addEventListener("pointerdown", beginLoginDrag);
       els.loginSheet.addEventListener("pointermove", moveLoginDrag, { passive: false });
       els.loginSheet.addEventListener("pointerup", endLoginDrag);
       els.loginSheet.addEventListener("pointercancel", endLoginDrag);
-
       els.cancelLoginBtn.addEventListener("click", () => setLayer(els.loginLayer, false));
       els.loginBtn.addEventListener("click", login);
-      els.passwordInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") login();
-      });
-
+      els.passwordInput.addEventListener("keydown", (e) => { if (e.key === "Enter") login(); });
       els.logoutBtn.addEventListener("click", logout);
 
       async function manualRefreshApp() {
@@ -8597,198 +8216,94 @@
         els.scoreRefreshBtn.classList.add("refreshing");
         try {
           await loadAppState({ silent: false });
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
           showToast("已同步最新数据");
-        } finally {
-          setTimeout(() => els.scoreRefreshBtn.classList.remove("refreshing"), 650);
-        }
+        } finally { setTimeout(() => els.scoreRefreshBtn.classList.remove("refreshing"), 650); }
       }
-
-      els.scoreRefreshBtn.addEventListener("click", () => {
-        manualRefreshApp();
-      });
+      els.scoreRefreshBtn.addEventListener("click", manualRefreshApp);
       els.scoreRefreshBtn.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          manualRefreshApp();
-        }
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); manualRefreshApp(); }
       });
 
       els.metricSwitch.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-metric]");
         if (!btn || btn.dataset.metric === state.activeMetric) return;
-        vibrate(7);
-        switchMetric(btn.dataset.metric);
+        vibrate(7); switchMetric(btn.dataset.metric);
       });
 
-      els.redeemGiftBtn.addEventListener("click", () => {
-        vibrate(8);
-        openRedeemPrompt({ source: "score" });
-      });
-
-      els.useGiftBtn.addEventListener("click", () => {
-        vibrate(8);
-        openUseGiftPrompt();
-      });
-
-      els.redeemWheelChanceBtn.addEventListener("click", () => {
-        vibrate(8);
-        openWheelRedeemPrompt();
-      });
+      els.redeemRewardBtn.addEventListener("click", () => { vibrate(8); openRedeemPrompt(); });
+      els.redeemWheelChanceBtn.addEventListener("click", () => { vibrate(8); openRedeemPrompt(); });
+      els.redeemLayer.addEventListener("click", (e) => { if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false); });
+      els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.redeemLayer, false));
+      els.redeemWheelConfirmBtn.addEventListener("click", () => performRewardRedemption("wheel"));
+      els.redeemCashConfirmBtn.addEventListener("click", () => performRewardRedemption("cash"));
 
       async function triggerWheelFromActionButton() {
         if (state.wheelSpinning) return;
         vibrate(8);
-
-        // The button is a business action. Refresh current server truth silently,
-        // then decide whether this is a formal spin or a preview spin prompt.
         await silentSyncBeforeWheelSpin();
-
+        if (state.isAdmin) return openWheelPreviewPrompt();
         if (state.wheelChances > 0) await performFormalWheelSpin();
         else openWheelPreviewPrompt();
       }
+      els.spinWheelActionBtn.addEventListener("click", () => void triggerWheelFromActionButton());
 
-      els.spinWheelActionBtn.addEventListener("click", () => {
-        void triggerWheelFromActionButton();
-      });
-
-      els.wheelRedeemLayer.addEventListener("click", (e) => {
-        if (e.target === els.wheelRedeemLayer) setLayer(els.wheelRedeemLayer, false);
-      });
-      els.wheelRedeemCancelBtn.addEventListener("click", () => setLayer(els.wheelRedeemLayer, false));
-      els.wheelRedeemConfirmBtn.addEventListener("click", performWheelChanceRedemption);
-
-      els.wheelPreviewLayer.addEventListener("click", (e) => {
-        if (e.target === els.wheelPreviewLayer) setLayer(els.wheelPreviewLayer, false);
-      });
+      els.wheelPreviewLayer.addEventListener("click", (e) => { if (e.target === els.wheelPreviewLayer) setLayer(els.wheelPreviewLayer, false); });
       els.wheelPreviewCancelBtn.addEventListener("click", () => setLayer(els.wheelPreviewLayer, false));
       els.wheelPreviewConfirmBtn.addEventListener("click", performPreviewWheelSpin);
-
-      els.wheelResultLayer.addEventListener("click", (e) => {
-        if (e.target === els.wheelResultLayer) setLayer(els.wheelResultLayer, false);
-      });
+      els.wheelResultLayer.addEventListener("click", (e) => { if (e.target === els.wheelResultLayer) setLayer(els.wheelResultLayer, false); });
       els.wheelResultDoneBtn.addEventListener("click", () => setLayer(els.wheelResultLayer, false));
 
       els.withdrawWheelBtn.addEventListener("click", openWheelWithdrawPrompt);
-      els.wheelWithdrawLayer.addEventListener("click", (e) => {
-        if (e.target === els.wheelWithdrawLayer) setLayer(els.wheelWithdrawLayer, false);
-      });
+      els.wheelWithdrawLayer.addEventListener("click", (e) => { if (e.target === els.wheelWithdrawLayer) setLayer(els.wheelWithdrawLayer, false); });
       els.wheelWithdrawCancelBtn.addEventListener("click", () => setLayer(els.wheelWithdrawLayer, false));
-      els.wheelWithdrawAllBtn.addEventListener("click", () => {
-        els.wheelWithdrawAmount.value = String(Math.max(0, Number(state.wheelCashBalance ?? 0)));
-      });
+      els.wheelWithdrawAllBtn.addEventListener("click", () => { els.wheelWithdrawAmount.value = String(Math.max(0, Number(state.wheelCashBalance ?? 0))); });
       els.wheelWithdrawConfirmBtn.addEventListener("click", performWheelWithdraw);
-      els.wheelWithdrawAmount.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") performWheelWithdraw();
-      });
+      els.wheelWithdrawAmount.addEventListener("keydown", (e) => { if (e.key === "Enter") performWheelWithdraw(); });
 
-      $$(".score-button").forEach(btn => {
-        btn.addEventListener("click", () => {
-          vibrate();
-          const delta = Number(btn.dataset.delta);
-          if (state.activeMetric === "wheel") return;
-          if (state.activeMetric === "gift" && delta === 1) {
-            openRedeemPrompt({ source: "gift" });
-            return;
-          }
-          openChange(delta);
-        });
+      els.pendingWithdrawalList.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-settle-withdrawal]");
+        if (!btn) return;
+        openSettlementPrompt(Number(btn.dataset.settleWithdrawal));
       });
+      els.settleWithdrawalLayer.addEventListener("click", (e) => { if (e.target === els.settleWithdrawalLayer) setLayer(els.settleWithdrawalLayer, false); });
+      els.settleWithdrawalCancelBtn.addEventListener("click", () => { state.pendingSettlementId = null; setLayer(els.settleWithdrawalLayer, false); });
+      els.settleWithdrawalConfirmBtn.addEventListener("click", settleWithdrawal);
 
-      els.changeLayer.addEventListener("click", (e) => {
-        if (e.target === els.changeLayer) setLayer(els.changeLayer, false);
-      });
-
+      $$(".score-button").forEach(btn => btn.addEventListener("click", () => { vibrate(); openChange(Number(btn.dataset.delta)); }));
+      els.changeLayer.addEventListener("click", (e) => { if (e.target === els.changeLayer) setLayer(els.changeLayer, false); });
       els.cancelChangeBtn.addEventListener("click", () => setLayer(els.changeLayer, false));
       els.confirmChangeBtn.addEventListener("click", confirmChange);
 
-      els.redeemLayer.addEventListener("click", (e) => {
-        if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false);
-      });
-      els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.redeemLayer, false));
-      els.redeemConfirmBtn.addEventListener("click", performGiftRedemption);
-      els.redeemForceBtn.addEventListener("click", forceAddGiftByAdmin);
+      window.addEventListener("resize", () => { if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit(); }, { passive: true });
+      window.visualViewport?.addEventListener("resize", () => { if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit(); }, { passive: true });
 
-      els.useGiftLayer.addEventListener("click", (e) => {
-        if (e.target === els.useGiftLayer) setLayer(els.useGiftLayer, false);
-      });
-      els.cancelUseGiftBtn.addEventListener("click", () => setLayer(els.useGiftLayer, false));
-      els.useGiftConfirmBtn.addEventListener("click", performGiftUse);
-
-      window.addEventListener("resize", () => {
-        if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
-      }, { passive: true });
-      window.visualViewport?.addEventListener("resize", () => {
-        if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
-      }, { passive: true });
-
-      els.resetBtn.addEventListener("click", () => {
-        setLayer(els.settingsLayer, false);
-        openResetSettlementPrompt();
-      });
-
-      els.cancelResetBtn.addEventListener("click", () => {
-        els.resetOnlyBtn.hidden = false;
-        setLayer(els.resetLayer, false);
-      });
-      els.resetLayer.addEventListener("click", (e) => {
-        if (e.target === els.resetLayer) {
-          els.resetOnlyBtn.hidden = false;
-          setLayer(els.resetLayer, false);
-        }
-      });
-      els.resetOnlyBtn.addEventListener("click", () => performReset({ autoSettle: false }));
-      els.resetAutoBtn.addEventListener("click", () => {
-        if (state.score <= 0 && !els.resetOnlyBtn.hidden) {
-          openGiftClearConfirmation();
-          return;
-        }
-        performReset({ autoSettle: true, confirmClear: state.score <= 0 });
-      });
+      els.resetBtn.addEventListener("click", () => { setLayer(els.settingsLayer, false); openResetPrompt(); });
+      els.cancelResetBtn.addEventListener("click", () => setLayer(els.resetLayer, false));
+      els.resetLayer.addEventListener("click", (e) => { if (e.target === els.resetLayer) setLayer(els.resetLayer, false); });
+      els.resetConfirmBtn.addEventListener("click", performReset);
 
       els.overviewBtn.addEventListener("click", async () => {
-        vibrate();
-        openOverviewSheet();
-
-        // Render immediately; network data fills in afterward.
-        renderOverview();
+        vibrate(); openOverviewSheet(); renderOverview();
         requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
-
         await loadOverviewData(false);
       });
-
       els.overviewQuickNav.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-overview-target]");
-        if (!btn) return;
-        vibrate(6);
-        openOverviewSection(btn.dataset.overviewTarget);
+        const btn = e.target.closest("[data-overview-target]"); if (!btn) return;
+        vibrate(6); openOverviewSection(btn.dataset.overviewTarget);
       });
-
       els.overviewContentSwitch.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-overview-section]");
         if (!btn || btn.dataset.overviewSection === state.overviewSection) return;
-        vibrate(6);
-        openOverviewSection(btn.dataset.overviewSection);
+        vibrate(6); openOverviewSection(btn.dataset.overviewSection);
       });
-
-      // Tapping outside the sheet closes it.
-      els.overviewBackdrop.addEventListener("click", () => {
-        if (performance.now() < suppressOverviewClickUntil) return;
-        closeOverviewSheet();
-      });
-
-      // Peek state: upward swipe can begin anywhere on the sheet.
-      // Full state: only the top grabber controls the whole sheet.
+      els.overviewBackdrop.addEventListener("click", () => { if (performance.now() >= suppressOverviewClickUntil) closeOverviewSheet(); });
       els.overviewShell.addEventListener("pointerdown", beginOverviewDrag);
       els.overviewShell.addEventListener("pointermove", moveOverviewDrag, { passive: false });
       els.overviewShell.addEventListener("pointerup", endOverviewDrag);
       els.overviewShell.addEventListener("pointercancel", endOverviewDrag);
-
-      // Prevent a button/date underneath the finger from firing after a drag.
       els.overview.addEventListener("click", (e) => {
-        if (performance.now() < suppressOverviewClickUntil) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
+        if (performance.now() < suppressOverviewClickUntil) { e.preventDefault(); e.stopPropagation(); }
       }, true);
 
       els.trendSegments.addEventListener("click", (e) => {
@@ -8796,50 +8311,25 @@
         if (monthOption) {
           state.trendMonthWeek = Number(monthOption.dataset.monthWeek);
           state.trendRange = "month";
-          setTrendMonthMenu(false);
-          renderTrend();
-          return;
+          setTrendMonthMenu(false); renderTrend(); return;
         }
-
-        if (e.target.closest("#trendMonthBtn")) {
-          setTrendMonthMenu(els.trendMonthMenu.hidden);
-          return;
-        }
-
-        const btn = e.target.closest(".segment[data-range]");
-        if (!btn) return;
-
-        state.trendRange = btn.dataset.range;
-        setTrendMonthMenu(false);
-        renderTrend();
+        if (e.target.closest("#trendMonthBtn")) { setTrendMonthMenu(els.trendMonthMenu.hidden); return; }
+        const btn = e.target.closest(".segment[data-range]"); if (!btn) return;
+        state.trendRange = btn.dataset.range; setTrendMonthMenu(false); renderTrend();
       });
-
       document.addEventListener("click", (e) => {
-        if (els.trendMonthMenu.hidden) return;
-        if (e.target.closest(".trend-month-control")) return;
+        if (els.trendMonthMenu.hidden || e.target.closest(".trend-month-control")) return;
         setTrendMonthMenu(false);
       });
-
-      els.prevMonthBtn.addEventListener("click", () => {
-        state.calendarDate = addMonths(state.calendarDate, -1);
-        state.selectedDayKey = null;
-        renderCalendar();
-      });
-
-      els.nextMonthBtn.addEventListener("click", () => {
-        state.calendarDate = addMonths(state.calendarDate, 1);
-        state.selectedDayKey = null;
-        renderCalendar();
-      });
+      els.prevMonthBtn.addEventListener("click", () => { state.calendarDate = addMonths(state.calendarDate, -1); state.selectedDayKey = null; renderCalendar(); });
+      els.nextMonthBtn.addEventListener("click", () => { state.calendarDate = addMonths(state.calendarDate, 1); state.selectedDayKey = null; renderCalendar(); });
 
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
-        if (!els.trendMonthMenu.hidden) {
-          setTrendMonthMenu(false);
-          return;
-        }
+        if (!els.trendMonthMenu.hidden) return setTrendMonthMenu(false);
         if (els.wheelProbabilityHistoryLayer.classList.contains("open")) return setLayer(els.wheelProbabilityHistoryLayer, false);
         if (els.wheelProbabilityLayer.classList.contains("open")) return setLayer(els.wheelProbabilityLayer, false);
+        if (els.settleWithdrawalLayer.classList.contains("open")) return setLayer(els.settleWithdrawalLayer, false);
         if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
@@ -8847,25 +8337,17 @@
         if (els.wheelResultLayer.classList.contains("open")) return setLayer(els.wheelResultLayer, false);
         if (els.wheelWithdrawLayer.classList.contains("open")) return setLayer(els.wheelWithdrawLayer, false);
         if (els.wheelPreviewLayer.classList.contains("open")) return setLayer(els.wheelPreviewLayer, false);
-        if (els.wheelRedeemLayer.classList.contains("open")) return setLayer(els.wheelRedeemLayer, false);
-        if (els.useGiftLayer.classList.contains("open")) return setLayer(els.useGiftLayer, false);
         if (els.redeemLayer.classList.contains("open")) return setLayer(els.redeemLayer, false);
         if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
         if (els.settingsLayer.classList.contains("open")) return setLayer(els.settingsLayer, false);
-        if (state.overviewMode !== "closed") {
-          closeOverviewSheet();
-        }
+        if (state.overviewMode !== "closed") closeOverviewSheet();
       });
 
       window.addEventListener("resize", () => {
-        if (els.overview.classList.contains("open")) {
-          drawTrend(buildTrendPoints(state.trendRange));
-        }
+        if (els.overview.classList.contains("open")) drawTrend(buildTrendPoints(state.trendRange));
       });
-
       db.auth.onAuthStateChange((_event, session) => {
         state.session = session;
-        // Avoid doing a nested Supabase request synchronously inside auth callback.
         setTimeout(refreshAuthState, 0);
       });
 
