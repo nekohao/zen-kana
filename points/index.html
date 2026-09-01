@@ -3383,6 +3383,95 @@
       }
     }
 
+  
+
+    /* ============================================================
+       v1.7.3 — content-fit Settings + guest gift usage
+       ============================================================ */
+    #settingsLayer .settings-sheet {
+      min-height: 0 !important;
+      box-sizing: border-box;
+      contain: layout style;
+    }
+
+    /* The action slot remains geometrically fixed. Score redeem and gift use
+       swap only by opacity/visibility, so the Overview button never moves. */
+    .metric-action-slot > .score-redeem-button,
+    .metric-action-slot > .use-gift-button,
+    .metric-action-slot > .admin-controls {
+      grid-area: 1 / 1;
+      margin: 0 !important;
+    }
+
+    .score-redeem-button,
+    .use-gift-button {
+      display: flex !important;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      transition: opacity .24s ease, visibility 0s linear 0s;
+    }
+
+    .home.gift-active .score-redeem-button,
+    .home:not(.gift-active) .use-gift-button,
+    .home.admin-mode .score-redeem-button,
+    .home.admin-mode .use-gift-button {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transform: none !important;
+      transition: opacity .20s ease, visibility 0s linear .20s !important;
+    }
+
+    .home.gift-active:not(.admin-mode) .use-gift-button {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: none !important;
+      transition-delay: 0s !important;
+      color: #9e5879;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.70), rgba(255,230,242,.46)),
+        rgba(255,244,249,.42);
+      border-color: rgba(255,255,255,.88);
+      box-shadow:
+        0 12px 30px rgba(200,116,156,.11),
+        inset 0 1px 0 rgba(255,255,255,.76);
+    }
+
+    .home.gift-active:not(.admin-mode) .use-gift-button .redeem-button-meta {
+      color: #b2708f;
+      background: rgba(255,255,255,.38);
+      border-color: rgba(255,255,255,.54);
+    }
+
+    #useGiftLayer {
+      padding: 0 0 12px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(45,54,70,.075);
+    }
+
+    #useGiftLayer .use-gift-alert {
+      width: min(calc(100% - 28px), 326px);
+      border-color: rgba(255,255,255,.86);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.30), rgba(255,233,244,.14) 48%),
+        var(--glass-fill-strong);
+      box-shadow:
+        0 24px 70px rgba(180,99,137,.14),
+        inset 0 1px 0 rgba(255,255,255,.50);
+    }
+
+    #useGiftLayer .alert-title { color: #9e5879; }
+    #useGiftLayer .primary-action { color: #b85f88; }
+    #useGiftLayer .alert-message {
+      white-space: normal;
+      line-height: 1.65;
+    }
+
   </style>
 </head>
 
@@ -3455,10 +3544,16 @@
         </div>
 
         <div class="metric-action-slot" aria-label="当前数据操作">
-          <button id="redeemGiftBtn" class="redeem-button pressable" type="button">
+          <button id="redeemGiftBtn" class="redeem-button score-redeem-button pressable" type="button">
             <span aria-hidden="true">🎁</span>
             <span>兑换小礼物额度</span>
             <span class="redeem-button-meta">10 分 / 次</span>
+          </button>
+
+          <button id="useGiftBtn" class="redeem-button use-gift-button pressable" type="button">
+            <span aria-hidden="true">🎀</span>
+            <span>使用小礼物额度</span>
+            <span id="useGiftBtnMeta" class="redeem-button-meta">剩余 0 次</span>
           </button>
 
           <div id="adminControls" class="admin-controls hidden" aria-hidden="true">
@@ -3736,7 +3831,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.7.2</span>
+              <span class="settings-value">1.7.3</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -3766,7 +3861,17 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.7.2</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.7.3</strong><span>当前版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>设置页改为读取当前访客 / 管理员实际内容高度，内容多少就弹多少，超出屏幕时才内部滚动。</li>
+              <li>访客小礼物页新增“使用小礼物额度”，确认后原子扣除 1 个额度。</li>
+              <li>0 额度、仅剩 1 次和多次额度均使用动态可爱提示；使用记录独立标记为 gift_use。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.7.2</strong><span>上一版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
               <li>分数 / 小礼物切换改为纯渐隐渐现，不再使用位移、缩放、模糊或扫光合成层。</li>
@@ -3985,6 +4090,21 @@
       </div>
     </div>
 
+    <!-- Guest gift usage confirmation -->
+    <div id="useGiftLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="gift">
+      <div class="alert use-gift-alert" role="alertdialog" aria-modal="true" aria-labelledby="useGiftTitle">
+        <div class="alert-content">
+          <div id="useGiftIcon" class="change-icon" aria-hidden="true">🎀</div>
+          <div id="useGiftTitle" class="alert-title">使用小礼物额度</div>
+          <div id="useGiftMessage" class="alert-message"></div>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="useGiftConfirmBtn" class="alert-button primary-action pressable" type="button">使用一次 🎁</button>
+          <button id="cancelUseGiftBtn" class="alert-button pressable" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Reset / gift settlement alert -->
     <div id="resetLayer" class="modal-layer alert-layer" aria-hidden="true">
       <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle">
@@ -4039,6 +4159,8 @@
         metricEyebrow: $("#metricEyebrow"),
         metricGhostValue: $("#metricGhostValue"),
         redeemGiftBtn: $("#redeemGiftBtn"),
+        useGiftBtn: $("#useGiftBtn"),
+        useGiftBtnMeta: $("#useGiftBtnMeta"),
         adminControls: $("#adminControls"),
         settingsBtn: $("#settingsBtn"),
         overviewBtn: $("#overviewBtn"),
@@ -4096,6 +4218,12 @@
         redeemConfirmBtn: $("#redeemConfirmBtn"),
         redeemForceBtn: $("#redeemForceBtn"),
         cancelRedeemBtn: $("#cancelRedeemBtn"),
+        useGiftLayer: $("#useGiftLayer"),
+        useGiftIcon: $("#useGiftIcon"),
+        useGiftTitle: $("#useGiftTitle"),
+        useGiftMessage: $("#useGiftMessage"),
+        useGiftConfirmBtn: $("#useGiftConfirmBtn"),
+        cancelUseGiftBtn: $("#cancelUseGiftBtn"),
 
         resetLayer: $("#resetLayer"),
         resetTitle: $("#resetTitle"),
@@ -4239,13 +4367,44 @@
         state.toastTimer = setTimeout(() => els.toast.classList.remove("show"), 2200);
       }
 
+      function fitSettingsSheet() {
+        const sheet = els.settingsSheet;
+        if (!sheet) return;
+
+        // Measure the actual visible visitor/admin content every time.
+        // The sheet grows only as much as its current content requires.
+        const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
+        const maxHeight = Math.max(280, viewportHeight - 86);
+
+        sheet.style.height = "auto";
+        sheet.style.maxHeight = "none";
+        sheet.style.overflowY = "visible";
+
+        const naturalHeight = Math.ceil(sheet.scrollHeight);
+        const targetHeight = Math.min(naturalHeight, maxHeight);
+
+        sheet.style.height = `${targetHeight}px`;
+        sheet.style.maxHeight = `${maxHeight}px`;
+        sheet.style.overflowY = naturalHeight > maxHeight ? "auto" : "hidden";
+      }
+
+      let settingsFitRaf = 0;
+      function scheduleSettingsFit() {
+        cancelAnimationFrame(settingsFitRaf);
+        settingsFitRaf = requestAnimationFrame(() => {
+          settingsFitRaf = 0;
+          fitSettingsSheet();
+        });
+      }
+
       function setLayer(layer, open) {
         layer.classList.toggle("open", open);
         layer.setAttribute("aria-hidden", String(!open));
+        if (open && layer === els.settingsLayer) scheduleSettingsFit();
       }
 
       function closeAllLayers() {
-        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.resetLayer]
+        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.useGiftLayer, els.resetLayer]
           .forEach(layer => setLayer(layer, false));
       }
 
@@ -4277,6 +4436,8 @@
         } else {
           els.loginStateText.textContent = "访客模式";
         }
+
+        if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
       }
 
       function activeMetricValue() {
@@ -4300,6 +4461,8 @@
 
         if (gift) {
           const balance = Math.max(0, Number(state.giftBalance ?? 0));
+          els.useGiftBtnMeta.textContent = `剩余 ${balance} 次`;
+          els.useGiftBtn.setAttribute("aria-label", `使用小礼物额度，当前剩余 ${balance} 次`);
           if (balance > 0) {
             primary.textContent = `₊˚🎀 恭喜宝宝 ♡ 获得等价 ${40 * balance} 元奖励 🎁`;
             secondary.textContent = `可折现 ${30 * balance} 元 ✧˖°`;
@@ -4647,6 +4810,80 @@
 
       function isGiftRedemptionAction(action) {
         return ["score_redeem", "redeem_gift", "gift_redeem", "redemption"].includes(String(action || ""));
+      }
+
+      function isGiftUseAction(action) {
+        return ["gift_use", "use_gift", "gift_used"].includes(String(action || ""));
+      }
+
+      function openUseGiftPrompt() {
+        if (state.isAdmin) return;
+
+        const balance = Math.max(0, Number(state.giftBalance ?? 0));
+        els.useGiftLayer.dataset.theme = "gift";
+
+        if (balance <= 0) {
+          els.useGiftIcon.textContent = "🌷";
+          els.useGiftTitle.textContent = "还没有小礼物额度哦";
+          els.useGiftMessage.textContent = "₊˚🎀 宝宝你目前还没有小礼物额度哦 ♡ 加油获取吧！🎁✨";
+          els.useGiftConfirmBtn.hidden = true;
+          els.cancelUseGiftBtn.textContent = "知道啦 ♡";
+        } else {
+          els.useGiftIcon.textContent = "🎀";
+          els.useGiftTitle.textContent = "使用小礼物额度";
+          els.useGiftMessage.textContent = balance === 1
+            ? "₊˚🎁 宝宝目前还剩下 1 次小礼物额度哦 ♡ 这次使用后额度就会变成 0 啦，确定要使用一次吗？🌷"
+            : `₊˚🎁 宝宝目前还剩下 ${balance} 次小礼物额度哦 ♡ 使用后还会剩下 ${balance - 1} 次 ✨ 是否使用一次小礼物额度？`;
+          els.useGiftConfirmBtn.hidden = false;
+          els.useGiftConfirmBtn.textContent = "使用一次 🎁";
+          els.cancelUseGiftBtn.textContent = "取消";
+        }
+
+        setLayer(els.useGiftLayer, true);
+      }
+
+      async function performGiftUse() {
+        const balance = Math.max(0, Number(state.giftBalance ?? 0));
+        if (balance <= 0) {
+          openUseGiftPrompt();
+          return;
+        }
+
+        setBusy(els.useGiftConfirmBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_use_gift");
+          if (error) throw error;
+
+          const row = Array.isArray(data) ? data[0] : data;
+          if (row && typeof row.gift_balance === "number") {
+            state.giftBalance = row.gift_balance;
+            state.giftUpdatedAt = row.gift_updated_at ?? row.updated_at ?? state.giftUpdatedAt;
+          } else {
+            await loadAppState({ silent: true });
+          }
+
+          renderPrimaryMetric({ animate: true });
+          markRefreshed();
+          state.overviewLoadedAt = 0;
+          setLayer(els.useGiftLayer, false);
+          vibrate(16);
+          showToast("🎀 已使用 1 次小礼物额度 ♡");
+          if (els.overview.classList.contains("open")) await loadOverviewData(true);
+        } catch (err) {
+          console.error("performGiftUse:", err);
+          const message = String(err?.message || "");
+          if (/points_use_gift|Could not find the function|PGRST202|schema cache/i.test(message)) {
+            showToast("使用接口尚未安装，请先部署 points_use_gift RPC");
+          } else if (/No gift balance|Gift balance.*zero|no.*gift/i.test(message)) {
+            await loadAppState({ silent: true });
+            renderPrimaryMetric();
+            openUseGiftPrompt();
+          } else {
+            showToast("使用小礼物额度失败，请稍后重试");
+          }
+        } finally {
+          setBusy(els.useGiftConfirmBtn, false);
+        }
       }
 
       function openRedeemPrompt({ source = "score" } = {}) {
@@ -5240,12 +5477,15 @@
         const delta = Number(log.delta);
         const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
         const isRedeem = isGiftRedemptionAction(log.action);
-        const reason = String(log.reason ?? "").trim() || (isRedeem ? "积分兑换小礼物额度" : "未填写原因");
+        const isUse = isGiftUseAction(log.action);
+        const reason = String(log.reason ?? "").trim() || (isRedeem ? "积分兑换小礼物额度" : isUse ? "使用小礼物额度" : "未填写原因");
         const before = Number(log.balance_before ?? 0);
         const after = Number(log.balance_after ?? before + delta);
         const actionLabel = isRedeem
           ? "积分兑换 · 10 分换 1 个额度"
-          : log.action === "settlement_add"
+          : isUse
+            ? "使用小礼物 · 使用 1 个额度"
+            : log.action === "settlement_add"
             ? "积分重置自动结算"
             : log.action === "settlement_clear"
               ? "自动结算 · 额度清空"
@@ -6376,6 +6616,11 @@
         openRedeemPrompt({ source: "score" });
       });
 
+      els.useGiftBtn.addEventListener("click", () => {
+        vibrate(8);
+        openUseGiftPrompt();
+      });
+
       $$(".score-button").forEach(btn => {
         btn.addEventListener("click", () => {
           vibrate();
@@ -6401,6 +6646,19 @@
       els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.redeemLayer, false));
       els.redeemConfirmBtn.addEventListener("click", performGiftRedemption);
       els.redeemForceBtn.addEventListener("click", forceAddGiftByAdmin);
+
+      els.useGiftLayer.addEventListener("click", (e) => {
+        if (e.target === els.useGiftLayer) setLayer(els.useGiftLayer, false);
+      });
+      els.cancelUseGiftBtn.addEventListener("click", () => setLayer(els.useGiftLayer, false));
+      els.useGiftConfirmBtn.addEventListener("click", performGiftUse);
+
+      window.addEventListener("resize", () => {
+        if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
+      }, { passive: true });
+      window.visualViewport?.addEventListener("resize", () => {
+        if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
+      }, { passive: true });
 
       els.resetBtn.addEventListener("click", () => {
         setLayer(els.settingsLayer, false);
@@ -6501,6 +6759,7 @@
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
         if (els.changeLayer.classList.contains("open")) return setLayer(els.changeLayer, false);
+        if (els.useGiftLayer.classList.contains("open")) return setLayer(els.useGiftLayer, false);
         if (els.redeemLayer.classList.contains("open")) return setLayer(els.redeemLayer, false);
         if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
         if (els.settingsLayer.classList.contains("open")) return setLayer(els.settingsLayer, false);
