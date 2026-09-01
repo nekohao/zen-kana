@@ -2441,7 +2441,7 @@
 
 
     /* ============================================================
-       v1.7.1 Home layout + metric transition polish
+       v1.7.2 Quiet crossfade + Overview visual unification
        Fixed slots keep every major control at a stable coordinate.
        ============================================================ */
     .hero {
@@ -3054,6 +3054,335 @@
        WORK SCHEDULE MODULE END
        ============================================================ */
 
+
+
+    /* ============================================================
+       v1.7.2 — quiet crossfade + Overview-aligned sheets
+       No moving/blurred rectangular compositing layers.
+       ============================================================ */
+
+    /* 1) Metric switching: fade content, keep geometry perfectly still. */
+    .metric-switch-thumb {
+      transition:
+        transform .34s cubic-bezier(.22,.61,.36,1),
+        background-color .42s ease,
+        box-shadow .42s ease !important;
+      will-change: auto;
+    }
+
+    .metric-option {
+      transition: color .28s ease, opacity .28s ease !important;
+      transform: none !important;
+    }
+
+    .reward-message {
+      animation: none !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.23), rgba(255,255,255,.055)),
+        rgba(255,255,255,.20) !important;
+      border-color: var(--glass-border) !important;
+      box-shadow:
+        0 10px 26px rgba(43,55,78,.065),
+        inset 0 1px 0 rgba(255,255,255,.46) !important;
+      transition: box-shadow .42s ease, border-color .42s ease !important;
+    }
+
+    .home:not(.gift-active) .reward-message {
+      box-shadow:
+        0 10px 28px rgba(181,142,78,.075),
+        inset 0 1px 0 rgba(255,255,255,.48) !important;
+    }
+
+    .home.gift-active .reward-message {
+      box-shadow:
+        0 10px 28px rgba(198,126,161,.075),
+        inset 0 1px 0 rgba(255,255,255,.48) !important;
+    }
+
+    .reward-line-primary,
+    .reward-line-secondary,
+    .score,
+    .metric-action-slot {
+      transition: opacity .18s ease !important;
+    }
+
+    /* The lens itself never moves during metric switching. The gift tint is
+       a circular opacity overlay, so there is no visible rectangular layer. */
+    .score-lens {
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.78), transparent 48%),
+        rgba(255,249,230,.58) !important;
+      border-color: rgba(255,255,255,.94) !important;
+      box-shadow:
+        0 24px 58px rgba(190,151,88,.13),
+        inset 0 2px 4px rgba(255,255,255,.90),
+        inset 0 -4px 14px rgba(183,143,79,.05) !important;
+      transition:
+        box-shadow .46s ease,
+        border-color .46s ease !important;
+      transform: none !important;
+      filter: none !important;
+      will-change: auto !important;
+    }
+
+    .score-lens::before {
+      z-index: 1;
+    }
+
+    .score-lens::after {
+      content: "" !important;
+      position: absolute;
+      z-index: 0;
+      inset: 0 !important;
+      border-radius: 50% !important;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.78), transparent 48%),
+        rgba(255,241,248,.60) !important;
+      transform: none !important;
+      mix-blend-mode: normal !important;
+      transition: opacity .46s cubic-bezier(.22,.61,.36,1) !important;
+      animation: none !important;
+    }
+
+    .home.gift-active .score-lens::after {
+      opacity: 1;
+    }
+
+    .home.gift-active .score-lens {
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.78), transparent 48%),
+        rgba(255,249,230,.58) !important;
+      box-shadow:
+        0 24px 58px rgba(201,132,166,.13),
+        inset 0 2px 4px rgba(255,255,255,.90),
+        inset 0 -4px 14px rgba(197,126,160,.05) !important;
+    }
+
+    .metric-ghost-value {
+      display: none !important;
+    }
+
+    /* Disable the v1.7.1 compositing animations completely. */
+    .home.metric-switching .metric-ghost-value,
+    .home.metric-switching .score,
+    .home.metric-switching .score-lens,
+    .home.metric-switching .score-lens::after,
+    .home.metric-switching .reward-message,
+    .home.metric-switching .metric-action-slot > * {
+      animation: none !important;
+      filter: none !important;
+      transform: none !important;
+    }
+
+    /* Phase 1: old content gently disappears. */
+    .home.metric-fading-out .reward-line-primary,
+    .home.metric-fading-out .reward-line-secondary,
+    .home.metric-fading-out .score,
+    .home.metric-fading-out .metric-action-slot {
+      opacity: 0 !important;
+    }
+
+    /* Phase 2: new content gently appears. No translate/scale/blur. */
+    .home.metric-fading-in .reward-line-primary,
+    .home.metric-fading-in .reward-line-secondary,
+    .home.metric-fading-in .score,
+    .home.metric-fading-in .metric-action-slot {
+      animation: metricQuietFadeIn .28s cubic-bezier(.22,.61,.36,1) both !important;
+    }
+
+    @keyframes metricQuietFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* 2) Settings = Overview visual system, not a separate Settings language. */
+    #settingsLayer {
+      background: rgba(45,54,70,.075) !important;
+    }
+
+    #settingsLayer .settings-sheet {
+      width: min(calc(100% - 12px), 620px) !important;
+      padding: 0 16px calc(var(--safe-bottom) + 18px) !important;
+      border-radius: 32px 32px 0 0 !important;
+      background:
+        linear-gradient(145deg,
+          rgba(255,255,255,.16),
+          rgba(255,255,255,.035) 42%,
+          rgba(255,255,255,.01)),
+        var(--glass-fill-strong) !important;
+      border: 1px solid var(--glass-border) !important;
+      border-bottom: 0 !important;
+      box-shadow:
+        0 -18px 55px rgba(34,43,62,.16),
+        inset 0 1px 0 rgba(255,255,255,.36) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+    }
+
+    #settingsLayer .settings-sheet-header {
+      min-height: 67px;
+      margin: 0 -16px 20px !important;
+      padding: 8px 16px 13px !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
+          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 75%,
+          transparent) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+      backdrop-filter: blur(28px) saturate(180%) !important;
+      border-bottom: 1px solid var(--hairline) !important;
+    }
+
+    #settingsLayer .settings-grabber-hitbox {
+      min-height: 64px !important;
+      margin-bottom: -28px !important;
+    }
+
+    #settingsLayer .settings-sheet-header .grabber {
+      width: 38px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(118,118,128,.34);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    #settingsLayer .settings-sheet-header .sheet-title {
+      margin-top: 2px !important;
+      font-size: 17px !important;
+      line-height: 1.15 !important;
+      font-weight: 700 !important;
+      letter-spacing: -.015em !important;
+    }
+
+    #settingsLayer .settings-sheet-header .login-state {
+      margin-top: 5px;
+      padding: 0 !important;
+      font-size: 12px !important;
+      line-height: 1.25 !important;
+      font-weight: 500 !important;
+      color: var(--secondary) !important;
+    }
+
+    #settingsLayer .settings-sheet-content {
+      padding: 0 0 2px !important;
+    }
+
+    #settingsLayer .settings-label {
+      margin: 0 6px 10px !important;
+      padding: 0 !important;
+      color: var(--ink) !important;
+      font-size: 20px !important;
+      line-height: 1.2 !important;
+      font-weight: 730 !important;
+      letter-spacing: -.026em !important;
+      text-transform: none !important;
+    }
+
+    #settingsLayer .settings-group {
+      margin: 0 0 20px !important;
+      padding: 4px 0 !important;
+      overflow: hidden;
+      border: 1px solid var(--glass-border) !important;
+      border-radius: var(--radius-xl) !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.20), rgba(255,255,255,.045)),
+        rgba(255,255,255,.18) !important;
+      box-shadow:
+        0 10px 24px rgba(43,55,78,.07),
+        inset 0 1px 0 rgba(255,255,255,.42) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(175%) !important;
+      backdrop-filter: blur(24px) saturate(175%) !important;
+    }
+
+    #settingsLayer .settings-row {
+      min-height: 56px !important;
+      padding: 0 15px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 620;
+      letter-spacing: -.012em;
+    }
+
+    #settingsLayer .settings-row + .settings-row {
+      border-top: 1px solid var(--hairline) !important;
+    }
+
+    #settingsLayer .settings-row:active {
+      background: rgba(118,118,128,.055) !important;
+      transform: none !important;
+    }
+
+    #settingsLayer .settings-row.destructive {
+      color: #c75e62 !important;
+    }
+
+    #settingsLayer .settings-value,
+    #settingsLayer .chevron {
+      color: var(--secondary) !important;
+    }
+
+    #settingsLayer .settings-row.destructive .settings-value,
+    #settingsLayer .settings-row.destructive .chevron {
+      color: color-mix(in srgb, #c75e62 72%, var(--secondary)) !important;
+    }
+
+    /* 3) Nested settings destinations use the same Overview shell/header material. */
+    #loginLayer .login-sheet,
+    #versionInfoLayer .unified-sheet,
+    #releaseNotesLayer .unified-sheet,
+    #workScheduleLayer .unified-sheet,
+    #workScheduleOverviewLayer .unified-sheet {
+      background:
+        linear-gradient(145deg,
+          rgba(255,255,255,.16),
+          rgba(255,255,255,.035) 42%,
+          rgba(255,255,255,.01)),
+        var(--glass-fill-strong) !important;
+      border-color: var(--glass-border) !important;
+      box-shadow:
+        0 -18px 55px rgba(34,43,62,.16),
+        inset 0 1px 0 rgba(255,255,255,.36) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+    }
+
+    #loginLayer .login-sheet-header,
+    #versionInfoLayer .unified-sheet-header,
+    #releaseNotesLayer .unified-sheet-header,
+    #workScheduleLayer .unified-sheet-header,
+    #workScheduleOverviewLayer .unified-sheet-header {
+      background:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
+          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 75%,
+          transparent) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+      backdrop-filter: blur(28px) saturate(180%) !important;
+      border-bottom-color: var(--hairline) !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .metric-switch-thumb,
+      .score-lens::after,
+      .reward-line-primary,
+      .reward-line-secondary,
+      .score,
+      .metric-action-slot {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -3407,7 +3736,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.7.1</span>
+              <span class="settings-value">1.7.2</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -3437,12 +3766,23 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.7.1</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.7.2</strong><span>当前版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
-              <li>当前分数与小礼物额度改为固定槽位排版，切换时圆环、操作区与总览不再上下跳动。</li>
-              <li>加入双层数字切换、玻璃高光扫过、提示卡与操作区错峰进入的高级动画。</li>
-              <li>管理员当前分数页隐藏访客兑换入口；积分与小礼物的管理员按钮、确认弹窗统一设计。</li>
+              <li>分数 / 小礼物切换改为纯渐隐渐现，不再使用位移、缩放、模糊或扫光合成层。</li>
+              <li>圆环主题采用圆形内部透明叠色渐变，切换时不会出现矩形图层边界。</li>
+              <li>设置页对齐总览的 Bottom Sheet、标题、分组标题与 Glass Card 设计体系。</li>
+              <li>管理员登录、版本信息、更新日志和排班页同步统一总览材质语言。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.7.1</strong><span>上一版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>管理员当前分数页隐藏访客兑换入口；访客仍可正常使用 10 分兑换。</li>
+              <li>首页分数/礼物切换改为固定操作槽位，避免切换时按钮和总览上下跳动。</li>
+              <li>管理员积分 ±1 / 礼物 ±1 的按钮与确认弹窗统一为同一套玻璃组件。</li>
             </ul>
           </div>
 
@@ -3994,28 +4334,53 @@
       }
 
       let metricSwitchTimer = 0;
+      let metricSwitchInTimer = 0;
+      let metricSwitchToken = 0;
+
+      function previewMetricSwitch(nextMetric) {
+        const gift = nextMetric === "gift";
+        els.metricSwitch.classList.toggle("gift-active", gift);
+        els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
+          const active = btn.dataset.metric === nextMetric;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-selected", String(active));
+        });
+      }
+
       function switchMetric(nextMetric) {
-        if (!['score', 'gift'].includes(nextMetric) || nextMetric === state.activeMetric) return;
+        if (!["score", "gift"].includes(nextMetric) || nextMetric === state.activeMetric) return;
 
-        const previousValue = activeMetricValue();
-        const direction = nextMetric === 'gift' ? 1 : -1;
-        if (els.metricGhostValue) els.metricGhostValue.textContent = String(previousValue ?? '');
-
+        const token = ++metricSwitchToken;
         clearTimeout(metricSwitchTimer);
-        els.home?.classList.remove('metric-switching', 'metric-to-gift', 'metric-to-score');
-        els.home?.style.setProperty('--metric-enter-x', direction > 0 ? '18px' : '-18px');
-        els.home?.style.setProperty('--metric-exit-x', direction > 0 ? '-18px' : '18px');
-        els.home?.style.setProperty('--metric-message-x', direction > 0 ? '10px' : '-10px');
-        void els.home?.offsetWidth;
+        clearTimeout(metricSwitchInTimer);
 
-        state.activeMetric = nextMetric;
-        renderPrimaryMetric({ animate: false });
-        els.home?.classList.add('metric-switching', nextMetric === 'gift' ? 'metric-to-gift' : 'metric-to-score');
+        const home = els.home;
+        home?.classList.remove(
+          "metric-switching", "metric-to-gift", "metric-to-score",
+          "metric-fading-in", "metric-fading-out"
+        );
+
+        // Let the selector respond immediately, while the actual page content
+        // quietly fades away in place. No translate / scale / blur layer.
+        previewMetricSwitch(nextMetric);
+        void home?.offsetWidth;
+        home?.classList.add("metric-fading-out");
 
         metricSwitchTimer = window.setTimeout(() => {
-          els.home?.classList.remove('metric-switching', 'metric-to-gift', 'metric-to-score');
-          if (els.metricGhostValue) els.metricGhostValue.textContent = '';
-        }, 560);
+          if (token !== metricSwitchToken) return;
+
+          state.activeMetric = nextMetric;
+          renderPrimaryMetric({ animate: false });
+
+          home?.classList.remove("metric-fading-out");
+          void home?.offsetWidth;
+          home?.classList.add("metric-fading-in");
+
+          metricSwitchInTimer = window.setTimeout(() => {
+            if (token !== metricSwitchToken) return;
+            home?.classList.remove("metric-fading-in");
+          }, 300);
+        }, 155);
       }
 
       function renderOverviewSectionMode() {
