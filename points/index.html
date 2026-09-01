@@ -4399,10 +4399,8 @@
     }
     .metric-option { font-size: 11.5px !important; }
 
-    .home.admin-mode.wheel-active #redeemWheelChanceBtn {
-      display: none !important;
-    }
-    .home.admin-mode.wheel-active #spinWheelActionBtn {
+    /* v2.1: wheel page keeps only the spin action; reward redemption stays on the score page. */
+    .home.wheel-active #spinWheelActionBtn {
       width: min(72vw, 225px) !important;
       flex-basis: 225px !important;
     }
@@ -4663,13 +4661,6 @@
 <button class="score-button plus pressable" data-delta="1" type="button">+1</button>
 </div>
 <div aria-hidden="true" class="wheel-actions" id="wheelActions">
-<button class="wheel-side-button wheel-side-redeem pressable" id="redeemWheelChanceBtn" type="button">
-<span aria-hidden="true" class="wheel-side-icon">🎁</span>
-<span class="wheel-side-copy">
-<strong>10分兑机会</strong>
-<small>兑换奖励</small>
-</span>
-</button>
 <button class="wheel-side-button wheel-side-spin pressable" id="spinWheelActionBtn" type="button">
 <span aria-hidden="true" class="wheel-side-icon">🎠</span>
 <span class="wheel-side-copy">
@@ -5389,7 +5380,6 @@
         wheelStage: $("#wheelStage"),
         wheelDisk: $("#wheelDisk"),
         wheelActions: $("#wheelActions"),
-        redeemWheelChanceBtn: $("#redeemWheelChanceBtn"),
         spinWheelActionBtn: $("#spinWheelActionBtn"),
         adminControls: $("#adminControls"),
         settingsBtn: $("#settingsBtn"),
@@ -5715,12 +5705,10 @@
         if (state.isAdmin) {
           const email = state.session?.user?.email || "管理员";
           els.loginStateText.textContent = `管理员 · ${email}`;
-          els.redeemWheelChanceBtn.hidden = true;
           els.spinWheelActionBtn.querySelector("strong").textContent = "试玩大转盘";
           els.spinWheelActionBtn.querySelector("small").textContent = "不影响游客资产";
         } else {
           els.loginStateText.textContent = "访客模式";
-          els.redeemWheelChanceBtn.hidden = false;
           els.spinWheelActionBtn.querySelector("strong").textContent = "转动大转盘";
           els.spinWheelActionBtn.querySelector("small").textContent = "开始";
         }
@@ -6296,7 +6284,6 @@
         if (state.wheelSpinning) return;
         state.wheelSpinning = true;
         els.home?.classList.add("wheel-spinning");
-        setBusy(els.redeemWheelChanceBtn, true);
         setBusy(els.spinWheelActionBtn, true);
 
         const angle = wheelAngleForPrize(prize, roll);
@@ -6327,7 +6314,6 @@
         } finally {
           state.wheelSpinning = false;
           els.home?.classList.remove("wheel-spinning");
-          setBusy(els.redeemWheelChanceBtn, false);
           setBusy(els.spinWheelActionBtn, false);
         }
       }
@@ -8232,7 +8218,6 @@
       });
 
       els.redeemRewardBtn.addEventListener("click", () => { vibrate(8); openRedeemPrompt(); });
-      els.redeemWheelChanceBtn.addEventListener("click", () => { vibrate(8); openRedeemPrompt(); });
       els.redeemLayer.addEventListener("click", (e) => { if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false); });
       els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.redeemLayer, false));
       els.redeemWheelConfirmBtn.addEventListener("click", () => performRewardRedemption("wheel"));
