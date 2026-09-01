@@ -2439,6 +2439,374 @@
 
     [hidden] { display: none !important; }
 
+
+    /* ============================================================
+       v1.7.1 Home layout + metric transition polish
+       Fixed slots keep every major control at a stable coordinate.
+       ============================================================ */
+    .hero {
+      --metric-enter-x: 18px;
+      --metric-exit-x: -18px;
+      --metric-message-x: 10px;
+      width: 100%;
+    }
+
+    .metric-switch {
+      flex: 0 0 44px;
+      margin-bottom: 12px;
+    }
+
+    .metric-switch-thumb {
+      transition:
+        transform .46s cubic-bezier(.22,1.12,.28,1),
+        background .32s ease,
+        box-shadow .32s ease;
+    }
+
+    .metric-option.active svg {
+      animation: metricTabIconPop .42s cubic-bezier(.2,1.2,.3,1);
+    }
+
+    @keyframes metricTabIconPop {
+      0% { transform: scale(.86) rotate(-5deg); opacity: .55; }
+      55% { transform: scale(1.10) rotate(2deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .reward-message {
+      width: min(92vw, 390px);
+      height: 64px;
+      min-height: 64px;
+      box-sizing: border-box;
+      margin: 0 auto 12px;
+      padding: 8px 13px 9px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .reward-message[hidden] { display: none !important; }
+
+    .score-lens-wrap {
+      flex: 0 0 auto;
+      margin: 0;
+    }
+
+    .score-lens {
+      transition:
+        transform .34s cubic-bezier(.2,.9,.25,1),
+        box-shadow .42s ease,
+        border-color .42s ease,
+        filter .42s ease;
+    }
+
+    .score-lens::after {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      inset: -22%;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(
+        112deg,
+        transparent 31%,
+        rgba(255,255,255,.08) 40%,
+        rgba(255,255,255,.72) 49%,
+        rgba(255,255,255,.12) 57%,
+        transparent 68%
+      );
+      transform: translateX(-72%) rotate(8deg);
+      mix-blend-mode: screen;
+    }
+
+    .metric-ghost-value {
+      position: absolute;
+      z-index: 3;
+      font-size: clamp(76px, 23vw, 88px);
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -3px;
+      font-variant-numeric: tabular-nums;
+      color: rgba(112,88,72,.42);
+      text-shadow: 0 10px 24px rgba(0,0,0,.04);
+      transform: translateX(-.025em);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .home.gift-active .metric-ghost-value {
+      color: rgba(144,83,113,.40);
+    }
+
+    .metric-action-slot {
+      width: 100%;
+      height: 68px;
+      min-height: 68px;
+      margin-top: 14px;
+      display: grid;
+      place-items: start center;
+      position: relative;
+    }
+
+    .metric-action-slot > .redeem-button,
+    .metric-action-slot > .admin-controls {
+      grid-area: 1 / 1;
+      margin: 0 !important;
+    }
+
+    .redeem-button {
+      margin-top: 0;
+      transition:
+        opacity .24s ease,
+        transform .34s cubic-bezier(.2,.9,.25,1),
+        visibility 0s linear 0s,
+        box-shadow .30s ease;
+    }
+
+    .home.gift-active .redeem-button,
+    .home.admin-mode .redeem-button {
+      display: flex;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(5px) scale(.975);
+      transition-delay: 0s, 0s, .25s, 0s;
+    }
+
+    .admin-controls {
+      height: 52px;
+      min-height: 52px;
+      gap: 12px;
+      opacity: 1;
+      transform: none;
+      transition: opacity .24s ease, transform .34s cubic-bezier(.2,.9,.25,1);
+    }
+
+    .admin-controls.hidden {
+      height: 52px;
+      min-height: 52px;
+      margin: 0 !important;
+      opacity: 0;
+      transform: translateY(5px) scale(.975);
+      visibility: hidden;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .score-button {
+      width: 102px;
+      height: 50px;
+      border-radius: 17px;
+      border: 1px solid rgba(255,255,255,.84);
+      -webkit-backdrop-filter: blur(22px) saturate(155%);
+      backdrop-filter: blur(22px) saturate(155%);
+      box-shadow:
+        0 10px 26px rgba(183,143,79,.09),
+        inset 0 1px 0 rgba(255,255,255,.72);
+      font-size: 17px;
+      font-weight: 735;
+      letter-spacing: -.01em;
+    }
+
+    .home:not(.gift-active) .score-button {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.64), rgba(255,245,216,.38)),
+        rgba(255,250,236,.35);
+    }
+    .home:not(.gift-active) .score-button.plus { color: #9a6c32; }
+    .home:not(.gift-active) .score-button.minus { color: #b27055; }
+
+    .home.gift-active .score-button {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.62), rgba(255,232,243,.40)),
+        rgba(255,244,249,.36);
+      box-shadow:
+        0 10px 26px rgba(211,132,170,.10),
+        inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .home.gift-active .score-button.plus { color: #b85f88; }
+    .home.gift-active .score-button.minus { color: #b56e7a; }
+
+    /* Metric transition: double-buffered number + glass sweep. */
+    .home.metric-switching .metric-ghost-value {
+      opacity: 1;
+      animation: metricGhostOut .48s cubic-bezier(.2,.72,.18,1) both;
+    }
+
+    .home.metric-switching .score {
+      animation: metricFreshIn .50s cubic-bezier(.18,.86,.22,1) both;
+    }
+
+    .home.metric-switching .score-lens {
+      animation: metricLensBreath .52s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .home.metric-switching .score-lens::after {
+      animation: metricGlassSweep .58s cubic-bezier(.2,.72,.22,1) both;
+    }
+
+    .home.metric-switching .reward-message {
+      animation: metricMessageSwap .46s cubic-bezier(.2,.82,.2,1) both;
+    }
+
+    .home.metric-switching .metric-action-slot > * {
+      animation: metricActionIn .44s .055s cubic-bezier(.2,.86,.22,1) both;
+    }
+
+    @keyframes metricGhostOut {
+      0% { opacity: .64; transform: translateX(-.025em) translateY(0) scale(1); filter: blur(0); }
+      100% {
+        opacity: 0;
+        transform: translateX(var(--metric-exit-x)) translateY(-7px) scale(.92);
+        filter: blur(5px);
+      }
+    }
+
+    @keyframes metricFreshIn {
+      0% {
+        opacity: 0;
+        transform: translateX(var(--metric-enter-x)) translateY(8px) scale(.92);
+        filter: blur(6px);
+      }
+      58% { opacity: 1; filter: blur(0); transform: translateX(-.025em) translateY(-2px) scale(1.025); }
+      100% { opacity: 1; filter: blur(0); transform: translateX(-.025em) translateY(0) scale(1); }
+    }
+
+    @keyframes metricLensBreath {
+      0% { transform: scale(1); filter: brightness(1); }
+      42% { transform: scale(.972); filter: brightness(1.055) saturate(1.05); }
+      72% { transform: scale(1.012); filter: brightness(1.025); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    @keyframes metricGlassSweep {
+      0% { opacity: 0; transform: translateX(-72%) rotate(8deg); }
+      24% { opacity: .72; }
+      70% { opacity: .42; }
+      100% { opacity: 0; transform: translateX(72%) rotate(8deg); }
+    }
+
+    @keyframes metricMessageSwap {
+      0% { opacity: .28; transform: translateX(var(--metric-message-x)) translateY(3px) scale(.988); filter: blur(3px); }
+      100% { opacity: 1; transform: translateX(0) translateY(0) scale(1); filter: blur(0); }
+    }
+
+    @keyframes metricActionIn {
+      0% { opacity: 0; transform: translateY(7px) scale(.975); filter: blur(2px); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    /* Unified admin change alert — same family as gift +1/redeem. */
+    #changeLayer {
+      padding: 0 0 12px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(45,54,70,.075);
+    }
+
+    #changeLayer .change-alert {
+      width: min(calc(100% - 28px), 326px);
+      border-color: rgba(255,255,255,.86);
+    }
+
+    #changeLayer[data-theme="score"] .change-alert {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.30), rgba(255,247,225,.12) 48%),
+        var(--glass-fill-strong);
+      box-shadow: 0 24px 70px rgba(135,99,51,.13), inset 0 1px 0 rgba(255,255,255,.50);
+    }
+
+    #changeLayer[data-theme="gift"] .change-alert,
+    #redeemLayer[data-theme="gift"] .alert {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.30), rgba(255,233,244,.14) 48%),
+        var(--glass-fill-strong);
+      box-shadow: 0 24px 70px rgba(180,99,137,.14), inset 0 1px 0 rgba(255,255,255,.50);
+    }
+
+    #changeLayer[data-theme="score"] .alert-title,
+    #changeLayer[data-theme="score"] .change-preview { color: #805f39; }
+    #changeLayer[data-theme="score"] .primary-action { color: #a06f32; }
+
+    #changeLayer[data-theme="gift"] .alert-title,
+    #changeLayer[data-theme="gift"] .change-preview,
+    #redeemLayer[data-theme="gift"] .alert-title { color: #9e5879; }
+    #changeLayer[data-theme="gift"] .primary-action,
+    #redeemLayer[data-theme="gift"] #redeemConfirmBtn,
+    #redeemLayer[data-theme="gift"] #redeemForceBtn { color: #b85f88; }
+
+    .change-icon {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto 9px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      background: rgba(255,255,255,.38);
+      border: 1px solid rgba(255,255,255,.64);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 7px 18px rgba(40,45,60,.06);
+    }
+
+    .change-preview {
+      margin: 13px auto 12px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.28);
+      border: 1px solid rgba(255,255,255,.56);
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 720;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .change-reason-field {
+      width: 100%;
+      min-height: 76px;
+      resize: none;
+      padding: 11px 12px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,.64);
+      outline: none;
+      background: rgba(255,255,255,.34);
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.42;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.50);
+      -webkit-backdrop-filter: blur(16px) saturate(145%);
+      backdrop-filter: blur(16px) saturate(145%);
+    }
+
+    .change-reason-field:focus {
+      border-color: rgba(170,128,78,.34);
+      box-shadow: 0 0 0 3px rgba(190,151,91,.08), inset 0 1px 0 rgba(255,255,255,.58);
+    }
+
+    #changeLayer[data-theme="gift"] .change-reason-field:focus {
+      border-color: rgba(191,99,142,.28);
+      box-shadow: 0 0 0 3px rgba(213,126,165,.08), inset 0 1px 0 rgba(255,255,255,.58);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .home.metric-switching .metric-ghost-value,
+      .home.metric-switching .score,
+      .home.metric-switching .score-lens,
+      .home.metric-switching .score-lens::after,
+      .home.metric-switching .reward-message,
+      .home.metric-switching .metric-action-slot > *,
+      .metric-option.active svg {
+        animation: none !important;
+      }
+      .metric-switch-thumb { transition-duration: .01ms !important; }
+    }
+
     /* High-refresh-rate path: drag animation stays transform-only. */
     .ambient {
       will-change: transform;
@@ -2752,19 +3120,22 @@
         <div id="scoreRefreshBtn" class="score-lens-wrap pressable" role="button" tabindex="0" aria-label="手动刷新最新数据">
           <div class="score-glow" aria-hidden="true"></div>
           <div class="score-lens">
+            <div id="metricGhostValue" class="metric-ghost-value" aria-hidden="true"></div>
             <div id="scoreValue" class="score loading" aria-live="polite">—</div>
           </div>
         </div>
 
-        <button id="redeemGiftBtn" class="redeem-button pressable" type="button">
-          <span aria-hidden="true">🎁</span>
-          <span>兑换小礼物额度</span>
-          <span class="redeem-button-meta">10 分 / 次</span>
-        </button>
+        <div class="metric-action-slot" aria-label="当前数据操作">
+          <button id="redeemGiftBtn" class="redeem-button pressable" type="button">
+            <span aria-hidden="true">🎁</span>
+            <span>兑换小礼物额度</span>
+            <span class="redeem-button-meta">10 分 / 次</span>
+          </button>
 
-        <div id="adminControls" class="admin-controls hidden" aria-hidden="true">
-          <button class="score-button minus glass pressable" type="button" data-delta="-1">−1</button>
-          <button class="score-button plus glass pressable" type="button" data-delta="1">+1</button>
+          <div id="adminControls" class="admin-controls hidden" aria-hidden="true">
+            <button class="score-button minus pressable" type="button" data-delta="-1">−1</button>
+            <button class="score-button plus pressable" type="button" data-delta="1">+1</button>
+          </div>
         </div>
       </div>
 
@@ -3036,7 +3407,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.7.0</span>
+              <span class="settings-value">1.7.1</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -3066,13 +3437,20 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.7.0</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.7.1</strong><span>当前版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
-              <li>当前分数与小礼物额度统一为同一套可爱玻璃语言；积分页采用奶油黄与焦糖色调。</li>
-              <li>积分页新增 10 分兑换 1 个小礼物额度入口，并加入动态“还差几分 / 可兑换几次”提示。</li>
-              <li>管理员小礼物 +1 优先按积分兑换；积分不足时允许明确确认后强制 +1。</li>
-              <li>兑换记录在积分历史、小礼物历史与日历中联动显示，日历可看到 ↓10 与 🎁↑1。</li>
+              <li>当前分数与小礼物额度改为固定槽位排版，切换时圆环、操作区与总览不再上下跳动。</li>
+              <li>加入双层数字切换、玻璃高光扫过、提示卡与操作区错峰进入的高级动画。</li>
+              <li>管理员当前分数页隐藏访客兑换入口；积分与小礼物的管理员按钮、确认弹窗统一设计。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.7.0</strong><span>上一版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>新增 10 分兑换 1 个小礼物额度，并联动积分历史、小礼物历史与日历记录。</li>
             </ul>
           </div>
 
@@ -3235,20 +3613,19 @@
       </div>
     </div>
 
-    <!-- Score / gift change sheet -->
-    <div id="changeLayer" class="modal-layer" aria-hidden="true">
-      <div class="unified-sheet" role="dialog" aria-modal="true" aria-labelledby="changeTitle">
-        <header class="unified-sheet-header">
-          <div class="grabber" aria-hidden="true"></div>
-          <div id="changeTitle" class="sheet-title">变更</div>
-        </header>
-        <div class="unified-sheet-body">
-          <div id="changeSubtitle" class="sheet-subtitle" style="text-align:center"></div>
-          <textarea id="reasonInput" class="field" maxlength="500" placeholder="原因（可留空）"></textarea>
-          <div class="sheet-actions">
-            <button id="cancelChangeBtn" class="sheet-button pressable" type="button">取消</button>
-            <button id="confirmChangeBtn" class="sheet-button primary pressable" type="button">确认</button>
-          </div>
+    <!-- Unified admin score / gift change alert -->
+    <div id="changeLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="score">
+      <div class="alert change-alert" role="alertdialog" aria-modal="true" aria-labelledby="changeTitle">
+        <div class="alert-content">
+          <div id="changeIcon" class="change-icon" aria-hidden="true">✨</div>
+          <div id="changeTitle" class="alert-title">变更</div>
+          <div id="changeSubtitle" class="alert-message"></div>
+          <div id="changePreview" class="change-preview"></div>
+          <textarea id="reasonInput" class="change-reason-field" maxlength="500" placeholder="写下这次变化的原因 ♡（可留空）"></textarea>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="confirmChangeBtn" class="alert-button primary-action pressable" type="button">确认</button>
+          <button id="cancelChangeBtn" class="alert-button pressable" type="button">取消</button>
         </div>
       </div>
     </div>
@@ -3320,6 +3697,7 @@
         scoreRefreshBtn: $("#scoreRefreshBtn"),
         metricSwitch: $("#metricSwitch"),
         metricEyebrow: $("#metricEyebrow"),
+        metricGhostValue: $("#metricGhostValue"),
         redeemGiftBtn: $("#redeemGiftBtn"),
         adminControls: $("#adminControls"),
         settingsBtn: $("#settingsBtn"),
@@ -3364,8 +3742,10 @@
         loginBtn: $("#loginBtn"),
 
         changeLayer: $("#changeLayer"),
+        changeIcon: $("#changeIcon"),
         changeTitle: $("#changeTitle"),
         changeSubtitle: $("#changeSubtitle"),
+        changePreview: $("#changePreview"),
         reasonInput: $("#reasonInput"),
         cancelChangeBtn: $("#cancelChangeBtn"),
         confirmChangeBtn: $("#confirmChangeBtn"),
@@ -3544,6 +3924,7 @@
       }
 
       function renderAdminState() {
+        els.home?.classList.toggle("admin-mode", state.isAdmin);
         els.adminControls.classList.toggle("hidden", !state.isAdmin);
         els.adminControls.setAttribute("aria-hidden", String(!state.isAdmin));
         els.guestAccountLabel.hidden = state.isAdmin;
@@ -3610,6 +3991,31 @@
           void els.score.offsetWidth;
           els.score.classList.add("metric-changing");
         }
+      }
+
+      let metricSwitchTimer = 0;
+      function switchMetric(nextMetric) {
+        if (!['score', 'gift'].includes(nextMetric) || nextMetric === state.activeMetric) return;
+
+        const previousValue = activeMetricValue();
+        const direction = nextMetric === 'gift' ? 1 : -1;
+        if (els.metricGhostValue) els.metricGhostValue.textContent = String(previousValue ?? '');
+
+        clearTimeout(metricSwitchTimer);
+        els.home?.classList.remove('metric-switching', 'metric-to-gift', 'metric-to-score');
+        els.home?.style.setProperty('--metric-enter-x', direction > 0 ? '18px' : '-18px');
+        els.home?.style.setProperty('--metric-exit-x', direction > 0 ? '-18px' : '18px');
+        els.home?.style.setProperty('--metric-message-x', direction > 0 ? '10px' : '-10px');
+        void els.home?.offsetWidth;
+
+        state.activeMetric = nextMetric;
+        renderPrimaryMetric({ animate: false });
+        els.home?.classList.add('metric-switching', nextMetric === 'gift' ? 'metric-to-gift' : 'metric-to-score');
+
+        metricSwitchTimer = window.setTimeout(() => {
+          els.home?.classList.remove('metric-switching', 'metric-to-gift', 'metric-to-score');
+          if (els.metricGhostValue) els.metricGhostValue.textContent = '';
+        }, 560);
       }
 
       function renderOverviewSectionMode() {
@@ -3791,17 +4197,29 @@
           return;
         }
 
-        if (state.changeTarget === "gift") {
-          els.changeTitle.textContent = delta > 0 ? "增加 1 个小礼物额度" : "减少 1 个小礼物额度";
-          els.changeSubtitle.textContent = `当前额度 ${state.giftBalance}，原因可以不填写。`;
-        } else {
-          els.changeTitle.textContent = delta > 0 ? "增加 1 分" : "减少 1 分";
-          els.changeSubtitle.textContent = `当前 ${state.score ?? "—"} 分，原因可以不填写。`;
-        }
-
+        const isGift = state.changeTarget === "gift";
+        const current = Number(isGift ? state.giftBalance : state.score ?? 0);
+        const next = current + delta;
+        els.changeLayer.dataset.theme = isGift ? "gift" : "score";
+        els.changeIcon.textContent = isGift
+          ? (delta > 0 ? "🎁" : "🌷")
+          : (delta > 0 ? "✨" : "🌙");
+        els.changeTitle.textContent = isGift
+          ? (delta > 0 ? "小礼物额度 +1" : "小礼物额度 −1")
+          : (delta > 0 ? "增加 1 分" : "减少 1 分");
+        els.changeSubtitle.textContent = isGift
+          ? "管理员操作 · 会立即写入小礼物历史"
+          : "管理员操作 · 会立即写入积分历史";
+        els.changePreview.textContent = isGift
+          ? `当前 ${current} 个  →  ${next} 个`
+          : `当前 ${current} 分  →  ${next} 分`;
+        els.confirmChangeBtn.textContent = delta > 0 ? "确认 +1" : "确认 −1";
+        els.reasonInput.placeholder = isGift
+          ? "写下这次额度变化的原因 ♡（可留空）"
+          : "写下这次积分变化的原因 ♡（可留空）";
         els.reasonInput.value = "";
         setLayer(els.changeLayer, true);
-        setTimeout(() => els.reasonInput.focus(), 280);
+        setTimeout(() => els.reasonInput.focus(), 240);
       }
 
       async function confirmChange() {
@@ -3867,6 +4285,7 @@
       }
 
       function openRedeemPrompt({ source = "score" } = {}) {
+        els.redeemLayer.dataset.theme = source === "gift" ? "gift" : "score";
         const score = Number(state.score ?? 0);
         const redeemable = Math.max(0, Math.floor(score / 10));
         const canRedeem = score >= 10;
@@ -5484,7 +5903,6 @@
 
       bindCompactSheetDrag(els.versionInfoLayer);
       bindCompactSheetDrag(els.releaseNotesLayer);
-      bindCompactSheetDrag(els.changeLayer);
 
       // -------------------- Events --------------------
       els.settingsBtn.addEventListener("click", () => {
@@ -5584,9 +6002,8 @@
       els.metricSwitch.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-metric]");
         if (!btn || btn.dataset.metric === state.activeMetric) return;
-        state.activeMetric = btn.dataset.metric;
         vibrate(7);
-        renderPrimaryMetric({ animate: true });
+        switchMetric(btn.dataset.metric);
       });
 
       els.redeemGiftBtn.addEventListener("click", () => {
