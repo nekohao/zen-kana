@@ -47,12 +47,12 @@
        ============================================================ -->
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
-<meta content="积分小本本" name="apple-mobile-web-app-title"/>
+<meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
 <meta content="telephone=no" name="format-detection"/>
 <link href="./apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
 <link href="./icon-512.png" rel="icon" sizes="512x512" type="image/png"/>
 <link href="./manifest.webmanifest" rel="manifest"/>
-<title>积分小本本</title>
+<title>宝宝和哥哥的小世界</title>
 <style>
     :root {
       /* Light theme: only the background palette is borrowed from the supplied reference. */
@@ -5252,11 +5252,11 @@
 <span class="cute-doodle d6">✧</span>
 </div>
 <main class="app">
-<section aria-label="积分小本本首页" class="home">
+<section aria-label="宝宝和哥哥的小世界首页" class="home">
 <header class="topbar">
-<div aria-label="积分小本本" class="app-brand">
+<div aria-label="宝宝和哥哥的小世界" class="app-brand">
 <img alt="" aria-hidden="true" class="app-brand-icon" src="./apple-touch-icon.png"/>
-<div class="app-brand-title">积分小本本</div>
+<div class="app-brand-title">宝宝和哥哥的小世界</div>
 </div>
 <button aria-label="设置" class="icon-button pressable" id="settingsBtn" type="button">
 <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
@@ -6889,13 +6889,51 @@
         if (ok) setLayer(els.wheelProbabilityLayer, true);
       }
 
+      function buildWheelProbabilityBasisPoints(values) {
+        // The UI works in percentages, while the database stores basis points (100% = 10000).
+        // Decimal percentages can sum to 100% in the UI but independently rounding every item
+        // may produce 9999/10001. Use a largest-remainder normalization so the submitted
+        // payload is ALWAYS exactly 10000 without visibly changing the user's proportions.
+        const rows = Object.entries(values).map(([amount, percent]) => {
+          const raw = Math.max(0, Number(percent) || 0) * 100;
+          const base = Math.floor(raw + 1e-9);
+          return { amount: String(amount), base, fraction: raw - base };
+        });
+
+        let remaining = 10000 - rows.reduce((sum, row) => sum + row.base, 0);
+        const byFraction = [...rows].sort((a, b) => b.fraction - a.fraction || Number(a.amount) - Number(b.amount));
+
+        if (remaining > 0) {
+          for (let i = 0; remaining > 0; i++, remaining--) {
+            byFraction[i % byFraction.length].base += 1;
+          }
+        } else if (remaining < 0) {
+          const reverse = [...rows].sort((a, b) => a.fraction - b.fraction || Number(b.amount) - Number(a.amount));
+          for (let i = 0; remaining < 0; i++) {
+            const row = reverse[i % reverse.length];
+            if (row.base > 0) {
+              row.base -= 1;
+              remaining += 1;
+            }
+          }
+        }
+
+        const payload = Object.fromEntries(rows.map(row => [row.amount, row.base]));
+        const total = Object.values(payload).reduce((sum, value) => sum + Number(value || 0), 0);
+        if (total !== 10000) throw new Error(`Normalized probability sum is ${total}, expected 10000`);
+        return payload;
+      }
+
       async function saveWheelProbability() {
         if (!state.isAdmin) return showToast("这个入口只有管理员可以使用");
         if (!updateWheelProbabilityTotal()) return;
         const values = readWheelProbabilityInputs();
-        const payload = {};
-        for (const [amount, percent] of Object.entries(values)) {
-          payload[String(amount)] = Math.round(Number(percent) * 100);
+        let payload;
+        try {
+          payload = buildWheelProbabilityBasisPoints(values);
+        } catch (err) {
+          console.error("buildWheelProbabilityBasisPoints:", err);
+          return showToast("概率格式异常，请重新检查后保存");
         }
 
         setBusy(els.saveWheelProbabilityBtn, true);
@@ -6916,9 +6954,19 @@
         } catch (err) {
           console.error("saveWheelProbability:", err);
           const message = String(err?.message || "");
-          if (/sum|10000|probability|config/i.test(message)) showToast("概率总和必须刚好是 100%");
-          else if (/Admin only/i.test(message)) showToast("只有管理员可以修改概率");
-          else showToast("保存概率失败");
+          const details = String(err?.details || "");
+          const hint = String(err?.hint || "");
+          const code = String(err?.code || "");
+          const diagnostic = `${code} ${message} ${details} ${hint}`;
+          if (/PGRST202|schema cache|Could not find|function .*points_admin_set_wheel_probabilities.*does not exist/i.test(diagnostic)) {
+            showToast("数据库缺少概率保存函数或函数签名不匹配，请运行最新版 SQL");
+          } else if (/sum|10000|probability|config/i.test(diagnostic)) {
+            showToast("数据库拒绝了概率配置，请确认 SQL 为最新版");
+          } else if (/Admin only|permission|not authorized|JWT/i.test(diagnostic)) {
+            showToast("管理员权限校验失败，请重新登录管理员后再试");
+          } else {
+            showToast(`保存概率失败${code ? ` · ${code}` : ""}`);
+          }
         } finally {
           setBusy(els.saveWheelProbabilityBtn, false);
           updateWheelProbabilityTotal();
