@@ -3550,6 +3550,116 @@
       line-height: 1 !important;
     }
 
+  
+    /* ============================================================
+       v1.7.5 — readable trend points + month week dropdown
+       ============================================================ */
+    .trend-card {
+      position: relative;
+      overflow: visible;
+    }
+
+    .trend-month-control {
+      position: relative;
+      min-width: 0;
+      height: 100%;
+    }
+
+    .trend-month-control > .segment {
+      width: 100%;
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      white-space: nowrap;
+    }
+
+    .trend-month-chevron {
+      display: inline-block;
+      margin-top: -2px;
+      font-size: 12px;
+      opacity: .62;
+      transform-origin: 50% 55%;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+
+    .trend-month-control.menu-open .trend-month-chevron {
+      transform: rotate(180deg);
+      opacity: .88;
+    }
+
+    .trend-month-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 40;
+      width: min(184px, 62vw);
+      padding: 6px;
+      border: 1px solid rgba(255,255,255,.56);
+      border-radius: 17px;
+      background: rgba(250,252,255,.88);
+      box-shadow:
+        0 16px 38px rgba(46,65,92,.16),
+        inset 0 1px 0 rgba(255,255,255,.76);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      backdrop-filter: blur(24px) saturate(150%);
+      transform-origin: 82% 0;
+      animation: trendMenuIn .16s ease-out both;
+    }
+
+    @keyframes trendMenuIn {
+      from { opacity: 0; transform: translateY(-3px) scale(.985); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .trend-month-option {
+      width: 100%;
+      min-height: 42px;
+      padding: 7px 10px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--ink);
+      text-align: left;
+      font-size: 13px;
+      font-weight: 680;
+    }
+
+    .trend-month-option small {
+      flex: 0 0 auto;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--tertiary);
+    }
+
+    .trend-month-option.active {
+      background: rgba(10,132,255,.10);
+      color: var(--blue);
+    }
+
+    .trend-month-option.active small {
+      color: currentColor;
+      opacity: .72;
+    }
+
+    .trend-month-option:active {
+      background: rgba(10,132,255,.14);
+    }
+
+    #scoreTrendSection .chart-wrap {
+      height: 202px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .trend-month-menu { animation: none !important; }
+      .trend-month-chevron { transition: none !important; }
+    }
+
   </style>
 </head>
 
@@ -3688,11 +3798,32 @@
 
           <section id="scoreTrendSection" class="section overview-section-anchor" hidden>
             <h2 class="section-title">趋势统计</h2>
-            <div class="card glass">
+            <div class="card glass trend-card">
               <div id="trendSegments" class="segmented" aria-label="趋势范围">
                 <button class="segment pressable active" type="button" data-range="today">今天</button>
                 <button class="segment pressable" type="button" data-range="week">本周</button>
-                <button class="segment pressable" type="button" data-range="month">本月</button>
+                <div class="trend-month-control">
+                  <button id="trendMonthBtn" class="segment pressable" type="button"
+                          aria-haspopup="menu" aria-expanded="false">
+                    <span id="trendMonthLabel">本月</span>
+                    <span class="trend-month-chevron" aria-hidden="true">⌄</span>
+                  </button>
+                  <div id="trendMonthMenu" class="trend-month-menu" role="menu"
+                       aria-label="选择本月周次" hidden>
+                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="1">
+                      <span>本月第一周</span><small>1–7 日</small>
+                    </button>
+                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="2">
+                      <span>本月第二周</span><small>8–14 日</small>
+                    </button>
+                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="3">
+                      <span>本月第三周</span><small>15–21 日</small>
+                    </button>
+                    <button class="trend-month-option pressable" type="button" role="menuitem" data-month-week="4">
+                      <span>本月第四周</span><small>22 日–月底</small>
+                    </button>
+                  </div>
+                </div>
               </div>
               <div class="chart-wrap">
                 <canvas id="trendCanvas"></canvas>
@@ -3909,7 +4040,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.7.4</span>
+              <span class="settings-value">1.7.5</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -3939,7 +4070,17 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.7.4</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.7.5</strong><span>当前版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>趋势图“今天 / 本周 / 本月周视图”的每个有效蓝点上方直接显示对应积分数字。</li>
+              <li>“本月”改为四周下拉：1–7 日、8–14 日、15–21 日、22 日至月底全部归第四周。</li>
+              <li>本周与本月周视图保留每日连续积分点；当前最新点稍大，便于快速定位。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.7.4</strong><span>上一版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
               <li>设置页改为读取当前访客 / 管理员实际内容高度，内容多少就弹多少，超出屏幕时才内部滚动。</li>
@@ -4311,6 +4452,9 @@
         cancelResetBtn: $("#cancelResetBtn"),
 
         trendSegments: $("#trendSegments"),
+        trendMonthBtn: $("#trendMonthBtn"),
+        trendMonthLabel: $("#trendMonthLabel"),
+        trendMonthMenu: $("#trendMonthMenu"),
         trendCanvas: $("#trendCanvas"),
         chartEmpty: $("#chartEmpty"),
         chartCaption: $("#chartCaption"),
@@ -4339,6 +4483,7 @@
         changeTarget: "score",
         changeDelta: null,
         trendRange: "today",
+        trendMonthWeek: Math.min(4, Math.floor((new Date().getDate() - 1) / 7) + 1),
         calendarDate: startOfMonth(new Date()),
         selectedDayKey: null,
         overviewLogs: [],
@@ -5201,6 +5346,56 @@
         return Number(state.score ?? 5);
       }
 
+      function trendMonthWeekName(week) {
+        return ["", "第一周", "第二周", "第三周", "第四周"][Number(week)] || "第一周";
+      }
+
+      function getMonthTrendWindow(date = new Date(), week = state.trendMonthWeek) {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const selectedWeek = Math.min(4, Math.max(1, Number(week) || 1));
+        const lastDay = new Date(year, month + 1, 0).getDate();
+        const startDay = selectedWeek === 1 ? 1
+          : selectedWeek === 2 ? 8
+            : selectedWeek === 3 ? 15
+              : 22;
+        const endDayExclusive = selectedWeek === 1 ? 8
+          : selectedWeek === 2 ? 15
+            : selectedWeek === 3 ? 22
+              : lastDay + 1;
+
+        return {
+          week: selectedWeek,
+          start: new Date(year, month, startDay),
+          end: new Date(year, month, endDayExclusive),
+          startDay,
+          endDay: selectedWeek === 4 ? lastDay : endDayExclusive - 1,
+          label: `本月${trendMonthWeekName(selectedWeek)}`
+        };
+      }
+
+      function syncTrendControls() {
+        const monthActive = state.trendRange === "month";
+        els.trendSegments.querySelectorAll(".segment[data-range]").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.range === state.trendRange);
+        });
+        els.trendMonthBtn.classList.toggle("active", monthActive);
+        els.trendMonthLabel.textContent = monthActive
+          ? trendMonthWeekName(state.trendMonthWeek)
+          : "本月";
+
+        els.trendMonthMenu.querySelectorAll("[data-month-week]").forEach(btn => {
+          btn.classList.toggle("active", Number(btn.dataset.monthWeek) === Number(state.trendMonthWeek));
+        });
+      }
+
+      function setTrendMonthMenu(open) {
+        const shouldOpen = Boolean(open);
+        els.trendMonthMenu.hidden = !shouldOpen;
+        els.trendMonthBtn.setAttribute("aria-expanded", String(shouldOpen));
+        els.trendMonthBtn.closest(".trend-month-control")?.classList.toggle("menu-open", shouldOpen);
+      }
+
       function buildTrendPoints(range) {
         const now = new Date();
         const logs = logsAscending();
@@ -5216,21 +5411,44 @@
           const points = [{ label: "00:00", value: running, date: start }];
           for (const log of todayLogs) {
             running = Number(log.score_after);
-            points.push({ label: formatTime(log.created_at), value: running, date: new Date(log.created_at) });
+            points.push({
+              label: formatTime(log.created_at),
+              value: running,
+              date: new Date(log.created_at)
+            });
           }
 
           const nowLabel = new Intl.DateTimeFormat("zh-CN", {
             hour: "2-digit", minute: "2-digit", hour12: false
           }).format(now);
           if (points.length === 1 || Number(points.at(-1).date) < Number(now)) {
-            points.push({ label: nowLabel, value: Number(state.score ?? running), date: now });
+            points.push({
+              label: nowLabel,
+              value: Number(state.score ?? running),
+              date: now
+            });
           }
           return points;
         }
 
-        const start = range === "week" ? startOfWeekMonday(now) : startOfMonth(now);
-        const totalDays = range === "week" ? 7 : new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-        const weekLabels = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+        let start;
+        let end;
+        let totalDays;
+        let labels;
+
+        if (range === "week") {
+          start = startOfWeekMonday(now);
+          end = addDays(start, 7);
+          totalDays = 7;
+          labels = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+        } else {
+          const window = getMonthTrendWindow(now);
+          start = window.start;
+          end = window.end;
+          totalDays = Math.round((end - start) / 86400000);
+          labels = Array.from({ length: totalDays }, (_, i) => `${addDays(start, i).getDate()}日`);
+        }
+
         let running = scoreAtRangeStart(start, logs);
         const points = [];
 
@@ -5247,34 +5465,49 @@
             for (const log of bucketLogs) running = Number(log.score_after);
           }
 
-          const pointValue = isFuture ? null : running;
           points.push({
-            label: range === "week"
-              ? (pointValue === null ? weekLabels[i] : `${weekLabels[i]} ${pointValue}`)
-              : `${dayStart.getDate()}日`,
-            value: pointValue,
+            label: labels[i],
+            value: isFuture ? null : running,
             date: dayEnd
           });
         }
+
         return points;
       }
 
       function renderTrend() {
+        syncTrendControls();
         const points = buildTrendPoints(state.trendRange);
         drawTrend(points);
 
         const now = new Date();
-        const start = state.trendRange === "today"
-          ? startOfDay(now)
-          : state.trendRange === "week"
-            ? startOfWeekMonday(now)
-            : startOfMonth(now);
+        let start;
+        let end;
+        let rangeLabel;
+
+        if (state.trendRange === "today") {
+          start = startOfDay(now);
+          end = now;
+          rangeLabel = "今天";
+        } else if (state.trendRange === "week") {
+          start = startOfWeekMonday(now);
+          end = now;
+          rangeLabel = "本周";
+        } else {
+          const window = getMonthTrendWindow(now);
+          start = window.start;
+          end = window.end < now ? window.end : now;
+          rangeLabel = window.label;
+        }
+
         const visibleLogs = state.overviewLogs.filter(log => {
           const t = new Date(log.created_at);
-          return t >= start && t <= now;
+          return t >= start && t < end;
         });
-        const rangeLabel = state.trendRange === "today" ? "今天" : state.trendRange === "week" ? "本周" : "本月";
-        els.chartCaption.textContent = visibleLogs.length ? `${rangeLabel} ${visibleLogs.length} 次变更` : `${rangeLabel}暂无变更`;
+
+        els.chartCaption.textContent = visibleLogs.length
+          ? `${rangeLabel} ${visibleLogs.length} 次变更`
+          : `${rangeLabel}暂无变更`;
       }
 
       function drawTrend(points) {
@@ -5310,11 +5543,11 @@
           max += valuePad;
         }
 
-        const pad = { l: 12, r: 12, t: 18, b: 30 };
+        // Extra top room is reserved for the permanent value label above each blue point.
+        const pad = { l: 13, r: 13, t: 38, b: 31 };
         const w = rect.width - pad.l - pad.r;
         const h = rect.height - pad.t - pad.b;
         const styles = getComputedStyle(document.documentElement);
-        const ink = styles.getPropertyValue("--ink").trim();
         const tertiary = styles.getPropertyValue("--tertiary").trim();
         const hairline = styles.getPropertyValue("--hairline").trim();
         const blue = styles.getPropertyValue("--blue").trim();
@@ -5323,10 +5556,15 @@
         ctx.strokeStyle = hairline;
         for (let i = 0; i < 3; i++) {
           const y = pad.t + (h * i / 2);
-          ctx.beginPath(); ctx.moveTo(pad.l, y + .5); ctx.lineTo(rect.width - pad.r, y + .5); ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(pad.l, y + .5);
+          ctx.lineTo(rect.width - pad.r, y + .5);
+          ctx.stroke();
         }
 
-        const xFor = index => points.length === 1 ? pad.l + w / 2 : pad.l + (w * index / (points.length - 1));
+        const xFor = index => points.length === 1
+          ? pad.l + w / 2
+          : pad.l + (w * index / (points.length - 1));
         const yFor = value => pad.t + h - ((value - min) / (max - min)) * h;
 
         if (valid.length >= 2) {
@@ -5336,39 +5574,67 @@
 
           ctx.beginPath();
           valid.forEach(({point,index},i) => {
-            const x=xFor(index), y=yFor(Number(point.value));
-            if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+            const x = xFor(index), y = yFor(Number(point.value));
+            if (i === 0) ctx.moveTo(x,y);
+            else ctx.lineTo(x,y);
           });
-          ctx.lineTo(xFor(valid.at(-1).index), pad.t+h);
-          ctx.lineTo(xFor(valid[0].index), pad.t+h);
-          ctx.closePath(); ctx.fillStyle=gradient; ctx.fill();
+          ctx.lineTo(xFor(valid.at(-1).index), pad.t + h);
+          ctx.lineTo(xFor(valid[0].index), pad.t + h);
+          ctx.closePath();
+          ctx.fillStyle = gradient;
+          ctx.fill();
 
           ctx.beginPath();
           valid.forEach(({point,index},i) => {
-            const x=xFor(index), y=yFor(Number(point.value));
-            if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+            const x = xFor(index), y = yFor(Number(point.value));
+            if (i === 0) ctx.moveTo(x,y);
+            else ctx.lineTo(x,y);
           });
-          ctx.strokeStyle=blue; ctx.lineWidth=2.5; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.stroke();
+          ctx.strokeStyle = blue;
+          ctx.lineWidth = 2.5;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.stroke();
         }
 
-        valid.forEach(({point,index}) => {
-          const x=xFor(index), y=yFor(Number(point.value));
-          ctx.beginPath(); ctx.arc(x,y,3.2,0,Math.PI*2); ctx.fillStyle=blue; ctx.fill();
+        // Blue points. The latest visible point is slightly larger for orientation.
+        valid.forEach(({point,index}, validIndex) => {
+          const x = xFor(index), y = yFor(Number(point.value));
+          const radius = validIndex === valid.length - 1 ? 4.1 : 3.25;
+          ctx.beginPath();
+          ctx.arc(x,y,radius,0,Math.PI*2);
+          ctx.fillStyle = blue;
+          ctx.fill();
         });
 
-        ctx.fillStyle=tertiary;
-        ctx.font='11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
-        ctx.textAlign="center"; ctx.textBaseline="top";
-        const showEvery = points.length > 20 ? 5 : points.length > 10 ? 2 : 1;
+        // Permanent score number above every visible blue point.
+        // Dense "today" data alternates between two small heights, but all labels stay above their point.
+        const dense = valid.length >= 9;
+        const veryDense = valid.length >= 14;
+        ctx.fillStyle = blue;
+        ctx.font = `${veryDense ? 600 : 650} ${veryDense ? 10 : dense ? 10.5 : 11.5}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+
+        valid.forEach(({point,index}, validIndex) => {
+          const x = xFor(index);
+          const y = yFor(Number(point.value));
+          const stagger = dense && validIndex % 2 ? 10 : 0;
+          ctx.fillText(String(point.value), x, Math.max(12, y - 7 - stagger));
+        });
+
+        // X-axis labels: weekly / month-week views show every date.
+        // Only a very busy "today" timeline thins the time labels.
+        ctx.fillStyle = tertiary;
+        ctx.font = '11px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        const showEvery = points.length > 14 ? 3 : points.length > 10 ? 2 : 1;
         points.forEach((point,index) => {
-          if (index % showEvery === 0 || index === points.length - 1) ctx.fillText(point.label, xFor(index), rect.height - 18);
+          if (index % showEvery === 0 || index === points.length - 1) {
+            ctx.fillText(point.label, xFor(index), rect.height - 18);
+          }
         });
-
-        const last=valid.at(-1).point;
-        ctx.fillStyle=ink;
-        ctx.font='600 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
-        ctx.textAlign="right"; ctx.textBaseline="bottom";
-        ctx.fillText(`当前 ${last.value}`, rect.width - pad.r, 14);
       }
 
       // -------------------- Calendar --------------------
@@ -6809,14 +7075,32 @@
       }, true);
 
       els.trendSegments.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-range]");
+        const monthOption = e.target.closest("[data-month-week]");
+        if (monthOption) {
+          state.trendMonthWeek = Number(monthOption.dataset.monthWeek);
+          state.trendRange = "month";
+          setTrendMonthMenu(false);
+          renderTrend();
+          return;
+        }
+
+        if (e.target.closest("#trendMonthBtn")) {
+          setTrendMonthMenu(els.trendMonthMenu.hidden);
+          return;
+        }
+
+        const btn = e.target.closest(".segment[data-range]");
         if (!btn) return;
 
         state.trendRange = btn.dataset.range;
-        els.trendSegments.querySelectorAll(".segment").forEach(x =>
-          x.classList.toggle("active", x === btn)
-        );
+        setTrendMonthMenu(false);
         renderTrend();
+      });
+
+      document.addEventListener("click", (e) => {
+        if (els.trendMonthMenu.hidden) return;
+        if (e.target.closest(".trend-month-control")) return;
+        setTrendMonthMenu(false);
       });
 
       els.prevMonthBtn.addEventListener("click", () => {
@@ -6833,6 +7117,10 @@
 
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
+        if (!els.trendMonthMenu.hidden) {
+          setTrendMonthMenu(false);
+          return;
+        }
         if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
