@@ -3660,6 +3660,283 @@
       .trend-month-chevron { transition: none !important; }
     }
 
+  
+
+    /* ============================================================
+       v1.8.0 — Lucky Wheel mode
+       ============================================================ */
+    .metric-switch {
+      width: min(94vw, 356px) !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+    .metric-switch-thumb {
+      width: calc((100% - 8px) / 3) !important;
+    }
+    .metric-switch.gift-active .metric-switch-thumb { transform: translate3d(100%,0,0) !important; }
+    .metric-switch.wheel-active .metric-switch-thumb {
+      transform: translate3d(200%,0,0) !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,235,199,.46)),
+        rgba(255,250,239,.56) !important;
+      box-shadow: 0 6px 18px rgba(207,158,77,.15), inset 0 1px 0 rgba(255,255,255,.78) !important;
+    }
+    .metric-switch.wheel-active .metric-option.active { color: #a66e27 !important; }
+    .metric-option { gap: 4px !important; padding: 0 4px !important; font-size: 10.8px !important; }
+    .metric-option svg { width: 13px !important; height: 13px !important; }
+
+    .home.wheel-active .reward-message {
+      box-shadow: 0 10px 28px rgba(196,148,72,.09), inset 0 1px 0 rgba(255,255,255,.50) !important;
+    }
+    .home.wheel-active .score-lens {
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.86), transparent 44%),
+        rgba(255,247,224,.62) !important;
+      box-shadow: 0 24px 60px rgba(191,142,61,.16), inset 0 2px 4px rgba(255,255,255,.92), inset 0 -4px 16px rgba(188,138,52,.06) !important;
+    }
+    .home.wheel-active .score-lens::after { opacity: 0 !important; }
+    .home.wheel-active .score { opacity: 0 !important; visibility: hidden !important; }
+
+    .wheel-stage {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .28s ease, visibility 0s linear .28s;
+    }
+    .home.wheel-active .wheel-stage {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+    .wheel-disk {
+      position: relative;
+      width: calc(100% - 18px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        #f9c9dc 0 30%,
+        #ffe2a8 30% 80%,
+        #cfe3fb 80% 92%,
+        #dfd0f5 92% 97%,
+        #f7b9ca 97% 100%
+      );
+      border: 5px solid rgba(255,255,255,.82);
+      box-shadow:
+        0 12px 32px rgba(155,116,58,.18),
+        inset 0 0 0 2px rgba(255,255,255,.38),
+        inset 0 0 28px rgba(255,255,255,.22);
+      transform: rotate(0deg);
+      will-change: transform;
+      overflow: hidden;
+    }
+    .wheel-disk::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.36);
+      background: radial-gradient(circle at 34% 24%, rgba(255,255,255,.28), transparent 42%);
+      pointer-events: none;
+    }
+    .wheel-disk::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: linear-gradient(120deg, rgba(255,255,255,.24), transparent 35% 68%, rgba(255,255,255,.12));
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+    .wheel-prize {
+      position: absolute;
+      z-index: 4;
+      transform: translate(-50%,-50%);
+      color: rgba(98,71,62,.86);
+      font-size: 13px;
+      line-height: 1;
+      font-weight: 820;
+      letter-spacing: -.035em;
+      text-shadow: 0 1px 0 rgba(255,255,255,.72), 0 2px 8px rgba(86,59,43,.08);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .wheel-prize-20 { left: 75.1%; top: 31.8%; }
+    .wheel-prize-30 { left: 40.4%; top: 79.5%; font-size: 15px; }
+    .wheel-prize-60 { left: 26.1%; top: 30.2%; font-size: 11px; }
+    .wheel-prize-80 { left: 41.2%; top: 25.5%; font-size: 9px; }
+    .wheel-prize-100 { left: 46.6%; top: 14.2%; font-size: 8px; }
+    .wheel-hub {
+      position: absolute;
+      z-index: 6;
+      left: 50%; top: 50%;
+      width: 34px; height: 34px;
+      transform: translate(-50%,-50%);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: #b37a2d;
+      background: linear-gradient(145deg, #fffaf0, #f6dca5);
+      border: 3px solid rgba(255,255,255,.78);
+      box-shadow: 0 5px 14px rgba(132,91,34,.18), inset 0 1px 0 rgba(255,255,255,.88);
+      font-size: 13px;
+    }
+    .wheel-pointer {
+      position: absolute;
+      z-index: 12;
+      left: 50%; top: 0;
+      width: 34px; height: 42px;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 5px 8px rgba(135,86,27,.20));
+    }
+    .wheel-pointer-gem {
+      width: 27px; height: 27px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: #aa6d25;
+      font-size: 12px; font-weight: 800;
+      background: linear-gradient(145deg, #fff9ec, #f1c775);
+      border: 2px solid rgba(255,255,255,.88);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.92);
+    }
+    .wheel-pointer-tip {
+      width: 0; height: 0;
+      margin-top: -2px;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 17px solid #d69b43;
+    }
+    .home.wheel-spinning .wheel-pointer { animation: wheelPointerGlow .55s ease-in-out infinite alternate; }
+    @keyframes wheelPointerGlow { from { filter: drop-shadow(0 4px 7px rgba(135,86,27,.17)); } to { filter: drop-shadow(0 6px 12px rgba(226,158,58,.34)); } }
+
+    .metric-action-slot {
+      height: 104px !important;
+      min-height: 104px !important;
+      place-items: center !important;
+    }
+    .metric-action-slot > .score-redeem-button,
+    .metric-action-slot > .use-gift-button,
+    .metric-action-slot > .admin-controls,
+    .metric-action-slot > .wheel-actions { grid-area: 1 / 1; margin: 0 !important; }
+    .score-redeem-button, .use-gift-button, .admin-controls { align-self: center; }
+
+    .wheel-actions {
+      width: min(88vw, 340px);
+      height: 100px;
+      display: grid;
+      grid-template-rows: 54px 39px;
+      gap: 7px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility 0s linear .22s;
+    }
+    .home.wheel-active .wheel-actions {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition-delay: 0s;
+    }
+    .home.wheel-active .score-redeem-button,
+    .home.wheel-active .use-gift-button,
+    .home.wheel-active .admin-controls,
+    .home:not(.wheel-active) .wheel-actions {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    .wheel-action-button {
+      width: 100%; border: 1px solid rgba(255,255,255,.82); border-radius: 18px;
+      color: #8f652e;
+      background: linear-gradient(135deg, rgba(255,255,255,.72), rgba(255,237,201,.48)), rgba(255,248,232,.46);
+      box-shadow: 0 12px 28px rgba(181,130,57,.10), inset 0 1px 0 rgba(255,255,255,.78);
+    }
+    .wheel-spin-button {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 0 18px;
+    }
+    .wheel-action-icon { font-size: 21px; }
+    .wheel-action-copy { display:flex; flex-direction:column; align-items:flex-start; line-height:1.05; }
+    .wheel-action-copy b { font-size: 14px; font-weight: 760; }
+    .wheel-action-copy small { margin-top:4px; font-size:10px; font-weight:600; color:#ae8250; }
+    .wheel-redeem-button {
+      display:flex; align-items:center; justify-content:center; gap:7px; padding:0 13px;
+      border-radius:15px; font-size:12px; font-weight:690;
+      color:#9b6a32;
+      background: linear-gradient(135deg, rgba(255,255,255,.61), rgba(255,239,215,.35)), rgba(255,249,238,.32);
+      box-shadow: 0 7px 18px rgba(181,130,57,.07), inset 0 1px 0 rgba(255,255,255,.66);
+    }
+    .wheel-redeem-button .redeem-button-meta { color:#ad7e46; background:rgba(255,255,255,.38); border-color:rgba(255,255,255,.54); }
+
+    .home.wheel-active .overview-button {
+      background: linear-gradient(135deg, rgba(255,255,255,.64), rgba(255,242,216,.28)), var(--home-control-bg);
+      box-shadow: 0 14px 34px rgba(178,130,63,.10), inset 0 1px 0 rgba(255,255,255,.64);
+    }
+    .home.wheel-active .overview-button::before { color: rgba(198,144,66,.78); }
+
+    #wheelRedeemLayer, #wheelPreviewLayer, #wheelResultLayer, #wheelWithdrawLayer {
+      padding: 0 0 12px; align-items:center; justify-content:center; background:rgba(45,54,70,.075);
+    }
+    #wheelRedeemLayer .alert, #wheelPreviewLayer .alert, #wheelResultLayer .alert, #wheelWithdrawLayer .alert {
+      width:min(calc(100% - 28px), 334px);
+      border-color:rgba(255,255,255,.88);
+      background: linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,239,207,.15) 48%), var(--glass-fill-strong);
+      box-shadow:0 24px 72px rgba(169,116,43,.15), inset 0 1px 0 rgba(255,255,255,.54);
+    }
+    #wheelRedeemLayer .primary-action, #wheelPreviewLayer .primary-action, #wheelResultLayer .primary-action, #wheelWithdrawLayer .primary-action {
+      color:#956326 !important;
+      background:linear-gradient(135deg, rgba(255,251,240,.94), rgba(247,210,143,.62)) !important;
+    }
+    .wheel-result-icon { font-size:34px; line-height:1; margin-bottom:5px; }
+    .wheel-result-prize { margin:8px 0 7px; font-size:42px; line-height:1; font-weight:820; letter-spacing:-.045em; color:#b27325; text-shadow:0 7px 20px rgba(181,118,33,.14); }
+    .wheel-withdraw-field-wrap {
+      height:50px; margin-top:14px; padding:0 15px; display:flex; align-items:center; gap:7px;
+      border:1px solid rgba(255,255,255,.70); border-radius:16px; background:rgba(255,255,255,.29);
+      color:#a66f2c; font-size:21px; font-weight:760;
+    }
+    .wheel-withdraw-field { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--ink); font:700 20px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif; }
+    .wheel-withdraw-field::-webkit-inner-spin-button { display:none; }
+    .wheel-withdraw-all { margin:8px auto 0; border:0; background:transparent; color:#aa7638; font-size:12px; font-weight:680; }
+
+    .overview.wheel-mode .overview-header { background: linear-gradient(180deg, rgba(255,249,236,.42), transparent) !important; }
+    .wheel-assets-card { padding:18px !important; }
+    .wheel-balance-main { text-align:center; display:flex; flex-direction:column; align-items:center; }
+    .wheel-balance-label { color:var(--secondary); font-size:11px; font-weight:650; }
+    .wheel-balance-main strong { margin-top:5px; color:#aa6d25; font-size:42px; line-height:1; font-weight:820; letter-spacing:-.045em; }
+    .wheel-balance-sub { margin-top:8px; color:#a57d4d; font-size:11px; font-weight:650; }
+    .wheel-assets-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:16px; }
+    .wheel-assets-grid > div { padding:11px 10px; border-radius:15px; background:rgba(255,255,255,.28); border:1px solid rgba(255,255,255,.55); display:flex; flex-direction:column; gap:4px; text-align:center; }
+    .wheel-assets-grid span { color:var(--secondary); font-size:10px; }
+    .wheel-assets-grid b { color:var(--ink); font-size:15px; }
+    .wheel-withdraw-button { width:100%; height:43px; margin-top:12px; border:1px solid rgba(255,255,255,.72); border-radius:15px; color:#95662e; font-size:13px; font-weight:720; background:linear-gradient(135deg, rgba(255,255,255,.67), rgba(255,235,196,.39)); box-shadow:inset 0 1px 0 rgba(255,255,255,.68); }
+    .wheel-withdraw-button:disabled { opacity:.42; pointer-events:none; }
+    .wheel-log-row .log-icon { font-size:15px; }
+    .log-icon.wheel-win { background:rgba(244,187,89,.14); color:#ae7429; }
+    .log-icon.wheel-withdraw { background:rgba(92,172,116,.11); color:#3f9360; }
+    .log-icon.wheel-chance { background:rgba(231,154,188,.12); color:#b26083; }
+    .wheel-cash-positive, .wheel-chance-positive { color:#b0782f !important; }
+    .wheel-cash-negative { color:var(--red) !important; }
+
+    .day-movements { flex-wrap:wrap; row-gap:1px; max-width:100%; }
+    .movement.wheel-win-day { color:#ad762f; gap:1px; font-size:8.5px; }
+    .movement.wheel-withdraw-day { color:#8a6e4c; gap:1px; font-size:8.5px; }
+
+    @media (max-width: 380px) {
+      .metric-switch { width:min(96vw, 342px) !important; }
+      .metric-option { font-size:10px !important; }
+      .metric-option svg { width:12px !important; height:12px !important; }
+      .wheel-actions { width:min(90vw, 326px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wheel-pointer { animation:none !important; }
+    }
+
   </style>
 </head>
 
@@ -3720,6 +3997,13 @@
             </svg>
             <span>小礼物额度</span>
           </button>
+          <button class="metric-option" type="button" role="tab" aria-selected="false" data-metric="wheel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/>
+              <path d="M12 3.5v6.5M19.36 7.75l-5.63 3.25M19.36 16.25l-5.63-3.25M12 20.5V14M4.64 16.25l5.63-3.25M4.64 7.75l5.63 3.25"/>
+            </svg>
+            <span>大转盘</span>
+          </button>
         </div>
         <div id="metricEyebrow" class="eyebrow reward-message" aria-live="polite" hidden></div>
 
@@ -3728,6 +4012,21 @@
           <div class="score-lens">
             <div id="metricGhostValue" class="metric-ghost-value" aria-hidden="true"></div>
             <div id="scoreValue" class="score loading" aria-live="polite">—</div>
+
+            <div id="wheelStage" class="wheel-stage" aria-hidden="true">
+              <div class="wheel-pointer" aria-hidden="true">
+                <span class="wheel-pointer-gem">♡</span>
+                <span class="wheel-pointer-tip"></span>
+              </div>
+              <div id="wheelDisk" class="wheel-disk">
+                <span class="wheel-prize wheel-prize-20">¥20</span>
+                <span class="wheel-prize wheel-prize-30">¥30</span>
+                <span class="wheel-prize wheel-prize-60">¥60</span>
+                <span class="wheel-prize wheel-prize-80">¥80</span>
+                <span class="wheel-prize wheel-prize-100">¥100</span>
+                <span class="wheel-hub" aria-hidden="true">✦</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -3747,6 +4046,21 @@
           <div id="adminControls" class="admin-controls hidden" aria-hidden="true">
             <button class="score-button minus pressable" type="button" data-delta="-1">−1</button>
             <button class="score-button plus pressable" type="button" data-delta="1">+1</button>
+          </div>
+
+          <div id="wheelActions" class="wheel-actions" aria-hidden="true">
+            <button id="spinWheelBtn" class="wheel-action-button wheel-spin-button pressable" type="button">
+              <span class="wheel-action-icon" aria-hidden="true">🎠</span>
+              <span class="wheel-action-copy">
+                <b>转动大转盘</b>
+                <small id="spinWheelMeta">当前 0 次正式机会</small>
+              </span>
+            </button>
+            <button id="redeemWheelChanceBtn" class="wheel-action-button wheel-redeem-button pressable" type="button">
+              <span aria-hidden="true">🎁</span>
+              <span>兑换大转盘机会</span>
+              <span class="redeem-button-meta">1 额度 / 次</span>
+            </button>
           </div>
         </div>
       </div>
@@ -3860,6 +4174,30 @@
             <h2 class="section-title">小礼物历史</h2>
             <div class="card glass">
               <ul id="giftRecordList" class="log-list"></ul>
+            </div>
+          </section>
+        </div>
+
+        <div id="wheelOverviewContent" hidden>
+          <section class="section overview-section-anchor wheel-assets-section">
+            <h2 class="section-title">大转盘资产</h2>
+            <div class="card glass wheel-assets-card">
+              <div class="wheel-balance-main">
+                <span class="wheel-balance-label">可提现余额</span>
+                <strong id="wheelOverviewCash">¥0</strong>
+                <span id="wheelOverviewChance" class="wheel-balance-sub">当前 0 次正式机会</span>
+              </div>
+              <div class="wheel-assets-grid">
+                <div><span>累计中奖</span><b id="wheelOverviewWon">¥0</b></div>
+                <div><span>已提现</span><b id="wheelOverviewWithdrawn">¥0</b></div>
+              </div>
+              <button id="withdrawWheelBtn" class="wheel-withdraw-button pressable" type="button">💰 提现</button>
+            </div>
+          </section>
+          <section class="section overview-section-anchor wheel-history-section">
+            <h2 class="section-title">转盘记录</h2>
+            <div class="card glass">
+              <ul id="wheelRecordList" class="log-list"></ul>
             </div>
           </section>
         </div>
@@ -4040,7 +4378,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.7.5</span>
+              <span class="settings-value">1.8.0</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -4070,7 +4408,18 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.7.5</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.8.0</strong><span>当前版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>首页新增第三模式“幸运大转盘”：真实概率扇区、固定指针、惯性减速动画。</li>
+              <li>1 个小礼物额度可兑换 1 次正式转盘机会；正式中奖进入可提现余额并写历史。</li>
+              <li>没有正式机会仍可免费试玩；试玩同样使用后端随机，但不记账、不写中奖历史。</li>
+              <li>总览新增转盘资产、累计中奖、已提现、提现入口和完整转盘记录。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.7.5</strong><span>上一版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
               <li>趋势图“今天 / 本周 / 本月周视图”的每个有效蓝点上方直接显示对应积分数字。</li>
@@ -4324,6 +4673,72 @@
       </div>
     </div>
 
+    <!-- Wheel chance redemption -->
+    <div id="wheelRedeemLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
+      <div class="alert wheel-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelRedeemTitle">
+        <div class="alert-content">
+          <div id="wheelRedeemIcon" class="change-icon" aria-hidden="true">🎠</div>
+          <div id="wheelRedeemTitle" class="alert-title">兑换大转盘机会</div>
+          <div id="wheelRedeemMessage" class="alert-message"></div>
+          <div id="wheelRedeemPreview" class="change-preview"></div>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="wheelRedeemConfirmBtn" class="alert-button primary-action pressable" type="button">兑换一次 🎀</button>
+          <button id="wheelRedeemCancelBtn" class="alert-button pressable" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- No formal chance: preview spin confirmation -->
+    <div id="wheelPreviewLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
+      <div class="alert wheel-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelPreviewTitle">
+        <div class="alert-content">
+          <div class="change-icon" aria-hidden="true">🎠</div>
+          <div id="wheelPreviewTitle" class="alert-title">今天也想转一转嘛 ♡</div>
+          <div id="wheelPreviewMessage" class="alert-message"></div>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="wheelPreviewConfirmBtn" class="alert-button primary-action pressable" type="button">试玩一次 🎠</button>
+          <button id="wheelPreviewCancelBtn" class="alert-button pressable" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wheel result -->
+    <div id="wheelResultLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
+      <div class="alert wheel-result-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelResultTitle">
+        <div class="alert-content">
+          <div id="wheelResultIcon" class="wheel-result-icon" aria-hidden="true">🎉</div>
+          <div id="wheelResultTitle" class="alert-title">转盘结果</div>
+          <div id="wheelResultPrize" class="wheel-result-prize">¥0</div>
+          <div id="wheelResultMessage" class="alert-message"></div>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="wheelResultDoneBtn" class="alert-button primary-action pressable" type="button">开心收下 ✨</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wheel cash withdrawal bookkeeping -->
+    <div id="wheelWithdrawLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
+      <div class="alert wheel-alert" role="alertdialog" aria-modal="true" aria-labelledby="wheelWithdrawTitle">
+        <div class="alert-content">
+          <div class="change-icon" aria-hidden="true">💰</div>
+          <div id="wheelWithdrawTitle" class="alert-title">提现余额</div>
+          <div id="wheelWithdrawMessage" class="alert-message"></div>
+          <div class="wheel-withdraw-field-wrap">
+            <span>¥</span>
+            <input id="wheelWithdrawAmount" class="wheel-withdraw-field" type="number" inputmode="numeric" min="1" step="1" placeholder="输入提现金额" />
+          </div>
+          <button id="wheelWithdrawAllBtn" class="wheel-withdraw-all pressable" type="button">全部提现</button>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="wheelWithdrawConfirmBtn" class="alert-button primary-action pressable" type="button">确认提现</button>
+          <button id="wheelWithdrawCancelBtn" class="alert-button pressable" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Reset / gift settlement alert -->
     <div id="resetLayer" class="modal-layer alert-layer" aria-hidden="true">
       <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle">
@@ -4380,6 +4795,12 @@
         redeemGiftBtn: $("#redeemGiftBtn"),
         useGiftBtn: $("#useGiftBtn"),
         useGiftBtnMeta: $("#useGiftBtnMeta"),
+        wheelStage: $("#wheelStage"),
+        wheelDisk: $("#wheelDisk"),
+        wheelActions: $("#wheelActions"),
+        spinWheelBtn: $("#spinWheelBtn"),
+        spinWheelMeta: $("#spinWheelMeta"),
+        redeemWheelChanceBtn: $("#redeemWheelChanceBtn"),
         adminControls: $("#adminControls"),
         settingsBtn: $("#settingsBtn"),
         overviewBtn: $("#overviewBtn"),
@@ -4393,6 +4814,13 @@
         overviewContentSwitch: $("#overviewContentSwitch"),
         scoreOverviewContent: $("#scoreOverviewContent"),
         giftOverviewContent: $("#giftOverviewContent"),
+        wheelOverviewContent: $("#wheelOverviewContent"),
+        wheelOverviewCash: $("#wheelOverviewCash"),
+        wheelOverviewChance: $("#wheelOverviewChance"),
+        wheelOverviewWon: $("#wheelOverviewWon"),
+        wheelOverviewWithdrawn: $("#wheelOverviewWithdrawn"),
+        wheelRecordList: $("#wheelRecordList"),
+        withdrawWheelBtn: $("#withdrawWheelBtn"),
         scoreTrendSection: $("#scoreTrendSection"),
         scoreCalendarSection: $("#scoreCalendarSection"),
 
@@ -4444,6 +4872,30 @@
         useGiftConfirmBtn: $("#useGiftConfirmBtn"),
         cancelUseGiftBtn: $("#cancelUseGiftBtn"),
 
+        wheelRedeemLayer: $("#wheelRedeemLayer"),
+        wheelRedeemIcon: $("#wheelRedeemIcon"),
+        wheelRedeemTitle: $("#wheelRedeemTitle"),
+        wheelRedeemMessage: $("#wheelRedeemMessage"),
+        wheelRedeemPreview: $("#wheelRedeemPreview"),
+        wheelRedeemConfirmBtn: $("#wheelRedeemConfirmBtn"),
+        wheelRedeemCancelBtn: $("#wheelRedeemCancelBtn"),
+        wheelPreviewLayer: $("#wheelPreviewLayer"),
+        wheelPreviewMessage: $("#wheelPreviewMessage"),
+        wheelPreviewConfirmBtn: $("#wheelPreviewConfirmBtn"),
+        wheelPreviewCancelBtn: $("#wheelPreviewCancelBtn"),
+        wheelResultLayer: $("#wheelResultLayer"),
+        wheelResultIcon: $("#wheelResultIcon"),
+        wheelResultTitle: $("#wheelResultTitle"),
+        wheelResultPrize: $("#wheelResultPrize"),
+        wheelResultMessage: $("#wheelResultMessage"),
+        wheelResultDoneBtn: $("#wheelResultDoneBtn"),
+        wheelWithdrawLayer: $("#wheelWithdrawLayer"),
+        wheelWithdrawMessage: $("#wheelWithdrawMessage"),
+        wheelWithdrawAmount: $("#wheelWithdrawAmount"),
+        wheelWithdrawAllBtn: $("#wheelWithdrawAllBtn"),
+        wheelWithdrawConfirmBtn: $("#wheelWithdrawConfirmBtn"),
+        wheelWithdrawCancelBtn: $("#wheelWithdrawCancelBtn"),
+
         resetLayer: $("#resetLayer"),
         resetTitle: $("#resetTitle"),
         resetMessage: $("#resetMessage"),
@@ -4475,6 +4927,11 @@
       const state = {
         score: null,
         giftBalance: 0,
+        wheelChances: 0,
+        wheelCashBalance: 0,
+        wheelUpdatedAt: null,
+        wheelRotation: 0,
+        wheelSpinning: false,
         updatedAt: null,
         giftUpdatedAt: null,
         session: null,
@@ -4488,6 +4945,7 @@
         selectedDayKey: null,
         overviewLogs: [],
         giftLogs: [],
+        wheelLogs: [],
         overviewLoadedAt: 0,
         refreshInFlight: false,
         lastRefreshAt: null,
@@ -4627,7 +5085,7 @@
       }
 
       function closeAllLayers() {
-        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.useGiftLayer, els.resetLayer]
+        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.useGiftLayer, els.wheelRedeemLayer, els.wheelPreviewLayer, els.wheelResultLayer, els.wheelWithdrawLayer, els.resetLayer]
           .forEach(layer => setLayer(layer, false));
       }
 
@@ -4664,13 +5122,18 @@
       }
 
       function activeMetricValue() {
-        return state.activeMetric === "gift" ? state.giftBalance : state.score;
+        if (state.activeMetric === "gift") return state.giftBalance;
+        if (state.activeMetric === "wheel") return null;
+        return state.score;
       }
 
       function renderMetricSwitch() {
         const gift = state.activeMetric === "gift";
+        const wheel = state.activeMetric === "wheel";
         els.metricSwitch.classList.toggle("gift-active", gift);
+        els.metricSwitch.classList.toggle("wheel-active", wheel);
         els.home?.classList.toggle("gift-active", gift);
+        els.home?.classList.toggle("wheel-active", wheel);
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === state.activeMetric;
           btn.classList.toggle("active", active);
@@ -4682,7 +5145,20 @@
         primary.className = "reward-line-primary";
         secondary.className = "reward-line-secondary";
 
-        if (gift) {
+        if (wheel) {
+          const chances = Math.max(0, Number(state.wheelChances ?? 0));
+          const cash = Math.max(0, Number(state.wheelCashBalance ?? 0));
+          primary.textContent = chances > 0
+            ? `₊˚🎠 幸运大转盘准备好啦 ♡ 还有 ${chances} 次正式机会`
+            : "₊˚🎠 幸运大转盘在等宝宝来转一转 ♡";
+          secondary.textContent = chances > 0
+            ? `当前可提现余额 ¥${cash} · 好运正在加载中 ✨`
+            : `暂时没有正式机会 · 也可以先试玩哦 ♡ · 可提现 ¥${cash}`;
+          els.spinWheelMeta.textContent = chances > 0
+            ? `当前 ${chances} 次正式机会`
+            : "没有机会也可以试玩";
+          els.wheelActions.setAttribute("aria-hidden", "false");
+        } else if (gift) {
           const balance = Math.max(0, Number(state.giftBalance ?? 0));
           els.useGiftBtnMeta.textContent = `剩余 ${balance} 次`;
           els.useGiftBtn.setAttribute("aria-label", `使用小礼物额度，当前剩余 ${balance} 次`);
@@ -4707,11 +5183,15 @@
       }
 
       function renderPrimaryMetric({ animate = false } = {}) {
+        renderMetricSwitch();
+        if (state.activeMetric === "wheel") {
+          els.score.classList.remove("loading");
+          return;
+        }
         const value = activeMetricValue();
         if (typeof value !== "number") return;
         els.score.textContent = value;
         els.score.classList.remove("loading");
-        renderMetricSwitch();
         if (animate) {
           els.score.classList.remove("metric-changing", "score-pop");
           void els.score.offsetWidth;
@@ -4725,7 +5205,9 @@
 
       function previewMetricSwitch(nextMetric) {
         const gift = nextMetric === "gift";
+        const wheel = nextMetric === "wheel";
         els.metricSwitch.classList.toggle("gift-active", gift);
+        els.metricSwitch.classList.toggle("wheel-active", wheel);
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === nextMetric;
           btn.classList.toggle("active", active);
@@ -4734,7 +5216,11 @@
       }
 
       function switchMetric(nextMetric) {
-        if (!["score", "gift"].includes(nextMetric) || nextMetric === state.activeMetric) return;
+        if (!["score", "gift", "wheel"].includes(nextMetric) || nextMetric === state.activeMetric) return;
+        if (state.wheelSpinning) {
+          showToast("🎠 转盘还在转呀，等它停稳一下 ♡");
+          return;
+        }
 
         const token = ++metricSwitchToken;
         clearTimeout(metricSwitchTimer);
@@ -4746,8 +5232,6 @@
           "metric-fading-in", "metric-fading-out"
         );
 
-        // Let the selector respond immediately, while the actual page content
-        // quietly fades away in place. No translate / scale / blur layer.
         previewMetricSwitch(nextMetric);
         void home?.offsetWidth;
         home?.classList.add("metric-fading-out");
@@ -4757,6 +5241,7 @@
 
           state.activeMetric = nextMetric;
           renderPrimaryMetric({ animate: false });
+          renderOverviewContentMode();
 
           home?.classList.remove("metric-fading-out");
           void home?.offsetWidth;
@@ -4792,17 +5277,20 @@
 
       function renderOverviewContentMode() {
         const gift = state.activeMetric === "gift";
+        const wheel = state.activeMetric === "wheel";
         els.overview.classList.toggle("gift-mode", gift);
-        els.scoreOverviewContent.hidden = gift;
+        els.overview.classList.toggle("wheel-mode", wheel);
+        els.scoreOverviewContent.hidden = gift || wheel;
         els.giftOverviewContent.hidden = !gift;
-        els.overviewTitle.textContent = gift ? "小礼物记录" : "总览";
-        els.overviewSubtitle.textContent = gift ? "查看每一次额度变化" : "查看趋势与日历";
+        els.wheelOverviewContent.hidden = !wheel;
+        els.overviewTitle.textContent = wheel ? "幸运大转盘" : gift ? "小礼物记录" : "总览";
+        els.overviewSubtitle.textContent = wheel
+          ? "查看奖金、机会与每一次幸运记录"
+          : gift ? "查看每一次额度变化" : "查看趋势与日历";
 
-        if (gift) {
-          renderGiftOverview();
-        } else {
-          renderOverviewSectionMode();
-        }
+        if (wheel) renderWheelOverview();
+        else if (gift) renderGiftOverview();
+        else renderOverviewSectionMode();
       }
 
       function markRefreshed() {
@@ -4823,10 +5311,15 @@
         state.refreshInFlight = true;
 
         try {
-          const { data, error } = await db.rpc("points_get_app_state");
-          if (error) throw error;
+          const [appRes, wheelRes] = await Promise.all([
+            db.rpc("points_get_app_state"),
+            db.rpc("points_get_wheel_state")
+          ]);
+          if (appRes.error) throw appRes.error;
+          if (wheelRes.error) throw wheelRes.error;
 
-          const row = Array.isArray(data) ? data[0] : data;
+          const row = Array.isArray(appRes.data) ? appRes.data[0] : appRes.data;
+          const wheelRow = Array.isArray(wheelRes.data) ? wheelRes.data[0] : wheelRes.data;
           if (!row || typeof row.score !== "number" || typeof row.gift_balance !== "number") {
             throw new Error("未读取到完整数据");
           }
@@ -4835,6 +5328,9 @@
           state.giftBalance = row.gift_balance;
           state.updatedAt = row.score_updated_at;
           state.giftUpdatedAt = row.gift_updated_at;
+          state.wheelChances = Number(wheelRow?.spin_chances ?? 0);
+          state.wheelCashBalance = Number(wheelRow?.cash_balance ?? 0);
+          state.wheelUpdatedAt = wheelRow?.updated_at ?? null;
           renderPrimaryMetric();
           markRefreshed();
         } catch (err) {
@@ -5211,6 +5707,249 @@
         }
       }
 
+      // -------------------- Lucky wheel --------------------
+      function isGiftWheelRedeemAction(action) {
+        return ["wheel_redeem", "redeem_wheel", "wheel_chance_redeem"].includes(String(action || ""));
+      }
+
+      function openWheelRedeemPrompt() {
+        const gifts = Math.max(0, Number(state.giftBalance ?? 0));
+        const chances = Math.max(0, Number(state.wheelChances ?? 0));
+        els.wheelRedeemLayer.dataset.theme = "wheel";
+
+        if (gifts <= 0) {
+          els.wheelRedeemIcon.textContent = "🌷";
+          els.wheelRedeemTitle.textContent = "还没有可兑换的额度哦";
+          els.wheelRedeemMessage.textContent = "₊˚🎀 宝宝目前还没有小礼物额度 ♡ 先去攒一个小礼物额度，再来换一次幸运机会吧！🎁✨";
+          els.wheelRedeemPreview.textContent = "1 个小礼物额度 = 1 次正式大转盘机会";
+          els.wheelRedeemConfirmBtn.hidden = true;
+          els.wheelRedeemCancelBtn.textContent = "知道啦 ♡";
+        } else {
+          els.wheelRedeemIcon.textContent = "🎠";
+          els.wheelRedeemTitle.textContent = "兑换大转盘机会";
+          els.wheelRedeemMessage.textContent = `₊˚🎁 宝宝现在有 ${gifts} 次小礼物额度 ♡ 兑换一次幸运机会会消耗 1 次额度，确定要兑换吗？✨`;
+          els.wheelRedeemPreview.textContent = `小礼物 ${gifts} → ${gifts - 1}  ·  转盘机会 ${chances} → ${chances + 1}`;
+          els.wheelRedeemConfirmBtn.hidden = false;
+          els.wheelRedeemConfirmBtn.textContent = "兑换一次 🎀";
+          els.wheelRedeemCancelBtn.textContent = "取消";
+        }
+        setLayer(els.wheelRedeemLayer, true);
+      }
+
+      async function performWheelChanceRedemption() {
+        if (state.giftBalance <= 0) return openWheelRedeemPrompt();
+        setBusy(els.wheelRedeemConfirmBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_redeem_wheel_chance");
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          state.giftBalance = Number(row?.gift_balance ?? state.giftBalance - 1);
+          state.wheelChances = Number(row?.spin_chances ?? state.wheelChances + 1);
+          state.wheelCashBalance = Number(row?.cash_balance ?? state.wheelCashBalance);
+          state.giftUpdatedAt = row?.gift_updated_at ?? state.giftUpdatedAt;
+          state.wheelUpdatedAt = row?.wheel_updated_at ?? state.wheelUpdatedAt;
+          state.overviewLoadedAt = 0;
+          renderPrimaryMetric({ animate: true });
+          setLayer(els.wheelRedeemLayer, false);
+          vibrate(16);
+          showToast("🎠 幸运机会 +1 啦 ♡");
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
+        } catch (err) {
+          console.error("performWheelChanceRedemption:", err);
+          const message = String(err?.message || "");
+          if (/No gift balance/i.test(message)) {
+            await loadAppState({ silent: true });
+            openWheelRedeemPrompt();
+          } else if (/points_redeem_wheel_chance|PGRST202|schema cache|Could not find/i.test(message)) {
+            showToast("请先运行 v1.8.0 大转盘 SQL ♡");
+          } else {
+            showToast("兑换转盘机会失败");
+          }
+        } finally {
+          setBusy(els.wheelRedeemConfirmBtn, false);
+        }
+      }
+
+      function openWheelPreviewPrompt() {
+        els.wheelPreviewMessage.textContent = "宝宝现在还没有正式的大转盘机会哦～不过可以先偷偷试玩一次 ✨ 试玩结果只负责开心，不会加入可提现余额，也不会保存中奖记录哦 ♡";
+        setLayer(els.wheelPreviewLayer, true);
+      }
+
+      function wheelAngleForRoll(roll) {
+        const safeRoll = Math.min(9999, Math.max(0, Number(roll) || 0));
+        return ((safeRoll + .5) / 10000) * 360;
+      }
+
+      async function animateWheelToRoll(roll) {
+        if (state.wheelSpinning) return;
+        state.wheelSpinning = true;
+        els.home?.classList.add("wheel-spinning");
+        setBusy(els.spinWheelBtn, true);
+        setBusy(els.redeemWheelChanceBtn, true);
+
+        const angle = wheelAngleForRoll(roll);
+        const current = Number(state.wheelRotation || 0);
+        const currentMod = ((current % 360) + 360) % 360;
+        const desiredMod = ((360 - angle) % 360 + 360) % 360;
+        const deltaToTarget = (desiredMod - currentMod + 360) % 360;
+        const turns = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ? 2 : 7;
+        const target = current + turns * 360 + deltaToTarget;
+        const duration = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ? 900 : 4700;
+
+        try {
+          const animation = els.wheelDisk.animate([
+            { transform: `rotate(${current}deg)`, offset: 0 },
+            { transform: `rotate(${current + (target-current)*.18}deg)`, offset: .18 },
+            { transform: `rotate(${current + (target-current)*.72}deg)`, offset: .58 },
+            { transform: `rotate(${target}deg)`, offset: 1 }
+          ], {
+            duration,
+            easing: "cubic-bezier(.12,.66,.12,1)",
+            fill: "forwards"
+          });
+          await animation.finished.catch(() => {});
+          els.wheelDisk.style.transform = `rotate(${target}deg)`;
+          animation.cancel();
+          state.wheelRotation = target;
+          vibrate([18, 35, 22]);
+        } finally {
+          state.wheelSpinning = false;
+          els.home?.classList.remove("wheel-spinning");
+          setBusy(els.spinWheelBtn, false);
+          setBusy(els.redeemWheelChanceBtn, false);
+        }
+      }
+
+      function showWheelResult({ prize, preview, cashBefore = 0, cashAfter = 0 }) {
+        const amount = Number(prize || 0);
+        els.wheelResultPrize.textContent = `¥${amount}`;
+        if (preview) {
+          els.wheelResultIcon.textContent = amount >= 80 ? "✨" : "🎀";
+          els.wheelResultTitle.textContent = `试玩转到了 ¥${amount} ♡`;
+          els.wheelResultMessage.textContent = "这次是快乐试玩，所以不会计入可提现余额，也不会留下中奖记录～下次用正式机会把好运带回家吧 ✨";
+          els.wheelResultDoneBtn.textContent = "好耶，记住好运 ♡";
+        } else {
+          els.wheelResultIcon.textContent = amount >= 80 ? "🎉" : "💛";
+          els.wheelResultTitle.textContent = "恭喜宝宝抽中啦 ♡";
+          els.wheelResultMessage.textContent = `可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨ 这次好运已经正式存进小金库啦！`;
+          els.wheelResultDoneBtn.textContent = "开心收下 ✨";
+        }
+        setLayer(els.wheelResultLayer, true);
+      }
+
+      async function performFormalWheelSpin() {
+        if (state.wheelSpinning) return;
+        if (state.wheelChances <= 0) return openWheelPreviewPrompt();
+        const cashBefore = Number(state.wheelCashBalance || 0);
+        try {
+          const { data, error } = await db.rpc("points_spin_wheel");
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          const prize = Number(row?.prize_amount || 0);
+          const roll = Number(row?.roll);
+          state.wheelChances = Number(row?.spin_chances ?? Math.max(0, state.wheelChances - 1));
+          state.wheelCashBalance = Number(row?.cash_balance ?? cashBefore + prize);
+          state.wheelUpdatedAt = row?.wheel_updated_at ?? new Date().toISOString();
+          state.overviewLoadedAt = 0;
+          renderPrimaryMetric();
+          await animateWheelToRoll(roll);
+          renderPrimaryMetric();
+          showWheelResult({ prize, preview: false, cashBefore, cashAfter: state.wheelCashBalance });
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
+        } catch (err) {
+          console.error("performFormalWheelSpin:", err);
+          const message = String(err?.message || "");
+          if (/No wheel chance/i.test(message)) {
+            await loadAppState({ silent: true });
+            renderPrimaryMetric();
+            openWheelPreviewPrompt();
+          } else if (/points_spin_wheel|PGRST202|schema cache|Could not find/i.test(message)) {
+            showToast("请先运行 v1.8.0 大转盘 SQL ♡");
+          } else {
+            showToast("转盘暂时没有转起来，再试一次吧");
+          }
+        }
+      }
+
+      async function performPreviewWheelSpin() {
+        if (state.wheelSpinning) return;
+        setBusy(els.wheelPreviewConfirmBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_preview_wheel");
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          const prize = Number(row?.prize_amount || 0);
+          const roll = Number(row?.roll);
+          setLayer(els.wheelPreviewLayer, false);
+          await animateWheelToRoll(roll);
+          showWheelResult({ prize, preview: true });
+        } catch (err) {
+          console.error("performPreviewWheelSpin:", err);
+          const message = String(err?.message || "");
+          showToast(/points_preview_wheel|PGRST202|schema cache|Could not find/i.test(message)
+            ? "请先运行 v1.8.0 大转盘 SQL ♡"
+            : "试玩转盘暂时没有转起来");
+        } finally {
+          setBusy(els.wheelPreviewConfirmBtn, false);
+        }
+      }
+
+      function openWheelWithdrawPrompt() {
+        const cash = Math.max(0, Number(state.wheelCashBalance ?? 0));
+        if (cash <= 0) {
+          showToast("💰 目前还没有可提现余额哦 ♡");
+          return;
+        }
+        els.wheelWithdrawMessage.textContent = `当前可提现余额 ¥${cash} ♡ 输入本次要提现的金额。`;
+        els.wheelWithdrawAmount.value = "";
+        els.wheelWithdrawAmount.max = String(cash);
+        setLayer(els.wheelWithdrawLayer, true);
+        setTimeout(() => els.wheelWithdrawAmount.focus(), 220);
+      }
+
+      async function performWheelWithdraw() {
+        const amount = Number(els.wheelWithdrawAmount.value);
+        const cashBefore = Math.max(0, Number(state.wheelCashBalance ?? 0));
+        if (!Number.isInteger(amount) || amount <= 0) {
+          showToast("请输入正确的提现金额");
+          return;
+        }
+        if (amount > cashBefore) {
+          showToast(`最多可以提现 ¥${cashBefore}`);
+          return;
+        }
+        setBusy(els.wheelWithdrawConfirmBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_withdraw_wheel", { p_amount: amount });
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          state.wheelChances = Number(row?.spin_chances ?? state.wheelChances);
+          state.wheelCashBalance = Number(row?.cash_balance ?? cashBefore - amount);
+          state.wheelUpdatedAt = row?.wheel_updated_at ?? new Date().toISOString();
+          state.overviewLoadedAt = 0;
+          setLayer(els.wheelWithdrawLayer, false);
+          renderPrimaryMetric();
+          renderWheelOverview();
+          vibrate(18);
+          showToast(`💰 已记录提现 ¥${amount}`);
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
+        } catch (err) {
+          console.error("performWheelWithdraw:", err);
+          const message = String(err?.message || "");
+          if (/exceeds cash balance/i.test(message)) {
+            await loadAppState({ silent: true });
+            renderPrimaryMetric();
+            showToast("余额刚刚发生变化，请重新输入");
+          } else if (/points_withdraw_wheel|PGRST202|schema cache|Could not find/i.test(message)) {
+            showToast("请先运行 v1.8.0 大转盘 SQL ♡");
+          } else {
+            showToast("提现记录失败");
+          }
+        } finally {
+          setBusy(els.wheelWithdrawConfirmBtn, false);
+        }
+      }
+
       function openResetSettlementPrompt() {
         els.resetTitle.textContent = "重置积分";
         const projected = state.score >= 10 ? Math.floor(state.score / 10) : 0;
@@ -5296,15 +6035,18 @@
         }
 
         try {
-          const [scoreRes, giftRes] = await Promise.all([
+          const [scoreRes, giftRes, wheelRes] = await Promise.all([
             db.rpc("points_get_logs", { p_from: null, p_to: null, p_limit: 10000 }),
-            db.rpc("points_get_gift_logs", { p_from: null, p_to: null, p_limit: 10000 })
+            db.rpc("points_get_gift_logs", { p_from: null, p_to: null, p_limit: 10000 }),
+            db.rpc("points_get_wheel_logs", { p_from: null, p_to: null, p_limit: 10000 })
           ]);
           if (scoreRes.error) throw scoreRes.error;
           if (giftRes.error) throw giftRes.error;
+          if (wheelRes.error) throw wheelRes.error;
 
           state.overviewLogs = Array.isArray(scoreRes.data) ? scoreRes.data : [];
           state.giftLogs = Array.isArray(giftRes.data) ? giftRes.data : [];
+          state.wheelLogs = Array.isArray(wheelRes.data) ? wheelRes.data : [];
           state.overviewLoadedAt = Date.now();
           markRefreshed();
           renderOverview();
@@ -5332,6 +6074,7 @@
         renderTrend();
         renderCalendar();
         renderGiftOverview();
+        renderWheelOverview();
         renderOverviewContentMode();
       }
 
@@ -5659,7 +6402,7 @@
         for (const log of monthLogs) {
           const k = dateKey(new Date(log.created_at));
           const delta = Number(log.delta) || 0;
-          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0 };
+          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
           if (delta > 0) movement.up += delta;
           if (delta < 0) movement.down += Math.abs(delta);
           movementByDay.set(k, movement);
@@ -5672,9 +6415,19 @@
           const t = new Date(log.created_at);
           if (t < first || t >= next) continue;
           const k = dateKey(t);
-          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0 };
+          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
           const delta = Number(log.delta) || 0;
           if (delta > 0) movement.giftUp += delta;
+          movementByDay.set(k, movement);
+        }
+
+        for (const log of state.wheelLogs) {
+          const t = new Date(log.created_at);
+          if (t < first || t >= next) continue;
+          const k = dateKey(t);
+          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
+          if (String(log.action) === "spin_win") movement.wheelWin += Math.max(0, Number(log.prize_amount ?? 0));
+          if (String(log.action) === "withdraw") movement.wheelWithdraw += Math.abs(Math.min(0, Number(log.cash_delta ?? 0)));
           movementByDay.set(k, movement);
         }
 
@@ -5701,13 +6454,13 @@
         for (let day = 1; day <= daysInMonth; day++) {
           const d = new Date(month.getFullYear(), month.getMonth(), day);
           const key = dateKey(d);
-          const movement = movementByDay.get(key) || { up: 0, down: 0, giftUp: 0 };
+          const movement = movementByDay.get(key) || { up: 0, down: 0, giftUp: 0, wheelWin: 0, wheelWithdraw: 0 };
 
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "day pressable";
           btn.dataset.dateKey = key;
-          btn.setAttribute("aria-label", `${month.getMonth()+1}月${day}日，加分 ${movement.up}，扣分 ${movement.down}，兑换小礼物 ${movement.giftUp}`);
+          btn.setAttribute("aria-label", `${month.getMonth()+1}月${day}日，加分 ${movement.up}，扣分 ${movement.down}，兑换小礼物 ${movement.giftUp}，转盘中奖 ${movement.wheelWin} 元，提现 ${movement.wheelWithdraw} 元`);
 
           if (sameDay(d, today)) btn.classList.add("today");
           if (state.selectedDayKey === key) btn.classList.add("selected");
@@ -5721,10 +6474,16 @@
           const giftHTML = movement.giftUp > 0
             ? `<span class="movement gift"><span class="movement-gift-emoji">🎁</span>${arrowUp}<b>${movement.giftUp}</b></span>`
             : "";
+          const wheelHTML = movement.wheelWin > 0
+            ? `<span class="movement wheel-win-day">🎠<b>+¥${movement.wheelWin}</b></span>`
+            : "";
+          const withdrawHTML = movement.wheelWithdraw > 0
+            ? `<span class="movement wheel-withdraw-day">💰<b>−¥${movement.wheelWithdraw}</b></span>`
+            : "";
 
           btn.innerHTML = `
             <span class="day-number">${day}</span>
-            <span class="day-movements">${upHTML}${downHTML}${giftHTML}</span>
+            <span class="day-movements">${upHTML}${downHTML}${giftHTML}${wheelHTML}${withdrawHTML}</span>
           `;
 
           btn.addEventListener("click", () => selectCalendarDay(d));
@@ -5760,20 +6519,28 @@
         const start = startOfDay(selected);
         const end = addDays(start, 1);
 
-        const logs = logsAscending().filter(l => {
+        const scoreDayLogs = logsAscending().filter(l => {
           const t = new Date(l.created_at);
           return t >= start && t < end;
         });
+        const wheelDayLogs = state.wheelLogs.filter(l => {
+          const t = new Date(l.created_at);
+          return t >= start && t < end;
+        });
+        const timeline = [
+          ...scoreDayLogs.map(log => ({ created_at: log.created_at, html: logRowHTML(log, false) })),
+          ...wheelDayLogs.map(log => ({ created_at: log.created_at, html: wheelLogRowHTML(log) }))
+        ].sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
 
         els.dayDetail.classList.remove("hidden");
         els.dayDetailTitle.textContent = formatDayTitle(selected);
 
-        if (!logs.length) {
-          els.dayDetailList.innerHTML = `<li class="empty-state">当天没有积分变更</li>`;
+        if (!timeline.length) {
+          els.dayDetailList.innerHTML = `<li class="empty-state">当天还没有积分或转盘记录</li>`;
           return;
         }
 
-        els.dayDetailList.innerHTML = logs.map(log => logRowHTML(log, false)).join("");
+        els.dayDetailList.innerHTML = timeline.map(item => item.html).join("");
       }
 
       // -------------------- Log row helpers --------------------
@@ -5822,14 +6589,17 @@
         const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
         const isRedeem = isGiftRedemptionAction(log.action);
         const isUse = isGiftUseAction(log.action);
-        const reason = String(log.reason ?? "").trim() || (isRedeem ? "积分兑换小礼物额度" : isUse ? "使用小礼物额度" : "未填写原因");
+        const isWheelRedeem = isGiftWheelRedeemAction(log.action);
+        const reason = String(log.reason ?? "").trim() || (isRedeem ? "积分兑换小礼物额度" : isUse ? "使用小礼物额度" : isWheelRedeem ? "兑换大转盘机会" : "未填写原因");
         const before = Number(log.balance_before ?? 0);
         const after = Number(log.balance_after ?? before + delta);
         const actionLabel = isRedeem
           ? "积分兑换 · 10 分换 1 个额度"
           : isUse
             ? "使用小礼物 · 使用 1 个额度"
-            : log.action === "settlement_add"
+            : isWheelRedeem
+              ? "兑换转盘机会 · 1 个额度换 1 次机会"
+              : log.action === "settlement_add"
             ? "积分重置自动结算"
             : log.action === "settlement_clear"
               ? "自动结算 · 额度清空"
@@ -5858,10 +6628,83 @@
           : `<li class="empty-state">暂无小礼物额度记录</li>`;
       }
 
+      function wheelLogsDescending() {
+        return [...state.wheelLogs].sort((a,b) => {
+          const t = new Date(b.created_at) - new Date(a.created_at);
+          return t || Number(b.id) - Number(a.id);
+        });
+      }
+
+      function wheelLogRowHTML(log) {
+        const action = String(log.action || "");
+        const chanceBefore = Number(log.chance_before ?? 0);
+        const chanceAfter = Number(log.chance_after ?? chanceBefore);
+        const cashBefore = Number(log.cash_before ?? 0);
+        const cashAfter = Number(log.cash_after ?? cashBefore);
+        const prize = Number(log.prize_amount ?? 0);
+        const cashDelta = Number(log.cash_delta ?? 0);
+
+        if (action === "spin_win") {
+          return `
+            <li class="log-row wheel-log-row">
+              <div class="log-icon wheel-win">🎠</div>
+              <div class="log-copy">
+                <div class="log-reason">转动大转盘 · 抽中 ¥${escapeHTML(prize)}</div>
+                <span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter} · 余额 ¥${cashBefore} → ¥${cashAfter}</span>
+              </div>
+              <div class="log-delta wheel-cash-positive">+¥${escapeHTML(prize)}</div>
+            </li>`;
+        }
+
+        if (action === "withdraw") {
+          const amount = Math.abs(cashDelta);
+          return `
+            <li class="log-row wheel-log-row">
+              <div class="log-icon wheel-withdraw">💰</div>
+              <div class="log-copy">
+                <div class="log-reason">提现</div>
+                <span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 可提现 ¥${cashBefore} → ¥${cashAfter}</span>
+              </div>
+              <div class="log-delta wheel-cash-negative">−¥${escapeHTML(amount)}</div>
+            </li>`;
+        }
+
+        return `
+          <li class="log-row wheel-log-row">
+            <div class="log-icon wheel-chance">🎁</div>
+            <div class="log-copy">
+              <div class="log-reason">兑换大转盘机会</div>
+              <span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 小礼物 ${Number(log.gift_before ?? 0)} → ${Number(log.gift_after ?? 0)} · 机会 ${chanceBefore} → ${chanceAfter}</span>
+            </div>
+            <div class="log-delta wheel-chance-positive">+1</div>
+          </li>`;
+      }
+
+      function renderWheelOverview() {
+        if (!els.wheelOverviewContent) return;
+        const logs = wheelLogsDescending();
+        const won = logs
+          .filter(log => String(log.action) === "spin_win")
+          .reduce((sum, log) => sum + Math.max(0, Number(log.prize_amount ?? 0)), 0);
+        const withdrawn = logs
+          .filter(log => String(log.action) === "withdraw")
+          .reduce((sum, log) => sum + Math.abs(Math.min(0, Number(log.cash_delta ?? 0))), 0);
+
+        els.wheelOverviewCash.textContent = `¥${Math.max(0, Number(state.wheelCashBalance ?? 0))}`;
+        els.wheelOverviewChance.textContent = `当前 ${Math.max(0, Number(state.wheelChances ?? 0))} 次正式机会`;
+        els.wheelOverviewWon.textContent = `¥${won}`;
+        els.wheelOverviewWithdrawn.textContent = `¥${withdrawn}`;
+        els.withdrawWheelBtn.disabled = Number(state.wheelCashBalance ?? 0) <= 0;
+        els.wheelRecordList.innerHTML = logs.length
+          ? logs.map(wheelLogRowHTML).join("")
+          : `<li class="empty-state">还没有正式转盘记录哦 ♡<br><small>试玩结果不会出现在这里</small></li>`;
+      }
+
       // -------------------- Overview sheet --------------------
       const SCORE_OVERVIEW_PEEK_FALLBACK = 300;
       const SCORE_OVERVIEW_PEEK_BOTTOM_GAP = 12;
       const GIFT_OVERVIEW_PEEK_HEIGHT = 350;
+      const WHEEL_OVERVIEW_PEEK_HEIGHT = 455;
       let overviewDrag = null;
 
       function scoreOverviewPeekHeight() {
@@ -5872,7 +6715,9 @@
       }
 
       function currentOverviewPeekHeight() {
-        const desired = state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : scoreOverviewPeekHeight();
+        const desired = state.activeMetric === "wheel"
+          ? WHEEL_OVERVIEW_PEEK_HEIGHT
+          : state.activeMetric === "gift" ? GIFT_OVERVIEW_PEEK_HEIGHT : scoreOverviewPeekHeight();
         const actual = Math.ceil(els.overviewShell.scrollHeight || desired);
         return Math.max(0, Math.min(desired, actual));
       }
@@ -6965,10 +7810,52 @@
         openUseGiftPrompt();
       });
 
+      els.redeemWheelChanceBtn.addEventListener("click", () => {
+        vibrate(8);
+        openWheelRedeemPrompt();
+      });
+
+      els.spinWheelBtn.addEventListener("click", () => {
+        vibrate(8);
+        if (state.wheelChances > 0) performFormalWheelSpin();
+        else openWheelPreviewPrompt();
+      });
+
+      els.wheelRedeemLayer.addEventListener("click", (e) => {
+        if (e.target === els.wheelRedeemLayer) setLayer(els.wheelRedeemLayer, false);
+      });
+      els.wheelRedeemCancelBtn.addEventListener("click", () => setLayer(els.wheelRedeemLayer, false));
+      els.wheelRedeemConfirmBtn.addEventListener("click", performWheelChanceRedemption);
+
+      els.wheelPreviewLayer.addEventListener("click", (e) => {
+        if (e.target === els.wheelPreviewLayer) setLayer(els.wheelPreviewLayer, false);
+      });
+      els.wheelPreviewCancelBtn.addEventListener("click", () => setLayer(els.wheelPreviewLayer, false));
+      els.wheelPreviewConfirmBtn.addEventListener("click", performPreviewWheelSpin);
+
+      els.wheelResultLayer.addEventListener("click", (e) => {
+        if (e.target === els.wheelResultLayer) setLayer(els.wheelResultLayer, false);
+      });
+      els.wheelResultDoneBtn.addEventListener("click", () => setLayer(els.wheelResultLayer, false));
+
+      els.withdrawWheelBtn.addEventListener("click", openWheelWithdrawPrompt);
+      els.wheelWithdrawLayer.addEventListener("click", (e) => {
+        if (e.target === els.wheelWithdrawLayer) setLayer(els.wheelWithdrawLayer, false);
+      });
+      els.wheelWithdrawCancelBtn.addEventListener("click", () => setLayer(els.wheelWithdrawLayer, false));
+      els.wheelWithdrawAllBtn.addEventListener("click", () => {
+        els.wheelWithdrawAmount.value = String(Math.max(0, Number(state.wheelCashBalance ?? 0)));
+      });
+      els.wheelWithdrawConfirmBtn.addEventListener("click", performWheelWithdraw);
+      els.wheelWithdrawAmount.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") performWheelWithdraw();
+      });
+
       $$(".score-button").forEach(btn => {
         btn.addEventListener("click", () => {
           vibrate();
           const delta = Number(btn.dataset.delta);
+          if (state.activeMetric === "wheel") return;
           if (state.activeMetric === "gift" && delta === 1) {
             openRedeemPrompt({ source: "gift" });
             return;
@@ -7125,6 +8012,10 @@
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
         if (els.changeLayer.classList.contains("open")) return setLayer(els.changeLayer, false);
+        if (els.wheelResultLayer.classList.contains("open")) return setLayer(els.wheelResultLayer, false);
+        if (els.wheelWithdrawLayer.classList.contains("open")) return setLayer(els.wheelWithdrawLayer, false);
+        if (els.wheelPreviewLayer.classList.contains("open")) return setLayer(els.wheelPreviewLayer, false);
+        if (els.wheelRedeemLayer.classList.contains("open")) return setLayer(els.wheelRedeemLayer, false);
         if (els.useGiftLayer.classList.contains("open")) return setLayer(els.useGiftLayer, false);
         if (els.redeemLayer.classList.contains("open")) return setLayer(els.redeemLayer, false);
         if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
