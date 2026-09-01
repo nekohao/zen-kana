@@ -3719,11 +3719,13 @@
       border-radius: 50%;
       background: conic-gradient(
         from 0deg,
-        #f9c9dc 0 30%,
-        #ffe2a8 30% 80%,
-        #cfe3fb 80% 92%,
-        #dfd0f5 92% 97%,
-        #f7b9ca 97% 100%
+        #f7d2df 0 10%,
+        #ffe2a8 10% 40%,
+        #cfe4fb 40% 70%,
+        #f8d9bc 70% 82%,
+        #dfd3f5 82% 92%,
+        #cfe9df 92% 97%,
+        #f5bdcf 97% 100%
       );
       border: 5px solid rgba(255,255,255,.82);
       box-shadow:
@@ -3765,11 +3767,13 @@
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
-    .wheel-prize-20 { left: 75.1%; top: 31.8%; }
-    .wheel-prize-30 { left: 40.4%; top: 79.5%; font-size: 15px; }
-    .wheel-prize-60 { left: 26.1%; top: 30.2%; font-size: 11px; }
-    .wheel-prize-80 { left: 41.2%; top: 25.5%; font-size: 9px; }
-    .wheel-prize-100 { left: 46.6%; top: 14.2%; font-size: 8px; }
+    .wheel-prize-10 { left: 57.8%; top: 22.8%; font-size: 10px; }
+    .wheel-prize-20 { left: 79.0%; top: 50.0%; font-size: 14px; }
+    .wheel-prize-30 { left: 40.2%; top: 78.6%; font-size: 14px; }
+    .wheel-prize-50 { left: 21.5%; top: 48.2%; font-size: 11px; }
+    .wheel-prize-60 { left: 31.2%; top: 25.8%; font-size: 10px; }
+    .wheel-prize-80 { left: 41.4%; top: 18.8%; font-size: 8.5px; }
+    .wheel-prize-100 { left: 47.8%; top: 13.7%; font-size: 7.7px; }
     .wheel-hub {
       position: absolute;
       z-index: 6;
@@ -3937,6 +3941,183 @@
       .wheel-pointer { animation:none !important; }
     }
 
+  
+    /* ============================================================
+       v1.8.1 — admin-only wheel probability management
+       Public wheel sectors stay fixed as a decorative visual.
+       ============================================================ */
+    .wheel-probability-alert,
+    .wheel-probability-history-alert {
+      width: min(92vw, 390px) !important;
+      max-height: min(82vh, 690px);
+      overflow: auto;
+    }
+
+    .wheel-probability-grid {
+      margin-top: 13px;
+      padding: 7px 11px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.30);
+      border: 1px solid rgba(255,255,255,.60);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.60);
+    }
+
+    .wheel-probability-grid label {
+      min-height: 39px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      border-bottom: 1px solid rgba(120,95,62,.08);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 740;
+    }
+
+    .wheel-probability-grid label:last-child { border-bottom: 0; }
+
+    .prob-input-wrap {
+      width: 96px;
+      height: 30px;
+      padding: 0 8px 0 6px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255,255,255,.58);
+      border: 1px solid rgba(255,255,255,.72);
+    }
+
+    .prob-input-wrap input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      outline: 0;
+      text-align: right;
+      background: transparent;
+      color: #9a692f;
+      font: 760 14px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .prob-input-wrap input::-webkit-inner-spin-button { display: none; }
+    .prob-input-wrap em {
+      color: #b28b5b;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .wheel-probability-total {
+      margin-top: 10px;
+      min-height: 34px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #6c7d67;
+      background: rgba(215,240,221,.42);
+      border: 1px solid rgba(255,255,255,.58);
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .wheel-probability-total.invalid {
+      color: #b35f62;
+      background: rgba(248,218,221,.48);
+    }
+    .wheel-probability-default-note {
+      margin-top: 7px;
+      color: var(--tertiary);
+      font-size: 10px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .wheel-probability-history-list {
+      margin-top: 12px;
+      max-height: min(48vh, 390px);
+      overflow: auto;
+      display: grid;
+      gap: 8px;
+    }
+    .wheel-probability-history-empty {
+      padding: 24px 12px;
+      color: var(--tertiary);
+      font-size: 12px;
+      text-align: center;
+    }
+    .wheel-probability-history-item {
+      padding: 11px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.32);
+      border: 1px solid rgba(255,255,255,.60);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
+    }
+    .wheel-probability-history-time {
+      color: var(--tertiary);
+      font-size: 10px;
+      font-weight: 650;
+    }
+    .wheel-probability-history-changes {
+      margin-top: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .wheel-probability-history-chip {
+      padding: 4px 7px;
+      border-radius: 9px;
+      background: rgba(245,221,179,.34);
+      color: #8c6639;
+      font-size: 10px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #saveWheelProbabilityBtn:disabled {
+      opacity: .42;
+      pointer-events: none;
+    }
+
+  
+    /* ============================================================
+       v1.8.2 — wheel itself is the primary spin interaction
+       ============================================================ */
+    .wheel-stage[role="button"] {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      outline: none;
+    }
+
+    .wheel-stage[role="button"]:active .wheel-disk {
+      filter: saturate(1.04) brightness(.985);
+    }
+
+    .wheel-stage[role="button"]:focus-visible .wheel-disk {
+      box-shadow:
+        0 0 0 4px rgba(255,255,255,.72),
+        0 0 0 7px rgba(224,169,82,.25),
+        0 18px 42px rgba(151,105,42,.17);
+    }
+
+    .home.wheel-spinning .wheel-stage {
+      cursor: default;
+    }
+
+    .wheel-actions {
+      height: 100px !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 0 !important;
+    }
+
+    .wheel-actions .wheel-redeem-button {
+      width: 100%;
+      height: 44px;
+      flex: 0 0 auto;
+    }
+
   </style>
 </head>
 
@@ -4013,14 +4194,16 @@
             <div id="metricGhostValue" class="metric-ghost-value" aria-hidden="true"></div>
             <div id="scoreValue" class="score loading" aria-live="polite">—</div>
 
-            <div id="wheelStage" class="wheel-stage" aria-hidden="true">
+            <div id="wheelStage" class="wheel-stage" role="button" tabindex="0" aria-label="转动大转盘" aria-hidden="true">
               <div class="wheel-pointer" aria-hidden="true">
                 <span class="wheel-pointer-gem">♡</span>
                 <span class="wheel-pointer-tip"></span>
               </div>
               <div id="wheelDisk" class="wheel-disk">
+                <span class="wheel-prize wheel-prize-10">¥10</span>
                 <span class="wheel-prize wheel-prize-20">¥20</span>
                 <span class="wheel-prize wheel-prize-30">¥30</span>
+                <span class="wheel-prize wheel-prize-50">¥50</span>
                 <span class="wheel-prize wheel-prize-60">¥60</span>
                 <span class="wheel-prize wheel-prize-80">¥80</span>
                 <span class="wheel-prize wheel-prize-100">¥100</span>
@@ -4049,13 +4232,6 @@
           </div>
 
           <div id="wheelActions" class="wheel-actions" aria-hidden="true">
-            <button id="spinWheelBtn" class="wheel-action-button wheel-spin-button pressable" type="button">
-              <span class="wheel-action-icon" aria-hidden="true">🎠</span>
-              <span class="wheel-action-copy">
-                <b>转动大转盘</b>
-                <small id="spinWheelMeta">当前 0 次正式机会</small>
-              </span>
-            </button>
             <button id="redeemWheelChanceBtn" class="wheel-action-button wheel-redeem-button pressable" type="button">
               <span aria-hidden="true">🎁</span>
               <span>兑换大转盘机会</span>
@@ -4231,6 +4407,22 @@
                 <span>重置积分</span>
                 <span class="settings-value">恢复到 5 <span class="chevron">›</span></span>
               </button>
+            </div>
+
+            <div class="settings-label">大转盘管理</div>
+            <div class="settings-group">
+              <button id="openWheelProbabilityBtn" class="settings-row pressable" type="button">
+                <span>奖项概率设置</span>
+                <span class="settings-value">管理员专用 <span class="chevron">›</span></span>
+              </button>
+              <button id="openWheelProbabilityHistoryBtn" class="settings-row pressable" type="button">
+                <span>概率修改记录</span>
+                <span class="chevron">›</span>
+              </button>
+            </div>
+
+            <div class="settings-label">账户</div>
+            <div class="settings-group">
               <button id="logoutBtn" class="settings-row destructive pressable" type="button">
                 <span>退出管理员</span>
                 <span class="chevron">›</span>
@@ -4378,7 +4570,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.8.0</span>
+              <span class="settings-value">1.8.2</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -4408,7 +4600,26 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.8.0</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.8.2</strong><span>当前版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>移除独立“转动大转盘”按钮，直接点击中央大转盘即可开始正式转动或进入试玩提示。</li>
+              <li>大转盘模式仅保留“兑换大转盘机会”次操作按钮，三种首页模式继续共用固定布局槽位。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.8.1</strong><span>上一版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>大转盘默认视觉档位升级为 ¥10 / ¥20 / ¥30 / ¥50 / ¥60 / ¥80 / ¥100。</li>
+              <li>管理员设置新增真实抽取概率配置与修改记录；两个入口均仅管理员可用。</li>
+              <li>转盘分区固定为装饰展示，实际抽取结果由数据库当前概率配置决定。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.8.0</strong><span>上一版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
               <li>首页新增第三模式“幸运大转盘”：真实概率扇区、固定指针、惯性减速动画。</li>
@@ -4596,6 +4807,49 @@
 
         
           <button id="closeReleaseNotesBtn" class="sheet-button primary pressable full-width" type="button">完成</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Admin-only wheel probability settings -->
+    <div id="wheelProbabilityLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
+      <div class="alert wheel-probability-alert" role="dialog" aria-modal="true" aria-labelledby="wheelProbabilityTitle">
+        <div class="alert-content">
+          <div class="change-icon" aria-hidden="true">🎛️</div>
+          <div id="wheelProbabilityTitle" class="alert-title">大转盘概率设置</div>
+          <div class="alert-message">仅管理员可查看和修改实际抽取概率。保存后下一次正式转盘与试玩立即生效。</div>
+          <div id="wheelProbabilityGrid" class="wheel-probability-grid">
+            <label><span>¥10</span><span class="prob-input-wrap"><input data-wheel-prob="10" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
+            <label><span>¥20</span><span class="prob-input-wrap"><input data-wheel-prob="20" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
+            <label><span>¥30</span><span class="prob-input-wrap"><input data-wheel-prob="30" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
+            <label><span>¥50</span><span class="prob-input-wrap"><input data-wheel-prob="50" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
+            <label><span>¥60</span><span class="prob-input-wrap"><input data-wheel-prob="60" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
+            <label><span>¥80</span><span class="prob-input-wrap"><input data-wheel-prob="80" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
+            <label><span>¥100</span><span class="prob-input-wrap"><input data-wheel-prob="100" type="number" min="0" max="100" step="0.01" inputmode="decimal"><em>%</em></span></label>
+          </div>
+          <div id="wheelProbabilityTotal" class="wheel-probability-total">总概率 100%</div>
+          <div class="wheel-probability-default-note">默认：10% / 30% / 30% / 12% / 10% / 5% / 3%</div>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="saveWheelProbabilityBtn" class="alert-button primary-action pressable" type="button">保存并生效</button>
+          <button id="resetWheelProbabilityDefaultBtn" class="alert-button pressable" type="button">恢复默认数值</button>
+          <button id="closeWheelProbabilityBtn" class="alert-button pressable" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin-only probability change history -->
+    <div id="wheelProbabilityHistoryLayer" class="modal-layer alert-layer" aria-hidden="true" data-theme="wheel">
+      <div class="alert wheel-probability-history-alert" role="dialog" aria-modal="true" aria-labelledby="wheelProbabilityHistoryTitle">
+        <div class="alert-content">
+          <div class="change-icon" aria-hidden="true">🗂️</div>
+          <div id="wheelProbabilityHistoryTitle" class="alert-title">概率修改记录</div>
+          <div class="alert-message">仅管理员可见。记录每一次真正保存成功的概率调整。</div>
+          <div id="wheelProbabilityHistoryList" class="wheel-probability-history-list"></div>
+        </div>
+        <div class="alert-actions vertical">
+          <button id="closeWheelProbabilityHistoryBtn" class="alert-button primary-action pressable" type="button">完成</button>
         </div>
       </div>
     </div>
@@ -4798,8 +5052,6 @@
         wheelStage: $("#wheelStage"),
         wheelDisk: $("#wheelDisk"),
         wheelActions: $("#wheelActions"),
-        spinWheelBtn: $("#spinWheelBtn"),
-        spinWheelMeta: $("#spinWheelMeta"),
         redeemWheelChanceBtn: $("#redeemWheelChanceBtn"),
         adminControls: $("#adminControls"),
         settingsBtn: $("#settingsBtn"),
@@ -4834,6 +5086,17 @@
         openLoginBtn: $("#openLoginBtn"),
         logoutBtn: $("#logoutBtn"),
         resetBtn: $("#resetBtn"),
+        openWheelProbabilityBtn: $("#openWheelProbabilityBtn"),
+        openWheelProbabilityHistoryBtn: $("#openWheelProbabilityHistoryBtn"),
+        wheelProbabilityLayer: $("#wheelProbabilityLayer"),
+        wheelProbabilityGrid: $("#wheelProbabilityGrid"),
+        wheelProbabilityTotal: $("#wheelProbabilityTotal"),
+        saveWheelProbabilityBtn: $("#saveWheelProbabilityBtn"),
+        resetWheelProbabilityDefaultBtn: $("#resetWheelProbabilityDefaultBtn"),
+        closeWheelProbabilityBtn: $("#closeWheelProbabilityBtn"),
+        wheelProbabilityHistoryLayer: $("#wheelProbabilityHistoryLayer"),
+        wheelProbabilityHistoryList: $("#wheelProbabilityHistoryList"),
+        closeWheelProbabilityHistoryBtn: $("#closeWheelProbabilityHistoryBtn"),
         lastRefreshText: $("#lastRefreshText"),
         openVersionInfoBtn: $("#openVersionInfoBtn"),
         versionInfoLayer: $("#versionInfoLayer"),
@@ -4932,6 +5195,8 @@
         wheelUpdatedAt: null,
         wheelRotation: 0,
         wheelSpinning: false,
+        wheelAdminConfig: null,
+        wheelProbabilityHistory: [],
         updatedAt: null,
         giftUpdatedAt: null,
         session: null,
@@ -5085,7 +5350,7 @@
       }
 
       function closeAllLayers() {
-        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.useGiftLayer, els.wheelRedeemLayer, els.wheelPreviewLayer, els.wheelResultLayer, els.wheelWithdrawLayer, els.resetLayer]
+        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.useGiftLayer, els.wheelRedeemLayer, els.wheelPreviewLayer, els.wheelResultLayer, els.wheelWithdrawLayer, els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer, els.resetLayer]
           .forEach(layer => setLayer(layer, false));
       }
 
@@ -5152,11 +5417,8 @@
             ? `₊˚🎠 幸运大转盘准备好啦 ♡ 还有 ${chances} 次正式机会`
             : "₊˚🎠 幸运大转盘在等宝宝来转一转 ♡";
           secondary.textContent = chances > 0
-            ? `当前可提现余额 ¥${cash} · 好运正在加载中 ✨`
-            : `暂时没有正式机会 · 也可以先试玩哦 ♡ · 可提现 ¥${cash}`;
-          els.spinWheelMeta.textContent = chances > 0
-            ? `当前 ${chances} 次正式机会`
-            : "没有机会也可以试玩";
+            ? `当前可提现余额 ¥${cash} · 转盘分区仅作视觉展示 ✨`
+            : `暂时没有正式机会 · 也可以先试玩哦 ♡ · 分区仅作视觉展示`;
           els.wheelActions.setAttribute("aria-hidden", "false");
         } else if (gift) {
           const balance = Math.max(0, Number(state.giftBalance ?? 0));
@@ -5761,7 +6023,7 @@
             await loadAppState({ silent: true });
             openWheelRedeemPrompt();
           } else if (/points_redeem_wheel_chance|PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v1.8.0 大转盘 SQL ♡");
+            showToast("请先运行 v1.8.1 大转盘 SQL ♡");
           } else {
             showToast("兑换转盘机会失败");
           }
@@ -5770,24 +6032,197 @@
         }
       }
 
+
+      const WHEEL_DEFAULT_PROBABILITIES = {
+        10: 10,
+        20: 30,
+        30: 30,
+        50: 12,
+        60: 10,
+        80: 5,
+        100: 3
+      };
+
+      function wheelProbabilityInputs() {
+        return [...els.wheelProbabilityGrid.querySelectorAll("[data-wheel-prob]")];
+      }
+
+      function setWheelProbabilityInputs(config) {
+        const values = config || WHEEL_DEFAULT_PROBABILITIES;
+        wheelProbabilityInputs().forEach(input => {
+          const amount = Number(input.dataset.wheelProb);
+          input.value = String(Number(values[amount] ?? 0));
+        });
+        updateWheelProbabilityTotal();
+      }
+
+      function readWheelProbabilityInputs() {
+        const result = {};
+        wheelProbabilityInputs().forEach(input => {
+          const amount = Number(input.dataset.wheelProb);
+          const value = Number(input.value);
+          result[amount] = Number.isFinite(value) ? Math.max(0, value) : 0;
+        });
+        return result;
+      }
+
+      function updateWheelProbabilityTotal() {
+        const values = readWheelProbabilityInputs();
+        const total = Object.values(values).reduce((sum, value) => sum + Number(value || 0), 0);
+        const rounded = Math.round(total * 100) / 100;
+        const valid = Math.abs(rounded - 100) < .005
+          && Object.values(values).every(value => value >= 0 && value <= 100);
+        els.wheelProbabilityTotal.textContent = valid
+          ? "总概率 100% ✓"
+          : `当前总概率 ${rounded}% · ${rounded > 100 ? `需要减少 ${(rounded - 100).toFixed(2)}%` : `还需要增加 ${(100 - rounded).toFixed(2)}%`}`;
+        els.wheelProbabilityTotal.classList.toggle("invalid", !valid);
+        els.saveWheelProbabilityBtn.disabled = !valid;
+        return valid;
+      }
+
+      async function loadAdminWheelProbability() {
+        if (!state.isAdmin) {
+          showToast("这个入口只有管理员可以使用");
+          return false;
+        }
+        try {
+          const { data, error } = await db.rpc("points_admin_get_wheel_probabilities");
+          if (error) throw error;
+          const config = {};
+          for (const row of (Array.isArray(data) ? data : [])) {
+            config[Number(row.amount)] = Number(row.probability_bp) / 100;
+          }
+          state.wheelAdminConfig = config;
+          setWheelProbabilityInputs(config);
+          return true;
+        } catch (err) {
+          console.error("loadAdminWheelProbability:", err);
+          showToast(/Admin only/i.test(String(err?.message || "")) ? "只有管理员可以查看概率" : "读取转盘概率失败");
+          return false;
+        }
+      }
+
+      async function openWheelProbabilitySettings() {
+        if (!state.isAdmin) return showToast("这个入口只有管理员可以使用");
+        setLayer(els.settingsLayer, false);
+        const ok = await loadAdminWheelProbability();
+        if (ok) setLayer(els.wheelProbabilityLayer, true);
+      }
+
+      async function saveWheelProbability() {
+        if (!state.isAdmin) return showToast("这个入口只有管理员可以使用");
+        if (!updateWheelProbabilityTotal()) return;
+        const values = readWheelProbabilityInputs();
+        const payload = {};
+        for (const [amount, percent] of Object.entries(values)) {
+          payload[String(amount)] = Math.round(Number(percent) * 100);
+        }
+
+        setBusy(els.saveWheelProbabilityBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_admin_set_wheel_probabilities", {
+            p_config: payload
+          });
+          if (error) throw error;
+
+          const config = {};
+          for (const row of (Array.isArray(data) ? data : [])) {
+            config[Number(row.amount)] = Number(row.probability_bp) / 100;
+          }
+          state.wheelAdminConfig = config;
+          setWheelProbabilityInputs(config);
+          vibrate(16);
+          showToast("🎠 新概率已经保存并生效");
+        } catch (err) {
+          console.error("saveWheelProbability:", err);
+          const message = String(err?.message || "");
+          if (/sum|10000|probability|config/i.test(message)) showToast("概率总和必须刚好是 100%");
+          else if (/Admin only/i.test(message)) showToast("只有管理员可以修改概率");
+          else showToast("保存概率失败");
+        } finally {
+          setBusy(els.saveWheelProbabilityBtn, false);
+          updateWheelProbabilityTotal();
+        }
+      }
+
+      function formatProbabilityHistoryConfig(config) {
+        const result = {};
+        for (const amount of [10,20,30,50,60,80,100]) {
+          result[amount] = Number(config?.[String(amount)] ?? config?.[amount] ?? 0) / 100;
+        }
+        return result;
+      }
+
+      function renderWheelProbabilityHistory() {
+        const rows = Array.isArray(state.wheelProbabilityHistory) ? state.wheelProbabilityHistory : [];
+        if (!rows.length) {
+          els.wheelProbabilityHistoryList.innerHTML = '<div class="wheel-probability-history-empty">还没有修改记录 ♡</div>';
+          return;
+        }
+
+        els.wheelProbabilityHistoryList.innerHTML = rows.map(row => {
+          const before = formatProbabilityHistoryConfig(row.before_config);
+          const after = formatProbabilityHistoryConfig(row.after_config);
+          const chips = [10,20,30,50,60,80,100]
+            .filter(amount => Math.abs(before[amount] - after[amount]) > .0001)
+            .map(amount => `<span class="wheel-probability-history-chip">¥${amount}：${before[amount]}% → ${after[amount]}%</span>`)
+            .join("");
+          const time = new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric", month: "2-digit", day: "2-digit",
+            hour: "2-digit", minute: "2-digit", hour12: false
+          }).format(new Date(row.created_at));
+          return `<div class="wheel-probability-history-item">
+            <div class="wheel-probability-history-time">${escapeHTML(time)} · 管理员修改</div>
+            <div class="wheel-probability-history-changes">${chips || '<span class="wheel-probability-history-chip">保存了相同配置</span>'}</div>
+          </div>`;
+        }).join("");
+      }
+
+      async function openWheelProbabilityHistory() {
+        if (!state.isAdmin) return showToast("这个入口只有管理员可以使用");
+        setLayer(els.settingsLayer, false);
+        els.wheelProbabilityHistoryList.innerHTML = '<div class="wheel-probability-history-empty">正在读取…</div>';
+        setLayer(els.wheelProbabilityHistoryLayer, true);
+        try {
+          const { data, error } = await db.rpc("points_admin_get_wheel_probability_logs", { p_limit: 100 });
+          if (error) throw error;
+          state.wheelProbabilityHistory = Array.isArray(data) ? data : [];
+          renderWheelProbabilityHistory();
+        } catch (err) {
+          console.error("openWheelProbabilityHistory:", err);
+          els.wheelProbabilityHistoryList.innerHTML = '<div class="wheel-probability-history-empty">读取记录失败</div>';
+        }
+      }
+
       function openWheelPreviewPrompt() {
         els.wheelPreviewMessage.textContent = "宝宝现在还没有正式的大转盘机会哦～不过可以先偷偷试玩一次 ✨ 试玩结果只负责开心，不会加入可提现余额，也不会保存中奖记录哦 ♡";
         setLayer(els.wheelPreviewLayer, true);
       }
 
-      function wheelAngleForRoll(roll) {
-        const safeRoll = Math.min(9999, Math.max(0, Number(roll) || 0));
-        return ((safeRoll + .5) / 10000) * 360;
+      const WHEEL_VISUAL_SEGMENTS = {
+        10:  [0, 36],
+        20:  [36, 144],
+        30:  [144, 252],
+        50:  [252, 295.2],
+        60:  [295.2, 331.2],
+        80:  [331.2, 349.2],
+        100: [349.2, 360]
+      };
+
+      function wheelAngleForPrize(prize, roll) {
+        const segment = WHEEL_VISUAL_SEGMENTS[Number(prize)] || WHEEL_VISUAL_SEGMENTS[10];
+        const safeRoll = Math.abs(Number(roll) || 0);
+        const fraction = .24 + ((safeRoll % 997) / 996) * .52;
+        return segment[0] + (segment[1] - segment[0]) * fraction;
       }
 
-      async function animateWheelToRoll(roll) {
+      async function animateWheelToPrize(prize, roll) {
         if (state.wheelSpinning) return;
         state.wheelSpinning = true;
         els.home?.classList.add("wheel-spinning");
-        setBusy(els.spinWheelBtn, true);
         setBusy(els.redeemWheelChanceBtn, true);
 
-        const angle = wheelAngleForRoll(roll);
+        const angle = wheelAngleForPrize(prize, roll);
         const current = Number(state.wheelRotation || 0);
         const currentMod = ((current % 360) + 360) % 360;
         const desiredMod = ((360 - angle) % 360 + 360) % 360;
@@ -5815,7 +6250,6 @@
         } finally {
           state.wheelSpinning = false;
           els.home?.classList.remove("wheel-spinning");
-          setBusy(els.spinWheelBtn, false);
           setBusy(els.redeemWheelChanceBtn, false);
         }
       }
@@ -5852,7 +6286,7 @@
           state.wheelUpdatedAt = row?.wheel_updated_at ?? new Date().toISOString();
           state.overviewLoadedAt = 0;
           renderPrimaryMetric();
-          await animateWheelToRoll(roll);
+          await animateWheelToPrize(prize, roll);
           renderPrimaryMetric();
           showWheelResult({ prize, preview: false, cashBefore, cashAfter: state.wheelCashBalance });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
@@ -5864,7 +6298,7 @@
             renderPrimaryMetric();
             openWheelPreviewPrompt();
           } else if (/points_spin_wheel|PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v1.8.0 大转盘 SQL ♡");
+            showToast("请先运行 v1.8.1 大转盘 SQL ♡");
           } else {
             showToast("转盘暂时没有转起来，再试一次吧");
           }
@@ -5881,13 +6315,13 @@
           const prize = Number(row?.prize_amount || 0);
           const roll = Number(row?.roll);
           setLayer(els.wheelPreviewLayer, false);
-          await animateWheelToRoll(roll);
+          await animateWheelToPrize(prize, roll);
           showWheelResult({ prize, preview: true });
         } catch (err) {
           console.error("performPreviewWheelSpin:", err);
           const message = String(err?.message || "");
           showToast(/points_preview_wheel|PGRST202|schema cache|Could not find/i.test(message)
-            ? "请先运行 v1.8.0 大转盘 SQL ♡"
+            ? "请先运行 v1.8.1 大转盘 SQL ♡"
             : "试玩转盘暂时没有转起来");
         } finally {
           setBusy(els.wheelPreviewConfirmBtn, false);
@@ -5941,7 +6375,7 @@
             renderPrimaryMetric();
             showToast("余额刚刚发生变化，请重新输入");
           } else if (/points_withdraw_wheel|PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v1.8.0 大转盘 SQL ♡");
+            showToast("请先运行 v1.8.1 大转盘 SQL ♡");
           } else {
             showToast("提现记录失败");
           }
@@ -7724,6 +8158,24 @@
         setLayer(els.versionInfoLayer, true);
       });
 
+      els.openWheelProbabilityBtn.addEventListener("click", openWheelProbabilitySettings);
+      els.openWheelProbabilityHistoryBtn.addEventListener("click", openWheelProbabilityHistory);
+
+      els.wheelProbabilityGrid.addEventListener("input", updateWheelProbabilityTotal);
+      els.resetWheelProbabilityDefaultBtn.addEventListener("click", () => {
+        setWheelProbabilityInputs(WHEEL_DEFAULT_PROBABILITIES);
+        vibrate(8);
+      });
+      els.saveWheelProbabilityBtn.addEventListener("click", saveWheelProbability);
+      els.closeWheelProbabilityBtn.addEventListener("click", () => setLayer(els.wheelProbabilityLayer, false));
+      els.wheelProbabilityLayer.addEventListener("click", (e) => {
+        if (e.target === els.wheelProbabilityLayer) setLayer(els.wheelProbabilityLayer, false);
+      });
+      els.closeWheelProbabilityHistoryBtn.addEventListener("click", () => setLayer(els.wheelProbabilityHistoryLayer, false));
+      els.wheelProbabilityHistoryLayer.addEventListener("click", (e) => {
+        if (e.target === els.wheelProbabilityHistoryLayer) setLayer(els.wheelProbabilityHistoryLayer, false);
+      });
+
       els.versionInfoLayer.addEventListener("click", (e) => {
         if (e.target === els.versionInfoLayer) setLayer(els.versionInfoLayer, false);
       });
@@ -7815,10 +8267,18 @@
         openWheelRedeemPrompt();
       });
 
-      els.spinWheelBtn.addEventListener("click", () => {
+      function triggerWheelFromDisc() {
+        if (state.wheelSpinning) return;
         vibrate(8);
         if (state.wheelChances > 0) performFormalWheelSpin();
         else openWheelPreviewPrompt();
+      }
+
+      els.wheelStage.addEventListener("click", triggerWheelFromDisc);
+      els.wheelStage.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        triggerWheelFromDisc();
       });
 
       els.wheelRedeemLayer.addEventListener("click", (e) => {
@@ -8008,6 +8468,8 @@
           setTrendMonthMenu(false);
           return;
         }
+        if (els.wheelProbabilityHistoryLayer.classList.contains("open")) return setLayer(els.wheelProbabilityHistoryLayer, false);
+        if (els.wheelProbabilityLayer.classList.contains("open")) return setLayer(els.wheelProbabilityLayer, false);
         if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
