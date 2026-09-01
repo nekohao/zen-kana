@@ -4616,6 +4616,276 @@
     .schedule-overview-home-button { font-size:13px; }
     .home.schedule-active #overviewBtn { opacity:0; visibility:hidden; pointer-events:none; }
     .admin-schedule-notice { display:none !important; }
+
+
+    /* ============================================================
+       v2.3 — Schedule clock / luminous work-arc refinement
+       ============================================================ */
+    .home.schedule-active .score-lens {
+      background:
+        radial-gradient(circle at 33% 24%, rgba(255,255,255,.84), transparent 40%),
+        linear-gradient(145deg, rgba(250,253,255,.70), rgba(230,244,253,.43)) !important;
+      border-color: rgba(218,239,252,.88) !important;
+      box-shadow:
+        0 26px 68px rgba(75,132,173,.13),
+        inset 0 2px 4px rgba(255,255,255,.96),
+        inset 0 -12px 30px rgba(82,145,188,.045) !important;
+      overflow: hidden;
+    }
+    .home.schedule-active .reward-message {
+      background: linear-gradient(145deg, rgba(255,255,255,.26), rgba(229,244,253,.14)), rgba(255,255,255,.14) !important;
+      border-color: rgba(226,241,251,.72) !important;
+      box-shadow: 0 12px 32px rgba(70,128,170,.07), inset 0 1px 0 rgba(255,255,255,.62) !important;
+    }
+    .home.schedule-active .reward-line-primary {
+      color: #4d7896;
+      font-weight: 730;
+      letter-spacing: -.012em;
+    }
+    .home.schedule-active .reward-line-secondary {
+      color: rgba(80,119,145,.58);
+      letter-spacing: .02em;
+    }
+    .schedule-stage {
+      inset: 0;
+      display: grid;
+      place-items: center;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .schedule-clock {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      transform: translate3d(0,0,0) scale(1);
+      opacity: 1;
+      transition: transform .72s cubic-bezier(.18,.82,.24,1), opacity .62s ease;
+      will-change: transform, opacity;
+    }
+    .schedule-clock.dragging { transition: none !important; }
+    .schedule-clock-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .schedule-tick {
+      stroke: rgba(79,121,149,.20);
+      stroke-width: 1.05;
+      stroke-linecap: round;
+    }
+    .schedule-tick.medium {
+      stroke: rgba(73,122,155,.28);
+      stroke-width: 1.25;
+    }
+    .schedule-tick.major {
+      stroke: rgba(66,117,153,.42);
+      stroke-width: 1.65;
+    }
+    .schedule-arc,
+    .schedule-arc-glow {
+      stroke-linecap: round;
+      transition: opacity .34s ease;
+      will-change: stroke-dasharray, stroke-dashoffset, opacity;
+    }
+    .schedule-arc {
+      stroke-width: 3.8;
+      filter: url(#scheduleArcGlowFilter) drop-shadow(0 0 3px rgba(112,199,245,.34));
+      animation: scheduleArcBreath 4.8s ease-in-out infinite;
+    }
+    .schedule-arc-glow {
+      stroke: rgba(118,205,248,.34);
+      stroke-width: 8.5;
+      filter: blur(2.6px);
+      animation: scheduleArcGlowBreath 5.6s ease-in-out infinite;
+    }
+    @keyframes scheduleArcBreath {
+      0%,100% { opacity: .86; filter: url(#scheduleArcGlowFilter) drop-shadow(0 0 2px rgba(113,201,246,.26)); }
+      48% { opacity: 1; filter: url(#scheduleArcGlowFilter) drop-shadow(0 0 6px rgba(108,195,246,.52)); }
+      72% { opacity: .92; filter: url(#scheduleArcGlowFilter) drop-shadow(0 0 4px rgba(154,190,255,.40)); }
+    }
+    @keyframes scheduleArcGlowBreath {
+      0%,100% { opacity: .22; }
+      50% { opacity: .46; }
+    }
+    .schedule-time-main {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 11px;
+      margin: 0;
+      color: #426f8e;
+      font-size: clamp(35px, 10.8vw, 43px);
+      line-height: 1;
+      font-weight: 740;
+      letter-spacing: -.055em;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 8px 24px rgba(72,125,160,.09);
+      pointer-events: none;
+    }
+    .schedule-time-main i {
+      font-style: normal;
+      font-size: .64em;
+      font-weight: 520;
+      color: rgba(75,126,159,.42);
+      transform: translateY(-.08em);
+    }
+    .home.schedule-shift-next .schedule-time-main,
+    .home.schedule-shift-next .reward-message {
+      animation: scheduleShiftNext .78s cubic-bezier(.16,.82,.22,1);
+    }
+    .home.schedule-shift-prev .schedule-time-main,
+    .home.schedule-shift-prev .reward-message {
+      animation: scheduleShiftPrev .78s cubic-bezier(.16,.82,.22,1);
+    }
+    @keyframes scheduleShiftNext {
+      0% { opacity: .36; transform: translate3d(12px,0,0) scale(.985); filter: blur(.7px); }
+      58% { opacity: 1; transform: translate3d(-1px,0,0) scale(1.003); filter: blur(0); }
+      100% { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+    }
+    @keyframes scheduleShiftPrev {
+      0% { opacity: .36; transform: translate3d(-12px,0,0) scale(.985); filter: blur(.7px); }
+      58% { opacity: 1; transform: translate3d(1px,0,0) scale(1.003); filter: blur(0); }
+      100% { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+    }
+
+    .metric-action-slot > .schedule-actions { grid-area: 1/1; margin: 0 !important; }
+    .schedule-actions {
+      width: min(88vw,340px);
+      height: 54px;
+      display: grid;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .25s ease, visibility 0s linear .25s, transform .34s cubic-bezier(.2,.9,.25,1);
+    }
+    .home.schedule-active .schedule-actions {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition-delay: 0s;
+    }
+    .schedule-main-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      width: 100%;
+      height: 54px;
+    }
+    .schedule-primary-button,
+    .schedule-overview-home-button {
+      min-width: 0;
+      height: 54px;
+      border-radius: 18px;
+      border: 1px solid rgba(222,241,253,.84);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      box-shadow: 0 10px 26px rgba(67,127,168,.10), inset 0 1px 0 rgba(255,255,255,.80);
+    }
+    .schedule-primary-button {
+      color: white;
+      background: linear-gradient(135deg, #7fbce1 0%, #659bc0 55%, #718fc6 100%);
+      box-shadow: 0 12px 28px rgba(79,143,184,.20), inset 0 1px 0 rgba(255,255,255,.34);
+    }
+    .schedule-overview-home-button {
+      color: #567e99;
+      background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(226,243,253,.42)), rgba(255,255,255,.30);
+    }
+
+    /* Schedule sheets: same material language, ice-blue accent. */
+    #workScheduleLayer,
+    #workScheduleOverviewLayer,
+    #adminWorkScheduleLayer {
+      background: rgba(47,75,98,.08) !important;
+    }
+    #workScheduleLayer.open,
+    #workScheduleOverviewLayer.open,
+    #adminWorkScheduleLayer.open {
+      -webkit-backdrop-filter: blur(10px) saturate(116%) !important;
+      backdrop-filter: blur(10px) saturate(116%) !important;
+    }
+    #workScheduleLayer .work-schedule-sheet,
+    #workScheduleOverviewLayer .work-schedule-sheet,
+    #adminWorkScheduleLayer .work-schedule-sheet {
+      background:
+        radial-gradient(circle at 16% 0%, rgba(224,246,255,.38), transparent 34%),
+        linear-gradient(145deg, rgba(255,255,255,.54), rgba(223,240,251,.28)),
+        rgba(244,250,254,.64) !important;
+      border-color: rgba(224,241,252,.90) !important;
+      box-shadow: 0 -20px 64px rgba(55,105,139,.16), inset 0 1px 0 rgba(255,255,255,.76) !important;
+      -webkit-backdrop-filter: blur(38px) saturate(185%) !important;
+      backdrop-filter: blur(38px) saturate(185%) !important;
+    }
+    #workScheduleLayer .unified-sheet-header,
+    #workScheduleOverviewLayer .unified-sheet-header,
+    #adminWorkScheduleLayer .unified-sheet-header {
+      background: linear-gradient(180deg, rgba(246,252,255,.86), rgba(232,245,253,.56) 76%, transparent) !important;
+      border-bottom-color: rgba(105,155,188,.10) !important;
+    }
+    #workScheduleLayer .grabber,
+    #workScheduleOverviewLayer .grabber,
+    #adminWorkScheduleLayer .grabber {
+      background: linear-gradient(90deg, rgba(135,189,220,.34), rgba(92,154,194,.56), rgba(135,189,220,.34)) !important;
+      box-shadow: 0 0 10px rgba(100,177,222,.14) !important;
+    }
+    #workScheduleLayer .sheet-title,
+    #workScheduleOverviewLayer .sheet-title,
+    #adminWorkScheduleLayer .sheet-title { color: #4d7896; }
+    #workScheduleLayer .work-schedule-field-label { color: rgba(72,116,146,.72); }
+    #workScheduleLayer .work-schedule-control {
+      color: #456f8b;
+      border-color: rgba(132,181,212,.20) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,.70), rgba(228,244,253,.42)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.78), 0 8px 20px rgba(62,119,155,.05);
+    }
+    #workScheduleLayer .work-schedule-date-step,
+    #workScheduleLayer #cancelWorkScheduleBtn,
+    #workScheduleLayer .work-schedule-overview-button {
+      color: #5b829c;
+      border-color: rgba(134,183,213,.16) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,.62), rgba(228,244,253,.34)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.68), 0 8px 20px rgba(67,121,157,.05);
+    }
+    #workScheduleLayer .work-schedule-existing {
+      color: #4e7d9d;
+      border-color: rgba(106,168,207,.18) !important;
+      background: linear-gradient(145deg, rgba(222,244,255,.58), rgba(237,248,255,.34)) !important;
+    }
+    #workScheduleLayer .work-schedule-hint { color: rgba(77,116,141,.56); }
+    #workScheduleLayer #saveWorkScheduleBtn {
+      color: white !important;
+      background: linear-gradient(135deg, #7fbce1 0%, #659bc0 55%, #718fc6 100%) !important;
+      box-shadow: 0 12px 28px rgba(79,143,184,.20), inset 0 1px 0 rgba(255,255,255,.30) !important;
+    }
+    #workScheduleOverviewLayer .work-schedule-row,
+    #adminWorkScheduleLayer .work-schedule-row {
+      border-color: rgba(125,174,206,.14) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,.52), rgba(230,244,252,.26)) !important;
+    }
+    #workScheduleOverviewLayer .work-schedule-time,
+    #adminWorkScheduleLayer .work-schedule-time { color: #4c7896; }
+    #workScheduleOverviewLayer .work-schedule-delete {
+      background: rgba(255,255,255,.48) !important;
+      border-color: rgba(235,125,132,.14) !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .schedule-arc,
+      .schedule-arc-glow { animation: none !important; }
+      .schedule-clock,
+      .home.schedule-shift-next .schedule-time-main,
+      .home.schedule-shift-next .reward-message,
+      .home.schedule-shift-prev .schedule-time-main,
+      .home.schedule-shift-prev .reward-message { animation: none !important; transition-duration: .01ms !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -4702,13 +4972,27 @@
 </div>
 </div>
 <div aria-hidden="true" class="schedule-stage" id="scheduleStage">
-<div class="schedule-time-ring" id="scheduleTimeRing">
-<div class="schedule-ring-inner">
-<div class="schedule-date-main" id="scheduleDateMain">9月1日</div>
-<div class="schedule-weekday" id="scheduleWeekday">周二</div>
-<div class="schedule-time-main" id="scheduleTimeMain">暂无排班</div>
-<div class="schedule-status" id="scheduleStatus">点击下方按钮登记 ♡</div>
-</div>
+<div class="schedule-clock" id="scheduleClock">
+<svg aria-hidden="true" class="schedule-clock-svg" viewBox="0 0 240 240">
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcGradient" x1="28" x2="212" y1="36" y2="204">
+<stop offset="0" stop-color="#77b9ea"></stop>
+<stop offset=".32" stop-color="#b9e8ff"></stop>
+<stop offset=".58" stop-color="#66c8ef"></stop>
+<stop offset=".82" stop-color="#8aaeff"></stop>
+<stop offset="1" stop-color="#d6f5ff"></stop>
+<animateTransform attributeName="gradientTransform" dur="12s" from="0 120 120" repeatCount="indefinite" to="360 120 120" type="rotate"></animateTransform>
+</linearGradient>
+<filter height="160%" id="scheduleArcGlowFilter" width="160%" x="-30%" y="-30%">
+<feGaussianBlur result="blur" stdDeviation="2.6"></feGaussianBlur>
+<feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+</filter>
+</defs>
+<g class="schedule-clock-ticks" id="scheduleClockTicks"></g>
+<circle class="schedule-arc-glow" cx="120" cy="120" fill="none" id="scheduleArcGlow" r="113" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc" cx="120" cy="120" fill="none" id="scheduleArc" r="113" stroke="url(#scheduleArcGradient)" transform="rotate(-90 120 120)"></circle>
+</svg>
+<div aria-live="polite" class="schedule-time-main" id="scheduleTimeMain"><span>—</span><i>—</i><span>—</span></div>
 </div>
 </div>
 </div>
@@ -4733,12 +5017,8 @@
 </button>
 </div>
 <div aria-hidden="true" class="schedule-actions" id="scheduleActions">
-<div class="schedule-day-nav">
-<button class="schedule-nav-button pressable" id="schedulePrevHomeBtn" type="button">‹ 前一天</button>
-<button class="schedule-nav-button pressable" id="scheduleNextHomeBtn" type="button">后一天 ›</button>
-</div>
 <div class="schedule-main-actions">
-<button class="schedule-primary-button pressable" id="scheduleEditHomeBtn" type="button">＋ 登记排班</button>
+<button class="schedule-primary-button pressable" id="scheduleEditHomeBtn" type="button">登记排班</button>
 <button class="schedule-overview-home-button pressable" id="scheduleOverviewHomeBtn" type="button">排班总览</button>
 </div>
 </div>
@@ -5811,8 +6091,8 @@
 
         if (schedule) {
           const info = workScheduleModule.getHomeSummary();
-          primary.textContent = `₊˚📅 ${info.relative}的排班 ♡`;
-          secondary.textContent = info.hasSchedule ? `${info.time} · 切换日期看看其他安排 ✨` : `这一天还没有登记排班 · 可以随时补上 🌷`;
+          primary.textContent = `${info.relative} · ${info.dateLabel}`;
+          secondary.textContent = info.weekday;
           els.wheelActions.setAttribute("aria-hidden", "true");
         } else if (wheel) {
           const chances = Math.max(0, Number(state.wheelChances ?? 0));
@@ -7590,13 +7870,12 @@
       const workScheduleModule = (() => {
         const scheduleEls = {
           openBtn: $("#openWorkScheduleBtn"),
-          homeRing: $("#scheduleTimeRing"),
-          homeDateMain: $("#scheduleDateMain"),
-          homeWeekday: $("#scheduleWeekday"),
+          homeStage: $("#scheduleStage"),
+          homeClock: $("#scheduleClock"),
+          homeTicks: $("#scheduleClockTicks"),
+          homeArc: $("#scheduleArc"),
+          homeArcGlow: $("#scheduleArcGlow"),
           homeTimeMain: $("#scheduleTimeMain"),
-          homeStatus: $("#scheduleStatus"),
-          homePrevBtn: $("#schedulePrevHomeBtn"),
-          homeNextBtn: $("#scheduleNextHomeBtn"),
           homeEditBtn: $("#scheduleEditHomeBtn"),
           homeOverviewBtn: $("#scheduleOverviewHomeBtn"),
           adminNotice: $("#adminScheduleNotice"),
@@ -7608,6 +7887,7 @@
           adminEmpty: $("#adminWorkScheduleEmpty"),
           closeAdminBtn: $("#closeAdminWorkScheduleBtn"),
           layer: $("#workScheduleLayer"),
+          title: $("#workScheduleTitle"),
           sheet: $("#workScheduleLayer .work-schedule-sheet"),
           grabberHitbox: $("#workScheduleGrabberHitbox"),
           date: $("#workScheduleDate"),
@@ -7637,6 +7917,9 @@
         let scheduleCacheLoaded = false;
         let pendingDeleteId = null;
         let homeDateKey = null;
+        let homeArcState = { start: 0, span: 0, initialized: false, raf: 0 };
+        let homeSwipeSuppressUntil = 0;
+        let homeShiftTimer = 0;
 
         function ensureHomeDateKey() {
           if (!homeDateKey) homeDateKey = localDateKey();
@@ -7645,52 +7928,183 @@
         function homeRow() { return rowsByDate.get(String(ensureHomeDateKey())) || null; }
         function homeDateParts() {
           const date = parseLocalDate(ensureHomeDateKey());
-          return { dateLabel:`${date.getMonth()+1}月${date.getDate()}日`, weekday:new Intl.DateTimeFormat("zh-CN",{weekday:"long"}).format(date), relative:relativeDateText(ensureHomeDateKey()) };
+          return {
+            dateLabel: `${date.getMonth()+1}月${date.getDate()}日`,
+            weekday: new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(date),
+            relative: relativeDateText(ensureHomeDateKey())
+          };
         }
         function getHomeSummary() {
-          const row=homeRow(), parts=homeDateParts();
-          return {...parts,hasSchedule:!!row,time:row?`${formatHour(row.start_hour)}–${formatHour(row.end_hour)}`:"暂无排班"};
+          const row = homeRow();
+          const parts = homeDateParts();
+          return {
+            ...parts,
+            hasSchedule: !!row,
+            time: row ? `${formatHour(row.start_hour)}–${formatHour(row.end_hour)}` : ""
+          };
         }
-        function renderHomeSchedule() {
-          if (!scheduleEls.homeRing) return;
-          const row=homeRow(), parts=homeDateParts();
-          scheduleEls.homeDateMain.textContent=parts.dateLabel;
-          scheduleEls.homeWeekday.textContent=parts.weekday;
-          scheduleEls.homeRing.classList.toggle("no-schedule",!row);
-          if (row) {
-            const start=Number(row.start_hour), end=Number(row.end_hour);
-            scheduleEls.homeTimeMain.textContent=`${formatHour(start)}–${formatHour(end)}`;
-            scheduleEls.homeStatus.textContent=`${parts.relative} · 已登记 ✓`;
-            scheduleEls.homeEditBtn.textContent="修改排班";
-            scheduleEls.homeRing.style.setProperty("--work-start",`${(start/24)*360}deg`);
-            scheduleEls.homeRing.style.setProperty("--work-span",`${((end-start)/24)*360}deg`);
-          } else {
-            scheduleEls.homeTimeMain.textContent="暂无排班";
-            scheduleEls.homeStatus.textContent=`${parts.relative} · 点击下方按钮登记 ♡`;
-            scheduleEls.homeEditBtn.textContent="＋ 登记排班";
-            scheduleEls.homeRing.style.setProperty("--work-start","0deg");
-            scheduleEls.homeRing.style.setProperty("--work-span","0deg");
+        function ensureClockTicks() {
+          if (!scheduleEls.homeTicks || scheduleEls.homeTicks.childElementCount) return;
+          const ns = "http://www.w3.org/2000/svg";
+          for (let i = 0; i < 24; i += 1) {
+            const angle = (i / 24) * Math.PI * 2 - Math.PI / 2;
+            const outer = 101.5;
+            const length = i % 6 === 0 ? 9.5 : (i % 3 === 0 ? 6.8 : 4.4);
+            const inner = outer - length;
+            const line = document.createElementNS(ns, "line");
+            line.setAttribute("x1", String(120 + Math.cos(angle) * inner));
+            line.setAttribute("y1", String(120 + Math.sin(angle) * inner));
+            line.setAttribute("x2", String(120 + Math.cos(angle) * outer));
+            line.setAttribute("y2", String(120 + Math.sin(angle) * outer));
+            line.classList.add("schedule-tick");
+            if (i % 6 === 0) line.classList.add("major");
+            else if (i % 3 === 0) line.classList.add("medium");
+            scheduleEls.homeTicks.appendChild(line);
           }
         }
-        async function refreshHome(forceRefresh=true) {
+        function setArcVisual(start, span) {
+          if (!scheduleEls.homeArc || !scheduleEls.homeArcGlow) return;
+          const circumference = scheduleEls.homeArc.getTotalLength();
+          const safeSpan = Math.max(0, Math.min(1, span));
+          const dash = safeSpan * circumference;
+          const gap = Math.max(0.001, circumference - dash);
+          const offset = -start * circumference;
+          [scheduleEls.homeArc, scheduleEls.homeArcGlow].forEach(el => {
+            el.style.strokeDasharray = `${Math.max(.001, dash)} ${gap}`;
+            el.style.strokeDashoffset = String(offset);
+            el.style.opacity = safeSpan < .001 ? "0" : "1";
+          });
+        }
+        function animateArcTo(targetStart, targetSpan) {
+          if (!scheduleEls.homeArc) return;
+          if (homeArcState.raf) cancelAnimationFrame(homeArcState.raf);
+          const hasTarget = targetSpan > .0001;
+          if (!homeArcState.initialized) {
+            homeArcState.start = targetStart;
+            homeArcState.span = 0;
+            homeArcState.initialized = true;
+            setArcVisual(homeArcState.start, homeArcState.span);
+          }
+          const fromStart = homeArcState.span < .0001 && hasTarget ? targetStart : homeArcState.start;
+          const fromSpan = homeArcState.span;
+          const toStart = hasTarget ? targetStart : fromStart;
+          const toSpan = hasTarget ? targetSpan : 0;
+          const begin = performance.now();
+          const duration = 760;
+          const ease = t => 1 - Math.pow(1 - t, 4);
+          const frame = now => {
+            const raw = Math.min(1, (now - begin) / duration);
+            const t = ease(raw);
+            homeArcState.start = fromStart + (toStart - fromStart) * t;
+            homeArcState.span = fromSpan + (toSpan - fromSpan) * t;
+            setArcVisual(homeArcState.start, homeArcState.span);
+            if (raw < 1) homeArcState.raf = requestAnimationFrame(frame);
+            else homeArcState.raf = 0;
+          };
+          homeArcState.raf = requestAnimationFrame(frame);
+        }
+        function animateHomeShift(direction) {
+          const home = els.home;
+          if (!home) return;
+          clearTimeout(homeShiftTimer);
+          home.classList.remove("schedule-shift-prev", "schedule-shift-next");
+          void home.offsetWidth;
+          home.classList.add(direction > 0 ? "schedule-shift-next" : "schedule-shift-prev");
+          homeShiftTimer = window.setTimeout(() => {
+            home.classList.remove("schedule-shift-prev", "schedule-shift-next");
+          }, 820);
+        }
+        function renderHomeSchedule() {
+          if (!scheduleEls.homeClock) return;
+          ensureClockTicks();
+          const row = homeRow();
+          if (row) {
+            const start = Number(row.start_hour);
+            const end = Number(row.end_hour);
+            scheduleEls.homeTimeMain.innerHTML = `<span>${String(start).padStart(2,"0")}</span><i>—</i><span>${String(end).padStart(2,"0")}</span>`;
+            scheduleEls.homeEditBtn.textContent = "修改排班";
+            animateArcTo(start / 24, (end - start) / 24);
+          } else {
+            scheduleEls.homeTimeMain.innerHTML = `<span>—</span><i>—</i><span>—</span>`;
+            scheduleEls.homeEditBtn.textContent = "登记排班";
+            animateArcTo(homeArcState.start, 0);
+          }
+        }
+        async function refreshHome(forceRefresh = true) {
           try {
             if (forceRefresh || !scheduleCacheLoaded) await fetchScheduleRows();
             renderHomeSchedule();
             if (state.activeMetric === "schedule") renderMetricSwitch();
-          } catch(err) {
-            console.error("workSchedule.refreshHome:",err);
+          } catch (err) {
+            console.error("workSchedule.refreshHome:", err);
             renderHomeSchedule();
             if (isRpcMissing(err?.message)) showToast("请先运行新版排班 SQL");
           }
         }
         function shiftHomeDate(delta) {
-          homeDateKey=localDateKey(addDays(parseLocalDate(ensureHomeDateKey()),delta));
-          renderHomeSchedule(); renderMetricSwitch(); vibrate(6);
+          homeDateKey = localDateKey(addDays(parseLocalDate(ensureHomeDateKey()), delta));
+          renderHomeSchedule();
+          renderMetricSwitch();
+          animateHomeShift(delta);
+          vibrate(6);
+        }
+        function bindHomeSwipe() {
+          if (!scheduleEls.homeStage || !scheduleEls.homeClock) return;
+          let drag = null;
+          const resetVisual = () => {
+            scheduleEls.homeClock.classList.remove("dragging");
+            scheduleEls.homeClock.style.transform = "";
+            scheduleEls.homeClock.style.opacity = "";
+          };
+          scheduleEls.homeStage.addEventListener("pointerdown", e => {
+            if (state.activeMetric !== "schedule") return;
+            drag = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, startTime: performance.now(), horizontal: false };
+            try { scheduleEls.homeStage.setPointerCapture(e.pointerId); } catch (_) {}
+          });
+          scheduleEls.homeStage.addEventListener("pointermove", e => {
+            if (!drag || e.pointerId !== drag.pointerId) return;
+            const dx = e.clientX - drag.startX;
+            const dy = e.clientY - drag.startY;
+            if (!drag.horizontal && Math.abs(dx) < 7) return;
+            if (!drag.horizontal && Math.abs(dx) <= Math.abs(dy)) return;
+            drag.horizontal = true;
+            e.preventDefault();
+            const visualX = Math.max(-18, Math.min(18, dx * .18));
+            scheduleEls.homeClock.classList.add("dragging");
+            scheduleEls.homeClock.style.transform = `translate3d(${visualX}px,0,0) scale(${1 - Math.min(.018, Math.abs(dx) / 5200)})`;
+            scheduleEls.homeClock.style.opacity = String(Math.max(.78, 1 - Math.abs(dx) / 650));
+          }, { passive: false });
+          const end = e => {
+            if (!drag || e.pointerId !== drag.pointerId) return;
+            const finished = drag;
+            drag = null;
+            try { scheduleEls.homeStage.releasePointerCapture(e.pointerId); } catch (_) {}
+            const dx = e.clientX - finished.startX;
+            const dt = Math.max(1, performance.now() - finished.startTime);
+            const velocity = dx / dt;
+            resetVisual();
+            if (!finished.horizontal) return;
+            homeSwipeSuppressUntil = performance.now() + 420;
+            if (Math.abs(dx) >= 42 || Math.abs(velocity) >= .36) shiftHomeDate(dx < 0 ? 1 : -1);
+          };
+          scheduleEls.homeStage.addEventListener("pointerup", end);
+          scheduleEls.homeStage.addEventListener("pointercancel", end);
+          scheduleEls.homeStage.addEventListener("click", e => {
+            if (performance.now() < homeSwipeSuppressUntil) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }, true);
         }
         function openHomeRegistration() {
-          resetForm(); scheduleEls.date.value=ensureHomeDateKey(); applyScheduleForDate(scheduleEls.date.value);
-          setLayer(scheduleEls.overviewLayer,false); setLayer(scheduleEls.deleteLayer,false); setLayer(scheduleEls.layer,true);
-          vibrate(8); void syncRegistrationForCurrentDate({forceRefresh:true});
+          resetForm();
+          scheduleEls.date.value = ensureHomeDateKey();
+          applyScheduleForDate(scheduleEls.date.value);
+          setLayer(scheduleEls.overviewLayer, false);
+          setLayer(scheduleEls.deleteLayer, false);
+          setLayer(scheduleEls.layer, true);
+          vibrate(8);
+          void syncRegistrationForCurrentDate({ forceRefresh: true });
         }
 
         function bindPullDownClose({ layer, sheet, handle, onClose }) {
@@ -7825,14 +8239,18 @@
           if (row) {
             scheduleEls.startHour.value = String(Number(row.start_hour));
             scheduleEls.endHour.value = String(Number(row.end_hour));
-            scheduleEls.existingState.textContent = `本天已经登记 · ${formatHour(row.start_hour)}–${formatHour(row.end_hour)}`;
+            scheduleEls.existingState.textContent = `已登记 · ${formatHour(row.start_hour)}–${formatHour(row.end_hour)}`;
             scheduleEls.existingState.hidden = false;
+            if (scheduleEls.title) scheduleEls.title.textContent = "修改排班";
+            scheduleEls.saveBtn.textContent = "保存修改";
             return;
           }
           scheduleEls.startHour.value = "9";
           scheduleEls.endHour.value = "18";
           scheduleEls.existingState.hidden = true;
           scheduleEls.existingState.textContent = "";
+          if (scheduleEls.title) scheduleEls.title.textContent = "登记排班";
+          scheduleEls.saveBtn.textContent = "保存排班";
         }
 
         async function syncRegistrationForCurrentDate({ forceRefresh = false } = {}) {
@@ -8146,10 +8564,10 @@
 
         populateHourOptions();
         resetForm();
+        ensureClockTicks();
+        bindHomeSwipe();
 
         scheduleEls.openBtn?.addEventListener("click", openRegistration);
-        scheduleEls.homePrevBtn?.addEventListener("click", () => shiftHomeDate(-1));
-        scheduleEls.homeNextBtn?.addEventListener("click", () => shiftHomeDate(1));
         scheduleEls.homeEditBtn?.addEventListener("click", openHomeRegistration);
         scheduleEls.homeOverviewBtn?.addEventListener("click", openOverview);
         scheduleEls.adminNotice.addEventListener("click", openAdminUpcoming);
