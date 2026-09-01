@@ -2073,6 +2073,132 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    /* Score and gift use the same cute component language, but different palettes. */
+    .home:not(.gift-active) .reward-message {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.56), rgba(255,247,225,.46)),
+        rgba(255,251,240,.28);
+      border-color: rgba(255,255,255,.82);
+      box-shadow: 0 9px 26px rgba(188,151,91,.09), inset 0 1px 0 rgba(255,255,255,.68);
+    }
+
+    .home:not(.gift-active) .reward-line-primary {
+      color: rgba(127,91,48,.94);
+    }
+
+    .home:not(.gift-active) .reward-line-secondary {
+      color: rgba(154,116,69,.80);
+    }
+
+    .metric-switch:not(.gift-active) .metric-switch-thumb {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.84), rgba(255,244,214,.54)),
+        rgba(255,252,241,.52);
+      box-shadow:
+        0 6px 18px rgba(193,153,88,.11),
+        inset 0 1px 0 rgba(255,255,255,.74);
+    }
+
+    .metric-switch:not(.gift-active) .metric-option.active {
+      color: #8b663d;
+    }
+
+    .home:not(.gift-active) .score-lens {
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.78), transparent 48%),
+        rgba(255,249,230,.58);
+      border-color: rgba(255,255,255,.94);
+      box-shadow:
+        0 24px 58px rgba(190,151,88,.13),
+        inset 0 2px 4px rgba(255,255,255,.90),
+        inset 0 -4px 14px rgba(183,143,79,.05);
+    }
+
+    .home:not(.gift-active) .score {
+      background: linear-gradient(180deg, #795a36 18%, #b68b54 108%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .redeem-button {
+      width: min(78vw, 258px);
+      min-height: 47px;
+      margin-top: 18px;
+      padding: 9px 17px;
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 17px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.62), rgba(255,245,216,.38)),
+        rgba(255,250,236,.34);
+      box-shadow: 0 10px 26px rgba(183,143,79,.10), inset 0 1px 0 rgba(255,255,255,.72);
+      color: #8a653c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 710;
+      letter-spacing: -.01em;
+      -webkit-backdrop-filter: blur(22px) saturate(155%);
+      backdrop-filter: blur(22px) saturate(155%);
+    }
+
+    .redeem-button .redeem-button-meta {
+      color: rgba(148,107,58,.70);
+      font-size: 10.5px;
+      font-weight: 650;
+    }
+
+    .home.gift-active .redeem-button { display: none; }
+    .home:not(.gift-active) .admin-controls { margin-top: 12px; }
+
+    .home:not(.gift-active) .overview-button {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.66), rgba(255,246,220,.34)),
+        var(--home-control-bg);
+      box-shadow: 0 14px 34px rgba(183,143,79,.10), inset 0 1px 0 rgba(255,255,255,.64);
+    }
+
+    .home:not(.gift-active) .overview-button::before {
+      color: rgba(189,145,79,.78);
+    }
+
+    .home.gift-active .overview-button {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.62), rgba(255,240,248,.26)),
+        var(--home-control-bg);
+      box-shadow: 0 14px 34px rgba(190,139,171,.09), inset 0 1px 0 rgba(255,255,255,.62);
+    }
+
+    .home.gift-active .overview-button::before {
+      color: rgba(210,126,165,.74);
+    }
+
+    .movement.gift {
+      color: #b27939;
+      gap: 1px;
+    }
+
+    .movement-gift-emoji {
+      font-size: 10px;
+      line-height: 1;
+      margin-right: 0;
+      transform: translateY(-.5px);
+    }
+
+    #redeemLayer .alert {
+      border-color: rgba(255,255,255,.84);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.26), rgba(255,247,225,.10) 48%),
+        var(--glass-fill-strong);
+    }
+
+    #redeemLayer .alert-title { color: #805f39; }
+    #redeemLayer .alert-message { color: rgba(114,87,57,.78); }
+    #redeemConfirmBtn { color: #a06f32; font-weight: 720; }
+    #redeemForceBtn { color: #c47d39; font-weight: 720; }
+
     .home.gift-active .score-lens {
       background:
         radial-gradient(circle at 34% 24%, rgba(255,255,255,.72), transparent 48%),
@@ -2101,7 +2227,7 @@
 
     .overview-button::before {
       content: "✦";
-      color: rgba(210,126,165,.74);
+      color: rgba(189,145,79,.78);
       font-size: 11px;
       line-height: 1;
     }
@@ -2630,6 +2756,12 @@
           </div>
         </div>
 
+        <button id="redeemGiftBtn" class="redeem-button pressable" type="button">
+          <span aria-hidden="true">🎁</span>
+          <span>兑换小礼物额度</span>
+          <span class="redeem-button-meta">10 分 / 次</span>
+        </button>
+
         <div id="adminControls" class="admin-controls hidden" aria-hidden="true">
           <button class="score-button minus glass pressable" type="button" data-delta="-1">−1</button>
           <button class="score-button plus glass pressable" type="button" data-delta="1">+1</button>
@@ -2904,7 +3036,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.6.4</span>
+              <span class="settings-value">1.7.0</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -2934,7 +3066,18 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.6.4</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.7.0</strong><span>当前版本</span></div>
+            <div class="release-date">2026.09.01</div>
+            <ul class="release-list">
+              <li>当前分数与小礼物额度统一为同一套可爱玻璃语言；积分页采用奶油黄与焦糖色调。</li>
+              <li>积分页新增 10 分兑换 1 个小礼物额度入口，并加入动态“还差几分 / 可兑换几次”提示。</li>
+              <li>管理员小礼物 +1 优先按积分兑换；积分不足时允许明确确认后强制 +1。</li>
+              <li>兑换记录在积分历史、小礼物历史与日历中联动显示，日历可看到 ↓10 与 🎁↑1。</li>
+            </ul>
+          </div>
+
+          <div class="release-block previous">
+            <div class="release-head"><strong>1.6.4</strong><span>上一版本</span></div>
             <div class="release-date">2026.08.31</div>
             <ul class="release-list">
               <li>首页移除“当前分数”重复说明，小礼物模式改为按额度动态计算的两行奖励文案。</li>
@@ -3110,6 +3253,21 @@
       </div>
     </div>
 
+    <!-- Score -> gift redemption confirmation -->
+    <div id="redeemLayer" class="modal-layer alert-layer" aria-hidden="true">
+      <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="redeemTitle">
+        <div class="alert-content">
+          <div id="redeemTitle" class="alert-title">兑换小礼物额度</div>
+          <div id="redeemMessage" class="alert-message"></div>
+        </div>
+        <div id="redeemActions" class="alert-actions vertical">
+          <button id="redeemConfirmBtn" class="alert-button primary-action pressable" type="button">确认兑换</button>
+          <button id="redeemForceBtn" class="alert-button pressable" type="button" hidden>管理员强制 +1</button>
+          <button id="cancelRedeemBtn" class="alert-button pressable" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Reset / gift settlement alert -->
     <div id="resetLayer" class="modal-layer alert-layer" aria-hidden="true">
       <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="resetTitle">
@@ -3162,6 +3320,7 @@
         scoreRefreshBtn: $("#scoreRefreshBtn"),
         metricSwitch: $("#metricSwitch"),
         metricEyebrow: $("#metricEyebrow"),
+        redeemGiftBtn: $("#redeemGiftBtn"),
         adminControls: $("#adminControls"),
         settingsBtn: $("#settingsBtn"),
         overviewBtn: $("#overviewBtn"),
@@ -3210,6 +3369,13 @@
         reasonInput: $("#reasonInput"),
         cancelChangeBtn: $("#cancelChangeBtn"),
         confirmChangeBtn: $("#confirmChangeBtn"),
+
+        redeemLayer: $("#redeemLayer"),
+        redeemTitle: $("#redeemTitle"),
+        redeemMessage: $("#redeemMessage"),
+        redeemConfirmBtn: $("#redeemConfirmBtn"),
+        redeemForceBtn: $("#redeemForceBtn"),
+        cancelRedeemBtn: $("#cancelRedeemBtn"),
 
         resetLayer: $("#resetLayer"),
         resetTitle: $("#resetTitle"),
@@ -3359,7 +3525,7 @@
       }
 
       function closeAllLayers() {
-        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.resetLayer]
+        [els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer, els.changeLayer, els.redeemLayer, els.resetLayer]
           .forEach(layer => setLayer(layer, false));
       }
 
@@ -3406,27 +3572,27 @@
           btn.setAttribute("aria-selected", String(active));
         });
 
-        // The switch already says “当前分数”, so score mode intentionally has
-        // no duplicated explanatory line. Gift mode uses a two-line, dynamic
-        // kawaii reward message based on the current available gift balance.
-        if (!gift) {
-          els.metricEyebrow.hidden = true;
-          els.metricEyebrow.replaceChildren();
-          return;
-        }
-
-        const balance = Math.max(0, Number(state.giftBalance ?? 0));
         const primary = document.createElement("span");
         const secondary = document.createElement("span");
         primary.className = "reward-line-primary";
         secondary.className = "reward-line-secondary";
 
-        if (balance > 0) {
-          primary.textContent = `₊˚🎀 恭喜宝宝 ♡ 获得等价 ${40 * balance} 元奖励 🎁`;
-          secondary.textContent = `可折现 ${30 * balance} 元 ✧˖°`;
+        if (gift) {
+          const balance = Math.max(0, Number(state.giftBalance ?? 0));
+          if (balance > 0) {
+            primary.textContent = `₊˚🎀 恭喜宝宝 ♡ 获得等价 ${40 * balance} 元奖励 🎁`;
+            secondary.textContent = `可折现 ${30 * balance} 元 ✧˖°`;
+          } else {
+            primary.textContent = "₊˚🌷 目前还没有奖励哦 ♡";
+            secondary.textContent = "继续加油获得小礼物额度吧宝宝！🎀✨";
+          }
         } else {
-          primary.textContent = "₊˚🌷 目前还没有奖励哦 ♡";
-          secondary.textContent = "继续加油获得小礼物额度吧宝宝！🎀✨";
+          const score = Number(state.score ?? 0);
+          const redeemable = Math.max(0, Math.floor(score / 10));
+          primary.textContent = `₊˚🧁 现在已经 ${score} 分了哦 ♡`;
+          secondary.textContent = redeemable > 0
+            ? `已经可以兑换 ${redeemable} 次小礼物额度啦！🎁✨`
+            : `还有 ${Math.max(0, 10 - score)} 分就可以兑换一次小礼物额度啦！加油宝宝 🌼✨`;
         }
 
         els.metricEyebrow.replaceChildren(primary, secondary);
@@ -3693,6 +3859,111 @@
           }
         } finally {
           setBusy(els.confirmChangeBtn, false);
+        }
+      }
+
+      function isGiftRedemptionAction(action) {
+        return ["score_redeem", "redeem_gift", "gift_redeem", "redemption"].includes(String(action || ""));
+      }
+
+      function openRedeemPrompt({ source = "score" } = {}) {
+        const score = Number(state.score ?? 0);
+        const redeemable = Math.max(0, Math.floor(score / 10));
+        const canRedeem = score >= 10;
+        const adminForceAllowed = state.isAdmin && source === "gift" && !canRedeem;
+
+        els.redeemTitle.textContent = canRedeem ? "🎁 兑换小礼物额度" : "🌼 还差一点点哦";
+        if (canRedeem) {
+          els.redeemMessage.textContent = `当前 ${score} 分，可兑换 ${redeemable} 次小礼物额度。本次兑换 1 次将扣除 10 分，兑换后剩余 ${score - 10} 分，小礼物额度 +1。是否兑换？`;
+          els.redeemConfirmBtn.hidden = false;
+          els.redeemConfirmBtn.textContent = "确认兑换";
+          els.redeemForceBtn.hidden = true;
+        } else {
+          const need = Math.max(0, 10 - score);
+          els.redeemMessage.textContent = adminForceAllowed
+            ? `当前只有 ${score} 分，还差 ${need} 分才能正常兑换。你是管理员，可以取消，或强制增加 1 个小礼物额度（不会扣积分）。`
+            : `当前 ${score} 分，还差 ${need} 分就可以兑换一次小礼物额度啦。继续加油宝宝！`;
+          els.redeemConfirmBtn.hidden = true;
+          els.redeemForceBtn.hidden = !adminForceAllowed;
+        }
+        setLayer(els.redeemLayer, true);
+      }
+
+      async function performGiftRedemption() {
+        const score = Number(state.score ?? 0);
+        if (score < 10) {
+          openRedeemPrompt({ source: state.activeMetric });
+          return;
+        }
+
+        setBusy(els.redeemConfirmBtn, true);
+        try {
+          // One server-side transaction must deduct 10 score, add 1 gift and write both logs.
+          const { data, error } = await db.rpc("points_redeem_gift");
+          if (error) throw error;
+
+          const row = Array.isArray(data) ? data[0] : data;
+          if (row && typeof row.score === "number" && typeof row.gift_balance === "number") {
+            state.score = row.score;
+            state.giftBalance = row.gift_balance;
+            state.updatedAt = row.score_updated_at ?? row.updated_at ?? state.updatedAt;
+            state.giftUpdatedAt = row.gift_updated_at ?? row.updated_at ?? state.giftUpdatedAt;
+          } else {
+            await loadAppState({ silent: true });
+          }
+
+          renderPrimaryMetric({ animate: true });
+          markRefreshed();
+          state.overviewLoadedAt = 0;
+          setLayer(els.redeemLayer, false);
+          vibrate(18);
+          showToast("🎁 兑换成功：积分 −10，小礼物额度 +1");
+          if (els.overview.classList.contains("open")) await loadOverviewData(true);
+        } catch (err) {
+          console.error("performGiftRedemption:", err);
+          const message = String(err?.message || "");
+          if (/points_redeem_gift|Could not find the function|PGRST202|schema cache/i.test(message)) {
+            showToast("兑换接口尚未安装，请先部署 points_redeem_gift RPC");
+          } else if (/Insufficient score|score.*10|not enough/i.test(message)) {
+            await loadAppState({ silent: true });
+            renderPrimaryMetric();
+            openRedeemPrompt({ source: state.activeMetric });
+          } else {
+            showToast("兑换失败，请稍后重试");
+          }
+        } finally {
+          setBusy(els.redeemConfirmBtn, false);
+        }
+      }
+
+      async function forceAddGiftByAdmin() {
+        if (!state.isAdmin) return;
+        setBusy(els.redeemForceBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_change_gift", {
+            p_delta: 1,
+            p_reason: "管理员强制增加小礼物额度"
+          });
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          if (row && typeof row.gift_balance === "number") {
+            state.giftBalance = row.gift_balance;
+            state.giftUpdatedAt = row.updated_at;
+          } else {
+            await loadAppState({ silent: true });
+          }
+          renderPrimaryMetric({ animate: true });
+          markRefreshed();
+          state.overviewLoadedAt = 0;
+          setLayer(els.redeemLayer, false);
+          vibrate(16);
+          showToast("管理员已强制增加 1 个小礼物额度");
+          if (els.overview.classList.contains("open")) await loadOverviewData(true);
+        } catch (err) {
+          console.error("forceAddGiftByAdmin:", err);
+          showToast("强制增加额度失败");
+        } finally {
+          setBusy(els.redeemForceBtn, false);
         }
       }
 
@@ -4023,9 +4294,22 @@
         for (const log of monthLogs) {
           const k = dateKey(new Date(log.created_at));
           const delta = Number(log.delta) || 0;
-          const movement = movementByDay.get(k) || { up: 0, down: 0 };
+          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0 };
           if (delta > 0) movement.up += delta;
           if (delta < 0) movement.down += Math.abs(delta);
+          movementByDay.set(k, movement);
+        }
+
+        // Redemption is one atomic business action: score −10 and gift +1.
+        // Only redemption gift logs are mirrored into the score calendar.
+        for (const log of state.giftLogs) {
+          if (!isGiftRedemptionAction(log.action)) continue;
+          const t = new Date(log.created_at);
+          if (t < first || t >= next) continue;
+          const k = dateKey(t);
+          const movement = movementByDay.get(k) || { up: 0, down: 0, giftUp: 0 };
+          const delta = Number(log.delta) || 0;
+          if (delta > 0) movement.giftUp += delta;
           movementByDay.set(k, movement);
         }
 
@@ -4052,13 +4336,13 @@
         for (let day = 1; day <= daysInMonth; day++) {
           const d = new Date(month.getFullYear(), month.getMonth(), day);
           const key = dateKey(d);
-          const movement = movementByDay.get(key) || { up: 0, down: 0 };
+          const movement = movementByDay.get(key) || { up: 0, down: 0, giftUp: 0 };
 
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "day pressable";
           btn.dataset.dateKey = key;
-          btn.setAttribute("aria-label", `${month.getMonth()+1}月${day}日，加分 ${movement.up}，扣分 ${movement.down}`);
+          btn.setAttribute("aria-label", `${month.getMonth()+1}月${day}日，加分 ${movement.up}，扣分 ${movement.down}，兑换小礼物 ${movement.giftUp}`);
 
           if (sameDay(d, today)) btn.classList.add("today");
           if (state.selectedDayKey === key) btn.classList.add("selected");
@@ -4069,10 +4353,13 @@
           const downHTML = movement.down > 0
             ? `<span class="movement down">${arrowDown}<b>${movement.down}</b></span>`
             : "";
+          const giftHTML = movement.giftUp > 0
+            ? `<span class="movement gift"><span class="movement-gift-emoji">🎁</span>${arrowUp}<b>${movement.giftUp}</b></span>`
+            : "";
 
           btn.innerHTML = `
             <span class="day-number">${day}</span>
-            <span class="day-movements">${upHTML}${downHTML}</span>
+            <span class="day-movements">${upHTML}${downHTML}${giftHTML}</span>
           `;
 
           btn.addEventListener("click", () => selectCalendarDay(d));
@@ -4138,8 +4425,13 @@
       function logRowHTML(log, showDate) {
         const delta = Number(log.delta);
         const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
-        const reason = String(log.reason ?? "").trim() || "未填写原因";
-        const actionMeta = log.action === "reset" ? "重置" : `${log.score_before} → ${log.score_after}`;
+        const isRedeem = isGiftRedemptionAction(log.action);
+        const reason = String(log.reason ?? "").trim() || (isRedeem ? "兑换小礼物额度" : "未填写原因");
+        const actionMeta = log.action === "reset"
+          ? "重置"
+          : isRedeem
+            ? `兑换小礼物 · ${log.score_before} → ${log.score_after}`
+            : `${log.score_before} → ${log.score_after}`;
         const timeMeta = `${showDate ? formatDateShort(log.created_at) + " · " : ""}${formatTime(log.created_at)} · ${actionMeta}`;
 
         return `
@@ -4163,14 +4455,17 @@
       function giftLogRowHTML(log) {
         const delta = Number(log.delta);
         const deltaClass = delta > 0 ? "positive" : delta < 0 ? "negative" : "neutral";
-        const reason = String(log.reason ?? "").trim() || "未填写原因";
+        const isRedeem = isGiftRedemptionAction(log.action);
+        const reason = String(log.reason ?? "").trim() || (isRedeem ? "积分兑换小礼物额度" : "未填写原因");
         const before = Number(log.balance_before ?? 0);
         const after = Number(log.balance_after ?? before + delta);
-        const actionLabel = log.action === "settlement_add"
-          ? "积分重置自动结算"
-          : log.action === "settlement_clear"
-            ? "自动结算 · 额度清空"
-            : "";
+        const actionLabel = isRedeem
+          ? "积分兑换 · 10 分换 1 个额度"
+          : log.action === "settlement_add"
+            ? "积分重置自动结算"
+            : log.action === "settlement_clear"
+              ? "自动结算 · 额度清空"
+              : "";
         const metaParts = [
           formatDateShort(log.created_at),
           formatTime(log.created_at),
@@ -5294,10 +5589,20 @@
         renderPrimaryMetric({ animate: true });
       });
 
+      els.redeemGiftBtn.addEventListener("click", () => {
+        vibrate(8);
+        openRedeemPrompt({ source: "score" });
+      });
+
       $$(".score-button").forEach(btn => {
         btn.addEventListener("click", () => {
           vibrate();
-          openChange(Number(btn.dataset.delta));
+          const delta = Number(btn.dataset.delta);
+          if (state.activeMetric === "gift" && delta === 1) {
+            openRedeemPrompt({ source: "gift" });
+            return;
+          }
+          openChange(delta);
         });
       });
 
@@ -5307,6 +5612,13 @@
 
       els.cancelChangeBtn.addEventListener("click", () => setLayer(els.changeLayer, false));
       els.confirmChangeBtn.addEventListener("click", confirmChange);
+
+      els.redeemLayer.addEventListener("click", (e) => {
+        if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false);
+      });
+      els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.redeemLayer, false));
+      els.redeemConfirmBtn.addEventListener("click", performGiftRedemption);
+      els.redeemForceBtn.addEventListener("click", forceAddGiftByAdmin);
 
       els.resetBtn.addEventListener("click", () => {
         setLayer(els.settingsLayer, false);
@@ -5407,6 +5719,7 @@
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
         if (els.changeLayer.classList.contains("open")) return setLayer(els.changeLayer, false);
+        if (els.redeemLayer.classList.contains("open")) return setLayer(els.redeemLayer, false);
         if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
         if (els.settingsLayer.classList.contains("open")) return setLayer(els.settingsLayer, false);
         if (state.overviewMode !== "closed") {
