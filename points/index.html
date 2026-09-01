@@ -3472,6 +3472,84 @@
       line-height: 1.65;
     }
 
+  
+    /* ============================================================
+       v1.7.4 — compact content-fit Settings
+       Keep the Overview glass language, remove excessive vertical air.
+       ============================================================ */
+    #settingsLayer .settings-sheet {
+      padding: 0 14px calc(var(--safe-bottom) + 9px) !important;
+      border-radius: 29px 29px 0 0 !important;
+    }
+
+    #settingsLayer .settings-sheet-header {
+      min-height: 52px !important;
+      margin: 0 -14px 9px !important;
+      padding: 5px 14px 7px !important;
+    }
+
+    #settingsLayer .settings-grabber-hitbox {
+      min-height: 39px !important;
+      margin-bottom: -21px !important;
+    }
+
+    #settingsLayer .settings-sheet-header .grabber {
+      width: 34px !important;
+      height: 4px !important;
+    }
+
+    #settingsLayer .settings-sheet-header .sheet-title {
+      margin-top: 0 !important;
+      font-size: 16px !important;
+      line-height: 1.1 !important;
+    }
+
+    #settingsLayer .settings-sheet-header .login-state {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 1.15 !important;
+    }
+
+    #settingsLayer .settings-sheet-content {
+      padding: 0 !important;
+    }
+
+    #settingsLayer .settings-label {
+      margin: 0 5px 5px !important;
+      font-size: 15px !important;
+      line-height: 1.15 !important;
+      font-weight: 700 !important;
+      letter-spacing: -.018em !important;
+    }
+
+    #settingsLayer .settings-group {
+      margin: 0 0 10px !important;
+      padding: 1px 0 !important;
+      border-radius: 18px !important;
+      box-shadow:
+        0 7px 18px rgba(43,55,78,.055),
+        inset 0 1px 0 rgba(255,255,255,.40) !important;
+    }
+
+    #settingsLayer .settings-group:last-child {
+      margin-bottom: 2px !important;
+    }
+
+    #settingsLayer .settings-row {
+      min-height: 45px !important;
+      padding: 0 13px !important;
+      font-size: 14px !important;
+    }
+
+    #settingsLayer .settings-value {
+      font-size: 12px !important;
+    }
+
+    #settingsLayer .chevron {
+      font-size: 20px !important;
+      line-height: 1 !important;
+    }
+
   </style>
 </head>
 
@@ -3831,7 +3909,7 @@
           <div class="settings-group">
             <div class="settings-row static">
               <span>当前版本</span>
-              <span class="settings-value">1.7.3</span>
+              <span class="settings-value">1.7.4</span>
             </div>
             <div class="settings-row static">
               <span>数据刷新</span>
@@ -3861,7 +3939,7 @@
         <div class="unified-sheet-body">
           <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
           <div class="release-block">
-            <div class="release-head"><strong>1.7.3</strong><span>当前版本</span></div>
+            <div class="release-head"><strong>1.7.4</strong><span>当前版本</span></div>
             <div class="release-date">2026.09.01</div>
             <ul class="release-list">
               <li>设置页改为读取当前访客 / 管理员实际内容高度，内容多少就弹多少，超出屏幕时才内部滚动。</li>
@@ -4374,7 +4452,7 @@
         // Measure the actual visible visitor/admin content every time.
         // The sheet grows only as much as its current content requires.
         const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
-        const maxHeight = Math.max(280, viewportHeight - 86);
+        const maxHeight = Math.max(250, Math.min(viewportHeight - 120, Math.round(viewportHeight * 0.72)));
 
         sheet.style.height = "auto";
         sheet.style.maxHeight = "none";
