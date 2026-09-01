@@ -4876,6 +4876,15 @@
       border-color: rgba(235,125,132,.14) !important;
     }
 
+    .schedule-time-main .schedule-empty-mark {
+      -webkit-text-fill-color: rgba(65,102,124,.28) !important;
+      color: rgba(65,102,124,.28) !important;
+      font-size: .86em;
+      font-weight: 420;
+      letter-spacing: 0;
+      transform: translateY(-.03em);
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .schedule-arc,
       .schedule-arc-glow { animation: none !important; }
@@ -4884,6 +4893,348 @@
       .home.schedule-shift-next .reward-message,
       .home.schedule-shift-prev .schedule-time-main,
       .home.schedule-shift-prev .reward-message { animation: none !important; transition-duration: .01ms !important; }
+    }
+
+
+
+    /* ============================================================
+       v2.4 — Unified three-mode design system / premium schedule
+       The homepage skeleton is shared by score, wheel and schedule.
+       Schedule changes only the content and cool-blue accent.
+       ============================================================ */
+
+    /* Shared geometry: same title → lens → action → overview rhythm. */
+    .home.schedule-active .score-lens {
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.48), transparent 34%),
+        radial-gradient(circle at 71% 76%, rgba(186,226,248,.055), transparent 46%),
+        linear-gradient(145deg, rgba(255,255,255,.20), rgba(255,255,255,.035) 48%, rgba(255,255,255,.01)),
+        var(--lens-bg) !important;
+      border: 1.5px solid rgba(255,255,255,.82) !important;
+      box-shadow:
+        0 22px 56px rgba(31,38,76,.075),
+        0 10px 34px rgba(78,145,184,.035),
+        inset 0 2px 3px rgba(255,255,255,.88),
+        inset 0 -5px 16px rgba(40,84,116,.045) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(185%) brightness(1.035) !important;
+      backdrop-filter: blur(40px) saturate(185%) brightness(1.035) !important;
+      overflow: visible !important;
+    }
+
+    .home.schedule-active .score-lens::before {
+      background:
+        radial-gradient(circle at 31% 22%, rgba(255,255,255,.38), transparent 43%),
+        linear-gradient(122deg, rgba(255,255,255,.10), transparent 36% 68%, rgba(132,203,239,.035)) !important;
+      opacity: .72;
+    }
+
+    /* The schedule header stays typography-first, not a blue card. */
+    .home.schedule-active .reward-message {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+    .home.schedule-active .reward-line-primary {
+      color: rgba(29,42,51,.92) !important;
+      font-size: 15px !important;
+      font-weight: 690 !important;
+      letter-spacing: -.022em !important;
+    }
+    .home.schedule-active .reward-line-secondary {
+      color: rgba(75,109,130,.48) !important;
+      font-size: 11.5px !important;
+      font-weight: 560 !important;
+      letter-spacing: .035em !important;
+      margin-top: 5px !important;
+    }
+
+    /* Fine watch-like markings, engraved rather than painted. */
+    .schedule-clock-svg { overflow: visible; }
+    .schedule-tick {
+      stroke-linecap: round;
+      shape-rendering: geometricPrecision;
+    }
+    .schedule-tick.minor {
+      stroke: rgba(54,72,84,.105);
+      stroke-width: .62;
+    }
+    .schedule-tick.hour {
+      stroke: rgba(49,73,89,.19);
+      stroke-width: .82;
+    }
+    .schedule-tick.medium {
+      stroke: rgba(49,84,106,.27);
+      stroke-width: 1.05;
+    }
+    .schedule-tick.major {
+      stroke: rgba(43,84,111,.40);
+      stroke-width: 1.38;
+    }
+
+    /* No background progress track: only the scheduled interval touches the circumference. */
+    .schedule-arc,
+    .schedule-arc-glow,
+    .schedule-arc-shine {
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+      transition: opacity .48s ease;
+      will-change: stroke-dasharray, stroke-dashoffset, opacity, filter;
+    }
+    .schedule-arc-glow {
+      stroke: rgba(72,176,230,.23);
+      stroke-width: 10.5;
+      filter: blur(4.2px);
+      animation: schedulePremiumGlow 6.8s cubic-bezier(.45,0,.25,1) infinite;
+    }
+    .schedule-arc {
+      stroke-width: 4.35;
+      filter:
+        url(#scheduleArcGlowFilter)
+        drop-shadow(0 0 1.5px rgba(219,249,255,.78))
+        drop-shadow(0 0 5px rgba(73,183,233,.32));
+      animation: schedulePremiumBreath 6.2s cubic-bezier(.42,0,.28,1) infinite;
+    }
+    .schedule-arc-shine {
+      stroke-width: 2.05;
+      opacity: .88;
+      filter: drop-shadow(0 0 2.8px rgba(224,250,255,.52));
+      mix-blend-mode: screen;
+      animation: schedulePremiumShine 7.2s ease-in-out infinite;
+    }
+    @keyframes schedulePremiumBreath {
+      0%,100% { opacity: .88; filter:url(#scheduleArcGlowFilter) drop-shadow(0 0 1px rgba(225,250,255,.72)) drop-shadow(0 0 4px rgba(68,179,229,.24)); }
+      46% { opacity: 1; filter:url(#scheduleArcGlowFilter) drop-shadow(0 0 2px rgba(237,253,255,.90)) drop-shadow(0 0 7px rgba(73,188,237,.40)); }
+      72% { opacity: .94; }
+    }
+    @keyframes schedulePremiumGlow {
+      0%,100% { opacity: .18; }
+      48% { opacity: .38; }
+      74% { opacity: .27; }
+    }
+    @keyframes schedulePremiumShine {
+      0%,100% { opacity: .46; }
+      48% { opacity: .96; }
+      72% { opacity: .68; }
+    }
+
+    /* Center typography: time is the only content in the dial. */
+    .schedule-time-main {
+      gap: clamp(12px, 4vw, 18px) !important;
+      color: rgba(34,75,101,.93) !important;
+      font-size: clamp(38px, 11.6vw, 47px) !important;
+      font-weight: 610 !important;
+      letter-spacing: -.062em !important;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,.66),
+        0 14px 32px rgba(63,132,173,.075) !important;
+    }
+    .schedule-time-main span {
+      background: linear-gradient(180deg, rgba(26,62,84,.98), rgba(78,135,169,.82));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .schedule-time-main i {
+      color: rgba(69,112,137,.30) !important;
+      font-size: .48em !important;
+      font-weight: 430 !important;
+      transform: translateY(-.04em) !important;
+    }
+
+    /* Swipe is quiet and physical; the date and time move as one system. */
+    .schedule-clock {
+      transition:
+        transform .88s cubic-bezier(.16,.82,.20,1),
+        opacity .72s ease !important;
+    }
+    .home.schedule-shift-next .schedule-time-main,
+    .home.schedule-shift-next .reward-message {
+      animation: schedulePremiumShiftNext .96s cubic-bezier(.16,.82,.20,1) !important;
+    }
+    .home.schedule-shift-prev .schedule-time-main,
+    .home.schedule-shift-prev .reward-message {
+      animation: schedulePremiumShiftPrev .96s cubic-bezier(.16,.82,.20,1) !important;
+    }
+    @keyframes schedulePremiumShiftNext {
+      0% { opacity:.18; transform:translate3d(18px,0,0) scale(.992); }
+      46% { opacity:.82; }
+      72% { opacity:1; transform:translate3d(-1.5px,0,0) scale(1.002); }
+      100% { opacity:1; transform:translate3d(0,0,0) scale(1); }
+    }
+    @keyframes schedulePremiumShiftPrev {
+      0% { opacity:.18; transform:translate3d(-18px,0,0) scale(.992); }
+      46% { opacity:.82; }
+      72% { opacity:1; transform:translate3d(1.5px,0,0) scale(1.002); }
+      100% { opacity:1; transform:translate3d(0,0,0) scale(1); }
+    }
+
+    /* One primary action under every core circle. Schedule uses the same slot and scale. */
+    .metric-action-slot > .schedule-actions {
+      grid-area: 1 / 1;
+      margin: 0 !important;
+      align-self: center;
+    }
+    .schedule-actions {
+      width: 100% !important;
+      height: 52px !important;
+      min-height: 52px !important;
+      display: grid !important;
+      place-items: center !important;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .24s ease, transform .34s cubic-bezier(.2,.9,.25,1), visibility 0s linear .24s;
+      transform: translateY(5px) scale(.982);
+    }
+    .home.schedule-active .schedule-actions {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) scale(1);
+      transition-delay: 0s;
+    }
+    .schedule-primary-button {
+      width: min(78vw,258px) !important;
+      height: 50px !important;
+      min-height: 50px !important;
+      border: 1px solid rgba(255,255,255,.84) !important;
+      border-radius: 17px !important;
+      padding: 0 18px !important;
+      color: rgba(48,105,140,.94) !important;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.66), rgba(226,244,253,.32)),
+        rgba(248,252,255,.28) !important;
+      box-shadow:
+        0 10px 26px rgba(60,135,176,.075),
+        inset 0 1px 0 rgba(255,255,255,.76) !important;
+      -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+      backdrop-filter: blur(22px) saturate(155%) !important;
+      font-size: 14px !important;
+      font-weight: 710 !important;
+      letter-spacing: -.01em !important;
+      transition: transform .16s ease, box-shadow .25s ease, background .25s ease !important;
+    }
+    .schedule-primary-button:active {
+      transform: scale(.97);
+      box-shadow: 0 6px 18px rgba(60,135,176,.06), inset 0 1px 0 rgba(255,255,255,.72) !important;
+    }
+
+    /* Shared bottom overview remains in exactly the same position in all three modes. */
+    .home.schedule-active #overviewBtn {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.64), rgba(226,244,253,.22)),
+        var(--home-control-bg) !important;
+      box-shadow:
+        0 14px 34px rgba(62,135,176,.07),
+        inset 0 1px 0 rgba(255,255,255,.64) !important;
+      color: rgba(38,70,88,.92) !important;
+    }
+    .home.schedule-active #overviewBtn svg { color: rgba(73,142,181,.78); }
+
+    /* Schedule accent belongs to the selected tab, not the entire page. */
+    .metric-switch.schedule-active .metric-switch-thumb {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.86), rgba(231,246,253,.33)),
+        rgba(255,255,255,.52) !important;
+      box-shadow:
+        0 5px 16px rgba(62,135,176,.07),
+        inset 0 1px 0 rgba(255,255,255,.82) !important;
+    }
+    .metric-switch.schedule-active .metric-option.active { color: rgba(52,112,148,.95) !important; }
+
+    /* Registration / edit sheet: same glass family, with cool-blue accents only. */
+    #workScheduleLayer,
+    #workScheduleOverviewLayer,
+    #adminWorkScheduleLayer {
+      background: rgba(45,54,70,.075) !important;
+    }
+    #workScheduleLayer.open,
+    #workScheduleOverviewLayer.open,
+    #adminWorkScheduleLayer.open {
+      -webkit-backdrop-filter: blur(9px) saturate(112%) !important;
+      backdrop-filter: blur(9px) saturate(112%) !important;
+    }
+    #workScheduleLayer .work-schedule-sheet,
+    #workScheduleOverviewLayer .work-schedule-sheet,
+    #adminWorkScheduleLayer .work-schedule-sheet {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.035) 42%, rgba(255,255,255,.01)),
+        var(--glass-fill-strong) !important;
+      border-color: var(--glass-border) !important;
+      box-shadow:
+        0 -18px 55px rgba(34,43,62,.15),
+        inset 0 1px 0 rgba(255,255,255,.38) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+    }
+    #workScheduleLayer .unified-sheet-header,
+    #workScheduleOverviewLayer .unified-sheet-header,
+    #adminWorkScheduleLayer .unified-sheet-header {
+      background:
+        linear-gradient(180deg,
+          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
+          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 76%,
+          transparent) !important;
+      border-bottom-color: var(--hairline) !important;
+    }
+    #workScheduleLayer .sheet-title,
+    #workScheduleOverviewLayer .sheet-title,
+    #adminWorkScheduleLayer .sheet-title {
+      color: rgba(27,42,52,.96) !important;
+    }
+    #workScheduleLayer .work-schedule-field-label {
+      color: rgba(63,100,123,.62) !important;
+      font-weight: 650 !important;
+    }
+    #workScheduleLayer .work-schedule-control {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.30), rgba(232,246,253,.10)),
+        rgba(255,255,255,.12) !important;
+      border-color: rgba(255,255,255,.58) !important;
+      color: rgba(32,61,79,.94) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.52), 0 7px 20px rgba(62,130,170,.035) !important;
+    }
+    #workScheduleLayer .work-schedule-date-step,
+    #workScheduleLayer .work-schedule-overview-button,
+    #workScheduleLayer #cancelWorkScheduleBtn {
+      color: rgba(63,111,139,.88) !important;
+      background: rgba(255,255,255,.18) !important;
+      border: 1px solid rgba(255,255,255,.52) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.42) !important;
+    }
+    #workScheduleLayer #saveWorkScheduleBtn {
+      color: rgba(43,105,143,.96) !important;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.68), rgba(215,240,253,.40)),
+        rgba(244,251,255,.34) !important;
+      border: 1px solid rgba(255,255,255,.76) !important;
+      box-shadow: 0 10px 26px rgba(55,132,176,.075), inset 0 1px 0 rgba(255,255,255,.74) !important;
+    }
+    #workScheduleLayer .work-schedule-existing {
+      color: rgba(43,106,143,.88) !important;
+      background: rgba(218,242,254,.22) !important;
+      border-color: rgba(175,222,246,.34) !important;
+    }
+    #workScheduleLayer .work-schedule-hint { color: rgba(71,103,123,.48) !important; }
+
+    #workScheduleOverviewLayer .work-schedule-row,
+    #adminWorkScheduleLayer .work-schedule-row {
+      background: rgba(255,255,255,.105) !important;
+      border-color: rgba(255,255,255,.42) !important;
+    }
+    #workScheduleOverviewLayer .work-schedule-time,
+    #adminWorkScheduleLayer .work-schedule-time { color: rgba(48,108,145,.92) !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .schedule-arc,
+      .schedule-arc-glow,
+      .schedule-arc-shine { animation: none !important; }
+      .schedule-clock { transition-duration: .01ms !important; }
     }
 
 </style>
@@ -4975,13 +5326,23 @@
 <div class="schedule-clock" id="scheduleClock">
 <svg aria-hidden="true" class="schedule-clock-svg" viewBox="0 0 240 240">
 <defs>
-<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcGradient" x1="28" x2="212" y1="36" y2="204">
-<stop offset="0" stop-color="#77b9ea"></stop>
-<stop offset=".32" stop-color="#b9e8ff"></stop>
-<stop offset=".58" stop-color="#66c8ef"></stop>
-<stop offset=".82" stop-color="#8aaeff"></stop>
-<stop offset="1" stop-color="#d6f5ff"></stop>
-<animateTransform attributeName="gradientTransform" dur="12s" from="0 120 120" repeatCount="indefinite" to="360 120 120" type="rotate"></animateTransform>
+<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcGradient" x1="32" x2="208" y1="42" y2="198">
+<stop offset="0" stop-color="#397fc2"></stop>
+<stop offset=".22" stop-color="#66b9e8"></stop>
+<stop offset=".46" stop-color="#c7f2ff"></stop>
+<stop offset=".64" stop-color="#6fd1ef"></stop>
+<stop offset=".82" stop-color="#7f9ff0"></stop>
+<stop offset="1" stop-color="#4d91cb"></stop>
+<animateTransform attributeName="gradientTransform" dur="18s" from="-18 120 120" repeatCount="indefinite" to="342 120 120" type="rotate"></animateTransform>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcShineGradient" x1="18" x2="222" y1="120" y2="120">
+<stop offset="0" stop-color="#ffffff" stop-opacity="0"></stop>
+<stop offset=".36" stop-color="#ffffff" stop-opacity="0"></stop>
+<stop offset=".50" stop-color="#f8feff" stop-opacity=".96"></stop>
+<stop offset=".58" stop-color="#d9f7ff" stop-opacity=".72"></stop>
+<stop offset=".72" stop-color="#ffffff" stop-opacity="0"></stop>
+<stop offset="1" stop-color="#ffffff" stop-opacity="0"></stop>
+<animateTransform attributeName="gradientTransform" dur="9.5s" from="0 120 120" repeatCount="indefinite" to="360 120 120" type="rotate"></animateTransform>
 </linearGradient>
 <filter height="160%" id="scheduleArcGlowFilter" width="160%" x="-30%" y="-30%">
 <feGaussianBlur result="blur" stdDeviation="2.6"></feGaussianBlur>
@@ -4989,8 +5350,9 @@
 </filter>
 </defs>
 <g class="schedule-clock-ticks" id="scheduleClockTicks"></g>
-<circle class="schedule-arc-glow" cx="120" cy="120" fill="none" id="scheduleArcGlow" r="113" transform="rotate(-90 120 120)"></circle>
-<circle class="schedule-arc" cx="120" cy="120" fill="none" id="scheduleArc" r="113" stroke="url(#scheduleArcGradient)" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-glow" cx="120" cy="120" fill="none" id="scheduleArcGlow" r="116.5" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc" cx="120" cy="120" fill="none" id="scheduleArc" r="116.5" stroke="url(#scheduleArcGradient)" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-shine" cx="120" cy="120" fill="none" id="scheduleArcShine" r="116.5" stroke="url(#scheduleArcShineGradient)" transform="rotate(-90 120 120)"></circle>
 </svg>
 <div aria-live="polite" class="schedule-time-main" id="scheduleTimeMain"><span>—</span><i>—</i><span>—</span></div>
 </div>
@@ -5017,10 +5379,7 @@
 </button>
 </div>
 <div aria-hidden="true" class="schedule-actions" id="scheduleActions">
-<div class="schedule-main-actions">
 <button class="schedule-primary-button pressable" id="scheduleEditHomeBtn" type="button">登记排班</button>
-<button class="schedule-overview-home-button pressable" id="scheduleOverviewHomeBtn" type="button">排班总览</button>
-</div>
 </div>
 </div>
 </div>
@@ -7875,6 +8234,7 @@
           homeTicks: $("#scheduleClockTicks"),
           homeArc: $("#scheduleArc"),
           homeArcGlow: $("#scheduleArcGlow"),
+          homeArcShine: $("#scheduleArcShine"),
           homeTimeMain: $("#scheduleTimeMain"),
           homeEditBtn: $("#scheduleEditHomeBtn"),
           homeOverviewBtn: $("#scheduleOverviewHomeBtn"),
@@ -7946,10 +8306,13 @@
         function ensureClockTicks() {
           if (!scheduleEls.homeTicks || scheduleEls.homeTicks.childElementCount) return;
           const ns = "http://www.w3.org/2000/svg";
-          for (let i = 0; i < 24; i += 1) {
-            const angle = (i / 24) * Math.PI * 2 - Math.PI / 2;
-            const outer = 101.5;
-            const length = i % 6 === 0 ? 9.5 : (i % 3 === 0 ? 6.8 : 4.4);
+          for (let i = 0; i < 48; i += 1) {
+            const angle = (i / 48) * Math.PI * 2 - Math.PI / 2;
+            const isMajor = i % 12 === 0;
+            const isMedium = !isMajor && i % 6 === 0;
+            const isHour = !isMajor && !isMedium && i % 2 === 0;
+            const outer = 105.6;
+            const length = isMajor ? 9.8 : (isMedium ? 7.2 : (isHour ? 4.5 : 2.2));
             const inner = outer - length;
             const line = document.createElementNS(ns, "line");
             line.setAttribute("x1", String(120 + Math.cos(angle) * inner));
@@ -7957,8 +8320,10 @@
             line.setAttribute("x2", String(120 + Math.cos(angle) * outer));
             line.setAttribute("y2", String(120 + Math.sin(angle) * outer));
             line.classList.add("schedule-tick");
-            if (i % 6 === 0) line.classList.add("major");
-            else if (i % 3 === 0) line.classList.add("medium");
+            if (isMajor) line.classList.add("major");
+            else if (isMedium) line.classList.add("medium");
+            else if (isHour) line.classList.add("hour");
+            else line.classList.add("minor");
             scheduleEls.homeTicks.appendChild(line);
           }
         }
@@ -7969,7 +8334,7 @@
           const dash = safeSpan * circumference;
           const gap = Math.max(0.001, circumference - dash);
           const offset = -start * circumference;
-          [scheduleEls.homeArc, scheduleEls.homeArcGlow].forEach(el => {
+          [scheduleEls.homeArc, scheduleEls.homeArcGlow, scheduleEls.homeArcShine].filter(Boolean).forEach(el => {
             el.style.strokeDasharray = `${Math.max(.001, dash)} ${gap}`;
             el.style.strokeDashoffset = String(offset);
             el.style.opacity = safeSpan < .001 ? "0" : "1";
@@ -7990,8 +8355,8 @@
           const toStart = hasTarget ? targetStart : fromStart;
           const toSpan = hasTarget ? targetSpan : 0;
           const begin = performance.now();
-          const duration = 760;
-          const ease = t => 1 - Math.pow(1 - t, 4);
+          const duration = 980;
+          const ease = t => 1 - Math.pow(1 - t, 5);
           const frame = now => {
             const raw = Math.min(1, (now - begin) / duration);
             const t = ease(raw);
@@ -8025,7 +8390,7 @@
             scheduleEls.homeEditBtn.textContent = "修改排班";
             animateArcTo(start / 24, (end - start) / 24);
           } else {
-            scheduleEls.homeTimeMain.innerHTML = `<span>—</span><i>—</i><span>—</span>`;
+            scheduleEls.homeTimeMain.innerHTML = `<span class="schedule-empty-mark">—</span>`;
             scheduleEls.homeEditBtn.textContent = "登记排班";
             animateArcTo(homeArcState.start, 0);
           }
