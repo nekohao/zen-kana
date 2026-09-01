@@ -5237,6 +5237,204 @@
       .schedule-clock { transition-duration: .01ms !important; }
     }
 
+
+
+    /* ============================================================
+       v2.5 — Luxury Glass Timepiece / schedule-only visual upgrade
+       Business logic is unchanged. Only the schedule dial and motion are refined.
+       ============================================================ */
+    .home.schedule-active .score-lens {
+      background:
+        radial-gradient(circle at 31% 20%, rgba(255,255,255,.52), transparent 34%),
+        radial-gradient(circle at 72% 78%, rgba(188,228,248,.045), transparent 44%),
+        linear-gradient(143deg, rgba(255,255,255,.22), rgba(255,255,255,.028) 49%, rgba(255,255,255,.008)),
+        rgba(255,255,255,.43) !important;
+      border: 1px solid rgba(255,255,255,.80) !important;
+      box-shadow:
+        0 28px 70px rgba(26,39,57,.072),
+        0 9px 30px rgba(66,132,170,.026),
+        inset 0 1.3px 0 rgba(255,255,255,.92),
+        inset 0 -1px 0 rgba(37,65,84,.035),
+        inset 0 -14px 34px rgba(46,92,120,.018) !important;
+      -webkit-backdrop-filter: blur(42px) saturate(168%) brightness(1.025) !important;
+      backdrop-filter: blur(42px) saturate(168%) brightness(1.025) !important;
+    }
+    .home.schedule-active .score-lens::before {
+      background:
+        radial-gradient(ellipse at 34% 18%, rgba(255,255,255,.42), transparent 38%),
+        linear-gradient(118deg, rgba(255,255,255,.10), transparent 31% 72%, rgba(158,216,245,.022)) !important;
+      opacity:.78 !important;
+    }
+
+    .schedule-clock::before {
+      content:"";
+      position:absolute;
+      inset:8.8%;
+      border-radius:50%;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 33% 25%, rgba(255,255,255,.16), transparent 34%),
+        linear-gradient(132deg, rgba(255,255,255,.05), transparent 42% 64%, rgba(104,181,219,.018));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.32),
+        inset 0 -1px 0 rgba(49,78,96,.024);
+      opacity:.82;
+    }
+    .schedule-clock::after {
+      content:"";
+      position:absolute;
+      width:8px; height:8px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.92) 0 14%, rgba(113,183,219,.24) 24%, rgba(113,183,219,0) 72%);
+      opacity:.38;
+      pointer-events:none;
+      filter:blur(.15px);
+    }
+
+    /* 24 engraved hour indices: fewer, calmer, more watch-like. */
+    .schedule-tick { stroke-linecap:round; shape-rendering:geometricPrecision; }
+    .schedule-tick.minor {
+      stroke:rgba(34,51,62,.105) !important;
+      stroke-width:.62 !important;
+    }
+    .schedule-tick.medium {
+      stroke:rgba(37,66,83,.20) !important;
+      stroke-width:.86 !important;
+    }
+    .schedule-tick.major {
+      stroke:rgba(32,67,90,.34) !important;
+      stroke-width:1.15 !important;
+    }
+    .schedule-tick.cardinal {
+      stroke:rgba(31,73,101,.50) !important;
+      stroke-width:1.55 !important;
+      filter:drop-shadow(0 1px 0 rgba(255,255,255,.46));
+    }
+
+    /* Embedded optical-fibre arc: no inactive rail at all. */
+    .schedule-arc-glow {
+      stroke:rgba(65,175,229,.20) !important;
+      stroke-width:11.2 !important;
+      filter:blur(4.8px) !important;
+      mix-blend-mode:screen;
+      animation:scheduleLuxuryHalo 7.4s cubic-bezier(.42,0,.22,1) infinite !important;
+    }
+    .schedule-arc {
+      stroke-width:3.25 !important;
+      filter:
+        url(#scheduleArcGlowFilter)
+        drop-shadow(0 0 .8px rgba(245,254,255,.92))
+        drop-shadow(0 0 3px rgba(101,211,250,.32))
+        drop-shadow(0 0 8px rgba(55,151,216,.18)) !important;
+      animation:scheduleLuxuryCore 6.8s cubic-bezier(.44,0,.23,1) infinite !important;
+    }
+    .schedule-arc-shine {
+      stroke:url(#scheduleArcShineGradient) !important;
+      stroke-width:1.55 !important;
+      stroke-linecap:round !important;
+      opacity:0;
+      mix-blend-mode:screen;
+      filter:drop-shadow(0 0 1.6px rgba(255,255,255,.86)) drop-shadow(0 0 4.5px rgba(145,229,255,.56)) !important;
+      animation:none !important;
+      will-change:stroke-dasharray,stroke-dashoffset,opacity;
+    }
+    @keyframes scheduleLuxuryCore {
+      0%,100% { opacity:.88; }
+      44% { opacity:1; }
+      72% { opacity:.93; }
+    }
+    @keyframes scheduleLuxuryHalo {
+      0%,100% { opacity:.14; }
+      48% { opacity:.31; }
+      76% { opacity:.20; }
+    }
+
+    /* The time is typography, not a label: airy, neutral, precise. */
+    .schedule-time-main {
+      gap:clamp(19px,6.4vw,28px) !important;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif !important;
+      font-size:clamp(42px,12.9vw,53px) !important;
+      line-height:.94 !important;
+      font-weight:430 !important;
+      letter-spacing:-.052em !important;
+      color:rgba(28,43,53,.96) !important;
+      text-shadow:0 1px 0 rgba(255,255,255,.72),0 18px 38px rgba(52,111,146,.055) !important;
+    }
+    .schedule-time-main .schedule-time-value {
+      min-width:1.55em;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(24,39,50,.98) 14%, rgba(43,73,90,.91) 70%, rgba(78,124,150,.78));
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+      transform:translateZ(0);
+    }
+    .schedule-time-main .schedule-time-divider {
+      width:18px;
+      height:1px;
+      align-self:center;
+      margin-top:-1px;
+      border-radius:99px;
+      background:linear-gradient(90deg, transparent, rgba(62,92,109,.38) 24% 76%, transparent);
+      font-size:0 !important;
+      transform:none !important;
+      opacity:.82;
+    }
+    .schedule-time-main .schedule-empty-mark {
+      min-width:auto;
+      font-size:.72em;
+      font-weight:330;
+      letter-spacing:0;
+      color:rgba(49,72,85,.22) !important;
+      -webkit-text-fill-color:rgba(49,72,85,.22) !important;
+      background:none !important;
+    }
+
+    /* Date moves horizontally; digits roll vertically with restrained depth. */
+    .home.schedule-shift-next .schedule-time-main,
+    .home.schedule-shift-prev .schedule-time-main { animation:none !important; }
+    .home.schedule-shift-next .schedule-time-value {
+      animation:scheduleDigitNext .88s cubic-bezier(.18,.79,.18,1);
+    }
+    .home.schedule-shift-prev .schedule-time-value {
+      animation:scheduleDigitPrev .88s cubic-bezier(.18,.79,.18,1);
+    }
+    .home.schedule-shift-next .schedule-time-value:last-child,
+    .home.schedule-shift-prev .schedule-time-value:last-child { animation-delay:.055s; }
+    @keyframes scheduleDigitNext {
+      0% { opacity:.04; transform:translate3d(0,10px,0) scale(.985); filter:blur(1.6px); }
+      44% { opacity:.84; filter:blur(.2px); }
+      78% { transform:translate3d(0,-.6px,0) scale(1.001); }
+      100% { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0); }
+    }
+    @keyframes scheduleDigitPrev {
+      0% { opacity:.04; transform:translate3d(0,-10px,0) scale(.985); filter:blur(1.6px); }
+      44% { opacity:.84; filter:blur(.2px); }
+      78% { transform:translate3d(0,.6px,0) scale(1.001); }
+      100% { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0); }
+    }
+    .home.schedule-shift-next .reward-message { animation:scheduleDateNext 1.02s cubic-bezier(.16,.82,.20,1) !important; }
+    .home.schedule-shift-prev .reward-message { animation:scheduleDatePrev 1.02s cubic-bezier(.16,.82,.20,1) !important; }
+    @keyframes scheduleDateNext {
+      0% { opacity:.12; transform:translate3d(12px,0,0); filter:blur(.8px); }
+      55% { opacity:.9; filter:blur(0); }
+      100% { opacity:1; transform:none; }
+    }
+    @keyframes scheduleDatePrev {
+      0% { opacity:.12; transform:translate3d(-12px,0,0); filter:blur(.8px); }
+      55% { opacity:.9; filter:blur(0); }
+      100% { opacity:1; transform:none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .schedule-arc,.schedule-arc-glow { animation:none !important; }
+      .schedule-arc-shine { opacity:.62 !important; }
+      .home.schedule-shift-next .schedule-time-value,
+      .home.schedule-shift-prev .schedule-time-value,
+      .home.schedule-shift-next .reward-message,
+      .home.schedule-shift-prev .reward-message { animation:none !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -5326,23 +5524,21 @@
 <div class="schedule-clock" id="scheduleClock">
 <svg aria-hidden="true" class="schedule-clock-svg" viewBox="0 0 240 240">
 <defs>
-<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcGradient" x1="32" x2="208" y1="42" y2="198">
-<stop offset="0" stop-color="#397fc2"></stop>
-<stop offset=".22" stop-color="#66b9e8"></stop>
-<stop offset=".46" stop-color="#c7f2ff"></stop>
-<stop offset=".64" stop-color="#6fd1ef"></stop>
-<stop offset=".82" stop-color="#7f9ff0"></stop>
-<stop offset="1" stop-color="#4d91cb"></stop>
-<animateTransform attributeName="gradientTransform" dur="18s" from="-18 120 120" repeatCount="indefinite" to="342 120 120" type="rotate"></animateTransform>
+<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcGradient" x1="25" x2="215" y1="53" y2="187">
+<stop offset="0" stop-color="#2f78b7"></stop>
+<stop offset=".18" stop-color="#4fa7d8"></stop>
+<stop offset=".39" stop-color="#94e0f6"></stop>
+<stop offset=".50" stop-color="#edfaff"></stop>
+<stop offset=".61" stop-color="#86d8f2"></stop>
+<stop offset=".82" stop-color="#6b9fe2"></stop>
+<stop offset="1" stop-color="#3d7fba"></stop>
 </linearGradient>
-<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcShineGradient" x1="18" x2="222" y1="120" y2="120">
-<stop offset="0" stop-color="#ffffff" stop-opacity="0"></stop>
-<stop offset=".36" stop-color="#ffffff" stop-opacity="0"></stop>
-<stop offset=".50" stop-color="#f8feff" stop-opacity=".96"></stop>
-<stop offset=".58" stop-color="#d9f7ff" stop-opacity=".72"></stop>
-<stop offset=".72" stop-color="#ffffff" stop-opacity="0"></stop>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"></stop>
-<animateTransform attributeName="gradientTransform" dur="9.5s" from="0 120 120" repeatCount="indefinite" to="360 120 120" type="rotate"></animateTransform>
+<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcShineGradient" x1="36" x2="204" y1="120" y2="120">
+<stop offset="0" stop-color="#ffffff" stop-opacity=".15"></stop>
+<stop offset=".38" stop-color="#d8f7ff" stop-opacity=".72"></stop>
+<stop offset=".52" stop-color="#ffffff" stop-opacity="1"></stop>
+<stop offset=".66" stop-color="#bceeff" stop-opacity=".64"></stop>
+<stop offset="1" stop-color="#ffffff" stop-opacity=".08"></stop>
 </linearGradient>
 <filter height="160%" id="scheduleArcGlowFilter" width="160%" x="-30%" y="-30%">
 <feGaussianBlur result="blur" stdDeviation="2.6"></feGaussianBlur>
@@ -8326,6 +8522,7 @@
         let pendingDeleteId = null;
         let homeDateKey = null;
         let homeArcState = { start: 0, span: 0, initialized: false, raf: 0 };
+        let homeShineState = { raf: 0, startedAt: 0 };
         let homeSwipeSuppressUntil = 0;
         let homeShiftTimer = 0;
 
@@ -8354,24 +8551,20 @@
         function ensureClockTicks() {
           if (!scheduleEls.homeTicks || scheduleEls.homeTicks.childElementCount) return;
           const ns = "http://www.w3.org/2000/svg";
-          for (let i = 0; i < 48; i += 1) {
-            const angle = (i / 48) * Math.PI * 2 - Math.PI / 2;
-            const isMajor = i % 12 === 0;
-            const isMedium = !isMajor && i % 6 === 0;
-            const isHour = !isMajor && !isMedium && i % 2 === 0;
-            const outer = 105.6;
-            const length = isMajor ? 9.8 : (isMedium ? 7.2 : (isHour ? 4.5 : 2.2));
+          for (let i = 0; i < 24; i += 1) {
+            const angle = (i / 24) * Math.PI * 2 - Math.PI / 2;
+            const cardinal = i % 6 === 0;
+            const major = !cardinal && i % 3 === 0;
+            const medium = !cardinal && !major && i % 2 === 0;
+            const outer = 105.2;
+            const length = cardinal ? 11.2 : (major ? 7.0 : (medium ? 4.8 : 2.75));
             const inner = outer - length;
             const line = document.createElementNS(ns, "line");
             line.setAttribute("x1", String(120 + Math.cos(angle) * inner));
             line.setAttribute("y1", String(120 + Math.sin(angle) * inner));
             line.setAttribute("x2", String(120 + Math.cos(angle) * outer));
             line.setAttribute("y2", String(120 + Math.sin(angle) * outer));
-            line.classList.add("schedule-tick");
-            if (isMajor) line.classList.add("major");
-            else if (isMedium) line.classList.add("medium");
-            else if (isHour) line.classList.add("hour");
-            else line.classList.add("minor");
+            line.classList.add("schedule-tick", cardinal ? "cardinal" : (major ? "major" : (medium ? "medium" : "minor")));
             scheduleEls.homeTicks.appendChild(line);
           }
         }
@@ -8382,11 +8575,40 @@
           const dash = safeSpan * circumference;
           const gap = Math.max(0.001, circumference - dash);
           const offset = -start * circumference;
-          [scheduleEls.homeArc, scheduleEls.homeArcGlow, scheduleEls.homeArcShine].filter(Boolean).forEach(el => {
+          [scheduleEls.homeArc, scheduleEls.homeArcGlow].forEach(el => {
             el.style.strokeDasharray = `${Math.max(.001, dash)} ${gap}`;
             el.style.strokeDashoffset = String(offset);
             el.style.opacity = safeSpan < .001 ? "0" : "1";
           });
+          if (safeSpan < .001 && scheduleEls.homeArcShine) scheduleEls.homeArcShine.style.opacity = "0";
+        }
+        function startHomeShine() {
+          if (!scheduleEls.homeArcShine || !scheduleEls.homeArc) return;
+          if (homeShineState.raf) cancelAnimationFrame(homeShineState.raf);
+          homeShineState.startedAt = performance.now();
+          const circumference = scheduleEls.homeArc.getTotalLength();
+          const frame = now => {
+            const span = Math.max(0, Math.min(1, Number(homeArcState.span || 0)));
+            if (span > .004) {
+              const shineSpan = Math.max(.010, Math.min(.034, span * .19));
+              const travel = Math.max(0, span - shineSpan);
+              const cycle = 8800;
+              const raw = ((now - homeShineState.startedAt) % cycle) / cycle;
+              const eased = raw < .5
+                ? 2 * raw * raw
+                : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+              const position = homeArcState.start + travel * eased;
+              const dash = shineSpan * circumference;
+              scheduleEls.homeArcShine.style.strokeDasharray = `${dash} ${Math.max(.001, circumference-dash)}`;
+              scheduleEls.homeArcShine.style.strokeDashoffset = String(-position * circumference);
+              const edgeFade = Math.min(1, raw / .08, (1-raw) / .08);
+              scheduleEls.homeArcShine.style.opacity = String(.96 * Math.max(0, edgeFade));
+            } else {
+              scheduleEls.homeArcShine.style.opacity = "0";
+            }
+            homeShineState.raf = requestAnimationFrame(frame);
+          };
+          homeShineState.raf = requestAnimationFrame(frame);
         }
         function animateArcTo(targetStart, targetSpan) {
           if (!scheduleEls.homeArc) return;
@@ -8398,13 +8620,19 @@
             homeArcState.initialized = true;
             setArcVisual(homeArcState.start, homeArcState.span);
           }
-          const fromStart = homeArcState.span < .0001 && hasTarget ? targetStart : homeArcState.start;
           const fromSpan = homeArcState.span;
-          const toStart = hasTarget ? targetStart : fromStart;
+          const fromStart = fromSpan < .0001 && hasTarget
+            ? targetStart + targetSpan / 2
+            : homeArcState.start;
+          const toStart = hasTarget
+            ? targetStart
+            : fromStart + fromSpan / 2;
           const toSpan = hasTarget ? targetSpan : 0;
           const begin = performance.now();
-          const duration = 980;
-          const ease = t => 1 - Math.pow(1 - t, 5);
+          const duration = 1280;
+          const ease = t => t < .5
+            ? 4 * t * t * t
+            : 1 - Math.pow(-2 * t + 2, 3) / 2;
           const frame = now => {
             const raw = Math.min(1, (now - begin) / duration);
             const t = ease(raw);
@@ -8434,11 +8662,11 @@
           if (row) {
             const start = Number(row.start_hour);
             const end = Number(row.end_hour);
-            scheduleEls.homeTimeMain.innerHTML = `<span>${String(start).padStart(2,"0")}</span><i>—</i><span>${String(end).padStart(2,"0")}</span>`;
+            scheduleEls.homeTimeMain.innerHTML = `<span class="schedule-time-value">${String(start).padStart(2,"0")}</span><i class="schedule-time-divider" aria-hidden="true">—</i><span class="schedule-time-value">${String(end).padStart(2,"0")}</span>`;
             scheduleEls.homeEditBtn.textContent = "修改排班";
             animateArcTo(start / 24, (end - start) / 24);
           } else {
-            scheduleEls.homeTimeMain.innerHTML = `<span class="schedule-empty-mark">—</span>`;
+            scheduleEls.homeTimeMain.innerHTML = `<span class="schedule-time-value schedule-empty-mark">—</span>`;
             scheduleEls.homeEditBtn.textContent = "登记排班";
             animateArcTo(homeArcState.start, 0);
           }
@@ -8978,6 +9206,7 @@
         populateHourOptions();
         resetForm();
         ensureClockTicks();
+        startHomeShine();
         bindHomeSwipe();
 
         scheduleEls.openBtn?.addEventListener("click", openRegistration);
