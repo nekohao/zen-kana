@@ -6149,6 +6149,407 @@
       .wheel-actions.admin-wheel-actions { width:min(90vw,334px) !important; gap:7px !important; }
     }
 
+
+    /* ============================================================
+       v2.2.0 — Unified controls experiment
+       Probability allocation / wheel chances / schedule editor
+       ============================================================ */
+
+    /* --- Detailed setting sheets use the same bottom-sheet language --- */
+    #wheelProbabilityLayer {
+      padding:0 !important;
+      align-items:flex-end !important;
+      justify-content:center !important;
+      background:rgba(45,54,70,.075) !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-sheet {
+      width:min(calc(100% - 8px),620px);
+      height:auto;
+      max-height:calc(100% - max(calc(var(--safe-top) + 56px),74px));
+      margin:0 auto;
+      padding:0 16px calc(var(--safe-bottom) + 18px);
+      overflow:auto;
+      scrollbar-width:none;
+      border:1px solid var(--glass-border);
+      border-bottom:0;
+      border-radius:30px 30px 0 0;
+      transform:translate3d(0,calc(100% + 32px),0);
+      transition:transform .46s cubic-bezier(.18,.84,.24,1);
+    }
+    #wheelProbabilityLayer .wheel-probability-sheet::-webkit-scrollbar { display:none; }
+    #wheelProbabilityLayer.open .wheel-probability-sheet { transform:translate3d(0,0,0); }
+    #wheelProbabilityLayer .unified-sheet-header { margin-bottom:14px; }
+    .wheel-probability-body { padding-bottom:2px; }
+
+    .wheel-probability-intro {
+      width:100%; display:flex; align-items:center; gap:11px;
+      margin:2px 0 13px; padding:13px 14px; border-radius:18px;
+      border:1px solid rgba(255,255,255,.72);
+      background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(250,239,253,.27));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 9px 28px rgba(110,78,130,.05);
+    }
+    .wheel-probability-intro-icon {
+      width:36px; height:36px; flex:0 0 36px; display:grid; place-items:center;
+      border-radius:12px; font-size:18px;
+      background:rgba(255,255,255,.52);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.76);
+    }
+    .wheel-probability-intro div { min-width:0; }
+    .wheel-probability-intro strong {
+      display:block; color:rgba(74,60,80,.92); font-size:14px; font-weight:760;
+    }
+    .wheel-probability-intro small {
+      display:block; margin-top:3px; color:rgba(83,70,91,.54); font-size:10.5px; line-height:1.45; font-weight:590;
+    }
+
+    .wheel-probability-studio {
+      width:100%; padding:14px; border-radius:22px;
+      border:1px solid rgba(255,255,255,.76);
+      background:rgba(255,255,255,.17);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.62),0 12px 34px rgba(76,58,87,.04);
+    }
+    .wheel-probability-bar-shell {
+      position:relative; width:100%; height:46px; border-radius:16px;
+      overflow:visible; isolation:isolate;
+    }
+    .wheel-probability-bar {
+      position:absolute; inset:0; display:flex; overflow:hidden; border-radius:16px;
+      background:rgba(105,89,112,.07);
+      border:1px solid rgba(255,255,255,.82);
+      box-shadow:inset 0 1px 3px rgba(71,55,78,.08),0 7px 18px rgba(98,72,111,.05);
+    }
+    .wheel-probability-segment {
+      min-width:0; height:100%; transition:width .18s cubic-bezier(.2,.8,.2,1),filter .18s ease;
+      box-shadow:inset -1px 0 0 rgba(255,255,255,.42);
+    }
+    .wheel-probability-segment.s0 { background:linear-gradient(180deg,#f0af76,#e69b68); }
+    .wheel-probability-segment.s1 { background:linear-gradient(180deg,#edc677,#dfb667); }
+    .wheel-probability-segment.s2 { background:linear-gradient(180deg,#ddd382,#cfc474); }
+    .wheel-probability-segment.s3 { background:linear-gradient(180deg,#d0b8df,#c0a3d4); }
+    .wheel-probability-segment.s4 { background:linear-gradient(180deg,#b9afe2,#a89bd8); }
+    .wheel-probability-segment.s5 { background:linear-gradient(180deg,#dda9c6,#cf95b6); }
+    .wheel-probability-segment.s6 { background:linear-gradient(180deg,#e9b58c,#dea27a); }
+    .wheel-probability-segment.selected { filter:saturate(1.12) brightness(1.035); }
+
+    .wheel-probability-boundaries { position:absolute; inset:0; z-index:4; pointer-events:none; }
+    .wheel-probability-boundary {
+      position:absolute; top:-8px; bottom:-8px; width:28px; padding:0;
+      transform:translateX(-14px); border:0; background:transparent;
+      pointer-events:auto; touch-action:none; cursor:ew-resize;
+    }
+    .wheel-probability-boundary > span {
+      position:absolute; left:50%; top:9px; bottom:9px; width:3px;
+      transform:translateX(-50%); border-radius:4px;
+      background:rgba(255,255,255,.93);
+      box-shadow:0 0 0 1px rgba(84,67,92,.11),0 2px 8px rgba(73,55,80,.18);
+      transition:width .15s ease,box-shadow .15s ease;
+    }
+    .wheel-probability-boundary::after {
+      content:""; position:absolute; left:50%; top:50%; width:10px; height:18px;
+      transform:translate(-50%,-50%); border-radius:7px;
+      border:1px solid rgba(255,255,255,.78);
+      background:rgba(255,255,255,.50);
+      box-shadow:0 3px 10px rgba(69,54,74,.12);
+    }
+    .wheel-probability-boundary.dragging > span,
+    .wheel-probability-boundary:active > span {
+      width:4px; box-shadow:0 0 0 2px rgba(255,255,255,.9),0 4px 12px rgba(74,54,82,.22);
+    }
+
+    .wheel-probability-legend {
+      display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px;
+      margin-top:11px;
+    }
+    .wheel-probability-legend-item {
+      min-width:0; border:0; border-radius:11px; padding:7px 2px 6px;
+      display:flex; flex-direction:column; gap:2px; align-items:center;
+      background:transparent; color:rgba(78,67,83,.56);
+      transition:background .18s ease,transform .18s ease,color .18s ease;
+    }
+    .wheel-probability-legend-item span { font-size:9px; font-weight:660; white-space:nowrap; }
+    .wheel-probability-legend-item strong {
+      font-size:11px; font-weight:780; font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+    }
+    .wheel-probability-legend-item.selected {
+      color:rgba(83,60,96,.95);
+      background:rgba(255,255,255,.55);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 5px 12px rgba(91,68,104,.06);
+    }
+
+    .wheel-probability-editor {
+      margin-top:14px; padding:12px 12px 11px; border-radius:18px;
+      background:linear-gradient(145deg,rgba(255,255,255,.52),rgba(244,236,249,.24));
+      border:1px solid rgba(255,255,255,.72);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+    }
+    .wheel-probability-editor-head {
+      display:flex; align-items:center; justify-content:space-between; padding:0 3px 8px;
+    }
+    .wheel-probability-editor-head span { color:rgba(78,69,84,.48); font-size:10px; font-weight:650; }
+    .wheel-probability-editor-head strong { color:rgba(96,65,112,.94); font-size:13px; font-weight:780; }
+    .wheel-probability-stepper {
+      display:grid; grid-template-columns:54px 1fr 54px; gap:9px; align-items:center;
+    }
+    .probability-step-button {
+      width:54px; height:52px; border-radius:16px;
+      border:1px solid rgba(255,255,255,.82);
+      background:rgba(255,255,255,.48);
+      color:rgba(102,70,117,.95); font-size:28px; font-weight:430; line-height:1;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 7px 18px rgba(91,67,105,.05);
+    }
+    .probability-step-button:disabled { opacity:.28; }
+    .wheel-probability-step-value {
+      min-width:0; height:52px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      border-radius:16px; background:rgba(255,255,255,.28);
+    }
+    .wheel-probability-step-value strong {
+      color:rgba(71,57,79,.94); font-size:20px; line-height:1; font-weight:760;
+      font-variant-numeric:tabular-nums; letter-spacing:-.035em;
+    }
+    .wheel-probability-step-value small {
+      margin-top:5px; color:rgba(82,68,88,.46); font-size:8.6px; font-weight:610; white-space:nowrap;
+    }
+
+    .wheel-probability-grid-legacy {
+      position:absolute !important; width:1px !important; height:1px !important;
+      overflow:hidden !important; opacity:0 !important; pointer-events:none !important;
+      clip-path:inset(50%) !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-total {
+      margin:10px 0 0; min-height:34px; display:flex; align-items:center; justify-content:center;
+      border-radius:12px; background:rgba(230,245,232,.34);
+      color:rgba(70,126,82,.88); font-size:11px; font-weight:720;
+    }
+    #wheelProbabilityLayer .wheel-probability-total.invalid {
+      background:rgba(255,231,226,.46); color:rgba(155,77,68,.92);
+    }
+    #wheelProbabilityLayer .wheel-probability-default-note {
+      margin-top:7px; text-align:center; color:rgba(79,68,85,.38); font-size:9px; font-weight:590;
+    }
+    .wheel-probability-sheet-actions { display:grid; gap:8px; margin-top:14px; }
+    .wheel-probability-cancel { opacity:.72; }
+
+    /* --- Wheel chances: same hierarchy as score editing --- */
+    #wheelAdjustLayer .wheel-adjust-unified-alert {
+      width:min(92vw,388px) !important;
+      border-radius:27px !important;
+    }
+    .wheel-adjust-value-card {
+      margin:14px 0 10px; padding:14px 12px 13px; border-radius:19px;
+      border:1px solid rgba(255,255,255,.78);
+      background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(250,234,246,.27));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 9px 26px rgba(126,79,105,.045);
+      text-align:center;
+    }
+    .wheel-adjust-value-card > span {
+      display:block; color:rgba(105,76,91,.47); font-size:10px; font-weight:640;
+    }
+    .wheel-adjust-value-line {
+      margin-top:5px; display:flex; align-items:flex-end; justify-content:center; gap:5px;
+    }
+    .wheel-adjust-value-line strong {
+      color:rgba(119,70,98,.95); font-size:38px; line-height:.95; font-weight:730;
+      letter-spacing:-.06em; font-variant-numeric:tabular-nums;
+    }
+    .wheel-adjust-value-line em {
+      margin-bottom:3px; color:rgba(107,78,94,.56); font-style:normal; font-size:11px; font-weight:650;
+    }
+    .wheel-adjust-stepper {
+      display:grid; grid-template-columns:58px 1fr 58px; align-items:center; gap:9px; margin:10px 0 9px;
+    }
+    .wheel-adjust-step {
+      width:58px; height:52px; border-radius:17px;
+      border:1px solid rgba(255,255,255,.82);
+      background:rgba(255,255,255,.38);
+      color:rgba(121,79,104,.78); font-size:28px; line-height:1; font-weight:430;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.74);
+    }
+    .wheel-adjust-step.selected {
+      color:rgba(151,72,112,.96);
+      background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,226,241,.55));
+      box-shadow:0 8px 22px rgba(190,108,148,.08),inset 0 1px 0 rgba(255,255,255,.88);
+    }
+    .wheel-adjust-step:disabled { opacity:.28; }
+    .wheel-adjust-next {
+      height:52px; border-radius:17px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.48);
+    }
+    .wheel-adjust-next small { color:rgba(103,76,91,.42); font-size:9px; font-weight:650; }
+    .wheel-adjust-next strong {
+      margin-top:3px; color:rgba(95,68,83,.90); font-size:17px; font-weight:740;
+      font-variant-numeric:tabular-nums;
+    }
+    .wheel-adjust-preview {
+      margin:0 !important; padding:8px 0 2px; font-size:11px !important; color:rgba(129,77,104,.66) !important;
+    }
+
+    /* --- Schedule editor: work/rest is a first-class segmented mode --- */
+    #workScheduleLayer .schedule-editor-sheet {
+      max-height:calc(100% - max(calc(var(--safe-top) + 54px),72px)) !important;
+    }
+    .schedule-editor-v22 { display:grid; gap:11px; }
+    .schedule-editor-date-card {
+      position:relative; width:100%; min-height:68px; padding:7px;
+      display:grid; grid-template-columns:46px 1fr 46px; align-items:center; gap:5px;
+      border-radius:21px; border:1px solid rgba(255,255,255,.76);
+      background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(224,242,252,.22));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 10px 28px rgba(64,125,158,.045);
+    }
+    .schedule-editor-date-arrow {
+      width:42px; height:42px; border:0; border-radius:14px;
+      background:rgba(255,255,255,.36); color:rgba(65,110,137,.72);
+      font-size:25px; font-weight:400;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .schedule-editor-date-main {
+      position:relative; min-width:0; min-height:50px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+    }
+    .schedule-editor-date-main strong {
+      color:rgba(49,92,119,.94); font-size:17px; line-height:1.1; font-weight:740;
+      letter-spacing:-.025em;
+    }
+    .schedule-editor-date-main small {
+      margin-top:5px; color:rgba(67,104,128,.47); font-size:9.5px; font-weight:620;
+    }
+    .work-schedule-date-native {
+      position:absolute !important; inset:0 !important; width:100% !important; height:100% !important;
+      opacity:.001 !important; cursor:pointer; border:0 !important; background:transparent !important;
+    }
+
+    .work-schedule-mode-switch {
+      width:100%; height:48px; padding:4px; display:grid; grid-template-columns:1fr 1fr; gap:4px;
+      border-radius:16px; border:1px solid rgba(255,255,255,.74);
+      background:rgba(255,255,255,.22);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+    }
+    .work-schedule-mode-option {
+      border:0; border-radius:12px; background:transparent;
+      display:flex; align-items:center; justify-content:center; gap:7px;
+      color:rgba(68,102,122,.50); font-size:12px;
+    }
+    .work-schedule-mode-option strong { font-weight:700; }
+    .work-schedule-mode-option.active {
+      color:rgba(48,98,128,.94);
+      background:rgba(255,255,255,.70);
+      box-shadow:0 5px 16px rgba(65,123,154,.07),inset 0 1px 0 rgba(255,255,255,.90);
+    }
+    .work-schedule-mode-option[data-schedule-mode="rest"].active {
+      color:rgba(151,93,47,.94);
+      background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,231,203,.54));
+      box-shadow:0 6px 17px rgba(177,112,58,.07),inset 0 1px 0 rgba(255,255,255,.90);
+    }
+
+    .work-schedule-work-panel { display:grid; gap:10px; }
+    .work-schedule-time-card {
+      width:100%; border-radius:20px; overflow:hidden;
+      border:1px solid rgba(255,255,255,.76);
+      background:rgba(255,255,255,.27);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.68),0 10px 28px rgba(55,113,146,.035);
+    }
+    .work-schedule-time-row {
+      width:100%; min-height:66px; padding:0 15px; border:0; background:transparent;
+      display:flex; align-items:center; justify-content:space-between; text-align:left;
+    }
+    .work-schedule-time-copy { display:flex; flex-direction:column; gap:4px; }
+    .work-schedule-time-copy small { color:rgba(64,99,121,.46); font-size:9.5px; font-weight:620; }
+    .work-schedule-time-copy strong {
+      color:rgba(43,92,123,.95); font-size:22px; line-height:1; font-weight:690;
+      letter-spacing:-.035em; font-variant-numeric:tabular-nums;
+    }
+    .work-schedule-time-row-icon { color:rgba(60,98,123,.30); font-size:22px; }
+    .work-schedule-time-divider { height:1px; margin:0 14px; background:rgba(75,113,136,.08); }
+    .work-schedule-hidden-select {
+      position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important;
+      pointer-events:none !important; clip-path:inset(50%) !important;
+    }
+    .work-schedule-duration-card {
+      min-height:42px; padding:0 14px; border-radius:14px;
+      display:flex; align-items:center; justify-content:space-between;
+      border:1px solid rgba(255,255,255,.62); background:rgba(255,255,255,.17);
+    }
+    .work-schedule-duration-card span { color:rgba(70,103,124,.42); font-size:9.5px; font-weight:620; }
+    .work-schedule-duration-card strong { color:rgba(48,93,121,.78); font-size:12px; font-weight:710; }
+
+    .work-schedule-rest-panel {
+      min-height:190px; padding:22px 18px; border-radius:22px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+      border:1px solid rgba(255,255,255,.78);
+      background:
+        radial-gradient(circle at 50% 12%,rgba(255,255,255,.68),transparent 38%),
+        linear-gradient(145deg,rgba(255,255,255,.55),rgba(255,230,199,.30));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 12px 30px rgba(169,108,58,.045);
+    }
+    .work-schedule-rest-panel[hidden] { display:none !important; }
+    .work-schedule-rest-orb {
+      width:54px; height:54px; border-radius:50%; display:grid; place-items:center;
+      color:#e79b29; background:rgba(255,255,255,.64);
+      box-shadow:0 8px 24px rgba(188,121,53,.10),inset 0 1px 0 rgba(255,255,255,.90);
+    }
+    .work-schedule-rest-orb svg { width:25px; height:25px; }
+    .work-schedule-rest-panel > strong {
+      margin-top:13px; color:rgba(110,76,50,.93); font-size:20px; font-weight:730; letter-spacing:-.03em;
+    }
+    .work-schedule-rest-panel > small {
+      max-width:250px; margin-top:7px; color:rgba(107,82,63,.48); font-size:10px; line-height:1.55; font-weight:590;
+    }
+    .schedule-editor-v22 .work-schedule-hint {
+      margin:0 !important; text-align:center; font-size:9px !important; line-height:1.45;
+    }
+    .schedule-editor-actions { display:grid; gap:8px; margin-top:1px; }
+    .schedule-editor-cancel { opacity:.72; }
+
+    /* --- Time wheel --- */
+    #workScheduleTimePickerLayer .schedule-time-picker-alert {
+      width:min(90vw,350px); border-radius:27px;
+    }
+    .schedule-hour-wheel-shell {
+      position:relative; width:100%; height:188px; margin-top:12px; overflow:hidden;
+      border-radius:20px; border:1px solid rgba(255,255,255,.74);
+      background:rgba(255,255,255,.20);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.66);
+    }
+    .schedule-hour-wheel {
+      position:absolute; inset:0; overflow-y:auto; padding:67px 0;
+      scroll-snap-type:y mandatory; scrollbar-width:none;
+      overscroll-behavior:contain;
+    }
+    .schedule-hour-wheel::-webkit-scrollbar { display:none; }
+    .schedule-hour-option {
+      width:100%; height:54px; border:0; background:transparent;
+      scroll-snap-align:center; color:rgba(68,91,107,.30);
+      font-size:20px; font-weight:620; font-variant-numeric:tabular-nums;
+      transition:font-size .16s ease,color .16s ease,transform .16s ease;
+    }
+    .schedule-hour-option.selected {
+      color:rgba(42,87,116,.94); font-size:25px; font-weight:720; transform:scale(1.02);
+    }
+    .schedule-hour-wheel-focus {
+      position:absolute; left:12px; right:12px; top:67px; height:54px; z-index:0;
+      border-radius:15px; border:1px solid rgba(255,255,255,.68);
+      background:rgba(255,255,255,.35);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
+      pointer-events:none;
+    }
+    .schedule-hour-wheel-fade {
+      position:absolute; left:0; right:0; height:58px; z-index:3; pointer-events:none;
+    }
+    .schedule-hour-wheel-fade.top {
+      top:0; background:linear-gradient(180deg,rgba(250,252,253,.82),rgba(250,252,253,0));
+    }
+    .schedule-hour-wheel-fade.bottom {
+      bottom:0; background:linear-gradient(0deg,rgba(250,252,253,.82),rgba(250,252,253,0));
+    }
+
+    @media(max-width:370px) {
+      .wheel-probability-studio { padding:11px; }
+      .wheel-probability-legend { gap:2px; }
+      .wheel-probability-legend-item span { font-size:8px; }
+      .wheel-probability-legend-item strong { font-size:10px; }
+      .wheel-probability-step-value small { font-size:7.8px; }
+      .schedule-editor-date-card { grid-template-columns:42px 1fr 42px; }
+    }
+
 </style>
 </head>
 <body>
@@ -6516,7 +6917,7 @@
          Independent schedule registration / overview sheets.
          ============================================================ -->
 <div aria-hidden="true" class="modal-layer" id="workScheduleLayer">
-<div aria-labelledby="workScheduleTitle" aria-modal="true" class="unified-sheet work-schedule-sheet" role="dialog">
+<div aria-labelledby="workScheduleTitle" aria-modal="true" class="unified-sheet work-schedule-sheet schedule-editor-sheet" role="dialog">
 <header class="unified-sheet-header">
 <div aria-label="下拉关闭排班登记" class="work-schedule-grabber-hitbox" id="workScheduleGrabberHitbox">
 <div aria-hidden="true" class="grabber"></div>
@@ -6524,37 +6925,97 @@
 <div class="sheet-title" id="workScheduleTitle">排班登记</div>
 </header>
 <div class="unified-sheet-body">
-<div class="work-schedule-form">
-<label class="work-schedule-field">
-<span class="work-schedule-field-label">日期</span>
-<input class="field work-schedule-control" id="workScheduleDate" type="date"/>
-</label>
-<div aria-label="快速切换日期" class="work-schedule-date-nav">
-<button class="sheet-button pressable work-schedule-date-step" id="workSchedulePrevDayBtn" type="button">‹ 上一天</button>
-<button class="sheet-button pressable work-schedule-date-step" id="workScheduleNextDayBtn" type="button">下一天 ›</button>
+<div class="work-schedule-form schedule-editor-v22">
+
+<div class="schedule-editor-date-card">
+<button aria-label="上一天" class="schedule-editor-date-arrow pressable" id="workSchedulePrevDayBtn" type="button">‹</button>
+<div class="schedule-editor-date-main">
+<strong id="workScheduleDatePrimary">9月2日</strong>
+<small id="workScheduleDateSecondary">星期三 · 今天</small>
+<input aria-label="选择日期" class="work-schedule-date-native" id="workScheduleDate" type="date"/>
 </div>
+<button aria-label="下一天" class="schedule-editor-date-arrow pressable" id="workScheduleNextDayBtn" type="button">›</button>
+</div>
+
 <div class="work-schedule-existing" hidden="" id="workScheduleExistingState"></div>
-<div class="work-schedule-time-grid">
-<label class="work-schedule-field">
-<span class="work-schedule-field-label">上班时间</span>
-<select aria-label="上班时间" class="field work-schedule-control" id="workScheduleStartHour"></select>
-</label>
-<label class="work-schedule-field">
-<span class="work-schedule-field-label">下班时间</span>
-<select aria-label="下班时间" class="field work-schedule-control" id="workScheduleEndHour"></select>
-</label>
-</div>
-<div class="work-schedule-hint">可选时间为 08:00–22:00 的整点；下班时间必须晚于上班时间。休息也会作为当天的正式记录并计入连续奖励。</div>
-<button class="work-schedule-rest-button pressable" id="workScheduleRestBtn" type="button">
-<svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>
-<span id="workScheduleRestBtnText">登记休息</span>
+
+<div aria-label="排班类型" class="work-schedule-mode-switch" id="workScheduleModeSwitch" role="tablist">
+<button aria-selected="true" class="work-schedule-mode-option active pressable" data-schedule-mode="work" id="workScheduleModeWorkBtn" role="tab" type="button">
+<span aria-hidden="true">☀️</span><strong>工作</strong>
 </button>
+<button aria-selected="false" class="work-schedule-mode-option pressable" data-schedule-mode="rest" id="workScheduleModeRestBtn" role="tab" type="button">
+<span aria-hidden="true">🌙</span><strong>休息</strong>
+</button>
+</div>
+
+<div class="work-schedule-work-panel" id="workScheduleWorkPanel">
+<div class="work-schedule-time-card">
+<button class="work-schedule-time-row pressable" id="workScheduleStartPickerBtn" type="button">
+<span class="work-schedule-time-copy">
+<small>上班时间</small>
+<strong id="workScheduleStartDisplay">09:00</strong>
+</span>
+<span aria-hidden="true" class="work-schedule-time-row-icon">›</span>
+</button>
+<div class="work-schedule-time-divider"></div>
+<button class="work-schedule-time-row pressable" id="workScheduleEndPickerBtn" type="button">
+<span class="work-schedule-time-copy">
+<small>下班时间</small>
+<strong id="workScheduleEndDisplay">18:00</strong>
+</span>
+<span aria-hidden="true" class="work-schedule-time-row-icon">›</span>
+</button>
+</div>
+
+<select aria-hidden="true" aria-label="上班时间" class="work-schedule-hidden-select" id="workScheduleStartHour" tabindex="-1"></select>
+<select aria-hidden="true" aria-label="下班时间" class="work-schedule-hidden-select" id="workScheduleEndHour" tabindex="-1"></select>
+
+<div class="work-schedule-duration-card">
+<span>排班时长</span>
+<strong id="workScheduleEditorDuration">9 小时</strong>
+</div>
+</div>
+
+<div class="work-schedule-rest-panel" hidden="" id="workScheduleRestPanel">
+<div class="work-schedule-rest-orb" aria-hidden="true">
+<svg viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>
+</div>
+<strong>休息日</strong>
+<small>这一天会被正式记录，并且同样计入连续排班奖励。</small>
+</div>
+
+<div class="work-schedule-hint" id="workScheduleEditorHint">整点选择 · 08:00–22:00 · 下班时间必须晚于上班时间</div>
+
+<!-- Kept for backwards-compatible JS references; v2.2 UI uses the mode switch above. -->
+<button hidden id="workScheduleRestBtn" type="button"><span id="workScheduleRestBtnText">登记休息</span></button>
+
 <button class="sheet-button pressable full-width work-schedule-overview-button" id="openWorkScheduleOverviewBtn" type="button">排班总览</button>
-<div class="sheet-actions">
-<button class="sheet-button pressable" id="cancelWorkScheduleBtn" type="button">取消</button>
-<button class="sheet-button primary pressable" id="saveWorkScheduleBtn" type="button">保存排班</button>
+<div class="schedule-editor-actions">
+<button class="sheet-button primary pressable full-width" id="saveWorkScheduleBtn" type="button">保存排班</button>
+<button class="sheet-button pressable full-width schedule-editor-cancel" id="cancelWorkScheduleBtn" type="button">取消</button>
 </div>
 </div>
+</div>
+</div>
+</div>
+
+<!-- Shared hour wheel for start/end time -->
+<div aria-hidden="true" class="modal-layer alert-layer" id="workScheduleTimePickerLayer">
+<div aria-labelledby="workScheduleTimePickerTitle" aria-modal="true" class="alert schedule-time-picker-alert" role="dialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon" id="workScheduleTimePickerIcon">🕘</div>
+<div class="alert-title" id="workScheduleTimePickerTitle">选择上班时间</div>
+<div class="alert-message" id="workScheduleTimePickerMessage">上下滑动，整点自动吸附</div>
+<div class="schedule-hour-wheel-shell">
+<div class="schedule-hour-wheel-fade top"></div>
+<div class="schedule-hour-wheel-fade bottom"></div>
+<div aria-hidden="true" class="schedule-hour-wheel-focus"></div>
+<div aria-label="选择整点时间" class="schedule-hour-wheel" id="workScheduleHourWheel"></div>
+</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="confirmWorkScheduleTimePickerBtn" type="button">确认时间</button>
+<button class="alert-button pressable" id="cancelWorkScheduleTimePickerBtn" type="button">取消</button>
 </div>
 </div>
 </div>
@@ -6634,7 +7095,7 @@
 <div class="settings-group">
 <div class="settings-row static">
 <span>当前版本</span>
-<span class="settings-value">2.1.0</span>
+<span class="settings-value">2.2.0</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -6663,7 +7124,16 @@
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>2.1.0</strong><span>当前版本</span></div>
+<div class="release-head"><strong>2.2.0</strong><span>当前版本</span></div>
+<div class="release-date">2026.09.02</div>
+<ul class="release-list">
+<li>大转盘概率设置改为 100% 分配条：拖动分界线、整数吸附、总和自动保持 100%，并支持 ±1% 精确微调。</li>
+<li>管理员“调整次数”重做为与积分修改一致的数值卡片 + 步进控制。</li>
+<li>修改排班重做为“工作 / 休息”双模式；工作时间使用统一的整点滚轮选择器。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>2.1.0</strong><span>上一版本</span></div>
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>管理员积分调整升级为 ±1～9 可选，积分允许进入负数，修改原因与历史继续保留。</li>
@@ -6844,28 +7314,63 @@
 </div>
 </div>
 <!-- Admin-only wheel probability settings -->
-<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelProbabilityLayer">
-<div aria-labelledby="wheelProbabilityTitle" aria-modal="true" class="alert wheel-probability-alert" role="dialog">
-<div class="alert-content">
-<div aria-hidden="true" class="change-icon">🎛️</div>
-<div class="alert-title" id="wheelProbabilityTitle">大转盘概率设置</div>
-<div class="alert-message">仅管理员可查看和修改实际抽取概率。保存后下一次正式转盘与试玩立即生效。</div>
-<div class="wheel-probability-grid" id="wheelProbabilityGrid">
-<label><span>¥10</span><span class="prob-input-wrap"><input data-wheel-prob="10" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
-<label><span>¥20</span><span class="prob-input-wrap"><input data-wheel-prob="20" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
-<label><span>¥30</span><span class="prob-input-wrap"><input data-wheel-prob="30" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
-<label><span>¥50</span><span class="prob-input-wrap"><input data-wheel-prob="50" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
-<label><span>¥60</span><span class="prob-input-wrap"><input data-wheel-prob="60" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
-<label><span>¥80</span><span class="prob-input-wrap"><input data-wheel-prob="80" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
-<label><span>¥100</span><span class="prob-input-wrap"><input data-wheel-prob="100" inputmode="decimal" max="100" min="0" step="0.01" type="number"/><em>%</em></span></label>
+<div aria-hidden="true" class="modal-layer" data-theme="wheel" id="wheelProbabilityLayer">
+<div aria-labelledby="wheelProbabilityTitle" aria-modal="true" class="unified-sheet wheel-probability-sheet" role="dialog">
+<header class="unified-sheet-header">
+<div aria-hidden="true" class="grabber"></div>
+<div class="sheet-title" id="wheelProbabilityTitle">大转盘概率设置</div>
+</header>
+<div class="unified-sheet-body wheel-probability-body">
+<div class="wheel-probability-intro">
+<span aria-hidden="true" class="wheel-probability-intro-icon">🎛️</span>
+<div>
+<strong>100% 概率分配</strong>
+<small>拖动分界线即可调整 · 自动吸附到整数 · 总和始终保持 100%</small>
 </div>
-<div class="wheel-probability-total" id="wheelProbabilityTotal">总概率 100%</div>
-<div class="wheel-probability-default-note">默认：10% / 30% / 30% / 12% / 10% / 5% / 3%</div>
 </div>
-<div class="alert-actions vertical">
-<button class="alert-button primary-action pressable" id="saveWheelProbabilityBtn" type="button">保存并生效</button>
-<button class="alert-button pressable" id="resetWheelProbabilityDefaultBtn" type="button">恢复默认数值</button>
-<button class="alert-button pressable" id="closeWheelProbabilityBtn" type="button">取消</button>
+
+<div class="wheel-probability-studio">
+<div aria-label="100% 概率分配条" class="wheel-probability-bar-shell">
+<div class="wheel-probability-bar" id="wheelProbabilityBar"></div>
+<div aria-hidden="true" class="wheel-probability-boundaries" id="wheelProbabilityBoundaries"></div>
+</div>
+<div aria-label="选择奖项进行精确调整" class="wheel-probability-legend" id="wheelProbabilityLegend"></div>
+
+<div class="wheel-probability-editor">
+<div class="wheel-probability-editor-head">
+<span>精确调整</span>
+<strong id="wheelProbabilitySelectedName">¥10</strong>
+</div>
+<div class="wheel-probability-stepper">
+<button aria-label="减少 1%" class="probability-step-button pressable" id="wheelProbabilityMinusBtn" type="button">−</button>
+<div class="wheel-probability-step-value">
+<strong id="wheelProbabilitySelectedValue">10%</strong>
+<small id="wheelProbabilityBalanceHint">与 ¥20 自动平衡 · 每次 1%</small>
+</div>
+<button aria-label="增加 1%" class="probability-step-button pressable" id="wheelProbabilityPlusBtn" type="button">+</button>
+</div>
+</div>
+</div>
+
+<!-- Legacy hidden inputs are kept as the single source submitted to the existing RPC. -->
+<div aria-hidden="true" class="wheel-probability-grid wheel-probability-grid-legacy" id="wheelProbabilityGrid">
+<input data-wheel-prob="10" max="100" min="0" step="1" type="number"/>
+<input data-wheel-prob="20" max="100" min="0" step="1" type="number"/>
+<input data-wheel-prob="30" max="100" min="0" step="1" type="number"/>
+<input data-wheel-prob="50" max="100" min="0" step="1" type="number"/>
+<input data-wheel-prob="60" max="100" min="0" step="1" type="number"/>
+<input data-wheel-prob="80" max="100" min="0" step="1" type="number"/>
+<input data-wheel-prob="100" max="100" min="0" step="1" type="number"/>
+</div>
+
+<div class="wheel-probability-total" id="wheelProbabilityTotal">总概率 100% ✓</div>
+<div class="wheel-probability-default-note">默认：10 / 30 / 30 / 12 / 10 / 5 / 3</div>
+
+<div class="wheel-probability-sheet-actions">
+<button class="sheet-button primary pressable full-width" id="saveWheelProbabilityBtn" type="button">保存并生效</button>
+<button class="sheet-button pressable full-width" id="resetWheelProbabilityDefaultBtn" type="button">恢复默认概率</button>
+<button class="sheet-button pressable full-width wheel-probability-cancel" id="closeWheelProbabilityBtn" type="button">取消</button>
+</div>
 </div>
 </div>
 </div>
@@ -6980,20 +7485,30 @@
 </div>
 <!-- Administrator wheel chance adjustment -->
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelAdjustLayer">
-<div aria-labelledby="wheelAdjustTitle" aria-modal="true" class="alert wheel-alert" role="alertdialog">
+<div aria-labelledby="wheelAdjustTitle" aria-modal="true" class="alert wheel-alert wheel-adjust-unified-alert" role="alertdialog">
 <div class="alert-content">
 <div aria-hidden="true" class="change-icon">🎟️</div>
 <div class="alert-title" id="wheelAdjustTitle">调整正式机会</div>
-<div class="alert-message">管理员操作 · 修改会真实写入游客大转盘资产与历史</div>
-<div class="wheel-adjust-current"><span>当前正式机会</span><strong id="wheelAdjustCurrent">0 次</strong></div>
-<div class="wheel-adjust-choice-grid">
-<button class="wheel-adjust-choice pressable" data-wheel-adjust="-1" id="wheelAdjustMinusBtn" type="button">−1 次</button>
-<button class="wheel-adjust-choice pressable selected" data-wheel-adjust="1" id="wheelAdjustPlusBtn" type="button">+1 次</button>
+<div class="alert-message">管理员操作 · 每次增加或减少 1 次 · 最低保持 0</div>
+
+<div class="wheel-adjust-value-card">
+<span>当前正式机会</span>
+<div class="wheel-adjust-value-line"><strong id="wheelAdjustCurrent">0</strong><em>次</em></div>
 </div>
-<div class="change-preview" id="wheelAdjustPreview">0 次 → 1 次</div>
+
+<div class="wheel-adjust-stepper">
+<button aria-label="减少一次" class="wheel-adjust-step pressable" data-wheel-adjust="-1" id="wheelAdjustMinusBtn" type="button">−</button>
+<div class="wheel-adjust-next">
+<small>调整后</small>
+<strong id="wheelAdjustNext">1 次</strong>
+</div>
+<button aria-label="增加一次" class="wheel-adjust-step pressable selected" data-wheel-adjust="1" id="wheelAdjustPlusBtn" type="button">+</button>
+</div>
+
+<div class="change-preview wheel-adjust-preview" id="wheelAdjustPreview">0 次 → 1 次</div>
 </div>
 <div class="alert-actions vertical">
-<button class="alert-button primary-action pressable" id="wheelAdjustConfirmBtn" type="button">确认 +1 次</button>
+<button class="alert-button primary-action pressable" id="wheelAdjustConfirmBtn" type="button">确认调整 · +1</button>
 <button class="alert-button pressable" id="wheelAdjustCancelBtn" type="button">取消</button>
 </div>
 </div>
@@ -7164,6 +7679,14 @@
         openWheelProbabilityHistoryBtn: $("#openWheelProbabilityHistoryBtn"),
         wheelProbabilityLayer: $("#wheelProbabilityLayer"),
         wheelProbabilityGrid: $("#wheelProbabilityGrid"),
+        wheelProbabilityBar: $("#wheelProbabilityBar"),
+        wheelProbabilityBoundaries: $("#wheelProbabilityBoundaries"),
+        wheelProbabilityLegend: $("#wheelProbabilityLegend"),
+        wheelProbabilitySelectedName: $("#wheelProbabilitySelectedName"),
+        wheelProbabilitySelectedValue: $("#wheelProbabilitySelectedValue"),
+        wheelProbabilityBalanceHint: $("#wheelProbabilityBalanceHint"),
+        wheelProbabilityMinusBtn: $("#wheelProbabilityMinusBtn"),
+        wheelProbabilityPlusBtn: $("#wheelProbabilityPlusBtn"),
         wheelProbabilityTotal: $("#wheelProbabilityTotal"),
         saveWheelProbabilityBtn: $("#saveWheelProbabilityBtn"),
         resetWheelProbabilityDefaultBtn: $("#resetWheelProbabilityDefaultBtn"),
@@ -7214,6 +7737,7 @@
         wheelPreviewCancelBtn: $("#wheelPreviewCancelBtn"),
         wheelAdjustLayer: $("#wheelAdjustLayer"),
         wheelAdjustCurrent: $("#wheelAdjustCurrent"),
+        wheelAdjustNext: $("#wheelAdjustNext"),
         wheelAdjustPreview: $("#wheelAdjustPreview"),
         wheelAdjustMinusBtn: $("#wheelAdjustMinusBtn"),
         wheelAdjustPlusBtn: $("#wheelAdjustPlusBtn"),
@@ -7277,6 +7801,7 @@
         wheelRotation: 0,
         wheelSpinning: false,
         wheelAdminConfig: null,
+        wheelProbabilitySelectedAmount: 10,
         wheelProbabilityHistory: [],
         updatedAt: null,
         session: null,
@@ -7925,12 +8450,13 @@
         if (current <= 0 && Number(state.wheelAdjustDelta) < 0) state.wheelAdjustDelta = 1;
         const delta = Number(state.wheelAdjustDelta) < 0 ? -1 : 1;
         const next = Math.max(0, current + delta);
-        els.wheelAdjustCurrent.textContent = `${current} 次`;
+        els.wheelAdjustCurrent.textContent = `${current}`;
+        if (els.wheelAdjustNext) els.wheelAdjustNext.textContent = `${next} 次`;
         els.wheelAdjustPreview.textContent = `${current} 次  →  ${next} 次`;
         els.wheelAdjustMinusBtn.disabled = current <= 0;
         els.wheelAdjustMinusBtn.classList.toggle("selected", delta < 0);
         els.wheelAdjustPlusBtn.classList.toggle("selected", delta > 0);
-        els.wheelAdjustConfirmBtn.textContent = `确认 ${delta > 0 ? "+1" : "−1"} 次`;
+        els.wheelAdjustConfirmBtn.textContent = `确认调整 · ${delta > 0 ? "+1" : "−1"}`;
       }
 
       async function confirmWheelAdjust() {
@@ -8084,42 +8610,207 @@
         80: 5,
         100: 3
       };
+      const WHEEL_PROBABILITY_AMOUNTS = [10, 20, 30, 50, 60, 80, 100];
 
       function wheelProbabilityInputs() {
         return [...els.wheelProbabilityGrid.querySelectorAll("[data-wheel-prob]")];
       }
 
+      function normalizeWheelProbabilityIntegers(config) {
+        const source = config || WHEEL_DEFAULT_PROBABILITIES;
+        const rows = WHEEL_PROBABILITY_AMOUNTS.map(amount => {
+          const raw = Math.max(0, Number(source[amount] ?? 0));
+          const base = Math.floor(raw);
+          return { amount, base, fraction: raw - base };
+        });
+        let remainder = 100 - rows.reduce((sum, row) => sum + row.base, 0);
+        if (remainder > 0) {
+          [...rows]
+            .sort((a,b) => b.fraction - a.fraction || a.amount - b.amount)
+            .forEach((row, i, arr) => {
+              if (remainder <= 0) return;
+              const add = Math.min(remainder, 1);
+              row.base += add;
+              remainder -= add;
+            });
+        } else if (remainder < 0) {
+          let need = -remainder;
+          const candidates = [...rows].sort((a,b) => a.fraction - b.fraction || b.base - a.base);
+          let guard = 0;
+          while (need > 0 && guard < 1000) {
+            const row = candidates[guard % candidates.length];
+            if (row.base > 0) { row.base -= 1; need -= 1; }
+            guard++;
+          }
+        }
+        return Object.fromEntries(rows.map(row => [row.amount, row.base]));
+      }
+
       function setWheelProbabilityInputs(config) {
-        const values = config || WHEEL_DEFAULT_PROBABILITIES;
+        const values = normalizeWheelProbabilityIntegers(config || WHEEL_DEFAULT_PROBABILITIES);
         wheelProbabilityInputs().forEach(input => {
           const amount = Number(input.dataset.wheelProb);
           input.value = String(Number(values[amount] ?? 0));
         });
         updateWheelProbabilityTotal();
+        renderWheelProbabilityStudio();
       }
 
       function readWheelProbabilityInputs() {
         const result = {};
         wheelProbabilityInputs().forEach(input => {
           const amount = Number(input.dataset.wheelProb);
-          const value = Number(input.value);
+          const value = Math.round(Number(input.value));
           result[amount] = Number.isFinite(value) ? Math.max(0, value) : 0;
         });
         return result;
       }
 
+      function writeWheelProbabilityValues(values) {
+        wheelProbabilityInputs().forEach(input => {
+          const amount = Number(input.dataset.wheelProb);
+          input.value = String(Math.max(0, Math.round(Number(values[amount] ?? 0))));
+        });
+        updateWheelProbabilityTotal();
+        renderWheelProbabilityStudio();
+      }
+
       function updateWheelProbabilityTotal() {
         const values = readWheelProbabilityInputs();
         const total = Object.values(values).reduce((sum, value) => sum + Number(value || 0), 0);
-        const rounded = Math.round(total * 100) / 100;
-        const valid = Math.abs(rounded - 100) < .005
-          && Object.values(values).every(value => value >= 0 && value <= 100);
+        const valid = total === 100
+          && Object.values(values).every(value => Number.isInteger(value) && value >= 0 && value <= 100);
         els.wheelProbabilityTotal.textContent = valid
           ? "总概率 100% ✓"
-          : `当前总概率 ${rounded}% · ${rounded > 100 ? `需要减少 ${(rounded - 100).toFixed(2)}%` : `还需要增加 ${(100 - rounded).toFixed(2)}%`}`;
+          : `当前总概率 ${total}% · 请调整到 100%`;
         els.wheelProbabilityTotal.classList.toggle("invalid", !valid);
         els.saveWheelProbabilityBtn.disabled = !valid;
         return valid;
+      }
+
+      function wheelProbabilityPartnerIndex(selectedIndex) {
+        if (selectedIndex < WHEEL_PROBABILITY_AMOUNTS.length - 1) return selectedIndex + 1;
+        return selectedIndex - 1;
+      }
+
+      function renderWheelProbabilityStudio() {
+        if (!els.wheelProbabilityBar) return;
+        const values = readWheelProbabilityInputs();
+        const selectedAmount = WHEEL_PROBABILITY_AMOUNTS.includes(Number(state.wheelProbabilitySelectedAmount))
+          ? Number(state.wheelProbabilitySelectedAmount)
+          : WHEEL_PROBABILITY_AMOUNTS[0];
+        state.wheelProbabilitySelectedAmount = selectedAmount;
+
+        els.wheelProbabilityBar.innerHTML = WHEEL_PROBABILITY_AMOUNTS.map((amount, index) => {
+          const value = Number(values[amount] || 0);
+          return `<span class="wheel-probability-segment s${index}${amount === selectedAmount ? " selected" : ""}" style="width:${value}%" title="¥${amount} · ${value}%"></span>`;
+        }).join("");
+
+        let cumulative = 0;
+        els.wheelProbabilityBoundaries.innerHTML = "";
+        WHEEL_PROBABILITY_AMOUNTS.slice(0, -1).forEach((amount, index) => {
+          cumulative += Number(values[amount] || 0);
+          const handle = document.createElement("button");
+          handle.type = "button";
+          handle.className = "wheel-probability-boundary pressable";
+          handle.dataset.probBoundaryIndex = String(index);
+          handle.style.left = `${cumulative}%`;
+          handle.setAttribute("aria-label", `调整 ¥${amount} 与 ¥${WHEEL_PROBABILITY_AMOUNTS[index+1]} 的分界线`);
+          handle.innerHTML = "<span></span>";
+          els.wheelProbabilityBoundaries.appendChild(handle);
+        });
+
+        els.wheelProbabilityLegend.innerHTML = WHEEL_PROBABILITY_AMOUNTS.map((amount, index) => {
+          const value = Number(values[amount] || 0);
+          return `<button class="wheel-probability-legend-item pressable s${index}${amount === selectedAmount ? " selected" : ""}" data-prob-select="${amount}" type="button"><span>¥${amount}</span><strong>${value}%</strong></button>`;
+        }).join("");
+
+        const selectedIndex = WHEEL_PROBABILITY_AMOUNTS.indexOf(selectedAmount);
+        const partnerIndex = wheelProbabilityPartnerIndex(selectedIndex);
+        const partnerAmount = WHEEL_PROBABILITY_AMOUNTS[partnerIndex];
+        const selectedValue = Number(values[selectedAmount] || 0);
+        const partnerValue = Number(values[partnerAmount] || 0);
+
+        els.wheelProbabilitySelectedName.textContent = `¥${selectedAmount}`;
+        els.wheelProbabilitySelectedValue.textContent = `${selectedValue}%`;
+        els.wheelProbabilityBalanceHint.textContent = `与 ¥${partnerAmount} 自动平衡 · 每次 1%`;
+        els.wheelProbabilityMinusBtn.disabled = selectedValue <= 0;
+        els.wheelProbabilityPlusBtn.disabled = partnerValue <= 0;
+      }
+
+      function adjustSelectedWheelProbability(delta) {
+        const values = readWheelProbabilityInputs();
+        const selectedAmount = Number(state.wheelProbabilitySelectedAmount);
+        const selectedIndex = WHEEL_PROBABILITY_AMOUNTS.indexOf(selectedAmount);
+        if (selectedIndex < 0) return;
+        const partnerIndex = wheelProbabilityPartnerIndex(selectedIndex);
+        const partnerAmount = WHEEL_PROBABILITY_AMOUNTS[partnerIndex];
+
+        if (delta > 0) {
+          if (Number(values[partnerAmount] || 0) <= 0) return;
+          values[selectedAmount] = Number(values[selectedAmount] || 0) + 1;
+          values[partnerAmount] = Number(values[partnerAmount] || 0) - 1;
+        } else {
+          if (Number(values[selectedAmount] || 0) <= 0) return;
+          values[selectedAmount] = Number(values[selectedAmount] || 0) - 1;
+          values[partnerAmount] = Number(values[partnerAmount] || 0) + 1;
+        }
+        writeWheelProbabilityValues(values);
+        vibrate(4);
+      }
+
+      let probabilityDragState = null;
+
+      function beginWheelProbabilityBoundaryDrag(e) {
+        const handle = e.target.closest("[data-prob-boundary-index]");
+        if (!handle) return;
+        const index = Number(handle.dataset.probBoundaryIndex);
+        if (!Number.isInteger(index) || index < 0 || index >= WHEEL_PROBABILITY_AMOUNTS.length - 1) return;
+
+        const values = readWheelProbabilityInputs();
+        const barRect = els.wheelProbabilityBar.getBoundingClientRect();
+        const prevTotal = WHEEL_PROBABILITY_AMOUNTS.slice(0, index)
+          .reduce((sum, amount) => sum + Number(values[amount] || 0), 0);
+        const leftAmount = WHEEL_PROBABILITY_AMOUNTS[index];
+        const rightAmount = WHEEL_PROBABILITY_AMOUNTS[index + 1];
+        const pairTotal = Number(values[leftAmount] || 0) + Number(values[rightAmount] || 0);
+
+        probabilityDragState = {
+          pointerId: e.pointerId,
+          index,
+          prevTotal,
+          pairTotal,
+          leftAmount,
+          rightAmount,
+          barRect,
+          lastLeft: Number(values[leftAmount] || 0)
+        };
+        state.wheelProbabilitySelectedAmount = leftAmount;
+        handle.classList.add("dragging");
+        e.preventDefault();
+      }
+
+      function moveWheelProbabilityBoundaryDrag(e) {
+        const drag = probabilityDragState;
+        if (!drag || drag.pointerId !== e.pointerId) return;
+        const width = Math.max(1, drag.barRect.width);
+        const globalPercent = Math.round(((e.clientX - drag.barRect.left) / width) * 100);
+        const leftValue = Math.min(drag.pairTotal, Math.max(0, globalPercent - drag.prevTotal));
+        if (leftValue === drag.lastLeft) return;
+
+        const values = readWheelProbabilityInputs();
+        values[drag.leftAmount] = leftValue;
+        values[drag.rightAmount] = drag.pairTotal - leftValue;
+        drag.lastLeft = leftValue;
+        writeWheelProbabilityValues(values);
+        vibrate(2);
+        e.preventDefault();
+      }
+
+      function endWheelProbabilityBoundaryDrag(e) {
+        if (!probabilityDragState || probabilityDragState.pointerId !== e.pointerId) return;
+        els.wheelProbabilityBoundaries.querySelectorAll(".dragging").forEach(el => el.classList.remove("dragging"));
+        probabilityDragState = null;
       }
 
       async function loadAdminWheelProbability() {
@@ -9575,6 +10266,19 @@
           prevDayBtn: $("#workSchedulePrevDayBtn"),
           nextDayBtn: $("#workScheduleNextDayBtn"),
           existingState: $("#workScheduleExistingState"),
+          datePrimary: $("#workScheduleDatePrimary"),
+          dateSecondary: $("#workScheduleDateSecondary"),
+          modeSwitch: $("#workScheduleModeSwitch"),
+          modeWorkBtn: $("#workScheduleModeWorkBtn"),
+          modeRestBtn: $("#workScheduleModeRestBtn"),
+          workPanel: $("#workScheduleWorkPanel"),
+          restPanel: $("#workScheduleRestPanel"),
+          startPickerBtn: $("#workScheduleStartPickerBtn"),
+          endPickerBtn: $("#workScheduleEndPickerBtn"),
+          startDisplay: $("#workScheduleStartDisplay"),
+          endDisplay: $("#workScheduleEndDisplay"),
+          editorDuration: $("#workScheduleEditorDuration"),
+          editorHint: $("#workScheduleEditorHint"),
           startHour: $("#workScheduleStartHour"),
           endHour: $("#workScheduleEndHour"),
           restBtn: $("#workScheduleRestBtn"),
@@ -9583,6 +10287,13 @@
           restMessage: $("#workScheduleRestMessage"),
           cancelRestBtn: $("#cancelWorkScheduleRestBtn"),
           confirmRestBtn: $("#confirmWorkScheduleRestBtn"),
+          timePickerLayer: $("#workScheduleTimePickerLayer"),
+          timePickerTitle: $("#workScheduleTimePickerTitle"),
+          timePickerMessage: $("#workScheduleTimePickerMessage"),
+          timePickerIcon: $("#workScheduleTimePickerIcon"),
+          hourWheel: $("#workScheduleHourWheel"),
+          confirmTimePickerBtn: $("#confirmWorkScheduleTimePickerBtn"),
+          cancelTimePickerBtn: $("#cancelWorkScheduleTimePickerBtn"),
           overviewBtn: $("#openWorkScheduleOverviewBtn"),
           cancelBtn: $("#cancelWorkScheduleBtn"),
           saveBtn: $("#saveWorkScheduleBtn"),
@@ -9604,6 +10315,9 @@
         let scheduleCacheLoaded = false;
         let pendingDeleteId = null;
         let progressState = null;
+        let scheduleEditorMode = "work";
+        let scheduleTimePickerTarget = "start";
+        let scheduleTimePickerHour = 9;
         let homeDateKey = null;
         let homeArcState = { start: 0, span: 0, initialized: false, raf: 0 };
         let homeShineState = { raf: 0, startedAt: 0 };
@@ -10021,6 +10735,9 @@
           scheduleEls.endHour.value = "18";
           scheduleEls.existingState.hidden = true;
           scheduleEls.existingState.textContent = "";
+          setScheduleEditorMode("work");
+          updateScheduleEditorDateDisplay();
+          updateScheduleEditorTimeDisplay();
         }
 
         function cacheScheduleRows(rows) {
@@ -10091,11 +10808,152 @@
           }
         }
 
+        function scheduleEditorDateParts(dateKey) {
+          const date = parseLocalDate(dateKey || localDateKey());
+          const todayKey = localDateKey();
+          const tomorrowKey = localDateKey(addDays(parseLocalDate(todayKey), 1));
+          const yesterdayKey = localDateKey(addDays(parseLocalDate(todayKey), -1));
+          const relative = dateKey === todayKey ? "今天"
+            : dateKey === tomorrowKey ? "明天"
+            : dateKey === yesterdayKey ? "昨天"
+            : "";
+          const primary = `${date.getMonth() + 1}月${date.getDate()}日`;
+          const weekday = new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(date);
+          return { primary, secondary: relative ? `${weekday} · ${relative}` : weekday };
+        }
+
+        function updateScheduleEditorDateDisplay() {
+          const key = scheduleEls.date.value || localDateKey();
+          const info = scheduleEditorDateParts(key);
+          if (scheduleEls.datePrimary) scheduleEls.datePrimary.textContent = info.primary;
+          if (scheduleEls.dateSecondary) scheduleEls.dateSecondary.textContent = info.secondary;
+        }
+
+        function updateScheduleEditorTimeDisplay() {
+          const start = Number(scheduleEls.startHour.value || 9);
+          const end = Number(scheduleEls.endHour.value || 18);
+          if (scheduleEls.startDisplay) scheduleEls.startDisplay.textContent = formatHour(start);
+          if (scheduleEls.endDisplay) scheduleEls.endDisplay.textContent = formatHour(end);
+          if (scheduleEls.editorDuration) {
+            const duration = Number.isFinite(start) && Number.isFinite(end) && end > start ? end - start : 0;
+            scheduleEls.editorDuration.textContent = duration > 0 ? `${duration} 小时` : "请选择有效时间";
+          }
+        }
+
+        function setScheduleEditorMode(mode, { preserveButtonText = false } = {}) {
+          scheduleEditorMode = mode === "rest" ? "rest" : "work";
+          const isRest = scheduleEditorMode === "rest";
+          scheduleEls.modeWorkBtn?.classList.toggle("active", !isRest);
+          scheduleEls.modeRestBtn?.classList.toggle("active", isRest);
+          scheduleEls.modeWorkBtn?.setAttribute("aria-selected", String(!isRest));
+          scheduleEls.modeRestBtn?.setAttribute("aria-selected", String(isRest));
+          if (scheduleEls.workPanel) scheduleEls.workPanel.hidden = isRest;
+          if (scheduleEls.restPanel) scheduleEls.restPanel.hidden = !isRest;
+          if (scheduleEls.editorHint) {
+            scheduleEls.editorHint.textContent = isRest
+              ? "休息同样属于正式记录 · 会计入连续 7 天与四周奖励"
+              : "整点选择 · 08:00–22:00 · 下班时间必须晚于上班时间";
+          }
+
+          if (!preserveButtonText) {
+            const row = rowsByDate.get(String(scheduleEls.date.value || ""));
+            if (isRest) {
+              scheduleEls.saveBtn.textContent = isRestRow(row) ? "确认休息" : "登记休息";
+            } else if (row && isRestRow(row)) {
+              scheduleEls.saveBtn.textContent = "改为工作排班";
+            } else {
+              scheduleEls.saveBtn.textContent = row ? "保存修改" : "保存排班";
+            }
+          }
+        }
+
+        function availableScheduleHours(target) {
+          const start = Number(scheduleEls.startHour.value || 9);
+          if (target === "start") return Array.from({ length: 14 }, (_, i) => i + 8); // 08..21
+          const first = Math.max(9, Math.min(22, start + 1));
+          return Array.from({ length: 22 - first + 1 }, (_, i) => i + first);
+        }
+
+        function renderScheduleHourWheel() {
+          const hours = availableScheduleHours(scheduleTimePickerTarget);
+          if (!hours.includes(scheduleTimePickerHour)) {
+            scheduleTimePickerHour = hours[0] ?? 9;
+          }
+          scheduleEls.hourWheel.innerHTML = hours.map(hour =>
+            `<button class="schedule-hour-option pressable${hour === scheduleTimePickerHour ? " selected" : ""}" data-schedule-hour="${hour}" type="button">${formatHour(hour)}</button>`
+          ).join("");
+          requestAnimationFrame(() => {
+            const selected = scheduleEls.hourWheel.querySelector(".schedule-hour-option.selected");
+            selected?.scrollIntoView({ block: "center", behavior: "auto" });
+          });
+        }
+
+        let scheduleHourScrollRaf = 0;
+        function syncScheduleHourFromScroll() {
+          if (scheduleHourScrollRaf) return;
+          scheduleHourScrollRaf = requestAnimationFrame(() => {
+            scheduleHourScrollRaf = 0;
+            const wheelRect = scheduleEls.hourWheel.getBoundingClientRect();
+            const center = wheelRect.top + wheelRect.height / 2;
+            let closest = null;
+            let best = Infinity;
+            scheduleEls.hourWheel.querySelectorAll("[data-schedule-hour]").forEach(btn => {
+              const rect = btn.getBoundingClientRect();
+              const distance = Math.abs((rect.top + rect.height / 2) - center);
+              if (distance < best) { best = distance; closest = btn; }
+            });
+            if (!closest) return;
+            const hour = Number(closest.dataset.scheduleHour);
+            if (hour !== scheduleTimePickerHour) {
+              scheduleTimePickerHour = hour;
+              scheduleEls.hourWheel.querySelectorAll("[data-schedule-hour]").forEach(btn => {
+                btn.classList.toggle("selected", btn === closest);
+              });
+              vibrate(2);
+            }
+          });
+        }
+
+        function openScheduleTimePicker(target) {
+          scheduleTimePickerTarget = target === "end" ? "end" : "start";
+          scheduleTimePickerHour = Number(
+            scheduleTimePickerTarget === "start" ? scheduleEls.startHour.value : scheduleEls.endHour.value
+          ) || (scheduleTimePickerTarget === "start" ? 9 : 18);
+          scheduleEls.timePickerTitle.textContent = scheduleTimePickerTarget === "start" ? "选择上班时间" : "选择下班时间";
+          scheduleEls.timePickerIcon.textContent = scheduleTimePickerTarget === "start" ? "🕘" : "🕕";
+          scheduleEls.timePickerMessage.textContent = scheduleTimePickerTarget === "start"
+            ? "08:00–21:00 · 上下滑动选择整点"
+            : `必须晚于 ${formatHour(Number(scheduleEls.startHour.value || 9))}`;
+          renderScheduleHourWheel();
+          setLayer(scheduleEls.timePickerLayer, true);
+          vibrate(6);
+        }
+
+        function closeScheduleTimePicker() {
+          setLayer(scheduleEls.timePickerLayer, false);
+        }
+
+        function confirmScheduleTimePicker() {
+          if (scheduleTimePickerTarget === "start") {
+            scheduleEls.startHour.value = String(scheduleTimePickerHour);
+            const end = Number(scheduleEls.endHour.value || 18);
+            if (end <= scheduleTimePickerHour) {
+              scheduleEls.endHour.value = String(Math.min(22, scheduleTimePickerHour + 1));
+            }
+          } else {
+            scheduleEls.endHour.value = String(scheduleTimePickerHour);
+          }
+          updateScheduleEditorTimeDisplay();
+          closeScheduleTimePicker();
+          vibrate(8);
+        }
+
         function applyScheduleForDate(dateKey) {
           const row = rowsByDate.get(String(dateKey));
           const rest = isRestRow(row);
           scheduleEls.restBtn.classList.toggle("active", rest);
           scheduleEls.restBtnText.textContent = rest ? "已登记为休息" : "登记休息";
+
           if (row) {
             if (!rest) {
               scheduleEls.startHour.value = String(Number(row.start_hour));
@@ -10107,17 +10965,20 @@
             scheduleEls.existingState.textContent = `已登记 · ${scheduleRowText(row)}`;
             scheduleEls.existingState.hidden = false;
             if (scheduleEls.title) scheduleEls.title.textContent = "修改排班";
-            scheduleEls.saveBtn.textContent = rest ? "改为工作排班" : "保存修改";
-            return;
+            setScheduleEditorMode(rest ? "rest" : "work");
+          } else {
+            scheduleEls.startHour.value = "9";
+            scheduleEls.endHour.value = "18";
+            scheduleEls.existingState.hidden = true;
+            scheduleEls.existingState.textContent = "";
+            scheduleEls.restBtn.classList.remove("active");
+            scheduleEls.restBtnText.textContent = "登记休息";
+            if (scheduleEls.title) scheduleEls.title.textContent = "登记排班";
+            setScheduleEditorMode("work");
           }
-          scheduleEls.startHour.value = "9";
-          scheduleEls.endHour.value = "18";
-          scheduleEls.existingState.hidden = true;
-          scheduleEls.existingState.textContent = "";
-          scheduleEls.restBtn.classList.remove("active");
-          scheduleEls.restBtnText.textContent = "登记休息";
-          if (scheduleEls.title) scheduleEls.title.textContent = "登记排班";
-          scheduleEls.saveBtn.textContent = "保存排班";
+
+          updateScheduleEditorDateDisplay();
+          updateScheduleEditorTimeDisplay();
         }
 
         async function syncRegistrationForCurrentDate({ forceRefresh = false } = {}) {
@@ -10471,13 +11332,41 @@
         scheduleEls.closeAdminBtn.addEventListener("click", closeAdminUpcoming);
         scheduleEls.date.addEventListener("change", () => {
           if (!scheduleEls.date.value) scheduleEls.date.value = localDateKey();
+          updateScheduleEditorDateDisplay();
           void syncRegistrationForCurrentDate();
         });
         scheduleEls.prevDayBtn.addEventListener("click", () => changeRegistrationDate(-1));
         scheduleEls.nextDayBtn.addEventListener("click", () => changeRegistrationDate(1));
         scheduleEls.cancelBtn.addEventListener("click", closeRegistration);
-        scheduleEls.saveBtn.addEventListener("click", saveSchedule);
+        scheduleEls.saveBtn.addEventListener("click", () => {
+          if (scheduleEditorMode === "rest") openRestPrompt();
+          else saveSchedule();
+        });
         scheduleEls.restBtn.addEventListener("click", openRestPrompt);
+        scheduleEls.modeSwitch?.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-schedule-mode]");
+          if (!btn) return;
+          setScheduleEditorMode(btn.dataset.scheduleMode);
+          vibrate(5);
+        });
+        scheduleEls.startPickerBtn?.addEventListener("click", () => openScheduleTimePicker("start"));
+        scheduleEls.endPickerBtn?.addEventListener("click", () => openScheduleTimePicker("end"));
+        scheduleEls.hourWheel?.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-schedule-hour]");
+          if (!btn) return;
+          scheduleTimePickerHour = Number(btn.dataset.scheduleHour);
+          scheduleEls.hourWheel.querySelectorAll("[data-schedule-hour]").forEach(item => {
+            item.classList.toggle("selected", item === btn);
+          });
+          btn.scrollIntoView({ block:"center", behavior:"smooth" });
+          vibrate(3);
+        });
+        scheduleEls.hourWheel?.addEventListener("scroll", syncScheduleHourFromScroll, { passive:true });
+        scheduleEls.cancelTimePickerBtn?.addEventListener("click", closeScheduleTimePicker);
+        scheduleEls.confirmTimePickerBtn?.addEventListener("click", confirmScheduleTimePicker);
+        scheduleEls.timePickerLayer?.addEventListener("click", (e) => {
+          if (e.target === scheduleEls.timePickerLayer) closeScheduleTimePicker();
+        });
         scheduleEls.cancelRestBtn.addEventListener("click", closeRestPrompt);
         scheduleEls.confirmRestBtn.addEventListener("click", saveRestDay);
         scheduleEls.restLayer.addEventListener("click", (e) => { if (e.target === scheduleEls.restLayer) closeRestPrompt(); });
@@ -10653,7 +11542,20 @@
       els.openVersionInfoBtn.addEventListener("click", () => { setLayer(els.settingsLayer, false); setLayer(els.versionInfoLayer, true); });
       els.openWheelProbabilityBtn.addEventListener("click", openWheelProbabilitySettings);
       els.openWheelProbabilityHistoryBtn.addEventListener("click", openWheelProbabilityHistory);
-      els.wheelProbabilityGrid.addEventListener("input", updateWheelProbabilityTotal);
+      els.wheelProbabilityGrid.addEventListener("input", () => { updateWheelProbabilityTotal(); renderWheelProbabilityStudio(); });
+      els.wheelProbabilityLegend?.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-prob-select]");
+        if (!btn) return;
+        state.wheelProbabilitySelectedAmount = Number(btn.dataset.probSelect);
+        renderWheelProbabilityStudio();
+        vibrate(4);
+      });
+      els.wheelProbabilityMinusBtn?.addEventListener("click", () => adjustSelectedWheelProbability(-1));
+      els.wheelProbabilityPlusBtn?.addEventListener("click", () => adjustSelectedWheelProbability(1));
+      els.wheelProbabilityBoundaries?.addEventListener("pointerdown", beginWheelProbabilityBoundaryDrag);
+      window.addEventListener("pointermove", moveWheelProbabilityBoundaryDrag, { passive:false });
+      window.addEventListener("pointerup", endWheelProbabilityBoundaryDrag);
+      window.addEventListener("pointercancel", endWheelProbabilityBoundaryDrag);
       els.resetWheelProbabilityDefaultBtn.addEventListener("click", () => { setWheelProbabilityInputs(WHEEL_DEFAULT_PROBABILITIES); vibrate(8); });
       els.saveWheelProbabilityBtn.addEventListener("click", saveWheelProbability);
       els.closeWheelProbabilityBtn.addEventListener("click", () => setLayer(els.wheelProbabilityLayer, false));
