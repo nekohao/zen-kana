@@ -5658,11 +5658,11 @@
 
     /* Samsung reference: continuous neutral rail, prominent but not bulky. */
     .schedule-ring-track {
-      stroke: rgba(60,60,67,.20) !important;
-      stroke-width: 9.4 !important;
+      stroke: rgba(67,67,72,.205) !important;
+      stroke-width: 6.25 !important;
       stroke-linecap: round !important;
       vector-effect: non-scaling-stroke;
-      filter: drop-shadow(0 .7px 0 rgba(255,255,255,.78)) drop-shadow(0 2px 5px rgba(44,44,48,.055));
+      filter: drop-shadow(0 .55px 0 rgba(255,255,255,.82)) drop-shadow(0 1.4px 3px rgba(44,44,48,.038));
     }
 
     /* Old luminous SVG arc remains as the animation driver only; it is visually suppressed. */
@@ -5685,9 +5685,9 @@
       opacity: 0;
       pointer-events: none;
       transform-origin: center;
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9.7px), #000 calc(100% - 9.3px));
-      mask: radial-gradient(farthest-side, transparent calc(100% - 9.7px), #000 calc(100% - 9.3px));
-      filter: drop-shadow(0 1px 1.6px rgba(116,74,80,.10));
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6.75px), #000 calc(100% - 6.25px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 6.75px), #000 calc(100% - 6.25px));
+      filter: drop-shadow(0 .9px 1.2px rgba(116,74,80,.075));
       transition: opacity .24s ease;
     }
 
@@ -5697,20 +5697,20 @@
       shape-rendering: geometricPrecision;
     }
     .schedule-tick.micro {
-      stroke: rgba(60,60,67,.17) !important;
-      stroke-width: .60 !important;
+      stroke: rgba(67,67,72,.285) !important;
+      stroke-width: .72 !important;
     }
     .schedule-tick.hour {
-      stroke: rgba(60,60,67,.25) !important;
+      stroke: rgba(67,67,72,.38) !important;
       stroke-width: .86 !important;
     }
     .schedule-tick.major {
-      stroke: rgba(60,60,67,.34) !important;
-      stroke-width: 1.06 !important;
+      stroke: rgba(67,67,72,.43) !important;
+      stroke-width: .94 !important;
     }
     .schedule-tick.cardinal {
-      stroke: rgba(60,60,67,.48) !important;
-      stroke-width: 1.40 !important;
+      opacity: 0 !important;
+      stroke-width: 0 !important;
       filter: none !important;
     }
 
@@ -5720,13 +5720,18 @@
       z-index: 3;
       display: grid;
       place-items: center;
-      min-width: 20px;
-      color: rgba(60,60,67,.60);
-      font-size: clamp(17px, 5.2vw, 21px);
-      line-height: 1;
-      font-weight: 520;
-      letter-spacing: -.035em;
+      min-width: 22px;
+      color: rgba(67,67,72,.555);
+      font-family: "Roboto Condensed", "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+      font-size: clamp(19px, 5.7vw, 23px);
+      line-height: .96;
+      font-weight: 400;
+      font-stretch: condensed;
+      font-variation-settings: "wdth" 82;
+      letter-spacing: -.055em;
       font-variant-numeric: tabular-nums;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
       pointer-events: none;
     }
     .schedule-hour-label.h0  { top: 13.2%; left: 50%; transform: translate(-50%,-50%); }
@@ -5738,8 +5743,8 @@
     .schedule-reference-handle {
       position: absolute;
       z-index: 6;
-      width: 29px;
-      height: 29px;
+      width: 24px;
+      height: 24px;
       margin: 0;
       padding: 0;
       border-radius: 50%;
@@ -5748,20 +5753,18 @@
       opacity: 0;
       transform: translate(-50%,-50%);
       pointer-events: none;
-      background: linear-gradient(145deg, #ffb12b 0%, #f3a11c 58%, #e99717 100%);
-      border: 1px solid rgba(188,116,8,.14);
-      box-shadow:
-        0 2px 5px rgba(118,73,12,.13),
-        inset 0 1px 0 rgba(255,230,162,.78);
+      background: #f5a51d;
+      border: 0;
+      box-shadow: 0 1.5px 3.5px rgba(118,73,12,.11);
       transition: opacity .24s ease;
     }
     .schedule-reference-handle svg {
-      width: 17px;
-      height: 17px;
+      width: 14.5px;
+      height: 14.5px;
       display: block;
-      color: rgba(29,29,31,.94);
+      color: rgba(31,31,33,.96);
     }
-    .schedule-reference-handle.end svg { width: 18px; height: 18px; }
+    .schedule-reference-handle.end svg { width: 15px; height: 15px; }
 
     /* Two stacked times with small am/pm, matching the reference hierarchy. */
     .schedule-time-main {
@@ -5774,46 +5777,51 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: clamp(17px, 5vw, 21px) !important;
+      gap: clamp(17px, 5vw, 20px) !important;
       color: rgba(28,28,30,.98) !important;
-      font-family: -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif !important;
+      font-family: "Roboto Condensed", "Avenir Next Condensed", "Arial Narrow", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
       text-shadow: none !important;
       pointer-events: none;
     }
     .schedule-center-row {
       display: grid;
-      grid-template-columns: 22px auto auto;
+      grid-template-columns: 25px auto auto;
       align-items: end;
       justify-content: center;
-      column-gap: 7px;
-      min-height: 38px;
+      column-gap: 8px;
+      min-height: 39px;
       font-variant-numeric: tabular-nums;
     }
     .schedule-center-icon {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       align-self: center;
-      color: #f1a21b;
-      filter: drop-shadow(0 1px 0 rgba(255,255,255,.58));
+      color: #f2a31c;
+      filter: none;
     }
     .schedule-center-row strong {
-      min-width: 2.25em;
-      color: rgba(28,28,30,.98);
-      font-size: clamp(29px, 8.9vw, 36px);
-      line-height: .94;
-      font-weight: 650;
-      letter-spacing: -.055em;
+      min-width: 2.28em;
+      color: rgba(24,24,26,.985);
+      font-size: clamp(31px, 9.3vw, 38px);
+      line-height: .91;
+      font-weight: 560;
+      font-stretch: condensed;
+      font-variation-settings: "wdth" 86;
+      letter-spacing: -.045em;
       text-align: right;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
       white-space: nowrap;
     }
     .schedule-center-row small {
       align-self: end;
       margin: 0 0 2px -2px;
-      color: rgba(28,28,30,.88);
-      font-size: clamp(10px, 3vw, 12px);
+      color: rgba(28,28,30,.82);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      font-size: clamp(9.5px, 2.8vw, 11.5px);
       line-height: 1;
-      font-weight: 650;
-      letter-spacing: -.02em;
+      font-weight: 610;
+      letter-spacing: -.025em;
       text-transform: lowercase;
     }
     .schedule-center-row.empty strong {
@@ -5915,9 +5923,9 @@
     .home.schedule-active #overviewBtn svg { color: rgba(177,106,55,.72) !important; }
 
     @media (max-width: 370px) {
-      .schedule-reference-handle { width: 27px; height: 27px; }
-      .schedule-reference-handle svg { width: 16px; height: 16px; }
-      .schedule-center-row { grid-template-columns: 20px auto auto; column-gap: 6px; }
+      .schedule-reference-handle { width: 22px; height: 22px; }
+      .schedule-reference-handle svg { width: 13px; height: 13px; }
+      .schedule-center-row { grid-template-columns: 23px auto auto; column-gap: 7px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -9083,11 +9091,11 @@
           // places them close to the outer rail and separately labels 0 / 6 / 12 / 18.
           for (let i = 0; i < 96; i += 1) {
             const angle = (i / 96) * Math.PI * 2 - Math.PI / 2;
-            const isCardinal = i % 24 === 0;       // 00 / 06 / 12 / 18
+            const isCardinal = i % 24 === 0;       // 00 / 06 / 12 / 18 use numerals, no competing line
             const isThreeHour = !isCardinal && i % 12 === 0;
             const isHour = !isCardinal && !isThreeHour && i % 4 === 0;
-            const outer = isCardinal ? 101.8 : 101.2;
-            const length = isCardinal ? 10.2 : (isThreeHour ? 7.0 : (isHour ? 4.6 : 2.05));
+            const outer = 100.4;
+            const length = isCardinal ? 0 : (isThreeHour ? 5.75 : (isHour ? 5.35 : 4.15));
             const inner = outer - length;
             const line = document.createElementNS(ns, "line");
             line.setAttribute("x1", String(120 + Math.cos(angle) * inner));
@@ -9138,7 +9146,7 @@
               const d2 = spanDeg * .48;
               const d3 = spanDeg * .73;
               const d4 = spanDeg * .90;
-              scheduleEls.homeReferenceArc.style.background = `conic-gradient(from 0deg, #f5aa21 0deg, #f2a12d ${d1}deg, #de8b99 ${d2}deg, #bb72cd ${d3}deg, #e18b7d ${d4}deg, #f3a11e ${spanDeg}deg, transparent ${spanDeg}deg 360deg)`;
+              scheduleEls.homeReferenceArc.style.background = `conic-gradient(from 0deg, #f6aa1d 0deg, #f1a050 ${d1}deg, #dc8e9f ${d2}deg, #bf78cc ${d3}deg, #d98bb4 ${d4}deg, #f4a41c ${spanDeg}deg, transparent ${spanDeg}deg 360deg)`;
               scheduleEls.homeReferenceArc.style.transform = `rotate(${safeStart * 360}deg)`;
               scheduleEls.homeReferenceArc.style.opacity = "1";
             } else {
