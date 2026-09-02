@@ -6719,7 +6719,488 @@
       .wheel-history-swipe { transition: none !important; }
     }
 
-</style>
+
+
+    /* ============================================================
+       v2.4.0 — One modal system
+       Preview-style centered alerts are the ONLY short-action modal.
+       Long/browse surfaces remain sheets: Settings / schedule overview /
+       future schedule / version / release notes.
+       ============================================================ */
+
+    /* One backdrop + one opening motion for every short action modal. */
+    .modal-layer.alert-layer {
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 12px !important;
+      background: rgba(45,54,70,.075) !important;
+    }
+    .modal-layer.alert-layer.open {
+      -webkit-backdrop-filter: blur(8px) saturate(112%) !important;
+      backdrop-filter: blur(8px) saturate(112%) !important;
+    }
+    .modal-layer.alert-layer .alert {
+      width: min(calc(100% - 28px), 334px);
+      max-width: 100%;
+      overflow: hidden;
+      color: var(--ink) !important;
+      border: 1px solid rgba(255,255,255,.88) !important;
+      border-radius: 27px !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,255,255,.09) 48%),
+        var(--glass-fill-strong) !important;
+      box-shadow:
+        0 24px 72px rgba(23,30,44,.17),
+        inset 0 1px 0 rgba(255,255,255,.54) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+      transform: scale(.88) !important;
+      opacity: 0 !important;
+      transition: transform .28s var(--ease-ios), opacity .20s ease !important;
+    }
+    .modal-layer.alert-layer.open .alert {
+      transform: scale(1) !important;
+      opacity: 1 !important;
+    }
+
+    /* Complex forms may be wider, but material / radius / actions remain identical. */
+    #workScheduleLayer .alert,
+    #wheelProbabilityLayer .alert,
+    #wheelProbabilityHistoryLayer .alert,
+    #changeLayer .alert,
+    #redeemLayer .alert {
+      width: min(calc(100% - 24px), 382px) !important;
+    }
+
+    /* Module tint = content accent only, never a different component family. */
+    .modal-layer.alert-layer[data-theme="wheel"] .alert {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,239,207,.15) 48%),
+        var(--glass-fill-strong) !important;
+      box-shadow: 0 24px 72px rgba(169,116,43,.15), inset 0 1px 0 rgba(255,255,255,.54) !important;
+    }
+    .modal-layer.alert-layer[data-theme="schedule"] .alert {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.36), rgba(218,239,252,.16) 50%),
+        var(--glass-fill-strong) !important;
+      box-shadow: 0 24px 72px rgba(66,119,151,.13), inset 0 1px 0 rgba(255,255,255,.56) !important;
+    }
+    .modal-layer.alert-layer[data-theme="score"] .alert {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.34), rgba(250,232,239,.12) 48%),
+        var(--glass-fill-strong) !important;
+    }
+
+    .modal-layer.alert-layer .alert-content {
+      padding: 22px 20px 18px;
+      text-align: center;
+    }
+    .modal-layer.alert-layer .change-icon {
+      width: 42px !important;
+      height: 42px !important;
+      margin: 0 auto 9px !important;
+      border-radius: 15px !important;
+      display: grid !important;
+      place-items: center !important;
+      font-size: 21px !important;
+      background: rgba(255,255,255,.38) !important;
+      border: 1px solid rgba(255,255,255,.64) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 7px 18px rgba(40,45,60,.06) !important;
+    }
+    .modal-layer.alert-layer .alert-title {
+      margin-bottom: 7px !important;
+      color: var(--ink) !important;
+      font-size: 17px !important;
+      font-weight: 730 !important;
+      letter-spacing: -.015em;
+    }
+    .modal-layer.alert-layer .alert-message {
+      color: var(--secondary) !important;
+      font-size: 13px !important;
+      line-height: 1.45 !important;
+    }
+
+    /* Every short modal uses Preview's stacked action rows. */
+    .modal-layer.alert-layer .alert-actions,
+    .modal-layer.alert-layer .alert-actions.vertical {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      background: rgba(255,255,255,.06) !important;
+      border-top: 1px solid var(--hairline) !important;
+    }
+    .modal-layer.alert-layer .alert-button {
+      width: 100%;
+      min-height: 49px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      color: var(--secondary) !important;
+      font-size: 16px !important;
+      font-weight: 520;
+    }
+    .modal-layer.alert-layer .alert-button + .alert-button {
+      border-left: 0 !important;
+      border-top: 1px solid var(--hairline) !important;
+    }
+    .modal-layer.alert-layer .alert-button.primary-action {
+      color: var(--blue) !important;
+      font-weight: 720 !important;
+      background: rgba(255,255,255,.12) !important;
+    }
+    .modal-layer.alert-layer[data-theme="wheel"] .alert-button.primary-action {
+      color: #956326 !important;
+      background: linear-gradient(135deg, rgba(255,251,240,.94), rgba(247,210,143,.62)) !important;
+    }
+    .modal-layer.alert-layer[data-theme="schedule"] .alert-button.primary-action {
+      color: #3f7799 !important;
+      background: linear-gradient(135deg, rgba(248,253,255,.94), rgba(211,235,249,.64)) !important;
+    }
+    .modal-layer.alert-layer .alert-button.destructive {
+      color: var(--red) !important;
+      font-weight: 700 !important;
+      background: rgba(255,255,255,.08) !important;
+    }
+
+    /* Probability v2: remove every old cream/bottom-sheet shell override. */
+    #wheelProbabilityLayer,
+    #wheelProbabilityHistoryLayer {
+      background: rgba(45,54,70,.075) !important;
+      -webkit-backdrop-filter: blur(8px) saturate(112%) !important;
+      backdrop-filter: blur(8px) saturate(112%) !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-popup,
+    #wheelProbabilityHistoryLayer .wheel-probability-history-alert {
+      color: var(--ink) !important;
+      border-color: rgba(255,255,255,.88) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-popup-content {
+      padding: 21px 17px 15px !important;
+    }
+    #wheelProbabilityHistoryLayer .alert-content {
+      max-height: min(70dvh, 560px);
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    #wheelProbabilityHistoryLayer .alert-content::-webkit-scrollbar { display:none; }
+
+    /* Schedule registration is now a true centered alert. Old sheet drag UI is retained
+       only as an invisible compatibility target so existing JS bindings cannot break. */
+    #workScheduleLayer .schedule-editor-alert {
+      max-height: min(88dvh, 720px) !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+    }
+    #workScheduleLayer .schedule-editor-alert-content {
+      max-height: calc(min(88dvh, 720px) - 148px);
+      overflow-y: auto;
+      padding: 18px 16px 14px !important;
+      scrollbar-width: none;
+    }
+    #workScheduleLayer .schedule-editor-alert-content::-webkit-scrollbar { display:none; }
+    #workScheduleLayer .schedule-editor-hidden-grabber,
+    #loginLayer .login-hidden-grabber { display:none !important; }
+    #workScheduleLayer .schedule-editor-v22 {
+      margin-top: 14px;
+      gap: 9px;
+    }
+    #workScheduleLayer .schedule-editor-date-card {
+      min-height: 62px;
+      border-radius: 18px;
+    }
+    #workScheduleLayer .work-schedule-mode-switch { height: 44px; }
+    #workScheduleLayer .work-schedule-time-row { min-height: 58px; }
+    #workScheduleLayer .work-schedule-rest-panel { min-height: 160px; }
+    #workScheduleLayer .work-schedule-overview-button {
+      color: #5f7890 !important;
+    }
+    #workScheduleLayer .schedule-editor-cancel { opacity: 1 !important; }
+
+    /* Login is no longer a separate bottom-sheet component. */
+    #loginLayer {
+      align-items: center !important;
+      padding: 12px !important;
+      background: rgba(45,54,70,.075) !important;
+    }
+    #loginLayer .login-alert {
+      width: min(calc(100% - 28px), 334px) !important;
+      max-height: none !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+    #loginLayer .login-alert-content { padding: 22px 20px 18px !important; }
+    #loginLayer .login-alert-fields {
+      display: grid;
+      gap: 9px;
+      margin-top: 15px;
+    }
+    #loginLayer .field {
+      width: 100%;
+      min-height: 46px;
+      margin: 0 !important;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.64) !important;
+      background: rgba(255,255,255,.28) !important;
+      color: var(--ink) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.55) !important;
+      outline: none;
+    }
+    #loginLayer .field:focus {
+      border-color: rgba(89,145,180,.42) !important;
+      box-shadow: 0 0 0 3px rgba(92,157,197,.08), inset 0 1px 0 rgba(255,255,255,.62) !important;
+    }
+
+    /* “调整次数” keeps its controls, but removes the visually separate card language. */
+    #wheelAdjustLayer .wheel-adjust-unified-alert {
+      width: min(calc(100% - 28px), 334px) !important;
+    }
+    #wheelAdjustLayer .wheel-adjust-value-card {
+      margin: 12px 0 8px !important;
+      padding: 6px 0 7px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    #wheelAdjustLayer .wheel-adjust-value-line strong { font-size: 35px !important; }
+    #wheelAdjustLayer .wheel-adjust-stepper { margin: 9px 0 5px !important; }
+    #wheelAdjustLayer .wheel-adjust-step,
+    #wheelAdjustLayer .wheel-adjust-next {
+      border-color: rgba(255,255,255,.58) !important;
+      background: rgba(255,255,255,.22) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.58) !important;
+    }
+    #wheelAdjustLayer .wheel-adjust-step.selected {
+      background: rgba(255,255,255,.42) !important;
+    }
+    #wheelAdjustLayer .wheel-adjust-preview {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      min-height: 0 !important;
+      padding: 6px 0 0 !important;
+    }
+
+    @media (max-height: 690px) {
+      #workScheduleLayer .schedule-editor-alert-content {
+        max-height: calc(88dvh - 148px);
+        padding-top: 14px !important;
+      }
+      #workScheduleLayer .change-icon { width:36px !important; height:36px !important; margin-bottom:6px !important; }
+      #workScheduleLayer .schedule-editor-v22 { margin-top:10px; gap:7px; }
+      #workScheduleLayer .work-schedule-time-row { min-height:52px; }
+    }
+
+  
+
+    /* v2.4 final modal hard-lock: later + ID-specific so legacy CSS cannot re-skin short alerts. */
+    #workScheduleLayer.modal-layer.alert-layer .alert,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert,
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert,
+    #loginLayer.modal-layer.alert-layer .alert,
+    #changeLayer.modal-layer.alert-layer .alert,
+    #redeemLayer.modal-layer.alert-layer .alert,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert,
+    #scheduleRewardLayer.modal-layer.alert-layer .alert,
+    #wheelResultLayer.modal-layer.alert-layer .alert,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert,
+    #settleWithdrawalLayer.modal-layer.alert-layer .alert,
+    #resetLayer.modal-layer.alert-layer .alert {
+      border-radius: 27px !important;
+      border: 1px solid rgba(255,255,255,.88) !important;
+      background: linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,255,255,.09) 48%), var(--glass-fill-strong) !important;
+      box-shadow: 0 24px 72px rgba(23,30,44,.17), inset 0 1px 0 rgba(255,255,255,.54) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      transform: scale(.88) !important;
+      opacity: 0 !important;
+      transition: transform .28s var(--ease-ios), opacity .20s ease !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer.open .alert, #workScheduleTimePickerLayer.modal-layer.alert-layer.open .alert, #workScheduleDeleteLayer.modal-layer.alert-layer.open .alert, #workScheduleRestLayer.modal-layer.alert-layer.open .alert, #wheelProbabilityLayer.modal-layer.alert-layer.open .alert, #wheelProbabilityHistoryLayer.modal-layer.alert-layer.open .alert, #loginLayer.modal-layer.alert-layer.open .alert, #changeLayer.modal-layer.alert-layer.open .alert, #redeemLayer.modal-layer.alert-layer.open .alert, #wheelPreviewLayer.modal-layer.alert-layer.open .alert, #wheelAdjustLayer.modal-layer.alert-layer.open .alert, #scheduleRewardLayer.modal-layer.alert-layer.open .alert, #wheelResultLayer.modal-layer.alert-layer.open .alert, #wheelWithdrawLayer.modal-layer.alert-layer.open .alert, #settleWithdrawalLayer.modal-layer.alert-layer.open .alert, #resetLayer.modal-layer.alert-layer.open .alert {
+      transform: scale(1) !important;
+      opacity: 1 !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-content,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-content,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-content,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert-content,
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert-content,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-content,
+    #loginLayer.modal-layer.alert-layer .alert-content,
+    #changeLayer.modal-layer.alert-layer .alert-content,
+    #redeemLayer.modal-layer.alert-layer .alert-content,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert-content,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert-content,
+    #scheduleRewardLayer.modal-layer.alert-layer .alert-content,
+    #wheelResultLayer.modal-layer.alert-layer .alert-content,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert-content,
+    #settleWithdrawalLayer.modal-layer.alert-layer .alert-content,
+    #resetLayer.modal-layer.alert-layer .alert-content {
+      text-align: center !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .change-icon,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .change-icon,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .change-icon,
+    #workScheduleRestLayer.modal-layer.alert-layer .change-icon,
+    #wheelProbabilityLayer.modal-layer.alert-layer .change-icon,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .change-icon,
+    #loginLayer.modal-layer.alert-layer .change-icon,
+    #changeLayer.modal-layer.alert-layer .change-icon,
+    #redeemLayer.modal-layer.alert-layer .change-icon,
+    #wheelPreviewLayer.modal-layer.alert-layer .change-icon,
+    #wheelAdjustLayer.modal-layer.alert-layer .change-icon,
+    #scheduleRewardLayer.modal-layer.alert-layer .change-icon,
+    #wheelResultLayer.modal-layer.alert-layer .change-icon,
+    #wheelWithdrawLayer.modal-layer.alert-layer .change-icon,
+    #settleWithdrawalLayer.modal-layer.alert-layer .change-icon,
+    #resetLayer.modal-layer.alert-layer .change-icon {
+      width:42px !important; height:42px !important; margin:0 auto 9px !important;
+      border-radius:15px !important; display:grid !important; place-items:center !important;
+      font-size:21px !important; background:rgba(255,255,255,.38) !important;
+      border:1px solid rgba(255,255,255,.64) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 7px 18px rgba(40,45,60,.06) !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-title,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-title,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-title,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert-title,
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert-title,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-title,
+    #loginLayer.modal-layer.alert-layer .alert-title,
+    #changeLayer.modal-layer.alert-layer .alert-title,
+    #redeemLayer.modal-layer.alert-layer .alert-title,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert-title,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert-title,
+    #scheduleRewardLayer.modal-layer.alert-layer .alert-title,
+    #wheelResultLayer.modal-layer.alert-layer .alert-title,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert-title,
+    #settleWithdrawalLayer.modal-layer.alert-layer .alert-title,
+    #resetLayer.modal-layer.alert-layer .alert-title {
+      color:var(--ink) !important; font-size:17px !important; font-weight:730 !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-message,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-message,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-message,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert-message,
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert-message,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-message,
+    #loginLayer.modal-layer.alert-layer .alert-message,
+    #changeLayer.modal-layer.alert-layer .alert-message,
+    #redeemLayer.modal-layer.alert-layer .alert-message,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert-message,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert-message,
+    #scheduleRewardLayer.modal-layer.alert-layer .alert-message,
+    #wheelResultLayer.modal-layer.alert-layer .alert-message,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert-message,
+    #settleWithdrawalLayer.modal-layer.alert-layer .alert-message,
+    #resetLayer.modal-layer.alert-layer .alert-message {
+      color:var(--secondary) !important; font-size:13px !important; line-height:1.45 !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-actions,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-actions,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-actions,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert-actions,
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert-actions,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-actions,
+    #loginLayer.modal-layer.alert-layer .alert-actions,
+    #changeLayer.modal-layer.alert-layer .alert-actions,
+    #redeemLayer.modal-layer.alert-layer .alert-actions,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert-actions,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert-actions,
+    #scheduleRewardLayer.modal-layer.alert-layer .alert-actions,
+    #wheelResultLayer.modal-layer.alert-layer .alert-actions,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert-actions,
+    #settleWithdrawalLayer.modal-layer.alert-layer .alert-actions,
+    #resetLayer.modal-layer.alert-layer .alert-actions {
+      display:grid !important; grid-template-columns:1fr !important; gap:0 !important;
+      margin:0 !important; padding:0 !important; border-top:1px solid var(--hairline) !important;
+      background:rgba(255,255,255,.06) !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-button,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert-button,
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert-button,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button,
+    #loginLayer.modal-layer.alert-layer .alert-button,
+    #changeLayer.modal-layer.alert-layer .alert-button,
+    #redeemLayer.modal-layer.alert-layer .alert-button,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert-button,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert-button,
+    #scheduleRewardLayer.modal-layer.alert-layer .alert-button,
+    #wheelResultLayer.modal-layer.alert-layer .alert-button,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert-button,
+    #settleWithdrawalLayer.modal-layer.alert-layer .alert-button,
+    #resetLayer.modal-layer.alert-layer .alert-button {
+      min-height:49px !important; margin:0 !important; padding:0 14px !important;
+      border:0 !important; border-radius:0 !important; box-shadow:none !important;
+      background:transparent !important; color:var(--secondary) !important; font-size:16px !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleRestLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelProbabilityLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button + .alert-button, #loginLayer.modal-layer.alert-layer .alert-button + .alert-button, #changeLayer.modal-layer.alert-layer .alert-button + .alert-button, #redeemLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelPreviewLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelAdjustLayer.modal-layer.alert-layer .alert-button + .alert-button, #scheduleRewardLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelResultLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelWithdrawLayer.modal-layer.alert-layer .alert-button + .alert-button, #settleWithdrawalLayer.modal-layer.alert-layer .alert-button + .alert-button, #resetLayer.modal-layer.alert-layer .alert-button + .alert-button {
+      border-left:0 !important; border-top:1px solid var(--hairline) !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleRestLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelProbabilityLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button.primary-action, #loginLayer.modal-layer.alert-layer .alert-button.primary-action, #changeLayer.modal-layer.alert-layer .alert-button.primary-action, #redeemLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelPreviewLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelAdjustLayer.modal-layer.alert-layer .alert-button.primary-action, #scheduleRewardLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelResultLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelWithdrawLayer.modal-layer.alert-layer .alert-button.primary-action, #settleWithdrawalLayer.modal-layer.alert-layer .alert-button.primary-action, #resetLayer.modal-layer.alert-layer .alert-button.primary-action {
+      color:var(--blue) !important; background:rgba(255,255,255,.12) !important; font-weight:720 !important;
+    }
+
+    /* Same component, subtle per-module tint only. */
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert,
+    #wheelResultLayer.modal-layer.alert-layer .alert,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert {
+      background:linear-gradient(145deg,rgba(255,255,255,.34),rgba(255,239,207,.15) 48%),var(--glass-fill-strong) !important;
+      box-shadow:0 24px 72px rgba(169,116,43,.15),inset 0 1px 0 rgba(255,255,255,.54) !important;
+    }
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert-button.primary-action,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button.primary-action,
+    #wheelPreviewLayer.modal-layer.alert-layer .alert-button.primary-action,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert-button.primary-action,
+    #wheelResultLayer.modal-layer.alert-layer .alert-button.primary-action,
+    #wheelWithdrawLayer.modal-layer.alert-layer .alert-button.primary-action {
+      color:#956326 !important;
+      background:linear-gradient(135deg,rgba(255,251,240,.94),rgba(247,210,143,.62)) !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert,
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert {
+      background:linear-gradient(145deg,rgba(255,255,255,.36),rgba(218,239,252,.16) 50%),var(--glass-fill-strong) !important;
+      box-shadow:0 24px 72px rgba(66,119,151,.13),inset 0 1px 0 rgba(255,255,255,.56) !important;
+    }
+    #workScheduleLayer.modal-layer.alert-layer .alert-button.primary-action,
+    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button.primary-action,
+    #workScheduleRestLayer.modal-layer.alert-layer .alert-button.primary-action {
+      color:#3f7799 !important;
+      background:linear-gradient(135deg,rgba(248,253,255,.94),rgba(211,235,249,.64)) !important;
+    }
+    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button.destructive {
+      color:var(--red) !important; background:rgba(255,255,255,.10) !important; font-weight:720 !important;
+    }
+
+    /* Width exceptions for information-dense forms; shell remains identical. */
+    #workScheduleLayer.modal-layer.alert-layer .alert,
+    #wheelProbabilityLayer.modal-layer.alert-layer .alert,
+    #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert,
+    #changeLayer.modal-layer.alert-layer .alert,
+    #redeemLayer.modal-layer.alert-layer .alert {
+      width:min(calc(100% - 24px),382px) !important;
+    }
+    #loginLayer.modal-layer.alert-layer .alert,
+    #wheelAdjustLayer.modal-layer.alert-layer .alert {
+      width:min(calc(100% - 28px),334px) !important;
+    }
+
+  </style>
 </head>
 <body>
 <div aria-hidden="true" class="background">
@@ -7086,15 +7567,13 @@
          WORK SCHEDULE MODULE START
          Independent schedule registration / overview sheets.
          ============================================================ -->
-<div aria-hidden="true" class="modal-layer" id="workScheduleLayer">
-<div aria-labelledby="workScheduleTitle" aria-modal="true" class="unified-sheet work-schedule-sheet schedule-editor-sheet" role="dialog">
-<header class="unified-sheet-header">
-<div aria-label="下拉关闭排班登记" class="work-schedule-grabber-hitbox" id="workScheduleGrabberHitbox">
-<div aria-hidden="true" class="grabber"></div>
-</div>
-<div class="sheet-title" id="workScheduleTitle">排班登记</div>
-</header>
-<div class="unified-sheet-body">
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleLayer">
+<div aria-labelledby="workScheduleTitle" aria-modal="true" class="alert work-schedule-sheet schedule-editor-sheet schedule-editor-alert" role="dialog">
+<div class="alert-content schedule-editor-alert-content">
+<div aria-label="排班登记弹窗" class="work-schedule-grabber-hitbox schedule-editor-hidden-grabber" id="workScheduleGrabberHitbox"><div aria-hidden="true" class="grabber"></div></div>
+<div aria-hidden="true" class="change-icon">📅</div>
+<div class="alert-title" id="workScheduleTitle">排班登记</div>
+<div class="alert-message">选择日期、工作 / 休息与整点时间</div>
 <div class="work-schedule-form schedule-editor-v22">
 
 <div class="schedule-editor-date-card">
@@ -7121,56 +7600,40 @@
 <div class="work-schedule-work-panel" id="workScheduleWorkPanel">
 <div class="work-schedule-time-card">
 <button class="work-schedule-time-row pressable" id="workScheduleStartPickerBtn" type="button">
-<span class="work-schedule-time-copy">
-<small>上班时间</small>
-<strong id="workScheduleStartDisplay">09:00</strong>
-</span>
+<span class="work-schedule-time-copy"><small>上班时间</small><strong id="workScheduleStartDisplay">09:00</strong></span>
 <span aria-hidden="true" class="work-schedule-time-row-icon">›</span>
 </button>
 <div class="work-schedule-time-divider"></div>
 <button class="work-schedule-time-row pressable" id="workScheduleEndPickerBtn" type="button">
-<span class="work-schedule-time-copy">
-<small>下班时间</small>
-<strong id="workScheduleEndDisplay">18:00</strong>
-</span>
+<span class="work-schedule-time-copy"><small>下班时间</small><strong id="workScheduleEndDisplay">18:00</strong></span>
 <span aria-hidden="true" class="work-schedule-time-row-icon">›</span>
 </button>
 </div>
-
 <select aria-hidden="true" aria-label="上班时间" class="work-schedule-hidden-select" id="workScheduleStartHour" tabindex="-1"></select>
 <select aria-hidden="true" aria-label="下班时间" class="work-schedule-hidden-select" id="workScheduleEndHour" tabindex="-1"></select>
-
-<div class="work-schedule-duration-card">
-<span>排班时长</span>
-<strong id="workScheduleEditorDuration">9 小时</strong>
-</div>
+<div class="work-schedule-duration-card"><span>排班时长</span><strong id="workScheduleEditorDuration">9 小时</strong></div>
 </div>
 
 <div class="work-schedule-rest-panel" hidden="" id="workScheduleRestPanel">
-<div class="work-schedule-rest-orb" aria-hidden="true">
-<svg viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>
-</div>
+<div class="work-schedule-rest-orb" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg></div>
 <strong>休息日</strong>
 <small>这一天会被正式记录，并且同样计入连续排班奖励。</small>
 </div>
 
 <div class="work-schedule-hint" id="workScheduleEditorHint">整点选择 · 08:00–22:00 · 下班时间必须晚于上班时间</div>
-
-<!-- Kept for backwards-compatible JS references; v2.2 UI uses the mode switch above. -->
 <button hidden id="workScheduleRestBtn" type="button"><span id="workScheduleRestBtnText">登记休息</span></button>
-
-<button class="sheet-button pressable full-width work-schedule-overview-button" id="openWorkScheduleOverviewBtn" type="button">排班总览</button>
-<div class="schedule-editor-actions">
-<button class="sheet-button primary pressable full-width" id="saveWorkScheduleBtn" type="button">保存排班</button>
-<button class="sheet-button pressable full-width schedule-editor-cancel" id="cancelWorkScheduleBtn" type="button">取消</button>
 </div>
 </div>
+<div class="alert-actions vertical schedule-editor-alert-actions">
+<button class="alert-button primary-action pressable" id="saveWorkScheduleBtn" type="button">保存排班</button>
+<button class="alert-button pressable work-schedule-overview-button" id="openWorkScheduleOverviewBtn" type="button">排班总览</button>
+<button class="alert-button pressable schedule-editor-cancel" id="cancelWorkScheduleBtn" type="button">取消</button>
 </div>
 </div>
 </div>
 
 <!-- Shared hour wheel for start/end time -->
-<div aria-hidden="true" class="modal-layer alert-layer" id="workScheduleTimePickerLayer">
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleTimePickerLayer">
 <div aria-labelledby="workScheduleTimePickerTitle" aria-modal="true" class="alert schedule-time-picker-alert" role="dialog">
 <div class="alert-content">
 <div aria-hidden="true" class="change-icon" id="workScheduleTimePickerIcon">🕘</div>
@@ -7225,20 +7688,20 @@
 </div>
 </div>
 <!-- Delete confirmation belongs only to the schedule module. -->
-<div aria-hidden="true" class="modal-layer alert-layer" id="workScheduleDeleteLayer">
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleDeleteLayer">
 <div aria-labelledby="workScheduleDeleteTitle" aria-modal="true" class="alert" role="alertdialog">
 <div class="alert-content">
 <div class="alert-title" id="workScheduleDeleteTitle">删除排班</div>
 <div class="alert-message" id="workScheduleDeleteMessage">确定删除这条排班吗？</div>
 </div>
-<div class="alert-actions">
+<div class="alert-actions vertical">
+<button class="alert-button destructive pressable" id="confirmWorkScheduleDeleteBtn" type="button">确认删除</button>
 <button class="alert-button pressable" id="cancelWorkScheduleDeleteBtn" type="button">取消</button>
-<button class="alert-button destructive pressable" id="confirmWorkScheduleDeleteBtn" type="button">删除</button>
 </div>
 </div>
 </div>
 <!-- Rest confirmation belongs only to the schedule module. -->
-<div aria-hidden="true" class="modal-layer alert-layer" id="workScheduleRestLayer">
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleRestLayer">
 <div aria-labelledby="workScheduleRestTitle" aria-modal="true" class="alert" role="alertdialog">
 <div class="alert-content">
 <div aria-hidden="true" class="change-icon">🌙</div>
@@ -7265,7 +7728,7 @@
 <div class="settings-group">
 <div class="settings-row static">
 <span>当前版本</span>
-<span class="settings-value">2.3.0</span>
+<span class="settings-value">2.4.0</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -7294,12 +7757,21 @@
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>2.3.0</strong><span>当前版本</span></div>
+<div class="release-head"><strong>2.4.0</strong><span>当前版本</span></div>
+<div class="release-date">2026.09.02</div>
+<ul class="release-list">
+<li>统一所有非半屏类弹窗：排班登记、管理员登录、积分调整、次数调整、概率、时间选择、确认类弹窗全部使用“试玩大转盘”同一套居中玻璃语言。</li>
+<li>排班登记由 Bottom Sheet 改为居中操作弹窗，原日期、工作/休息、时间选择、排班总览与保存逻辑全部保留。</li>
+<li>大转盘概率切换至独立 v2 singleton 配置与全新 RPC，正式抽奖映射同步读取新配置，彻底脱离旧概率保存链路。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>2.3.0</strong><span>上一版本</span></div>
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>奖励与提现记录新增 iOS 风格左滑操作：管理员左滑后可删除历史；待兑现提现显示“取消提现”并退回可提现余额。</li>
 <li>历史删除改为数据库软删除，不反向修改已经发生的中奖/兑现资产；累计中奖与累计兑现继续保留真实总账。</li>
-<li>大转盘概率设置改为与“试玩大转盘”一致的居中玻璃弹窗，保留拖动分界线、整数吸附与 ±1% 精确调整。</li>
+<li>大转盘概率设置改为居中玻璃弹窗，保留拖动分界线、整数吸附与 ±1% 精确调整。</li>
 </ul>
 </div>
 <div class="release-block previous">
@@ -7559,23 +8031,22 @@
 </div>
 </div>
 <!-- Login Sheet -->
-<div aria-hidden="true" class="modal-layer" id="loginLayer">
-<div aria-labelledby="loginTitle" aria-modal="true" class="sheet login-sheet" id="loginSheet" role="dialog">
-<header class="login-sheet-header">
-<div aria-label="下拉关闭管理员登录" class="login-grabber-hitbox" id="loginGrabberHitbox">
-<div aria-hidden="true" class="grabber"></div>
+<div aria-hidden="true" class="modal-layer alert-layer" id="loginLayer">
+<div aria-labelledby="loginTitle" aria-modal="true" class="alert login-sheet login-alert" id="loginSheet" role="dialog">
+<div class="alert-content login-alert-content">
+<div aria-label="管理员登录弹窗" class="login-grabber-hitbox login-hidden-grabber" id="loginGrabberHitbox"><div aria-hidden="true" class="grabber"></div></div>
+<div aria-hidden="true" class="change-icon">🔐</div>
+<div class="alert-title" id="loginTitle">管理员登录</div>
+<div class="alert-message">使用已创建的管理员账号登录</div>
+<div class="login-alert-fields">
+<input autocomplete="username" class="field" id="emailInput" inputmode="email" placeholder="邮箱" type="email"/>
+<input autocomplete="current-password" class="field" id="passwordInput" placeholder="密码" type="password"/>
 </div>
-<div class="sheet-title" id="loginTitle">管理员登录</div>
-</header>
-<div class="login-sheet-body">
-<div class="sheet-subtitle">使用已创建的管理员账号登录</div>
-<input autocomplete="username" class="field" id="emailInput" inputmode="email" placeholder="邮箱" type="email">
-<input autocomplete="current-password" class="field" id="passwordInput" placeholder="密码" type="password">
-<div class="sheet-actions">
-<button class="sheet-button pressable" id="cancelLoginBtn" type="button">取消</button>
-<button class="sheet-button primary pressable" id="loginBtn" type="button">登录</button>
 </div>
-</input></input></div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="loginBtn" type="button">登录</button>
+<button class="alert-button pressable" id="cancelLoginBtn" type="button">取消</button>
+</div>
 </div>
 </div>
 <!-- Administrator score change -->
@@ -8991,7 +9462,7 @@
           return false;
         }
         try {
-          const { data, error } = await db.rpc("points_admin_get_wheel_probabilities");
+          const { data, error } = await db.rpc("points_admin_get_wheel_probabilities_v2");
           if (error) throw error;
           const config = {};
           for (const row of (Array.isArray(data) ? data : [])) {
@@ -9063,7 +9534,7 @@
 
         setBusy(els.saveWheelProbabilityBtn, true);
         try {
-          const { data, error } = await db.rpc("points_admin_set_wheel_probabilities", {
+          const { data, error } = await db.rpc("points_admin_set_wheel_probabilities_v2", {
             p_config: payload
           });
           if (error) throw error;
@@ -9077,16 +9548,16 @@
           vibrate(16);
           showToast("🎠 新概率已经保存并生效");
         } catch (err) {
-          console.error("saveWheelProbability:", err);
+          console.error("saveWheelProbabilityV2:", err);
           const message = String(err?.message || "");
           const details = String(err?.details || "");
           const hint = String(err?.hint || "");
           const code = String(err?.code || "");
           const diagnostic = `${code} ${message} ${details} ${hint}`;
-          if (/PGRST202|schema cache|Could not find|function .*points_admin_set_wheel_probabilities.*does not exist/i.test(diagnostic)) {
-            showToast("数据库缺少概率保存函数或函数签名不匹配，请运行最新版 SQL");
+          if (/PGRST202|schema cache|Could not find|function .*points_admin_set_wheel_probabilities_v2.*does not exist/i.test(diagnostic)) {
+            showToast("数据库缺少 v2 概率函数，请运行 v2.4 数据库更新 SQL");
           } else if (/sum|10000|probability|config/i.test(diagnostic)) {
-            showToast("数据库拒绝了概率配置，请确认 SQL 为最新版");
+            showToast("数据库拒绝了概率配置，请确认已运行 v2.4 数据库更新 SQL");
           } else if (/Admin only|permission|not authorized|JWT/i.test(diagnostic)) {
             showToast("管理员权限校验失败，请重新登录管理员后再试");
           } else {
@@ -9137,7 +9608,7 @@
         els.wheelProbabilityHistoryList.innerHTML = '<div class="wheel-probability-history-empty">正在读取…</div>';
         setLayer(els.wheelProbabilityHistoryLayer, true);
         try {
-          const { data, error } = await db.rpc("points_admin_get_wheel_probability_logs", { p_limit: 100 });
+          const { data, error } = await db.rpc("points_admin_get_wheel_probability_logs_v2", { p_limit: 100 });
           if (error) throw error;
           state.wheelProbabilityHistory = Array.isArray(data) ? data : [];
           renderWheelProbabilityHistory();
