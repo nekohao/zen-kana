@@ -6550,6 +6550,175 @@
       .schedule-editor-date-card { grid-template-columns:42px 1fr 42px; }
     }
 
+
+
+    /* ============================================================
+       v2.3.0 — iOS history swipe + Preview-style probability popup
+       ============================================================ */
+
+    /* Probability settings now deliberately reuse the same centered alert
+       material and motion language as “试玩大转盘”. */
+    #wheelProbabilityLayer {
+      padding: 0 0 12px !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: rgba(45,54,70,.075) !important;
+    }
+    #wheelProbabilityLayer.open {
+      -webkit-backdrop-filter: blur(8px) !important;
+      backdrop-filter: blur(8px) !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-popup {
+      width: min(calc(100% - 28px), 382px) !important;
+      max-height: min(84dvh, 700px);
+      overflow: hidden;
+      color: var(--ink) !important;
+      border: 1px solid rgba(255,255,255,.88) !important;
+      border-radius: 27px !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,239,207,.15) 48%),
+        var(--glass-fill-strong) !important;
+      box-shadow:
+        0 24px 72px rgba(169,116,43,.15),
+        inset 0 1px 0 rgba(255,255,255,.54) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-popup-content {
+      padding: 21px 17px 15px !important;
+      max-height: calc(min(84dvh, 700px) - 147px);
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    #wheelProbabilityLayer .wheel-probability-popup-content::-webkit-scrollbar { display: none; }
+    #wheelProbabilityLayer .change-icon {
+      width: auto !important;
+      height: auto !important;
+      margin: 0 auto 6px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      font-size: 31px !important;
+    }
+    #wheelProbabilityLayer .alert-title {
+      color: var(--ink) !important;
+      font-size: 17px !important;
+      font-weight: 730 !important;
+    }
+    #wheelProbabilityLayer .alert-message {
+      color: var(--secondary) !important;
+      font-size: 12px !important;
+      line-height: 1.4 !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-studio {
+      margin-top: 14px;
+      padding: 13px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.72);
+      background: rgba(255,255,255,.20);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 10px 28px rgba(91,67,105,.045);
+    }
+    #wheelProbabilityLayer .wheel-probability-total {
+      margin-top: 10px;
+    }
+    #wheelProbabilityLayer .alert-actions {
+      background: rgba(255,255,255,.06) !important;
+      border-top: 1px solid var(--hairline) !important;
+    }
+    #wheelProbabilityLayer .alert-button {
+      color: var(--secondary) !important;
+      background: transparent !important;
+      border-color: var(--hairline) !important;
+    }
+    #wheelProbabilityLayer .alert-button.primary-action {
+      color: #956326 !important;
+      background: linear-gradient(135deg, rgba(255,251,240,.94), rgba(247,210,143,.62)) !important;
+      font-weight: 730 !important;
+    }
+    #wheelProbabilityLayer .wheel-probability-cancel { color: var(--secondary) !important; }
+
+    /* History stays read-only for the visitor. Admin gets Messages-like swipe actions. */
+    .wheel-history-admin-hint {
+      margin: -4px 6px 10px;
+      color: var(--tertiary);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .01em;
+    }
+    .wheel-history-section .log-list { gap: 8px; }
+    .wheel-history-static,
+    .wheel-history-swipe {
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-radius: 17px;
+    }
+    .wheel-history-swipe {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      background: #ff3b30;
+      box-shadow: 0 5px 16px rgba(35,43,58,.035);
+      transition: height .22s ease, opacity .18s ease, transform .22s ease, margin .22s ease;
+    }
+    .wheel-history-swipe:has(.wheel-history-action.cancel) { background: #ff9500; }
+    .wheel-history-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      min-height: 60px;
+      margin: 0 !important;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.055)),
+        color-mix(in srgb, var(--glass-fill-strong) 70%, transparent);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      backdrop-filter: blur(18px) saturate(150%);
+      transform: translate3d(0,0,0);
+      transition: transform .30s cubic-bezier(.22,.78,.24,1);
+      will-change: transform;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .wheel-history-swipe.open .wheel-history-content {
+      transform: translate3d(-94px,0,0);
+    }
+    .wheel-history-action {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 94px;
+      padding: 0 7px;
+      border: 0;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: #ff3b30;
+      font-size: 13px;
+      font-weight: 720;
+      letter-spacing: -.01em;
+      cursor: pointer;
+    }
+    .wheel-history-action.cancel { background: #ff9500; }
+    .wheel-history-action:active { filter: brightness(.92); }
+    .wheel-history-action.busy { opacity: .64 !important; }
+    .wheel-history-swipe.removing {
+      opacity: 0;
+      transform: scale(.965);
+      pointer-events: none;
+    }
+    .wheel-history-swipe.removing .wheel-history-content {
+      transform: translate3d(-100%,0,0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wheel-history-content,
+      .wheel-history-swipe { transition: none !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -6850,6 +7019,7 @@
 </section>
 <section class="section overview-section-anchor wheel-history-section">
 <h2 class="section-title">奖励与提现记录</h2>
+<div class="wheel-history-admin-hint" hidden id="wheelHistoryAdminHint">向左滑动记录可管理</div>
 <div class="card glass">
 <ul class="log-list" id="wheelRecordList"></ul>
 </div>
@@ -7095,7 +7265,7 @@
 <div class="settings-group">
 <div class="settings-row static">
 <span>当前版本</span>
-<span class="settings-value">2.2.0</span>
+<span class="settings-value">2.3.0</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -7124,7 +7294,16 @@
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>2.2.0</strong><span>当前版本</span></div>
+<div class="release-head"><strong>2.3.0</strong><span>当前版本</span></div>
+<div class="release-date">2026.09.02</div>
+<ul class="release-list">
+<li>奖励与提现记录新增 iOS 风格左滑操作：管理员左滑后可删除历史；待兑现提现显示“取消提现”并退回可提现余额。</li>
+<li>历史删除改为数据库软删除，不反向修改已经发生的中奖/兑现资产；累计中奖与累计兑现继续保留真实总账。</li>
+<li>大转盘概率设置改为与“试玩大转盘”一致的居中玻璃弹窗，保留拖动分界线、整数吸附与 ±1% 精确调整。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>2.2.0</strong><span>上一版本</span></div>
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>大转盘概率设置改为 100% 分配条：拖动分界线、整数吸附、总和自动保持 100%，并支持 ±1% 精确微调。</li>
@@ -7314,20 +7493,12 @@
 </div>
 </div>
 <!-- Admin-only wheel probability settings -->
-<div aria-hidden="true" class="modal-layer" data-theme="wheel" id="wheelProbabilityLayer">
-<div aria-labelledby="wheelProbabilityTitle" aria-modal="true" class="unified-sheet wheel-probability-sheet" role="dialog">
-<header class="unified-sheet-header">
-<div aria-hidden="true" class="grabber"></div>
-<div class="sheet-title" id="wheelProbabilityTitle">大转盘概率设置</div>
-</header>
-<div class="unified-sheet-body wheel-probability-body">
-<div class="wheel-probability-intro">
-<span aria-hidden="true" class="wheel-probability-intro-icon">🎛️</span>
-<div>
-<strong>100% 概率分配</strong>
-<small>拖动分界线即可调整 · 自动吸附到整数 · 总和始终保持 100%</small>
-</div>
-</div>
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelProbabilityLayer">
+<div aria-labelledby="wheelProbabilityTitle" aria-modal="true" class="alert wheel-alert wheel-probability-popup" role="dialog">
+<div class="alert-content wheel-probability-popup-content">
+<div aria-hidden="true" class="change-icon">🎛️</div>
+<div class="alert-title" id="wheelProbabilityTitle">大转盘概率设置</div>
+<div class="alert-message">拖动分界线调整 · 自动吸附整数 · 总和始终保持 100%</div>
 
 <div class="wheel-probability-studio">
 <div aria-label="100% 概率分配条" class="wheel-probability-bar-shell">
@@ -7365,12 +7536,11 @@
 
 <div class="wheel-probability-total" id="wheelProbabilityTotal">总概率 100% ✓</div>
 <div class="wheel-probability-default-note">默认：10 / 30 / 30 / 12 / 10 / 5 / 3</div>
-
-<div class="wheel-probability-sheet-actions">
-<button class="sheet-button primary pressable full-width" id="saveWheelProbabilityBtn" type="button">保存并生效</button>
-<button class="sheet-button pressable full-width" id="resetWheelProbabilityDefaultBtn" type="button">恢复默认概率</button>
-<button class="sheet-button pressable full-width wheel-probability-cancel" id="closeWheelProbabilityBtn" type="button">取消</button>
 </div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="saveWheelProbabilityBtn" type="button">保存并生效</button>
+<button class="alert-button pressable" id="resetWheelProbabilityDefaultBtn" type="button">恢复默认概率</button>
+<button class="alert-button pressable wheel-probability-cancel" id="closeWheelProbabilityBtn" type="button">取消</button>
 </div>
 </div>
 </div>
@@ -7661,6 +7831,7 @@
         withdrawalNoticeCopy: $("#withdrawalNoticeCopy"),
         pendingWithdrawalList: $("#pendingWithdrawalList"),
         wheelRecordList: $("#wheelRecordList"),
+        wheelHistoryAdminHint: $("#wheelHistoryAdminHint"),
         withdrawWheelBtn: $("#withdrawWheelBtn"),
         scoreTrendSection: $("#scoreTrendSection"),
         scoreCalendarSection: $("#scoreCalendarSection"),
@@ -7822,6 +7993,7 @@
         overviewLogs: [],
         wheelLogs: [],
         withdrawals: [],
+        wheelTotals: null,
         overviewLoadedAt: 0,
         refreshInFlight: false,
         lastRefreshAt: null,
@@ -9307,6 +9479,20 @@
           state.overviewLogs = Array.isArray(scoreRes.data) ? scoreRes.data : [];
           state.wheelLogs = Array.isArray(wheelRes.data) ? wheelRes.data : [];
           state.withdrawals = Array.isArray(withdrawalRes.data) ? withdrawalRes.data : [];
+          try {
+            const totalsRes = await db.rpc("points_get_wheel_totals");
+            if (!totalsRes.error) {
+              const totalsRow = Array.isArray(totalsRes.data) ? totalsRes.data[0] : totalsRes.data;
+              state.wheelTotals = totalsRow ? {
+                total_won: Number(totalsRow.total_won ?? 0),
+                total_settled: Number(totalsRow.total_settled ?? 0)
+              } : null;
+            } else {
+              state.wheelTotals = null;
+            }
+          } catch (_) {
+            state.wheelTotals = null;
+          }
           state.overviewLoadedAt = Date.now();
           markRefreshed();
           renderOverview();
@@ -9797,6 +9983,21 @@
         });
       }
 
+      function wheelHistoryRowShell({ recordType, recordId, amount = 0, pending = false, content }) {
+        const numericId = Number(recordId);
+        const inner = `<div class="log-row wheel-log-row wheel-history-content">${content}</div>`;
+        if (!state.isAdmin || !Number.isFinite(numericId)) {
+          return `<li class="wheel-history-static">${inner}</li>`;
+        }
+        const cancelWithdrawal = recordType === "withdrawal" && pending;
+        const actionLabel = cancelWithdrawal ? "取消提现" : "删除";
+        const actionClass = cancelWithdrawal ? " cancel" : "";
+        return `<li class="wheel-history-swipe" data-record-type="${escapeHTML(recordType)}" data-record-id="${escapeHTML(numericId)}" data-record-amount="${escapeHTML(amount)}">
+          <button aria-label="${escapeHTML(actionLabel)}" class="wheel-history-action${actionClass}" data-wheel-history-manage type="button">${escapeHTML(actionLabel)}</button>
+          ${inner}
+        </li>`;
+      }
+
       function wheelLogRowHTML(log) {
         const action = String(log.action || "");
         const chanceBefore = Number(log.chance_before ?? 0);
@@ -9805,25 +10006,24 @@
         const cashAfter = Number(log.cash_after ?? cashBefore);
         const prize = Number(log.prize_amount ?? 0);
         const cashDelta = Number(log.cash_delta ?? 0);
+        let content = "";
 
         if (action === "spin_win") {
-          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-win">🎠</div><div class="log-copy"><div class="log-reason">转动大转盘 · 抽中 ¥${escapeHTML(prize)}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter} · 余额 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(prize)}</div></li>`;
-        }
-        if (action === "cash_redeem") {
-          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">💰</div><div class="log-copy"><div class="log-reason">10 分兑换 ¥30 可提现余额</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 可提现 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(Math.max(0, cashDelta))}</div></li>`;
-        }
-        if (action === "chance_redeem") {
-          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">🎟️</div><div class="log-copy"><div class="log-reason">10 分兑换 1 次正式大转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 1))}</div></li>`;
-        }
-        if (action === "admin_chance_adjust") {
+          content = `<div class="log-icon wheel-win">🎠</div><div class="log-copy"><div class="log-reason">转动大转盘 · 抽中 ¥${escapeHTML(prize)}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter} · 余额 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(prize)}</div>`;
+        } else if (action === "cash_redeem") {
+          content = `<div class="log-icon wheel-chance">💰</div><div class="log-copy"><div class="log-reason">10 分兑换 ¥30 可提现余额</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 可提现 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(Math.max(0, cashDelta))}</div>`;
+        } else if (action === "chance_redeem") {
+          content = `<div class="log-icon wheel-chance">🎟️</div><div class="log-copy"><div class="log-reason">10 分兑换 1 次正式大转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 1))}</div>`;
+        } else if (action === "admin_chance_adjust") {
           const delta = Number(log.chance_delta ?? 0);
           const deltaText = delta > 0 ? `+${delta}` : `${delta}`;
-          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">↕</div><div class="log-copy"><div class="log-reason">${escapeHTML(String(log.reason || "管理员调整正式机会"))}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta ${delta >= 0 ? "wheel-chance-positive" : "negative"}">${escapeHTML(deltaText)}</div></li>`;
+          content = `<div class="log-icon wheel-chance">↕</div><div class="log-copy"><div class="log-reason">${escapeHTML(String(log.reason || "管理员调整正式机会"))}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta ${delta >= 0 ? "wheel-chance-positive" : "negative"}">${escapeHTML(deltaText)}</div>`;
+        } else if (action === "legacy_balance_migration") {
+          content = `<div class="log-icon wheel-chance">✨</div><div class="log-copy"><div class="log-reason">旧版奖励余额已迁移为正式转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 0))}</div>`;
+        } else {
+          content = `<div class="log-icon wheel-chance">🎟️</div><div class="log-copy"><div class="log-reason">旧版奖励兑换大转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 1))}</div>`;
         }
-        if (action === "legacy_balance_migration") {
-          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">✨</div><div class="log-copy"><div class="log-reason">旧版奖励余额已迁移为正式转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 0))}</div></li>`;
-        }
-        return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">🎟️</div><div class="log-copy"><div class="log-reason">旧版奖励兑换大转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 1))}</div></li>`;
+        return wheelHistoryRowShell({ recordType: "wheel_log", recordId: log.id, content });
       }
 
       function withdrawalLogRowHTML(row) {
@@ -9831,19 +10031,22 @@
         const pending = String(row.status) === "pending";
         const requested = `${formatDateShort(row.requested_at)} · ${formatTime(row.requested_at)}`;
         const settled = row.settled_at ? `${formatDateShort(row.settled_at)} · ${formatTime(row.settled_at)}` : "";
-        return `<li class="log-row wheel-log-row"><div class="log-icon wheel-withdraw">${pending ? "⏳" : "✅"}</div><div class="log-copy"><div class="log-reason">提现 ¥${escapeHTML(amount)}</div><span class="withdrawal-status-line ${pending ? "pending" : "settled"}">${pending ? "等待管理员兑现" : "管理员已经兑现提现申请。请查收。"}</span><span class="log-meta">申请 ${escapeHTML(requested)}${pending ? "" : ` · 兑现 ${escapeHTML(settled)}`}</span></div><div class="log-delta wheel-cash-negative">−¥${escapeHTML(amount)}</div></li>`;
+        const content = `<div class="log-icon wheel-withdraw">${pending ? "⏳" : "✅"}</div><div class="log-copy"><div class="log-reason">提现 ¥${escapeHTML(amount)}</div><span class="withdrawal-status-line ${pending ? "pending" : "settled"}">${pending ? "等待管理员兑现" : "管理员已经兑现提现申请。请查收。"}</span><span class="log-meta">申请 ${escapeHTML(requested)}${pending ? "" : ` · 兑现 ${escapeHTML(settled)}`}</span></div><div class="log-delta wheel-cash-negative">−¥${escapeHTML(amount)}</div>`;
+        return wheelHistoryRowShell({ recordType: "withdrawal", recordId: row.id, amount, pending, content });
       }
 
       function renderWheelOverview() {
         if (!els.wheelOverviewContent) return;
         const logs = wheelLogsDescending();
         const withdrawals = [...state.withdrawals];
-        const won = logs.filter(log => String(log.action) === "spin_win")
+        const visibleWon = logs.filter(log => String(log.action) === "spin_win")
           .reduce((sum, log) => sum + Math.max(0, Number(log.prize_amount ?? 0)), 0);
         const pendingRows = withdrawals.filter(row => String(row.status) === "pending");
         const settledRows = withdrawals.filter(row => String(row.status) === "settled");
         const pendingAmount = pendingRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
-        const settledAmount = settledRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
+        const visibleSettledAmount = settledRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
+        const won = Number.isFinite(Number(state.wheelTotals?.total_won)) ? Number(state.wheelTotals.total_won) : visibleWon;
+        const settledAmount = Number.isFinite(Number(state.wheelTotals?.total_settled)) ? Number(state.wheelTotals.total_settled) : visibleSettledAmount;
 
         els.wheelAssetsTitle.textContent = state.isAdmin ? "游客 · 大转盘资产" : "大转盘资产";
         els.wheelOverviewCash.textContent = `¥${Math.max(0, Number(state.wheelCashBalance ?? 0))}`;
@@ -9851,6 +10054,7 @@
         els.wheelOverviewPending.textContent = `¥${pendingAmount}`;
         els.wheelOverviewWon.textContent = `¥${won}`;
         els.wheelOverviewSettled.textContent = `¥${settledAmount}`;
+        if (els.wheelHistoryAdminHint) els.wheelHistoryAdminHint.hidden = !state.isAdmin;
 
         els.withdrawWheelBtn.hidden = state.isAdmin;
         els.withdrawWheelBtn.disabled = state.isAdmin || Number(state.wheelCashBalance ?? 0) <= 0;
@@ -9878,6 +10082,119 @@
         els.wheelRecordList.innerHTML = history.length
           ? history.map(item => item.html).join("")
           : `<li class="empty-state">还没有正式奖励或提现记录哦 ♡<br><small>试玩结果不会出现在这里</small></li>`;
+      }
+
+      const WHEEL_HISTORY_ACTION_WIDTH = 94;
+      let wheelHistorySwipeState = null;
+
+      function closeWheelHistorySwipe(exceptRow = null) {
+        els.wheelRecordList?.querySelectorAll(".wheel-history-swipe.open").forEach(row => {
+          if (row === exceptRow) return;
+          row.classList.remove("open");
+          const content = row.querySelector(".wheel-history-content");
+          if (content) {
+            content.style.transition = "";
+            content.style.transform = "";
+          }
+        });
+      }
+
+      function beginWheelHistorySwipe(e) {
+        if (!state.isAdmin || e.button > 0) return;
+        const content = e.target.closest(".wheel-history-content");
+        const row = content?.closest(".wheel-history-swipe");
+        if (!content || !row) return;
+        closeWheelHistorySwipe(row);
+        wheelHistorySwipeState = {
+          pointerId: e.pointerId,
+          row,
+          content,
+          startX: e.clientX,
+          startY: e.clientY,
+          startOffset: row.classList.contains("open") ? -WHEEL_HISTORY_ACTION_WIDTH : 0,
+          horizontal: false,
+          ignored: false
+        };
+        content.setPointerCapture?.(e.pointerId);
+      }
+
+      function moveWheelHistorySwipe(e) {
+        const drag = wheelHistorySwipeState;
+        if (!drag || drag.pointerId !== e.pointerId || drag.ignored) return;
+        const dx = e.clientX - drag.startX;
+        const dy = e.clientY - drag.startY;
+        if (!drag.horizontal) {
+          if (Math.abs(dx) < 7 && Math.abs(dy) < 7) return;
+          if (Math.abs(dy) >= Math.abs(dx)) {
+            drag.ignored = true;
+            return;
+          }
+          drag.horizontal = true;
+        }
+        const offset = Math.max(-WHEEL_HISTORY_ACTION_WIDTH, Math.min(0, drag.startOffset + dx));
+        drag.content.style.transition = "none";
+        drag.content.style.transform = `translate3d(${offset}px,0,0)`;
+        drag.currentOffset = offset;
+        e.preventDefault();
+      }
+
+      function endWheelHistorySwipe(e) {
+        const drag = wheelHistorySwipeState;
+        if (!drag || drag.pointerId !== e.pointerId) return;
+        wheelHistorySwipeState = null;
+        if (drag.ignored || !drag.horizontal) return;
+        const offset = Number(drag.currentOffset ?? drag.startOffset);
+        const open = offset <= -(WHEEL_HISTORY_ACTION_WIDTH * .46);
+        drag.content.style.transition = "";
+        drag.content.style.transform = "";
+        drag.row.classList.toggle("open", open);
+        vibrate(open ? 4 : 2);
+      }
+
+      async function manageWheelHistoryRecord(row) {
+        if (!state.isAdmin || !row) return showToast("只有管理员可以管理历史记录");
+        const recordType = String(row.dataset.recordType || "");
+        const recordId = Number(row.dataset.recordId);
+        const amount = Math.max(0, Number(row.dataset.recordAmount || 0));
+        if (!recordType || !Number.isInteger(recordId)) return;
+        const button = row.querySelector("[data-wheel-history-manage]");
+        setBusy(button, true);
+        try {
+          const { data, error } = await db.rpc("points_admin_manage_wheel_record", {
+            p_record_type: recordType,
+            p_record_id: recordId
+          });
+          if (error) throw error;
+          const result = Array.isArray(data) ? data[0] : data;
+          const operation = String(result?.operation || "hidden");
+          row.classList.remove("open");
+          row.classList.add("removing");
+          await new Promise(resolve => setTimeout(resolve, 220));
+          state.overviewLoadedAt = 0;
+          await loadAppState({ silent: true });
+          await loadOverviewData(true);
+          vibrate(14);
+          showToast(operation === "withdrawal_cancelled"
+            ? `↩️ 已取消 ¥${amount} 提现，金额已退回可提现余额`
+            : "记录已删除");
+        } catch (err) {
+          console.error("manageWheelHistoryRecord:", err);
+          const diagnostic = `${err?.code || ""} ${err?.message || ""} ${err?.details || ""}`;
+          if (/PGRST202|schema cache|Could not find|points_admin_manage_wheel_record/i.test(diagnostic)) {
+            showToast("请先运行 v2.3 历史记录管理 SQL");
+          } else if (/Admin permission|required|permission/i.test(diagnostic)) {
+            await refreshAuthState();
+            showToast("管理员权限已失效");
+          } else if (/not found|already hidden/i.test(diagnostic)) {
+            state.overviewLoadedAt = 0;
+            await loadOverviewData(true);
+            showToast("这条记录已经不存在了");
+          } else {
+            showToast("记录处理失败");
+          }
+        } finally {
+          setBusy(button, false);
+        }
       }
 
       // -------------------- Overview sheet --------------------
@@ -11657,6 +11974,27 @@
         if (!btn) return;
         openSettlementPrompt(Number(btn.dataset.settleWithdrawal));
       });
+
+      els.wheelRecordList.addEventListener("pointerdown", beginWheelHistorySwipe);
+      els.wheelRecordList.addEventListener("pointermove", moveWheelHistorySwipe, { passive: false });
+      els.wheelRecordList.addEventListener("pointerup", endWheelHistorySwipe);
+      els.wheelRecordList.addEventListener("pointercancel", endWheelHistorySwipe);
+      els.wheelRecordList.addEventListener("click", (e) => {
+        const manageBtn = e.target.closest("[data-wheel-history-manage]");
+        if (manageBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          void manageWheelHistoryRecord(manageBtn.closest(".wheel-history-swipe"));
+          return;
+        }
+        const openRow = e.target.closest(".wheel-history-swipe.open");
+        if (openRow && e.target.closest(".wheel-history-content")) {
+          openRow.classList.remove("open");
+        }
+      });
+      document.addEventListener("pointerdown", (e) => {
+        if (!e.target.closest(".wheel-history-swipe")) closeWheelHistorySwipe();
+      }, true);
       els.settleWithdrawalLayer.addEventListener("click", (e) => { if (e.target === els.settleWithdrawalLayer) setLayer(els.settleWithdrawalLayer, false); });
       els.settleWithdrawalCancelBtn.addEventListener("click", () => { state.pendingSettlementId = null; setLayer(els.settleWithdrawalLayer, false); });
       els.settleWithdrawalConfirmBtn.addEventListener("click", settleWithdrawal);
