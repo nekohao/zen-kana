@@ -5435,6 +5435,143 @@
       .home.schedule-shift-prev .reward-message { animation:none !important; }
     }
 
+
+
+    /* ============================================================
+       v2.6 — Product-inspired radial timepiece
+       Reference direction: mature bedtime/sleep radial pickers.
+       No inactive rail; precision geometry + restrained optical depth.
+       ============================================================ */
+    .home.schedule-active .score-lens {
+      background:
+        radial-gradient(ellipse at 31% 18%, rgba(255,255,255,.50), transparent 31%),
+        radial-gradient(ellipse at 72% 82%, rgba(123,197,231,.028), transparent 43%),
+        linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.025) 52%, rgba(255,255,255,.006)),
+        rgba(255,255,255,.425) !important;
+      border-color: rgba(255,255,255,.78) !important;
+      box-shadow:
+        0 30px 72px rgba(25,37,54,.066),
+        0 11px 32px rgba(54,120,158,.022),
+        inset 0 1.2px 0 rgba(255,255,255,.92),
+        inset 0 -1px 0 rgba(35,61,77,.028),
+        inset 0 -16px 38px rgba(43,88,115,.014) !important;
+    }
+    .schedule-clock::before {
+      inset: 10.2% !important;
+      background:
+        radial-gradient(ellipse at 34% 24%, rgba(255,255,255,.105), transparent 32%),
+        linear-gradient(138deg, rgba(255,255,255,.032), transparent 41% 67%, rgba(90,168,207,.012)) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.19),
+        inset 0 -1px 0 rgba(37,65,83,.018) !important;
+      opacity:.86 !important;
+    }
+    .schedule-clock::after { content:none !important; }
+
+    /* 15-minute micro indices create precision; hours stay legible by hierarchy only. */
+    .schedule-tick.micro {
+      stroke: rgba(27,43,53,.070) !important;
+      stroke-width: .48 !important;
+    }
+    .schedule-tick.hour {
+      stroke: rgba(31,58,75,.175) !important;
+      stroke-width: .82 !important;
+    }
+    .schedule-tick.major {
+      stroke: rgba(30,66,89,.305) !important;
+      stroke-width: 1.10 !important;
+    }
+    .schedule-tick.cardinal {
+      stroke: rgba(26,70,98,.49) !important;
+      stroke-width: 1.62 !important;
+      filter: drop-shadow(0 .7px 0 rgba(255,255,255,.50));
+    }
+
+    /* The work interval reads as an embedded glass-fibre ribbon, not a progress bar. */
+    .schedule-arc-glow {
+      stroke: rgba(75,177,224,.17) !important;
+      stroke-width: 13.6 !important;
+      filter: blur(5.4px) !important;
+      animation: scheduleRadialHalo 8.2s cubic-bezier(.44,0,.22,1) infinite !important;
+    }
+    .schedule-arc {
+      stroke-width: 6.2 !important;
+      filter:
+        url(#scheduleArcGlowFilter)
+        drop-shadow(0 0 .55px rgba(248,254,255,.90))
+        drop-shadow(0 0 2.4px rgba(131,222,250,.30))
+        drop-shadow(0 0 6.2px rgba(54,151,209,.13)) !important;
+      animation: scheduleRadialCore 7.6s cubic-bezier(.44,0,.22,1) infinite !important;
+    }
+    .schedule-arc-shine {
+      stroke-width: 1.25 !important;
+      filter:
+        drop-shadow(0 0 1px rgba(255,255,255,.92))
+        drop-shadow(0 0 3.2px rgba(168,237,255,.48)) !important;
+      mix-blend-mode: screen;
+    }
+    .schedule-arc-cap {
+      opacity:0;
+      filter: url(#scheduleCapGlowFilter);
+      mix-blend-mode: screen;
+      transform-box: fill-box;
+      transform-origin:center;
+      transition: opacity .34s ease, r .34s ease;
+      pointer-events:none;
+    }
+    .schedule-arc-cap-start { opacity:.82; }
+    .schedule-arc-cap-end { opacity:.90; }
+    @keyframes scheduleRadialCore {
+      0%,100% { opacity:.91; }
+      46% { opacity:1; }
+      73% { opacity:.955; }
+    }
+    @keyframes scheduleRadialHalo {
+      0%,100% { opacity:.11; }
+      48% { opacity:.25; }
+      76% { opacity:.17; }
+    }
+
+    /* Center time: precise product typography, almost neutral; blue lives on the rim. */
+    .schedule-time-main {
+      gap: clamp(22px, 6.8vw, 31px) !important;
+      font-size: clamp(43px, 13.1vw, 54px) !important;
+      font-weight: 390 !important;
+      letter-spacing: -.048em !important;
+      color: rgba(24,38,47,.965) !important;
+      text-shadow: 0 1px 0 rgba(255,255,255,.70), 0 15px 38px rgba(40,89,117,.040) !important;
+    }
+    .schedule-time-main .schedule-time-value {
+      min-width: 1.52em !important;
+      background: linear-gradient(180deg, rgba(21,34,43,.99) 16%, rgba(35,56,69,.94) 69%, rgba(58,91,109,.84)) !important;
+      -webkit-background-clip:text !important;
+      background-clip:text !important;
+      -webkit-text-fill-color:transparent !important;
+    }
+    .schedule-time-main .schedule-time-divider {
+      width: 20px !important;
+      height: .75px !important;
+      background: linear-gradient(90deg, transparent, rgba(51,76,91,.31) 27% 73%, transparent) !important;
+      opacity:.78 !important;
+    }
+
+    /* Keep swipe refinement slow and inertial, closer to native sleep pickers. */
+    .schedule-clock {
+      transition: transform .96s cubic-bezier(.16,.82,.20,1), opacity .80s ease !important;
+    }
+    .home.schedule-shift-next .schedule-time-value,
+    .home.schedule-shift-prev .schedule-time-value {
+      animation-duration: .98s !important;
+    }
+    .home.schedule-shift-next .reward-message,
+    .home.schedule-shift-prev .reward-message {
+      animation-duration: 1.08s !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .schedule-arc-cap { transition:none !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -5524,31 +5661,42 @@
 <div class="schedule-clock" id="scheduleClock">
 <svg aria-hidden="true" class="schedule-clock-svg" viewBox="0 0 240 240">
 <defs>
-<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcGradient" x1="25" x2="215" y1="53" y2="187">
-<stop offset="0" stop-color="#2f78b7"></stop>
-<stop offset=".18" stop-color="#4fa7d8"></stop>
-<stop offset=".39" stop-color="#94e0f6"></stop>
-<stop offset=".50" stop-color="#edfaff"></stop>
-<stop offset=".61" stop-color="#86d8f2"></stop>
-<stop offset=".82" stop-color="#6b9fe2"></stop>
-<stop offset="1" stop-color="#3d7fba"></stop>
+<linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcGradient" x1="22" x2="218" y1="38" y2="202">
+<stop offset="0" stop-color="#3479b8"></stop>
+<stop offset=".28" stop-color="#51a8d8"></stop>
+<stop offset=".52" stop-color="#8ddbf3"></stop>
+<stop offset=".72" stop-color="#65bee8"></stop>
+<stop offset="1" stop-color="#477fbd"></stop>
 </linearGradient>
 <linearGradient gradientUnits="userSpaceOnUse" id="scheduleArcShineGradient" x1="36" x2="204" y1="120" y2="120">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".15"></stop>
-<stop offset=".38" stop-color="#d8f7ff" stop-opacity=".72"></stop>
-<stop offset=".52" stop-color="#ffffff" stop-opacity="1"></stop>
-<stop offset=".66" stop-color="#bceeff" stop-opacity=".64"></stop>
-<stop offset="1" stop-color="#ffffff" stop-opacity=".08"></stop>
+<stop offset="0" stop-color="#ffffff" stop-opacity="0"></stop>
+<stop offset=".22" stop-color="#dff8ff" stop-opacity=".22"></stop>
+<stop offset=".46" stop-color="#effcff" stop-opacity=".90"></stop>
+<stop offset=".56" stop-color="#ffffff" stop-opacity="1"></stop>
+<stop offset=".68" stop-color="#c8f2ff" stop-opacity=".48"></stop>
+<stop offset="1" stop-color="#ffffff" stop-opacity="0"></stop>
 </linearGradient>
-<filter height="160%" id="scheduleArcGlowFilter" width="160%" x="-30%" y="-30%">
-<feGaussianBlur result="blur" stdDeviation="2.6"></feGaussianBlur>
+<radialGradient id="scheduleArcCapGradient" cx="38%" cy="32%" r="68%">
+<stop offset="0" stop-color="#ffffff" stop-opacity=".98"></stop>
+<stop offset=".22" stop-color="#dff8ff" stop-opacity=".92"></stop>
+<stop offset=".56" stop-color="#66c8ed" stop-opacity=".72"></stop>
+<stop offset="1" stop-color="#317eb9" stop-opacity=".22"></stop>
+</radialGradient>
+<filter height="190%" id="scheduleArcGlowFilter" width="190%" x="-45%" y="-45%">
+<feGaussianBlur result="blur" stdDeviation="2.25"></feGaussianBlur>
 <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+</filter>
+<filter height="260%" id="scheduleCapGlowFilter" width="260%" x="-80%" y="-80%">
+<feGaussianBlur result="capBlur" stdDeviation="2.2"></feGaussianBlur>
+<feMerge><feMergeNode in="capBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
 </filter>
 </defs>
 <g class="schedule-clock-ticks" id="scheduleClockTicks"></g>
-<circle class="schedule-arc-glow" cx="120" cy="120" fill="none" id="scheduleArcGlow" r="116.5" transform="rotate(-90 120 120)"></circle>
-<circle class="schedule-arc" cx="120" cy="120" fill="none" id="scheduleArc" r="116.5" stroke="url(#scheduleArcGradient)" transform="rotate(-90 120 120)"></circle>
-<circle class="schedule-arc-shine" cx="120" cy="120" fill="none" id="scheduleArcShine" r="116.5" stroke="url(#scheduleArcShineGradient)" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-glow" cx="120" cy="120" fill="none" id="scheduleArcGlow" r="115.6" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc" cx="120" cy="120" fill="none" id="scheduleArc" r="115.6" stroke="url(#scheduleArcGradient)" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-shine" cx="120" cy="120" fill="none" id="scheduleArcShine" r="115.6" stroke="url(#scheduleArcShineGradient)" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-cap schedule-arc-cap-start" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcStartCap" r="2.45"></circle>
+<circle class="schedule-arc-cap schedule-arc-cap-end" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcEndCap" r="2.45"></circle>
 </svg>
 <div aria-live="polite" class="schedule-time-main" id="scheduleTimeMain"><span>—</span><i>—</i><span>—</span></div>
 </div>
@@ -8479,6 +8627,8 @@
           homeArc: $("#scheduleArc"),
           homeArcGlow: $("#scheduleArcGlow"),
           homeArcShine: $("#scheduleArcShine"),
+          homeArcStartCap: $("#scheduleArcStartCap"),
+          homeArcEndCap: $("#scheduleArcEndCap"),
           homeTimeMain: $("#scheduleTimeMain"),
           homeEditBtn: $("#scheduleEditHomeBtn"),
           homeOverviewBtn: $("#scheduleOverviewHomeBtn"),
@@ -8551,20 +8701,22 @@
         function ensureClockTicks() {
           if (!scheduleEls.homeTicks || scheduleEls.homeTicks.childElementCount) return;
           const ns = "http://www.w3.org/2000/svg";
-          for (let i = 0; i < 24; i += 1) {
-            const angle = (i / 24) * Math.PI * 2 - Math.PI / 2;
-            const cardinal = i % 6 === 0;
-            const major = !cardinal && i % 3 === 0;
-            const medium = !cardinal && !major && i % 2 === 0;
-            const outer = 105.2;
-            const length = cardinal ? 11.2 : (major ? 7.0 : (medium ? 4.8 : 2.75));
+          // 96 indices = one every 15 minutes. Only the geometry changes by hierarchy;
+          // no numbers are painted on the dial, keeping the face quiet and watch-like.
+          for (let i = 0; i < 96; i += 1) {
+            const angle = (i / 96) * Math.PI * 2 - Math.PI / 2;
+            const isCardinal = i % 24 === 0;       // 00 / 06 / 12 / 18
+            const isThreeHour = !isCardinal && i % 12 === 0;
+            const isHour = !isCardinal && !isThreeHour && i % 4 === 0;
+            const outer = isCardinal ? 103.9 : 103.5;
+            const length = isCardinal ? 10.4 : (isThreeHour ? 6.7 : (isHour ? 4.15 : 1.55));
             const inner = outer - length;
             const line = document.createElementNS(ns, "line");
             line.setAttribute("x1", String(120 + Math.cos(angle) * inner));
             line.setAttribute("y1", String(120 + Math.sin(angle) * inner));
             line.setAttribute("x2", String(120 + Math.cos(angle) * outer));
             line.setAttribute("y2", String(120 + Math.sin(angle) * outer));
-            line.classList.add("schedule-tick", cardinal ? "cardinal" : (major ? "major" : (medium ? "medium" : "minor")));
+            line.classList.add("schedule-tick", isCardinal ? "cardinal" : (isThreeHour ? "major" : (isHour ? "hour" : "micro")));
             scheduleEls.homeTicks.appendChild(line);
           }
         }
@@ -8572,14 +8724,32 @@
           if (!scheduleEls.homeArc || !scheduleEls.homeArcGlow) return;
           const circumference = scheduleEls.homeArc.getTotalLength();
           const safeSpan = Math.max(0, Math.min(1, span));
+          const safeStart = ((Number(start) % 1) + 1) % 1;
           const dash = safeSpan * circumference;
           const gap = Math.max(0.001, circumference - dash);
-          const offset = -start * circumference;
+          const offset = -safeStart * circumference;
           [scheduleEls.homeArc, scheduleEls.homeArcGlow].forEach(el => {
             el.style.strokeDasharray = `${Math.max(.001, dash)} ${gap}`;
             el.style.strokeDashoffset = String(offset);
             el.style.opacity = safeSpan < .001 ? "0" : "1";
           });
+
+          const placeCap = (el, fraction) => {
+            if (!el) return;
+            const angle = fraction * Math.PI * 2 - Math.PI / 2;
+            const r = 115.6;
+            el.setAttribute("cx", String(120 + Math.cos(angle) * r));
+            el.setAttribute("cy", String(120 + Math.sin(angle) * r));
+          };
+          if (safeSpan > .003) {
+            placeCap(scheduleEls.homeArcStartCap, safeStart);
+            placeCap(scheduleEls.homeArcEndCap, safeStart + safeSpan);
+            if (scheduleEls.homeArcStartCap) scheduleEls.homeArcStartCap.style.opacity = "1";
+            if (scheduleEls.homeArcEndCap) scheduleEls.homeArcEndCap.style.opacity = "1";
+          } else {
+            if (scheduleEls.homeArcStartCap) scheduleEls.homeArcStartCap.style.opacity = "0";
+            if (scheduleEls.homeArcEndCap) scheduleEls.homeArcEndCap.style.opacity = "0";
+          }
           if (safeSpan < .001 && scheduleEls.homeArcShine) scheduleEls.homeArcShine.style.opacity = "0";
         }
         function startHomeShine() {
@@ -8590,9 +8760,9 @@
           const frame = now => {
             const span = Math.max(0, Math.min(1, Number(homeArcState.span || 0)));
             if (span > .004) {
-              const shineSpan = Math.max(.010, Math.min(.034, span * .19));
+              const shineSpan = Math.max(.008, Math.min(.026, span * .145));
               const travel = Math.max(0, span - shineSpan);
-              const cycle = 8800;
+              const cycle = 11800;
               const raw = ((now - homeShineState.startedAt) % cycle) / cycle;
               const eased = raw < .5
                 ? 2 * raw * raw
@@ -8602,7 +8772,8 @@
               scheduleEls.homeArcShine.style.strokeDasharray = `${dash} ${Math.max(.001, circumference-dash)}`;
               scheduleEls.homeArcShine.style.strokeDashoffset = String(-position * circumference);
               const edgeFade = Math.min(1, raw / .08, (1-raw) / .08);
-              scheduleEls.homeArcShine.style.opacity = String(.96 * Math.max(0, edgeFade));
+              const breathe = .78 + .14 * Math.sin((now - homeShineState.startedAt) / 1700);
+              scheduleEls.homeArcShine.style.opacity = String(breathe * Math.max(0, edgeFade));
             } else {
               scheduleEls.homeArcShine.style.opacity = "0";
             }
@@ -8629,7 +8800,7 @@
             : fromStart + fromSpan / 2;
           const toSpan = hasTarget ? targetSpan : 0;
           const begin = performance.now();
-          const duration = 1280;
+          const duration = 1480;
           const ease = t => t < .5
             ? 4 * t * t * t
             : 1 - Math.pow(-2 * t + 2, 3) / 2;
