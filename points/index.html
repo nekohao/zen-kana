@@ -7,43 +7,139 @@
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
 <!-- ============================================================
-       AUTO UPDATE MODULE START
-       Same-origin one-time fresh reload on a new app/page open.
-       It does not clear localStorage, so Supabase persistSession survives.
-       Safe to remove as one independent block.
+       APP VERSION UPDATE MODULE START
+       Checks GitHub Pages version.json on launch and whenever the PWA
+       returns to the foreground. A newer version triggers a cache-busted
+       reload without clearing localStorage / Supabase persistSession.
        ============================================================ -->
 <script>
-    (() => {
-      try {
-        const FRESH_PARAM = "__points_fresh";
-        const current = new URL(window.location.href);
+  (() => {
+    const APP_VERSION = "2.4.3";
+    const VERSION_FILE = "./version.json";
+    const CHECK_DEBOUNCE_MS = 1200;
+    const RELOAD_RETRY_WINDOW_MS = 60000;
+    const MAX_RELOAD_ATTEMPTS_PER_WINDOW = 3;
+    const UPDATE_PARAM = "__app_update";
+    const BUST_PARAM = "__app_refresh";
+    const SESSION_KEY = "appVersionReloadState";
 
-        // The cache-busting reload has already happened. Remove the temporary
-        // query parameter without another navigation, preventing refresh loops.
-        if (current.searchParams.has(FRESH_PARAM)) {
-          current.searchParams.delete(FRESH_PARAM);
-          const cleanQuery = current.searchParams.toString();
-          const cleanUrl = `${current.pathname}${cleanQuery ? `?${cleanQuery}` : ""}${current.hash}`;
-          window.history.replaceState(window.history.state, "", cleanUrl);
-          return;
-        }
+    let lastCheckAt = 0;
+    let checkPromise = null;
 
-        // A manual browser reload is already a fresh navigation; do not cause
-        // an additional second reload in that case. New opens/navigations get
-        // exactly one cache-busting reload so GitHub Pages serves the latest HTML.
-        const navEntry = window.performance?.getEntriesByType?.("navigation")?.[0];
-        if (navEntry?.type === "reload") return;
+    function parseVersion(value) {
+      const parts = String(value || "").trim().replace(/^v/i, "").split(".");
+      if (!parts.length || parts.some(p => !/^\d+$/.test(p))) return null;
+      return parts.map(Number);
+    }
 
-        const freshUrl = new URL(window.location.href);
-        freshUrl.searchParams.set(FRESH_PARAM, String(Date.now()));
-        window.location.replace(freshUrl.href);
-      } catch (err) {
-        console.warn("autoUpdateModule:", err);
+    function compareVersions(a, b) {
+      const av = parseVersion(a);
+      const bv = parseVersion(b);
+      if (!av || !bv) return 0;
+      const length = Math.max(av.length, bv.length);
+      for (let i = 0; i < length; i += 1) {
+        const left = av[i] || 0;
+        const right = bv[i] || 0;
+        if (left !== right) return left > right ? 1 : -1;
       }
-    })();
-  </script>
+      return 0;
+    }
+
+    function cleanUpdateParams() {
+      try {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.has(UPDATE_PARAM) && !url.searchParams.has(BUST_PARAM)) return;
+        url.searchParams.delete(UPDATE_PARAM);
+        url.searchParams.delete(BUST_PARAM);
+        history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
+      } catch (_) {}
+    }
+
+    function getReloadState(remoteVersion) {
+      let state = null;
+      try { state = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); } catch (_) {}
+      const now = Date.now();
+      if (!state || state.version !== remoteVersion || now - Number(state.windowStartedAt || 0) > RELOAD_RETRY_WINDOW_MS) {
+        state = { version: remoteVersion, attempts: 0, windowStartedAt: now, lastAttemptAt: 0 };
+      }
+      return state;
+    }
+
+    function reloadForVersion(remoteVersion) {
+      const state = getReloadState(remoteVersion);
+      if (state.attempts >= MAX_RELOAD_ATTEMPTS_PER_WINDOW) return false;
+
+      state.attempts += 1;
+      state.lastAttemptAt = Date.now();
+      try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(state)); } catch (_) {}
+
+      const url = new URL(window.location.href);
+      url.searchParams.set(UPDATE_PARAM, remoteVersion);
+      url.searchParams.set(BUST_PARAM, String(Date.now()));
+      window.location.replace(url.href);
+      return true;
+    }
+
+    async function checkAppVersion({ force = false } = {}) {
+      const now = Date.now();
+      if (!force && now - lastCheckAt < CHECK_DEBOUNCE_MS) return;
+      if (checkPromise) return checkPromise;
+      if (navigator.onLine === false) return;
+
+      lastCheckAt = now;
+      checkPromise = (async () => {
+        try {
+          const url = new URL(VERSION_FILE, window.location.href);
+          url.searchParams.set("_", String(Date.now()));
+          const response = await fetch(url.href, {
+            cache: "no-store",
+            credentials: "same-origin"
+          });
+          if (!response.ok) return;
+
+          const payload = await response.json();
+          const remoteVersion = String(payload?.version || "").trim();
+          if (!parseVersion(remoteVersion)) return;
+
+          const comparison = compareVersions(remoteVersion, APP_VERSION);
+          if (comparison > 0) {
+            reloadForVersion(remoteVersion);
+            return;
+          }
+
+          // We are already on the newest (or a newer local development) build.
+          try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
+          cleanUpdateParams();
+        } catch (err) {
+          console.warn("appVersionCheck:", err);
+        } finally {
+          checkPromise = null;
+        }
+      })();
+      return checkPromise;
+    }
+
+    // Fresh launch / ordinary page load.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => checkAppVersion({ force: true }), { once: true });
+    } else {
+      checkAppVersion({ force: true });
+    }
+
+    // Safari/PWA may restore an existing page instead of navigating again.
+    window.addEventListener("pageshow", () => checkAppVersion({ force: true }));
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") checkAppVersion({ force: true });
+    });
+    window.addEventListener("focus", () => checkAppVersion());
+
+    // Expose only for diagnostics from the browser console.
+    window.__APP_VERSION__ = APP_VERSION;
+    window.__checkAppVersion__ = () => checkAppVersion({ force: true });
+  })();
+</script>
 <!-- ============================================================
-       AUTO UPDATE MODULE END
+       APP VERSION UPDATE MODULE END
        ============================================================ -->
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
@@ -7307,6 +7403,22 @@
       #workScheduleLayer .schedule-time-compact .work-schedule-time-copy strong { font-size: 18px !important; }
     }
 
+
+
+    /* ============================================================
+       v2.4.3 — Stable work/rest editor height
+       Both modes occupy the same 160px content slot so the centered
+       alert shell does not jump vertically when switching modes.
+       ============================================================ */
+    #workScheduleLayer .work-schedule-work-panel,
+    #workScheduleLayer .work-schedule-rest-panel {
+      height: 160px !important;
+      min-height: 160px !important;
+      box-sizing: border-box !important;
+    }
+    #workScheduleLayer .work-schedule-work-panel {
+      align-items: center !important;
+    }
   </style>
 </head>
 <body>
@@ -7817,7 +7929,7 @@
 <div class="settings-group">
 <div class="settings-row static">
 <span>当前版本</span>
-<span class="settings-value">2.4.1</span>
+<span class="settings-value">2.4.3</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -7846,7 +7958,23 @@
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>2.4.1</strong><span>当前版本</span></div>
+<div class="release-head"><strong>2.4.3</strong><span>当前版本</span></div>
+<div class="release-date">2026.09.02</div>
+<ul class="release-list">
+<li>新增 GitHub Pages 版本检查：首次打开、从后台回到前台与页面恢复时检查 version.json，发现新版本自动刷新到最新版。</li>
+<li>工作 / 休息使用相同高度的内容区域，切换时弹窗外壳不再上下跳动。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>2.4.2</strong><span>上一版本</span></div>
+<div class="release-date">2026.09.02</div>
+<ul class="release-list">
+<li>排班时间改为左右并排的紧凑原生选择器，并保留中间排班时长。</li>
+<li>首页排班表盘时间改为 24 小时制；排班登记限制为今天及未来日期。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>2.4.1</strong><span>上一版本</span></div>
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>修改排班的开始/结束时间改为系统原生整点选择器，选择范围覆盖 08:00–22:00。</li>
