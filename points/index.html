@@ -7735,7 +7735,6 @@
 </div>
 <div class="alert-actions vertical schedule-editor-alert-actions">
 <button class="alert-button primary-action pressable" id="saveWorkScheduleBtn" type="button">保存排班</button>
-<button class="alert-button pressable work-schedule-overview-button" id="openWorkScheduleOverviewBtn" type="button">排班总览</button>
 <button class="alert-button pressable schedule-editor-cancel" id="cancelWorkScheduleBtn" type="button">取消</button>
 </div>
 </div>
@@ -11174,7 +11173,6 @@
           restMessage: $("#workScheduleRestMessage"),
           cancelRestBtn: $("#cancelWorkScheduleRestBtn"),
           confirmRestBtn: $("#confirmWorkScheduleRestBtn"),
-          overviewBtn: $("#openWorkScheduleOverviewBtn"),
           cancelBtn: $("#cancelWorkScheduleBtn"),
           saveBtn: $("#saveWorkScheduleBtn"),
           overviewLayer: $("#workScheduleOverviewLayer"),
@@ -11392,7 +11390,7 @@
 
           const dialTime = hour => {
             const h = ((Number(hour) % 24) + 24) % 24;
-            return { value: `${h % 12 || 12}:00`, period: h < 12 ? "am" : "pm" };
+            return { value: `${String(h).padStart(2, "0")}:00`, period: "" };
           };
           const moonIcon = `<svg aria-hidden="true" class="schedule-center-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>`;
           const sunriseIcon = `<svg aria-hidden="true" class="schedule-center-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 16a7 7 0 0 1 14 0"/><path d="M12 3v3M4.2 7.2l2.1 2.1M19.8 7.2l-2.1 2.1M2.5 16h19"/><path fill="currentColor" stroke="none" d="M7 16a5 5 0 0 1 10 0H7Z"/></svg>`;
@@ -11417,8 +11415,8 @@
             animateArcTo(start / 24, (end - start) / 24);
           } else {
             scheduleEls.homeTimeMain.innerHTML = `
-              <div class="schedule-center-row empty">${moonIcon}<strong>--:--</strong><small>am</small></div>
-              <div class="schedule-center-row empty">${sunriseIcon}<strong>--:--</strong><small>pm</small></div>`;
+              <div class="schedule-center-row empty">${moonIcon}<strong>--:--</strong><small></small></div>
+              <div class="schedule-center-row empty">${sunriseIcon}<strong>--:--</strong><small></small></div>`;
             if (scheduleEls.homeDuration) scheduleEls.homeDuration.textContent = "今日未排班";
             scheduleEls.homeEditBtn.textContent = "登记排班";
             animateArcTo(homeArcState.start, 0);
@@ -11492,8 +11490,13 @@
           }, true);
         }
         function openHomeRegistration() {
+          const selectedHomeDate = ensureHomeDateKey();
+          if (selectedHomeDate < localDateKey()) {
+            showToast("历史排班仅供查看，不能修改");
+            return;
+          }
           resetForm();
-          scheduleEls.date.value = ensureHomeDateKey();
+          scheduleEls.date.value = selectedHomeDate;
           applyScheduleForDate(scheduleEls.date.value);
           setLayer(scheduleEls.overviewLayer, false);
           setLayer(scheduleEls.deleteLayer, false);
@@ -11617,6 +11620,7 @@
         }
 
         function resetForm() {
+          scheduleEls.date.min = localDateKey();
           scheduleEls.date.value = localDateKey();
           scheduleEls.startHour.value = "9";
           updateEndHourOptions({ preferredHour: 18 });
@@ -11815,8 +11819,14 @@
         }
 
         function changeRegistrationDate(dayDelta) {
-          const base = parseLocalDate(scheduleEls.date.value || localDateKey());
-          scheduleEls.date.value = localDateKey(addDays(base, dayDelta));
+          const todayKey = localDateKey();
+          const base = parseLocalDate(scheduleEls.date.value || todayKey);
+          const nextKey = localDateKey(addDays(base, dayDelta));
+          if (nextKey < todayKey) {
+            scheduleEls.date.value = todayKey;
+            return;
+          }
+          scheduleEls.date.value = nextKey;
           applyScheduleForDate(scheduleEls.date.value);
           vibrate(6);
         }
@@ -11845,6 +11855,7 @@
           const endHour = Number(scheduleEls.endHour.value);
 
           if (!workDate) return showToast("请选择日期");
+          if (workDate < localDateKey()) return showToast("只能登记今天及未来的排班");
           if (!Number.isInteger(startHour) || startHour < 8 || startHour > 22 ||
               !Number.isInteger(endHour) || endHour < 8 || endHour > 22) {
             return showToast("请选择 08:00–22:00 的整点时间");
@@ -11885,6 +11896,7 @@
 
         function openRestPrompt() {
           const workDate = scheduleEls.date.value || localDateKey();
+          if (workDate < localDateKey()) return showToast("只能登记今天及未来的排班");
           scheduleEls.date.value = workDate;
           scheduleEls.restMessage.textContent = `确认将 ${formatScheduleDate(workDate)} 登记为休息吗？休息也会计入连续记录。`;
           setLayer(scheduleEls.restLayer, true);
@@ -11897,6 +11909,7 @@
 
         async function saveRestDay() {
           const workDate = scheduleEls.date.value || localDateKey();
+          if (workDate < localDateKey()) return showToast("只能登记今天及未来的排班");
           setBusy(scheduleEls.confirmRestBtn, true);
           try {
             const { data, error } = await db.rpc("work_schedule_upsert_v2", {
@@ -12150,7 +12163,13 @@
         scheduleEls.adminNotice.addEventListener("click", openAdminUpcoming);
         scheduleEls.closeAdminBtn.addEventListener("click", closeAdminUpcoming);
         scheduleEls.date.addEventListener("change", () => {
-          if (!scheduleEls.date.value) scheduleEls.date.value = localDateKey();
+          const todayKey = localDateKey();
+          scheduleEls.date.min = todayKey;
+          const requestedDate = scheduleEls.date.value;
+          if (!requestedDate || requestedDate < todayKey) {
+            scheduleEls.date.value = todayKey;
+            if (requestedDate && requestedDate < todayKey) showToast("只能登记今天及未来的排班");
+          }
           updateScheduleEditorDateDisplay();
           void syncRegistrationForCurrentDate();
         });
@@ -12173,7 +12192,6 @@
         scheduleEls.cancelRestBtn.addEventListener("click", closeRestPrompt);
         scheduleEls.confirmRestBtn.addEventListener("click", saveRestDay);
         scheduleEls.restLayer.addEventListener("click", (e) => { if (e.target === scheduleEls.restLayer) closeRestPrompt(); });
-        scheduleEls.overviewBtn.addEventListener("click", openOverview);
         scheduleEls.backBtn.addEventListener("click", backToRegistration);
         scheduleEls.closeOverviewBtn.addEventListener("click", closeOverview);
         scheduleEls.cancelDeleteBtn.addEventListener("click", cancelDelete);
