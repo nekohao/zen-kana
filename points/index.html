@@ -5575,134 +5575,362 @@
 
 
     /* ============================================================
-       v2.7 — iPhone Sleep-dial inspired schedule face
-       Reference geometry: pale continuous outer ring + inner precision dial.
-       Deliberate deviation: the outer ring is narrower than the reference.
+       v2.8 — Light Samsung-style radial schedule dial
+       Keeps the shared three-mode homepage geometry and light glass shell,
+       while the schedule face follows the supplied sleep-schedule reference:
+       24h rail + 96 ticks + 0/6/12/18 + warm gradient arc + moon/sunrise handles.
        ============================================================ */
+
+    /* Keep the same homepage circle geometry as Score / Wheel. Only its face changes. */
     .home.schedule-active .score-lens {
+      overflow: visible !important;
       background:
-        radial-gradient(circle at 34% 22%, rgba(255,255,255,.72), transparent 34%),
-        linear-gradient(145deg, rgba(255,255,255,.40), rgba(246,249,252,.25) 58%, rgba(235,242,247,.15)),
-        rgba(255,255,255,.40) !important;
-      border-color: rgba(255,255,255,.82) !important;
+        radial-gradient(circle at 32% 20%, rgba(255,255,255,.72), transparent 36%),
+        linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,255,255,.12)),
+        rgba(255,255,255,.30) !important;
+      border: 1.5px solid rgba(255,255,255,.82) !important;
       box-shadow:
-        0 26px 64px rgba(42,55,72,.075),
-        inset 0 1.2px 0 rgba(255,255,255,.94),
-        inset 0 -1px 0 rgba(46,63,74,.035) !important;
-      -webkit-backdrop-filter: blur(42px) saturate(150%) !important;
-      backdrop-filter: blur(42px) saturate(150%) !important;
+        0 22px 56px rgba(43,55,78,.075),
+        inset 0 1.5px 0 rgba(255,255,255,.88),
+        inset 0 -1px 0 rgba(60,60,67,.035) !important;
+      -webkit-backdrop-filter: blur(38px) saturate(155%) !important;
+      backdrop-filter: blur(38px) saturate(155%) !important;
     }
+    .home.schedule-active .score-lens::before {
+      background: radial-gradient(circle at 31% 20%, rgba(255,255,255,.30), transparent 45%) !important;
+      opacity: .68 !important;
+    }
+    .home.schedule-active .score-lens::after { opacity: 0 !important; }
 
-    .schedule-clock::before {
-      inset: 13.2% !important;
-      border: 0 !important;
-      background:
-        radial-gradient(circle at 38% 28%, rgba(255,255,255,.22), transparent 36%),
-        rgba(255,255,255,.10) !important;
+    /* Date copy stays in the same shared slot as the other two modules. */
+    .home.schedule-active .reward-message {
+      background: transparent !important;
+      border-color: transparent !important;
       box-shadow: none !important;
-      opacity: .72 !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+    .home.schedule-active .reward-line-primary {
+      color: rgba(28,28,30,.94) !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      letter-spacing: -.022em !important;
+    }
+    .home.schedule-active .reward-line-secondary {
+      color: rgba(60,60,67,.50) !important;
+      font-size: 11.5px !important;
+      font-weight: 560 !important;
+      letter-spacing: .025em !important;
+      margin-top: 4px !important;
     }
 
-    /* Continuous inactive ring, like the iPhone sleep clock, but deliberately slimmer. */
+    .schedule-stage {
+      inset: 0 !important;
+      display: grid !important;
+      place-items: start center !important;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .schedule-clock {
+      position: relative;
+      width: 92% !important;
+      height: 92% !important;
+      margin-top: 0 !important;
+      display: grid;
+      place-items: center;
+      opacity: 1;
+      transition: transform .72s cubic-bezier(.18,.82,.24,1), opacity .58s ease !important;
+      will-change: transform, opacity;
+    }
+    .schedule-clock.dragging { transition: none !important; }
+    .schedule-clock::before,
+    .schedule-clock::after { content: none !important; }
+
+    .schedule-clock-svg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* Samsung reference: continuous neutral rail, prominent but not bulky. */
     .schedule-ring-track {
-      stroke: rgba(187,194,202,.34);
-      stroke-width: 9.4;
-      stroke-linecap: round;
+      stroke: rgba(60,60,67,.20) !important;
+      stroke-width: 9.4 !important;
+      stroke-linecap: round !important;
       vector-effect: non-scaling-stroke;
-      filter:
-        drop-shadow(0 .7px 0 rgba(255,255,255,.78))
-        drop-shadow(0 2px 7px rgba(79,91,105,.07));
+      filter: drop-shadow(0 .7px 0 rgba(255,255,255,.78)) drop-shadow(0 2px 5px rgba(44,44,48,.055));
     }
 
-    /* Inner timing indices stay visible and sit clearly inside the ring. */
+    /* Old luminous SVG arc remains as the animation driver only; it is visually suppressed. */
+    .schedule-arc,
+    .schedule-arc-glow,
+    .schedule-arc-shine,
+    .schedule-arc-cap {
+      opacity: 0 !important;
+      filter: none !important;
+      animation: none !important;
+      pointer-events: none !important;
+    }
+
+    /* True circumferential gradient ribbon, clipped to the scheduled interval by JS. */
+    .schedule-reference-arc {
+      position: absolute;
+      inset: 2.30%;
+      z-index: 2;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: center;
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9.7px), #000 calc(100% - 9.3px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 9.7px), #000 calc(100% - 9.3px));
+      filter: drop-shadow(0 1px 1.6px rgba(116,74,80,.10));
+      transition: opacity .24s ease;
+    }
+
+    /* 96 precision ticks: one every 15 minutes, hierarchy copied from the reference. */
+    .schedule-tick {
+      stroke-linecap: round !important;
+      shape-rendering: geometricPrecision;
+    }
     .schedule-tick.micro {
-      stroke: rgba(85,92,100,.115) !important;
-      stroke-width: .52 !important;
+      stroke: rgba(60,60,67,.17) !important;
+      stroke-width: .60 !important;
     }
     .schedule-tick.hour {
-      stroke: rgba(68,78,88,.24) !important;
-      stroke-width: .82 !important;
+      stroke: rgba(60,60,67,.25) !important;
+      stroke-width: .86 !important;
     }
     .schedule-tick.major {
-      stroke: rgba(54,68,80,.36) !important;
-      stroke-width: 1.05 !important;
+      stroke: rgba(60,60,67,.34) !important;
+      stroke-width: 1.06 !important;
     }
     .schedule-tick.cardinal {
-      stroke: rgba(41,57,70,.58) !important;
-      stroke-width: 1.48 !important;
+      stroke: rgba(60,60,67,.48) !important;
+      stroke-width: 1.40 !important;
       filter: none !important;
     }
 
-    /* Apple-like active interval: opaque polished ribbon rather than neon. */
-    .schedule-arc-glow {
-      stroke: rgba(78,167,214,.14) !important;
-      stroke-width: 13.2 !important;
-      filter: blur(4.4px) !important;
-      opacity: .24;
-      animation: scheduleIOSHalo 8.6s ease-in-out infinite !important;
+    /* 0 / 6 / 12 / 18 are deliberately inside the tick ring, like the supplied screenshot. */
+    .schedule-hour-label {
+      position: absolute;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      min-width: 20px;
+      color: rgba(60,60,67,.60);
+      font-size: clamp(17px, 5.2vw, 21px);
+      line-height: 1;
+      font-weight: 520;
+      letter-spacing: -.035em;
+      font-variant-numeric: tabular-nums;
+      pointer-events: none;
     }
-    .schedule-arc {
-      stroke-width: 9.4 !important;
-      stroke-linecap: round !important;
-      filter:
-        drop-shadow(0 1px 0 rgba(255,255,255,.62))
-        drop-shadow(0 2px 7px rgba(47,134,187,.14)) !important;
-      animation: scheduleIOSArcBreath 8.2s ease-in-out infinite !important;
-    }
-    .schedule-arc-shine {
-      stroke-width: 2.1 !important;
-      stroke-linecap: round !important;
-      mix-blend-mode: screen;
-      filter: drop-shadow(0 0 1.4px rgba(255,255,255,.72)) !important;
-      animation: none !important;
-    }
-    @keyframes scheduleIOSArcBreath {
-      0%,100% { opacity:.94; }
-      52% { opacity:1; }
-    }
-    @keyframes scheduleIOSHalo {
-      0%,100% { opacity:.13; }
-      50% { opacity:.24; }
-    }
+    .schedule-hour-label.h0  { top: 13.2%; left: 50%; transform: translate(-50%,-50%); }
+    .schedule-hour-label.h6  { top: 50%; right: 13.0%; transform: translate(50%,-50%); }
+    .schedule-hour-label.h12 { bottom: 13.0%; left: 50%; transform: translate(-50%,50%); }
+    .schedule-hour-label.h18 { top: 50%; left: 13.0%; transform: translate(-50%,-50%); }
 
-    /* End handles echo the iPhone sleep control, scaled down for this smaller ring. */
-    .schedule-arc-cap {
-      fill: rgba(252,253,254,.98) !important;
-      stroke: rgba(158,171,183,.42) !important;
-      stroke-width: .82 !important;
-      filter:
-        drop-shadow(0 1px 0 rgba(255,255,255,.95))
-        drop-shadow(0 2.4px 6px rgba(67,82,96,.16)) !important;
-      mix-blend-mode: normal !important;
-      transition: opacity .42s ease !important;
+    /* Reference handles: warm circular knobs with dark moon / sunrise glyphs. */
+    .schedule-reference-handle {
+      position: absolute;
+      z-index: 6;
+      width: 29px;
+      height: 29px;
+      margin: 0;
+      padding: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translate(-50%,-50%);
+      pointer-events: none;
+      background: linear-gradient(145deg, #ffb12b 0%, #f3a11c 58%, #e99717 100%);
+      border: 1px solid rgba(188,116,8,.14);
+      box-shadow:
+        0 2px 5px rgba(118,73,12,.13),
+        inset 0 1px 0 rgba(255,230,162,.78);
+      transition: opacity .24s ease;
     }
-    .schedule-arc-cap-start { stroke: rgba(71,174,214,.56) !important; }
-    .schedule-arc-cap-end { stroke: rgba(79,132,210,.50) !important; }
+    .schedule-reference-handle svg {
+      width: 17px;
+      height: 17px;
+      display: block;
+      color: rgba(29,29,31,.94);
+    }
+    .schedule-reference-handle.end svg { width: 18px; height: 18px; }
 
-    /* Center time stays ours, but uses the calmer hierarchy of the iPhone dial. */
+    /* Two stacked times with small am/pm, matching the reference hierarchy. */
     .schedule-time-main {
-      gap: clamp(20px, 6vw, 28px) !important;
-      font-size: clamp(40px, 12.3vw, 50px) !important;
-      font-weight: 450 !important;
-      letter-spacing: -.045em !important;
-      color: rgba(25,31,36,.96) !important;
-      text-shadow: 0 1px 0 rgba(255,255,255,.78) !important;
+      position: relative !important;
+      z-index: 5;
+      width: 100%;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(17px, 5vw, 21px) !important;
+      color: rgba(28,28,30,.98) !important;
+      font-family: -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif !important;
+      text-shadow: none !important;
+      pointer-events: none;
     }
-    .schedule-time-main .schedule-time-value {
-      background: linear-gradient(180deg, rgba(22,28,33,.99), rgba(56,64,71,.91)) !important;
-      -webkit-background-clip: text !important;
-      background-clip: text !important;
-      -webkit-text-fill-color: transparent !important;
+    .schedule-center-row {
+      display: grid;
+      grid-template-columns: 22px auto auto;
+      align-items: end;
+      justify-content: center;
+      column-gap: 7px;
+      min-height: 38px;
+      font-variant-numeric: tabular-nums;
     }
-    .schedule-time-main .schedule-time-divider {
-      width: 18px !important;
-      height: 1px !important;
-      background: rgba(82,91,99,.26) !important;
-      opacity: .75 !important;
+    .schedule-center-icon {
+      width: 20px;
+      height: 20px;
+      align-self: center;
+      color: #f1a21b;
+      filter: drop-shadow(0 1px 0 rgba(255,255,255,.58));
+    }
+    .schedule-center-row strong {
+      min-width: 2.25em;
+      color: rgba(28,28,30,.98);
+      font-size: clamp(29px, 8.9vw, 36px);
+      line-height: .94;
+      font-weight: 650;
+      letter-spacing: -.055em;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .schedule-center-row small {
+      align-self: end;
+      margin: 0 0 2px -2px;
+      color: rgba(28,28,30,.88);
+      font-size: clamp(10px, 3vw, 12px);
+      line-height: 1;
+      font-weight: 650;
+      letter-spacing: -.02em;
+      text-transform: lowercase;
+    }
+    .schedule-center-row.empty strong {
+      min-width: 2.25em;
+      color: rgba(60,60,67,.30);
+      font-weight: 520;
+    }
+    .schedule-center-row.empty small { visibility: hidden; }
+
+    /* Reference's "Sleep time" line, adapted only in wording for work schedules. */
+    .schedule-duration {
+      position: absolute;
+      z-index: 7;
+      left: 50%;
+      bottom: 1.1%;
+      transform: translateX(-50%);
+      max-width: 92%;
+      color: rgba(60,60,67,.54);
+      font-size: clamp(10.5px, 3.1vw, 12px);
+      line-height: 1.15;
+      font-weight: 570;
+      letter-spacing: -.01em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* Quiet date swipe: keep the existing behavior, remove luxury/glow motion. */
+    .home.schedule-shift-next .schedule-time-main,
+    .home.schedule-shift-prev .schedule-time-main { animation: none !important; }
+    .home.schedule-shift-next .schedule-center-row,
+    .home.schedule-shift-prev .schedule-center-row {
+      animation: scheduleReferenceTimeIn .48s cubic-bezier(.2,.75,.25,1) both;
+    }
+    @keyframes scheduleReferenceTimeIn {
+      from { opacity: .22; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .home.schedule-shift-next .reward-message { animation: scheduleReferenceDateNext .52s cubic-bezier(.2,.75,.25,1) !important; }
+    .home.schedule-shift-prev .reward-message { animation: scheduleReferenceDatePrev .52s cubic-bezier(.2,.75,.25,1) !important; }
+    @keyframes scheduleReferenceDateNext {
+      from { opacity:.18; transform:translateX(9px); }
+      to { opacity:1; transform:none; }
+    }
+    @keyframes scheduleReferenceDatePrev {
+      from { opacity:.18; transform:translateX(-9px); }
+      to { opacity:1; transform:none; }
+    }
+
+    /* Same action slot and button geometry as the other homepage modes; warm schedule accent only. */
+    .metric-action-slot > .schedule-actions {
+      grid-area: 1 / 1;
+      margin: 0 !important;
+      align-self: center;
+    }
+    .schedule-actions {
+      width: 100% !important;
+      height: 52px !important;
+      min-height: 52px !important;
+      display: grid !important;
+      place-items: center !important;
+    }
+    .schedule-primary-button {
+      width: min(78vw,258px) !important;
+      height: 50px !important;
+      min-height: 50px !important;
+      border-radius: 17px !important;
+      padding: 0 18px !important;
+      color: rgba(142,84,42,.96) !important;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.70), rgba(255,229,199,.34)),
+        rgba(255,249,240,.34) !important;
+      border: 1px solid rgba(255,255,255,.86) !important;
+      box-shadow: 0 10px 26px rgba(183,117,60,.075), inset 0 1px 0 rgba(255,255,255,.78) !important;
+      -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+      backdrop-filter: blur(22px) saturate(155%) !important;
+      font-size: 14px !important;
+      font-weight: 710 !important;
+      letter-spacing: -.01em !important;
+    }
+    .schedule-primary-button:active { transform: scale(.97); }
+
+    .metric-switch.schedule-active .metric-switch-thumb {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.88), rgba(255,235,211,.44)),
+        rgba(255,251,246,.56) !important;
+      box-shadow: 0 5px 16px rgba(187,120,64,.075), inset 0 1px 0 rgba(255,255,255,.84) !important;
+    }
+    .metric-switch.schedule-active .metric-option.active { color: rgba(160,95,47,.96) !important; }
+
+    /* Bottom overview remains exactly in the common slot. */
+    .home.schedule-active #overviewBtn {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      background: var(--home-control-bg) !important;
+      color: var(--ink) !important;
+      box-shadow: var(--home-control-shadow) !important;
+    }
+    .home.schedule-active #overviewBtn svg { color: rgba(177,106,55,.72) !important; }
+
+    @media (max-width: 370px) {
+      .schedule-reference-handle { width: 27px; height: 27px; }
+      .schedule-reference-handle svg { width: 16px; height: 16px; }
+      .schedule-center-row { grid-template-columns: 20px auto auto; column-gap: 6px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .schedule-arc,.schedule-arc-glow { animation:none !important; }
+      .schedule-reference-arc,
+      .schedule-reference-handle,
+      .schedule-clock,
+      .home.schedule-shift-next .schedule-center-row,
+      .home.schedule-shift-prev .schedule-center-row,
+      .home.schedule-shift-next .reward-message,
+      .home.schedule-shift-prev .reward-message {
+        animation: none !important;
+        transition-duration: .01ms !important;
+      }
     }
 
 </style>
@@ -5832,8 +6060,20 @@
 <circle class="schedule-arc-cap schedule-arc-cap-start" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcStartCap" r="6.2"></circle>
 <circle class="schedule-arc-cap schedule-arc-cap-end" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcEndCap" r="6.2"></circle>
 </svg>
-<div aria-live="polite" class="schedule-time-main" id="scheduleTimeMain"><span>—</span><i>—</i><span>—</span></div>
+<div aria-hidden="true" class="schedule-reference-arc" id="scheduleReferenceArc"></div>
+<span aria-hidden="true" class="schedule-hour-label h0">0</span>
+<span aria-hidden="true" class="schedule-hour-label h6">6</span>
+<span aria-hidden="true" class="schedule-hour-label h12">12</span>
+<span aria-hidden="true" class="schedule-hour-label h18">18</span>
+<div aria-hidden="true" class="schedule-reference-handle start" id="scheduleStartHandle">
+<svg viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>
 </div>
+<div aria-hidden="true" class="schedule-reference-handle end" id="scheduleEndHandle">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.9" viewBox="0 0 24 24"><path d="M5 16a7 7 0 0 1 14 0"/><path d="M12 3v3M4.2 7.2l2.1 2.1M19.8 7.2l-2.1 2.1M2.5 16h19"/><path fill="currentColor" stroke="none" d="M7 16a5 5 0 0 1 10 0H7Z"/></svg>
+</div>
+<div aria-live="polite" class="schedule-time-main" id="scheduleTimeMain"></div>
+</div>
+<div aria-live="polite" class="schedule-duration" id="scheduleDuration">今日未排班</div>
 </div>
 </div>
 </div>
@@ -8763,7 +9003,11 @@
           homeArcShine: $("#scheduleArcShine"),
           homeArcStartCap: $("#scheduleArcStartCap"),
           homeArcEndCap: $("#scheduleArcEndCap"),
+          homeReferenceArc: $("#scheduleReferenceArc"),
+          homeStartHandle: $("#scheduleStartHandle"),
+          homeEndHandle: $("#scheduleEndHandle"),
           homeTimeMain: $("#scheduleTimeMain"),
+          homeDuration: $("#scheduleDuration"),
           homeEditBtn: $("#scheduleEditHomeBtn"),
           homeOverviewBtn: $("#scheduleOverviewHomeBtn"),
           adminNotice: $("#adminScheduleNotice"),
@@ -8835,15 +9079,15 @@
         function ensureClockTicks() {
           if (!scheduleEls.homeTicks || scheduleEls.homeTicks.childElementCount) return;
           const ns = "http://www.w3.org/2000/svg";
-          // 96 indices = one every 15 minutes. Only the geometry changes by hierarchy;
-          // no numbers are painted on the dial, keeping the face quiet and watch-like.
+          // 96 indices = one every 15 minutes. The supplied Samsung-style reference
+          // places them close to the outer rail and separately labels 0 / 6 / 12 / 18.
           for (let i = 0; i < 96; i += 1) {
             const angle = (i / 96) * Math.PI * 2 - Math.PI / 2;
             const isCardinal = i % 24 === 0;       // 00 / 06 / 12 / 18
             const isThreeHour = !isCardinal && i % 12 === 0;
             const isHour = !isCardinal && !isThreeHour && i % 4 === 0;
-            const outer = isCardinal ? 96.8 : 96.2;
-            const length = isCardinal ? 10.8 : (isThreeHour ? 7.1 : (isHour ? 4.55 : 1.75));
+            const outer = isCardinal ? 101.8 : 101.2;
+            const length = isCardinal ? 10.2 : (isThreeHour ? 7.0 : (isHour ? 4.6 : 2.05));
             const inner = outer - length;
             const line = document.createElementNS(ns, "line");
             line.setAttribute("x1", String(120 + Math.cos(angle) * inner));
@@ -8885,6 +9129,39 @@
             if (scheduleEls.homeArcEndCap) scheduleEls.homeArcEndCap.style.opacity = "0";
           }
           if (safeSpan < .001 && scheduleEls.homeArcShine) scheduleEls.homeArcShine.style.opacity = "0";
+
+          // Visible reference arc: a true circumferential orange → rose → violet → orange ribbon.
+          if (scheduleEls.homeReferenceArc) {
+            if (safeSpan > .003) {
+              const spanDeg = safeSpan * 360;
+              const d1 = spanDeg * .18;
+              const d2 = spanDeg * .48;
+              const d3 = spanDeg * .73;
+              const d4 = spanDeg * .90;
+              scheduleEls.homeReferenceArc.style.background = `conic-gradient(from 0deg, #f5aa21 0deg, #f2a12d ${d1}deg, #de8b99 ${d2}deg, #bb72cd ${d3}deg, #e18b7d ${d4}deg, #f3a11e ${spanDeg}deg, transparent ${spanDeg}deg 360deg)`;
+              scheduleEls.homeReferenceArc.style.transform = `rotate(${safeStart * 360}deg)`;
+              scheduleEls.homeReferenceArc.style.opacity = "1";
+            } else {
+              scheduleEls.homeReferenceArc.style.opacity = "0";
+            }
+          }
+
+          const placeReferenceHandle = (el, fraction) => {
+            if (!el) return;
+            const angle = fraction * Math.PI * 2 - Math.PI / 2;
+            const radius = 45.7;
+            el.style.left = `${50 + Math.cos(angle) * radius}%`;
+            el.style.top = `${50 + Math.sin(angle) * radius}%`;
+          };
+          if (safeSpan > .003) {
+            placeReferenceHandle(scheduleEls.homeStartHandle, safeStart);
+            placeReferenceHandle(scheduleEls.homeEndHandle, safeStart + safeSpan);
+            if (scheduleEls.homeStartHandle) scheduleEls.homeStartHandle.style.opacity = "1";
+            if (scheduleEls.homeEndHandle) scheduleEls.homeEndHandle.style.opacity = "1";
+          } else {
+            if (scheduleEls.homeStartHandle) scheduleEls.homeStartHandle.style.opacity = "0";
+            if (scheduleEls.homeEndHandle) scheduleEls.homeEndHandle.style.opacity = "0";
+          }
         }
         function startHomeShine() {
           if (!scheduleEls.homeArcShine || !scheduleEls.homeArc) return;
@@ -8963,15 +9240,36 @@
         function renderHomeSchedule() {
           if (!scheduleEls.homeClock) return;
           ensureClockTicks();
+
+          const dialTime = hour => {
+            const h = ((Number(hour) % 24) + 24) % 24;
+            return {
+              value: `${h % 12 || 12}:00`,
+              period: h < 12 ? "am" : "pm"
+            };
+          };
+          const moonIcon = `<svg aria-hidden="true" class="schedule-center-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>`;
+          const sunriseIcon = `<svg aria-hidden="true" class="schedule-center-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 16a7 7 0 0 1 14 0"/><path d="M12 3v3M4.2 7.2l2.1 2.1M19.8 7.2l-2.1 2.1M2.5 16h19"/><path fill="currentColor" stroke="none" d="M7 16a5 5 0 0 1 10 0H7Z"/></svg>`;
+
           const row = homeRow();
           if (row) {
             const start = Number(row.start_hour);
             const end = Number(row.end_hour);
-            scheduleEls.homeTimeMain.innerHTML = `<span class="schedule-time-value">${String(start).padStart(2,"0")}</span><i class="schedule-time-divider" aria-hidden="true">—</i><span class="schedule-time-value">${String(end).padStart(2,"0")}</span>`;
+            const startDial = dialTime(start);
+            const endDial = dialTime(end);
+            scheduleEls.homeTimeMain.innerHTML = `
+              <div class="schedule-center-row">${moonIcon}<strong>${startDial.value}</strong><small>${startDial.period}</small></div>
+              <div class="schedule-center-row">${sunriseIcon}<strong>${endDial.value}</strong><small>${endDial.period}</small></div>`;
+            if (scheduleEls.homeDuration) {
+              scheduleEls.homeDuration.textContent = `排班时长 · ${Math.max(0, end - start)} 小时`;
+            }
             scheduleEls.homeEditBtn.textContent = "修改排班";
             animateArcTo(start / 24, (end - start) / 24);
           } else {
-            scheduleEls.homeTimeMain.innerHTML = `<span class="schedule-time-value schedule-empty-mark">—</span>`;
+            scheduleEls.homeTimeMain.innerHTML = `
+              <div class="schedule-center-row empty">${moonIcon}<strong>--:--</strong><small>am</small></div>
+              <div class="schedule-center-row empty">${sunriseIcon}<strong>--:--</strong><small>pm</small></div>`;
+            if (scheduleEls.homeDuration) scheduleEls.homeDuration.textContent = "今日未排班";
             scheduleEls.homeEditBtn.textContent = "登记排班";
             animateArcTo(homeArcState.start, 0);
           }
