@@ -5572,6 +5572,139 @@
       .schedule-arc-cap { transition:none !important; }
     }
 
+
+
+    /* ============================================================
+       v2.7 — iPhone Sleep-dial inspired schedule face
+       Reference geometry: pale continuous outer ring + inner precision dial.
+       Deliberate deviation: the outer ring is narrower than the reference.
+       ============================================================ */
+    .home.schedule-active .score-lens {
+      background:
+        radial-gradient(circle at 34% 22%, rgba(255,255,255,.72), transparent 34%),
+        linear-gradient(145deg, rgba(255,255,255,.40), rgba(246,249,252,.25) 58%, rgba(235,242,247,.15)),
+        rgba(255,255,255,.40) !important;
+      border-color: rgba(255,255,255,.82) !important;
+      box-shadow:
+        0 26px 64px rgba(42,55,72,.075),
+        inset 0 1.2px 0 rgba(255,255,255,.94),
+        inset 0 -1px 0 rgba(46,63,74,.035) !important;
+      -webkit-backdrop-filter: blur(42px) saturate(150%) !important;
+      backdrop-filter: blur(42px) saturate(150%) !important;
+    }
+
+    .schedule-clock::before {
+      inset: 13.2% !important;
+      border: 0 !important;
+      background:
+        radial-gradient(circle at 38% 28%, rgba(255,255,255,.22), transparent 36%),
+        rgba(255,255,255,.10) !important;
+      box-shadow: none !important;
+      opacity: .72 !important;
+    }
+
+    /* Continuous inactive ring, like the iPhone sleep clock, but deliberately slimmer. */
+    .schedule-ring-track {
+      stroke: rgba(187,194,202,.34);
+      stroke-width: 9.4;
+      stroke-linecap: round;
+      vector-effect: non-scaling-stroke;
+      filter:
+        drop-shadow(0 .7px 0 rgba(255,255,255,.78))
+        drop-shadow(0 2px 7px rgba(79,91,105,.07));
+    }
+
+    /* Inner timing indices stay visible and sit clearly inside the ring. */
+    .schedule-tick.micro {
+      stroke: rgba(85,92,100,.115) !important;
+      stroke-width: .52 !important;
+    }
+    .schedule-tick.hour {
+      stroke: rgba(68,78,88,.24) !important;
+      stroke-width: .82 !important;
+    }
+    .schedule-tick.major {
+      stroke: rgba(54,68,80,.36) !important;
+      stroke-width: 1.05 !important;
+    }
+    .schedule-tick.cardinal {
+      stroke: rgba(41,57,70,.58) !important;
+      stroke-width: 1.48 !important;
+      filter: none !important;
+    }
+
+    /* Apple-like active interval: opaque polished ribbon rather than neon. */
+    .schedule-arc-glow {
+      stroke: rgba(78,167,214,.14) !important;
+      stroke-width: 13.2 !important;
+      filter: blur(4.4px) !important;
+      opacity: .24;
+      animation: scheduleIOSHalo 8.6s ease-in-out infinite !important;
+    }
+    .schedule-arc {
+      stroke-width: 9.4 !important;
+      stroke-linecap: round !important;
+      filter:
+        drop-shadow(0 1px 0 rgba(255,255,255,.62))
+        drop-shadow(0 2px 7px rgba(47,134,187,.14)) !important;
+      animation: scheduleIOSArcBreath 8.2s ease-in-out infinite !important;
+    }
+    .schedule-arc-shine {
+      stroke-width: 2.1 !important;
+      stroke-linecap: round !important;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 1.4px rgba(255,255,255,.72)) !important;
+      animation: none !important;
+    }
+    @keyframes scheduleIOSArcBreath {
+      0%,100% { opacity:.94; }
+      52% { opacity:1; }
+    }
+    @keyframes scheduleIOSHalo {
+      0%,100% { opacity:.13; }
+      50% { opacity:.24; }
+    }
+
+    /* End handles echo the iPhone sleep control, scaled down for this smaller ring. */
+    .schedule-arc-cap {
+      fill: rgba(252,253,254,.98) !important;
+      stroke: rgba(158,171,183,.42) !important;
+      stroke-width: .82 !important;
+      filter:
+        drop-shadow(0 1px 0 rgba(255,255,255,.95))
+        drop-shadow(0 2.4px 6px rgba(67,82,96,.16)) !important;
+      mix-blend-mode: normal !important;
+      transition: opacity .42s ease !important;
+    }
+    .schedule-arc-cap-start { stroke: rgba(71,174,214,.56) !important; }
+    .schedule-arc-cap-end { stroke: rgba(79,132,210,.50) !important; }
+
+    /* Center time stays ours, but uses the calmer hierarchy of the iPhone dial. */
+    .schedule-time-main {
+      gap: clamp(20px, 6vw, 28px) !important;
+      font-size: clamp(40px, 12.3vw, 50px) !important;
+      font-weight: 450 !important;
+      letter-spacing: -.045em !important;
+      color: rgba(25,31,36,.96) !important;
+      text-shadow: 0 1px 0 rgba(255,255,255,.78) !important;
+    }
+    .schedule-time-main .schedule-time-value {
+      background: linear-gradient(180deg, rgba(22,28,33,.99), rgba(56,64,71,.91)) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+    .schedule-time-main .schedule-time-divider {
+      width: 18px !important;
+      height: 1px !important;
+      background: rgba(82,91,99,.26) !important;
+      opacity: .75 !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .schedule-arc,.schedule-arc-glow { animation:none !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -5692,11 +5825,12 @@
 </filter>
 </defs>
 <g class="schedule-clock-ticks" id="scheduleClockTicks"></g>
-<circle class="schedule-arc-glow" cx="120" cy="120" fill="none" id="scheduleArcGlow" r="115.6" transform="rotate(-90 120 120)"></circle>
-<circle class="schedule-arc" cx="120" cy="120" fill="none" id="scheduleArc" r="115.6" stroke="url(#scheduleArcGradient)" transform="rotate(-90 120 120)"></circle>
-<circle class="schedule-arc-shine" cx="120" cy="120" fill="none" id="scheduleArcShine" r="115.6" stroke="url(#scheduleArcShineGradient)" transform="rotate(-90 120 120)"></circle>
-<circle class="schedule-arc-cap schedule-arc-cap-start" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcStartCap" r="2.45"></circle>
-<circle class="schedule-arc-cap schedule-arc-cap-end" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcEndCap" r="2.45"></circle>
+<circle class="schedule-ring-track" cx="120" cy="120" fill="none" id="scheduleRingTrack" r="109.7" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-glow" cx="120" cy="120" fill="none" id="scheduleArcGlow" r="109.7" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc" cx="120" cy="120" fill="none" id="scheduleArc" r="109.7" stroke="url(#scheduleArcGradient)" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-shine" cx="120" cy="120" fill="none" id="scheduleArcShine" r="109.7" stroke="url(#scheduleArcShineGradient)" transform="rotate(-90 120 120)"></circle>
+<circle class="schedule-arc-cap schedule-arc-cap-start" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcStartCap" r="6.2"></circle>
+<circle class="schedule-arc-cap schedule-arc-cap-end" cx="120" cy="4.4" fill="url(#scheduleArcCapGradient)" id="scheduleArcEndCap" r="6.2"></circle>
 </svg>
 <div aria-live="polite" class="schedule-time-main" id="scheduleTimeMain"><span>—</span><i>—</i><span>—</span></div>
 </div>
@@ -8708,8 +8842,8 @@
             const isCardinal = i % 24 === 0;       // 00 / 06 / 12 / 18
             const isThreeHour = !isCardinal && i % 12 === 0;
             const isHour = !isCardinal && !isThreeHour && i % 4 === 0;
-            const outer = isCardinal ? 103.9 : 103.5;
-            const length = isCardinal ? 10.4 : (isThreeHour ? 6.7 : (isHour ? 4.15 : 1.55));
+            const outer = isCardinal ? 96.8 : 96.2;
+            const length = isCardinal ? 10.8 : (isThreeHour ? 7.1 : (isHour ? 4.55 : 1.75));
             const inner = outer - length;
             const line = document.createElementNS(ns, "line");
             line.setAttribute("x1", String(120 + Math.cos(angle) * inner));
@@ -8737,7 +8871,7 @@
           const placeCap = (el, fraction) => {
             if (!el) return;
             const angle = fraction * Math.PI * 2 - Math.PI / 2;
-            const r = 115.6;
+            const r = 109.7;
             el.setAttribute("cx", String(120 + Math.cos(angle) * r));
             el.setAttribute("cy", String(120 + Math.sin(angle) * r));
           };
@@ -8760,7 +8894,7 @@
           const frame = now => {
             const span = Math.max(0, Math.min(1, Number(homeArcState.span || 0)));
             if (span > .004) {
-              const shineSpan = Math.max(.008, Math.min(.026, span * .145));
+              const shineSpan = Math.max(.012, Math.min(.034, span * .18));
               const travel = Math.max(0, span - shineSpan);
               const cycle = 11800;
               const raw = ((now - homeShineState.startedAt) % cycle) / cycle;
