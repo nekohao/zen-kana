@@ -5941,6 +5941,214 @@
       }
     }
 
+
+    /* ============================================================
+       v4 — score amount picker / wheel chance admin / schedule rest + rewards
+       ============================================================ */
+
+    /* Score admin buttons stay geometrically identical, labels are cleaner. */
+    .score-button {
+      font-size: 25px !important;
+      font-weight: 520 !important;
+      letter-spacing: 0 !important;
+    }
+
+    /* Strong pending schedule-reward reminder lives between the score lens and +/- controls. */
+    .score-reward-notice {
+      position: absolute;
+      left: 50%;
+      top: -50px;
+      width: min(88vw, 350px);
+      min-height: 42px;
+      padding: 7px 11px 7px 10px;
+      border: 1px solid rgba(255,255,255,.88);
+      border-radius: 16px;
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: 28px minmax(0,1fr) 18px;
+      align-items: center;
+      gap: 8px;
+      color: rgba(106,74,35,.95);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.84), rgba(255,241,204,.58)),
+        rgba(255,250,235,.62);
+      box-shadow:
+        0 10px 28px rgba(182,138,71,.13),
+        inset 0 1px 0 rgba(255,255,255,.88);
+      -webkit-backdrop-filter: blur(24px) saturate(165%);
+      backdrop-filter: blur(24px) saturate(165%);
+      z-index: 8;
+      text-align: left;
+    }
+    .score-reward-notice[hidden] { display: none !important; }
+    .score-reward-notice-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: rgba(255,207,96,.22);
+      font-size: 16px;
+    }
+    .score-reward-notice-copy { min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .score-reward-notice-copy strong {
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+      font-size: 11.7px; line-height:1.25; font-weight:760; letter-spacing:-.015em;
+    }
+    .score-reward-notice-copy small {
+      color: rgba(126,93,53,.62); font-size: 9.5px; font-weight:590; line-height:1.15;
+    }
+    .score-reward-notice-chevron { color: rgba(137,101,57,.48); font-size:21px; font-weight:300; }
+    .home.has-schedule-reward:not(.wheel-active):not(.schedule-active) .metric-action-slot {
+      margin-top: 62px !important;
+    }
+
+    /* Custom 1..9 score selector — same alert material, no native select styling. */
+    .change-amount-row {
+      position: relative;
+      width: 100%;
+      margin: 13px 0 10px;
+      min-height: 52px;
+      padding: 0 11px 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid rgba(255,255,255,.76);
+      border-radius: 16px;
+      background: rgba(255,255,255,.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.62), 0 7px 18px rgba(80,61,39,.045);
+    }
+    .change-amount-caption { font-size:13px; font-weight:680; color:rgba(91,68,42,.88); }
+    .change-amount-picker-wrap { position:relative; }
+    .change-amount-picker {
+      min-width: 76px; height: 38px; padding: 0 10px 0 13px;
+      border: 1px solid rgba(185,143,84,.14); border-radius: 13px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: linear-gradient(145deg,rgba(255,255,255,.76),rgba(255,247,226,.44));
+      color:rgba(105,76,37,.96); box-shadow:0 5px 14px rgba(164,123,66,.07),inset 0 1px 0 rgba(255,255,255,.84);
+    }
+    .change-amount-picker strong { font-size:17px; font-weight:740; font-variant-numeric:tabular-nums; }
+    .change-amount-picker svg { width:14px; height:14px; transition: transform .2s ease; }
+    .change-amount-picker[aria-expanded="true"] svg { transform:rotate(180deg); }
+    .change-amount-menu {
+      position:absolute; right:0; top:44px; z-index:20;
+      width:92px; padding:5px; border-radius:15px;
+      border:1px solid rgba(255,255,255,.88);
+      background:rgba(255,253,248,.96);
+      box-shadow:0 15px 38px rgba(65,50,37,.16),inset 0 1px 0 rgba(255,255,255,.92);
+      -webkit-backdrop-filter:blur(24px) saturate(165%); backdrop-filter:blur(24px) saturate(165%);
+      max-height:245px; overflow:auto; scrollbar-width:none;
+    }
+    .change-amount-menu::-webkit-scrollbar { display:none; }
+    .change-amount-menu[hidden] { display:none !important; }
+    .change-amount-option {
+      width:100%; min-height:34px; border:0; border-radius:10px; padding:0 10px;
+      background:transparent; display:flex; align-items:center; justify-content:space-between;
+      color:rgba(64,55,47,.88); font-size:14px; font-weight:650; font-variant-numeric:tabular-nums;
+    }
+    .change-amount-option.selected { background:rgba(246,222,169,.32); color:rgba(126,86,31,.96); }
+    .change-amount-check { opacity:0; font-size:12px; }
+    .change-amount-option.selected .change-amount-check { opacity:1; }
+
+    /* Admin wheel gets two equal actions; guest keeps the existing single action. */
+    .wheel-actions.admin-wheel-actions {
+      width: min(88vw, 344px) !important;
+      height: 52px !important;
+      min-height: 52px !important;
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+      grid-template-rows: 52px !important;
+      gap: 9px !important;
+      align-items: stretch !important;
+    }
+    .wheel-actions.admin-wheel-actions .wheel-side-button {
+      width:100% !important; min-width:0 !important; padding:0 11px !important;
+    }
+    .home.wheel-active .wheel-actions.admin-wheel-actions #spinWheelActionBtn,
+    .home.wheel-active .wheel-actions.admin-wheel-actions #adjustWheelChancesBtn {
+      width:100% !important;
+      min-width:0 !important;
+      max-width:none !important;
+      flex:0 1 auto !important;
+      flex-basis:auto !important;
+    }
+    .wheel-adjust-action[hidden] { display:none !important; }
+    .wheel-adjust-action {
+      color: rgba(111,83,138,.92) !important;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.70), rgba(239,231,251,.46)),
+        rgba(250,247,255,.40) !important;
+      box-shadow:
+        0 10px 26px rgba(139,111,173,.085),
+        inset 0 1px 0 rgba(255,255,255,.76) !important;
+    }
+    .wheel-adjust-action .wheel-side-icon { font-size:18px; }
+
+    .wheel-adjust-current {
+      margin:14px auto 13px; display:flex; flex-direction:column; align-items:center; gap:3px;
+    }
+    .wheel-adjust-current span { color:var(--secondary); font-size:11px; font-weight:620; }
+    .wheel-adjust-current strong {
+      font-size:36px; line-height:1; font-weight:720; letter-spacing:-.05em;
+      font-variant-numeric:tabular-nums; color:rgba(117,73,101,.94);
+    }
+    .wheel-adjust-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:10px 0 12px; }
+    .wheel-adjust-choice {
+      min-height:48px; border:1px solid rgba(255,255,255,.82); border-radius:16px;
+      background:rgba(255,255,255,.25); color:rgba(102,69,87,.82); font-size:14px; font-weight:720;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.66);
+    }
+    .wheel-adjust-choice.selected {
+      color:rgba(146,74,110,.96);
+      background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(255,229,241,.52));
+      box-shadow:0 7px 20px rgba(196,115,153,.09),inset 0 1px 0 rgba(255,255,255,.84);
+    }
+    .wheel-adjust-choice:disabled { opacity:.34; pointer-events:none; }
+
+    /* Schedule rest option belongs to the same light-glass sheet family. */
+    .work-schedule-rest-button {
+      width:100%; min-height:49px; margin-top:11px; padding:0 15px;
+      border:1px solid rgba(255,255,255,.84); border-radius:16px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      background:linear-gradient(145deg,rgba(255,255,255,.66),rgba(255,239,219,.34)),rgba(255,255,255,.23);
+      color:rgba(154,94,49,.92); font-size:14px; font-weight:710;
+      box-shadow:0 8px 22px rgba(176,112,58,.065),inset 0 1px 0 rgba(255,255,255,.76);
+    }
+    .work-schedule-rest-button.active {
+      background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(255,226,197,.58));
+      box-shadow:0 9px 24px rgba(176,112,58,.10),inset 0 1px 0 rgba(255,255,255,.88);
+    }
+    .work-schedule-rest-button svg { width:17px; height:17px; }
+    .work-schedule-time.rest { color:rgba(159,96,48,.92) !important; }
+
+    .schedule-rest-center {
+      position:relative; z-index:7; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      color:rgba(68,58,52,.92); pointer-events:none;
+    }
+    .schedule-rest-center svg { width:28px; height:28px; margin-bottom:8px; color:#efa126; }
+    .schedule-rest-center strong { font-size:34px; line-height:1; font-weight:630; letter-spacing:-.055em; }
+    .schedule-rest-center small { margin-top:7px; color:rgba(95,78,67,.46); font-size:9px; font-weight:720; letter-spacing:.15em; }
+
+    /* Progress remains typography-first so the three homepage modes stay aligned. */
+    .schedule-progress-inline {
+      display:inline-flex; align-items:center; gap:2px; margin:0 3px;
+      vertical-align:middle;
+    }
+    .schedule-progress-dot {
+      width:4px; height:4px; border-radius:50%; background:rgba(177,111,61,.18);
+    }
+    .schedule-progress-dot.done { background:rgba(230,145,61,.72); }
+
+    /* Reward confirmation uses the same strong, warm score language. */
+    .schedule-reward-points {
+      margin:13px auto 6px; font-size:38px; line-height:1; font-weight:760; letter-spacing:-.05em;
+      color:rgba(151,103,36,.95); font-variant-numeric:tabular-nums;
+    }
+    .schedule-reward-period { margin-top:8px; color:var(--secondary); font-size:12px; font-weight:610; }
+
+    @media (max-width:370px) {
+      .score-reward-notice { width:min(92vw,340px); }
+      .score-reward-notice-copy strong { font-size:11px; }
+      .wheel-actions.admin-wheel-actions { width:min(90vw,334px) !important; gap:7px !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -6086,14 +6294,22 @@
 </div>
 </div>
 <div aria-label="当前数据操作" class="metric-action-slot">
+<button class="score-reward-notice pressable" hidden id="scoreRewardNotice" type="button">
+<span aria-hidden="true" class="score-reward-notice-icon" id="scoreRewardNoticeIcon">🎉</span>
+<span class="score-reward-notice-copy">
+<strong id="scoreRewardNoticeText">连续 7 天排班已完成 · 待奖励 +1 分</strong>
+<small id="scoreRewardNoticeMeta">点击确认发放</small>
+</span>
+<span aria-hidden="true" class="score-reward-notice-chevron">›</span>
+</button>
 <button class="redeem-button score-redeem-button pressable" id="redeemRewardBtn" type="button">
 <span aria-hidden="true">🎁</span>
 <span>兑换奖励</span>
 <span class="redeem-button-meta">10 分 / 次</span>
 </button>
 <div aria-hidden="true" class="admin-controls hidden" id="adminControls">
-<button class="score-button minus pressable" data-delta="-1" type="button">−1</button>
-<button class="score-button plus pressable" data-delta="1" type="button">+1</button>
+<button aria-label="减少积分" class="score-button minus pressable" data-sign="-1" type="button">−</button>
+<button aria-label="增加积分" class="score-button plus pressable" data-sign="1" type="button">+</button>
 </div>
 <div aria-hidden="true" class="wheel-actions" id="wheelActions">
 <button class="wheel-side-button wheel-side-spin pressable" id="spinWheelActionBtn" type="button">
@@ -6101,6 +6317,13 @@
 <span class="wheel-side-copy">
 <strong>转动大转盘</strong>
 <small>开始</small>
+</span>
+</button>
+<button class="wheel-side-button wheel-adjust-action pressable" hidden id="adjustWheelChancesBtn" type="button">
+<span aria-hidden="true" class="wheel-side-icon">↕</span>
+<span class="wheel-side-copy">
+<strong>调整次数</strong>
+<small id="adjustWheelChancesMeta">当前 0 次</small>
 </span>
 </button>
 </div>
@@ -6321,7 +6544,11 @@
 <select aria-label="下班时间" class="field work-schedule-control" id="workScheduleEndHour"></select>
 </label>
 </div>
-<div class="work-schedule-hint">可选时间为 08:00–22:00 的整点；下班时间必须晚于上班时间。</div>
+<div class="work-schedule-hint">可选时间为 08:00–22:00 的整点；下班时间必须晚于上班时间。休息也会作为当天的正式记录并计入连续奖励。</div>
+<button class="work-schedule-rest-button pressable" id="workScheduleRestBtn" type="button">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>
+<span id="workScheduleRestBtnText">登记休息</span>
+</button>
 <button class="sheet-button pressable full-width work-schedule-overview-button" id="openWorkScheduleOverviewBtn" type="button">排班总览</button>
 <div class="sheet-actions">
 <button class="sheet-button pressable" id="cancelWorkScheduleBtn" type="button">取消</button>
@@ -6379,6 +6606,20 @@
 </div>
 </div>
 </div>
+<!-- Rest confirmation belongs only to the schedule module. -->
+<div aria-hidden="true" class="modal-layer alert-layer" id="workScheduleRestLayer">
+<div aria-labelledby="workScheduleRestTitle" aria-modal="true" class="alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">🌙</div>
+<div class="alert-title" id="workScheduleRestTitle">登记休息</div>
+<div class="alert-message" id="workScheduleRestMessage">确认将这一天登记为休息吗？</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="confirmWorkScheduleRestBtn" type="button">确认登记休息</button>
+<button class="alert-button pressable" id="cancelWorkScheduleRestBtn" type="button">取消</button>
+</div>
+</div>
+</div>
 <!-- ============================================================
          WORK SCHEDULE MODULE END
          ============================================================ -->
@@ -6393,7 +6634,7 @@
 <div class="settings-group">
 <div class="settings-row static">
 <span>当前版本</span>
-<span class="settings-value">2.0.0</span>
+<span class="settings-value">2.1.0</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -6422,13 +6663,22 @@
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>2.0.0</strong><span>当前版本</span></div>
+<div class="release-head"><strong>2.1.0</strong><span>当前版本</span></div>
+<div class="release-date">2026.09.02</div>
+<ul class="release-list">
+<li>管理员积分调整升级为 ±1～9 可选，积分允许进入负数，修改原因与历史继续保留。</li>
+<li>管理员大转盘新增“调整次数”，可真实增减正式机会且最低为 0，并写入历史。</li>
+<li>排班新增“休息”记录；工作与休息都计入连续登记。</li>
+<li>连续 7 天产生待确认 +1；连续 4 个七天再额外产生待确认 +10，管理员确认不阻塞下一轮计数。</li>
+<li>游客排班首页实时显示连续天数、距离下一次 +1 的天数与四周大奖进度。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>2.0.0</strong><span>上一版本</span></div>
 <div class="release-date">2026.09.01</div>
 <ul class="release-list">
-<li>彻底移除小礼物额度中转：每 10 分可直接兑换 1 次正式大转盘机会，或直接兑换 ¥30 可提现余额。</li>
-<li>大转盘资产固定为游客唯一资产；管理员可查看与试玩，但不能正式兑换、正式抽奖或申请提现。</li>
-<li>提现新增“待兑现 → 已兑现”流程；管理员确认后，游客历史会显示“管理员已经兑现提现申请。请查收。”</li>
-<li>管理员重置积分不再自动替游客兑换奖励；可兑换积分会在重置前明确警告。</li>
+<li>每 10 分可直接兑换 1 次正式大转盘机会，或直接兑换 ¥30 可提现余额。</li>
+<li>提现新增“待兑现 → 已兑现”流程；管理员确认后写入历史。</li>
 </ul>
 </div>
 <div class="release-block previous">
@@ -6660,6 +6910,26 @@
 <div aria-hidden="true" class="change-icon" id="changeIcon">✨</div>
 <div class="alert-title" id="changeTitle">变更积分</div>
 <div class="alert-message" id="changeSubtitle"></div>
+<div class="change-amount-row">
+<span class="change-amount-caption" id="changeAmountCaption">增加分数</span>
+<div class="change-amount-picker-wrap">
+<button aria-expanded="false" aria-haspopup="listbox" class="change-amount-picker pressable" id="changeAmountPickerBtn" type="button">
+<strong id="changeAmountValue">1</strong>
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg>
+</button>
+<div aria-label="选择积分数量" class="change-amount-menu" hidden id="changeAmountMenu" role="listbox">
+<button class="change-amount-option pressable" data-change-amount="1" type="button"><span>1</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="2" type="button"><span>2</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="3" type="button"><span>3</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="4" type="button"><span>4</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="5" type="button"><span>5</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="6" type="button"><span>6</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="7" type="button"><span>7</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="8" type="button"><span>8</span><span class="change-amount-check">✓</span></button>
+<button class="change-amount-option pressable" data-change-amount="9" type="button"><span>9</span><span class="change-amount-check">✓</span></button>
+</div>
+</div>
+</div>
 <div class="change-preview" id="changePreview"></div>
 <textarea class="change-reason-field" id="reasonInput" maxlength="200" placeholder="写下这次积分变化的原因 ♡（可留空）"></textarea>
 </div>
@@ -6705,6 +6975,42 @@
 <div class="alert-actions vertical">
 <button class="alert-button primary-action pressable" id="wheelPreviewConfirmBtn" type="button">试玩一次 🎠</button>
 <button class="alert-button pressable" id="wheelPreviewCancelBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- Administrator wheel chance adjustment -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelAdjustLayer">
+<div aria-labelledby="wheelAdjustTitle" aria-modal="true" class="alert wheel-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">🎟️</div>
+<div class="alert-title" id="wheelAdjustTitle">调整正式机会</div>
+<div class="alert-message">管理员操作 · 修改会真实写入游客大转盘资产与历史</div>
+<div class="wheel-adjust-current"><span>当前正式机会</span><strong id="wheelAdjustCurrent">0 次</strong></div>
+<div class="wheel-adjust-choice-grid">
+<button class="wheel-adjust-choice pressable" data-wheel-adjust="-1" id="wheelAdjustMinusBtn" type="button">−1 次</button>
+<button class="wheel-adjust-choice pressable selected" data-wheel-adjust="1" id="wheelAdjustPlusBtn" type="button">+1 次</button>
+</div>
+<div class="change-preview" id="wheelAdjustPreview">0 次 → 1 次</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="wheelAdjustConfirmBtn" type="button">确认 +1 次</button>
+<button class="alert-button pressable" id="wheelAdjustCancelBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+<!-- Administrator schedule reward confirmation -->
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="scheduleRewardLayer">
+<div aria-labelledby="scheduleRewardTitle" aria-modal="true" class="alert change-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon" id="scheduleRewardIcon">🎉</div>
+<div class="alert-title" id="scheduleRewardTitle">连续排班奖励</div>
+<div class="alert-message" id="scheduleRewardMessage">已满足奖励条件</div>
+<div class="schedule-reward-period" id="scheduleRewardPeriod"></div>
+<div class="schedule-reward-points" id="scheduleRewardPoints">+1</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="scheduleRewardConfirmBtn" type="button">确认发放 +1</button>
+<button class="alert-button pressable" id="scheduleRewardCancelBtn" type="button">稍后处理</button>
 </div>
 </div>
 </div>
@@ -6810,7 +7116,13 @@
         wheelDisk: $("#wheelDisk"),
         wheelActions: $("#wheelActions"),
         spinWheelActionBtn: $("#spinWheelActionBtn"),
+        adjustWheelChancesBtn: $("#adjustWheelChancesBtn"),
+        adjustWheelChancesMeta: $("#adjustWheelChancesMeta"),
         adminControls: $("#adminControls"),
+        scoreRewardNotice: $("#scoreRewardNotice"),
+        scoreRewardNoticeIcon: $("#scoreRewardNoticeIcon"),
+        scoreRewardNoticeText: $("#scoreRewardNoticeText"),
+        scoreRewardNoticeMeta: $("#scoreRewardNoticeMeta"),
         settingsBtn: $("#settingsBtn"),
         overviewBtn: $("#overviewBtn"),
         overview: $("#overview"),
@@ -6880,6 +7192,10 @@
         changeTitle: $("#changeTitle"),
         changeSubtitle: $("#changeSubtitle"),
         changePreview: $("#changePreview"),
+        changeAmountCaption: $("#changeAmountCaption"),
+        changeAmountPickerBtn: $("#changeAmountPickerBtn"),
+        changeAmountValue: $("#changeAmountValue"),
+        changeAmountMenu: $("#changeAmountMenu"),
         reasonInput: $("#reasonInput"),
         cancelChangeBtn: $("#cancelChangeBtn"),
         confirmChangeBtn: $("#confirmChangeBtn"),
@@ -6896,6 +7212,21 @@
         wheelPreviewMessage: $("#wheelPreviewMessage"),
         wheelPreviewConfirmBtn: $("#wheelPreviewConfirmBtn"),
         wheelPreviewCancelBtn: $("#wheelPreviewCancelBtn"),
+        wheelAdjustLayer: $("#wheelAdjustLayer"),
+        wheelAdjustCurrent: $("#wheelAdjustCurrent"),
+        wheelAdjustPreview: $("#wheelAdjustPreview"),
+        wheelAdjustMinusBtn: $("#wheelAdjustMinusBtn"),
+        wheelAdjustPlusBtn: $("#wheelAdjustPlusBtn"),
+        wheelAdjustConfirmBtn: $("#wheelAdjustConfirmBtn"),
+        wheelAdjustCancelBtn: $("#wheelAdjustCancelBtn"),
+        scheduleRewardLayer: $("#scheduleRewardLayer"),
+        scheduleRewardIcon: $("#scheduleRewardIcon"),
+        scheduleRewardTitle: $("#scheduleRewardTitle"),
+        scheduleRewardMessage: $("#scheduleRewardMessage"),
+        scheduleRewardPeriod: $("#scheduleRewardPeriod"),
+        scheduleRewardPoints: $("#scheduleRewardPoints"),
+        scheduleRewardConfirmBtn: $("#scheduleRewardConfirmBtn"),
+        scheduleRewardCancelBtn: $("#scheduleRewardCancelBtn"),
         wheelResultLayer: $("#wheelResultLayer"),
         wheelResultIcon: $("#wheelResultIcon"),
         wheelResultTitle: $("#wheelResultTitle"),
@@ -6952,6 +7283,12 @@
         isAdmin: false,
         activeMetric: "score",
         changeDelta: null,
+        changeSign: 1,
+        changeMagnitude: 1,
+        wheelAdjustDelta: 1,
+        scheduleProgress: null,
+        pendingScheduleRewards: [],
+        selectedScheduleRewardId: null,
         pendingSettlementId: null,
         trendRange: "today",
         trendMonthWeek: Math.min(4, Math.floor((new Date().getDate() - 1) / 7) + 1),
@@ -7129,20 +7466,29 @@
           if (els.wheelProbabilityLayer.classList.contains("open")) setLayer(els.wheelProbabilityLayer, false);
           if (els.wheelProbabilityHistoryLayer.classList.contains("open")) setLayer(els.wheelProbabilityHistoryLayer, false);
           if (els.settleWithdrawalLayer.classList.contains("open")) setLayer(els.settleWithdrawalLayer, false);
+          if (els.wheelAdjustLayer.classList.contains("open")) setLayer(els.wheelAdjustLayer, false);
+          if (els.scheduleRewardLayer.classList.contains("open")) setLayer(els.scheduleRewardLayer, false);
+          state.pendingScheduleRewards = [];
         }
 
         if (state.isAdmin) {
           const email = state.session?.user?.email || "管理员";
           els.loginStateText.textContent = `管理员 · ${email}`;
-          els.spinWheelActionBtn.querySelector("strong").textContent = "试玩大转盘";
-          els.spinWheelActionBtn.querySelector("small").textContent = "不影响游客资产";
+          els.spinWheelActionBtn.querySelector("strong").textContent = "试玩";
+          els.spinWheelActionBtn.querySelector("small").textContent = "不消耗机会";
+          els.adjustWheelChancesBtn.hidden = false;
+          els.adjustWheelChancesMeta.textContent = `当前 ${Math.max(0, Number(state.wheelChances ?? 0))} 次`;
+          els.wheelActions.classList.add("admin-wheel-actions");
         } else {
           els.loginStateText.textContent = "访客模式";
           els.spinWheelActionBtn.querySelector("strong").textContent = "转动大转盘";
           els.spinWheelActionBtn.querySelector("small").textContent = "开始";
+          els.adjustWheelChancesBtn.hidden = true;
+          els.wheelActions.classList.remove("admin-wheel-actions");
         }
 
         renderPrimaryMetric();
+        renderScheduleRewardNotice();
         if (state.overviewMode !== "closed") renderWheelOverview();
         if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
       }
@@ -7176,15 +7522,39 @@
 
         if (schedule) {
           const info = workScheduleModule.getHomeSummary();
-          primary.textContent = `${info.relative} · ${info.dateLabel}`;
-          secondary.textContent = info.weekday;
+          const progress = workScheduleModule.getProgressSummary();
+          if (progress) {
+            const streak = Math.max(0, Number(progress.streak_days || 0));
+            const roundDays = Math.max(0, Number(progress.days_in_current_week || 0));
+            const remaining = Math.max(1, Number(progress.days_until_weekly || 7));
+            const weeklyPending = Math.max(0, Number(progress.pending_weekly_count || 0));
+            const fourPending = Math.max(0, Number(progress.pending_four_week_count || 0));
+            if (!progress.today_recorded && streak > 0) {
+              primary.textContent = `🌷 已连续记录 ${streak} 天 · 今天登记后继续累计`;
+            } else if (streak > 0 && roundDays === 0) {
+              primary.textContent = weeklyPending > 0
+                ? `🎉 已连续记录 ${streak} 天 · +1 分等待管理员发放`
+                : `🎉 已连续记录 ${streak} 天 · 新一轮从下一天开始`;
+            } else if (streak > 0) {
+              primary.textContent = `📅 已连续记录 ${streak} 天 · 再 ${remaining} 天获得 +1 分`;
+            } else {
+              primary.textContent = "📅 今天登记排班或休息，开始连续记录";
+            }
+            const dots = Array.from({length:7}, (_,i) => i < roundDays ? "●" : "○").join("");
+            const weekCycle = Math.max(0, Number(progress.completed_weeks_in_cycle || 0));
+            const waiting = (weeklyPending + fourPending) > 0 ? ` · ${weeklyPending + fourPending} 项奖励待发放` : "";
+            secondary.textContent = `${info.relative} · ${info.dateLabel} · ${dots} · 四周大奖 ${weekCycle}/4${waiting}`;
+          } else {
+            primary.textContent = `${info.relative} · ${info.dateLabel}`;
+            secondary.textContent = info.weekday;
+          }
           els.wheelActions.setAttribute("aria-hidden", "true");
         } else if (wheel) {
           const chances = Math.max(0, Number(state.wheelChances ?? 0));
           const cash = Math.max(0, Number(state.wheelCashBalance ?? 0));
           if (state.isAdmin) {
             primary.textContent = `₊˚🎠 游客的大转盘资产 ♡ 正式机会 ${chances} 次`;
-            secondary.textContent = `可提现余额 ¥${cash} · 管理员只能试玩，不会改变游客资产 ✨`;
+            secondary.textContent = `可提现余额 ¥${cash} · 管理员可试玩或调整正式机会 ✨`;
           } else {
             primary.textContent = chances > 0
               ? `₊˚🎠 幸运大转盘准备好啦 ♡ 还有 ${chances} 次正式机会`
@@ -7195,18 +7565,19 @@
           }
           els.wheelActions.setAttribute("aria-hidden", "false");
         } else {
-          const score = Math.max(0, Number(state.score ?? 0));
-          const redeemable = Math.floor(score / 10);
+          const score = Number(state.score ?? 0);
+          const redeemable = Math.max(0, Math.floor(score / 10));
           primary.textContent = state.isAdmin
             ? `₊˚🧁 游客当前 ${score} 分 ♡`
             : `₊˚🧁 现在已经 ${score} 分了哦 ♡`;
           secondary.textContent = redeemable > 0
             ? `可兑换 ${redeemable} 次奖励 · 每 10 分换 1 次转盘机会或 ¥30 🎁✨`
-            : `还有 ${Math.max(0, 10 - score)} 分就能兑换：1 次转盘机会或 ¥30 🌼✨`;
+            : `还有 ${10 - score} 分就能兑换：1 次转盘机会或 ¥30 🌼✨`;
         }
 
         els.metricEyebrow.replaceChildren(primary, secondary);
         els.metricEyebrow.hidden = false;
+        renderScheduleRewardNotice();
       }
 
       function renderPrimaryMetric({ animate = false } = {}) {
@@ -7342,6 +7713,7 @@
           state.wheelChances = Number(wheelRow?.spin_chances ?? 0);
           state.wheelCashBalance = Number(wheelRow?.cash_balance ?? 0);
           state.wheelUpdatedAt = wheelRow?.updated_at ?? null;
+          if (els.adjustWheelChancesMeta) els.adjustWheelChancesMeta.textContent = `当前 ${Math.max(0, state.wheelChances)} 次`;
           renderPrimaryMetric();
           markRefreshed();
         } catch (err) {
@@ -7398,6 +7770,7 @@
           setLayer(els.loginLayer, false);
           renderAdminState();
           void workScheduleModule.refreshAdminNotice({ forceRefresh: true });
+          void workScheduleModule.refreshProgress({ sync: true, refreshPending: true });
           vibrate(12);
           showToast("管理员已登录");
         } catch (err) {
@@ -7428,27 +7801,186 @@
         }
       }
 
-      // -------------------- Score writes / direct reward redemption --------------------
-      function openChange(delta) {
+
+      function formatScheduleRewardDate(dateKey) {
+        const [y,m,d] = String(dateKey || "").split("-").map(Number);
+        if (!y || !m || !d) return String(dateKey || "");
+        return `${m}月${d}日`;
+      }
+
+      function renderScheduleRewardNotice() {
+        const reward = Array.isArray(state.pendingScheduleRewards) ? state.pendingScheduleRewards[0] : null;
+        const visible = !!(state.isAdmin && state.activeMetric === "score" && reward);
+        els.home?.classList.toggle("has-schedule-reward", visible);
+        els.scoreRewardNotice.hidden = !visible;
+        if (!visible) return;
+
+        const isFourWeek = String(reward.reward_type) === "four_week";
+        els.scoreRewardNoticeIcon.textContent = isFourWeek ? "🏆" : "🎉";
+        els.scoreRewardNoticeText.textContent = isFourWeek
+          ? "连续 4 个七天已完成 · 待奖励 +10 分"
+          : "连续 7 天排班已完成 · 待奖励 +1 分";
+        const extra = state.pendingScheduleRewards.length > 1 ? ` · 还有 ${state.pendingScheduleRewards.length - 1} 项` : "";
+        els.scoreRewardNoticeMeta.textContent = `点击确认发放${extra}`;
+      }
+
+      function selectedScheduleReward() {
+        const id = Number(state.selectedScheduleRewardId);
+        return state.pendingScheduleRewards.find(row => Number(row.id) === id) || state.pendingScheduleRewards[0] || null;
+      }
+
+      function openScheduleRewardPrompt() {
         if (!state.isAdmin) return showToast("需要管理员权限");
+        const reward = state.pendingScheduleRewards[0];
+        if (!reward) return showToast("当前没有待发放的排班奖励");
+        state.selectedScheduleRewardId = Number(reward.id);
+        const isFourWeek = String(reward.reward_type) === "four_week";
+        const points = Number(reward.points || (isFourWeek ? 10 : 1));
+        els.scheduleRewardIcon.textContent = isFourWeek ? "🏆" : "🎉";
+        els.scheduleRewardTitle.textContent = isFourWeek ? "连续 4 周排班大奖" : "连续排班奖励";
+        els.scheduleRewardMessage.textContent = isFourWeek
+          ? "已经连续完成 4 个完整的 7 天记录周期，额外奖励等待发放。"
+          : "连续 7 个自然日都已经完成排班或休息记录。";
+        els.scheduleRewardPeriod.textContent = `${formatScheduleRewardDate(reward.period_start)} – ${formatScheduleRewardDate(reward.period_end)}`;
+        els.scheduleRewardPoints.textContent = `+${points}`;
+        els.scheduleRewardConfirmBtn.textContent = `确认发放 +${points}`;
+        setLayer(els.scheduleRewardLayer, true);
+        vibrate(8);
+      }
+
+      async function claimScheduleReward() {
+        const reward = selectedScheduleReward();
+        if (!state.isAdmin || !reward) return;
+        setBusy(els.scheduleRewardConfirmBtn, true);
+        try {
+          const { data, error } = await db.rpc("work_schedule_admin_claim_reward", { p_reward_id: Number(reward.id) });
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          if (row && typeof row.score === "number") {
+            state.score = Number(row.score);
+            state.updatedAt = row.claimed_at ?? state.updatedAt;
+          } else {
+            await loadAppState({ silent: true });
+          }
+          setLayer(els.scheduleRewardLayer, false);
+          state.selectedScheduleRewardId = null;
+          state.overviewLoadedAt = 0;
+          await workScheduleModule.refreshProgress({ sync: false, refreshPending: true });
+          renderPrimaryMetric({ animate: true });
+          vibrate(16);
+          showToast(`🎉 已发放 +${Number(reward.points)} 分`);
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
+        } catch (err) {
+          console.error("claimScheduleReward:", err);
+          const message = String(err?.message || "");
+          if (/permission|admin/i.test(message)) {
+            await refreshAuthState();
+            showToast("管理员权限已失效");
+          } else if (/already claimed/i.test(message)) {
+            showToast("这笔奖励已经发放");
+            await workScheduleModule.refreshProgress({ sync:false, refreshPending:true });
+          } else if (/PGRST202|Could not find|work_schedule_admin_claim_reward/i.test(message)) {
+            showToast("请先运行 v4 数据库迁移 SQL");
+          } else showToast("奖励发放失败");
+        } finally {
+          setBusy(els.scheduleRewardConfirmBtn, false);
+        }
+      }
+
+      function closeChangeAmountMenu() {
+        els.changeAmountMenu.hidden = true;
+        els.changeAmountPickerBtn.setAttribute("aria-expanded", "false");
+      }
+
+      function renderChangeAmount() {
+        const magnitude = Math.min(9, Math.max(1, Number(state.changeMagnitude || 1)));
+        const sign = Number(state.changeSign) < 0 ? -1 : 1;
+        const delta = sign * magnitude;
+        state.changeMagnitude = magnitude;
         state.changeDelta = delta;
         const current = Number(state.score ?? 0);
-        const next = current + delta;
+        els.changeAmountCaption.textContent = sign > 0 ? "增加分数" : "减少分数";
+        els.changeAmountValue.textContent = String(magnitude);
+        els.changeTitle.textContent = sign > 0 ? "增加积分" : "减少积分";
+        els.changeIcon.textContent = sign > 0 ? "✨" : "🌙";
+        els.changePreview.textContent = `当前 ${current} 分  →  ${current + delta} 分`;
+        els.confirmChangeBtn.textContent = `确认 ${delta > 0 ? "+" : "−"}${magnitude}`;
+        els.changeAmountMenu.querySelectorAll("[data-change-amount]").forEach(btn => {
+          const selected = Number(btn.dataset.changeAmount) === magnitude;
+          btn.classList.toggle("selected", selected);
+          btn.setAttribute("aria-selected", String(selected));
+        });
+      }
+
+      function openWheelAdjustPrompt() {
+        if (!state.isAdmin) return showToast("需要管理员权限");
+        state.wheelAdjustDelta = 1;
+        renderWheelAdjustPrompt();
+        setLayer(els.wheelAdjustLayer, true);
+        vibrate(8);
+      }
+
+      function renderWheelAdjustPrompt() {
+        const current = Math.max(0, Number(state.wheelChances ?? 0));
+        if (current <= 0 && Number(state.wheelAdjustDelta) < 0) state.wheelAdjustDelta = 1;
+        const delta = Number(state.wheelAdjustDelta) < 0 ? -1 : 1;
+        const next = Math.max(0, current + delta);
+        els.wheelAdjustCurrent.textContent = `${current} 次`;
+        els.wheelAdjustPreview.textContent = `${current} 次  →  ${next} 次`;
+        els.wheelAdjustMinusBtn.disabled = current <= 0;
+        els.wheelAdjustMinusBtn.classList.toggle("selected", delta < 0);
+        els.wheelAdjustPlusBtn.classList.toggle("selected", delta > 0);
+        els.wheelAdjustConfirmBtn.textContent = `确认 ${delta > 0 ? "+1" : "−1"} 次`;
+      }
+
+      async function confirmWheelAdjust() {
+        if (!state.isAdmin) return;
+        const delta = Number(state.wheelAdjustDelta) < 0 ? -1 : 1;
+        if (delta < 0 && Number(state.wheelChances ?? 0) <= 0) return showToast("正式机会已经是 0 次");
+        setBusy(els.wheelAdjustConfirmBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_admin_adjust_wheel_chances", { p_delta: delta });
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          state.wheelChances = Math.max(0, Number(row?.spin_chances ?? state.wheelChances));
+          state.wheelCashBalance = Math.max(0, Number(row?.cash_balance ?? state.wheelCashBalance));
+          state.wheelUpdatedAt = row?.updated_at ?? state.wheelUpdatedAt;
+          setLayer(els.wheelAdjustLayer, false);
+          state.overviewLoadedAt = 0;
+          renderPrimaryMetric();
+          renderAdminState();
+          vibrate(14);
+          showToast(delta > 0 ? "🎟️ 已增加 1 次正式机会" : "🎟️ 已减少 1 次正式机会");
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
+        } catch (err) {
+          console.error("confirmWheelAdjust:", err);
+          const message = String(err?.message || "");
+          if (/negative/i.test(message)) showToast("正式机会最低为 0 次");
+          else if (/permission|admin/i.test(message)) showToast("管理员权限已失效");
+          else if (/PGRST202|Could not find|points_admin_adjust_wheel_chances/i.test(message)) showToast("请先运行 v4 数据库迁移 SQL");
+          else showToast("调整次数失败");
+        } finally {
+          setBusy(els.wheelAdjustConfirmBtn, false);
+        }
+      }
+
+      // -------------------- Score writes / direct reward redemption --------------------
+      function openChange(sign) {
+        if (!state.isAdmin) return showToast("需要管理员权限");
+        state.changeSign = Number(sign) < 0 ? -1 : 1;
+        state.changeMagnitude = 1;
         els.changeLayer.dataset.theme = "score";
-        els.changeIcon.textContent = delta > 0 ? "✨" : "🌙";
-        els.changeTitle.textContent = delta > 0 ? "增加 1 分" : "减少 1 分";
         els.changeSubtitle.textContent = "管理员操作 · 会立即写入积分历史";
-        els.changePreview.textContent = `当前 ${current} 分  →  ${next} 分`;
-        els.confirmChangeBtn.textContent = delta > 0 ? "确认 +1" : "确认 −1";
         els.reasonInput.placeholder = "写下这次积分变化的原因 ♡（可留空）";
         els.reasonInput.value = "";
+        closeChangeAmountMenu();
+        renderChangeAmount();
         setLayer(els.changeLayer, true);
-        setTimeout(() => els.reasonInput.focus(), 240);
       }
 
       async function confirmChange() {
-        const delta = state.changeDelta;
-        if (delta !== 1 && delta !== -1) return;
+        const delta = Number(state.changeDelta);
+        if (!Number.isInteger(delta) || delta === 0 || Math.abs(delta) > 9) return;
         setBusy(els.confirmChangeBtn, true);
         try {
           const reason = els.reasonInput.value.trim();
@@ -7467,15 +7999,19 @@
           renderPrimaryMetric({ animate: true });
           markRefreshed();
           setLayer(els.changeLayer, false);
+          closeChangeAmountMenu();
           state.overviewLoadedAt = 0;
           vibrate(14);
-          showToast(delta > 0 ? "已增加 1 分" : "已减少 1 分");
+          showToast(delta > 0 ? `已增加 ${delta} 分` : `已减少 ${Math.abs(delta)} 分`);
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           console.error("confirmChange:", err);
-          if (/permission|admin/i.test(String(err?.message || ""))) {
+          const message = String(err?.message || "");
+          if (/permission|admin/i.test(message)) {
             await refreshAuthState();
             showToast("管理员权限已失效");
+          } else if (/delta|between -9|PGRST202|Could not find/i.test(message)) {
+            showToast("请先运行 v4 数据库迁移 SQL");
           } else showToast("积分修改失败");
         } finally {
           setBusy(els.confirmChangeBtn, false);
@@ -7484,7 +8020,7 @@
 
       function openRedeemPrompt() {
         if (state.isAdmin) return showToast("管理员不能兑换游客奖励");
-        const score = Math.max(0, Number(state.score ?? 0));
+        const score = Number(state.score ?? 0);
         els.redeemTitle.textContent = "兑换奖励";
         if (score < 10) {
           els.redeemMessage.textContent = `宝宝现在有 ${score} 分 ♡ 还差 ${10 - score} 分就可以兑换一次奖励啦！`;
@@ -8588,6 +9124,11 @@
         if (action === "chance_redeem") {
           return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">🎟️</div><div class="log-copy"><div class="log-reason">10 分兑换 1 次正式大转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 1))}</div></li>`;
         }
+        if (action === "admin_chance_adjust") {
+          const delta = Number(log.chance_delta ?? 0);
+          const deltaText = delta > 0 ? `+${delta}` : `${delta}`;
+          return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">↕</div><div class="log-copy"><div class="log-reason">${escapeHTML(String(log.reason || "管理员调整正式机会"))}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta ${delta >= 0 ? "wheel-chance-positive" : "negative"}">${escapeHTML(deltaText)}</div></li>`;
+        }
         if (action === "legacy_balance_migration") {
           return `<li class="log-row wheel-log-row"><div class="log-icon wheel-chance">✨</div><div class="log-copy"><div class="log-reason">旧版奖励余额已迁移为正式转盘机会</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter}</span></div><div class="log-delta wheel-chance-positive">+${Math.max(0, Number(log.chance_delta ?? 0))}</div></li>`;
         }
@@ -9036,6 +9577,12 @@
           existingState: $("#workScheduleExistingState"),
           startHour: $("#workScheduleStartHour"),
           endHour: $("#workScheduleEndHour"),
+          restBtn: $("#workScheduleRestBtn"),
+          restBtnText: $("#workScheduleRestBtnText"),
+          restLayer: $("#workScheduleRestLayer"),
+          restMessage: $("#workScheduleRestMessage"),
+          cancelRestBtn: $("#cancelWorkScheduleRestBtn"),
+          confirmRestBtn: $("#confirmWorkScheduleRestBtn"),
           overviewBtn: $("#openWorkScheduleOverviewBtn"),
           cancelBtn: $("#cancelWorkScheduleBtn"),
           saveBtn: $("#saveWorkScheduleBtn"),
@@ -9056,6 +9603,7 @@
         let rowsByDate = new Map();
         let scheduleCacheLoaded = false;
         let pendingDeleteId = null;
+        let progressState = null;
         let homeDateKey = null;
         let homeArcState = { start: 0, span: 0, initialized: false, raf: 0 };
         let homeShineState = { raf: 0, startedAt: 0 };
@@ -9081,7 +9629,8 @@
           return {
             ...parts,
             hasSchedule: !!row,
-            time: row ? `${formatHour(row.start_hour)}–${formatHour(row.end_hour)}` : ""
+            isRest: isRestRow(row),
+            time: row ? scheduleRowText(row) : ""
           };
         }
         function ensureClockTicks() {
@@ -9251,16 +9800,19 @@
 
           const dialTime = hour => {
             const h = ((Number(hour) % 24) + 24) % 24;
-            return {
-              value: `${h % 12 || 12}:00`,
-              period: h < 12 ? "am" : "pm"
-            };
+            return { value: `${h % 12 || 12}:00`, period: h < 12 ? "am" : "pm" };
           };
           const moonIcon = `<svg aria-hidden="true" class="schedule-center-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18.7 15.7A7.7 7.7 0 0 1 8.3 5.3a7.9 7.9 0 1 0 10.4 10.4Z"/></svg>`;
           const sunriseIcon = `<svg aria-hidden="true" class="schedule-center-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 16a7 7 0 0 1 14 0"/><path d="M12 3v3M4.2 7.2l2.1 2.1M19.8 7.2l-2.1 2.1M2.5 16h19"/><path fill="currentColor" stroke="none" d="M7 16a5 5 0 0 1 10 0H7Z"/></svg>`;
 
           const row = homeRow();
-          if (row) {
+          scheduleEls.homeClock.classList.toggle("rest-day", isRestRow(row));
+          if (row && isRestRow(row)) {
+            scheduleEls.homeTimeMain.innerHTML = `<div class="schedule-rest-center">${moonIcon}<strong>休息</strong><small>REST DAY</small></div>`;
+            if (scheduleEls.homeDuration) scheduleEls.homeDuration.textContent = "今日休息 · 已计入连续记录";
+            scheduleEls.homeEditBtn.textContent = "修改排班";
+            animateArcTo(homeArcState.start, 0);
+          } else if (row) {
             const start = Number(row.start_hour);
             const end = Number(row.end_hour);
             const startDial = dialTime(start);
@@ -9268,9 +9820,7 @@
             scheduleEls.homeTimeMain.innerHTML = `
               <div class="schedule-center-row">${moonIcon}<strong>${startDial.value}</strong><small>${startDial.period}</small></div>
               <div class="schedule-center-row">${sunriseIcon}<strong>${endDial.value}</strong><small>${endDial.period}</small></div>`;
-            if (scheduleEls.homeDuration) {
-              scheduleEls.homeDuration.textContent = `排班时长 · ${Math.max(0, end - start)} 小时`;
-            }
+            if (scheduleEls.homeDuration) scheduleEls.homeDuration.textContent = `排班时长 · ${Math.max(0, end - start)} 小时`;
             scheduleEls.homeEditBtn.textContent = "修改排班";
             animateArcTo(start / 24, (end - start) / 24);
           } else {
@@ -9285,12 +9835,13 @@
         async function refreshHome(forceRefresh = true) {
           try {
             if (forceRefresh || !scheduleCacheLoaded) await fetchScheduleRows();
+            await refreshProgress({ sync: true, refreshPending: state.isAdmin });
             renderHomeSchedule();
             if (state.activeMetric === "schedule") renderMetricSwitch();
           } catch (err) {
             console.error("workSchedule.refreshHome:", err);
             renderHomeSchedule();
-            if (isRpcMissing(err?.message)) showToast("请先运行新版排班 SQL");
+            if (isRpcMissing(err?.message)) showToast("请先运行 v4 数据库迁移 SQL");
           }
         }
         function shiftHomeDate(delta) {
@@ -9481,26 +10032,90 @@
         }
 
         async function fetchScheduleRows() {
-          const { data, error } = await db.rpc("work_schedule_list");
+          const { data, error } = await db.rpc("work_schedule_list_v2");
           if (error) throw error;
           return cacheScheduleRows(data || []);
         }
 
+        function isRestRow(row) {
+          return !!(row && (row.is_rest === true || String(row.is_rest).toLowerCase() === "true"));
+        }
+
+        function scheduleRowText(row) {
+          return isRestRow(row) ? "休息" : `${formatHour(row.start_hour)}–${formatHour(row.end_hour)}`;
+        }
+
+        function getProgressSummary() {
+          return progressState || state.scheduleProgress || null;
+        }
+
+        async function refreshPendingRewards() {
+          if (!state.isAdmin) {
+            state.pendingScheduleRewards = [];
+            renderScheduleRewardNotice();
+            return [];
+          }
+          const { data, error } = await db.rpc("work_schedule_get_pending_rewards");
+          if (error) throw error;
+          state.pendingScheduleRewards = Array.isArray(data) ? data : [];
+          renderScheduleRewardNotice();
+          return state.pendingScheduleRewards;
+        }
+
+        async function refreshProgress({ sync = true, refreshPending = state.isAdmin } = {}) {
+          const today = localDateKey();
+          try {
+            if (sync) {
+              const syncRes = await db.rpc("work_schedule_sync_rewards", { p_today: today });
+              if (syncRes.error) throw syncRes.error;
+            }
+            const { data, error } = await db.rpc("work_schedule_get_progress", { p_today: today });
+            if (error) throw error;
+            const row = Array.isArray(data) ? data[0] : data;
+            progressState = row || null;
+            state.scheduleProgress = progressState;
+            if (refreshPending) await refreshPendingRewards();
+            else if (!state.isAdmin) state.pendingScheduleRewards = [];
+            if (state.activeMetric === "schedule") renderMetricSwitch();
+            renderScheduleRewardNotice();
+            return progressState;
+          } catch (err) {
+            console.error("workSchedule.refreshProgress:", err);
+            const message = String(err?.message || "");
+            if (/PGRST202|Could not find|work_schedule_(sync_rewards|get_progress|get_pending_rewards)/i.test(message)) {
+              progressState = null;
+              state.scheduleProgress = null;
+            }
+            renderScheduleRewardNotice();
+            return null;
+          }
+        }
+
         function applyScheduleForDate(dateKey) {
           const row = rowsByDate.get(String(dateKey));
+          const rest = isRestRow(row);
+          scheduleEls.restBtn.classList.toggle("active", rest);
+          scheduleEls.restBtnText.textContent = rest ? "已登记为休息" : "登记休息";
           if (row) {
-            scheduleEls.startHour.value = String(Number(row.start_hour));
-            scheduleEls.endHour.value = String(Number(row.end_hour));
-            scheduleEls.existingState.textContent = `已登记 · ${formatHour(row.start_hour)}–${formatHour(row.end_hour)}`;
+            if (!rest) {
+              scheduleEls.startHour.value = String(Number(row.start_hour));
+              scheduleEls.endHour.value = String(Number(row.end_hour));
+            } else {
+              scheduleEls.startHour.value = "9";
+              scheduleEls.endHour.value = "18";
+            }
+            scheduleEls.existingState.textContent = `已登记 · ${scheduleRowText(row)}`;
             scheduleEls.existingState.hidden = false;
             if (scheduleEls.title) scheduleEls.title.textContent = "修改排班";
-            scheduleEls.saveBtn.textContent = "保存修改";
+            scheduleEls.saveBtn.textContent = rest ? "改为工作排班" : "保存修改";
             return;
           }
           scheduleEls.startHour.value = "9";
           scheduleEls.endHour.value = "18";
           scheduleEls.existingState.hidden = true;
           scheduleEls.existingState.textContent = "";
+          scheduleEls.restBtn.classList.remove("active");
+          scheduleEls.restBtnText.textContent = "登记休息";
           if (scheduleEls.title) scheduleEls.title.textContent = "登记排班";
           scheduleEls.saveBtn.textContent = "保存排班";
         }
@@ -9549,52 +10164,88 @@
           const startHour = Number(scheduleEls.startHour.value);
           const endHour = Number(scheduleEls.endHour.value);
 
-          if (!workDate) {
-            showToast("请选择日期");
-            return;
-          }
+          if (!workDate) return showToast("请选择日期");
           if (!Number.isInteger(startHour) || startHour < 8 || startHour > 22 ||
               !Number.isInteger(endHour) || endHour < 8 || endHour > 22) {
-            showToast("请选择 08:00–22:00 的整点时间");
-            return;
+            return showToast("请选择 08:00–22:00 的整点时间");
           }
-          if (endHour <= startHour) {
-            showToast("下班时间必须晚于上班时间");
-            return;
-          }
+          if (endHour <= startHour) return showToast("下班时间必须晚于上班时间");
 
           setBusy(scheduleEls.saveBtn, true);
           try {
-            const { data, error } = await db.rpc("work_schedule_upsert", {
+            const { data, error } = await db.rpc("work_schedule_upsert_v2", {
               p_work_date: workDate,
               p_start_hour: startHour,
-              p_end_hour: endHour
+              p_end_hour: endHour,
+              p_is_rest: false
             });
             if (error) throw error;
-
             const saved = Array.isArray(data) ? data[0] : data;
             if (saved) {
               rowsById.set(Number(saved.id), saved);
               rowsByDate.set(String(saved.work_date), saved);
               scheduleCacheLoaded = true;
               applyScheduleForDate(workDate);
-            } else {
-              await syncRegistrationForCurrentDate({ forceRefresh: true });
-            }
+            } else await syncRegistrationForCurrentDate({ forceRefresh: true });
 
             if (state.isAdmin) await refreshAdminNotice({ forceRefresh: false });
             homeDateKey = workDate;
+            await refreshProgress({ sync: true, refreshPending: state.isAdmin });
             renderHomeSchedule();
             if (state.activeMetric === "schedule") renderMetricSwitch();
             vibrate(14);
             showToast("排班已保存");
           } catch (err) {
             console.error("workSchedule.saveSchedule:", err);
-            showToast(isRpcMissing(err?.message)
-              ? "请先运行新版排班 SQL"
-              : "排班保存失败");
+            showToast(isRpcMissing(err?.message) ? "请先运行 v4 数据库迁移 SQL" : "排班保存失败");
           } finally {
             setBusy(scheduleEls.saveBtn, false);
+          }
+        }
+
+        function openRestPrompt() {
+          const workDate = scheduleEls.date.value || localDateKey();
+          scheduleEls.date.value = workDate;
+          scheduleEls.restMessage.textContent = `确认将 ${formatScheduleDate(workDate)} 登记为休息吗？休息也会计入连续记录。`;
+          setLayer(scheduleEls.restLayer, true);
+          vibrate(8);
+        }
+
+        function closeRestPrompt() {
+          setLayer(scheduleEls.restLayer, false);
+        }
+
+        async function saveRestDay() {
+          const workDate = scheduleEls.date.value || localDateKey();
+          setBusy(scheduleEls.confirmRestBtn, true);
+          try {
+            const { data, error } = await db.rpc("work_schedule_upsert_v2", {
+              p_work_date: workDate,
+              p_start_hour: null,
+              p_end_hour: null,
+              p_is_rest: true
+            });
+            if (error) throw error;
+            const saved = Array.isArray(data) ? data[0] : data;
+            if (saved) {
+              rowsById.set(Number(saved.id), saved);
+              rowsByDate.set(String(saved.work_date), saved);
+              scheduleCacheLoaded = true;
+            } else await syncRegistrationForCurrentDate({ forceRefresh: true });
+            closeRestPrompt();
+            applyScheduleForDate(workDate);
+            homeDateKey = workDate;
+            if (state.isAdmin) await refreshAdminNotice({ forceRefresh: false });
+            await refreshProgress({ sync: true, refreshPending: state.isAdmin });
+            renderHomeSchedule();
+            if (state.activeMetric === "schedule") renderMetricSwitch();
+            vibrate(14);
+            showToast("🌙 已登记为休息");
+          } catch (err) {
+            console.error("workSchedule.saveRestDay:", err);
+            showToast(isRpcMissing(err?.message) ? "请先运行 v4 数据库迁移 SQL" : "休息登记失败");
+          } finally {
+            setBusy(scheduleEls.confirmRestBtn, false);
           }
         }
 
@@ -9647,16 +10298,13 @@
         }
 
         function renderAdminNotice(rows) {
-          if (!state.isAdmin) {
-            hideAdminNotice();
-            return [];
-          }
+          if (!state.isAdmin) { hideAdminNotice(); return []; }
           const upcoming = upcomingScheduleRows(rows);
           scheduleEls.adminNotice.hidden = upcoming.length === 0;
           if (upcoming.length) {
             const first = upcoming[0];
             const firstWhen = relativeDateText(first.work_date);
-            scheduleEls.adminNoticeMeta.textContent = `${firstWhen} ${formatHour(first.start_hour)}–${formatHour(first.end_hour)} · 共 ${upcoming.length} 天`;
+            scheduleEls.adminNoticeMeta.textContent = `${firstWhen} ${scheduleRowText(first)} · 共 ${upcoming.length} 天`;
           }
           return upcoming;
         }
@@ -9670,7 +10318,7 @@
                 ${escapeHTML(formatScheduleDate(row.work_date))}
                 <span class="work-schedule-date-meta">${escapeHTML(relativeDateText(row.work_date))}</span>
               </div>
-              <div class="work-schedule-time">${escapeHTML(formatHour(row.start_hour))}–${escapeHTML(formatHour(row.end_hour))}</div>
+              <div class="work-schedule-time ${isRestRow(row) ? "rest" : ""}">${escapeHTML(scheduleRowText(row))}</div>
             </li>
           `).join("");
           return upcoming;
@@ -9729,7 +10377,7 @@
                 <span class="work-schedule-date-meta">${escapeHTML(relativeDateText(row.work_date))}</span>
               </div>
               <div class="work-schedule-actions">
-                <div class="work-schedule-time">${escapeHTML(formatHour(row.start_hour))}–${escapeHTML(formatHour(row.end_hour))}</div>
+                <div class="work-schedule-time ${isRestRow(row) ? "rest" : ""}">${escapeHTML(scheduleRowText(row))}</div>
                 <button class="work-schedule-delete pressable" type="button" data-work-schedule-delete-id="${Number(row.id)}">删除</button>
               </div>
             </li>
@@ -9774,9 +10422,8 @@
           const numericId = Number(id);
           const row = rowsById.get(numericId);
           if (!row) return;
-
           pendingDeleteId = numericId;
-          scheduleEls.deleteMessage.textContent = `${formatScheduleDate(row.work_date)} ${formatHour(row.start_hour)}–${formatHour(row.end_hour)}，删除后无法恢复。`;
+          scheduleEls.deleteMessage.textContent = `${formatScheduleDate(row.work_date)} ${scheduleRowText(row)}，删除后无法恢复。`;
           setLayer(scheduleEls.deleteLayer, true);
           vibrate(8);
         }
@@ -9790,25 +10437,22 @@
           if (!Number.isInteger(pendingDeleteId)) return;
           const deletingId = pendingDeleteId;
           setBusy(scheduleEls.confirmDeleteBtn, true);
-
           try {
             const { data, error } = await db.rpc("work_schedule_delete", { p_id: deletingId });
             if (error) throw error;
             if (data !== true) throw new Error("Schedule row not found");
-
             pendingDeleteId = null;
             setLayer(scheduleEls.deleteLayer, false);
             vibrate(14);
-            showToast("排班已删除");
+            showToast("排班记录已删除");
             await loadOverview();
+            await refreshProgress({ sync: true, refreshPending: state.isAdmin });
             renderHomeSchedule();
             if (state.activeMetric === "schedule") renderMetricSwitch();
             if (state.isAdmin) await refreshAdminNotice({ forceRefresh: false });
           } catch (err) {
             console.error("workSchedule.confirmDelete:", err);
-            showToast(isRpcMissing(err?.message)
-              ? "请先运行新版排班 SQL"
-              : "删除排班失败");
+            showToast(isRpcMissing(err?.message) ? "请先运行 v4 数据库迁移 SQL" : "删除排班失败");
           } finally {
             setBusy(scheduleEls.confirmDeleteBtn, false);
           }
@@ -9833,6 +10477,10 @@
         scheduleEls.nextDayBtn.addEventListener("click", () => changeRegistrationDate(1));
         scheduleEls.cancelBtn.addEventListener("click", closeRegistration);
         scheduleEls.saveBtn.addEventListener("click", saveSchedule);
+        scheduleEls.restBtn.addEventListener("click", openRestPrompt);
+        scheduleEls.cancelRestBtn.addEventListener("click", closeRestPrompt);
+        scheduleEls.confirmRestBtn.addEventListener("click", saveRestDay);
+        scheduleEls.restLayer.addEventListener("click", (e) => { if (e.target === scheduleEls.restLayer) closeRestPrompt(); });
         scheduleEls.overviewBtn.addEventListener("click", openOverview);
         scheduleEls.backBtn.addEventListener("click", backToRegistration);
         scheduleEls.closeOverviewBtn.addEventListener("click", closeOverview);
@@ -9881,6 +10529,11 @@
 
         document.addEventListener("keydown", (e) => {
           if (e.key !== "Escape") return;
+          if (scheduleEls.restLayer.classList.contains("open")) {
+            e.stopImmediatePropagation();
+            closeRestPrompt();
+            return;
+          }
           if (scheduleEls.deleteLayer.classList.contains("open")) {
             e.stopImmediatePropagation();
             cancelDelete();
@@ -9908,6 +10561,9 @@
           hideAdminNotice,
           renderHomeSchedule,
           refreshHome,
+          refreshProgress,
+          refreshPendingRewards,
+          getProgressSummary,
           getHomeSummary,
           shiftHomeDate,
           openHomeRegistration,
@@ -10033,6 +10689,7 @@
         els.scoreRefreshBtn.classList.add("refreshing");
         try {
           await loadAppState({ silent: false });
+          await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
           showToast("已同步最新数据");
         } finally { setTimeout(() => els.scoreRefreshBtn.classList.remove("refreshing"), 650); }
@@ -10070,6 +10727,15 @@
         else openWheelPreviewPrompt();
       }
       els.spinWheelActionBtn.addEventListener("click", () => void triggerWheelFromActionButton());
+      els.adjustWheelChancesBtn.addEventListener("click", openWheelAdjustPrompt);
+      [els.wheelAdjustMinusBtn, els.wheelAdjustPlusBtn].forEach(btn => btn.addEventListener("click", () => {
+        state.wheelAdjustDelta = Number(btn.dataset.wheelAdjust) < 0 ? -1 : 1;
+        renderWheelAdjustPrompt();
+        vibrate(5);
+      }));
+      els.wheelAdjustLayer.addEventListener("click", (e) => { if (e.target === els.wheelAdjustLayer) setLayer(els.wheelAdjustLayer, false); });
+      els.wheelAdjustCancelBtn.addEventListener("click", () => setLayer(els.wheelAdjustLayer, false));
+      els.wheelAdjustConfirmBtn.addEventListener("click", confirmWheelAdjust);
 
       els.wheelPreviewLayer.addEventListener("click", (e) => { if (e.target === els.wheelPreviewLayer) setLayer(els.wheelPreviewLayer, false); });
       els.wheelPreviewCancelBtn.addEventListener("click", () => setLayer(els.wheelPreviewLayer, false));
@@ -10093,10 +10759,27 @@
       els.settleWithdrawalCancelBtn.addEventListener("click", () => { state.pendingSettlementId = null; setLayer(els.settleWithdrawalLayer, false); });
       els.settleWithdrawalConfirmBtn.addEventListener("click", settleWithdrawal);
 
-      $$(".score-button").forEach(btn => btn.addEventListener("click", () => { vibrate(); openChange(Number(btn.dataset.delta)); }));
-      els.changeLayer.addEventListener("click", (e) => { if (e.target === els.changeLayer) setLayer(els.changeLayer, false); });
-      els.cancelChangeBtn.addEventListener("click", () => setLayer(els.changeLayer, false));
+      $$(".score-button").forEach(btn => btn.addEventListener("click", () => { vibrate(); openChange(Number(btn.dataset.sign)); }));
+      els.changeAmountPickerBtn.addEventListener("click", () => {
+        const opening = els.changeAmountMenu.hidden;
+        els.changeAmountMenu.hidden = !opening;
+        els.changeAmountPickerBtn.setAttribute("aria-expanded", String(opening));
+      });
+      els.changeAmountMenu.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-change-amount]");
+        if (!btn) return;
+        state.changeMagnitude = Number(btn.dataset.changeAmount);
+        renderChangeAmount();
+        closeChangeAmountMenu();
+        vibrate(4);
+      });
+      els.changeLayer.addEventListener("click", (e) => { if (e.target === els.changeLayer) { closeChangeAmountMenu(); setLayer(els.changeLayer, false); } });
+      els.cancelChangeBtn.addEventListener("click", () => { closeChangeAmountMenu(); setLayer(els.changeLayer, false); });
       els.confirmChangeBtn.addEventListener("click", confirmChange);
+      els.scoreRewardNotice.addEventListener("click", openScheduleRewardPrompt);
+      els.scheduleRewardLayer.addEventListener("click", (e) => { if (e.target === els.scheduleRewardLayer) setLayer(els.scheduleRewardLayer, false); });
+      els.scheduleRewardCancelBtn.addEventListener("click", () => { state.selectedScheduleRewardId = null; setLayer(els.scheduleRewardLayer, false); });
+      els.scheduleRewardConfirmBtn.addEventListener("click", claimScheduleReward);
 
       window.addEventListener("resize", () => { if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit(); }, { passive: true });
       window.visualViewport?.addEventListener("resize", () => { if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit(); }, { passive: true });
@@ -10142,6 +10825,7 @@
         state.trendRange = btn.dataset.range; setTrendMonthMenu(false); renderTrend();
       });
       document.addEventListener("click", (e) => {
+        if (!els.changeAmountMenu.hidden && !e.target.closest(".change-amount-picker-wrap")) closeChangeAmountMenu();
         if (els.trendMonthMenu.hidden || e.target.closest(".trend-month-control")) return;
         setTrendMonthMenu(false);
       });
@@ -10157,7 +10841,9 @@
         if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
-        if (els.changeLayer.classList.contains("open")) return setLayer(els.changeLayer, false);
+        if (els.scheduleRewardLayer.classList.contains("open")) return setLayer(els.scheduleRewardLayer, false);
+        if (els.wheelAdjustLayer.classList.contains("open")) return setLayer(els.wheelAdjustLayer, false);
+        if (els.changeLayer.classList.contains("open")) { closeChangeAmountMenu(); return setLayer(els.changeLayer, false); }
         if (els.wheelResultLayer.classList.contains("open")) return setLayer(els.wheelResultLayer, false);
         if (els.wheelWithdrawLayer.classList.contains("open")) return setLayer(els.wheelWithdrawLayer, false);
         if (els.wheelPreviewLayer.classList.contains("open")) return setLayer(els.wheelPreviewLayer, false);
@@ -10178,6 +10864,7 @@
       // -------------------- Boot --------------------
       async function scheduledDatabaseRefresh() {
         await loadAppState({ silent: true });
+        await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
         if (state.isAdmin) await workScheduleModule.refreshAdminNotice({ forceRefresh: true });
         if (state.activeMetric === "schedule") await workScheduleModule.refreshHome(true);
 
@@ -10192,6 +10879,8 @@
           loadAppState(),
           refreshAuthState()
         ]);
+        await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
+        renderPrimaryMetric();
 
         // Then refresh at a low-frequency 30-minute cadence.
         // iOS may suspend timers while a web app is fully backgrounded, so
