@@ -7,80 +7,107 @@
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
 <!-- ============================================================
-       APP VERSION UPDATE MODULE START
-       Checks GitHub Pages version.json on launch and whenever the PWA
-       returns to the foreground. A newer version triggers a cache-busted
-       reload without clearing localStorage / Supabase persistSession.
+       AUTO HTML FINGERPRINT UPDATE MODULE START
+       No manual version number and no version.json are required.
+       On launch / foreground restore, fetch the current GitHub Pages HTML
+       with cache disabled, hash the full file, and compare it with the last
+       remote fingerprint. If GitHub HTML changed, reload through a unique URL.
+       localStorage / Supabase persistSession are never cleared.
        ============================================================ -->
 <script>
   (() => {
-    const APP_VERSION = "2.4.3";
-    const VERSION_FILE = "./version.json";
+    const FINGERPRINT_KEY = "appRemoteHtmlFingerprintV1";
+    const UPDATE_PARAM = "__app_refresh";
+    const CACHE_BUST_PARAM = "__html_fingerprint_check";
     const CHECK_DEBOUNCE_MS = 1200;
-    const RELOAD_RETRY_WINDOW_MS = 60000;
-    const MAX_RELOAD_ATTEMPTS_PER_WINDOW = 3;
-    const UPDATE_PARAM = "__app_update";
-    const BUST_PARAM = "__app_refresh";
-    const SESSION_KEY = "appVersionReloadState";
+    const RELOAD_GUARD_KEY = "appFingerprintReloadGuardV1";
+    const RELOAD_GUARD_MS = 45000;
 
     let lastCheckAt = 0;
     let checkPromise = null;
 
-    function parseVersion(value) {
-      const parts = String(value || "").trim().replace(/^v/i, "").split(".");
-      if (!parts.length || parts.some(p => !/^\d+$/.test(p))) return null;
-      return parts.map(Number);
-    }
-
-    function compareVersions(a, b) {
-      const av = parseVersion(a);
-      const bv = parseVersion(b);
-      if (!av || !bv) return 0;
-      const length = Math.max(av.length, bv.length);
-      for (let i = 0; i < length; i += 1) {
-        const left = av[i] || 0;
-        const right = bv[i] || 0;
-        if (left !== right) return left > right ? 1 : -1;
-      }
-      return 0;
+    function pageUrl({ forCheck = false } = {}) {
+      const url = new URL(window.location.href);
+      url.hash = "";
+      url.searchParams.delete(UPDATE_PARAM);
+      url.searchParams.delete(CACHE_BUST_PARAM);
+      if (forCheck) url.searchParams.set(CACHE_BUST_PARAM, String(Date.now()));
+      return url;
     }
 
     function cleanUpdateParams() {
       try {
         const url = new URL(window.location.href);
-        if (!url.searchParams.has(UPDATE_PARAM) && !url.searchParams.has(BUST_PARAM)) return;
+        if (!url.searchParams.has(UPDATE_PARAM) && !url.searchParams.has(CACHE_BUST_PARAM)) return;
         url.searchParams.delete(UPDATE_PARAM);
-        url.searchParams.delete(BUST_PARAM);
+        url.searchParams.delete(CACHE_BUST_PARAM);
         history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
       } catch (_) {}
     }
 
-    function getReloadState(remoteVersion) {
-      let state = null;
-      try { state = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); } catch (_) {}
-      const now = Date.now();
-      if (!state || state.version !== remoteVersion || now - Number(state.windowStartedAt || 0) > RELOAD_RETRY_WINDOW_MS) {
-        state = { version: remoteVersion, attempts: 0, windowStartedAt: now, lastAttemptAt: 0 };
+    async function sha256Hex(text) {
+      try {
+        if (window.crypto?.subtle && window.TextEncoder) {
+          const bytes = new TextEncoder().encode(text);
+          const digest = await crypto.subtle.digest("SHA-256", bytes);
+          return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
+        }
+      } catch (_) {}
+
+      // Small deterministic fallback for browsers where SubtleCrypto is unavailable.
+      let h1 = 0x811c9dc5;
+      let h2 = 0x9e3779b9;
+      for (let i = 0; i < text.length; i += 1) {
+        const c = text.charCodeAt(i);
+        h1 ^= c;
+        h1 = Math.imul(h1, 0x01000193);
+        h2 ^= c + ((i & 255) << 8);
+        h2 = Math.imul(h2, 0x85ebca6b);
       }
-      return state;
+      return `fallback-${(h1 >>> 0).toString(16).padStart(8, "0")}${(h2 >>> 0).toString(16).padStart(8, "0")}-${text.length}`;
     }
 
-    function reloadForVersion(remoteVersion) {
-      const state = getReloadState(remoteVersion);
-      if (state.attempts >= MAX_RELOAD_ATTEMPTS_PER_WINDOW) return false;
+    function getReloadGuard() {
+      try { return JSON.parse(sessionStorage.getItem(RELOAD_GUARD_KEY) || "null"); }
+      catch (_) { return null; }
+    }
 
-      state.attempts += 1;
-      state.lastAttemptAt = Date.now();
-      try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(state)); } catch (_) {}
+    function setReloadGuard(fingerprint) {
+      try {
+        sessionStorage.setItem(RELOAD_GUARD_KEY, JSON.stringify({ fingerprint, at: Date.now() }));
+      } catch (_) {}
+    }
 
-      const url = new URL(window.location.href);
-      url.searchParams.set(UPDATE_PARAM, remoteVersion);
-      url.searchParams.set(BUST_PARAM, String(Date.now()));
+    function clearReloadGuard() {
+      try { sessionStorage.removeItem(RELOAD_GUARD_KEY); } catch (_) {}
+    }
+
+    function reloadLatest(fingerprint) {
+      const guard = getReloadGuard();
+      if (guard && guard.fingerprint === fingerprint && Date.now() - Number(guard.at || 0) < RELOAD_GUARD_MS) {
+        return false;
+      }
+      setReloadGuard(fingerprint);
+      const url = pageUrl();
+      url.searchParams.set(UPDATE_PARAM, fingerprint.slice(0, 16));
+      url.searchParams.set(CACHE_BUST_PARAM, String(Date.now()));
       window.location.replace(url.href);
       return true;
     }
 
-    async function checkAppVersion({ force = false } = {}) {
+    async function fetchRemoteFingerprint() {
+      const response = await fetch(pageUrl({ forCheck: true }).href, {
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: { "Cache-Control": "no-cache" }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const html = await response.text();
+      if (!html || !/<html[\s>]/i.test(html)) throw new Error("Latest HTML response is invalid");
+      return sha256Hex(html);
+    }
+
+    async function checkForHtmlUpdate({ force = false } = {}) {
       const now = Date.now();
       if (!force && now - lastCheckAt < CHECK_DEBOUNCE_MS) return;
       if (checkPromise) return checkPromise;
@@ -89,29 +116,37 @@
       lastCheckAt = now;
       checkPromise = (async () => {
         try {
-          const url = new URL(VERSION_FILE, window.location.href);
-          url.searchParams.set("_", String(Date.now()));
-          const response = await fetch(url.href, {
-            cache: "no-store",
-            credentials: "same-origin"
-          });
-          if (!response.ok) return;
+          const remoteFingerprint = await fetchRemoteFingerprint();
+          const storedFingerprint = localStorage.getItem(FINGERPRINT_KEY);
+          const arrivedFromRefresh = new URL(window.location.href).searchParams.has(UPDATE_PARAM);
 
-          const payload = await response.json();
-          const remoteVersion = String(payload?.version || "").trim();
-          if (!parseVersion(remoteVersion)) return;
-
-          const comparison = compareVersions(remoteVersion, APP_VERSION);
-          if (comparison > 0) {
-            reloadForVersion(remoteVersion);
+          // A cache-busted update navigation has just completed. Treat the HTML
+          // currently served by GitHub as the new baseline and remove temp params.
+          if (arrivedFromRefresh) {
+            localStorage.setItem(FINGERPRINT_KEY, remoteFingerprint);
+            clearReloadGuard();
+            cleanUpdateParams();
             return;
           }
 
-          // We are already on the newest (or a newer local development) build.
-          try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
+          // First run of this one-time mechanism: remember the current GitHub HTML.
+          // Every later GitHub HTML change will have a different fingerprint.
+          if (!storedFingerprint) {
+            localStorage.setItem(FINGERPRINT_KEY, remoteFingerprint);
+            clearReloadGuard();
+            cleanUpdateParams();
+            return;
+          }
+
+          if (storedFingerprint !== remoteFingerprint) {
+            reloadLatest(remoteFingerprint);
+            return;
+          }
+
+          clearReloadGuard();
           cleanUpdateParams();
         } catch (err) {
-          console.warn("appVersionCheck:", err);
+          console.warn("htmlFingerprintUpdateCheck:", err);
         } finally {
           checkPromise = null;
         }
@@ -119,27 +154,25 @@
       return checkPromise;
     }
 
-    // Fresh launch / ordinary page load.
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => checkAppVersion({ force: true }), { once: true });
+      document.addEventListener("DOMContentLoaded", () => checkForHtmlUpdate({ force: true }), { once: true });
     } else {
-      checkAppVersion({ force: true });
+      checkForHtmlUpdate({ force: true });
     }
 
-    // Safari/PWA may restore an existing page instead of navigating again.
-    window.addEventListener("pageshow", () => checkAppVersion({ force: true }));
+    // iOS/PWA frequently resumes an existing WebView instead of navigating again.
+    window.addEventListener("pageshow", () => checkForHtmlUpdate({ force: true }));
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") checkAppVersion({ force: true });
+      if (document.visibilityState === "visible") checkForHtmlUpdate({ force: true });
     });
-    window.addEventListener("focus", () => checkAppVersion());
+    window.addEventListener("focus", () => checkForHtmlUpdate());
 
-    // Expose only for diagnostics from the browser console.
-    window.__APP_VERSION__ = APP_VERSION;
-    window.__checkAppVersion__ = () => checkAppVersion({ force: true });
+    // Console diagnostics only; no release version number is involved.
+    window.__checkHtmlUpdate__ = () => checkForHtmlUpdate({ force: true });
   })();
 </script>
 <!-- ============================================================
-       APP VERSION UPDATE MODULE END
+       AUTO HTML FINGERPRINT UPDATE MODULE END
        ============================================================ -->
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
@@ -7419,7 +7452,94 @@
     #workScheduleLayer .work-schedule-work-panel {
       align-items: center !important;
     }
-  </style>
+  
+
+    /* ============================================================
+       v2.4.4 — Schedule statistics range chart
+       Reuses the schedule overview data; no database changes.
+       ============================================================ */
+    #workScheduleOverviewLayer .schedule-stat-section {
+      margin: 2px 0 18px;
+    }
+    #workScheduleOverviewLayer .schedule-stat-title,
+    #workScheduleOverviewLayer .schedule-record-title {
+      margin: 0 6px 10px;
+      color: rgba(46,79,101,.92);
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 730;
+      letter-spacing: -.024em;
+    }
+    #workScheduleOverviewLayer .schedule-stat-card {
+      position: relative;
+      overflow: visible;
+      padding: 14px 13px 12px;
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(255,255,255,.56), transparent 38%),
+        linear-gradient(145deg, rgba(255,255,255,.46), rgba(223,241,252,.22));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.72), 0 12px 30px rgba(62,116,151,.055);
+    }
+    #workScheduleOverviewLayer .schedule-stat-segments {
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      margin-bottom: 8px;
+    }
+    #workScheduleOverviewLayer .schedule-stat-month-control {
+      position: relative;
+      min-width: 0;
+      height: 100%;
+    }
+    #workScheduleOverviewLayer .schedule-stat-month-control > .segment {
+      width: 100%;
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      white-space: nowrap;
+    }
+    #workScheduleOverviewLayer .schedule-stat-month-control.menu-open .trend-month-chevron {
+      transform: rotate(180deg);
+      opacity: .88;
+    }
+    #workScheduleOverviewLayer .schedule-stat-month-menu {
+      right: 0;
+      left: auto;
+    }
+    #workScheduleOverviewLayer .schedule-stat-chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 318px;
+      margin-top: 0;
+    }
+    #workScheduleOverviewLayer #scheduleStatCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    #workScheduleOverviewLayer .schedule-stat-empty {
+      position: absolute;
+      inset: 44px 0 36px 34px;
+      display: grid;
+      place-items: center;
+      color: rgba(69,105,127,.42);
+      font-size: 12px;
+      font-weight: 620;
+      pointer-events: none;
+    }
+    #workScheduleOverviewLayer .schedule-stat-empty[hidden] { display:none !important; }
+    #workScheduleOverviewLayer .schedule-record-block {
+      margin-top: 4px;
+    }
+    #workScheduleOverviewLayer .schedule-overview-subtitle {
+      margin: -2px 4px 10px;
+    }
+    @media (max-width:370px) {
+      #workScheduleOverviewLayer .schedule-stat-card { padding-left:9px; padding-right:9px; }
+      #workScheduleOverviewLayer .schedule-stat-chart-wrap { height:300px; }
+    }
+</style>
 </head>
 <body>
 <div aria-hidden="true" class="background">
@@ -7862,9 +7982,36 @@
 <div class="sheet-title" id="workScheduleOverviewTitle">排班总览</div>
 </header>
 <div class="unified-sheet-body">
-<div class="sheet-subtitle" style="text-align:center">仅显示已登记日期，并按距离今天由近到远排列。</div>
+<section class="schedule-stat-section" aria-labelledby="scheduleStatTitle">
+<h2 class="schedule-stat-title" id="scheduleStatTitle">排班统计</h2>
+<div class="schedule-stat-card">
+<div aria-label="排班统计范围" class="segmented schedule-stat-segments" id="scheduleStatSegments">
+<button class="segment pressable active" data-schedule-stat-range="week" type="button">本周</button>
+<div class="trend-month-control schedule-stat-month-control">
+<button aria-expanded="false" aria-haspopup="menu" class="segment pressable" id="scheduleStatMonthBtn" type="button">
+<span id="scheduleStatMonthLabel">本月</span>
+<span aria-hidden="true" class="trend-month-chevron">⌄</span>
+</button>
+<div aria-label="选择本月周次" class="trend-month-menu schedule-stat-month-menu" hidden id="scheduleStatMonthMenu" role="menu">
+<button class="trend-month-option pressable" data-schedule-stat-month-week="1" role="menuitem" type="button"><span>本月第一周</span><small>1–7 日</small></button>
+<button class="trend-month-option pressable" data-schedule-stat-month-week="2" role="menuitem" type="button"><span>本月第二周</span><small>8–14 日</small></button>
+<button class="trend-month-option pressable" data-schedule-stat-month-week="3" role="menuitem" type="button"><span>本月第三周</span><small>15–21 日</small></button>
+<button class="trend-month-option pressable" data-schedule-stat-month-week="4" role="menuitem" type="button"><span>本月第四周</span><small>22 日–月底</small></button>
+</div>
+</div>
+</div>
+<div class="schedule-stat-chart-wrap">
+<canvas id="scheduleStatCanvas" aria-label="排班时间统计图"></canvas>
+<div class="schedule-stat-empty" hidden id="scheduleStatEmpty">该范围暂无排班记录</div>
+</div>
+</div>
+</section>
+<div class="schedule-record-block">
+<h2 class="schedule-record-title">排班记录</h2>
+<div class="sheet-subtitle schedule-overview-subtitle" style="text-align:center">仅显示已登记日期，并按距离今天由近到远排列。</div>
 <ul class="work-schedule-list" id="workScheduleList"></ul>
 <div class="work-schedule-empty" hidden="" id="workScheduleEmpty">还没有登记任何排班</div>
+</div>
 <div class="sheet-actions">
 <button class="sheet-button pressable" id="backToWorkScheduleBtn" type="button">返回登记</button>
 <button class="sheet-button primary pressable" id="closeWorkScheduleOverviewBtn" type="button">完成</button>
@@ -7928,8 +8075,8 @@
 <div class="unified-sheet-body">
 <div class="settings-group">
 <div class="settings-row static">
-<span>当前版本</span>
-<span class="settings-value">2.4.3</span>
+<span>更新机制</span>
+<span class="settings-value">GitHub 自动检测</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -7958,11 +8105,11 @@
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>2.4.3</strong><span>当前版本</span></div>
+<div class="release-head"><strong>自动更新</strong><span>当前机制</span></div>
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
-<li>新增 GitHub Pages 版本检查：首次打开、从后台回到前台与页面恢复时检查 version.json，发现新版本自动刷新到最新版。</li>
-<li>工作 / 休息使用相同高度的内容区域，切换时弹窗外壳不再上下跳动。</li>
+<li>自动更新改为直接读取 GitHub Pages 最新 HTML 并计算文件指纹；HTML 内容变化后自动刷新，不再需要 APP_VERSION 或 version.json。</li>
+<li>首次打开、从后台回到前台与页面恢复时都会检查；工作 / 休息仍保持相同高度，切换不跳动。</li>
 </ul>
 </div>
 <div class="release-block previous">
@@ -11310,6 +11457,12 @@
           empty: $("#workScheduleEmpty"),
           backBtn: $("#backToWorkScheduleBtn"),
           closeOverviewBtn: $("#closeWorkScheduleOverviewBtn"),
+          statSegments: $("#scheduleStatSegments"),
+          statMonthBtn: $("#scheduleStatMonthBtn"),
+          statMonthLabel: $("#scheduleStatMonthLabel"),
+          statMonthMenu: $("#scheduleStatMonthMenu"),
+          statCanvas: $("#scheduleStatCanvas"),
+          statEmpty: $("#scheduleStatEmpty"),
           deleteLayer: $("#workScheduleDeleteLayer"),
           deleteMessage: $("#workScheduleDeleteMessage"),
           cancelDeleteBtn: $("#cancelWorkScheduleDeleteBtn"),
@@ -11327,6 +11480,8 @@
         let homeShineState = { raf: 0, startedAt: 0 };
         let homeSwipeSuppressUntil = 0;
         let homeShiftTimer = 0;
+        let scheduleStatRange = "week";
+        let scheduleStatMonthWeek = Math.min(4, Math.floor((new Date().getDate() - 1) / 7) + 1);
 
         function ensureHomeDateKey() {
           if (!homeDateKey) homeDateKey = localDateKey();
@@ -12187,6 +12342,186 @@
           setLayer(scheduleEls.adminLayer, false);
         }
 
+
+        function scheduleStatWeekName(week) {
+          return Number(week) === 1 ? "第一周"
+            : Number(week) === 2 ? "第二周"
+              : Number(week) === 3 ? "第三周"
+                : "第四周";
+        }
+
+        function setScheduleStatMonthMenu(open) {
+          if (!scheduleEls.statMonthMenu || !scheduleEls.statMonthBtn) return;
+          const shouldOpen = Boolean(open);
+          scheduleEls.statMonthMenu.hidden = !shouldOpen;
+          scheduleEls.statMonthBtn.setAttribute("aria-expanded", String(shouldOpen));
+          scheduleEls.statMonthBtn.closest(".schedule-stat-month-control")?.classList.toggle("menu-open", shouldOpen);
+        }
+
+        function syncScheduleStatControls() {
+          const monthActive = scheduleStatRange === "month";
+          scheduleEls.statSegments?.querySelectorAll("[data-schedule-stat-range]").forEach(btn => {
+            btn.classList.toggle("active", btn.dataset.scheduleStatRange === scheduleStatRange);
+          });
+          scheduleEls.statMonthBtn?.classList.toggle("active", monthActive);
+          if (scheduleEls.statMonthLabel) {
+            scheduleEls.statMonthLabel.textContent = monthActive ? scheduleStatWeekName(scheduleStatMonthWeek) : "本月";
+          }
+          scheduleEls.statMonthMenu?.querySelectorAll("[data-schedule-stat-month-week]").forEach(btn => {
+            btn.classList.toggle("active", Number(btn.dataset.scheduleStatMonthWeek) === Number(scheduleStatMonthWeek));
+          });
+        }
+
+        function scheduleStatDateWindow() {
+          const now = new Date();
+          if (scheduleStatRange === "week") {
+            const day = now.getDay();
+            const mondayOffset = day === 0 ? -6 : 1 - day;
+            const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + mondayOffset);
+            const dates = Array.from({ length: 7 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
+            return { dates, label: "本周" };
+          }
+
+          const year = now.getFullYear();
+          const month = now.getMonth();
+          const lastDay = new Date(year, month + 1, 0).getDate();
+          const week = Math.max(1, Math.min(4, Number(scheduleStatMonthWeek) || 1));
+          const startDay = week === 1 ? 1 : week === 2 ? 8 : week === 3 ? 15 : 22;
+          const endDay = week === 1 ? 7 : week === 2 ? 14 : week === 3 ? 21 : lastDay;
+          const dates = Array.from({ length: Math.max(0, endDay - startDay + 1) }, (_, i) => new Date(year, month, startDay + i));
+          return { dates, label: `本月${scheduleStatWeekName(week)}` };
+        }
+
+        function drawScheduleStats(rows = null) {
+          const canvas = scheduleEls.statCanvas;
+          if (!canvas) return;
+          const rect = canvas.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+
+          const normalized = Array.isArray(rows) ? rows : Array.from(rowsByDate.values());
+          const rowMap = new Map(normalized.map(row => [String(row.work_date), row]));
+          const windowData = scheduleStatDateWindow();
+          const points = windowData.dates.map(date => ({
+            date,
+            key: localDateKey(date),
+            row: rowMap.get(localDateKey(date)) || null
+          }));
+          const hasAny = points.some(item => !!item.row);
+          if (scheduleEls.statEmpty) scheduleEls.statEmpty.hidden = hasAny;
+
+          const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+          canvas.width = Math.round(rect.width * dpr);
+          canvas.height = Math.round(rect.height * dpr);
+          const ctx = canvas.getContext("2d");
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, rect.width, rect.height);
+
+          const styles = getComputedStyle(document.documentElement);
+          const tertiary = styles.getPropertyValue("--tertiary").trim() || "rgba(60,60,67,.38)";
+          const hairline = styles.getPropertyValue("--hairline").trim() || "rgba(50,57,70,.12)";
+          const pad = { l: 38, r: 10, t: 28, b: 48 };
+          const plotW = Math.max(1, rect.width - pad.l - pad.r);
+          const plotH = Math.max(1, rect.height - pad.t - pad.b);
+          const minHour = 8, maxHour = 22;
+          const yFor = hour => pad.t + ((Number(hour) - minHour) / (maxHour - minHour)) * plotH;
+          const xFor = index => points.length <= 1 ? pad.l + plotW / 2 : pad.l + plotW * ((index + .5) / points.length);
+
+          // Time grid: early at top, late at bottom.
+          ctx.lineWidth = 1;
+          ctx.font = '10.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          for (let hour = minHour; hour <= maxHour; hour += 2) {
+            const y = yFor(hour);
+            ctx.strokeStyle = hairline;
+            ctx.beginPath();
+            ctx.moveTo(pad.l, Math.round(y) + .5);
+            ctx.lineTo(rect.width - pad.r, Math.round(y) + .5);
+            ctx.stroke();
+            ctx.fillStyle = tertiary;
+            ctx.fillText(String(hour).padStart(2, "0"), pad.l - 7, y);
+          }
+
+          const weekday = ["日", "一", "二", "三", "四", "五", "六"];
+          const labelFont = points.length > 8 ? 9 : 10;
+          const dateFont = points.length > 8 ? 8.5 : 9;
+
+          points.forEach((item, index) => {
+            const x = xFor(index);
+            const row = item.row;
+
+            if (row && isRestRow(row)) {
+              const cy = yFor(15);
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.font = '15px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+              ctx.fillStyle = "rgba(122,106,158,.68)";
+              ctx.fillText("☾", x, cy - 6);
+              ctx.font = '650 9.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+              ctx.fillStyle = "rgba(96,91,126,.56)";
+              ctx.fillText("休", x, cy + 9);
+            } else if (row) {
+              const start = Math.max(minHour, Math.min(maxHour, Number(row.start_hour)));
+              const end = Math.max(minHour, Math.min(maxHour, Number(row.end_hour)));
+              if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
+                const y1 = yFor(start), y2 = yFor(end);
+                const gradient = ctx.createLinearGradient(0, y1, 0, y2);
+                gradient.addColorStop(0, "#f6aa1d");
+                gradient.addColorStop(.32, "#dc8e9f");
+                gradient.addColorStop(.62, "#bf78cc");
+                gradient.addColorStop(.84, "#d98bb4");
+                gradient.addColorStop(1, "#f4a41c");
+
+                // Soft halo + crisp premium gradient core.
+                ctx.save();
+                ctx.lineCap = "round";
+                ctx.strokeStyle = "rgba(202,132,185,.16)";
+                ctx.lineWidth = 8;
+                ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke();
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 3.4;
+                ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke();
+                ctx.restore();
+
+                const dot = (y, fill) => {
+                  ctx.beginPath(); ctx.arc(x, y, 6.0, 0, Math.PI * 2);
+                  ctx.fillStyle = "rgba(255,255,255,.76)"; ctx.fill();
+                  ctx.beginPath(); ctx.arc(x, y, 4.0, 0, Math.PI * 2);
+                  ctx.fillStyle = fill; ctx.fill();
+                  ctx.beginPath(); ctx.arc(x - 1.2, y - 1.3, 1.25, 0, Math.PI * 2);
+                  ctx.fillStyle = "rgba(255,255,255,.74)"; ctx.fill();
+                };
+                dot(y1, "#ef9f32");
+                dot(y2, "#d59678");
+
+                // Symmetric labels: start above the upper dot, end below the lower dot.
+                ctx.textAlign = "center";
+                ctx.fillStyle = "rgba(61,80,94,.82)";
+                ctx.font = '700 10.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
+                ctx.textBaseline = "bottom";
+                ctx.fillText(String(Math.round(start)).padStart(2, "0"), x, y1 - 8);
+                ctx.textBaseline = "top";
+                ctx.fillText(String(Math.round(end)).padStart(2, "0"), x, y2 + 8);
+              }
+            }
+
+            // X axis: weekday + calendar date keeps week/month-week readable.
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            ctx.fillStyle = "rgba(62,91,110,.62)";
+            ctx.font = `650 ${labelFont}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
+            ctx.fillText(weekday[item.date.getDay()], x, rect.height - 31);
+            ctx.fillStyle = "rgba(66,97,117,.34)";
+            ctx.font = `600 ${dateFont}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
+            ctx.fillText(String(item.date.getDate()), x, rect.height - 17);
+          });
+        }
+
+        function renderScheduleStats(rows = null) {
+          syncScheduleStatControls();
+          requestAnimationFrame(() => drawScheduleStats(rows));
+        }
+
         function renderOverview(rows) {
           const normalized = cacheScheduleRows(rows);
           const sorted = sortNearToFar(normalized);
@@ -12203,6 +12538,7 @@
               </div>
             </li>
           `).join("");
+          renderScheduleStats(normalized);
         }
 
         async function loadOverview() {
@@ -12284,6 +12620,36 @@
         ensureClockTicks();
         startHomeShine();
         bindHomeSwipe();
+
+        scheduleEls.statSegments?.addEventListener("click", (e) => {
+          const rangeBtn = e.target.closest("[data-schedule-stat-range]");
+          if (rangeBtn) {
+            scheduleStatRange = "week";
+            setScheduleStatMonthMenu(false);
+            renderScheduleStats();
+            vibrate(5);
+            return;
+          }
+          if (e.target.closest("#scheduleStatMonthBtn")) {
+            setScheduleStatMonthMenu(scheduleEls.statMonthMenu?.hidden !== false);
+          }
+        });
+        scheduleEls.statMonthMenu?.addEventListener("click", (e) => {
+          const option = e.target.closest("[data-schedule-stat-month-week]");
+          if (!option) return;
+          scheduleStatRange = "month";
+          scheduleStatMonthWeek = Math.max(1, Math.min(4, Number(option.dataset.scheduleStatMonthWeek) || 1));
+          setScheduleStatMonthMenu(false);
+          renderScheduleStats();
+          vibrate(5);
+        });
+        document.addEventListener("click", (e) => {
+          if (!scheduleEls.statMonthMenu || scheduleEls.statMonthMenu.hidden) return;
+          if (!e.target.closest(".schedule-stat-month-control")) setScheduleStatMonthMenu(false);
+        });
+        window.addEventListener("resize", () => {
+          if (scheduleEls.overviewLayer?.classList.contains("open")) renderScheduleStats();
+        });
 
         scheduleEls.openBtn?.addEventListener("click", openRegistration);
         scheduleEls.homeEditBtn?.addEventListener("click", openHomeRegistration);
