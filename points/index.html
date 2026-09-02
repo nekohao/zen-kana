@@ -6448,28 +6448,37 @@
       box-shadow:inset 0 1px 0 rgba(255,255,255,.68),0 10px 28px rgba(55,113,146,.035);
     }
     .work-schedule-time-row {
-      width:100%; min-height:66px; padding:0 15px; border:0; background:transparent;
-      display:flex; align-items:center; justify-content:space-between; text-align:left;
+      position:relative; width:100%; min-height:66px; padding:0 15px; border:0; background:transparent;
+      display:flex; align-items:center; justify-content:space-between; text-align:left; cursor:pointer; overflow:hidden;
     }
-    .work-schedule-time-copy { display:flex; flex-direction:column; gap:4px; }
+    .work-schedule-time-copy { display:flex; flex-direction:column; gap:4px; pointer-events:none; }
     .work-schedule-time-copy small { color:rgba(64,99,121,.46); font-size:9.5px; font-weight:620; }
     .work-schedule-time-copy strong {
       color:rgba(43,92,123,.95); font-size:22px; line-height:1; font-weight:690;
       letter-spacing:-.035em; font-variant-numeric:tabular-nums;
     }
-    .work-schedule-time-row-icon { color:rgba(60,98,123,.30); font-size:22px; }
-    .work-schedule-time-divider { height:1px; margin:0 14px; background:rgba(75,113,136,.08); }
-    .work-schedule-hidden-select {
-      position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important;
-      pointer-events:none !important; clip-path:inset(50%) !important;
+    .work-schedule-time-row-icon { color:rgba(60,98,123,.30); font-size:22px; pointer-events:none; }
+    .work-schedule-native-select {
+      position:absolute; inset:0; z-index:3; width:100%; height:100%; margin:0; border:0;
+      opacity:.001; cursor:pointer; appearance:auto; -webkit-appearance:menulist;
+      font-size:16px; color:transparent; background:transparent;
     }
-    .work-schedule-duration-card {
-      min-height:42px; padding:0 14px; border-radius:14px;
-      display:flex; align-items:center; justify-content:space-between;
-      border:1px solid rgba(255,255,255,.62); background:rgba(255,255,255,.17);
+    .work-schedule-duration-bridge {
+      height:42px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+      color:rgba(55,100,128,.52); pointer-events:none;
     }
-    .work-schedule-duration-card span { color:rgba(70,103,124,.42); font-size:9.5px; font-weight:620; }
-    .work-schedule-duration-card strong { color:rgba(48,93,121,.78); font-size:12px; font-weight:710; }
+    .work-schedule-duration-line {
+      width:1px; height:8px; border-radius:999px;
+      background:linear-gradient(180deg,rgba(70,115,142,.08),rgba(70,115,142,.30));
+      box-shadow:0 0 0 .25px rgba(255,255,255,.82);
+    }
+    .work-schedule-duration-line:last-child {
+      background:linear-gradient(180deg,rgba(70,115,142,.30),rgba(70,115,142,.08));
+    }
+    .work-schedule-duration-bridge strong {
+      min-width:34px; text-align:center; color:rgba(48,93,121,.69); font-size:10.5px; line-height:1;
+      font-weight:720; letter-spacing:.025em; font-variant-numeric:tabular-nums;
+    }
 
     .work-schedule-rest-panel {
       min-height:190px; padding:22px 18px; border-radius:22px;
@@ -6499,47 +6508,7 @@
     .schedule-editor-actions { display:grid; gap:8px; margin-top:1px; }
     .schedule-editor-cancel { opacity:.72; }
 
-    /* --- Time wheel --- */
-    #workScheduleTimePickerLayer .schedule-time-picker-alert {
-      width:min(90vw,350px); border-radius:27px;
-    }
-    .schedule-hour-wheel-shell {
-      position:relative; width:100%; height:188px; margin-top:12px; overflow:hidden;
-      border-radius:20px; border:1px solid rgba(255,255,255,.74);
-      background:rgba(255,255,255,.20);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.66);
-    }
-    .schedule-hour-wheel {
-      position:absolute; inset:0; overflow-y:auto; padding:67px 0;
-      scroll-snap-type:y mandatory; scrollbar-width:none;
-      overscroll-behavior:contain;
-    }
-    .schedule-hour-wheel::-webkit-scrollbar { display:none; }
-    .schedule-hour-option {
-      width:100%; height:54px; border:0; background:transparent;
-      scroll-snap-align:center; color:rgba(68,91,107,.30);
-      font-size:20px; font-weight:620; font-variant-numeric:tabular-nums;
-      transition:font-size .16s ease,color .16s ease,transform .16s ease;
-    }
-    .schedule-hour-option.selected {
-      color:rgba(42,87,116,.94); font-size:25px; font-weight:720; transform:scale(1.02);
-    }
-    .schedule-hour-wheel-focus {
-      position:absolute; left:12px; right:12px; top:67px; height:54px; z-index:0;
-      border-radius:15px; border:1px solid rgba(255,255,255,.68);
-      background:rgba(255,255,255,.35);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
-      pointer-events:none;
-    }
-    .schedule-hour-wheel-fade {
-      position:absolute; left:0; right:0; height:58px; z-index:3; pointer-events:none;
-    }
-    .schedule-hour-wheel-fade.top {
-      top:0; background:linear-gradient(180deg,rgba(250,252,253,.82),rgba(250,252,253,0));
-    }
-    .schedule-hour-wheel-fade.bottom {
-      bottom:0; background:linear-gradient(0deg,rgba(250,252,253,.82),rgba(250,252,253,0));
-    }
+    /* Native system <select> supplies the platform picker; no custom hour wheel is used. */
 
     @media(max-width:370px) {
       .wheel-probability-studio { padding:11px; }
@@ -6722,7 +6691,7 @@
 
 
     /* ============================================================
-       v2.4.0 — One modal system
+       v2.4.1 — Native schedule time picker + probability save fix
        Preview-style centered alerts are the ONLY short-action modal.
        Long/browse surfaces remain sheets: Settings / schedule overview /
        future schedule / version / release notes.
@@ -6997,8 +6966,7 @@
 
     /* v2.4 final modal hard-lock: later + ID-specific so legacy CSS cannot re-skin short alerts. */
     #workScheduleLayer.modal-layer.alert-layer .alert,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .alert,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .alert,
     #workScheduleRestLayer.modal-layer.alert-layer .alert,
     #wheelProbabilityLayer.modal-layer.alert-layer .alert,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert,
@@ -7024,13 +6992,12 @@
       opacity: 0 !important;
       transition: transform .28s var(--ease-ios), opacity .20s ease !important;
     }
-    #workScheduleLayer.modal-layer.alert-layer.open .alert, #workScheduleTimePickerLayer.modal-layer.alert-layer.open .alert, #workScheduleDeleteLayer.modal-layer.alert-layer.open .alert, #workScheduleRestLayer.modal-layer.alert-layer.open .alert, #wheelProbabilityLayer.modal-layer.alert-layer.open .alert, #wheelProbabilityHistoryLayer.modal-layer.alert-layer.open .alert, #loginLayer.modal-layer.alert-layer.open .alert, #changeLayer.modal-layer.alert-layer.open .alert, #redeemLayer.modal-layer.alert-layer.open .alert, #wheelPreviewLayer.modal-layer.alert-layer.open .alert, #wheelAdjustLayer.modal-layer.alert-layer.open .alert, #scheduleRewardLayer.modal-layer.alert-layer.open .alert, #wheelResultLayer.modal-layer.alert-layer.open .alert, #wheelWithdrawLayer.modal-layer.alert-layer.open .alert, #settleWithdrawalLayer.modal-layer.alert-layer.open .alert, #resetLayer.modal-layer.alert-layer.open .alert {
+    #workScheduleLayer.modal-layer.alert-layer.open .alert, #workScheduleDeleteLayer.modal-layer.alert-layer.open .alert, #workScheduleRestLayer.modal-layer.alert-layer.open .alert, #wheelProbabilityLayer.modal-layer.alert-layer.open .alert, #wheelProbabilityHistoryLayer.modal-layer.alert-layer.open .alert, #loginLayer.modal-layer.alert-layer.open .alert, #changeLayer.modal-layer.alert-layer.open .alert, #redeemLayer.modal-layer.alert-layer.open .alert, #wheelPreviewLayer.modal-layer.alert-layer.open .alert, #wheelAdjustLayer.modal-layer.alert-layer.open .alert, #scheduleRewardLayer.modal-layer.alert-layer.open .alert, #wheelResultLayer.modal-layer.alert-layer.open .alert, #wheelWithdrawLayer.modal-layer.alert-layer.open .alert, #settleWithdrawalLayer.modal-layer.alert-layer.open .alert, #resetLayer.modal-layer.alert-layer.open .alert {
       transform: scale(1) !important;
       opacity: 1 !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .alert-content,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-content,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-content,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .alert-content,
     #workScheduleRestLayer.modal-layer.alert-layer .alert-content,
     #wheelProbabilityLayer.modal-layer.alert-layer .alert-content,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-content,
@@ -7047,8 +7014,7 @@
       text-align: center !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .change-icon,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .change-icon,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .change-icon,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .change-icon,
     #workScheduleRestLayer.modal-layer.alert-layer .change-icon,
     #wheelProbabilityLayer.modal-layer.alert-layer .change-icon,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .change-icon,
@@ -7069,8 +7035,7 @@
       box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 7px 18px rgba(40,45,60,.06) !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .alert-title,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-title,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-title,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .alert-title,
     #workScheduleRestLayer.modal-layer.alert-layer .alert-title,
     #wheelProbabilityLayer.modal-layer.alert-layer .alert-title,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-title,
@@ -7087,8 +7052,7 @@
       color:var(--ink) !important; font-size:17px !important; font-weight:730 !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .alert-message,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-message,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-message,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .alert-message,
     #workScheduleRestLayer.modal-layer.alert-layer .alert-message,
     #wheelProbabilityLayer.modal-layer.alert-layer .alert-message,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-message,
@@ -7105,8 +7069,7 @@
       color:var(--secondary) !important; font-size:13px !important; line-height:1.45 !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .alert-actions,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-actions,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-actions,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .alert-actions,
     #workScheduleRestLayer.modal-layer.alert-layer .alert-actions,
     #wheelProbabilityLayer.modal-layer.alert-layer .alert-actions,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-actions,
@@ -7125,8 +7088,7 @@
       background:rgba(255,255,255,.06) !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .alert-button,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button,
     #workScheduleRestLayer.modal-layer.alert-layer .alert-button,
     #wheelProbabilityLayer.modal-layer.alert-layer .alert-button,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button,
@@ -7144,10 +7106,10 @@
       border:0 !important; border-radius:0 !important; box-shadow:none !important;
       background:transparent !important; color:var(--secondary) !important; font-size:16px !important;
     }
-    #workScheduleLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleRestLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelProbabilityLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button + .alert-button, #loginLayer.modal-layer.alert-layer .alert-button + .alert-button, #changeLayer.modal-layer.alert-layer .alert-button + .alert-button, #redeemLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelPreviewLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelAdjustLayer.modal-layer.alert-layer .alert-button + .alert-button, #scheduleRewardLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelResultLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelWithdrawLayer.modal-layer.alert-layer .alert-button + .alert-button, #settleWithdrawalLayer.modal-layer.alert-layer .alert-button + .alert-button, #resetLayer.modal-layer.alert-layer .alert-button + .alert-button {
+    #workScheduleLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button + .alert-button, #workScheduleRestLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelProbabilityLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button + .alert-button, #loginLayer.modal-layer.alert-layer .alert-button + .alert-button, #changeLayer.modal-layer.alert-layer .alert-button + .alert-button, #redeemLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelPreviewLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelAdjustLayer.modal-layer.alert-layer .alert-button + .alert-button, #scheduleRewardLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelResultLayer.modal-layer.alert-layer .alert-button + .alert-button, #wheelWithdrawLayer.modal-layer.alert-layer .alert-button + .alert-button, #settleWithdrawalLayer.modal-layer.alert-layer .alert-button + .alert-button, #resetLayer.modal-layer.alert-layer .alert-button + .alert-button {
       border-left:0 !important; border-top:1px solid var(--hairline) !important;
     }
-    #workScheduleLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleRestLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelProbabilityLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button.primary-action, #loginLayer.modal-layer.alert-layer .alert-button.primary-action, #changeLayer.modal-layer.alert-layer .alert-button.primary-action, #redeemLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelPreviewLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelAdjustLayer.modal-layer.alert-layer .alert-button.primary-action, #scheduleRewardLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelResultLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelWithdrawLayer.modal-layer.alert-layer .alert-button.primary-action, #settleWithdrawalLayer.modal-layer.alert-layer .alert-button.primary-action, #resetLayer.modal-layer.alert-layer .alert-button.primary-action {
+    #workScheduleLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleDeleteLayer.modal-layer.alert-layer .alert-button.primary-action, #workScheduleRestLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelProbabilityLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert-button.primary-action, #loginLayer.modal-layer.alert-layer .alert-button.primary-action, #changeLayer.modal-layer.alert-layer .alert-button.primary-action, #redeemLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelPreviewLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelAdjustLayer.modal-layer.alert-layer .alert-button.primary-action, #scheduleRewardLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelResultLayer.modal-layer.alert-layer .alert-button.primary-action, #wheelWithdrawLayer.modal-layer.alert-layer .alert-button.primary-action, #settleWithdrawalLayer.modal-layer.alert-layer .alert-button.primary-action, #resetLayer.modal-layer.alert-layer .alert-button.primary-action {
       color:var(--blue) !important; background:rgba(255,255,255,.12) !important; font-weight:720 !important;
     }
 
@@ -7171,15 +7133,13 @@
       background:linear-gradient(135deg,rgba(255,251,240,.94),rgba(247,210,143,.62)) !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .alert,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert,
-    #workScheduleDeleteLayer.modal-layer.alert-layer .alert,
+        #workScheduleDeleteLayer.modal-layer.alert-layer .alert,
     #workScheduleRestLayer.modal-layer.alert-layer .alert {
       background:linear-gradient(145deg,rgba(255,255,255,.36),rgba(218,239,252,.16) 50%),var(--glass-fill-strong) !important;
       box-shadow:0 24px 72px rgba(66,119,151,.13),inset 0 1px 0 rgba(255,255,255,.56) !important;
     }
     #workScheduleLayer.modal-layer.alert-layer .alert-button.primary-action,
-    #workScheduleTimePickerLayer.modal-layer.alert-layer .alert-button.primary-action,
-    #workScheduleRestLayer.modal-layer.alert-layer .alert-button.primary-action {
+        #workScheduleRestLayer.modal-layer.alert-layer .alert-button.primary-action {
       color:#3f7799 !important;
       background:linear-gradient(135deg,rgba(248,253,255,.94),rgba(211,235,249,.64)) !important;
     }
@@ -7599,19 +7559,22 @@
 
 <div class="work-schedule-work-panel" id="workScheduleWorkPanel">
 <div class="work-schedule-time-card">
-<button class="work-schedule-time-row pressable" id="workScheduleStartPickerBtn" type="button">
-<span class="work-schedule-time-copy"><small>上班时间</small><strong id="workScheduleStartDisplay">09:00</strong></span>
+<label class="work-schedule-time-row pressable" id="workScheduleStartPickerBtn">
+<span class="work-schedule-time-copy"><small>上班开始</small><strong id="workScheduleStartDisplay">09:00</strong></span>
 <span aria-hidden="true" class="work-schedule-time-row-icon">›</span>
-</button>
-<div class="work-schedule-time-divider"></div>
-<button class="work-schedule-time-row pressable" id="workScheduleEndPickerBtn" type="button">
-<span class="work-schedule-time-copy"><small>下班时间</small><strong id="workScheduleEndDisplay">18:00</strong></span>
-<span aria-hidden="true" class="work-schedule-time-row-icon">›</span>
-</button>
+<select aria-label="选择上班开始时间" class="work-schedule-native-select" id="workScheduleStartHour"></select>
+</label>
+<div aria-label="排班时长 9 小时" class="work-schedule-duration-bridge" id="workScheduleDurationBridge">
+<span aria-hidden="true" class="work-schedule-duration-line"></span>
+<strong id="workScheduleEditorDuration">9 h</strong>
+<span aria-hidden="true" class="work-schedule-duration-line"></span>
 </div>
-<select aria-hidden="true" aria-label="上班时间" class="work-schedule-hidden-select" id="workScheduleStartHour" tabindex="-1"></select>
-<select aria-hidden="true" aria-label="下班时间" class="work-schedule-hidden-select" id="workScheduleEndHour" tabindex="-1"></select>
-<div class="work-schedule-duration-card"><span>排班时长</span><strong id="workScheduleEditorDuration">9 小时</strong></div>
+<label class="work-schedule-time-row pressable" id="workScheduleEndPickerBtn">
+<span class="work-schedule-time-copy"><small>下班结束</small><strong id="workScheduleEndDisplay">18:00</strong></span>
+<span aria-hidden="true" class="work-schedule-time-row-icon">›</span>
+<select aria-label="选择下班结束时间" class="work-schedule-native-select" id="workScheduleEndHour"></select>
+</label>
+</div>
 </div>
 
 <div class="work-schedule-rest-panel" hidden="" id="workScheduleRestPanel">
@@ -7632,26 +7595,7 @@
 </div>
 </div>
 
-<!-- Shared hour wheel for start/end time -->
-<div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleTimePickerLayer">
-<div aria-labelledby="workScheduleTimePickerTitle" aria-modal="true" class="alert schedule-time-picker-alert" role="dialog">
-<div class="alert-content">
-<div aria-hidden="true" class="change-icon" id="workScheduleTimePickerIcon">🕘</div>
-<div class="alert-title" id="workScheduleTimePickerTitle">选择上班时间</div>
-<div class="alert-message" id="workScheduleTimePickerMessage">上下滑动，整点自动吸附</div>
-<div class="schedule-hour-wheel-shell">
-<div class="schedule-hour-wheel-fade top"></div>
-<div class="schedule-hour-wheel-fade bottom"></div>
-<div aria-hidden="true" class="schedule-hour-wheel-focus"></div>
-<div aria-label="选择整点时间" class="schedule-hour-wheel" id="workScheduleHourWheel"></div>
-</div>
-</div>
-<div class="alert-actions vertical">
-<button class="alert-button primary-action pressable" id="confirmWorkScheduleTimePickerBtn" type="button">确认时间</button>
-<button class="alert-button pressable" id="cancelWorkScheduleTimePickerBtn" type="button">取消</button>
-</div>
-</div>
-</div>
+<!-- Native system hour selects are embedded directly in the two schedule time rows. -->
 <div aria-hidden="true" class="modal-layer" id="workScheduleOverviewLayer">
 <div aria-labelledby="workScheduleOverviewTitle" aria-modal="true" class="unified-sheet work-schedule-sheet" role="dialog">
 <header class="unified-sheet-header">
@@ -7728,7 +7672,7 @@
 <div class="settings-group">
 <div class="settings-row static">
 <span>当前版本</span>
-<span class="settings-value">2.4.0</span>
+<span class="settings-value">2.4.1</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -7757,7 +7701,16 @@
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>2.4.0</strong><span>当前版本</span></div>
+<div class="release-head"><strong>2.4.1</strong><span>当前版本</span></div>
+<div class="release-date">2026.09.02</div>
+<ul class="release-list">
+<li>修改排班的开始/结束时间改为系统原生整点选择器，选择范围覆盖 08:00–22:00。</li>
+<li>排班时长移到两个时间之间，用细竖线 + “h” 的轻量连接方式实时显示。</li>
+<li>概率保存对应 SQL 修复 PostgreSQL 42883，不改现有概率表、余额、记录与正式抽奖链。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>2.4.0</strong><span>上一版本</span></div>
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>统一所有非半屏类弹窗：排班登记、管理员登录、积分调整、次数调整、概率、时间选择、确认类弹窗全部使用“试玩大转盘”同一套居中玻璃语言。</li>
@@ -11075,13 +11028,6 @@
           restMessage: $("#workScheduleRestMessage"),
           cancelRestBtn: $("#cancelWorkScheduleRestBtn"),
           confirmRestBtn: $("#confirmWorkScheduleRestBtn"),
-          timePickerLayer: $("#workScheduleTimePickerLayer"),
-          timePickerTitle: $("#workScheduleTimePickerTitle"),
-          timePickerMessage: $("#workScheduleTimePickerMessage"),
-          timePickerIcon: $("#workScheduleTimePickerIcon"),
-          hourWheel: $("#workScheduleHourWheel"),
-          confirmTimePickerBtn: $("#confirmWorkScheduleTimePickerBtn"),
-          cancelTimePickerBtn: $("#cancelWorkScheduleTimePickerBtn"),
           overviewBtn: $("#openWorkScheduleOverviewBtn"),
           cancelBtn: $("#cancelWorkScheduleBtn"),
           saveBtn: $("#saveWorkScheduleBtn"),
@@ -11104,8 +11050,6 @@
         let pendingDeleteId = null;
         let progressState = null;
         let scheduleEditorMode = "work";
-        let scheduleTimePickerTarget = "start";
-        let scheduleTimePickerHour = 9;
         let homeDateKey = null;
         let homeArcState = { start: 0, span: 0, initialized: false, raf: 0 };
         let homeShineState = { raf: 0, startedAt: 0 };
@@ -11505,22 +11449,31 @@
           return `${String(Number(hour)).padStart(2, "0")}:00`;
         }
 
+        function updateEndHourOptions({ preferredHour = null } = {}) {
+          const start = Number(scheduleEls.startHour.value || 9);
+          const previous = preferredHour == null ? Number(scheduleEls.endHour.value || 18) : Number(preferredHour);
+          const firstEnd = Math.max(9, Math.min(22, start + 1));
+          scheduleEls.endHour.innerHTML = Array.from({ length: 22 - firstEnd + 1 }, (_, i) => {
+            const hour = firstEnd + i;
+            return `<option value="${hour}">${formatHour(hour)}</option>`;
+          }).join("");
+          const next = Number.isInteger(previous) && previous >= firstEnd && previous <= 22 ? previous : firstEnd;
+          scheduleEls.endHour.value = String(next);
+        }
+
         function populateHourOptions() {
-          const options = [];
-          for (let hour = 8; hour <= 22; hour += 1) {
-            options.push(`<option value="${hour}">${formatHour(hour)}</option>`);
-          }
-          const html = options.join("");
-          scheduleEls.startHour.innerHTML = html;
-          scheduleEls.endHour.innerHTML = html;
+          scheduleEls.startHour.innerHTML = Array.from({ length: 14 }, (_, i) => {
+            const hour = i + 8; // 08:00..21:00; 22:00 remains the latest valid end time.
+            return `<option value="${hour}">${formatHour(hour)}</option>`;
+          }).join("");
           scheduleEls.startHour.value = "9";
-          scheduleEls.endHour.value = "18";
+          updateEndHourOptions({ preferredHour: 18 });
         }
 
         function resetForm() {
           scheduleEls.date.value = localDateKey();
           scheduleEls.startHour.value = "9";
-          scheduleEls.endHour.value = "18";
+          updateEndHourOptions({ preferredHour: 18 });
           scheduleEls.existingState.hidden = true;
           scheduleEls.existingState.textContent = "";
           setScheduleEditorMode("work");
@@ -11624,7 +11577,9 @@
           if (scheduleEls.endDisplay) scheduleEls.endDisplay.textContent = formatHour(end);
           if (scheduleEls.editorDuration) {
             const duration = Number.isFinite(start) && Number.isFinite(end) && end > start ? end - start : 0;
-            scheduleEls.editorDuration.textContent = duration > 0 ? `${duration} 小时` : "请选择有效时间";
+            scheduleEls.editorDuration.textContent = duration > 0 ? `${duration} h` : "—";
+            const bridge = document.getElementById("workScheduleDurationBridge");
+            if (bridge) bridge.setAttribute("aria-label", duration > 0 ? `排班时长 ${duration} 小时` : "排班时长未确定");
           }
         }
 
@@ -11655,85 +11610,15 @@
           }
         }
 
-        function availableScheduleHours(target) {
-          const start = Number(scheduleEls.startHour.value || 9);
-          if (target === "start") return Array.from({ length: 14 }, (_, i) => i + 8); // 08..21
-          const first = Math.max(9, Math.min(22, start + 1));
-          return Array.from({ length: 22 - first + 1 }, (_, i) => i + first);
-        }
-
-        function renderScheduleHourWheel() {
-          const hours = availableScheduleHours(scheduleTimePickerTarget);
-          if (!hours.includes(scheduleTimePickerHour)) {
-            scheduleTimePickerHour = hours[0] ?? 9;
-          }
-          scheduleEls.hourWheel.innerHTML = hours.map(hour =>
-            `<button class="schedule-hour-option pressable${hour === scheduleTimePickerHour ? " selected" : ""}" data-schedule-hour="${hour}" type="button">${formatHour(hour)}</button>`
-          ).join("");
-          requestAnimationFrame(() => {
-            const selected = scheduleEls.hourWheel.querySelector(".schedule-hour-option.selected");
-            selected?.scrollIntoView({ block: "center", behavior: "auto" });
-          });
-        }
-
-        let scheduleHourScrollRaf = 0;
-        function syncScheduleHourFromScroll() {
-          if (scheduleHourScrollRaf) return;
-          scheduleHourScrollRaf = requestAnimationFrame(() => {
-            scheduleHourScrollRaf = 0;
-            const wheelRect = scheduleEls.hourWheel.getBoundingClientRect();
-            const center = wheelRect.top + wheelRect.height / 2;
-            let closest = null;
-            let best = Infinity;
-            scheduleEls.hourWheel.querySelectorAll("[data-schedule-hour]").forEach(btn => {
-              const rect = btn.getBoundingClientRect();
-              const distance = Math.abs((rect.top + rect.height / 2) - center);
-              if (distance < best) { best = distance; closest = btn; }
-            });
-            if (!closest) return;
-            const hour = Number(closest.dataset.scheduleHour);
-            if (hour !== scheduleTimePickerHour) {
-              scheduleTimePickerHour = hour;
-              scheduleEls.hourWheel.querySelectorAll("[data-schedule-hour]").forEach(btn => {
-                btn.classList.toggle("selected", btn === closest);
-              });
-              vibrate(2);
-            }
-          });
-        }
-
-        function openScheduleTimePicker(target) {
-          scheduleTimePickerTarget = target === "end" ? "end" : "start";
-          scheduleTimePickerHour = Number(
-            scheduleTimePickerTarget === "start" ? scheduleEls.startHour.value : scheduleEls.endHour.value
-          ) || (scheduleTimePickerTarget === "start" ? 9 : 18);
-          scheduleEls.timePickerTitle.textContent = scheduleTimePickerTarget === "start" ? "选择上班时间" : "选择下班时间";
-          scheduleEls.timePickerIcon.textContent = scheduleTimePickerTarget === "start" ? "🕘" : "🕕";
-          scheduleEls.timePickerMessage.textContent = scheduleTimePickerTarget === "start"
-            ? "08:00–21:00 · 上下滑动选择整点"
-            : `必须晚于 ${formatHour(Number(scheduleEls.startHour.value || 9))}`;
-          renderScheduleHourWheel();
-          setLayer(scheduleEls.timePickerLayer, true);
-          vibrate(6);
-        }
-
-        function closeScheduleTimePicker() {
-          setLayer(scheduleEls.timePickerLayer, false);
-        }
-
-        function confirmScheduleTimePicker() {
-          if (scheduleTimePickerTarget === "start") {
-            scheduleEls.startHour.value = String(scheduleTimePickerHour);
-            const end = Number(scheduleEls.endHour.value || 18);
-            if (end <= scheduleTimePickerHour) {
-              scheduleEls.endHour.value = String(Math.min(22, scheduleTimePickerHour + 1));
-            }
-          } else {
-            scheduleEls.endHour.value = String(scheduleTimePickerHour);
-          }
+        function handleScheduleStartHourChange() {
+          updateEndHourOptions({ preferredHour: Number(scheduleEls.endHour.value || 18) });
           updateScheduleEditorTimeDisplay();
-          closeScheduleTimePicker();
-          vibrate(8);
+          vibrate(4);
+        }
+
+        function handleScheduleEndHourChange() {
+          updateScheduleEditorTimeDisplay();
+          vibrate(4);
         }
 
         function applyScheduleForDate(dateKey) {
@@ -11745,10 +11630,10 @@
           if (row) {
             if (!rest) {
               scheduleEls.startHour.value = String(Number(row.start_hour));
-              scheduleEls.endHour.value = String(Number(row.end_hour));
+              updateEndHourOptions({ preferredHour: Number(row.end_hour) });
             } else {
               scheduleEls.startHour.value = "9";
-              scheduleEls.endHour.value = "18";
+              updateEndHourOptions({ preferredHour: 18 });
             }
             scheduleEls.existingState.textContent = `已登记 · ${scheduleRowText(row)}`;
             scheduleEls.existingState.hidden = false;
@@ -11756,7 +11641,7 @@
             setScheduleEditorMode(rest ? "rest" : "work");
           } else {
             scheduleEls.startHour.value = "9";
-            scheduleEls.endHour.value = "18";
+            updateEndHourOptions({ preferredHour: 18 });
             scheduleEls.existingState.hidden = true;
             scheduleEls.existingState.textContent = "";
             scheduleEls.restBtn.classList.remove("active");
@@ -12137,24 +12022,8 @@
           setScheduleEditorMode(btn.dataset.scheduleMode);
           vibrate(5);
         });
-        scheduleEls.startPickerBtn?.addEventListener("click", () => openScheduleTimePicker("start"));
-        scheduleEls.endPickerBtn?.addEventListener("click", () => openScheduleTimePicker("end"));
-        scheduleEls.hourWheel?.addEventListener("click", (e) => {
-          const btn = e.target.closest("[data-schedule-hour]");
-          if (!btn) return;
-          scheduleTimePickerHour = Number(btn.dataset.scheduleHour);
-          scheduleEls.hourWheel.querySelectorAll("[data-schedule-hour]").forEach(item => {
-            item.classList.toggle("selected", item === btn);
-          });
-          btn.scrollIntoView({ block:"center", behavior:"smooth" });
-          vibrate(3);
-        });
-        scheduleEls.hourWheel?.addEventListener("scroll", syncScheduleHourFromScroll, { passive:true });
-        scheduleEls.cancelTimePickerBtn?.addEventListener("click", closeScheduleTimePicker);
-        scheduleEls.confirmTimePickerBtn?.addEventListener("click", confirmScheduleTimePicker);
-        scheduleEls.timePickerLayer?.addEventListener("click", (e) => {
-          if (e.target === scheduleEls.timePickerLayer) closeScheduleTimePicker();
-        });
+        scheduleEls.startHour?.addEventListener("change", handleScheduleStartHourChange);
+        scheduleEls.endHour?.addEventListener("change", handleScheduleEndHourChange);
         scheduleEls.cancelRestBtn.addEventListener("click", closeRestPrompt);
         scheduleEls.confirmRestBtn.addEventListener("click", saveRestDay);
         scheduleEls.restLayer.addEventListener("click", (e) => { if (e.target === scheduleEls.restLayer) closeRestPrompt(); });
