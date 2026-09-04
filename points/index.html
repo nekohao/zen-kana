@@ -6,14 +6,7 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<!-- ============================================================
-       AUTO HTML FINGERPRINT UPDATE MODULE START
-       No manual version number and no version.json are required.
-       On launch / foreground restore, fetch the current GitHub Pages HTML
-       with cache disabled, hash the full file, and compare it with the last
-       remote fingerprint. If GitHub HTML changed, reload through a unique URL.
-       localStorage / Supabase persistSession are never cleared.
-       ============================================================ -->
+
 <script>
   (() => {
     const FINGERPRINT_KEY = "appRemoteHtmlFingerprintV1";
@@ -171,9 +164,7 @@
     window.__checkHtmlUpdate__ = () => checkForHtmlUpdate({ force: true });
   })();
 </script>
-<!-- ============================================================
-       AUTO HTML FINGERPRINT UPDATE MODULE END
-       ============================================================ -->
+
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -184,7 +175,7 @@
 <title>宝宝和哥哥的小世界</title>
 <style>
     :root {
-      /* Light theme: only the background palette is borrowed from the supplied reference. */
+
       --bg-0: #fbf8fc;
       --bg-1: #fffaf7;
       --mesh-1: rgba(196, 181, 253, .22);
@@ -231,7 +222,6 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       color-scheme: light;
     }
-
 
     * {
       box-sizing: border-box;
@@ -311,8 +301,6 @@
       position: absolute;
       border-radius: 50%;
       filter: blur(80px);
-      opacity: .80;
-      transform: translateZ(0);
       pointer-events: none;
     }
 
@@ -416,10 +404,8 @@
     }
 
     .topbar {
-      min-height: 54px;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
     }
 
     .icon-button {
@@ -454,15 +440,12 @@
     .hero {
       align-self: center;
       justify-self: center;
-      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transform: translateY(-1.5vh);
     }
 
     .eyebrow {
-      margin-bottom: 25px;
       font-size: 15px;
       line-height: 1;
       font-weight: 600;
@@ -514,22 +497,15 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: var(--lens-bg);
       -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
       backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
       border: 1.5px solid var(--lens-border);
-      box-shadow:
-        var(--lens-shadow),
-        inset 0 2px 3px var(--lens-specular),
-        inset 0 -4px 12px rgba(0,0,0,.08);
       display: flex;
       justify-content: center;
       align-items: center;
       position: relative;
       overflow: hidden;
       transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform .30s cubic-bezier(.175,.885,.32,1.275);
       perspective: 1000px;
     }
 
@@ -545,10 +521,6 @@
           rgba(255,255,255,0) 60%
         );
       pointer-events: none;
-    }
-
-    .score-lens::after {
-      content: none;
     }
 
     .score {
@@ -572,32 +544,17 @@
     }
 
     .admin-controls {
-      height: 67px;
       margin-top: 29px;
       display: flex;
-      gap: 13px;
       align-items: center;
       justify-content: center;
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity .28s ease, transform .34s var(--ease-ios), height .34s var(--ease-ios), margin .34s var(--ease-ios);
     }
 
     .admin-controls.hidden {
-      height: 0;
       margin-top: 0;
-      opacity: 0;
-      transform: translateY(8px);
-      pointer-events: none;
-      overflow: hidden;
     }
 
     .score-button {
-      width: 87px;
-      height: 52px;
-      border-radius: 18px;
-      font-size: 18px;
-      font-weight: 650;
       background-color: var(--glass-fill);
     }
 
@@ -614,11 +571,9 @@
       min-height: 0;
       padding: 14px 44px;
       border-radius: 30px;
-      background: var(--home-control-bg);
       -webkit-backdrop-filter: blur(30px) saturate(180%);
       backdrop-filter: blur(30px) saturate(180%);
       border: 1px solid var(--home-control-border);
-      box-shadow: var(--home-control-shadow);
       color: var(--ink);
       font-size: 16px;
       font-weight: 600;
@@ -640,7 +595,6 @@
       flex: 0 0 auto;
     }
 
-    /* -------- iOS-style draggable Overview Sheet -------- */
     .home {
       transform-origin: center 24%;
       transition:
@@ -923,10 +877,6 @@
       margin-bottom: 14px;
     }
 
-    .overview.gift-mode #giftOverviewContent {
-      padding-top: 1px;
-    }
-
     @media (max-width: 370px) {
       .overview-quick-nav { gap: 6px; }
       .overview-quick-card { min-height: 102px; padding-left: 3px; padding-right: 3px; border-radius: 20px; }
@@ -1009,7 +959,6 @@
       color: var(--tertiary);
     }
 
-    /* calendar */
     .calendar-card { padding: 16px 10px 13px; }
 
     .calendar-head {
@@ -1154,49 +1103,23 @@
       color: var(--secondary);
     }
 
-    /* lists */
     .log-list {
       margin: 0;
       padding: 0;
       list-style: none;
     }
 
-    .log-row {
-      display: grid;
-      grid-template-columns: 48px 42px 1fr;
-      gap: 8px;
-      align-items: start;
-      padding: 12px 6px;
-    }
-
-    .log-row + .log-row {
-      border-top: 1px solid var(--hairline);
-    }
-
-    .log-time {
-      font-size: 12px;
-      color: var(--secondary);
-      font-variant-numeric: tabular-nums;
-      padding-top: 2px;
-    }
-
     .log-delta {
-      font-size: 14px;
-      font-weight: 750;
       font-variant-numeric: tabular-nums;
     }
 
     .log-reason {
       min-width: 0;
-      font-size: 14px;
-      line-height: 1.35;
       overflow-wrap: anywhere;
     }
 
     .log-meta {
       display: block;
-      margin-top: 3px;
-      font-size: 11px;
       color: var(--tertiary);
     }
 
@@ -1207,13 +1130,6 @@
       font-size: 14px;
     }
 
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
     .metric {
       min-height: 94px;
       padding: 15px;
@@ -1222,49 +1138,6 @@
       border: 1px solid var(--hairline);
     }
 
-    .metric-label {
-      font-size: 12px;
-      color: var(--secondary);
-      margin-bottom: 8px;
-    }
-
-    .metric-value {
-      font-size: 26px;
-      font-weight: 730;
-      letter-spacing: -.04em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .reason-table {
-      border-top: 1px solid var(--hairline);
-      padding-top: 6px;
-    }
-
-    .reason-row {
-      display: flex;
-      gap: 16px;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 4px;
-      font-size: 13px;
-    }
-
-    .reason-row + .reason-row {
-      border-top: 1px solid var(--hairline);
-    }
-
-    .reason-name {
-      min-width: 0;
-      color: var(--secondary);
-      overflow-wrap: anywhere;
-    }
-
-    .reason-count {
-      flex: 0 0 auto;
-      font-weight: 700;
-    }
-
-    /* -------- Sheets / alerts -------- */
     .modal-layer {
       position: fixed;
       inset: 0;
@@ -1315,13 +1188,10 @@
       background: rgba(118,118,128,.34);
     }
 
-    /* Settings uses the exact same material language as Overview,
-       but stays content-fit and never expands to full screen. */
     #settingsLayer {
       padding: 0;
       align-items: flex-end;
       justify-content: center;
-      background: rgba(11,15,22,.10);
     }
 
     #settingsLayer.open {
@@ -1330,32 +1200,14 @@
     }
 
     #settingsLayer .settings-sheet {
-      width: min(calc(100% - 12px), 620px);
       height: auto;
       max-height: calc(100% - max(calc(var(--safe-top) + 72px), 86px));
       margin: 0 auto;
-      padding: 0 16px calc(var(--safe-bottom) + 20px);
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
       scrollbar-width: none;
-
-      border-radius: 32px 32px 0 0;
-      background:
-        linear-gradient(145deg,
-          rgba(255,255,255,.16),
-          rgba(255,255,255,.035) 42%,
-          rgba(255,255,255,.01)),
-        var(--glass-fill-strong);
-      border: 1px solid var(--glass-border);
-      border-bottom: 0;
-      box-shadow:
-        0 -18px 55px rgba(34,43,62,.16),
-        inset 0 1px 0 rgba(255,255,255,.36);
-      -webkit-backdrop-filter: blur(36px) saturate(190%);
-      backdrop-filter: blur(36px) saturate(190%);
-
       transform: translateY(calc(100% + 28px));
       transition: transform .48s cubic-bezier(.18,.84,.24,1);
       will-change: transform;
@@ -1436,17 +1288,8 @@
       margin-top: 0;
     }
 
-    #settingsLayer .settings-row {
-      min-height: 51px;
-    }
-
-
-    /* Admin login: same content-fit Bottom Sheet language as Settings. */
     #loginLayer {
-      padding: 0;
-      align-items: flex-end;
       justify-content: center;
-      background: rgba(11,15,22,.10);
     }
 
     #loginLayer.open {
@@ -1500,22 +1343,6 @@
       transition: none !important;
     }
 
-    .login-sheet-header {
-      position: sticky;
-      top: 0;
-      z-index: 12;
-      margin: 0 -16px 12px;
-      padding: 8px 16px 10px;
-      background:
-        linear-gradient(180deg,
-          color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
-          color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 76%,
-          transparent);
-      -webkit-backdrop-filter: blur(28px) saturate(180%);
-      backdrop-filter: blur(28px) saturate(180%);
-      border-bottom: 1px solid var(--hairline);
-    }
-
     .login-grabber-hitbox {
       width: 100%;
       min-height: 58px;
@@ -1534,36 +1361,6 @@
       cursor: grabbing;
     }
 
-    .login-sheet-header .grabber {
-      margin: 0;
-    }
-
-    .login-sheet-header .sheet-title {
-      margin: 5px 0 0;
-      text-align: center;
-      font-size: 17px;
-      line-height: 1.15;
-      font-weight: 700;
-      letter-spacing: -.015em;
-    }
-
-    .login-sheet-body {
-      padding: 0 0 4px;
-    }
-
-    .login-sheet-body .sheet-subtitle {
-      margin: 0 4px 14px;
-      text-align: center;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    #loginLayer .field {
-      min-height: 52px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.12);
-    }
-
     #loginLayer .sheet-actions {
       margin-top: 14px;
       padding-bottom: 0;
@@ -1574,10 +1371,6 @@
         width: calc(100% - 8px);
         border-radius: 30px 30px 0 0;
       }
-    }
-
-    #loginLayer {
-      background: rgba(45,54,70,.075);
     }
 
     @media (max-width: 520px) {
@@ -1750,7 +1543,6 @@
       font-weight: 650;
     }
 
-    /* -------- Toast -------- */
     .toast {
       position: fixed;
       z-index: 120;
@@ -1780,8 +1572,6 @@
       pointer-events: none !important;
     }
 
-
-    /* -------- Refined motion -------- */
     @keyframes ambientDriftA {
       0%,100% { transform: translate3d(0,0,0) scale(1); }
       50% { transform: translate3d(28px,18px,0) scale(1.05); }
@@ -1839,7 +1629,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* -------- Settings information -------- */
     .settings-label {
       margin: 18px 5px 7px;
       font-size: 12px;
@@ -1933,22 +1722,13 @@
       }
     }
 
-
-    /* ============================================================
-       v1.5.0 — App shell, dual metric switch, unified surfaces
-       Existing confirmed layout/behavior remains intact unless
-       explicitly extended below.
-       ============================================================ */
-
     .topbar {
       min-height: 58px;
       padding: 6px 7px;
       justify-content: space-between;
       gap: 10px;
       border-radius: 20px;
-      background: var(--home-control-bg);
       border: 1px solid var(--home-control-border);
-      box-shadow: var(--home-icon-shadow);
       -webkit-backdrop-filter: blur(30px) saturate(180%);
       backdrop-filter: blur(30px) saturate(180%);
     }
@@ -1987,8 +1767,6 @@
       width: 42px;
       height: 42px;
       box-shadow: none;
-      background: rgba(255,255,255,.12);
-      border-color: var(--hairline);
     }
 
     .topbar {
@@ -2023,11 +1801,9 @@
       padding: 9px 12px;
       border: 1px solid var(--glass-border);
       border-radius: 16px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.21), rgba(255,255,255,.045)),
+      background: linear-gradient(145deg, rgba(255,255,255,.21), rgba(255,255,255,.045)),
         rgba(255,255,255,.18);
       box-shadow: 0 8px 20px rgba(43,55,78,.07), inset 0 1px 0 rgba(255,255,255,.38);
-      display: grid;
       grid-template-columns: 34px minmax(0,1fr) 18px;
       gap: 9px;
       align-items: center;
@@ -2060,17 +1836,14 @@
 
     .metric-switch {
       position: relative;
-      width: min(82vw, 274px);
       height: 44px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
       align-items: center;
       padding: 4px;
       border-radius: 15px;
       background: rgba(255,255,255,.35);
       border: 1px solid rgba(232,207,224,.48);
       box-shadow: 0 8px 24px rgba(181,141,172,.07), inset 0 1px 1px rgba(255,255,255,.55);
-      margin-bottom: 14px;
       isolation: isolate;
     }
 
@@ -2084,24 +1857,15 @@
       z-index: 0;
       top: 4px;
       left: 4px;
-      width: calc(50% - 4px);
       height: calc(100% - 8px);
       border-radius: 12px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.76), rgba(244,239,255,.30)),
+      background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(244,239,255,.30)),
         var(--glass-fill-strong);
       border: 1px solid rgba(255,255,255,.82);
-      box-shadow:
-        0 4px 13px rgba(27,34,50,.10),
+      box-shadow: 0 4px 13px rgba(27,34,50,.10),
         inset 0 1px 0 rgba(255,255,255,.44);
       transform: translate3d(0,0,0);
-      transition: transform .46s cubic-bezier(.2,1.35,.32,1);
-      will-change: transform;
       pointer-events: none;
-    }
-
-    .metric-switch.gift-active .metric-switch-thumb {
-      transform: translate3d(100%,0,0);
     }
 
     .metric-switch.gift-active .metric-switch-thumb {
@@ -2128,13 +1892,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 0 7px;
       color: var(--secondary);
-      font-size: 12px;
       font-weight: 650;
       white-space: nowrap;
-      transition: color .22s ease, opacity .22s ease, transform .22s ease;
     }
 
     .metric-option.active {
@@ -2142,8 +1902,6 @@
     }
 
     .metric-option svg {
-      width: 15px;
-      height: 15px;
       flex: 0 0 auto;
       stroke-width: 1.8;
     }
@@ -2154,23 +1912,12 @@
     }
 
     .reward-message {
-      width: min(92vw, 390px);
-      min-height: 0;
-      margin: 0 auto 15px;
-      padding: 8px 13px 9px;
       border-radius: 18px;
       text-align: center;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.44), rgba(255,239,247,.23)),
-        rgba(255,255,255,.18);
       border: 1px solid rgba(255,255,255,.72);
-      box-shadow: 0 8px 24px rgba(205,143,176,.07), inset 0 1px 0 rgba(255,255,255,.58);
       -webkit-backdrop-filter: blur(18px) saturate(145%);
       backdrop-filter: blur(18px) saturate(145%);
-      animation: rewardMessageIn .38s var(--ease-ios) both;
     }
-
-    .reward-message[hidden] { display: none !important; }
 
     .reward-line-primary,
     .reward-line-secondary {
@@ -2200,13 +1947,10 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Score and gift use the same cute component language, but different palettes. */
     .home:not(.gift-active) .reward-message {
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.56), rgba(255,247,225,.46)),
+      background: linear-gradient(135deg, rgba(255,255,255,.56), rgba(255,247,225,.46)),
         rgba(255,251,240,.28);
       border-color: rgba(255,255,255,.82);
-      box-shadow: 0 9px 26px rgba(188,151,91,.09), inset 0 1px 0 rgba(255,255,255,.68);
     }
 
     .home:not(.gift-active) .reward-line-primary {
@@ -2251,12 +1995,10 @@
     .redeem-button {
       width: min(78vw, 258px);
       min-height: 47px;
-      margin-top: 18px;
       padding: 9px 17px;
       border: 1px solid rgba(255,255,255,.82);
       border-radius: 17px;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.62), rgba(255,245,216,.38)),
+      background: linear-gradient(135deg, rgba(255,255,255,.62), rgba(255,245,216,.38)),
         rgba(255,250,236,.34);
       box-shadow: 0 10px 26px rgba(183,143,79,.10), inset 0 1px 0 rgba(255,255,255,.72);
       color: #8a653c;
@@ -2307,13 +2049,6 @@
       gap: 1px;
     }
 
-    .movement-gift-emoji {
-      font-size: 10px;
-      line-height: 1;
-      margin-right: 0;
-      transform: translateY(-.5px);
-    }
-
     #redeemLayer .alert {
       border-color: rgba(255,255,255,.84);
       background:
@@ -2323,18 +2058,9 @@
 
     #redeemLayer .alert-title { color: #805f39; }
     #redeemLayer .alert-message { color: rgba(114,87,57,.78); }
-    #redeemConfirmBtn { color: #a06f32; font-weight: 720; }
-    #redeemForceBtn { color: #c47d39; font-weight: 720; }
 
     .home.gift-active .score-lens {
-      background:
-        radial-gradient(circle at 34% 24%, rgba(255,255,255,.72), transparent 48%),
-        rgba(255,244,249,.52);
       border-color: rgba(255,255,255,.92);
-      box-shadow:
-        0 24px 58px rgba(218,137,174,.14),
-        inset 0 2px 4px rgba(255,255,255,.88),
-        inset 0 -4px 14px rgba(215,135,173,.055);
     }
 
     .home.gift-active .score {
@@ -2370,8 +2096,6 @@
       100% { transform: translateX(-.025em) translateY(0) scale(1); opacity: 1; }
     }
 
-    /* The same glass recipe is shared by Overview, Settings, Login,
-       Release Notes and Change Reason sheets. */
     :where(.overview-shell, .settings-sheet, .login-sheet, .unified-sheet) {
       background:
         linear-gradient(145deg,
@@ -2395,7 +2119,6 @@
       justify-content: center;
       background: rgba(45,54,70,.075);
     }
-
 
     #versionInfoLayer .unified-sheet,
     #releaseNotesLayer .unified-sheet,
@@ -2443,7 +2166,6 @@
       border-bottom: 1px solid var(--hairline);
     }
 
-    /* Low-frequency unified sheets: make the whole top header a generous drag target. */
     #versionInfoLayer .unified-sheet-header,
     #releaseNotesLayer .unified-sheet-header,
     #changeLayer .unified-sheet-header {
@@ -2476,7 +2198,6 @@
 
     .unified-sheet-body { padding-bottom: 4px; }
 
-    /* Unified central glass alerts. */
     .alert {
       background:
         linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.035) 46%),
@@ -2503,7 +2224,6 @@
       font-weight: 700;
     }
 
-    /* New record visual language — used by both score and gift history. */
     .log-list {
       display: grid;
       gap: 8px;
@@ -2542,35 +2262,8 @@
     .log-meta { margin-top: 4px; font-size: 11px; line-height: 1.2; }
     .log-delta { font-size: 16px; font-weight: 760; padding-left: 6px; }
 
-    .gift-overview-balance {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 18px;
-      min-height: 94px;
-    }
-
-    .gift-overview-value {
-      font-size: 40px;
-      line-height: 1;
-      font-weight: 750;
-      letter-spacing: -.055em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .gift-overview-unit {
-      color: var(--secondary);
-      font-size: 12px;
-      padding-bottom: 4px;
-    }
-
     [hidden] { display: none !important; }
 
-
-    /* ============================================================
-       v1.7.2 Quiet crossfade + Overview visual unification
-       Fixed slots keep every major control at a stable coordinate.
-       ============================================================ */
     .hero {
       --metric-enter-x: 18px;
       --metric-exit-x: -18px;
@@ -2581,13 +2274,6 @@
     .metric-switch {
       flex: 0 0 44px;
       margin-bottom: 12px;
-    }
-
-    .metric-switch-thumb {
-      transition:
-        transform .46s cubic-bezier(.22,1.12,.28,1),
-        background .32s ease,
-        box-shadow .32s ease;
     }
 
     .metric-option.active svg {
@@ -2621,34 +2307,6 @@
       margin: 0;
     }
 
-    .score-lens {
-      transition:
-        transform .34s cubic-bezier(.2,.9,.25,1),
-        box-shadow .42s ease,
-        border-color .42s ease,
-        filter .42s ease;
-    }
-
-    .score-lens::after {
-      content: "";
-      position: absolute;
-      z-index: 4;
-      inset: -22%;
-      border-radius: 50%;
-      pointer-events: none;
-      opacity: 0;
-      background: linear-gradient(
-        112deg,
-        transparent 31%,
-        rgba(255,255,255,.08) 40%,
-        rgba(255,255,255,.72) 49%,
-        rgba(255,255,255,.12) 57%,
-        transparent 68%
-      );
-      transform: translateX(-72%) rotate(8deg);
-      mix-blend-mode: screen;
-    }
-
     .metric-ghost-value {
       position: absolute;
       z-index: 3;
@@ -2670,11 +2328,8 @@
 
     .metric-action-slot {
       width: 100%;
-      height: 68px;
-      min-height: 68px;
       margin-top: 14px;
       display: grid;
-      place-items: start center;
       position: relative;
     }
 
@@ -2730,12 +2385,8 @@
       border: 1px solid rgba(255,255,255,.84);
       -webkit-backdrop-filter: blur(22px) saturate(155%);
       backdrop-filter: blur(22px) saturate(155%);
-      box-shadow:
-        0 10px 26px rgba(183,143,79,.09),
+      box-shadow: 0 10px 26px rgba(183,143,79,.09),
         inset 0 1px 0 rgba(255,255,255,.72);
-      font-size: 17px;
-      font-weight: 735;
-      letter-spacing: -.01em;
     }
 
     .home:not(.gift-active) .score-button {
@@ -2757,7 +2408,6 @@
     .home.gift-active .score-button.plus { color: #b85f88; }
     .home.gift-active .score-button.minus { color: #b56e7a; }
 
-    /* Metric transition: double-buffered number + glass sweep. */
     .home.metric-switching .metric-ghost-value {
       opacity: 1;
       animation: metricGhostOut .48s cubic-bezier(.2,.72,.18,1) both;
@@ -2826,7 +2476,6 @@
       100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
     }
 
-    /* Unified admin change alert — same family as gift +1/redeem. */
     #changeLayer {
       padding: 0 0 12px;
       align-items: center;
@@ -2934,7 +2583,6 @@
       .metric-switch-thumb { transition-duration: .01ms !important; }
     }
 
-    /* High-refresh-rate path: drag animation stays transform-only. */
     .ambient {
       will-change: transform;
       contain: paint;
@@ -2955,20 +2603,13 @@
       .eyebrow { margin-bottom: 13px; }
     }
 
-
-    /* ============================================================
-       WORK SCHEDULE MODULE START
-       Independent schedule-registration styles. Safe to remove as a block.
-       ============================================================ */
     #workScheduleLayer,
     #workScheduleOverviewLayer,
     #adminWorkScheduleLayer {
       padding: 0;
       align-items: flex-end;
       justify-content: center;
-      background: rgba(45,54,70,.075);
     }
-
 
     #workScheduleLayer .work-schedule-sheet,
     #workScheduleOverviewLayer .work-schedule-sheet,
@@ -3034,35 +2675,6 @@
       gap: 13px;
     }
 
-    .work-schedule-field {
-      display: grid;
-      gap: 7px;
-    }
-
-    .work-schedule-field-label {
-      padding-left: 3px;
-      font-size: 12px;
-      font-weight: 650;
-      color: var(--secondary);
-    }
-
-    .work-schedule-time-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-    }
-
-    .work-schedule-date-nav {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-      margin-top: -2px;
-    }
-
-    .work-schedule-date-step {
-      min-height: 44px;
-    }
-
     .work-schedule-existing {
       margin: -1px 2px 0;
       padding: 9px 11px;
@@ -3074,29 +2686,6 @@
       line-height: 1.35;
       font-weight: 650;
       text-align: center;
-    }
-
-    .work-schedule-control {
-      min-height: 52px;
-      color: var(--ink);
-      color-scheme: inherit;
-    }
-
-    .work-schedule-control option {
-      color: #111;
-      background: #fff;
-    }
-
-
-    .work-schedule-hint {
-      margin: -2px 3px 1px;
-      font-size: 11px;
-      line-height: 1.45;
-      color: var(--tertiary);
-    }
-
-    .work-schedule-overview-button {
-      margin-top: 2px;
     }
 
     .work-schedule-list {
@@ -3177,18 +2766,6 @@
       opacity: .62;
     }
 
-    /* ============================================================
-       WORK SCHEDULE MODULE END
-       ============================================================ */
-
-
-
-    /* ============================================================
-       v1.7.2 — quiet crossfade + Overview-aligned sheets
-       No moving/blurred rectangular compositing layers.
-       ============================================================ */
-
-    /* 1) Metric switching: fade content, keep geometry perfectly still. */
     .metric-switch-thumb {
       transition:
         transform .34s cubic-bezier(.22,.61,.36,1),
@@ -3233,8 +2810,6 @@
       transition: opacity .18s ease !important;
     }
 
-    /* The lens itself never moves during metric switching. The gift tint is
-       a circular opacity overlay, so there is no visible rectangular layer. */
     .score-lens {
       background:
         radial-gradient(circle at 34% 24%, rgba(255,255,255,.78), transparent 48%),
@@ -3291,7 +2866,6 @@
       display: none !important;
     }
 
-    /* Disable the v1.7.1 compositing animations completely. */
     .home.metric-switching .metric-ghost-value,
     .home.metric-switching .score,
     .home.metric-switching .score-lens,
@@ -3303,7 +2877,6 @@
       transform: none !important;
     }
 
-    /* Phase 1: old content gently disappears. */
     .home.metric-fading-out .reward-line-primary,
     .home.metric-fading-out .reward-line-secondary,
     .home.metric-fading-out .score,
@@ -3311,7 +2884,6 @@
       opacity: 0 !important;
     }
 
-    /* Phase 2: new content gently appears. No translate/scale/blur. */
     .home.metric-fading-in .reward-line-primary,
     .home.metric-fading-in .reward-line-secondary,
     .home.metric-fading-in .score,
@@ -3324,40 +2896,31 @@
       to { opacity: 1; }
     }
 
-    /* 2) Settings = Overview visual system, not a separate Settings language. */
     #settingsLayer {
       background: rgba(45,54,70,.075) !important;
     }
 
     #settingsLayer .settings-sheet {
       width: min(calc(100% - 12px), 620px) !important;
-      padding: 0 16px calc(var(--safe-bottom) + 18px) !important;
-      border-radius: 32px 32px 0 0 !important;
-      background:
-        linear-gradient(145deg,
+      background: linear-gradient(145deg,
           rgba(255,255,255,.16),
           rgba(255,255,255,.035) 42%,
           rgba(255,255,255,.01)),
         var(--glass-fill-strong) !important;
       border: 1px solid var(--glass-border) !important;
       border-bottom: 0 !important;
-      box-shadow:
-        0 -18px 55px rgba(34,43,62,.16),
+      box-shadow: 0 -18px 55px rgba(34,43,62,.16),
         inset 0 1px 0 rgba(255,255,255,.36) !important;
       -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
       backdrop-filter: blur(36px) saturate(190%) !important;
     }
 
     #settingsLayer .settings-sheet-header {
-      min-height: 67px;
-      margin: 0 -16px 20px !important;
-      padding: 8px 16px 13px !important;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      background:
-        linear-gradient(180deg,
+      background: linear-gradient(180deg,
           color-mix(in srgb, var(--glass-fill-strong) 88%, transparent),
           color-mix(in srgb, var(--glass-fill-strong) 58%, transparent) 75%,
           transparent) !important;
@@ -3366,76 +2929,44 @@
       border-bottom: 1px solid var(--hairline) !important;
     }
 
-    #settingsLayer .settings-grabber-hitbox {
-      min-height: 64px !important;
-      margin-bottom: -28px !important;
-    }
-
     #settingsLayer .settings-sheet-header .grabber {
-      width: 38px;
-      height: 5px;
       border-radius: 999px;
       background: rgba(118,118,128,.34);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
     }
 
     #settingsLayer .settings-sheet-header .sheet-title {
-      margin-top: 2px !important;
-      font-size: 17px !important;
-      line-height: 1.15 !important;
       font-weight: 700 !important;
       letter-spacing: -.015em !important;
     }
 
     #settingsLayer .settings-sheet-header .login-state {
-      margin-top: 5px;
       padding: 0 !important;
-      font-size: 12px !important;
-      line-height: 1.25 !important;
       font-weight: 500 !important;
       color: var(--secondary) !important;
     }
 
-    #settingsLayer .settings-sheet-content {
-      padding: 0 0 2px !important;
-    }
-
     #settingsLayer .settings-label {
-      margin: 0 6px 10px !important;
       padding: 0 !important;
       color: var(--ink) !important;
-      font-size: 20px !important;
-      line-height: 1.2 !important;
-      font-weight: 730 !important;
-      letter-spacing: -.026em !important;
       text-transform: none !important;
     }
 
     #settingsLayer .settings-group {
-      margin: 0 0 20px !important;
-      padding: 4px 0 !important;
       overflow: hidden;
       border: 1px solid var(--glass-border) !important;
-      border-radius: var(--radius-xl) !important;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.20), rgba(255,255,255,.045)),
+      background: linear-gradient(145deg, rgba(255,255,255,.20), rgba(255,255,255,.045)),
         rgba(255,255,255,.18) !important;
-      box-shadow:
-        0 10px 24px rgba(43,55,78,.07),
-        inset 0 1px 0 rgba(255,255,255,.42) !important;
       -webkit-backdrop-filter: blur(24px) saturate(175%) !important;
       backdrop-filter: blur(24px) saturate(175%) !important;
     }
 
     #settingsLayer .settings-row {
-      min-height: 56px !important;
-      padding: 0 15px !important;
       border: 0 !important;
       border-radius: 0 !important;
       background: transparent !important;
       box-shadow: none !important;
       color: var(--ink);
-      font-size: 15px;
       font-weight: 620;
       letter-spacing: -.012em;
     }
@@ -3463,7 +2994,6 @@
       color: color-mix(in srgb, #c75e62 72%, var(--secondary)) !important;
     }
 
-    /* 3) Nested settings destinations use the same Overview shell/header material. */
     #loginLayer .login-sheet,
     #versionInfoLayer .unified-sheet,
     #releaseNotesLayer .unified-sheet,
@@ -3510,19 +3040,12 @@
       }
     }
 
-  
-
-    /* ============================================================
-       v1.7.3 — content-fit Settings + guest gift usage
-       ============================================================ */
     #settingsLayer .settings-sheet {
       min-height: 0 !important;
       box-sizing: border-box;
       contain: layout style;
     }
 
-    /* The action slot remains geometrically fixed. Score redeem and gift use
-       swap only by opacity/visibility, so the Overview button never moves. */
     .metric-action-slot > .score-redeem-button,
     .metric-action-slot > .use-gift-button,
     .metric-action-slot > .admin-controls {
@@ -3551,59 +3074,6 @@
       transition: opacity .20s ease, visibility 0s linear .20s !important;
     }
 
-    .home.gift-active:not(.admin-mode) .use-gift-button {
-      display: flex !important;
-      opacity: 1 !important;
-      visibility: visible !important;
-      pointer-events: auto !important;
-      transform: none !important;
-      transition-delay: 0s !important;
-      color: #9e5879;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.70), rgba(255,230,242,.46)),
-        rgba(255,244,249,.42);
-      border-color: rgba(255,255,255,.88);
-      box-shadow:
-        0 12px 30px rgba(200,116,156,.11),
-        inset 0 1px 0 rgba(255,255,255,.76);
-    }
-
-    .home.gift-active:not(.admin-mode) .use-gift-button .redeem-button-meta {
-      color: #b2708f;
-      background: rgba(255,255,255,.38);
-      border-color: rgba(255,255,255,.54);
-    }
-
-    #useGiftLayer {
-      padding: 0 0 12px;
-      align-items: center;
-      justify-content: center;
-      background: rgba(45,54,70,.075);
-    }
-
-    #useGiftLayer .use-gift-alert {
-      width: min(calc(100% - 28px), 326px);
-      border-color: rgba(255,255,255,.86);
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.30), rgba(255,233,244,.14) 48%),
-        var(--glass-fill-strong);
-      box-shadow:
-        0 24px 70px rgba(180,99,137,.14),
-        inset 0 1px 0 rgba(255,255,255,.50);
-    }
-
-    #useGiftLayer .alert-title { color: #9e5879; }
-    #useGiftLayer .primary-action { color: #b85f88; }
-    #useGiftLayer .alert-message {
-      white-space: normal;
-      line-height: 1.65;
-    }
-
-  
-    /* ============================================================
-       v1.7.4 — compact content-fit Settings
-       Keep the Overview glass language, remove excessive vertical air.
-       ============================================================ */
     #settingsLayer .settings-sheet {
       padding: 0 14px calc(var(--safe-bottom) + 9px) !important;
       border-radius: 29px 29px 0 0 !important;
@@ -3677,10 +3147,6 @@
       line-height: 1 !important;
     }
 
-  
-    /* ============================================================
-       v1.7.5 — readable trend points + month week dropdown
-       ============================================================ */
     .trend-card {
       position: relative;
       overflow: visible;
@@ -3787,28 +3253,16 @@
       .trend-month-chevron { transition: none !important; }
     }
 
-  
-
-    /* ============================================================
-       v1.8.0 — Lucky Wheel mode
-       ============================================================ */
-    .metric-switch {
-      width: min(94vw, 356px) !important;
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    }
-    .metric-switch-thumb {
-      width: calc((100% - 8px) / 3) !important;
-    }
     .metric-switch.gift-active .metric-switch-thumb { transform: translate3d(100%,0,0) !important; }
     .metric-switch.wheel-active .metric-switch-thumb {
-      transform: translate3d(200%,0,0) !important;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,235,199,.46)),
+      background: linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,235,199,.46)),
         rgba(255,250,239,.56) !important;
       box-shadow: 0 6px 18px rgba(207,158,77,.15), inset 0 1px 0 rgba(255,255,255,.78) !important;
     }
     .metric-switch.wheel-active .metric-option.active { color: #a66e27 !important; }
-    .metric-option { gap: 4px !important; padding: 0 4px !important; font-size: 10.8px !important; }
+    .metric-option {
+      padding: 0 4px !important;
+    }
     .metric-option svg { width: 13px !important; height: 13px !important; }
 
     .home.wheel-active .reward-message {
@@ -3959,11 +3413,7 @@
     .score-redeem-button, .use-gift-button, .admin-controls { align-self: center; }
 
     .wheel-actions {
-      width: min(88vw, 340px);
-      height: 100px;
-      display: grid;
       grid-template-rows: 54px 39px;
-      gap: 7px;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -3983,28 +3433,6 @@
       visibility: hidden !important;
       pointer-events: none !important;
     }
-    .wheel-action-button {
-      width: 100%; border: 1px solid rgba(255,255,255,.82); border-radius: 18px;
-      color: #8f652e;
-      background: linear-gradient(135deg, rgba(255,255,255,.72), rgba(255,237,201,.48)), rgba(255,248,232,.46);
-      box-shadow: 0 12px 28px rgba(181,130,57,.10), inset 0 1px 0 rgba(255,255,255,.78);
-    }
-    .wheel-spin-button {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      padding: 0 18px;
-    }
-    .wheel-action-icon { font-size: 21px; }
-    .wheel-action-copy { display:flex; flex-direction:column; align-items:flex-start; line-height:1.05; }
-    .wheel-action-copy b { font-size: 14px; font-weight: 760; }
-    .wheel-action-copy small { margin-top:4px; font-size:10px; font-weight:600; color:#ae8250; }
-    .wheel-redeem-button {
-      display:flex; align-items:center; justify-content:center; gap:7px; padding:0 13px;
-      border-radius:15px; font-size:12px; font-weight:690;
-      color:#9b6a32;
-      background: linear-gradient(135deg, rgba(255,255,255,.61), rgba(255,239,215,.35)), rgba(255,249,238,.32);
-      box-shadow: 0 7px 18px rgba(181,130,57,.07), inset 0 1px 0 rgba(255,255,255,.66);
-    }
-    .wheel-redeem-button .redeem-button-meta { color:#ad7e46; background:rgba(255,255,255,.38); border-color:rgba(255,255,255,.54); }
 
     .home.wheel-active .overview-button {
       background: linear-gradient(135deg, rgba(255,255,255,.64), rgba(255,242,216,.28)), var(--home-control-bg);
@@ -4057,7 +3485,6 @@
 
     .day-movements { flex-wrap:wrap; row-gap:1px; max-width:100%; }
     .movement.wheel-win-day { color:#ad762f; gap:1px; font-size:8.5px; }
-    .movement.wheel-withdraw-day { color:#8a6e4c; gap:1px; font-size:8.5px; }
 
     @media (max-width: 380px) {
       .metric-switch { width:min(96vw, 342px) !important; }
@@ -4069,11 +3496,6 @@
       .wheel-pointer { animation:none !important; }
     }
 
-  
-    /* ============================================================
-       v1.8.1 — admin-only wheel probability management
-       Public wheel sectors stay fixed as a decorative visual.
-       ============================================================ */
     .wheel-probability-alert,
     .wheel-probability-history-alert {
       width: min(92vw, 390px) !important;
@@ -4103,37 +3525,6 @@
     }
 
     .wheel-probability-grid label:last-child { border-bottom: 0; }
-
-    .prob-input-wrap {
-      width: 96px;
-      height: 30px;
-      padding: 0 8px 0 6px;
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      background: rgba(255,255,255,.58);
-      border: 1px solid rgba(255,255,255,.72);
-    }
-
-    .prob-input-wrap input {
-      min-width: 0;
-      width: 100%;
-      border: 0;
-      outline: 0;
-      text-align: right;
-      background: transparent;
-      color: #9a692f;
-      font: 760 14px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;
-      font-variant-numeric: tabular-nums;
-    }
-    .prob-input-wrap input::-webkit-inner-spin-button { display: none; }
-    .prob-input-wrap em {
-      color: #b28b5b;
-      font-size: 11px;
-      font-style: normal;
-      font-weight: 700;
-    }
 
     .wheel-probability-total {
       margin-top: 10px;
@@ -4205,10 +3596,6 @@
       pointer-events: none;
     }
 
-  
-    /* ============================================================
-       v1.8.2 — wheel itself is the primary spin interaction
-       ============================================================ */
     .wheel-stage[role="button"] {
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
@@ -4230,31 +3617,6 @@
 
     .home.wheel-spinning .wheel-stage {
       cursor: default;
-    }
-
-    .wheel-actions {
-      height: 100px !important;
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-      gap: 0 !important;
-    }
-
-    .wheel-actions .wheel-redeem-button {
-      width: 100%;
-      height: 44px;
-      flex: 0 0 auto;
-    }
-
-  
-    /* ============================================================
-       v1.8.3 — bright cream wheel-admin surfaces
-       ============================================================ */
-    #wheelProbabilityLayer,
-    #wheelProbabilityHistoryLayer {
-      background: rgba(91,70,44,.055) !important;
-      -webkit-backdrop-filter: blur(2px) !important;
-      backdrop-filter: blur(2px) !important;
     }
 
     #wheelProbabilityLayer .alert,
@@ -4316,35 +3678,13 @@
       color: #67513a;
     }
 
-    #wheelProbabilityLayer .prob-input-wrap {
-      background: #fff8e9;
-      border-color: rgba(235,205,161,.78);
-      box-shadow: inset 0 1px 2px rgba(152,108,50,.035);
-    }
-
-    #wheelProbabilityLayer .prob-input-wrap input {
-      color: #a46b25;
-    }
-
-    #wheelProbabilityLayer .prob-input-wrap em {
-      color: #bd8a4c;
-    }
-
     #wheelProbabilityLayer .wheel-probability-total {
-      color: #5e7e64;
-      background: #eef8ee;
       border-color: rgba(198,225,198,.88);
       box-shadow: none;
     }
 
     #wheelProbabilityLayer .wheel-probability-total.invalid {
-      color: #a65d63;
-      background: #fff0f1;
       border-color: rgba(236,196,199,.88);
-    }
-
-    #wheelProbabilityLayer .wheel-probability-default-note {
-      color: #af9270;
     }
 
     #wheelProbabilityLayer .alert-actions,
@@ -4386,19 +3726,10 @@
       color: #8f6230;
     }
 
-    /* Administrator section is never interactable outside admin mode. */
     #adminSettings[hidden] {
       display: none !important;
     }
 
-  
-    /* ============================================================
-       v1.8.5 — unified dual wheel controls
-       Center wheel = sync; left/right buttons = business actions.
-       ============================================================ */
-
-    /* The wheel is decorative inside the existing sync lens.
-       pointer-events:none lets taps land on #scoreRefreshBtn. */
     .home.wheel-active .wheel-stage,
     .wheel-stage {
       pointer-events: none !important;
@@ -4439,13 +3770,6 @@
 
     .wheel-side-button:active:not(:disabled) {
       transform: scale(.97);
-    }
-
-    .wheel-side-redeem {
-      color: #a36d34;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.66), rgba(255,244,214,.40)),
-        rgba(255,250,235,.37);
     }
 
     .wheel-side-spin {
@@ -4512,23 +3836,6 @@
       .wheel-side-copy strong { font-size: 10.8px; }
     }
 
-
-    /* ============================================================
-       v2.0 — Direct rewards + withdrawal settlement workflow
-       ============================================================ */
-    .metric-switch {
-      width: min(86vw, 300px) !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    }
-    .metric-switch-thumb {
-      width: calc(50% - 4px) !important;
-    }
-    .metric-switch.wheel-active .metric-switch-thumb {
-      transform: translate3d(100%,0,0) !important;
-    }
-    .metric-option { font-size: 11.5px !important; }
-
-    /* v2.1: wheel page keeps only the spin action; reward redemption stays on the score page. */
     .home.wheel-active #spinWheelActionBtn {
       width: min(72vw, 225px) !important;
       flex-basis: 225px !important;
@@ -4698,140 +4005,58 @@
       .wheel-assets-grid.three b { font-size: 15px; }
     }
 
-  
-
-    /* ============================================================
-       v2.2 — Third homepage mode: Work Schedule
-       ============================================================ */
     .metric-switch { width:min(94vw,356px) !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
     .metric-switch-thumb { width:calc((100% - 8px)/3) !important; }
     .metric-switch.wheel-active .metric-switch-thumb { transform:translate3d(100%,0,0) !important; }
     .metric-switch.schedule-active .metric-switch-thumb {
-      transform:translate3d(200%,0,0) !important;
-      background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(225,242,255,.50)),rgba(248,252,255,.58) !important;
-      box-shadow:0 6px 18px rgba(93,151,193,.13),inset 0 1px 0 rgba(255,255,255,.80) !important;
+      transform: translate3d(200%,0,0) !important;
     }
-    .metric-switch.schedule-active .metric-option.active { color:#5685a6 !important; }
+
     .metric-option { font-size:11px !important; gap:4px !important; }
 
-    .schedule-stage { position:absolute; inset:0; z-index:5; display:grid; place-items:center; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .28s ease,visibility 0s linear .28s; }
+    .schedule-stage {
+      position: absolute;
+      z-index: 5;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .28s ease,visibility 0s linear .28s;
+    }
     .home.schedule-active .schedule-stage { opacity:1; visibility:visible; pointer-events:auto; transition-delay:0s; }
     .home.schedule-active .score { opacity:0 !important; visibility:hidden !important; }
     .home.schedule-active .wheel-stage { opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
-    .home.schedule-active .score-lens {
-      background:radial-gradient(circle at 34% 24%,rgba(255,255,255,.88),transparent 44%),rgba(235,247,255,.58) !important;
-      box-shadow:0 24px 60px rgba(91,143,182,.13),inset 0 2px 4px rgba(255,255,255,.94),inset 0 -4px 16px rgba(93,151,193,.05) !important;
+
+    .schedule-time-main {
+      margin-top: 19px;
     }
-    .home.schedule-active .score-lens::after { opacity:0 !important; }
-    .home.schedule-active .reward-message { box-shadow:0 10px 28px rgba(91,143,182,.08),inset 0 1px 0 rgba(255,255,255,.50) !important; }
 
-    .schedule-time-ring { width:calc(100% - 22px); aspect-ratio:1; border-radius:50%; padding:7px; background:conic-gradient(from -90deg,rgba(111,177,220,.74) 0deg,rgba(111,177,220,.74) var(--work-span,0deg),rgba(214,231,242,.34) var(--work-span,0deg) 360deg); box-shadow:0 10px 28px rgba(82,137,176,.10),inset 0 1px 0 rgba(255,255,255,.65); transform:rotate(var(--work-start,0deg)); transition:transform .35s ease,background .3s ease; }
-    .schedule-ring-inner { width:100%; height:100%; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(242,249,255,.70)); border:1px solid rgba(255,255,255,.82); transform:rotate(calc(-1 * var(--work-start,0deg))); box-shadow:inset 0 2px 4px rgba(255,255,255,.92),inset 0 -5px 18px rgba(91,143,182,.05); transition:transform .35s ease; }
-    .schedule-date-main { font-size:26px; line-height:1; font-weight:760; letter-spacing:-.04em; color:var(--ink); }
-    .schedule-weekday { margin-top:7px; font-size:13px; font-weight:650; color:#6c91aa; }
-    .schedule-time-main { margin-top:19px; font-size:27px; line-height:1; font-weight:780; letter-spacing:-.045em; font-variant-numeric:tabular-nums; color:#466f8b; }
-    .schedule-status { margin-top:9px; font-size:11.5px; font-weight:600; color:var(--secondary); }
-    .schedule-time-ring.no-schedule { background:conic-gradient(rgba(207,224,235,.38) 0 360deg); }
+    .schedule-actions {
+      grid-template-rows: 38px 54px;
+      gap: 8px;
+    }
 
-    .metric-action-slot > .schedule-actions { grid-area:1/1; margin:0 !important; }
-    .schedule-actions { width:min(88vw,340px); height:104px; display:grid; grid-template-rows:38px 54px; gap:8px; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .22s ease,visibility 0s linear .22s; }
-    .home.schedule-active .schedule-actions { opacity:1; visibility:visible; pointer-events:auto; transition-delay:0s; }
     .home.schedule-active .score-redeem-button,.home.schedule-active .admin-controls,.home.schedule-active .wheel-actions { opacity:0 !important; visibility:hidden !important; pointer-events:none !important; }
-    .schedule-day-nav { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
     .schedule-nav-button,.schedule-overview-home-button,.schedule-primary-button { border:1px solid rgba(255,255,255,.80); border-radius:16px; font-weight:680; background:linear-gradient(145deg,rgba(255,255,255,.68),rgba(232,245,253,.42)),rgba(255,255,255,.34); box-shadow:0 8px 22px rgba(82,137,176,.08),inset 0 1px 0 rgba(255,255,255,.72); color:#557c97; }
-    .schedule-nav-button { font-size:12px; }
-    .schedule-main-actions { display:grid; grid-template-columns:1.25fr .75fr; gap:8px; }
-    .schedule-primary-button { color:white; background:linear-gradient(145deg,#78afd0,#6598b8); font-size:14px; }
-    .schedule-overview-home-button { font-size:13px; }
-    .home.schedule-active #overviewBtn { opacity:0; visibility:hidden; pointer-events:none; }
+
     .admin-schedule-notice { display:none !important; }
 
-
-    /* ============================================================
-       v2.3 — Schedule clock / luminous work-arc refinement
-       ============================================================ */
-    .home.schedule-active .score-lens {
-      background:
-        radial-gradient(circle at 33% 24%, rgba(255,255,255,.84), transparent 40%),
-        linear-gradient(145deg, rgba(250,253,255,.70), rgba(230,244,253,.43)) !important;
-      border-color: rgba(218,239,252,.88) !important;
-      box-shadow:
-        0 26px 68px rgba(75,132,173,.13),
-        inset 0 2px 4px rgba(255,255,255,.96),
-        inset 0 -12px 30px rgba(82,145,188,.045) !important;
-      overflow: hidden;
-    }
-    .home.schedule-active .reward-message {
-      background: linear-gradient(145deg, rgba(255,255,255,.26), rgba(229,244,253,.14)), rgba(255,255,255,.14) !important;
-      border-color: rgba(226,241,251,.72) !important;
-      box-shadow: 0 12px 32px rgba(70,128,170,.07), inset 0 1px 0 rgba(255,255,255,.62) !important;
-    }
-    .home.schedule-active .reward-line-primary {
-      color: #4d7896;
-      font-weight: 730;
-      letter-spacing: -.012em;
-    }
-    .home.schedule-active .reward-line-secondary {
-      color: rgba(80,119,145,.58);
-      letter-spacing: .02em;
-    }
-    .schedule-stage {
-      inset: 0;
-      display: grid;
-      place-items: center;
-      touch-action: pan-y;
-      user-select: none;
-      -webkit-user-select: none;
-    }
     .schedule-clock {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      place-items: center;
       transform: translate3d(0,0,0) scale(1);
-      opacity: 1;
-      transition: transform .72s cubic-bezier(.18,.82,.24,1), opacity .62s ease;
-      will-change: transform, opacity;
     }
-    .schedule-clock.dragging { transition: none !important; }
-    .schedule-clock-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
+
     .schedule-tick {
       stroke: rgba(79,121,149,.20);
       stroke-width: 1.05;
-      stroke-linecap: round;
     }
-    .schedule-tick.medium {
-      stroke: rgba(73,122,155,.28);
-      stroke-width: 1.25;
-    }
-    .schedule-tick.major {
-      stroke: rgba(66,117,153,.42);
-      stroke-width: 1.65;
-    }
+
     .schedule-arc,
     .schedule-arc-glow {
       stroke-linecap: round;
       transition: opacity .34s ease;
       will-change: stroke-dasharray, stroke-dashoffset, opacity;
     }
-    .schedule-arc {
-      stroke-width: 3.8;
-      filter: url(#scheduleArcGlowFilter) drop-shadow(0 0 3px rgba(112,199,245,.34));
-      animation: scheduleArcBreath 4.8s ease-in-out infinite;
-    }
-    .schedule-arc-glow {
-      stroke: rgba(118,205,248,.34);
-      stroke-width: 8.5;
-      filter: blur(2.6px);
-      animation: scheduleArcGlowBreath 5.6s ease-in-out infinite;
-    }
+
     @keyframes scheduleArcBreath {
       0%,100% { opacity: .86; filter: url(#scheduleArcGlowFilter) drop-shadow(0 0 2px rgba(113,201,246,.26)); }
       48% { opacity: 1; filter: url(#scheduleArcGlowFilter) drop-shadow(0 0 6px rgba(108,195,246,.52)); }
@@ -4842,37 +4067,12 @@
       50% { opacity: .46; }
     }
     .schedule-time-main {
-      position: relative;
-      z-index: 5;
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      gap: 11px;
-      margin: 0;
-      color: #426f8e;
-      font-size: clamp(35px, 10.8vw, 43px);
-      line-height: 1;
-      font-weight: 740;
-      letter-spacing: -.055em;
       font-variant-numeric: tabular-nums;
-      text-shadow: 0 8px 24px rgba(72,125,160,.09);
-      pointer-events: none;
     }
     .schedule-time-main i {
       font-style: normal;
-      font-size: .64em;
-      font-weight: 520;
-      color: rgba(75,126,159,.42);
-      transform: translateY(-.08em);
     }
-    .home.schedule-shift-next .schedule-time-main,
-    .home.schedule-shift-next .reward-message {
-      animation: scheduleShiftNext .78s cubic-bezier(.16,.82,.22,1);
-    }
-    .home.schedule-shift-prev .schedule-time-main,
-    .home.schedule-shift-prev .reward-message {
-      animation: scheduleShiftPrev .78s cubic-bezier(.16,.82,.22,1);
-    }
+
     @keyframes scheduleShiftNext {
       0% { opacity: .36; transform: translate3d(12px,0,0) scale(.985); filter: blur(.7px); }
       58% { opacity: 1; transform: translate3d(-1px,0,0) scale(1.003); filter: blur(0); }
@@ -4884,29 +4084,6 @@
       100% { opacity: 1; transform: translate3d(0,0,0) scale(1); }
     }
 
-    .metric-action-slot > .schedule-actions { grid-area: 1/1; margin: 0 !important; }
-    .schedule-actions {
-      width: min(88vw,340px);
-      height: 54px;
-      display: grid;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity .25s ease, visibility 0s linear .25s, transform .34s cubic-bezier(.2,.9,.25,1);
-    }
-    .home.schedule-active .schedule-actions {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transition-delay: 0s;
-    }
-    .schedule-main-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 9px;
-      width: 100%;
-      height: 54px;
-    }
     .schedule-primary-button,
     .schedule-overview-home-button {
       min-width: 0;
@@ -4918,62 +4095,14 @@
       letter-spacing: -.01em;
       box-shadow: 0 10px 26px rgba(67,127,168,.10), inset 0 1px 0 rgba(255,255,255,.80);
     }
-    .schedule-primary-button {
-      color: white;
-      background: linear-gradient(135deg, #7fbce1 0%, #659bc0 55%, #718fc6 100%);
-      box-shadow: 0 12px 28px rgba(79,143,184,.20), inset 0 1px 0 rgba(255,255,255,.34);
-    }
-    .schedule-overview-home-button {
-      color: #567e99;
-      background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(226,243,253,.42)), rgba(255,255,255,.30);
-    }
 
-    /* Schedule sheets: same material language, ice-blue accent. */
-    #workScheduleLayer,
-    #workScheduleOverviewLayer,
-    #adminWorkScheduleLayer {
-      background: rgba(47,75,98,.08) !important;
-    }
-    #workScheduleLayer.open,
-    #workScheduleOverviewLayer.open,
-    #adminWorkScheduleLayer.open {
-      -webkit-backdrop-filter: blur(10px) saturate(116%) !important;
-      backdrop-filter: blur(10px) saturate(116%) !important;
-    }
-    #workScheduleLayer .work-schedule-sheet,
-    #workScheduleOverviewLayer .work-schedule-sheet,
-    #adminWorkScheduleLayer .work-schedule-sheet {
-      background:
-        radial-gradient(circle at 16% 0%, rgba(224,246,255,.38), transparent 34%),
-        linear-gradient(145deg, rgba(255,255,255,.54), rgba(223,240,251,.28)),
-        rgba(244,250,254,.64) !important;
-      border-color: rgba(224,241,252,.90) !important;
-      box-shadow: 0 -20px 64px rgba(55,105,139,.16), inset 0 1px 0 rgba(255,255,255,.76) !important;
-      -webkit-backdrop-filter: blur(38px) saturate(185%) !important;
-      backdrop-filter: blur(38px) saturate(185%) !important;
-    }
-    #workScheduleLayer .unified-sheet-header,
-    #workScheduleOverviewLayer .unified-sheet-header,
-    #adminWorkScheduleLayer .unified-sheet-header {
-      background: linear-gradient(180deg, rgba(246,252,255,.86), rgba(232,245,253,.56) 76%, transparent) !important;
-      border-bottom-color: rgba(105,155,188,.10) !important;
-    }
     #workScheduleLayer .grabber,
     #workScheduleOverviewLayer .grabber,
     #adminWorkScheduleLayer .grabber {
       background: linear-gradient(90deg, rgba(135,189,220,.34), rgba(92,154,194,.56), rgba(135,189,220,.34)) !important;
       box-shadow: 0 0 10px rgba(100,177,222,.14) !important;
     }
-    #workScheduleLayer .sheet-title,
-    #workScheduleOverviewLayer .sheet-title,
-    #adminWorkScheduleLayer .sheet-title { color: #4d7896; }
-    #workScheduleLayer .work-schedule-field-label { color: rgba(72,116,146,.72); }
-    #workScheduleLayer .work-schedule-control {
-      color: #456f8b;
-      border-color: rgba(132,181,212,.20) !important;
-      background: linear-gradient(145deg, rgba(255,255,255,.70), rgba(228,244,253,.42)) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.78), 0 8px 20px rgba(62,119,155,.05);
-    }
+
     #workScheduleLayer .work-schedule-date-step,
     #workScheduleLayer #cancelWorkScheduleBtn,
     #workScheduleLayer .work-schedule-overview-button {
@@ -4982,36 +4111,10 @@
       background: linear-gradient(145deg, rgba(255,255,255,.62), rgba(228,244,253,.34)) !important;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.68), 0 8px 20px rgba(67,121,157,.05);
     }
-    #workScheduleLayer .work-schedule-existing {
-      color: #4e7d9d;
-      border-color: rgba(106,168,207,.18) !important;
-      background: linear-gradient(145deg, rgba(222,244,255,.58), rgba(237,248,255,.34)) !important;
-    }
-    #workScheduleLayer .work-schedule-hint { color: rgba(77,116,141,.56); }
-    #workScheduleLayer #saveWorkScheduleBtn {
-      color: white !important;
-      background: linear-gradient(135deg, #7fbce1 0%, #659bc0 55%, #718fc6 100%) !important;
-      box-shadow: 0 12px 28px rgba(79,143,184,.20), inset 0 1px 0 rgba(255,255,255,.30) !important;
-    }
-    #workScheduleOverviewLayer .work-schedule-row,
-    #adminWorkScheduleLayer .work-schedule-row {
-      border-color: rgba(125,174,206,.14) !important;
-      background: linear-gradient(145deg, rgba(255,255,255,.52), rgba(230,244,252,.26)) !important;
-    }
-    #workScheduleOverviewLayer .work-schedule-time,
-    #adminWorkScheduleLayer .work-schedule-time { color: #4c7896; }
+
     #workScheduleOverviewLayer .work-schedule-delete {
       background: rgba(255,255,255,.48) !important;
       border-color: rgba(235,125,132,.14) !important;
-    }
-
-    .schedule-time-main .schedule-empty-mark {
-      -webkit-text-fill-color: rgba(65,102,124,.28) !important;
-      color: rgba(65,102,124,.28) !important;
-      font-size: .86em;
-      font-weight: 420;
-      letter-spacing: 0;
-      transform: translateY(-.03em);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -5024,85 +4127,6 @@
       .home.schedule-shift-prev .reward-message { animation: none !important; transition-duration: .01ms !important; }
     }
 
-
-
-    /* ============================================================
-       v2.4 — Unified three-mode design system / premium schedule
-       The homepage skeleton is shared by score, wheel and schedule.
-       Schedule changes only the content and cool-blue accent.
-       ============================================================ */
-
-    /* Shared geometry: same title → lens → action → overview rhythm. */
-    .home.schedule-active .score-lens {
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,.48), transparent 34%),
-        radial-gradient(circle at 71% 76%, rgba(186,226,248,.055), transparent 46%),
-        linear-gradient(145deg, rgba(255,255,255,.20), rgba(255,255,255,.035) 48%, rgba(255,255,255,.01)),
-        var(--lens-bg) !important;
-      border: 1.5px solid rgba(255,255,255,.82) !important;
-      box-shadow:
-        0 22px 56px rgba(31,38,76,.075),
-        0 10px 34px rgba(78,145,184,.035),
-        inset 0 2px 3px rgba(255,255,255,.88),
-        inset 0 -5px 16px rgba(40,84,116,.045) !important;
-      -webkit-backdrop-filter: blur(40px) saturate(185%) brightness(1.035) !important;
-      backdrop-filter: blur(40px) saturate(185%) brightness(1.035) !important;
-      overflow: visible !important;
-    }
-
-    .home.schedule-active .score-lens::before {
-      background:
-        radial-gradient(circle at 31% 22%, rgba(255,255,255,.38), transparent 43%),
-        linear-gradient(122deg, rgba(255,255,255,.10), transparent 36% 68%, rgba(132,203,239,.035)) !important;
-      opacity: .72;
-    }
-
-    /* The schedule header stays typography-first, not a blue card. */
-    .home.schedule-active .reward-message {
-      background: transparent !important;
-      border-color: transparent !important;
-      box-shadow: none !important;
-      -webkit-backdrop-filter: none !important;
-      backdrop-filter: none !important;
-    }
-    .home.schedule-active .reward-line-primary {
-      color: rgba(29,42,51,.92) !important;
-      font-size: 15px !important;
-      font-weight: 690 !important;
-      letter-spacing: -.022em !important;
-    }
-    .home.schedule-active .reward-line-secondary {
-      color: rgba(75,109,130,.48) !important;
-      font-size: 11.5px !important;
-      font-weight: 560 !important;
-      letter-spacing: .035em !important;
-      margin-top: 5px !important;
-    }
-
-    /* Fine watch-like markings, engraved rather than painted. */
-    .schedule-clock-svg { overflow: visible; }
-    .schedule-tick {
-      stroke-linecap: round;
-      shape-rendering: geometricPrecision;
-    }
-    .schedule-tick.minor {
-      stroke: rgba(54,72,84,.105);
-      stroke-width: .62;
-    }
-    .schedule-tick.hour {
-      stroke: rgba(49,73,89,.19);
-      stroke-width: .82;
-    }
-    .schedule-tick.medium {
-      stroke: rgba(49,84,106,.27);
-      stroke-width: 1.05;
-    }
-    .schedule-tick.major {
-      stroke: rgba(43,84,111,.40);
-      stroke-width: 1.38;
-    }
-
-    /* No background progress track: only the scheduled interval touches the circumference. */
     .schedule-arc,
     .schedule-arc-glow,
     .schedule-arc-shine {
@@ -5111,27 +4135,7 @@
       transition: opacity .48s ease;
       will-change: stroke-dasharray, stroke-dashoffset, opacity, filter;
     }
-    .schedule-arc-glow {
-      stroke: rgba(72,176,230,.23);
-      stroke-width: 10.5;
-      filter: blur(4.2px);
-      animation: schedulePremiumGlow 6.8s cubic-bezier(.45,0,.25,1) infinite;
-    }
-    .schedule-arc {
-      stroke-width: 4.35;
-      filter:
-        url(#scheduleArcGlowFilter)
-        drop-shadow(0 0 1.5px rgba(219,249,255,.78))
-        drop-shadow(0 0 5px rgba(73,183,233,.32));
-      animation: schedulePremiumBreath 6.2s cubic-bezier(.42,0,.28,1) infinite;
-    }
-    .schedule-arc-shine {
-      stroke-width: 2.05;
-      opacity: .88;
-      filter: drop-shadow(0 0 2.8px rgba(224,250,255,.52));
-      mix-blend-mode: screen;
-      animation: schedulePremiumShine 7.2s ease-in-out infinite;
-    }
+
     @keyframes schedulePremiumBreath {
       0%,100% { opacity: .88; filter:url(#scheduleArcGlowFilter) drop-shadow(0 0 1px rgba(225,250,255,.72)) drop-shadow(0 0 4px rgba(68,179,229,.24)); }
       46% { opacity: 1; filter:url(#scheduleArcGlowFilter) drop-shadow(0 0 2px rgba(237,253,255,.90)) drop-shadow(0 0 7px rgba(73,188,237,.40)); }
@@ -5148,17 +4152,6 @@
       72% { opacity: .68; }
     }
 
-    /* Center typography: time is the only content in the dial. */
-    .schedule-time-main {
-      gap: clamp(12px, 4vw, 18px) !important;
-      color: rgba(34,75,101,.93) !important;
-      font-size: clamp(38px, 11.6vw, 47px) !important;
-      font-weight: 610 !important;
-      letter-spacing: -.062em !important;
-      text-shadow:
-        0 1px 0 rgba(255,255,255,.66),
-        0 14px 32px rgba(63,132,173,.075) !important;
-    }
     .schedule-time-main span {
       background: linear-gradient(180deg, rgba(26,62,84,.98), rgba(78,135,169,.82));
       -webkit-background-clip: text;
@@ -5172,12 +4165,6 @@
       transform: translateY(-.04em) !important;
     }
 
-    /* Swipe is quiet and physical; the date and time move as one system. */
-    .schedule-clock {
-      transition:
-        transform .88s cubic-bezier(.16,.82,.20,1),
-        opacity .72s ease !important;
-    }
     .home.schedule-shift-next .schedule-time-main,
     .home.schedule-shift-next .reward-message {
       animation: schedulePremiumShiftNext .96s cubic-bezier(.16,.82,.20,1) !important;
@@ -5199,18 +4186,7 @@
       100% { opacity:1; transform:translate3d(0,0,0) scale(1); }
     }
 
-    /* One primary action under every core circle. Schedule uses the same slot and scale. */
-    .metric-action-slot > .schedule-actions {
-      grid-area: 1 / 1;
-      margin: 0 !important;
-      align-self: center;
-    }
     .schedule-actions {
-      width: 100% !important;
-      height: 52px !important;
-      min-height: 52px !important;
-      display: grid !important;
-      place-items: center !important;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -5225,58 +4201,12 @@
       transition-delay: 0s;
     }
     .schedule-primary-button {
-      width: min(78vw,258px) !important;
-      height: 50px !important;
-      min-height: 50px !important;
-      border: 1px solid rgba(255,255,255,.84) !important;
-      border-radius: 17px !important;
-      padding: 0 18px !important;
-      color: rgba(48,105,140,.94) !important;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.66), rgba(226,244,253,.32)),
-        rgba(248,252,255,.28) !important;
-      box-shadow:
-        0 10px 26px rgba(60,135,176,.075),
-        inset 0 1px 0 rgba(255,255,255,.76) !important;
-      -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
-      backdrop-filter: blur(22px) saturate(155%) !important;
-      font-size: 14px !important;
-      font-weight: 710 !important;
-      letter-spacing: -.01em !important;
       transition: transform .16s ease, box-shadow .25s ease, background .25s ease !important;
     }
     .schedule-primary-button:active {
-      transform: scale(.97);
       box-shadow: 0 6px 18px rgba(60,135,176,.06), inset 0 1px 0 rgba(255,255,255,.72) !important;
     }
 
-    /* Shared bottom overview remains in exactly the same position in all three modes. */
-    .home.schedule-active #overviewBtn {
-      opacity: 1 !important;
-      visibility: visible !important;
-      pointer-events: auto !important;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.64), rgba(226,244,253,.22)),
-        var(--home-control-bg) !important;
-      box-shadow:
-        0 14px 34px rgba(62,135,176,.07),
-        inset 0 1px 0 rgba(255,255,255,.64) !important;
-      color: rgba(38,70,88,.92) !important;
-    }
-    .home.schedule-active #overviewBtn svg { color: rgba(73,142,181,.78); }
-
-    /* Schedule accent belongs to the selected tab, not the entire page. */
-    .metric-switch.schedule-active .metric-switch-thumb {
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.86), rgba(231,246,253,.33)),
-        rgba(255,255,255,.52) !important;
-      box-shadow:
-        0 5px 16px rgba(62,135,176,.07),
-        inset 0 1px 0 rgba(255,255,255,.82) !important;
-    }
-    .metric-switch.schedule-active .metric-option.active { color: rgba(52,112,148,.95) !important; }
-
-    /* Registration / edit sheet: same glass family, with cool-blue accents only. */
     #workScheduleLayer,
     #workScheduleOverviewLayer,
     #adminWorkScheduleLayer {
@@ -5316,18 +4246,7 @@
     #adminWorkScheduleLayer .sheet-title {
       color: rgba(27,42,52,.96) !important;
     }
-    #workScheduleLayer .work-schedule-field-label {
-      color: rgba(63,100,123,.62) !important;
-      font-weight: 650 !important;
-    }
-    #workScheduleLayer .work-schedule-control {
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.30), rgba(232,246,253,.10)),
-        rgba(255,255,255,.12) !important;
-      border-color: rgba(255,255,255,.58) !important;
-      color: rgba(32,61,79,.94) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.52), 0 7px 20px rgba(62,130,170,.035) !important;
-    }
+
     #workScheduleLayer .work-schedule-date-step,
     #workScheduleLayer .work-schedule-overview-button,
     #workScheduleLayer #cancelWorkScheduleBtn {
@@ -5349,7 +4268,6 @@
       background: rgba(218,242,254,.22) !important;
       border-color: rgba(175,222,246,.34) !important;
     }
-    #workScheduleLayer .work-schedule-hint { color: rgba(71,103,123,.48) !important; }
 
     #workScheduleOverviewLayer .work-schedule-row,
     #adminWorkScheduleLayer .work-schedule-row {
@@ -5366,62 +4284,23 @@
       .schedule-clock { transition-duration: .01ms !important; }
     }
 
-
-
-    /* ============================================================
-       v2.5 — Luxury Glass Timepiece / schedule-only visual upgrade
-       Business logic is unchanged. Only the schedule dial and motion are refined.
-       ============================================================ */
-    .home.schedule-active .score-lens {
-      background:
-        radial-gradient(circle at 31% 20%, rgba(255,255,255,.52), transparent 34%),
-        radial-gradient(circle at 72% 78%, rgba(188,228,248,.045), transparent 44%),
-        linear-gradient(143deg, rgba(255,255,255,.22), rgba(255,255,255,.028) 49%, rgba(255,255,255,.008)),
-        rgba(255,255,255,.43) !important;
-      border: 1px solid rgba(255,255,255,.80) !important;
-      box-shadow:
-        0 28px 70px rgba(26,39,57,.072),
-        0 9px 30px rgba(66,132,170,.026),
-        inset 0 1.3px 0 rgba(255,255,255,.92),
-        inset 0 -1px 0 rgba(37,65,84,.035),
-        inset 0 -14px 34px rgba(46,92,120,.018) !important;
-      -webkit-backdrop-filter: blur(42px) saturate(168%) brightness(1.025) !important;
-      backdrop-filter: blur(42px) saturate(168%) brightness(1.025) !important;
-    }
-    .home.schedule-active .score-lens::before {
-      background:
-        radial-gradient(ellipse at 34% 18%, rgba(255,255,255,.42), transparent 38%),
-        linear-gradient(118deg, rgba(255,255,255,.10), transparent 31% 72%, rgba(158,216,245,.022)) !important;
-      opacity:.78 !important;
-    }
-
     .schedule-clock::before {
-      content:"";
-      position:absolute;
-      inset:8.8%;
-      border-radius:50%;
-      pointer-events:none;
-      background:
-        radial-gradient(circle at 33% 25%, rgba(255,255,255,.16), transparent 34%),
-        linear-gradient(132deg, rgba(255,255,255,.05), transparent 42% 64%, rgba(104,181,219,.018));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.32),
-        inset 0 -1px 0 rgba(49,78,96,.024);
-      opacity:.82;
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
     }
     .schedule-clock::after {
-      content:"";
-      position:absolute;
-      width:8px; height:8px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.92) 0 14%, rgba(113,183,219,.24) 24%, rgba(113,183,219,0) 72%);
-      opacity:.38;
-      pointer-events:none;
-      filter:blur(.15px);
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,.92) 0 14%, rgba(113,183,219,.24) 24%, rgba(113,183,219,0) 72%);
+      opacity: .38;
+      pointer-events: none;
+      filter: blur(.15px);
     }
 
-    /* 24 engraved hour indices: fewer, calmer, more watch-like. */
-    .schedule-tick { stroke-linecap:round; shape-rendering:geometricPrecision; }
     .schedule-tick.minor {
       stroke:rgba(34,51,62,.105) !important;
       stroke-width:.62 !important;
@@ -5430,42 +4309,17 @@
       stroke:rgba(37,66,83,.20) !important;
       stroke-width:.86 !important;
     }
-    .schedule-tick.major {
-      stroke:rgba(32,67,90,.34) !important;
-      stroke-width:1.15 !important;
-    }
-    .schedule-tick.cardinal {
-      stroke:rgba(31,73,101,.50) !important;
-      stroke-width:1.55 !important;
-      filter:drop-shadow(0 1px 0 rgba(255,255,255,.46));
+
+    .schedule-arc-glow {
+      mix-blend-mode: screen;
     }
 
-    /* Embedded optical-fibre arc: no inactive rail at all. */
-    .schedule-arc-glow {
-      stroke:rgba(65,175,229,.20) !important;
-      stroke-width:11.2 !important;
-      filter:blur(4.8px) !important;
-      mix-blend-mode:screen;
-      animation:scheduleLuxuryHalo 7.4s cubic-bezier(.42,0,.22,1) infinite !important;
-    }
-    .schedule-arc {
-      stroke-width:3.25 !important;
-      filter:
-        url(#scheduleArcGlowFilter)
-        drop-shadow(0 0 .8px rgba(245,254,255,.92))
-        drop-shadow(0 0 3px rgba(101,211,250,.32))
-        drop-shadow(0 0 8px rgba(55,151,216,.18)) !important;
-      animation:scheduleLuxuryCore 6.8s cubic-bezier(.44,0,.23,1) infinite !important;
-    }
     .schedule-arc-shine {
-      stroke:url(#scheduleArcShineGradient) !important;
-      stroke-width:1.55 !important;
-      stroke-linecap:round !important;
-      opacity:0;
-      mix-blend-mode:screen;
-      filter:drop-shadow(0 0 1.6px rgba(255,255,255,.86)) drop-shadow(0 0 4.5px rgba(145,229,255,.56)) !important;
-      animation:none !important;
-      will-change:stroke-dasharray,stroke-dashoffset,opacity;
+      stroke: url(#scheduleArcShineGradient) !important;
+      stroke-linecap: round !important;
+      opacity: 0;
+      animation: none !important;
+      will-change: stroke-dasharray,stroke-dashoffset,opacity;
     }
     @keyframes scheduleLuxuryCore {
       0%,100% { opacity:.88; }
@@ -5478,56 +4332,10 @@
       76% { opacity:.20; }
     }
 
-    /* The time is typography, not a label: airy, neutral, precise. */
     .schedule-time-main {
-      gap:clamp(19px,6.4vw,28px) !important;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif !important;
-      font-size:clamp(42px,12.9vw,53px) !important;
-      line-height:.94 !important;
-      font-weight:430 !important;
-      letter-spacing:-.052em !important;
-      color:rgba(28,43,53,.96) !important;
-      text-shadow:0 1px 0 rgba(255,255,255,.72),0 18px 38px rgba(52,111,146,.055) !important;
-    }
-    .schedule-time-main .schedule-time-value {
-      min-width:1.55em;
-      text-align:center;
-      background:linear-gradient(180deg, rgba(24,39,50,.98) 14%, rgba(43,73,90,.91) 70%, rgba(78,124,150,.78));
-      -webkit-background-clip:text;
-      background-clip:text;
-      -webkit-text-fill-color:transparent;
-      transform:translateZ(0);
-    }
-    .schedule-time-main .schedule-time-divider {
-      width:18px;
-      height:1px;
-      align-self:center;
-      margin-top:-1px;
-      border-radius:99px;
-      background:linear-gradient(90deg, transparent, rgba(62,92,109,.38) 24% 76%, transparent);
-      font-size:0 !important;
-      transform:none !important;
-      opacity:.82;
-    }
-    .schedule-time-main .schedule-empty-mark {
-      min-width:auto;
-      font-size:.72em;
-      font-weight:330;
-      letter-spacing:0;
-      color:rgba(49,72,85,.22) !important;
-      -webkit-text-fill-color:rgba(49,72,85,.22) !important;
-      background:none !important;
+      line-height: .94 !important;
     }
 
-    /* Date moves horizontally; digits roll vertically with restrained depth. */
-    .home.schedule-shift-next .schedule-time-main,
-    .home.schedule-shift-prev .schedule-time-main { animation:none !important; }
-    .home.schedule-shift-next .schedule-time-value {
-      animation:scheduleDigitNext .88s cubic-bezier(.18,.79,.18,1);
-    }
-    .home.schedule-shift-prev .schedule-time-value {
-      animation:scheduleDigitPrev .88s cubic-bezier(.18,.79,.18,1);
-    }
     .home.schedule-shift-next .schedule-time-value:last-child,
     .home.schedule-shift-prev .schedule-time-value:last-child { animation-delay:.055s; }
     @keyframes scheduleDigitNext {
@@ -5542,8 +4350,7 @@
       78% { transform:translate3d(0,.6px,0) scale(1.001); }
       100% { opacity:1; transform:translate3d(0,0,0) scale(1); filter:blur(0); }
     }
-    .home.schedule-shift-next .reward-message { animation:scheduleDateNext 1.02s cubic-bezier(.16,.82,.20,1) !important; }
-    .home.schedule-shift-prev .reward-message { animation:scheduleDatePrev 1.02s cubic-bezier(.16,.82,.20,1) !important; }
+
     @keyframes scheduleDateNext {
       0% { opacity:.12; transform:translate3d(12px,0,0); filter:blur(.8px); }
       55% { opacity:.9; filter:blur(0); }
@@ -5564,26 +4371,8 @@
       .home.schedule-shift-prev .reward-message { animation:none !important; }
     }
 
-
-
-    /* ============================================================
-       v2.6 — Product-inspired radial timepiece
-       Reference direction: mature bedtime/sleep radial pickers.
-       No inactive rail; precision geometry + restrained optical depth.
-       ============================================================ */
     .home.schedule-active .score-lens {
-      background:
-        radial-gradient(ellipse at 31% 18%, rgba(255,255,255,.50), transparent 31%),
-        radial-gradient(ellipse at 72% 82%, rgba(123,197,231,.028), transparent 43%),
-        linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.025) 52%, rgba(255,255,255,.006)),
-        rgba(255,255,255,.425) !important;
       border-color: rgba(255,255,255,.78) !important;
-      box-shadow:
-        0 30px 72px rgba(25,37,54,.066),
-        0 11px 32px rgba(54,120,158,.022),
-        inset 0 1.2px 0 rgba(255,255,255,.92),
-        inset 0 -1px 0 rgba(35,61,77,.028),
-        inset 0 -16px 38px rgba(43,88,115,.014) !important;
     }
     .schedule-clock::before {
       inset: 10.2% !important;
@@ -5597,26 +4386,10 @@
     }
     .schedule-clock::after { content:none !important; }
 
-    /* 15-minute micro indices create precision; hours stay legible by hierarchy only. */
-    .schedule-tick.micro {
-      stroke: rgba(27,43,53,.070) !important;
-      stroke-width: .48 !important;
-    }
-    .schedule-tick.hour {
-      stroke: rgba(31,58,75,.175) !important;
-      stroke-width: .82 !important;
-    }
-    .schedule-tick.major {
-      stroke: rgba(30,66,89,.305) !important;
-      stroke-width: 1.10 !important;
-    }
     .schedule-tick.cardinal {
       stroke: rgba(26,70,98,.49) !important;
-      stroke-width: 1.62 !important;
-      filter: drop-shadow(0 .7px 0 rgba(255,255,255,.50));
     }
 
-    /* The work interval reads as an embedded glass-fibre ribbon, not a progress bar. */
     .schedule-arc-glow {
       stroke: rgba(75,177,224,.17) !important;
       stroke-width: 13.6 !important;
@@ -5661,33 +4434,12 @@
       76% { opacity:.17; }
     }
 
-    /* Center time: precise product typography, almost neutral; blue lives on the rim. */
     .schedule-time-main {
-      gap: clamp(22px, 6.8vw, 31px) !important;
       font-size: clamp(43px, 13.1vw, 54px) !important;
       font-weight: 390 !important;
       letter-spacing: -.048em !important;
-      color: rgba(24,38,47,.965) !important;
-      text-shadow: 0 1px 0 rgba(255,255,255,.70), 0 15px 38px rgba(40,89,117,.040) !important;
-    }
-    .schedule-time-main .schedule-time-value {
-      min-width: 1.52em !important;
-      background: linear-gradient(180deg, rgba(21,34,43,.99) 16%, rgba(35,56,69,.94) 69%, rgba(58,91,109,.84)) !important;
-      -webkit-background-clip:text !important;
-      background-clip:text !important;
-      -webkit-text-fill-color:transparent !important;
-    }
-    .schedule-time-main .schedule-time-divider {
-      width: 20px !important;
-      height: .75px !important;
-      background: linear-gradient(90deg, transparent, rgba(51,76,91,.31) 27% 73%, transparent) !important;
-      opacity:.78 !important;
     }
 
-    /* Keep swipe refinement slow and inertial, closer to native sleep pickers. */
-    .schedule-clock {
-      transition: transform .96s cubic-bezier(.16,.82,.20,1), opacity .80s ease !important;
-    }
     .home.schedule-shift-next .schedule-time-value,
     .home.schedule-shift-prev .schedule-time-value {
       animation-duration: .98s !important;
@@ -5701,16 +4453,6 @@
       .schedule-arc-cap { transition:none !important; }
     }
 
-
-
-    /* ============================================================
-       v2.8 — Light Samsung-style radial schedule dial
-       Keeps the shared three-mode homepage geometry and light glass shell,
-       while the schedule face follows the supplied sleep-schedule reference:
-       24h rail + 96 ticks + 0/6/12/18 + warm gradient arc + moon/sunrise handles.
-       ============================================================ */
-
-    /* Keep the same homepage circle geometry as Score / Wheel. Only its face changes. */
     .home.schedule-active .score-lens {
       overflow: visible !important;
       background:
@@ -5731,7 +4473,6 @@
     }
     .home.schedule-active .score-lens::after { opacity: 0 !important; }
 
-    /* Date copy stays in the same shared slot as the other two modules. */
     .home.schedule-active .reward-message {
       background: transparent !important;
       border-color: transparent !important;
@@ -5785,7 +4526,6 @@
       overflow: visible;
     }
 
-    /* Samsung reference: continuous neutral rail, prominent but not bulky. */
     .schedule-ring-track {
       stroke: rgba(67,67,72,.205) !important;
       stroke-width: 6.25 !important;
@@ -5794,7 +4534,6 @@
       filter: drop-shadow(0 .55px 0 rgba(255,255,255,.82)) drop-shadow(0 1.4px 3px rgba(44,44,48,.038));
     }
 
-    /* Old luminous SVG arc remains as the animation driver only; it is visually suppressed. */
     .schedule-arc,
     .schedule-arc-glow,
     .schedule-arc-shine,
@@ -5805,7 +4544,6 @@
       pointer-events: none !important;
     }
 
-    /* True circumferential gradient ribbon, clipped to the scheduled interval by JS. */
     .schedule-reference-arc {
       position: absolute;
       inset: 2.30%;
@@ -5820,7 +4558,6 @@
       transition: opacity .24s ease;
     }
 
-    /* 96 precision ticks: one every 15 minutes, hierarchy copied from the reference. */
     .schedule-tick {
       stroke-linecap: round !important;
       shape-rendering: geometricPrecision;
@@ -5843,7 +4580,6 @@
       filter: none !important;
     }
 
-    /* 0 / 6 / 12 / 18 are deliberately inside the tick ring, like the supplied screenshot. */
     .schedule-hour-label {
       position: absolute;
       z-index: 3;
@@ -5868,7 +4604,6 @@
     .schedule-hour-label.h12 { bottom: 13.0%; left: 50%; transform: translate(-50%,50%); }
     .schedule-hour-label.h18 { top: 50%; left: 13.0%; transform: translate(-50%,-50%); }
 
-    /* Reference handles: warm circular knobs with dark moon / sunrise glyphs. */
     .schedule-reference-handle {
       position: absolute;
       z-index: 6;
@@ -5895,7 +4630,6 @@
     }
     .schedule-reference-handle.end svg { width: 15px; height: 15px; }
 
-    /* Two stacked times with small am/pm, matching the reference hierarchy. */
     .schedule-time-main {
       position: relative !important;
       z-index: 5;
@@ -5960,7 +4694,6 @@
     }
     .schedule-center-row.empty small { visibility: hidden; }
 
-    /* Reference's "Sleep time" line, adapted only in wording for work schedules. */
     .schedule-duration {
       position: absolute;
       z-index: 7;
@@ -5977,7 +4710,6 @@
       pointer-events: none;
     }
 
-    /* Quiet date swipe: keep the existing behavior, remove luxury/glow motion. */
     .home.schedule-shift-next .schedule-time-main,
     .home.schedule-shift-prev .schedule-time-main { animation: none !important; }
     .home.schedule-shift-next .schedule-center-row,
@@ -5999,7 +4731,6 @@
       to { opacity:1; transform:none; }
     }
 
-    /* Same action slot and button geometry as the other homepage modes; warm schedule accent only. */
     .metric-action-slot > .schedule-actions {
       grid-area: 1 / 1;
       margin: 0 !important;
@@ -6040,7 +4771,6 @@
     }
     .metric-switch.schedule-active .metric-option.active { color: rgba(160,95,47,.96) !important; }
 
-    /* Bottom overview remains exactly in the common slot. */
     .home.schedule-active #overviewBtn {
       opacity: 1 !important;
       visibility: visible !important;
@@ -6070,19 +4800,12 @@
       }
     }
 
-
-    /* ============================================================
-       v4 — score amount picker / wheel chance admin / schedule rest + rewards
-       ============================================================ */
-
-    /* Score admin buttons stay geometrically identical, labels are cleaner. */
     .score-button {
       font-size: 25px !important;
       font-weight: 520 !important;
       letter-spacing: 0 !important;
     }
 
-    /* Strong pending schedule-reward reminder lives between the score lens and +/- controls. */
     .score-reward-notice {
       position: absolute;
       left: 50%;
@@ -6129,7 +4852,6 @@
       margin-top: 62px !important;
     }
 
-    /* Custom 1..9 score selector — same alert material, no native select styling. */
     .change-amount-row {
       position: relative;
       width: 100%;
@@ -6176,7 +4898,6 @@
     .change-amount-check { opacity:0; font-size:12px; }
     .change-amount-option.selected .change-amount-check { opacity:1; }
 
-    /* Admin wheel gets two equal actions; guest keeps the existing single action. */
     .wheel-actions.admin-wheel-actions {
       width: min(88vw, 344px) !important;
       height: 52px !important;
@@ -6210,41 +4931,6 @@
     }
     .wheel-adjust-action .wheel-side-icon { font-size:18px; }
 
-    .wheel-adjust-current {
-      margin:14px auto 13px; display:flex; flex-direction:column; align-items:center; gap:3px;
-    }
-    .wheel-adjust-current span { color:var(--secondary); font-size:11px; font-weight:620; }
-    .wheel-adjust-current strong {
-      font-size:36px; line-height:1; font-weight:720; letter-spacing:-.05em;
-      font-variant-numeric:tabular-nums; color:rgba(117,73,101,.94);
-    }
-    .wheel-adjust-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:10px 0 12px; }
-    .wheel-adjust-choice {
-      min-height:48px; border:1px solid rgba(255,255,255,.82); border-radius:16px;
-      background:rgba(255,255,255,.25); color:rgba(102,69,87,.82); font-size:14px; font-weight:720;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.66);
-    }
-    .wheel-adjust-choice.selected {
-      color:rgba(146,74,110,.96);
-      background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(255,229,241,.52));
-      box-shadow:0 7px 20px rgba(196,115,153,.09),inset 0 1px 0 rgba(255,255,255,.84);
-    }
-    .wheel-adjust-choice:disabled { opacity:.34; pointer-events:none; }
-
-    /* Schedule rest option belongs to the same light-glass sheet family. */
-    .work-schedule-rest-button {
-      width:100%; min-height:49px; margin-top:11px; padding:0 15px;
-      border:1px solid rgba(255,255,255,.84); border-radius:16px;
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      background:linear-gradient(145deg,rgba(255,255,255,.66),rgba(255,239,219,.34)),rgba(255,255,255,.23);
-      color:rgba(154,94,49,.92); font-size:14px; font-weight:710;
-      box-shadow:0 8px 22px rgba(176,112,58,.065),inset 0 1px 0 rgba(255,255,255,.76);
-    }
-    .work-schedule-rest-button.active {
-      background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(255,226,197,.58));
-      box-shadow:0 9px 24px rgba(176,112,58,.10),inset 0 1px 0 rgba(255,255,255,.88);
-    }
-    .work-schedule-rest-button svg { width:17px; height:17px; }
     .work-schedule-time.rest { color:rgba(159,96,48,.92) !important; }
 
     .schedule-rest-center {
@@ -6255,17 +4941,6 @@
     .schedule-rest-center strong { font-size:34px; line-height:1; font-weight:630; letter-spacing:-.055em; }
     .schedule-rest-center small { margin-top:7px; color:rgba(95,78,67,.46); font-size:9px; font-weight:720; letter-spacing:.15em; }
 
-    /* Progress remains typography-first so the three homepage modes stay aligned. */
-    .schedule-progress-inline {
-      display:inline-flex; align-items:center; gap:2px; margin:0 3px;
-      vertical-align:middle;
-    }
-    .schedule-progress-dot {
-      width:4px; height:4px; border-radius:50%; background:rgba(177,111,61,.18);
-    }
-    .schedule-progress-dot.done { background:rgba(230,145,61,.72); }
-
-    /* Reward confirmation uses the same strong, warm score language. */
     .schedule-reward-points {
       margin:13px auto 6px; font-size:38px; line-height:1; font-weight:760; letter-spacing:-.05em;
       color:rgba(151,103,36,.95); font-variant-numeric:tabular-nums;
@@ -6278,58 +4953,7 @@
       .wheel-actions.admin-wheel-actions { width:min(90vw,334px) !important; gap:7px !important; }
     }
 
-
-    /* ============================================================
-       v2.2.0 — Unified controls experiment
-       Probability allocation / wheel chances / schedule editor
-       ============================================================ */
-
-    /* --- Detailed setting sheets use the same bottom-sheet language --- */
-    #wheelProbabilityLayer {
-      padding:0 !important;
-      align-items:flex-end !important;
-      justify-content:center !important;
-      background:rgba(45,54,70,.075) !important;
-    }
-    #wheelProbabilityLayer .wheel-probability-sheet {
-      width:min(calc(100% - 8px),620px);
-      height:auto;
-      max-height:calc(100% - max(calc(var(--safe-top) + 56px),74px));
-      margin:0 auto;
-      padding:0 16px calc(var(--safe-bottom) + 18px);
-      overflow:auto;
-      scrollbar-width:none;
-      border:1px solid var(--glass-border);
-      border-bottom:0;
-      border-radius:30px 30px 0 0;
-      transform:translate3d(0,calc(100% + 32px),0);
-      transition:transform .46s cubic-bezier(.18,.84,.24,1);
-    }
-    #wheelProbabilityLayer .wheel-probability-sheet::-webkit-scrollbar { display:none; }
-    #wheelProbabilityLayer.open .wheel-probability-sheet { transform:translate3d(0,0,0); }
     #wheelProbabilityLayer .unified-sheet-header { margin-bottom:14px; }
-    .wheel-probability-body { padding-bottom:2px; }
-
-    .wheel-probability-intro {
-      width:100%; display:flex; align-items:center; gap:11px;
-      margin:2px 0 13px; padding:13px 14px; border-radius:18px;
-      border:1px solid rgba(255,255,255,.72);
-      background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(250,239,253,.27));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 9px 28px rgba(110,78,130,.05);
-    }
-    .wheel-probability-intro-icon {
-      width:36px; height:36px; flex:0 0 36px; display:grid; place-items:center;
-      border-radius:12px; font-size:18px;
-      background:rgba(255,255,255,.52);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.76);
-    }
-    .wheel-probability-intro div { min-width:0; }
-    .wheel-probability-intro strong {
-      display:block; color:rgba(74,60,80,.92); font-size:14px; font-weight:760;
-    }
-    .wheel-probability-intro small {
-      display:block; margin-top:3px; color:rgba(83,70,91,.54); font-size:10.5px; line-height:1.45; font-weight:590;
-    }
 
     .wheel-probability-studio {
       width:100%; padding:14px; border-radius:22px;
@@ -6455,13 +5079,11 @@
     #wheelProbabilityLayer .wheel-probability-default-note {
       margin-top:7px; text-align:center; color:rgba(79,68,85,.38); font-size:9px; font-weight:590;
     }
-    .wheel-probability-sheet-actions { display:grid; gap:8px; margin-top:14px; }
+
     .wheel-probability-cancel { opacity:.72; }
 
-    /* --- Wheel chances: same hierarchy as score editing --- */
     #wheelAdjustLayer .wheel-adjust-unified-alert {
-      width:min(92vw,388px) !important;
-      border-radius:27px !important;
+      border-radius: 27px !important;
     }
     .wheel-adjust-value-card {
       margin:14px 0 10px; padding:14px 12px 13px; border-radius:19px;
@@ -6512,7 +5134,6 @@
       margin:0 !important; padding:8px 0 2px; font-size:11px !important; color:rgba(129,77,104,.66) !important;
     }
 
-    /* --- Schedule editor: work/rest is a first-class segmented mode --- */
     #workScheduleLayer .schedule-editor-sheet {
       max-height:calc(100% - max(calc(var(--safe-top) + 54px),72px)) !important;
     }
@@ -6631,13 +5252,8 @@
     .work-schedule-rest-panel > small {
       max-width:250px; margin-top:7px; color:rgba(107,82,63,.48); font-size:10px; line-height:1.55; font-weight:590;
     }
-    .schedule-editor-v22 .work-schedule-hint {
-      margin:0 !important; text-align:center; font-size:9px !important; line-height:1.45;
-    }
-    .schedule-editor-actions { display:grid; gap:8px; margin-top:1px; }
-    .schedule-editor-cancel { opacity:.72; }
 
-    /* Native system <select> supplies the platform picker; no custom hour wheel is used. */
+    .schedule-editor-cancel { opacity:.72; }
 
     @media(max-width:370px) {
       .wheel-probability-studio { padding:11px; }
@@ -6648,14 +5264,6 @@
       .schedule-editor-date-card { grid-template-columns:42px 1fr 42px; }
     }
 
-
-
-    /* ============================================================
-       v2.3.0 — iOS history swipe + Preview-style probability popup
-       ============================================================ */
-
-    /* Probability settings now deliberately reuse the same centered alert
-       material and motion language as “试玩大转盘”. */
     #wheelProbabilityLayer {
       padding: 0 0 12px !important;
       align-items: center !important;
@@ -6683,7 +5291,6 @@
       backdrop-filter: blur(36px) saturate(190%) !important;
     }
     #wheelProbabilityLayer .wheel-probability-popup-content {
-      padding: 21px 17px 15px !important;
       max-height: calc(min(84dvh, 700px) - 147px);
       overflow-y: auto;
       scrollbar-width: none;
@@ -6736,7 +5343,6 @@
     }
     #wheelProbabilityLayer .wheel-probability-cancel { color: var(--secondary) !important; }
 
-    /* History stays read-only for the visitor. Admin gets Messages-like swipe actions. */
     .wheel-history-admin-hint {
       margin: -4px 6px 10px;
       color: var(--tertiary);
@@ -6817,16 +5423,6 @@
       .wheel-history-swipe { transition: none !important; }
     }
 
-
-
-    /* ============================================================
-       v2.4.1 — Native schedule time picker + probability save fix
-       Preview-style centered alerts are the ONLY short-action modal.
-       Long/browse surfaces remain sheets: Settings / schedule overview /
-       future schedule / version / release notes.
-       ============================================================ */
-
-    /* One backdrop + one opening motion for every short action modal. */
     .modal-layer.alert-layer {
       align-items: center !important;
       justify-content: center !important;
@@ -6861,7 +5457,6 @@
       opacity: 1 !important;
     }
 
-    /* Complex forms may be wider, but material / radius / actions remain identical. */
     #workScheduleLayer .alert,
     #wheelProbabilityLayer .alert,
     #wheelProbabilityHistoryLayer .alert,
@@ -6870,7 +5465,6 @@
       width: min(calc(100% - 24px), 382px) !important;
     }
 
-    /* Module tint = content accent only, never a different component family. */
     .modal-layer.alert-layer[data-theme="wheel"] .alert {
       background:
         linear-gradient(145deg, rgba(255,255,255,.34), rgba(255,239,207,.15) 48%),
@@ -6918,7 +5512,6 @@
       line-height: 1.45 !important;
     }
 
-    /* Every short modal uses Preview's stacked action rows. */
     .modal-layer.alert-layer .alert-actions,
     .modal-layer.alert-layer .alert-actions.vertical {
       display: grid !important;
@@ -6959,7 +5552,6 @@
       background: rgba(255,255,255,.08) !important;
     }
 
-    /* Probability v2: remove every old cream/bottom-sheet shell override. */
     #wheelProbabilityLayer,
     #wheelProbabilityHistoryLayer {
       background: rgba(45,54,70,.075) !important;
@@ -6983,8 +5575,6 @@
     }
     #wheelProbabilityHistoryLayer .alert-content::-webkit-scrollbar { display:none; }
 
-    /* Schedule registration is now a true centered alert. Old sheet drag UI is retained
-       only as an invisible compatibility target so existing JS bindings cannot break. */
     #workScheduleLayer .schedule-editor-alert {
       max-height: min(88dvh, 720px) !important;
       overflow: hidden !important;
@@ -7001,7 +5591,6 @@
     #loginLayer .login-hidden-grabber { display:none !important; }
     #workScheduleLayer .schedule-editor-v22 {
       margin-top: 14px;
-      gap: 9px;
     }
     #workScheduleLayer .schedule-editor-date-card {
       min-height: 62px;
@@ -7010,12 +5599,9 @@
     #workScheduleLayer .work-schedule-mode-switch { height: 44px; }
     #workScheduleLayer .work-schedule-time-row { min-height: 58px; }
     #workScheduleLayer .work-schedule-rest-panel { min-height: 160px; }
-    #workScheduleLayer .work-schedule-overview-button {
-      color: #5f7890 !important;
-    }
+
     #workScheduleLayer .schedule-editor-cancel { opacity: 1 !important; }
 
-    /* Login is no longer a separate bottom-sheet component. */
     #loginLayer {
       align-items: center !important;
       padding: 12px !important;
@@ -7050,7 +5636,6 @@
       box-shadow: 0 0 0 3px rgba(92,157,197,.08), inset 0 1px 0 rgba(255,255,255,.62) !important;
     }
 
-    /* “调整次数” keeps its controls, but removes the visually separate card language. */
     #wheelAdjustLayer .wheel-adjust-unified-alert {
       width: min(calc(100% - 28px), 334px) !important;
     }
@@ -7091,9 +5676,6 @@
       #workScheduleLayer .work-schedule-time-row { min-height:52px; }
     }
 
-  
-
-    /* v2.4 final modal hard-lock: later + ID-specific so legacy CSS cannot re-skin short alerts. */
     #workScheduleLayer.modal-layer.alert-layer .alert,
         #workScheduleDeleteLayer.modal-layer.alert-layer .alert,
     #workScheduleRestLayer.modal-layer.alert-layer .alert,
@@ -7242,7 +5824,6 @@
       color:var(--blue) !important; background:rgba(255,255,255,.12) !important; font-weight:720 !important;
     }
 
-    /* Same component, subtle per-module tint only. */
     #wheelProbabilityLayer.modal-layer.alert-layer .alert,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert,
     #wheelPreviewLayer.modal-layer.alert-layer .alert,
@@ -7276,7 +5857,6 @@
       color:var(--red) !important; background:rgba(255,255,255,.10) !important; font-weight:720 !important;
     }
 
-    /* Width exceptions for information-dense forms; shell remains identical. */
     #workScheduleLayer.modal-layer.alert-layer .alert,
     #wheelProbabilityLayer.modal-layer.alert-layer .alert,
     #wheelProbabilityHistoryLayer.modal-layer.alert-layer .alert,
@@ -7289,12 +5869,6 @@
       width:min(calc(100% - 28px),334px) !important;
     }
 
-
-
-    /* ============================================================
-       v2.4.2 — Compact schedule time selector
-       Keep schedule business logic/native selects intact; visual-only refinement.
-       ============================================================ */
     #workScheduleLayer .schedule-time-compact-grid {
       display: grid !important;
       grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr) !important;
@@ -7436,13 +6010,6 @@
       #workScheduleLayer .schedule-time-compact .work-schedule-time-copy strong { font-size: 18px !important; }
     }
 
-
-
-    /* ============================================================
-       v2.4.3 — Stable work/rest editor height
-       Both modes occupy the same 160px content slot so the centered
-       alert shell does not jump vertically when switching modes.
-       ============================================================ */
     #workScheduleLayer .work-schedule-work-panel,
     #workScheduleLayer .work-schedule-rest-panel {
       height: 160px !important;
@@ -7452,12 +6019,7 @@
     #workScheduleLayer .work-schedule-work-panel {
       align-items: center !important;
     }
-  
 
-    /* ============================================================
-       v2.4.4 — Schedule statistics range chart
-       Reuses the schedule overview data; no database changes.
-       ============================================================ */
     #workScheduleOverviewLayer .schedule-stat-section {
       margin: 2px 0 18px;
     }
@@ -7568,7 +6130,7 @@
 </button>
 </header>
 <div class="hero">
-<!-- WORK SCHEDULE MODULE START: administrator home reminder -->
+
 <button aria-label="查看未来排班" class="admin-schedule-notice pressable" hidden="" id="adminScheduleNotice" type="button">
 <span aria-hidden="true" class="admin-schedule-notice-icon">
 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" viewbox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="5"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
@@ -7579,7 +6141,7 @@
 </span>
 <span class="admin-schedule-notice-chevron">›</span>
 </button>
-<!-- WORK SCHEDULE MODULE END: administrator home reminder -->
+
 <div aria-label="首页数据切换" class="metric-switch" id="metricSwitch" role="tablist">
 <div aria-hidden="true" class="metric-switch-thumb"></div>
 <button aria-selected="true" class="metric-option active" data-metric="score" role="tab" type="button">
@@ -7731,7 +6293,7 @@
 </button>
 </div>
 </section>
-<!-- Overview -->
+
 <section aria-hidden="true" class="overview" id="overview">
 <div class="overview-backdrop"></div>
 <div class="overview-shell">
@@ -7847,7 +6409,7 @@
 </div>
 </div>
 </section>
-<!-- Settings Sheet -->
+
 <div aria-hidden="true" class="modal-layer" id="settingsLayer">
 <div aria-labelledby="settingsTitle" aria-modal="true" class="sheet settings-sheet" id="settingsSheet" role="dialog">
 <header class="settings-sheet-header">
@@ -7902,10 +6464,7 @@
 </div>
 </div>
 </div>
-<!-- ============================================================
-         WORK SCHEDULE MODULE START
-         Independent schedule registration / overview sheets.
-         ============================================================ -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleLayer">
 <div aria-labelledby="workScheduleTitle" aria-modal="true" class="alert work-schedule-sheet schedule-editor-sheet schedule-editor-alert" role="dialog">
 <div class="alert-content schedule-editor-alert-content">
@@ -7972,7 +6531,6 @@
 </div>
 </div>
 
-<!-- Native system hour selects are embedded directly in the two schedule time rows. -->
 <div aria-hidden="true" class="modal-layer" id="workScheduleOverviewLayer">
 <div aria-labelledby="workScheduleOverviewTitle" aria-modal="true" class="unified-sheet work-schedule-sheet" role="dialog">
 <header class="unified-sheet-header">
@@ -8019,7 +6577,7 @@
 </div>
 </div>
 </div>
-<!-- Administrator-only homepage shortcut: current and future schedules only. -->
+
 <div aria-hidden="true" class="modal-layer" id="adminWorkScheduleLayer">
 <div aria-labelledby="adminWorkScheduleTitle" aria-modal="true" class="unified-sheet work-schedule-sheet" role="dialog">
 <header class="unified-sheet-header">
@@ -8035,7 +6593,7 @@
 </div>
 </div>
 </div>
-<!-- Delete confirmation belongs only to the schedule module. -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleDeleteLayer">
 <div aria-labelledby="workScheduleDeleteTitle" aria-modal="true" class="alert" role="alertdialog">
 <div class="alert-content">
@@ -8048,7 +6606,7 @@
 </div>
 </div>
 </div>
-<!-- Rest confirmation belongs only to the schedule module. -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleRestLayer">
 <div aria-labelledby="workScheduleRestTitle" aria-modal="true" class="alert" role="alertdialog">
 <div class="alert-content">
@@ -8062,10 +6620,7 @@
 </div>
 </div>
 </div>
-<!-- ============================================================
-         WORK SCHEDULE MODULE END
-         ============================================================ -->
-<!-- Compact version information opened from Settings. -->
+
 <div aria-hidden="true" class="modal-layer" id="versionInfoLayer">
 <div aria-labelledby="versionInfoTitle" aria-modal="true" class="unified-sheet" role="dialog">
 <header class="unified-sheet-header">
@@ -8095,7 +6650,7 @@
 </div>
 </div>
 </div>
-<!-- Version / optimization info -->
+
 <div aria-hidden="true" class="modal-layer" id="releaseNotesLayer">
 <div aria-labelledby="releaseNotesTitle" aria-modal="true" class="unified-sheet" role="dialog">
 <header class="unified-sheet-header">
@@ -8143,7 +6698,7 @@
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>奖励与提现记录新增 iOS 风格左滑操作：管理员左滑后可删除历史；待兑现提现显示“取消提现”并退回可提现余额。</li>
-<li>历史删除继续采用数据库软删除，不反向修改已经发生的真实资产；“累计中奖 / 已兑现”改为按当前可见历史实时汇总，删除记录后会同步更新。</li>
+<li>历史删除改为数据库软删除，不反向修改已经发生的中奖/兑现资产；累计中奖与累计兑现继续保留真实总账。</li>
 <li>大转盘概率设置改为居中玻璃弹窗，保留拖动分界线、整数吸附与 ±1% 精确调整。</li>
 </ul>
 </div>
@@ -8220,10 +6775,6 @@
 <li>本周与本月周视图保留每日连续积分点；当前最新点稍大，便于快速定位。</li>
 </ul>
 </div>
-
-
-
-
 
 <div class="release-block previous">
 <div class="release-head"><strong>1.6.3</strong><span>上一版本</span></div>
@@ -8337,7 +6888,7 @@
 </div>
 </div>
 </div>
-<!-- Admin-only wheel probability settings -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelProbabilityLayer">
 <div aria-labelledby="wheelProbabilityTitle" aria-modal="true" class="alert wheel-alert wheel-probability-popup" role="dialog">
 <div class="alert-content wheel-probability-popup-content">
@@ -8368,7 +6919,6 @@
 </div>
 </div>
 
-<!-- Legacy hidden inputs are kept as the single source submitted to the existing RPC. -->
 <div aria-hidden="true" class="wheel-probability-grid wheel-probability-grid-legacy" id="wheelProbabilityGrid">
 <input data-wheel-prob="10" max="100" min="0" step="1" type="number"/>
 <input data-wheel-prob="20" max="100" min="0" step="1" type="number"/>
@@ -8389,7 +6939,7 @@
 </div>
 </div>
 </div>
-<!-- Admin-only probability change history -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelProbabilityHistoryLayer">
 <div aria-labelledby="wheelProbabilityHistoryTitle" aria-modal="true" class="alert wheel-probability-history-alert" role="dialog">
 <div class="alert-content">
@@ -8403,7 +6953,7 @@
 </div>
 </div>
 </div>
-<!-- Login Sheet -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" id="loginLayer">
 <div aria-labelledby="loginTitle" aria-modal="true" class="alert login-sheet login-alert" id="loginSheet" role="dialog">
 <div class="alert-content login-alert-content">
@@ -8422,7 +6972,7 @@
 </div>
 </div>
 </div>
-<!-- Administrator score change -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="changeLayer">
 <div aria-labelledby="changeTitle" aria-modal="true" class="alert change-alert" role="alertdialog">
 <div class="alert-content">
@@ -8458,7 +7008,7 @@
 </div>
 </div>
 </div>
-<!-- 10 points -> direct reward choice -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" id="redeemLayer">
 <div aria-labelledby="redeemTitle" aria-modal="true" class="alert" role="alertdialog">
 <div class="alert-content">
@@ -8483,7 +7033,7 @@
 </div>
 </div>
 </div>
-<!-- Preview spin confirmation -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelPreviewLayer">
 <div aria-labelledby="wheelPreviewTitle" aria-modal="true" class="alert wheel-alert" role="alertdialog">
 <div class="alert-content">
@@ -8497,7 +7047,7 @@
 </div>
 </div>
 </div>
-<!-- Administrator wheel chance adjustment -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelAdjustLayer">
 <div aria-labelledby="wheelAdjustTitle" aria-modal="true" class="alert wheel-alert wheel-adjust-unified-alert" role="alertdialog">
 <div class="alert-content">
@@ -8527,7 +7077,7 @@
 </div>
 </div>
 </div>
-<!-- Administrator schedule reward confirmation -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="scheduleRewardLayer">
 <div aria-labelledby="scheduleRewardTitle" aria-modal="true" class="alert change-alert" role="alertdialog">
 <div class="alert-content">
@@ -8543,7 +7093,7 @@
 </div>
 </div>
 </div>
-<!-- Wheel result -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelResultLayer">
 <div aria-labelledby="wheelResultTitle" aria-modal="true" class="alert wheel-result-alert" role="alertdialog">
 <div class="alert-content">
@@ -8557,7 +7107,7 @@
 </div>
 </div>
 </div>
-<!-- Guest withdrawal request -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelWithdrawLayer">
 <div aria-labelledby="wheelWithdrawTitle" aria-modal="true" class="alert wheel-alert" role="alertdialog">
 <div class="alert-content">
@@ -8576,7 +7126,7 @@
 </div>
 </div>
 </div>
-<!-- Administrator settlement confirmation -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" id="settleWithdrawalLayer">
 <div aria-labelledby="settleWithdrawalTitle" aria-modal="true" class="alert" role="alertdialog">
 <div class="alert-content">
@@ -8590,7 +7140,7 @@
 </div>
 </div>
 </div>
-<!-- Reset score confirmation -->
+
 <div aria-hidden="true" class="modal-layer alert-layer" id="resetLayer">
 <div aria-labelledby="resetTitle" aria-modal="true" class="alert" role="alertdialog">
 <div class="alert-content">
@@ -8837,6 +7387,7 @@
         overviewLogs: [],
         wheelLogs: [],
         withdrawals: [],
+        wheelTotals: null,
         overviewLoadedAt: 0,
         refreshInFlight: false,
         lastRefreshAt: null,
@@ -9340,7 +7891,6 @@
           showToast("退出失败");
         }
       }
-
 
       function formatScheduleRewardDate(dateKey) {
         const [y,m,d] = String(dateKey || "").split("-").map(Number);
@@ -9990,7 +8540,6 @@
         }
       }
 
-
       function openWheelPreviewPrompt() {
         els.wheelPreviewMessage.textContent = state.isAdmin
           ? "管理员试玩使用当前真实概率，但不会消耗游客正式机会、不会产生可提现余额，也不会留下中奖记录。"
@@ -10069,8 +8618,6 @@
         }
         setLayer(els.wheelResultLayer, true);
       }
-
-
 
       async function silentSyncBeforeWheelSpin() {
         try {
@@ -10322,6 +8869,20 @@
           state.overviewLogs = Array.isArray(scoreRes.data) ? scoreRes.data : [];
           state.wheelLogs = Array.isArray(wheelRes.data) ? wheelRes.data : [];
           state.withdrawals = Array.isArray(withdrawalRes.data) ? withdrawalRes.data : [];
+          try {
+            const totalsRes = await db.rpc("points_get_wheel_totals");
+            if (!totalsRes.error) {
+              const totalsRow = Array.isArray(totalsRes.data) ? totalsRes.data[0] : totalsRes.data;
+              state.wheelTotals = totalsRow ? {
+                total_won: Number(totalsRow.total_won ?? 0),
+                total_settled: Number(totalsRow.total_settled ?? 0)
+              } : null;
+            } else {
+              state.wheelTotals = null;
+            }
+          } catch (_) {
+            state.wheelTotals = null;
+          }
           state.overviewLoadedAt = Date.now();
           markRefreshed();
           renderOverview();
@@ -10868,17 +9429,14 @@
         if (!els.wheelOverviewContent) return;
         const logs = wheelLogsDescending();
         const withdrawals = [...state.withdrawals];
-        // Summary cards and history deliberately share one source of truth.
-        // If an admin hides/deletes a visible history row, the matching total
-        // changes automatically after loadOverviewData(true) refreshes these arrays.
-        const won = logs
-          .filter(log => String(log.action) === "spin_win")
+        const visibleWon = logs.filter(log => String(log.action) === "spin_win")
           .reduce((sum, log) => sum + Math.max(0, Number(log.prize_amount ?? 0)), 0);
         const pendingRows = withdrawals.filter(row => String(row.status) === "pending");
         const settledRows = withdrawals.filter(row => String(row.status) === "settled");
         const pendingAmount = pendingRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
-        const settledAmount = settledRows
-          .reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
+        const visibleSettledAmount = settledRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
+        const won = Number.isFinite(Number(state.wheelTotals?.total_won)) ? Number(state.wheelTotals.total_won) : visibleWon;
+        const settledAmount = Number.isFinite(Number(state.wheelTotals?.total_settled)) ? Number(state.wheelTotals.total_settled) : visibleSettledAmount;
 
         els.wheelAssetsTitle.textContent = state.isAdmin ? "游客 · 大转盘资产" : "大转盘资产";
         els.wheelOverviewCash.textContent = `¥${Math.max(0, Number(state.wheelCashBalance ?? 0))}`;
@@ -11368,7 +9926,6 @@
           setLayer(els.loginLayer, false);
         }
       }
-
 
       // ============================================================
       // WORK SCHEDULE MODULE START
@@ -12329,7 +10886,6 @@
         function closeAdminUpcoming() {
           setLayer(scheduleEls.adminLayer, false);
         }
-
 
         function scheduleStatWeekName(week) {
           return Number(week) === 1 ? "第一周"
