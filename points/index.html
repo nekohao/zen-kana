@@ -8143,7 +8143,7 @@
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>奖励与提现记录新增 iOS 风格左滑操作：管理员左滑后可删除历史；待兑现提现显示“取消提现”并退回可提现余额。</li>
-<li>历史删除改为数据库软删除，不反向修改已经发生的中奖/兑现资产；累计中奖与累计兑现继续保留真实总账。</li>
+<li>历史删除继续采用数据库软删除，不反向修改已经发生的真实资产；“累计中奖 / 已兑现”改为按当前可见历史实时汇总，删除记录后会同步更新。</li>
 <li>大转盘概率设置改为居中玻璃弹窗，保留拖动分界线、整数吸附与 ±1% 精确调整。</li>
 </ul>
 </div>
@@ -8837,7 +8837,6 @@
         overviewLogs: [],
         wheelLogs: [],
         withdrawals: [],
-        wheelTotals: null,
         overviewLoadedAt: 0,
         refreshInFlight: false,
         lastRefreshAt: null,
@@ -10323,20 +10322,6 @@
           state.overviewLogs = Array.isArray(scoreRes.data) ? scoreRes.data : [];
           state.wheelLogs = Array.isArray(wheelRes.data) ? wheelRes.data : [];
           state.withdrawals = Array.isArray(withdrawalRes.data) ? withdrawalRes.data : [];
-          try {
-            const totalsRes = await db.rpc("points_get_wheel_totals");
-            if (!totalsRes.error) {
-              const totalsRow = Array.isArray(totalsRes.data) ? totalsRes.data[0] : totalsRes.data;
-              state.wheelTotals = totalsRow ? {
-                total_won: Number(totalsRow.total_won ?? 0),
-                total_settled: Number(totalsRow.total_settled ?? 0)
-              } : null;
-            } else {
-              state.wheelTotals = null;
-            }
-          } catch (_) {
-            state.wheelTotals = null;
-          }
           state.overviewLoadedAt = Date.now();
           markRefreshed();
           renderOverview();
@@ -10883,14 +10868,17 @@
         if (!els.wheelOverviewContent) return;
         const logs = wheelLogsDescending();
         const withdrawals = [...state.withdrawals];
-        const visibleWon = logs.filter(log => String(log.action) === "spin_win")
+        // Summary cards and history deliberately share one source of truth.
+        // If an admin hides/deletes a visible history row, the matching total
+        // changes automatically after loadOverviewData(true) refreshes these arrays.
+        const won = logs
+          .filter(log => String(log.action) === "spin_win")
           .reduce((sum, log) => sum + Math.max(0, Number(log.prize_amount ?? 0)), 0);
         const pendingRows = withdrawals.filter(row => String(row.status) === "pending");
         const settledRows = withdrawals.filter(row => String(row.status) === "settled");
         const pendingAmount = pendingRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
-        const visibleSettledAmount = settledRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
-        const won = Number.isFinite(Number(state.wheelTotals?.total_won)) ? Number(state.wheelTotals.total_won) : visibleWon;
-        const settledAmount = Number.isFinite(Number(state.wheelTotals?.total_settled)) ? Number(state.wheelTotals.total_settled) : visibleSettledAmount;
+        const settledAmount = settledRows
+          .reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
 
         els.wheelAssetsTitle.textContent = state.isAdmin ? "游客 · 大转盘资产" : "大转盘资产";
         els.wheelOverviewCash.textContent = `¥${Math.max(0, Number(state.wheelCashBalance ?? 0))}`;
