@@ -1,6 +1,6 @@
 {
-  "name": "积分小本本",
-  "short_name": "积分小本本",
+  "name": "小世界",
+  "short_name": "小世界",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -8,13 +8,13 @@
   "theme_color": "#f4f5f9",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "./ICON/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./icon-512.png",
+      "src": "./ICON/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
