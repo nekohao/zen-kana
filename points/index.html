@@ -6698,7 +6698,7 @@
 <div class="release-date">2026.09.02</div>
 <ul class="release-list">
 <li>奖励与提现记录新增 iOS 风格左滑操作：管理员左滑后可删除历史；待兑现提现显示“取消提现”并退回可提现余额。</li>
-<li>历史删除改为数据库软删除，不反向修改已经发生的中奖/兑现资产；累计中奖与累计兑现继续保留真实总账。</li>
+<li>历史删除继续采用数据库软删除，不反向修改已经发生的真实资产；“累计中奖 / 已兑现”按当前可见历史实时汇总，删除记录后同步更新。</li>
 <li>大转盘概率设置改为居中玻璃弹窗，保留拖动分界线、整数吸附与 ±1% 精确调整。</li>
 </ul>
 </div>
@@ -9435,8 +9435,10 @@
         const settledRows = withdrawals.filter(row => String(row.status) === "settled");
         const pendingAmount = pendingRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
         const visibleSettledAmount = settledRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
-        const won = Number.isFinite(Number(state.wheelTotals?.total_won)) ? Number(state.wheelTotals.total_won) : visibleWon;
-        const settledAmount = Number.isFinite(Number(state.wheelTotals?.total_settled)) ? Number(state.wheelTotals.total_settled) : visibleSettledAmount;
+        // 累计中奖 / 已兑现与当前可见历史保持同一数据源。
+        // 管理员软删除历史后，loadOverviewData(true) 会刷新列表，这两个统计同步变化。
+        const won = visibleWon;
+        const settledAmount = visibleSettledAmount;
 
         els.wheelAssetsTitle.textContent = state.isAdmin ? "游客 · 大转盘资产" : "大转盘资产";
         els.wheelOverviewCash.textContent = `¥${Math.max(0, Number(state.wheelCashBalance ?? 0))}`;
