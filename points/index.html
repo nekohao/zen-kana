@@ -3318,6 +3318,13 @@
       will-change: transform;
       overflow: hidden;
     }
+    .wheel-disk.probability-morphing {
+      box-shadow:
+        0 14px 36px rgba(155,116,58,.20),
+        0 0 0 5px rgba(255,255,255,.12),
+        inset 0 0 0 2px rgba(255,255,255,.44),
+        inset 0 0 32px rgba(255,255,255,.28);
+    }
     .wheel-disk::before {
       content: "";
       position: absolute;
@@ -6101,7 +6108,297 @@
       #workScheduleOverviewLayer .schedule-stat-card { padding-left:9px; padding-right:9px; }
       #workScheduleOverviewLayer .schedule-stat-chart-wrap { height:300px; }
     }
-</style>
+
+
+    /* ============================================================
+       POINTS SHOP / BACKPACK — premium glass storefront
+       ============================================================ */
+    .shop-home-button-icon { width:17px; height:17px; flex:0 0 auto; }
+
+    #redeemLayer.shop-layer {
+      padding:0;
+      align-items:flex-end;
+      justify-content:center;
+      background:rgba(45,54,70,.075);
+    }
+    #redeemLayer .shop-sheet {
+      width:min(calc(100% - 8px),620px);
+      height:min(91dvh,820px);
+      max-height:calc(100% - max(calc(var(--safe-top) + 28px),40px));
+      margin:0 auto;
+      padding:0 16px calc(var(--safe-bottom) + 14px);
+      overflow-y:auto;
+      overflow-x:hidden;
+      scrollbar-width:none;
+      border:1px solid var(--glass-border);
+      border-bottom:0;
+      border-radius:30px 30px 0 0;
+      transform:translate3d(0,calc(100% + 28px),0);
+      transition:transform .48s cubic-bezier(.18,.84,.24,1);
+      will-change:transform;
+    }
+    #redeemLayer .shop-sheet::-webkit-scrollbar { display:none; }
+    #redeemLayer.open .shop-sheet { transform:translate3d(0,0,0); }
+    #redeemLayer.dragging .shop-sheet { transition:none !important; }
+    #redeemLayer .shop-sheet-header {
+      min-height:76px;
+      margin-bottom:8px;
+      cursor:grab;
+      touch-action:none;
+      user-select:none;
+      -webkit-user-select:none;
+    }
+    #redeemLayer .shop-sheet-header:active { cursor:grabbing; }
+    .shop-sheet-subtitle { margin-top:4px; font-size:11px; font-weight:560; color:var(--secondary); }
+    .shop-sheet-body { padding:0 1px 4px; }
+
+    .shop-balance-card {
+      min-height:76px;
+      margin:2px 0 14px;
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      border:1px solid rgba(255,255,255,.78);
+      border-radius:22px;
+      background:
+        radial-gradient(circle at 82% 18%, rgba(255,234,177,.28), transparent 34%),
+        linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,247,225,.28));
+      box-shadow:0 12px 30px rgba(177,132,70,.08),inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .shop-balance-card > div { min-width:0; display:flex; flex-direction:column; gap:4px; }
+    .shop-balance-card > div > span { font-size:13px; font-weight:730; color:#775b39; }
+    .shop-balance-card small { font-size:10px; font-weight:560; color:rgba(119,91,57,.58); }
+    .shop-balance-card > strong { display:flex; align-items:baseline; gap:5px; font-size:32px; line-height:1; font-weight:790; letter-spacing:-.04em; color:#8d6537; font-variant-numeric:tabular-nums; }
+    .shop-balance-card > strong em { font-size:15px; font-style:normal; color:#c29756; }
+
+    .shop-db-note {
+      margin:-4px 2px 12px;
+      padding:9px 11px;
+      border-radius:14px;
+      border:1px solid rgba(223,178,102,.25);
+      background:rgba(255,246,218,.34);
+      color:rgba(126,91,47,.78);
+      font-size:10px;
+      line-height:1.4;
+      text-align:center;
+    }
+
+    .shop-tabs {
+      width:min(62%,244px);
+      height:36px;
+      margin:0 auto 15px;
+      padding:3px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:2px;
+      border-radius:13px;
+      background:rgba(118,118,128,.10);
+    }
+    .shop-tab {
+      position:relative;
+      border:0;
+      border-radius:10px;
+      background:transparent;
+      color:var(--secondary);
+      font-size:12px;
+      font-weight:680;
+    }
+    .shop-tab.active { color:var(--ink); background:var(--glass-fill-strong); box-shadow:0 2px 7px rgba(0,0,0,.08),inset 0 1px rgba(255,255,255,.30); }
+    .shop-tab-badge {
+      min-width:16px; height:16px; margin-left:2px; padding:0 4px;
+      display:inline-grid; place-items:center;
+      border-radius:999px; background:#b8874c; color:white;
+      font-size:9px; font-weight:780; vertical-align:1px;
+    }
+
+    .shop-section-kicker { margin:0 5px 8px; color:var(--tertiary); font-size:10px; font-weight:720; letter-spacing:.08em; text-transform:uppercase; }
+    .shop-section-head { margin:17px 5px 9px; display:flex; align-items:end; justify-content:space-between; }
+    .shop-section-head > div { display:flex; flex-direction:column; gap:3px; }
+    .shop-section-head strong { font-size:16px; line-height:1.15; font-weight:760; letter-spacing:-.02em; }
+    .shop-section-head small { color:var(--secondary); font-size:10px; font-weight:560; }
+    .inventory-head { margin-top:3px; }
+
+    .shop-featured-card {
+      position:relative;
+      width:100%; min-height:180px;
+      padding:20px 19px 17px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.84);
+      border-radius:25px;
+      color:#4f3a65;
+      text-align:left;
+      background:
+        radial-gradient(circle at 78% 23%, rgba(255,255,255,.62), transparent 24%),
+        radial-gradient(circle at 91% 75%, rgba(255,214,231,.34), transparent 33%),
+        linear-gradient(135deg,rgba(242,229,255,.82),rgba(255,237,246,.70) 52%,rgba(255,249,231,.65));
+      box-shadow:0 16px 38px rgba(110,78,128,.12),inset 0 1px 0 rgba(255,255,255,.82);
+    }
+    .shop-featured-card::after {
+      content:""; position:absolute; width:168px; height:168px; right:-34px; top:-28px; border-radius:50%;
+      border:1px solid rgba(255,255,255,.50); box-shadow:inset 0 0 0 18px rgba(255,255,255,.08),inset 0 0 0 38px rgba(255,255,255,.06);
+      transform:rotate(-12deg); pointer-events:none;
+    }
+    .shop-featured-copy { position:relative; z-index:2; width:62%; }
+    .shop-featured-label { display:inline-flex; align-items:center; gap:5px; margin-bottom:8px; color:rgba(94,65,111,.60); font-size:9.5px; font-weight:760; letter-spacing:.08em; }
+    .shop-featured-copy h3 { margin:0; font-size:24px; line-height:1.05; font-weight:800; letter-spacing:-.045em; }
+    .shop-featured-copy p { margin:8px 0 13px; color:rgba(73,55,86,.66); font-size:11px; line-height:1.42; font-weight:560; }
+    .shop-featured-price { display:inline-flex; align-items:center; gap:5px; padding:7px 11px; border-radius:999px; background:rgba(255,255,255,.52); box-shadow:inset 0 1px 0 rgba(255,255,255,.72); font-size:12px; font-weight:760; }
+    .shop-featured-art { position:absolute; right:18px; top:42px; z-index:2; width:92px; height:92px; display:grid; place-items:center; border-radius:28px; background:rgba(255,255,255,.34); border:1px solid rgba(255,255,255,.66); box-shadow:0 14px 28px rgba(94,65,111,.10),inset 0 1px 0 rgba(255,255,255,.72); transform:rotate(3deg); }
+    .shop-featured-art svg { width:50px; height:50px; }
+    .shop-featured-limit { position:absolute; right:15px; bottom:14px; z-index:2; color:rgba(86,65,98,.56); font-size:9px; font-weight:650; }
+
+    .shop-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
+    .shop-product-card {
+      position:relative; min-width:0; height:196px; padding:0; overflow:hidden; border:1px solid rgba(255,255,255,.82); border-radius:22px; text-align:left;
+      background:rgba(255,255,255,.30); box-shadow:0 12px 30px rgba(43,55,78,.075),inset 0 1px 0 rgba(255,255,255,.72);
+      isolation:isolate;
+    }
+    .shop-product-card::after {
+      content:""; position:absolute; inset:auto 0 0; height:58%; z-index:2; pointer-events:none;
+      background:linear-gradient(180deg,transparent,rgba(255,255,255,.17) 18%,rgba(255,255,255,.77) 75%,rgba(255,255,255,.88));
+      -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+    }
+    .shop-product-card:disabled { opacity:.64; }
+    .shop-product-cover {
+      position:absolute; inset:0; display:grid; place-items:start center; overflow:hidden; padding-top:24px;
+    }
+    .shop-product-cover::before {
+      content:""; position:absolute; width:122px; height:122px; top:4px; right:-23px; border:1px solid rgba(255,255,255,.42); border-radius:38px;
+      transform:rotate(17deg); box-shadow:inset 0 0 0 18px rgba(255,255,255,.055); opacity:.9;
+    }
+    .shop-product-cover::after {
+      content:""; position:absolute; width:76px; height:76px; left:-24px; top:40px; border-radius:999px; background:rgba(255,255,255,.20); filter:blur(1px);
+    }
+    .shop-product-cover svg { position:relative; z-index:2; width:58px; height:58px; filter:drop-shadow(0 10px 17px rgba(64,54,76,.11)); }
+    .shop-product-cover .shop-cover-word { position:absolute; left:12px; top:10px; z-index:2; color:rgba(56,52,68,.43); font-size:7.6px; font-weight:800; letter-spacing:.13em; }
+    .shop-theme-wheel { color:#846187; background:radial-gradient(circle at 68% 20%,rgba(255,255,255,.80),transparent 27%),linear-gradient(145deg,#f3e5f8,#f8e7ef 57%,#fff4d9); }
+    .shop-theme-cash { color:#a57533; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.82),transparent 26%),linear-gradient(145deg,#fff4d1,#f5e0bb 58%,#fff8eb); }
+    .shop-theme-shield { color:#5d7fa5; background:radial-gradient(circle at 69% 18%,rgba(255,255,255,.84),transparent 27%),linear-gradient(145deg,#e4f3ff,#e5ebff 57%,#faf8ff); }
+    .shop-theme-upgrade { color:#9f6288; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.83),transparent 27%),linear-gradient(145deg,#ffeaf3,#f0e5ff 57%,#fff4ea); }
+    .shop-theme-double { color:#74578d; background:radial-gradient(circle at 68% 18%,rgba(255,255,255,.82),transparent 27%),linear-gradient(145deg,#ebe1ff,#f9e6f1 57%,#fff0e5); }
+    .shop-theme-potion { color:#5d8974; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.83),transparent 27%),linear-gradient(145deg,#e3f7ec,#edf6d7 57%,#fff2d1); }
+    .shop-product-body {
+      position:relative; z-index:3; height:100%; padding:111px 11px 11px; display:flex; flex-direction:column; justify-content:flex-end;
+    }
+    .shop-product-name { display:block; font-size:13px; line-height:1.15; font-weight:780; letter-spacing:-.025em; color:rgba(43,39,48,.92); }
+    .shop-product-desc { display:-webkit-box; min-height:29px; margin-top:5px; overflow:hidden; -webkit-box-orient:vertical; -webkit-line-clamp:2; color:rgba(70,65,78,.61); font-size:9.25px; line-height:1.42; font-weight:570; }
+    .shop-product-footer { margin-top:8px; display:flex; align-items:center; justify-content:space-between; gap:6px; }
+    .shop-product-price { display:inline-flex; align-items:center; padding:5px 8px; border-radius:999px; background:rgba(255,255,255,.52); box-shadow:inset 0 1px 0 rgba(255,255,255,.68); color:#8f6538; font-size:10.5px; font-weight:800; }
+    .shop-product-status { max-width:74px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:rgba(71,66,79,.48); font-size:8.3px; font-weight:660; text-align:right; }
+    .shop-product-card.affordable .shop-product-status { color:#91663a; }
+
+    .shop-active-buff {
+      margin:3px 0 11px; padding:12px 13px; display:flex; align-items:center; gap:11px;
+      border:1px solid rgba(255,255,255,.78); border-radius:18px;
+      background:linear-gradient(135deg,rgba(234,250,242,.72),rgba(255,248,220,.44));
+      box-shadow:0 8px 22px rgba(73,112,91,.07),inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .shop-active-buff svg { width:28px; height:28px; color:#628b75; flex:0 0 auto; }
+    .shop-active-buff div { min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .shop-active-buff strong { font-size:12px; font-weight:760; }
+    .shop-active-buff small { color:var(--secondary); font-size:9.5px; font-weight:560; }
+
+    .shop-inventory-list { display:flex; flex-direction:column; gap:9px; }
+    .shop-inventory-row {
+      min-height:74px; padding:10px 10px 10px 11px; display:grid; grid-template-columns:48px minmax(0,1fr) auto; align-items:center; gap:10px;
+      border:1px solid rgba(255,255,255,.74); border-radius:19px; background:rgba(255,255,255,.27); box-shadow:0 8px 20px rgba(43,55,78,.055),inset 0 1px 0 rgba(255,255,255,.60);
+    }
+    .shop-inventory-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:15px; }
+    .shop-inventory-icon svg { width:28px; height:28px; }
+    .shop-inventory-copy { min-width:0; }
+    .shop-inventory-copy strong { display:block; font-size:12.5px; font-weight:750; }
+    .shop-inventory-copy small { display:block; margin-top:4px; color:var(--secondary); font-size:9.4px; line-height:1.35; }
+    .shop-inventory-action { min-width:61px; height:34px; padding:0 10px; border:0; border-radius:12px; background:rgba(255,255,255,.56); color:#7f6041; font-size:10px; font-weight:730; box-shadow:inset 0 1px 0 rgba(255,255,255,.72); }
+    .shop-inventory-action.equipped { color:#6e5a82; background:rgba(239,231,251,.66); }
+    .shop-inventory-action:disabled { opacity:.48; }
+    .shop-inventory-count { min-width:46px; padding:7px 9px; border-radius:999px; text-align:center; background:rgba(255,255,255,.52); color:#7d674f; font-size:9.5px; font-weight:780; box-shadow:inset 0 1px 0 rgba(255,255,255,.72); }
+
+    #wheelToolLayer .wheel-tool-alert { width:min(calc(100% - 26px),356px) !important; }
+    .wheel-tool-orb {
+      width:58px; height:58px; margin:0 auto 10px; display:grid; place-items:center; border-radius:20px;
+      color:#755a87; background:linear-gradient(145deg,rgba(247,239,255,.92),rgba(255,239,248,.68)); border:1px solid rgba(255,255,255,.82);
+      box-shadow:0 12px 28px rgba(94,69,111,.09),inset 0 1px 0 rgba(255,255,255,.78);
+    }
+    .wheel-tool-orb svg { width:31px; height:31px; }
+    .wheel-tool-active-strip { margin:11px 0 8px; padding:9px 10px; display:flex; align-items:center; gap:8px; border-radius:14px; background:rgba(235,249,241,.60); color:#62846f; font-size:9.5px; font-weight:650; }
+    .wheel-tool-active-strip[hidden] { display:none !important; }
+    .wheel-tool-active-strip svg { width:20px; height:20px; flex:0 0 auto; }
+    .wheel-tool-list { margin-top:11px; display:flex; flex-direction:column; gap:7px; }
+    .wheel-tool-choice {
+      width:100%; min-height:58px; padding:8px 9px; border:1px solid rgba(255,255,255,.72); border-radius:17px; background:rgba(255,255,255,.27);
+      display:grid; grid-template-columns:42px minmax(0,1fr) auto; align-items:center; gap:9px; text-align:left; color:var(--ink);
+      box-shadow:0 7px 19px rgba(53,47,65,.045),inset 0 1px 0 rgba(255,255,255,.58);
+    }
+    .wheel-tool-choice.selected { border-color:rgba(174,139,198,.42); background:linear-gradient(135deg,rgba(247,239,255,.70),rgba(255,241,247,.50)); box-shadow:0 9px 22px rgba(101,73,118,.075),inset 0 1px 0 rgba(255,255,255,.70); }
+    .wheel-tool-choice.potion.selected { border-color:rgba(115,157,132,.38); background:linear-gradient(135deg,rgba(231,248,239,.73),rgba(250,247,219,.46)); }
+    .wheel-tool-choice-icon { width:42px; height:42px; display:grid; place-items:center; border-radius:14px; }
+    .wheel-tool-choice-icon svg { width:25px; height:25px; }
+    .wheel-tool-choice-copy { min-width:0; }
+    .wheel-tool-choice-copy strong { display:block; font-size:11.2px; font-weight:760; letter-spacing:-.01em; }
+    .wheel-tool-choice-copy small { display:block; margin-top:3px; color:var(--secondary); font-size:8.7px; line-height:1.34; font-weight:560; }
+    .wheel-tool-choice-mark { min-width:38px; color:var(--tertiary); font-size:9px; font-weight:720; text-align:right; }
+    .wheel-tool-choice.selected .wheel-tool-choice-mark { color:#7c5d8e; }
+    .wheel-tool-choice.potion.selected .wheel-tool-choice-mark { color:#5f856f; }
+    .wheel-tool-warning-card { margin:12px 0 2px; padding:12px 12px; border-radius:17px; background:linear-gradient(145deg,rgba(255,248,229,.70),rgba(255,241,232,.42)); border:1px solid rgba(255,255,255,.72); color:#806a4d; font-size:9.7px; line-height:1.48; font-weight:590; text-align:left; }
+    .wheel-tool-warning-card strong { color:#6f5433; font-weight:760; }
+    .shop-empty { padding:42px 10px 34px; text-align:center; color:var(--secondary); }
+    .shop-empty > span { display:block; margin-bottom:9px; font-size:28px; color:#c9a978; }
+    .shop-empty strong { display:block; color:var(--ink); font-size:14px; }
+    .shop-empty small { display:block; margin-top:5px; font-size:10px; }
+    .shop-bottom-safe { height:4px; }
+
+    #shopItemLayer .shop-item-alert { width:min(calc(100% - 28px),340px) !important; }
+    .shop-detail-cover {
+      width:86px; height:86px; margin:0 auto 12px; display:grid; place-items:center; overflow:hidden;
+      border:1px solid rgba(255,255,255,.78); border-radius:24px; box-shadow:0 12px 28px rgba(50,44,60,.09),inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .shop-detail-cover svg { width:44px; height:44px; }
+    .shop-item-description { min-height:38px; }
+    .shop-detail-meta { margin:12px 0 0; display:flex; justify-content:center; gap:6px; flex-wrap:wrap; }
+    .shop-detail-chip { padding:5px 8px; border-radius:999px; background:rgba(255,255,255,.40); color:var(--secondary); font-size:9.5px; font-weight:650; }
+    .shop-detail-price { margin:13px auto 0; padding:10px 12px; max-width:210px; display:flex; align-items:center; justify-content:space-between; border-radius:15px; background:rgba(255,255,255,.28); color:var(--secondary); font-size:10px; }
+    .shop-detail-price strong { color:#916b3f; font-size:15px; font-weight:790; }
+
+    .wheel-item-notice {
+      width:min(78vw,258px); min-height:44px; padding:8px 10px; margin:0 auto 8px;
+      border:1px solid rgba(255,255,255,.80); border-radius:16px;
+      display:grid; grid-template-columns:30px minmax(0,1fr) 15px; align-items:center; gap:8px;
+      text-align:left; color:#755881;
+      background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(239,229,251,.42));
+      box-shadow:0 9px 24px rgba(101,75,117,.08),inset 0 1px 0 rgba(255,255,255,.70);
+      -webkit-backdrop-filter:blur(22px) saturate(155%); backdrop-filter:blur(22px) saturate(155%);
+    }
+    .wheel-item-notice[hidden] { display:none !important; }
+    .wheel-item-notice-icon { width:30px; height:30px; display:grid; place-items:center; border-radius:10px; background:rgba(255,255,255,.48); }
+    .wheel-item-notice-icon svg { width:18px; height:18px; }
+    .wheel-item-notice-copy { min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .wheel-item-notice-copy strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10.7px; font-weight:760; }
+    .wheel-item-notice-copy small { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:rgba(92,72,104,.56); font-size:8.8px; font-weight:570; }
+    .wheel-item-notice-chevron { color:rgba(91,70,103,.40); font-size:20px; font-weight:300; }
+    .home:not(.wheel-active) .wheel-item-notice, .home.admin-mode .wheel-item-notice { display:none !important; }
+
+    .wheel-double-result { margin:9px 0 10px; display:grid; grid-template-columns:1fr 19px 1fr; align-items:center; gap:6px; }
+    .wheel-double-result[hidden] { display:none !important; }
+    .wheel-double-card { min-height:66px; padding:9px 6px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; border:1px solid rgba(255,255,255,.72); border-radius:16px; background:rgba(255,255,255,.25); }
+    .wheel-double-card span { color:var(--secondary); font-size:9px; font-weight:650; }
+    .wheel-double-card strong { font-size:22px; line-height:1; font-weight:820; letter-spacing:-.04em; color:#987042; }
+    .wheel-double-card.selected { border-color:rgba(225,188,117,.52); background:linear-gradient(145deg,rgba(255,250,229,.72),rgba(255,239,210,.32)); box-shadow:0 8px 20px rgba(177,124,55,.10),inset 0 1px 0 rgba(255,255,255,.76); }
+    .wheel-double-card.selected strong { color:#b37624; }
+    .wheel-double-vs { text-align:center; color:var(--tertiary); font-size:12px; font-weight:700; }
+    .wheel-double-choice { grid-column:1/-1; margin-top:1px; color:#9a6c33; font-size:9.5px; font-weight:690; text-align:center; }
+
+    @media (max-width:370px) {
+      .shop-featured-copy { width:66%; }
+      .shop-featured-copy h3 { font-size:21px; }
+      .shop-featured-art { right:12px; width:78px; height:78px; }
+      .shop-featured-art svg { width:43px; height:43px; }
+      .shop-grid { gap:8px; }
+      .shop-product-cover { height:96px; }
+    }
+
+  </style>
 </head>
 <body>
 <div aria-hidden="true" class="background">
@@ -6255,14 +6552,19 @@
 <span aria-hidden="true" class="score-reward-notice-chevron">›</span>
 </button>
 <button class="redeem-button score-redeem-button pressable" id="redeemRewardBtn" type="button">
-<span aria-hidden="true">🎁</span>
-<span>兑换奖励</span>
-<span class="redeem-button-meta">10 分 / 次</span>
+<svg aria-hidden="true" class="shop-home-button-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 9.5 6.2 4h11.6L20 9.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-6h6v6"/><path d="M3.5 9.5h17"/></svg>
+<span>积分商城</span>
+<span class="redeem-button-meta">6 种奖励</span>
 </button>
 <div aria-hidden="true" class="admin-controls hidden" id="adminControls">
 <button aria-label="减少积分" class="score-button minus pressable" data-sign="-1" type="button">−</button>
 <button aria-label="增加积分" class="score-button plus pressable" data-sign="1" type="button">+</button>
 </div>
+<button class="wheel-item-notice pressable" hidden id="wheelItemNotice" type="button">
+<span aria-hidden="true" class="wheel-item-notice-icon"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 8h12l1 12H5L6 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg></span>
+<span class="wheel-item-notice-copy"><strong id="wheelItemNoticeTitle">我的道具</strong><small id="wheelItemNoticeMeta">点击查看背包</small></span>
+<span aria-hidden="true" class="wheel-item-notice-chevron">›</span>
+</button>
 <div aria-hidden="true" class="wheel-actions" id="wheelActions">
 <button class="wheel-side-button wheel-side-spin pressable" id="spinWheelActionBtn" type="button">
 <span aria-hidden="true" class="wheel-side-icon">🎠</span>
@@ -7009,27 +7311,70 @@
 </div>
 </div>
 
-<div aria-hidden="true" class="modal-layer alert-layer" id="redeemLayer">
-<div aria-labelledby="redeemTitle" aria-modal="true" class="alert" role="alertdialog">
-<div class="alert-content">
-<div aria-hidden="true" class="change-icon">🎁</div>
-<div class="alert-title" id="redeemTitle">兑换奖励</div>
-<div class="alert-message" id="redeemMessage"></div>
-<div class="reward-choice-grid" id="rewardChoiceGrid">
-<button class="reward-choice-card wheel pressable" id="redeemWheelConfirmBtn" type="button">
-<span aria-hidden="true" class="reward-choice-icon">🎠</span>
-<span><strong>1 次正式大转盘机会</strong><small>消耗 10 分 · 正式中奖可提现</small></span>
-<span class="reward-choice-arrow">›</span>
-</button>
-<button class="reward-choice-card cash pressable" id="redeemCashConfirmBtn" type="button">
-<span aria-hidden="true" class="reward-choice-icon">💰</span>
-<span><strong>¥30 可提现余额</strong><small>消耗 10 分 · 直接进入可提现余额</small></span>
-<span class="reward-choice-arrow">›</span>
-</button>
+<div aria-hidden="true" class="modal-layer shop-layer" data-theme="score" id="redeemLayer">
+<div aria-labelledby="redeemTitle" aria-modal="true" class="unified-sheet shop-sheet" role="dialog">
+<header class="unified-sheet-header shop-sheet-header">
+<div aria-hidden="true" class="grabber"></div>
+<div class="sheet-title" id="redeemTitle">积分商城</div>
+<div class="shop-sheet-subtitle">把攒下的小幸运，换成喜欢的奖励 ♡</div>
+</header>
+<div class="unified-sheet-body shop-sheet-body">
+<section class="shop-balance-card" aria-label="当前积分">
+<div><span>我的积分</span><small id="shopBalanceHint">每一分都可以慢慢攒 ♡</small></div>
+<strong><span id="shopBalanceValue">0</span><em>✦</em></strong>
+</section>
+<div class="shop-db-note" hidden id="shopDbNote">新道具数据库尚未启用；原有两种 10 分兑换仍可正常使用。</div>
+<div aria-label="商城页面" class="shop-tabs" id="shopTabs" role="tablist">
+<button aria-selected="true" class="shop-tab active pressable" data-shop-view="products" role="tab" type="button">商品</button>
+<button aria-selected="false" class="shop-tab pressable" data-shop-view="inventory" role="tab" type="button">我的道具 <span class="shop-tab-badge" hidden id="shopInventoryBadge">0</span></button>
 </div>
+<div id="shopProductsPanel">
+<div class="shop-section-kicker">本周精选</div>
+<div class="shop-featured" id="shopFeatured"></div>
+<div class="shop-section-head"><div><strong>全部商品</strong><small>整张卡片都是商品封面 · 点开查看完整效果</small></div></div>
+<div class="shop-grid" id="shopGrid"></div>
+</div>
+<div hidden id="shopInventoryPanel">
+<div class="shop-section-head inventory-head"><div><strong>我的道具</strong><small>这里只查看库存 · 点击转盘开始时再选择是否使用</small></div></div>
+<div class="shop-active-buff" hidden id="shopActiveBuff"></div>
+<div class="shop-inventory-list" id="shopInventoryList"></div>
+<div class="shop-empty" hidden id="shopInventoryEmpty"><span aria-hidden="true">✦</span><strong>目前还没有道具</strong><small>兑换后的道具会保存在这里，开始抽奖时再选择使用 ♡</small></div>
+</div>
+<div class="shop-bottom-safe"></div>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="shopItemLayer">
+<div aria-labelledby="shopItemTitle" aria-modal="true" class="alert shop-item-alert" role="alertdialog">
+<div class="alert-content">
+<div class="shop-detail-cover" id="shopItemCover"></div>
+<div class="alert-title" id="shopItemTitle">商品详情</div>
+<div class="alert-message shop-item-description" id="shopItemDescription"></div>
+<div class="shop-detail-meta" id="shopItemMeta"></div>
+<div class="shop-detail-price"><span>兑换需要</span><strong><span id="shopItemPrice">0</span> ✦</strong></div>
 </div>
 <div class="alert-actions vertical">
-<button class="alert-button pressable" id="cancelRedeemBtn" type="button">取消</button>
+<button class="alert-button primary-action pressable" id="shopItemConfirmBtn" type="button">确认兑换</button>
+<button class="alert-button pressable" id="cancelRedeemBtn" type="button">再看看</button>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelToolLayer">
+<div aria-labelledby="wheelToolTitle" aria-modal="true" class="alert wheel-tool-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="wheel-tool-orb"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.55" viewBox="0 0 32 32"><path d="M7.5 11.5h17l1.5 14h-20l1.5-14Z"/><path d="M11 12V9.2a5 5 0 0 1 10 0V12"/><path d="m16 16 1.2 2.5 2.8.4-2 1.9.5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-1.9 2.8-.4L16 16Z"/></svg></div>
+<div class="alert-title" id="wheelToolTitle">这次要带上幸运道具吗？</div>
+<div class="alert-message" id="wheelToolMessage">已兑换的道具会在这里选择，本次不选也可以直接开始。</div>
+<div class="wheel-tool-active-strip" hidden id="wheelToolActiveBuff"></div>
+<div class="wheel-tool-list" id="wheelToolList"></div>
+<div class="wheel-tool-warning-card" hidden id="wheelToolWarning"></div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="wheelToolConfirmBtn" type="button">使用并开始</button>
+<button class="alert-button pressable" id="wheelToolBareBtn" type="button">不用道具，直接抽</button>
+<button class="alert-button pressable" id="wheelToolCancelBtn" type="button">取消</button>
 </div>
 </div>
 </div>
@@ -7100,6 +7445,12 @@
 <div aria-hidden="true" class="wheel-result-icon" id="wheelResultIcon">🎉</div>
 <div class="alert-title" id="wheelResultTitle">转盘结果</div>
 <div class="wheel-result-prize" id="wheelResultPrize">¥0</div>
+<div class="wheel-double-result" hidden id="wheelDoubleResult">
+<div class="wheel-double-card" id="wheelDoubleCardA"><span>结果 A</span><strong id="wheelDoublePrizeA">¥0</strong></div>
+<div class="wheel-double-vs">&amp;</div>
+<div class="wheel-double-card" id="wheelDoubleCardB"><span>结果 B</span><strong id="wheelDoublePrizeB">¥0</strong></div>
+<div class="wheel-double-choice" id="wheelDoubleChoice">已自动选择更高奖励</div>
+</div>
 <div class="alert-message" id="wheelResultMessage"></div>
 </div>
 <div class="alert-actions vertical">
@@ -7290,11 +7641,38 @@
 
         redeemLayer: $("#redeemLayer"),
         redeemTitle: $("#redeemTitle"),
-        redeemMessage: $("#redeemMessage"),
-        rewardChoiceGrid: $("#rewardChoiceGrid"),
-        redeemWheelConfirmBtn: $("#redeemWheelConfirmBtn"),
-        redeemCashConfirmBtn: $("#redeemCashConfirmBtn"),
+        shopBalanceValue: $("#shopBalanceValue"),
+        shopBalanceHint: $("#shopBalanceHint"),
+        shopDbNote: $("#shopDbNote"),
+        shopTabs: $("#shopTabs"),
+        shopInventoryBadge: $("#shopInventoryBadge"),
+        shopProductsPanel: $("#shopProductsPanel"),
+        shopInventoryPanel: $("#shopInventoryPanel"),
+        shopFeatured: $("#shopFeatured"),
+        shopGrid: $("#shopGrid"),
+        shopActiveBuff: $("#shopActiveBuff"),
+        shopInventoryList: $("#shopInventoryList"),
+        shopInventoryEmpty: $("#shopInventoryEmpty"),
+        shopItemLayer: $("#shopItemLayer"),
+        shopItemCover: $("#shopItemCover"),
+        shopItemTitle: $("#shopItemTitle"),
+        shopItemDescription: $("#shopItemDescription"),
+        shopItemMeta: $("#shopItemMeta"),
+        shopItemPrice: $("#shopItemPrice"),
+        shopItemConfirmBtn: $("#shopItemConfirmBtn"),
         cancelRedeemBtn: $("#cancelRedeemBtn"),
+        wheelItemNotice: $("#wheelItemNotice"),
+        wheelItemNoticeTitle: $("#wheelItemNoticeTitle"),
+        wheelItemNoticeMeta: $("#wheelItemNoticeMeta"),
+        wheelToolLayer: $("#wheelToolLayer"),
+        wheelToolTitle: $("#wheelToolTitle"),
+        wheelToolMessage: $("#wheelToolMessage"),
+        wheelToolActiveBuff: $("#wheelToolActiveBuff"),
+        wheelToolList: $("#wheelToolList"),
+        wheelToolWarning: $("#wheelToolWarning"),
+        wheelToolConfirmBtn: $("#wheelToolConfirmBtn"),
+        wheelToolBareBtn: $("#wheelToolBareBtn"),
+        wheelToolCancelBtn: $("#wheelToolCancelBtn"),
 
         wheelPreviewLayer: $("#wheelPreviewLayer"),
         wheelPreviewMessage: $("#wheelPreviewMessage"),
@@ -7321,6 +7699,12 @@
         wheelResultTitle: $("#wheelResultTitle"),
         wheelResultPrize: $("#wheelResultPrize"),
         wheelResultMessage: $("#wheelResultMessage"),
+        wheelDoubleResult: $("#wheelDoubleResult"),
+        wheelDoubleCardA: $("#wheelDoubleCardA"),
+        wheelDoubleCardB: $("#wheelDoubleCardB"),
+        wheelDoublePrizeA: $("#wheelDoublePrizeA"),
+        wheelDoublePrizeB: $("#wheelDoublePrizeB"),
+        wheelDoubleChoice: $("#wheelDoubleChoice"),
         wheelResultDoneBtn: $("#wheelResultDoneBtn"),
         wheelWithdrawLayer: $("#wheelWithdrawLayer"),
         wheelWithdrawMessage: $("#wheelWithdrawMessage"),
@@ -7368,6 +7752,21 @@
         wheelAdminConfig: null,
         wheelProbabilitySelectedAmount: 10,
         wheelProbabilityHistory: [],
+        shopAvailable: null,
+        shopView: "products",
+        shopSelectedCode: null,
+        shopInventory: { shield30: 0, upgrade: 0, double_pick: 0, lucky100: 0 },
+        shopWeekly: {},
+        shopEquipped: null,
+        shopLuckyRemaining: 0,
+        shopLoadedAt: 0,
+        wheelToolPromptMode: null,
+        wheelToolSelectedCode: null,
+        wheelToolUsePotion: false,
+        wheelVisualProbabilities: null,
+        wheelVisualSegments: null,
+        wheelVisualProfileKey: "base",
+        wheelVisualRestorePending: false,
         updatedAt: null,
         session: null,
         isAdmin: false,
@@ -7522,7 +7921,7 @@
       function closeAllLayers() {
         [
           els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer,
-          els.changeLayer, els.redeemLayer, els.wheelPreviewLayer, els.wheelResultLayer,
+          els.changeLayer, els.redeemLayer, els.shopItemLayer, els.wheelToolLayer, els.wheelPreviewLayer, els.wheelResultLayer,
           els.wheelWithdrawLayer, els.settleWithdrawalLayer,
           els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer, els.resetLayer
         ].filter(Boolean).forEach(layer => setLayer(layer, false));
@@ -7563,6 +7962,9 @@
         }
 
         if (state.isAdmin) {
+          if (els.redeemLayer?.classList.contains("open")) setLayer(els.redeemLayer, false);
+          if (els.shopItemLayer?.classList.contains("open")) setLayer(els.shopItemLayer, false);
+          if (els.wheelToolLayer?.classList.contains("open")) setLayer(els.wheelToolLayer, false);
           const email = state.session?.user?.email || "管理员";
           els.loginStateText.textContent = `管理员 · ${email}`;
           els.spinWheelActionBtn.querySelector("strong").textContent = "试玩";
@@ -7651,7 +8053,7 @@
               ? `₊˚🎠 幸运大转盘准备好啦 ♡ 还有 ${chances} 次正式机会`
               : "₊˚🎠 幸运大转盘在等宝宝来转一转 ♡";
             secondary.textContent = chances > 0
-              ? `当前可提现余额 ¥${cash} · 也可以继续用 10 分兑换奖励 ✨`
+              ? `当前可提现余额 ¥${cash} · 也可以去积分商城挑选幸运道具 ✨`
               : `当前可提现余额 ¥${cash} · 没有正式机会也可以先试玩哦 ♡`;
           }
           els.wheelActions.setAttribute("aria-hidden", "false");
@@ -7662,8 +8064,8 @@
             ? `₊˚🧁 游客当前 ${score} 分 ♡`
             : `₊˚🧁 现在已经 ${score} 分了哦 ♡`;
           secondary.textContent = redeemable > 0
-            ? `可兑换 ${redeemable} 次奖励 · 每 10 分换 1 次转盘机会或 ¥30 🎁✨`
-            : `还有 ${10 - score} 分就能兑换：1 次转盘机会或 ¥30 🌼✨`;
+            ? `积分商城已开放 · 当前积分足够兑换 ${redeemable} 份基础奖励 ✦`
+            : `积分商城有 2 分起的小道具 · 慢慢攒也可以换幸运 ✦`;
         }
 
         els.metricEyebrow.replaceChildren(primary, secondary);
@@ -7673,6 +8075,7 @@
 
       function renderPrimaryMetric({ animate = false } = {}) {
         renderMetricSwitch();
+        renderWheelItemNotice();
         if (state.activeMetric === "wheel") {
           els.score.classList.remove("loading");
           return;
@@ -8109,59 +8512,412 @@
         }
       }
 
-      function openRedeemPrompt() {
-        if (state.isAdmin) return showToast("管理员不能兑换游客奖励");
-        const score = Number(state.score ?? 0);
-        els.redeemTitle.textContent = "兑换奖励";
-        if (score < 10) {
-          els.redeemMessage.textContent = `宝宝现在有 ${score} 分 ♡ 还差 ${10 - score} 分就可以兑换一次奖励啦！`;
-          els.rewardChoiceGrid.hidden = true;
-          els.cancelRedeemBtn.textContent = "知道啦 ♡";
-        } else {
-          const times = Math.floor(score / 10);
-          els.redeemMessage.textContent = `当前 ${score} 分，可兑换 ${times} 次奖励 ♡ 每次消耗 10 分，请选择这一次想要的奖励。`;
-          els.rewardChoiceGrid.hidden = false;
-          els.cancelRedeemBtn.textContent = "取消";
+      const SHOP_ITEMS = {
+        wheel_ticket: {
+          code: "wheel_ticket", name: "正式转盘券", coverWord: "SPIN PASS", price: 10, theme: "wheel",
+          desc: "+1 次正式大转盘机会，正式中奖会进入可提现余额。", detail: "兑换后立即增加 1 次正式大转盘机会，不进入道具库存。", weeklyLimit: 0, immediate: true
+        },
+        cash_box: {
+          code: "cash_box", name: "30元小金库", coverWord: "CASH BOX", price: 10, theme: "cash",
+          desc: "直接获得 ¥30 可提现余额。", detail: "兑换后 ¥30 会立即进入可提现余额，不需要经过转盘。", weeklyLimit: 0, immediate: true
+        },
+        shield30: {
+          code: "shield30", name: "小幸运护盾", coverWord: "SAFE 30", price: 2, theme: "shield",
+          desc: "下一次正式抽奖最低 ¥30。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择是否使用；若本次原结果低于 ¥30，会自动提升到 ¥30，抽奖完成后消耗 1 个。", weeklyLimit: 2
+        },
+        upgrade: {
+          code: "upgrade", name: "奖励升级卡", coverWord: "LEVEL UP", price: 3, theme: "upgrade",
+          desc: "下一抽 ≤¥30 自动升一档。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择是否使用；本次若抽到 ¥10→¥20、¥20→¥30、¥30→¥50，更高奖励保持原样。", weeklyLimit: 1
+        },
+        double_pick: {
+          code: "double_pick", name: "命运二选一", coverWord: "DOUBLE PICK", price: 3, theme: "double",
+          desc: "下一抽出现两个结果，自动取更高。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择是否使用；正式机会只扣 1 次，同时产生 A / B 两个结果，两个都会展示，并自动把更高的那一个存入可提现余额。", weeklyLimit: 1
+        },
+        lucky100: {
+          code: "lucky100", name: "百元幸运药水", coverWord: "LUCKY +2%", price: 2, theme: "potion",
+          desc: "使用后连续 5 抽，¥100 概率 +2%。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择开启；从本次起连续 5 次正式抽奖把 ¥100 概率提高 2 个百分点，并从 ¥10 档转移同等概率；可与 1 个单次类道具同时生效。", weeklyLimit: 1
         }
+      };
+
+      function shopIconSVG(code) {
+        const attrs = `fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"`;
+        const icons = {
+          wheel_ticket: `<svg ${attrs}><path d="M12 18.5h40v9.3c-3.8.6-6.2 3-6.2 6.2s2.4 5.6 6.2 6.2v9.3H12v-9.3c3.8-.6 6.2-3 6.2-6.2s-2.4-5.6-6.2-6.2v-9.3Z"/><path d="M34 18.5v31" stroke-dasharray="2.6 4.2" opacity=".48"/><circle cx="26" cy="34" r="6.4"/><path d="m22.9 34.1 2 2 4.4-5"/></svg>`,
+          cash_box: `<svg ${attrs}><rect x="12.5" y="20" width="39" height="28.5" rx="8"/><path d="M12.5 28.5h39" opacity=".55"/><path d="M39.5 34.6H52v9.1H39.5a4.55 4.55 0 1 1 0-9.1Z"/><circle cx="41.5" cy="39.15" r="1.4" fill="currentColor" stroke="none"/><path d="M22 20c1.1-5.4 4.6-8.2 10-8.2S40.9 14.6 42 20"/></svg>`,
+          shield30: `<svg ${attrs}><path d="M32 8.8c5.8 3.8 11.1 5.4 17 7.1v13.4c0 12-6.7 20.8-17 26-10.3-5.2-17-14-17-26V15.9c5.9-1.7 11.2-3.3 17-7.1Z"/><path d="M32 15.1v33.7" opacity=".16"/><path d="M24.2 29.6c1.9-4.1 4.6-6.1 7.8-6.1 3.2 0 5.9 2 7.8 6.1-1.4 5.8-4 9.8-7.8 12.1-3.8-2.3-6.4-6.3-7.8-12.1Z" opacity=".38"/><path d="m32 24.7 1.9 4 4.4.6-3.2 3.1.8 4.4-3.9-2.1-3.9 2.1.8-4.4-3.2-3.1 4.4-.6 1.9-4Z" fill="currentColor" stroke="none" opacity=".86"/><path d="M22.5 17.9c-1.7.6-3 1-4.3 1.4" opacity=".35"/><path d="M41.5 17.9c1.7.6 3 1 4.3 1.4" opacity=".35"/></svg>`,
+          upgrade: `<svg ${attrs}><rect x="13" y="36" width="15" height="11.5" rx="4.2" opacity=".38"/><rect x="24.5" y="27" width="15.5" height="13" rx="4.5" opacity=".62"/><rect x="36" y="17" width="15" height="14" rx="4.5"/><path d="M18 32.3 30 20.5 37.1 20"/><path d="m32.8 15.9 4.7 4.1-4.1 4.7"/><path d="m17 18.5 1.5 3.2 3.5.5-2.5 2.4.6 3.5-3.1-1.7-3.1 1.7.6-3.5-2.5-2.4 3.5-.5 1.5-3.2Z" fill="currentColor" stroke="none" opacity=".58"/></svg>`,
+          double_pick: `<svg ${attrs}><g transform="rotate(-7 23 32)"><rect x="10.5" y="17" width="26" height="31" rx="9"/><path d="M17 25.5h13M17 31h9" opacity=".36"/><path d="m23.5 35.5 1.8 3.7 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6 1.8-3.7Z" fill="currentColor" stroke="none" opacity=".54"/></g><g transform="rotate(7 42 32)"><rect x="27.5" y="16" width="26" height="32" rx="9"/><path d="M34.5 24.5h12M34.5 30h8" opacity=".32"/><path d="m42.5 34 2.2 4.5 5 .7-3.6 3.5.8 4.9-4.4-2.4-4.4 2.4.8-4.9-3.6-3.5 5-.7 2.2-4.5Z" fill="currentColor" stroke="none" opacity=".82"/></g><path d="M27.5 12.5c2.8-2.8 6.2-4.1 10.2-4" opacity=".4"/><path d="m35.4 6.6 2.5 1.9-2 2.4" opacity=".62"/></svg>`,
+          lucky100: `<svg ${attrs}><path d="M25 10h14"/><path d="M28 10v13L17 42c-4 7 1 12 9 12h12c8 0 13-5 9-12L36 23V10"/><path d="M22 39h20"/><path d="M25 35c6 4 9-3 16 1" opacity=".65"/><path d="m45 13 2 4 4 2-4 2-2 4-2-4-4-2 4-2 2-4Z"/></svg>`
+        };
+        return icons[code] || icons.wheel_ticket;
+      }
+
+      function shopMissingError(err) {
+        return /PGRST202|schema cache|Could not find|points_shop_/i.test(`${err?.code || ""} ${err?.message || ""} ${err?.details || ""}`);
+      }
+
+      function shopInventoryCount() {
+        return Object.values(state.shopInventory || {}).reduce((sum, value) => sum + Math.max(0, Number(value || 0)), 0);
+      }
+
+      function normalizeShopState(row) {
+        if (!row) return;
+        const inventory = row.inventory && typeof row.inventory === "object" ? row.inventory : {};
+        const weekly = row.weekly_counts && typeof row.weekly_counts === "object" ? row.weekly_counts : {};
+        state.shopInventory = {
+          shield30: Math.max(0, Number(inventory.shield30 || 0)),
+          upgrade: Math.max(0, Number(inventory.upgrade || 0)),
+          double_pick: Math.max(0, Number(inventory.double_pick || 0)),
+          lucky100: Math.max(0, Number(inventory.lucky100 || 0))
+        };
+        state.shopWeekly = weekly;
+        state.shopEquipped = ["shield30", "upgrade", "double_pick"].includes(String(row.equipped_one_shot || "")) ? String(row.equipped_one_shot) : null;
+        state.shopLuckyRemaining = Math.max(0, Number(row.lucky100_remaining || 0));
+        if (typeof row.score === "number") state.score = Number(row.score);
+        state.shopLoadedAt = Date.now();
+      }
+
+      async function loadShopState({ silent = false } = {}) {
+        try {
+          const { data, error } = await db.rpc("points_shop_get_state");
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          normalizeShopState(row || {});
+          state.shopAvailable = true;
+          renderWheelItemNotice();
+          return true;
+        } catch (err) {
+          if (shopMissingError(err)) {
+            state.shopAvailable = false;
+            renderWheelItemNotice();
+            return false;
+          }
+          console.error("loadShopState:", err);
+          if (!silent) showToast("读取积分商城失败");
+          return false;
+        }
+      }
+
+      function shopWeeklyCount(code) {
+        return Math.max(0, Number(state.shopWeekly?.[code] || 0));
+      }
+
+      function shopLimitText(item) {
+        if (!item.weeklyLimit) return "不限购";
+        return `本周 ${Math.min(item.weeklyLimit, shopWeeklyCount(item.code))}/${item.weeklyLimit}`;
+      }
+
+      function shopCardStatus(item) {
+        const score = Number(state.score || 0);
+        const count = shopWeeklyCount(item.code);
+        if (item.weeklyLimit && count >= item.weeklyLimit) return "本周已兑换";
+        if (score < item.price) return `还差 ${item.price - score} 分`;
+        return item.weeklyLimit ? `${count}/${item.weeklyLimit} · 可兑换` : "可兑换";
+      }
+
+      function shopProductCardHTML(item) {
+        const affordable = Number(state.score || 0) >= item.price && (!item.weeklyLimit || shopWeeklyCount(item.code) < item.weeklyLimit);
+        return `<button class="shop-product-card pressable${affordable ? " affordable" : ""}" data-shop-product="${item.code}" type="button">
+          <span class="shop-product-cover shop-theme-${item.theme}">${shopIconSVG(item.code)}<span class="shop-cover-word">${escapeHTML(item.coverWord)}</span></span>
+          <span class="shop-product-body">
+            <strong class="shop-product-name">${escapeHTML(item.name)}</strong>
+            <small class="shop-product-desc">${escapeHTML(item.desc)}</small>
+            <span class="shop-product-footer"><b class="shop-product-price">${item.price} ✦</b><span class="shop-product-status">${escapeHTML(shopCardStatus(item))}</span></span>
+          </span>
+        </button>`;
+      }
+
+      function renderShopFeatured() {
+        const item = SHOP_ITEMS.double_pick;
+        const count = shopWeeklyCount(item.code);
+        const locked = item.weeklyLimit && count >= item.weeklyLimit;
+        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-shop-product="${item.code}" type="button">
+          <span class="shop-featured-copy"><span class="shop-featured-label">✦ WEEKLY PICK</span><h3>${escapeHTML(item.name)}</h3><p>一次机会 · 两个结果<br>自动留下更高的那一个。</p><span class="shop-featured-price">${item.price} ✦ · ${locked ? "本周已兑换" : "查看详情"}</span></span>
+          <span class="shop-featured-art">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${escapeHTML(shopLimitText(item))}</span>
+        </button>`;
+      }
+
+      function renderShopProducts() {
+        renderShopFeatured();
+        els.shopGrid.innerHTML = Object.values(SHOP_ITEMS).map(shopProductCardHTML).join("");
+      }
+
+      function renderShopInventory() {
+        const inventoryCodes = ["shield30", "upgrade", "double_pick", "lucky100"];
+        const rows = inventoryCodes.filter(code => Number(state.shopInventory?.[code] || 0) > 0 || (code === "lucky100" && state.shopLuckyRemaining > 0));
+        els.shopInventoryEmpty.hidden = rows.length > 0 || state.shopLuckyRemaining > 0;
+        els.shopInventoryList.innerHTML = rows.map(code => {
+          const item = SHOP_ITEMS[code];
+          const qty = Math.max(0, Number(state.shopInventory?.[code] || 0));
+          const activePotion = code === "lucky100" && state.shopLuckyRemaining > 0;
+          const copy = activePotion
+            ? `百元概率加成生效中 · 剩余 ${state.shopLuckyRemaining} 抽；无需再次选择`
+            : `已兑换库存 ×${qty} · 点击“转动大转盘”时再选择是否使用`;
+          return `<div class="shop-inventory-row">
+            <span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span>
+            <span class="shop-inventory-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(copy)}</small></span>
+            <span class="shop-inventory-count">${activePotion ? `剩 ${state.shopLuckyRemaining} 抽` : `× ${qty}`}</span>
+          </div>`;
+        }).join("");
+        if (state.shopLuckyRemaining > 0) {
+          els.shopActiveBuff.hidden = false;
+          els.shopActiveBuff.innerHTML = `${shopIconSVG("lucky100")}<div><strong>百元幸运药水正在生效</strong><small>接下来还有 ${state.shopLuckyRemaining} 次正式抽奖享受 ¥100 +2% 加成</small></div>`;
+        } else {
+          els.shopActiveBuff.hidden = true;
+          els.shopActiveBuff.innerHTML = "";
+        }
+      }
+
+      function renderShop() {
+        if (!els.shopBalanceValue) return;
+        els.shopBalanceValue.textContent = String(Number(state.score ?? 0));
+        els.shopBalanceHint.textContent = Number(state.score || 0) >= 10 ? "今天也攒了好多小幸运 ✦" : "2 分起就有可以兑换的小道具 ♡";
+        els.shopDbNote.hidden = state.shopAvailable !== false;
+        const count = shopInventoryCount();
+        const badgeCount = count + (state.shopLuckyRemaining > 0 ? 1 : 0);
+        els.shopInventoryBadge.hidden = badgeCount <= 0;
+        els.shopInventoryBadge.textContent = String(badgeCount);
+        const products = state.shopView !== "inventory";
+        els.shopProductsPanel.hidden = !products;
+        els.shopInventoryPanel.hidden = products;
+        els.shopTabs.querySelectorAll("[data-shop-view]").forEach(btn => {
+          const active = btn.dataset.shopView === state.shopView;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-selected", String(active));
+        });
+        renderShopProducts();
+        renderShopInventory();
+      }
+
+      function renderWheelItemNotice() {
+        if (!els.wheelItemNotice) return;
+        const inventoryCount = shopInventoryCount();
+        if (state.isAdmin || (inventoryCount <= 0 && state.shopLuckyRemaining <= 0)) {
+          els.wheelItemNotice.hidden = true;
+          return;
+        }
+        els.wheelItemNotice.hidden = false;
+        els.wheelItemNoticeTitle.textContent = state.shopLuckyRemaining > 0 ? "幸运药水生效中" : `我的道具 · ${inventoryCount}`;
+        const extras = [];
+        if (inventoryCount > 0) extras.push("开始抽奖时选择使用");
+        if (state.shopLuckyRemaining > 0) extras.push(`百元 +2% · 剩 ${state.shopLuckyRemaining} 抽`);
+        els.wheelItemNoticeMeta.textContent = extras.join(" · ");
+      }
+
+      function setShopView(view) {
+        state.shopView = view === "inventory" ? "inventory" : "products";
+        renderShop();
+      }
+
+      async function openShop(view = "products") {
+        if (state.isAdmin) return showToast("管理员模式不参与游客积分商城兑换");
+        state.shopView = view === "inventory" ? "inventory" : "products";
+        await loadAppState({ silent: true });
+        await loadShopState({ silent: true });
+        renderShop();
         setLayer(els.redeemLayer, true);
       }
 
-      async function performRewardRedemption(kind) {
-        if (state.isAdmin) return showToast("管理员不能兑换游客奖励");
-        const isWheel = kind === "wheel";
-        setBusy(els.redeemWheelConfirmBtn, true);
-        setBusy(els.redeemCashConfirmBtn, true);
+      function openShopItemDetail(code) {
+        const item = SHOP_ITEMS[code];
+        if (!item) return;
+        state.shopSelectedCode = code;
+        els.shopItemCover.className = `shop-detail-cover shop-theme-${item.theme}`;
+        els.shopItemCover.innerHTML = shopIconSVG(code);
+        els.shopItemTitle.textContent = item.name;
+        els.shopItemDescription.textContent = item.detail;
+        els.shopItemPrice.textContent = String(item.price);
+        const chips = [item.immediate ? "即时到账" : "存入我的道具"];
+        if (item.weeklyLimit) chips.push(shopLimitText(item));
+        if (code === "double_pick") chips.push("只消耗 1 次机会");
+        els.shopItemMeta.innerHTML = chips.map(x => `<span class="shop-detail-chip">${escapeHTML(x)}</span>`).join("");
+        const score = Number(state.score || 0);
+        const exhausted = item.weeklyLimit && shopWeeklyCount(code) >= item.weeklyLimit;
+        els.shopItemConfirmBtn.disabled = exhausted || score < item.price || (!item.immediate && state.shopAvailable === false);
+        els.shopItemConfirmBtn.textContent = exhausted ? "本周已兑换" : score < item.price ? `还差 ${item.price - score} 分` : (!item.immediate && state.shopAvailable === false) ? "请先启用商城 SQL" : `确认兑换 · ${item.price} ✦`;
+        setLayer(els.shopItemLayer, true);
+      }
+
+      async function purchaseShopItem() {
+        const code = state.shopSelectedCode;
+        const item = SHOP_ITEMS[code];
+        if (!item || state.isAdmin) return;
+        setBusy(els.shopItemConfirmBtn, true);
         try {
-          const rpc = isWheel ? "points_redeem_wheel_chance" : "points_redeem_cash";
-          const { data, error } = await db.rpc(rpc);
-          if (error) throw error;
-          const row = Array.isArray(data) ? data[0] : data;
-          state.score = Number(row?.score ?? Math.max(0, Number(state.score || 0) - 10));
-          state.wheelChances = Number(row?.spin_chances ?? state.wheelChances);
-          state.wheelCashBalance = Number(row?.cash_balance ?? state.wheelCashBalance + (isWheel ? 0 : 30));
-          state.updatedAt = row?.score_updated_at ?? new Date().toISOString();
-          state.wheelUpdatedAt = row?.wheel_updated_at ?? state.wheelUpdatedAt;
+          let usedNewShop = false;
+          if (state.shopAvailable !== false) {
+            const { data, error } = await db.rpc("points_shop_purchase", { p_item_code: code });
+            if (error) {
+              if (!shopMissingError(error)) throw error;
+              state.shopAvailable = false;
+            } else {
+              const row = Array.isArray(data) ? data[0] : data;
+              normalizeShopState(row || {});
+              state.shopAvailable = true;
+              usedNewShop = true;
+            }
+          }
+          if (!usedNewShop) {
+            if (code !== "wheel_ticket" && code !== "cash_box") throw new Error("SHOP_SQL_REQUIRED");
+            const rpc = code === "wheel_ticket" ? "points_redeem_wheel_chance" : "points_redeem_cash";
+            const { data, error } = await db.rpc(rpc);
+            if (error) throw error;
+            const row = Array.isArray(data) ? data[0] : data;
+            state.score = Number(row?.score ?? Math.max(0, Number(state.score || 0) - 10));
+            state.wheelChances = Number(row?.spin_chances ?? state.wheelChances);
+            state.wheelCashBalance = Number(row?.cash_balance ?? state.wheelCashBalance + (code === "cash_box" ? 30 : 0));
+          }
           state.overviewLoadedAt = 0;
-          setLayer(els.redeemLayer, false);
-          renderPrimaryMetric({ animate: state.activeMetric === "score" });
+          await loadAppState({ silent: true });
+          await loadShopState({ silent: true });
+          setLayer(els.shopItemLayer, false);
+          renderPrimaryMetric({ animate: true });
+          renderShop();
           vibrate(18);
-          showToast(isWheel ? "🎠 兑换成功：10 分 → 1 次正式大转盘机会" : "💰 兑换成功：10 分 → ¥30 可提现余额");
+          showToast(item.immediate ? `兑换成功 · ${item.name}已到账 ✦` : `兑换成功 · ${item.name}已加入我的道具 ✦`);
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
-          console.error("performRewardRedemption:", err);
-          const message = String(err?.message || "");
-          if (/Insufficient score|at least 10/i.test(message)) {
-            await loadAppState({ silent: true });
-            openRedeemPrompt();
-          } else if (/Guest mode required|permission/i.test(message)) {
-            await refreshAuthState();
-            showToast("当前不是游客模式，不能兑换奖励");
-          } else if (/PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v2.0 数据库迁移 SQL");
-          } else showToast("兑换失败，请稍后重试");
+          console.error("purchaseShopItem:", err);
+          const msg = String(err?.message || "");
+          if (/SHOP_SQL_REQUIRED|points_shop_/i.test(msg)) showToast("请先运行积分商城数据库更新 SQL");
+          else if (/Insufficient score/i.test(msg)) { await loadAppState({ silent: true }); renderShop(); showToast("积分不够啦，再攒一点点 ♡"); }
+          else if (/Weekly limit/i.test(msg)) { await loadShopState({ silent: true }); renderShop(); showToast("这个商品本周已经达到限购啦"); }
+          else showToast("兑换失败，请稍后再试");
         } finally {
-          setBusy(els.redeemWheelConfirmBtn, false);
-          setBusy(els.redeemCashConfirmBtn, false);
+          setBusy(els.shopItemConfirmBtn, false);
+        }
+      }
+
+      function ownedWheelToolCodes() {
+        const codes = ["shield30", "upgrade", "double_pick"]
+          .filter(code => Math.max(0, Number(state.shopInventory?.[code] || 0)) > 0);
+        if (state.shopLuckyRemaining <= 0 && Math.max(0, Number(state.shopInventory?.lucky100 || 0)) > 0) codes.push("lucky100");
+        return codes;
+      }
+
+      function affordableWheelToolCodes() {
+        const score = Math.max(0, Number(state.score || 0));
+        return ["shield30", "upgrade", "double_pick", "lucky100"].filter(code => {
+          const item = SHOP_ITEMS[code];
+          if (!item || score < item.price) return false;
+          return !item.weeklyLimit || shopWeeklyCount(code) < item.weeklyLimit;
+        });
+      }
+
+      function renderWheelToolPrompt() {
+        const owned = ownedWheelToolCodes();
+        const activePotion = state.shopLuckyRemaining > 0;
+        const mode = state.wheelToolPromptMode;
+        els.wheelToolActiveBuff.hidden = !activePotion;
+        els.wheelToolActiveBuff.innerHTML = activePotion
+          ? `${shopIconSVG("lucky100")}<span>百元幸运药水正在生效 · 本次仍会享受 ¥100 +2% · 剩 ${state.shopLuckyRemaining} 抽</span>`
+          : "";
+        els.wheelToolWarning.hidden = true;
+        els.wheelToolList.innerHTML = "";
+
+        if (mode === "warning") {
+          const affordable = affordableWheelToolCodes();
+          const names = affordable.slice(0, 3).map(code => SHOP_ITEMS[code].name).join("、");
+          els.wheelToolTitle.textContent = "确定不用道具吗？";
+          els.wheelToolMessage.textContent = "你目前没有已兑换道具，但积分已经足够兑换转盘道具。";
+          els.wheelToolWarning.hidden = false;
+          els.wheelToolWarning.innerHTML = `当前有 <strong>${Math.max(0, Number(state.score || 0))} ✦</strong>${names ? `，可以兑换 ${escapeHTML(names)}${affordable.length > 3 ? " 等" : ""}` : ""}。如果继续，将不使用新道具直接抽奖。`;
+          els.wheelToolConfirmBtn.disabled = false;
+          els.wheelToolConfirmBtn.textContent = "去积分商城看看";
+          els.wheelToolBareBtn.textContent = activePotion ? "保持当前药水 · 直接抽" : "不用道具，直接抽";
+          return;
+        }
+
+        els.wheelToolTitle.textContent = "这次要带上幸运道具吗？";
+        els.wheelToolMessage.textContent = activePotion
+          ? "药水已经自动生效；你还可以再选择 1 个单次道具。"
+          : "选择 1 个单次道具；百元幸运药水可以同时开启，从本次开始连续生效 5 抽。";
+
+        const oneShotCodes = owned.filter(code => code !== "lucky100");
+        const potionOwned = owned.includes("lucky100");
+        const rows = [];
+        for (const code of oneShotCodes) {
+          const item = SHOP_ITEMS[code];
+          const selected = state.wheelToolSelectedCode === code;
+          rows.push(`<button class="wheel-tool-choice pressable${selected ? " selected" : ""}" data-wheel-tool-code="${code}" type="button">
+            <span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span>
+            <span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(item.desc)} · 库存 ×${Math.max(0, Number(state.shopInventory?.[code] || 0))}</small></span>
+            <span class="wheel-tool-choice-mark">${selected ? "已选择" : "选择"}</span>
+          </button>`);
+        }
+        if (potionOwned && !activePotion) {
+          const item = SHOP_ITEMS.lucky100;
+          const selected = state.wheelToolUsePotion;
+          rows.push(`<button class="wheel-tool-choice potion pressable${selected ? " selected" : ""}" data-wheel-potion-toggle="1" type="button">
+            <span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG("lucky100")}</span>
+            <span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(item.desc)} · 库存 ×${Math.max(0, Number(state.shopInventory?.lucky100 || 0))}</small></span>
+            <span class="wheel-tool-choice-mark">${selected ? "已开启" : "开启"}</span>
+          </button>`);
+        }
+        els.wheelToolList.innerHTML = rows.join("");
+        const hasSelection = !!state.wheelToolSelectedCode || state.wheelToolUsePotion;
+        els.wheelToolConfirmBtn.disabled = !hasSelection;
+        els.wheelToolConfirmBtn.textContent = hasSelection ? "使用并开始" : "请选择道具";
+        els.wheelToolBareBtn.textContent = activePotion ? "不加单次道具 · 直接抽" : "不用道具，直接抽";
+      }
+
+      function openWheelToolPrompt(mode = "owned") {
+        state.wheelToolPromptMode = mode;
+        state.wheelToolSelectedCode = null;
+        state.wheelToolUsePotion = false;
+        renderWheelToolPrompt();
+        setLayer(els.wheelToolLayer, true);
+      }
+
+      async function clearLegacyEquippedTool() {
+        if (state.shopAvailable !== true) return;
+        try {
+          const { error } = await db.rpc("points_shop_set_equipped", { p_item_code: null });
+          if (error && !shopMissingError(error)) throw error;
+          state.shopEquipped = null;
+        } catch (err) {
+          console.debug("clearLegacyEquippedTool:", err);
+        }
+      }
+
+      async function spinWithoutNewTool() {
+        setBusy(els.wheelToolBareBtn, true);
+        try {
+          await clearLegacyEquippedTool();
+          setLayer(els.wheelToolLayer, false);
+          await performFormalWheelSpin();
+        } finally {
+          setBusy(els.wheelToolBareBtn, false);
+        }
+      }
+
+      async function confirmWheelToolChoice() {
+        if (state.wheelToolPromptMode === "warning") {
+          setLayer(els.wheelToolLayer, false);
+          return openShop("products");
+        }
+        const oneShot = state.wheelToolSelectedCode;
+        const usePotion = state.wheelToolUsePotion;
+        if (!oneShot && !usePotion) return;
+        if (state.shopAvailable !== true) return showToast("商城数据库尚未启用");
+        setBusy(els.wheelToolConfirmBtn, true);
+        try {
+          const { error: equipError } = await db.rpc("points_shop_set_equipped", { p_item_code: oneShot || null });
+          if (equipError) throw equipError;
+          if (usePotion) {
+            const { error: potionError } = await db.rpc("points_shop_activate_lucky100");
+            if (potionError) throw potionError;
+          }
+          setLayer(els.wheelToolLayer, false);
+          await loadShopState({ silent: true });
+          await performFormalWheelSpin();
+        } catch (err) {
+          console.error("confirmWheelToolChoice:", err);
+          showToast(shopMissingError(err) ? "商城数据库尚未启用" : "道具暂时没有准备好，请再试一次");
+          await loadShopState({ silent: true });
+          renderWheelToolPrompt();
+        } finally {
+          setBusy(els.wheelToolConfirmBtn, false);
         }
       }
 
@@ -8547,18 +9303,191 @@
         setLayer(els.wheelPreviewLayer, true);
       }
 
-      const WHEEL_VISUAL_SEGMENTS = {
-        10:  [0, 36],
-        20:  [36, 144],
-        30:  [144, 252],
-        50:  [252, 295.2],
-        60:  [295.2, 331.2],
-        80:  [331.2, 349.2],
-        100: [349.2, 360]
-      };
+      // The wheel's ordinary visual profile is intentionally fixed.
+      // Admin probability edits affect the real database odds only; they do NOT resize the wheel.
+      // Only a temporary shop tool may morph the visible sectors for that spin.
+      const WHEEL_VISUAL_BASE = Object.freeze({
+        10: 10, 20: 30, 30: 30, 50: 12, 60: 10, 80: 5, 100: 3
+      });
+      const WHEEL_VISUAL_COLORS = Object.freeze({
+        10: "#f7d2df", 20: "#ffe2a8", 30: "#cfe4fb", 50: "#f8d9bc",
+        60: "#dfd3f5", 80: "#cfe9df", 100: "#f5bdcf"
+      });
+      const WHEEL_VISUAL_AMOUNTS = [10,20,30,50,60,80,100];
+      const WHEEL_VISUAL_LABEL_RADIUS = 31;
+      const WHEEL_LUCKY100_VISUAL_SHIFT = 2; // percentage points: 3% -> 5%, taken from ¥10
+
+      function cloneWheelVisualProbabilities(source = WHEEL_VISUAL_BASE) {
+        return Object.fromEntries(WHEEL_VISUAL_AMOUNTS.map(amount => [amount, Math.max(0, Number(source?.[amount] || 0))]));
+      }
+
+      function normalizeWheelVisualProbabilities(source) {
+        const p = cloneWheelVisualProbabilities(source);
+        const total = WHEEL_VISUAL_AMOUNTS.reduce((sum, amount) => sum + p[amount], 0);
+        if (!(total > 0)) return cloneWheelVisualProbabilities(WHEEL_VISUAL_BASE);
+        if (Math.abs(total - 100) > .0001) {
+          WHEEL_VISUAL_AMOUNTS.forEach(amount => { p[amount] = p[amount] * 100 / total; });
+        }
+        return p;
+      }
+
+      function wheelVisualWithPotion(source) {
+        const p = cloneWheelVisualProbabilities(source);
+        const shift = Math.min(WHEEL_LUCKY100_VISUAL_SHIFT, p[10]);
+        p[10] -= shift;
+        p[100] += shift;
+        return p;
+      }
+
+      function wheelVisualApplyOneShot(source, modifier) {
+        const p = cloneWheelVisualProbabilities(source);
+        if (modifier === "shield30") {
+          p[30] += p[10] + p[20];
+          p[10] = 0; p[20] = 0;
+          return p;
+        }
+        if (modifier === "upgrade") {
+          const out = Object.fromEntries(WHEEL_VISUAL_AMOUNTS.map(a => [a, 0]));
+          const map = {10:20,20:30,30:50,50:50,60:60,80:80,100:100};
+          WHEEL_VISUAL_AMOUNTS.forEach(amount => { out[map[amount]] += p[amount]; });
+          return out;
+        }
+        if (modifier === "double_pick") {
+          // Two independent draws, keeping the larger result: P(max=x)=F(x)^2-F(prev)^2.
+          const out = Object.fromEntries(WHEEL_VISUAL_AMOUNTS.map(a => [a, 0]));
+          let cumulative = 0;
+          let previousSquared = 0;
+          WHEEL_VISUAL_AMOUNTS.forEach(amount => {
+            cumulative += p[amount] / 100;
+            const squared = cumulative * cumulative;
+            out[amount] = (squared - previousSquared) * 100;
+            previousSquared = squared;
+          });
+          return out;
+        }
+        return p;
+      }
+
+      function effectiveWheelVisualProbabilities(modifier = null, luckyActive = false) {
+        let p = cloneWheelVisualProbabilities(WHEEL_VISUAL_BASE);
+        if (luckyActive) p = wheelVisualWithPotion(p);
+        p = wheelVisualApplyOneShot(p, modifier);
+        return normalizeWheelVisualProbabilities(p);
+      }
+
+      function buildWheelVisualSegments(probabilities) {
+        const p = normalizeWheelVisualProbabilities(probabilities);
+        let cursor = 0;
+        const segments = {};
+        WHEEL_VISUAL_AMOUNTS.forEach((amount, index) => {
+          const start = cursor;
+          cursor += p[amount] * 3.6;
+          const end = index === WHEEL_VISUAL_AMOUNTS.length - 1 ? 360 : cursor;
+          segments[amount] = [start, end];
+        });
+        return segments;
+      }
+
+      function wheelVisualGradient(probabilities) {
+        const p = normalizeWheelVisualProbabilities(probabilities);
+        let cursor = 0;
+        const stops = [];
+        WHEEL_VISUAL_AMOUNTS.forEach((amount, index) => {
+          const start = cursor;
+          cursor += p[amount] * 3.6;
+          const end = index === WHEEL_VISUAL_AMOUNTS.length - 1 ? 360 : cursor;
+          if (end - start > .0001) stops.push(`${WHEEL_VISUAL_COLORS[amount]} ${start.toFixed(3)}deg ${end.toFixed(3)}deg`);
+        });
+        return `conic-gradient(from 0deg, ${stops.join(",")})`;
+      }
+
+      function wheelVisualLabelElement(amount) {
+        return els.wheelDisk?.querySelector(`.wheel-prize-${amount}`) || null;
+      }
+
+      function renderWheelVisualFrame(probabilities) {
+        if (!els.wheelDisk) return;
+        const p = normalizeWheelVisualProbabilities(probabilities);
+        const segments = buildWheelVisualSegments(p);
+        els.wheelDisk.style.background = wheelVisualGradient(p);
+        WHEEL_VISUAL_AMOUNTS.forEach(amount => {
+          const el = wheelVisualLabelElement(amount);
+          if (!el) return;
+          const probability = p[amount];
+          const [start, end] = segments[amount];
+          const mid = (start + end) / 2;
+          const rad = mid * Math.PI / 180;
+          const radius = probability < 4 ? 29.7 : (probability < 7 ? 30.3 : WHEEL_VISUAL_LABEL_RADIUS);
+          const left = 50 + Math.sin(rad) * radius;
+          const top = 50 - Math.cos(rad) * radius;
+          const font = Math.max(6.8, Math.min(13.5, 7 + probability * .22));
+          el.style.left = `${left.toFixed(3)}%`;
+          el.style.top = `${top.toFixed(3)}%`;
+          el.style.fontSize = `${font.toFixed(2)}px`;
+          el.style.opacity = probability <= .001 ? "0" : "1";
+        });
+        state.wheelVisualProbabilities = p;
+        state.wheelVisualSegments = segments;
+      }
+
+      function wheelVisualProfilesEqual(a, b) {
+        return WHEEL_VISUAL_AMOUNTS.every(amount => Math.abs(Number(a?.[amount] || 0) - Number(b?.[amount] || 0)) < .001);
+      }
+
+      async function animateWheelVisualProfile(target, { duration = 620 } = {}) {
+        const targetP = normalizeWheelVisualProbabilities(target);
+        const startP = normalizeWheelVisualProbabilities(state.wheelVisualProbabilities || WHEEL_VISUAL_BASE);
+        if (wheelVisualProfilesEqual(startP, targetP)) {
+          renderWheelVisualFrame(targetP);
+          return;
+        }
+        const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+        const actualDuration = reduced ? 0 : duration;
+        if (!actualDuration) { renderWheelVisualFrame(targetP); return; }
+        els.wheelDisk?.classList.add("probability-morphing");
+        await new Promise(resolve => {
+          const started = performance.now();
+          const frame = now => {
+            const raw = Math.min(1, (now - started) / actualDuration);
+            const t = 1 - Math.pow(1 - raw, 3);
+            const current = {};
+            WHEEL_VISUAL_AMOUNTS.forEach(amount => {
+              current[amount] = startP[amount] + (targetP[amount] - startP[amount]) * t;
+            });
+            renderWheelVisualFrame(current);
+            if (raw < 1) requestAnimationFrame(frame);
+            else resolve();
+          };
+          requestAnimationFrame(frame);
+        });
+        els.wheelDisk?.classList.remove("probability-morphing");
+        renderWheelVisualFrame(targetP);
+      }
+
+      async function prepareWheelVisualForCurrentTool() {
+        const modifier = ["shield30","upgrade","double_pick"].includes(String(state.shopEquipped || "")) ? String(state.shopEquipped) : null;
+        const luckyActive = Number(state.shopLuckyRemaining || 0) > 0;
+        const target = effectiveWheelVisualProbabilities(modifier, luckyActive);
+        const hasTemporaryVisual = !!modifier || luckyActive;
+        state.wheelVisualProfileKey = hasTemporaryVisual ? `${modifier || "none"}:${luckyActive ? "lucky2" : "plain"}` : "base";
+        state.wheelVisualRestorePending = hasTemporaryVisual;
+        await animateWheelVisualProfile(target);
+      }
+
+      function restoreWheelVisualProfile({ immediate = false } = {}) {
+        state.wheelVisualProfileKey = "base";
+        state.wheelVisualRestorePending = false;
+        if (immediate) renderWheelVisualFrame(WHEEL_VISUAL_BASE);
+        else void animateWheelVisualProfile(WHEEL_VISUAL_BASE, { duration: 560 });
+      }
 
       function wheelAngleForPrize(prize, roll) {
-        const segment = WHEEL_VISUAL_SEGMENTS[Number(prize)] || WHEEL_VISUAL_SEGMENTS[10];
+        const segments = state.wheelVisualSegments || buildWheelVisualSegments(WHEEL_VISUAL_BASE);
+        let segment = segments[Number(prize)] || segments[10];
+        // Defensive fallback for an impossible/zero-width visible sector.
+        if (!segment || segment[1] - segment[0] < .0001) {
+          segment = buildWheelVisualSegments(WHEEL_VISUAL_BASE)[Number(prize)] || [0,36];
+        }
         const safeRoll = Math.abs(Number(roll) || 0);
         const fraction = .24 + ((safeRoll % 997) / 996) * .52;
         return segment[0] + (segment[1] - segment[0]) * fraction;
@@ -8602,18 +9531,50 @@
         }
       }
 
-      function showWheelResult({ prize, preview, cashBefore = 0, cashAfter = 0 }) {
+      function showWheelResult({ prize, preview, cashBefore = 0, cashAfter = 0, modifier = null, firstPrize = null, secondPrize = null, luckyRemaining = null, luckyApplied = false }) {
         const amount = Number(prize || 0);
+        const first = Number(firstPrize ?? amount);
+        const second = secondPrize == null ? null : Number(secondPrize);
         els.wheelResultPrize.textContent = `¥${amount}`;
+        els.wheelDoubleResult.hidden = true;
+        els.wheelDoubleCardA.classList.remove("selected");
+        els.wheelDoubleCardB.classList.remove("selected");
+
         if (preview) {
           els.wheelResultIcon.textContent = amount >= 80 ? "✨" : "🎀";
           els.wheelResultTitle.textContent = `试玩转到了 ¥${amount} ♡`;
           els.wheelResultMessage.textContent = "这次是快乐试玩，所以不会计入可提现余额，也不会留下中奖记录～下次用正式机会把好运带回家吧 ✨";
           els.wheelResultDoneBtn.textContent = "好耶，记住好运 ♡";
+        } else if (modifier === "double_pick" && second != null) {
+          els.wheelResultIcon.textContent = "✦";
+          els.wheelResultTitle.textContent = "命运二选一结果 ♡";
+          els.wheelDoubleResult.hidden = false;
+          els.wheelDoublePrizeA.textContent = `¥${first}`;
+          els.wheelDoublePrizeB.textContent = `¥${second}`;
+          if (first >= second) els.wheelDoubleCardA.classList.add("selected");
+          if (second >= first) els.wheelDoubleCardB.classList.add("selected");
+          els.wheelDoubleChoice.textContent = `已自动选择更高奖励 ¥${amount}`;
+          els.wheelResultMessage.textContent = `一次正式机会产生了两个结果，系统已经自动把更高的 ¥${amount} 存进小金库。可提现余额 ¥${cashBefore} → ¥${cashAfter}${Number(luckyRemaining) >= 0 ? ` · 幸运药水剩余 ${Number(luckyRemaining)} 抽` : ""} ✨`;
+          els.wheelResultDoneBtn.textContent = "收下更幸运的那个 ✦";
+        } else if (modifier === "shield30") {
+          els.wheelResultIcon.textContent = "✦";
+          els.wheelResultTitle.textContent = "小幸运护盾生效 ♡";
+          els.wheelResultMessage.textContent = first < 30
+            ? `原本抽到 ¥${first}，护盾已经自动保底到 ¥${amount}。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`
+            : `这次原本就是 ¥${first}，护盾没有改动奖励。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`;
+          els.wheelResultDoneBtn.textContent = "开心收下 ✦";
+        } else if (modifier === "upgrade") {
+          els.wheelResultIcon.textContent = "✦";
+          els.wheelResultTitle.textContent = "奖励升级卡生效 ♡";
+          els.wheelResultMessage.textContent = amount > first
+            ? `原结果 ¥${first} 已自动升级为 ¥${amount}。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`
+            : `这次抽到 ¥${first}，已经高于升级范围，奖励保持不变。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`;
+          els.wheelResultDoneBtn.textContent = "开心收下 ✦";
         } else {
           els.wheelResultIcon.textContent = amount >= 80 ? "🎉" : "💛";
           els.wheelResultTitle.textContent = "恭喜宝宝抽中啦 ♡";
-          els.wheelResultMessage.textContent = `可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨ 这次好运已经正式存进小金库啦！`;
+          const potionCopy = luckyApplied ? (Number(luckyRemaining) > 0 ? ` 百元幸运药水还剩 ${Number(luckyRemaining)} 抽。` : " 百元幸运药水本次已生效并用完。") : "";
+          els.wheelResultMessage.textContent = `可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨ 这次好运已经正式存进小金库啦！${potionCopy}`;
           els.wheelResultDoneBtn.textContent = "开心收下 ✨";
         }
         setLayer(els.wheelResultLayer, true);
@@ -8659,11 +9620,34 @@
         if (state.wheelChances <= 0) return openWheelPreviewPrompt();
         const cashBefore = Number(state.wheelCashBalance || 0);
         try {
-          const { data, error } = await db.rpc("points_spin_wheel");
-          if (error) throw error;
-          const row = Array.isArray(data) ? data[0] : data;
+          // Morph only for the temporary item state. Admin probability edits never enter this path.
+          await prepareWheelVisualForCurrentTool();
+          let row = null;
+          let usedShopSpin = false;
+          if (state.shopAvailable !== false) {
+            const { data, error } = await db.rpc("points_shop_spin_wheel");
+            if (error) {
+              if (!shopMissingError(error)) throw error;
+              state.shopAvailable = false;
+            } else {
+              row = Array.isArray(data) ? data[0] : data;
+              state.shopAvailable = true;
+              usedShopSpin = true;
+            }
+          }
+          if (!row) {
+            const { data, error } = await db.rpc("points_spin_wheel");
+            if (error) throw error;
+            row = Array.isArray(data) ? data[0] : data;
+          }
+
           const prize = Number(row?.prize_amount || 0);
           const roll = Number(row?.roll);
+          const modifier = usedShopSpin ? String(row?.modifier || "") || null : null;
+          const firstPrize = usedShopSpin && row?.first_prize != null ? Number(row.first_prize) : prize;
+          const secondPrize = usedShopSpin && row?.second_prize != null ? Number(row.second_prize) : null;
+          const luckyRemaining = usedShopSpin && row?.lucky100_remaining != null ? Number(row.lucky100_remaining) : null;
+          const luckyApplied = usedShopSpin && row?.lucky100_applied === true;
           state.wheelChances = Number(row?.spin_chances ?? Math.max(0, state.wheelChances - 1));
           state.wheelCashBalance = Number(row?.cash_balance ?? cashBefore + prize);
           state.wheelUpdatedAt = row?.wheel_updated_at ?? new Date().toISOString();
@@ -8672,9 +9656,12 @@
           await animateWheelToPrize(prize, roll);
           renderPrimaryMetric();
           await silentSyncAfterWheelSpin();
-          showWheelResult({ prize, preview: false, cashBefore, cashAfter: state.wheelCashBalance });
+          if (usedShopSpin) await loadShopState({ silent: true });
+          renderWheelItemNotice();
+          showWheelResult({ prize, preview: false, cashBefore, cashAfter: state.wheelCashBalance, modifier, firstPrize, secondPrize, luckyRemaining, luckyApplied });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
+          if (state.wheelVisualRestorePending) restoreWheelVisualProfile();
           console.error("performFormalWheelSpin:", err);
           const message = String(err?.message || "");
           if (/No wheel chance/i.test(message)) {
@@ -8684,7 +9671,7 @@
             await refreshAuthState();
             openWheelPreviewPrompt();
           } else if (/PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行 v2.0 数据库迁移 SQL");
+            showToast("请先运行数据库迁移 SQL");
           } else showToast("转盘暂时没有转起来，再试一次吧");
         }
       }
@@ -8693,6 +9680,7 @@
         if (state.wheelSpinning) return;
         setBusy(els.wheelPreviewConfirmBtn, true);
         try {
+          if (state.wheelVisualProfileKey !== "base") restoreWheelVisualProfile({ immediate: true });
           const { data, error } = await db.rpc("points_preview_wheel");
           if (error) throw error;
           const row = Array.isArray(data) ? data[0] : data;
@@ -11475,21 +12463,56 @@
         vibrate(7); switchMetric(btn.dataset.metric);
       });
 
-      els.redeemRewardBtn.addEventListener("click", () => { vibrate(8); openRedeemPrompt(); });
-      els.redeemLayer.addEventListener("click", (e) => { if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false); });
-      els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.redeemLayer, false));
-      els.redeemWheelConfirmBtn.addEventListener("click", () => performRewardRedemption("wheel"));
-      els.redeemCashConfirmBtn.addEventListener("click", () => performRewardRedemption("cash"));
+      bindCompactSheetDrag(els.redeemLayer);
+      els.redeemRewardBtn.addEventListener("click", () => { vibrate(8); void openShop("products"); });
+      els.redeemLayer.addEventListener("click", (e) => {
+        const product = e.target.closest("[data-shop-product]");
+        const tab = e.target.closest("[data-shop-view]");
+        if (product) { vibrate(5); openShopItemDetail(product.dataset.shopProduct); return; }
+        if (tab) { vibrate(4); setShopView(tab.dataset.shopView); return; }
+        if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false);
+      });
+      els.shopItemLayer.addEventListener("click", (e) => { if (e.target === els.shopItemLayer) setLayer(els.shopItemLayer, false); });
+      els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.shopItemLayer, false));
+      els.shopItemConfirmBtn.addEventListener("click", () => void purchaseShopItem());
+      els.wheelItemNotice.addEventListener("click", () => { vibrate(6); void openShop("inventory"); });
+
+      // Normalize the initial wheel to the fixed design profile once.
+      if (!state.wheelVisualProbabilities) renderWheelVisualFrame(WHEEL_VISUAL_BASE);
 
       async function triggerWheelFromActionButton() {
         if (state.wheelSpinning) return;
         vibrate(8);
         await silentSyncBeforeWheelSpin();
         if (state.isAdmin) return openWheelPreviewPrompt();
-        if (state.wheelChances > 0) await performFormalWheelSpin();
-        else openWheelPreviewPrompt();
+        if (state.wheelChances <= 0) return openWheelPreviewPrompt();
+
+        const shopReady = await loadShopState({ silent: true });
+        if (shopReady) {
+          if (ownedWheelToolCodes().length > 0) return openWheelToolPrompt("owned");
+          if (affordableWheelToolCodes().length > 0) return openWheelToolPrompt("warning");
+          await clearLegacyEquippedTool();
+        }
+        await performFormalWheelSpin();
       }
       els.spinWheelActionBtn.addEventListener("click", () => void triggerWheelFromActionButton());
+      els.wheelToolLayer.addEventListener("click", (e) => {
+        const choice = e.target.closest("[data-wheel-tool-code]");
+        const potion = e.target.closest("[data-wheel-potion-toggle]");
+        if (choice) {
+          const code = choice.dataset.wheelToolCode;
+          state.wheelToolSelectedCode = state.wheelToolSelectedCode === code ? null : code;
+          vibrate(5); renderWheelToolPrompt(); return;
+        }
+        if (potion) {
+          state.wheelToolUsePotion = !state.wheelToolUsePotion;
+          vibrate(5); renderWheelToolPrompt(); return;
+        }
+        if (e.target === els.wheelToolLayer) setLayer(els.wheelToolLayer, false);
+      });
+      els.wheelToolCancelBtn.addEventListener("click", () => setLayer(els.wheelToolLayer, false));
+      els.wheelToolBareBtn.addEventListener("click", () => void spinWithoutNewTool());
+      els.wheelToolConfirmBtn.addEventListener("click", () => void confirmWheelToolChoice());
       els.adjustWheelChancesBtn.addEventListener("click", openWheelAdjustPrompt);
       [els.wheelAdjustMinusBtn, els.wheelAdjustPlusBtn].forEach(btn => btn.addEventListener("click", () => {
         state.wheelAdjustDelta = Number(btn.dataset.wheelAdjust) < 0 ? -1 : 1;
@@ -11503,8 +12526,12 @@
       els.wheelPreviewLayer.addEventListener("click", (e) => { if (e.target === els.wheelPreviewLayer) setLayer(els.wheelPreviewLayer, false); });
       els.wheelPreviewCancelBtn.addEventListener("click", () => setLayer(els.wheelPreviewLayer, false));
       els.wheelPreviewConfirmBtn.addEventListener("click", performPreviewWheelSpin);
-      els.wheelResultLayer.addEventListener("click", (e) => { if (e.target === els.wheelResultLayer) setLayer(els.wheelResultLayer, false); });
-      els.wheelResultDoneBtn.addEventListener("click", () => setLayer(els.wheelResultLayer, false));
+      function closeWheelResultAndRestoreVisual() {
+        setLayer(els.wheelResultLayer, false);
+        if (state.wheelVisualRestorePending || state.wheelVisualProfileKey !== "base") restoreWheelVisualProfile();
+      }
+      els.wheelResultLayer.addEventListener("click", (e) => { if (e.target === els.wheelResultLayer) closeWheelResultAndRestoreVisual(); });
+      els.wheelResultDoneBtn.addEventListener("click", closeWheelResultAndRestoreVisual);
 
       els.withdrawWheelBtn.addEventListener("click", openWheelWithdrawPrompt);
       els.wheelWithdrawLayer.addEventListener("click", (e) => { if (e.target === els.wheelWithdrawLayer) setLayer(els.wheelWithdrawLayer, false); });
@@ -11631,6 +12658,8 @@
         if (els.wheelResultLayer.classList.contains("open")) return setLayer(els.wheelResultLayer, false);
         if (els.wheelWithdrawLayer.classList.contains("open")) return setLayer(els.wheelWithdrawLayer, false);
         if (els.wheelPreviewLayer.classList.contains("open")) return setLayer(els.wheelPreviewLayer, false);
+        if (els.shopItemLayer.classList.contains("open")) return setLayer(els.shopItemLayer, false);
+        if (els.wheelToolLayer.classList.contains("open")) return setLayer(els.wheelToolLayer, false);
         if (els.redeemLayer.classList.contains("open")) return setLayer(els.redeemLayer, false);
         if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
         if (els.settingsLayer.classList.contains("open")) return setLayer(els.settingsLayer, false);
@@ -11648,6 +12677,7 @@
       // -------------------- Boot --------------------
       async function scheduledDatabaseRefresh() {
         await loadAppState({ silent: true });
+        await loadShopState({ silent: true });
         await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
         if (state.isAdmin) await workScheduleModule.refreshAdminNotice({ forceRefresh: true });
         if (state.activeMetric === "schedule") await workScheduleModule.refreshHome(true);
@@ -11661,7 +12691,8 @@
         // Opening the app always performs one immediate database read.
         await Promise.all([
           loadAppState(),
-          refreshAuthState()
+          refreshAuthState(),
+          loadShopState({ silent: true })
         ]);
         await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
         renderPrimaryMetric();
