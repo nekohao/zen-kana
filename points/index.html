@@ -4954,6 +4954,32 @@
     }
     .schedule-reward-period { margin-top:8px; color:var(--secondary); font-size:12px; font-weight:610; }
 
+
+    .shop-theme-restart { color:#7169a4; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.84),transparent 27%),linear-gradient(145deg,#e9e8ff,#efe6fa 55%,#fff4e9); }
+    .shop-theme-wish { color:#a27b45; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.86),transparent 26%),linear-gradient(145deg,#fff3ce,#f6e8ef 56%,#f3edff); }
+    .shop-theme-challenge { color:#9a6859; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.84),transparent 26%),linear-gradient(145deg,#ffe8de,#f5e3f0 55%,#fff3d4); }
+    .shop-theme-no10 { color:#6f7694; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.84),transparent 26%),linear-gradient(145deg,#e9eef9,#e7e8f5 56%,#fbf4ef); }
+    .shop-theme-return { color:#708c82; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.84),transparent 26%),linear-gradient(145deg,#e4f4ee,#e9eff5 56%,#fff4dc); }
+    .shop-theme-heartbeat { color:#a7667d; background:radial-gradient(circle at 70% 18%,rgba(255,255,255,.85),transparent 26%),linear-gradient(145deg,#ffe7ef,#f2e5f2 56%,#fff3e8); }
+    .shop-theme-mystery { color:#75678f; background:radial-gradient(circle at 68% 18%,rgba(255,255,255,.90),transparent 27%),linear-gradient(145deg,#ece6ff,#f8e8f1 52%,#fff1d3); }
+
+    .wheel-challenge-progress {
+      width:min(82vw,286px); margin:0 auto 8px; padding:10px 12px 9px; border:1px solid rgba(255,255,255,.82); border-radius:18px;
+      color:#845e51; background:linear-gradient(135deg,rgba(255,246,235,.76),rgba(247,230,241,.48));
+      box-shadow:0 9px 24px rgba(126,82,72,.07),inset 0 1px 0 rgba(255,255,255,.74); -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
+    }
+    .wheel-challenge-progress[hidden]{display:none!important}.home:not(.wheel-active) .wheel-challenge-progress,.home.admin-mode .wheel-challenge-progress{display:none!important}
+    .wheel-challenge-progress-head{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:8px}.wheel-challenge-progress-icon{width:28px;height:28px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.52);font-size:13px}.wheel-challenge-progress-head span:nth-child(2){display:flex;min-width:0;flex-direction:column;gap:1px}.wheel-challenge-progress-head strong{font-size:10.7px;font-weight:780}.wheel-challenge-progress-head small{color:rgba(111,77,67,.58);font-size:8.5px;font-weight:570}.wheel-challenge-progress-head b{font-size:10px;font-weight:800;color:#95654e}
+    .wheel-challenge-track{margin:9px 5px 6px;display:grid;grid-template-columns:12px 1fr 12px 1fr 12px;align-items:center}.wheel-challenge-track i{width:12px;height:12px;border-radius:50%;border:2px solid rgba(153,102,79,.25);background:rgba(255,255,255,.62);box-shadow:inset 0 1px rgba(255,255,255,.8)}.wheel-challenge-track i.done{border-color:rgba(163,99,75,.62);background:linear-gradient(145deg,#e8a98c,#c98172)}.wheel-challenge-track span{height:2px;background:rgba(157,109,91,.17)}.wheel-challenge-track span.done{background:linear-gradient(90deg,rgba(206,137,105,.65),rgba(174,104,125,.48))}.wheel-challenge-foot{color:rgba(108,77,67,.52);font-size:8.3px;line-height:1.3;text-align:center;font-weight:560}
+
+    .wheel-wish-selector{margin:9px 0 1px;padding:10px;border:1px solid rgba(255,255,255,.73);border-radius:17px;background:linear-gradient(145deg,rgba(255,248,227,.62),rgba(247,237,252,.44))}.wheel-wish-selector[hidden]{display:none!important}.wheel-wish-selector-head{display:flex;flex-direction:column;gap:2px;text-align:left}.wheel-wish-selector-head strong{font-size:10.2px;color:#8d6b3f}.wheel-wish-selector-head small{font-size:8.4px;color:var(--secondary)}.wheel-wish-grid{margin-top:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.wheel-wish-chip{height:32px;border:1px solid rgba(255,255,255,.75);border-radius:11px;background:rgba(255,255,255,.38);font-size:9.5px;font-weight:720;color:#7c6a52}.wheel-wish-chip.selected{color:#9a672a;background:linear-gradient(145deg,rgba(255,247,218,.88),rgba(248,230,194,.55));border-color:rgba(206,163,91,.36);box-shadow:inset 0 1px rgba(255,255,255,.78)}
+    .wheel-tool-choice.auto-trigger{border-style:dashed}.wheel-tool-choice.auto-trigger .wheel-tool-choice-mark{color:#9b6880}.wheel-tool-choice.challenge.selected{border-color:rgba(189,124,95,.42);background:linear-gradient(135deg,rgba(255,240,228,.72),rgba(248,230,242,.48))}.wheel-tool-choice.disabled{opacity:.48;pointer-events:none}
+
+    .shop-reveal-alert{width:min(calc(100% - 30px),326px)!important}.shop-reveal-box{position:relative;width:84px;height:84px;margin:0 auto 12px;border-radius:24px;background:linear-gradient(145deg,#eee6ff,#fae8f2 58%,#fff2d4);border:1px solid rgba(255,255,255,.82);box-shadow:0 15px 32px rgba(93,67,112,.12),inset 0 1px rgba(255,255,255,.82);display:grid;place-items:center}.shop-reveal-box:before,.shop-reveal-box:after{content:"";position:absolute;background:rgba(255,255,255,.72)}.shop-reveal-box:before{width:46px;height:2px;top:37px}.shop-reveal-box:after{width:2px;height:50px}.shop-reveal-box span{width:46px;height:40px;border:1.5px solid currentColor;border-radius:9px;color:#78668e;transform:translateY(6px)}.shop-reveal-box i:before{content:"✦";position:absolute;right:13px;top:11px;color:#b69457;font-style:normal;font-size:17px}.shop-reveal-prize{min-height:52px;margin:8px auto 3px;display:flex;align-items:center;justify-content:center;gap:10px}.shop-reveal-prize .shop-inventory-icon{width:46px;height:46px}.shop-reveal-prize strong{font-size:17px;font-weight:800;letter-spacing:-.02em}
+
+    .wheel-decision-alert{width:min(calc(100% - 28px),338px)!important}.wheel-decision-orb{width:58px;height:58px;margin:0 auto 10px;display:grid;place-items:center;border-radius:20px;color:#7c607f;background:linear-gradient(145deg,rgba(247,238,255,.9),rgba(255,238,246,.68));border:1px solid rgba(255,255,255,.8);font-size:22px;box-shadow:0 12px 27px rgba(104,74,111,.09),inset 0 1px rgba(255,255,255,.78)}.wheel-decision-current{margin:10px auto 8px;max-width:210px;padding:10px 13px;border-radius:16px;background:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:space-between}.wheel-decision-current span{font-size:9.5px;color:var(--secondary)}.wheel-decision-current strong{font-size:24px;line-height:1;font-weight:820;color:#a06d3a}.wheel-decision-odds{margin:10px 0 0;padding:10px 11px;border-radius:15px;background:rgba(255,255,255,.28);font-size:9.4px;line-height:1.45;color:var(--secondary);text-align:left}.wheel-decision-odds[hidden]{display:none!important}.wheel-result-extra{margin:10px 0 0;padding:10px 11px;border:1px solid rgba(255,255,255,.66);border-radius:15px;background:linear-gradient(145deg,rgba(255,247,226,.56),rgba(244,235,252,.40));font-size:9.5px;line-height:1.45;color:#7d674d;font-weight:610}.wheel-result-extra[hidden]{display:none!important}
+    .wheel-prize.wish-target{color:#fff7d4!important;text-shadow:0 0 5px rgba(255,229,147,.95),0 0 11px rgba(217,173,80,.72);transform:translate(-50%,-50%) scale(1.18)!important}.wheel-prize.wish-target:after{content:"✦";position:absolute;left:50%;top:-9px;transform:translateX(-50%);font-size:7px;color:#fff0a4;text-shadow:0 0 6px rgba(255,220,102,.9)}
+
     @media (max-width:370px) {
       .score-reward-notice { width:min(92vw,340px); }
       .score-reward-notice-copy strong { font-size:11px; }
@@ -6554,7 +6580,7 @@
 <button class="redeem-button score-redeem-button pressable" id="redeemRewardBtn" type="button">
 <svg aria-hidden="true" class="shop-home-button-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 9.5 6.2 4h11.6L20 9.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-6h6v6"/><path d="M3.5 9.5h17"/></svg>
 <span>积分商城</span>
-<span class="redeem-button-meta">6 种奖励</span>
+
 </button>
 <div aria-hidden="true" class="admin-controls hidden" id="adminControls">
 <button aria-label="减少积分" class="score-button minus pressable" data-sign="-1" type="button">−</button>
@@ -6565,6 +6591,17 @@
 <span class="wheel-item-notice-copy"><strong id="wheelItemNoticeTitle">我的道具</strong><small id="wheelItemNoticeMeta">点击查看背包</small></span>
 <span aria-hidden="true" class="wheel-item-notice-chevron">›</span>
 </button>
+<div class="wheel-challenge-progress" hidden id="wheelChallengeProgress">
+  <div class="wheel-challenge-progress-head">
+    <span class="wheel-challenge-progress-icon" aria-hidden="true">✦</span>
+    <span><strong>三连挑战进行中</strong><small id="wheelChallengeProgressText">已完成 0 / 3 抽</small></span>
+    <b id="wheelChallengeHitText">0 / 2</b>
+  </div>
+  <div class="wheel-challenge-track" aria-hidden="true">
+    <i data-challenge-dot="1"></i><span></span><i data-challenge-dot="2"></i><span></span><i data-challenge-dot="3"></i>
+  </div>
+  <div class="wheel-challenge-foot" id="wheelChallengeFoot">3 抽中至少 2 次达到 ¥50 · 成功额外 +¥20</div>
+</div>
 <div aria-hidden="true" class="wheel-actions" id="wheelActions">
 <button class="wheel-side-button wheel-side-spin pressable" id="spinWheelActionBtn" type="button">
 <span aria-hidden="true" class="wheel-side-icon">🎠</span>
@@ -7361,6 +7398,18 @@
 </div>
 </div>
 
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="shopRevealLayer">
+<div aria-labelledby="shopRevealTitle" aria-modal="true" class="alert shop-reveal-alert" role="alertdialog">
+<div class="alert-content">
+<div class="shop-reveal-box" id="shopRevealBox"><span></span><i></i></div>
+<div class="alert-title" id="shopRevealTitle">幸运盲盒开启 ✦</div>
+<div class="shop-reveal-prize" id="shopRevealPrize"></div>
+<div class="alert-message" id="shopRevealMessage">已经放进“我的道具”啦 ♡</div>
+</div>
+<div class="alert-actions vertical"><button class="alert-button primary-action pressable" id="shopRevealDoneBtn" type="button">收下幸运 ✦</button></div>
+</div>
+</div>
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelToolLayer">
 <div aria-labelledby="wheelToolTitle" aria-modal="true" class="alert wheel-tool-alert" role="alertdialog">
 <div class="alert-content">
@@ -7369,6 +7418,18 @@
 <div class="alert-message" id="wheelToolMessage">已兑换的道具会在这里选择，本次不选也可以直接开始。</div>
 <div class="wheel-tool-active-strip" hidden id="wheelToolActiveBuff"></div>
 <div class="wheel-tool-list" id="wheelToolList"></div>
+<div class="wheel-wish-selector" hidden id="wheelWishSelector">
+  <div class="wheel-wish-selector-head"><strong>许下这一次的愿望 ✦</strong><small>正好命中时，额外奖励该金额的 50%</small></div>
+  <div class="wheel-wish-grid" id="wheelWishGrid">
+    <button class="wheel-wish-chip pressable" data-wheel-wish="10" type="button">¥10</button>
+    <button class="wheel-wish-chip pressable" data-wheel-wish="20" type="button">¥20</button>
+    <button class="wheel-wish-chip pressable" data-wheel-wish="30" type="button">¥30</button>
+    <button class="wheel-wish-chip pressable" data-wheel-wish="50" type="button">¥50</button>
+    <button class="wheel-wish-chip pressable" data-wheel-wish="60" type="button">¥60</button>
+    <button class="wheel-wish-chip pressable" data-wheel-wish="80" type="button">¥80</button>
+    <button class="wheel-wish-chip pressable" data-wheel-wish="100" type="button">¥100</button>
+  </div>
+</div>
 <div class="wheel-tool-warning-card" hidden id="wheelToolWarning"></div>
 </div>
 <div class="alert-actions vertical">
@@ -7439,6 +7500,22 @@
 </div>
 </div>
 
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelDecisionLayer">
+<div aria-labelledby="wheelDecisionTitle" aria-modal="true" class="alert wheel-decision-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="wheel-decision-orb" id="wheelDecisionIcon">✦</div>
+<div class="alert-title" id="wheelDecisionTitle">命运还没有写完</div>
+<div class="wheel-decision-current"><span>当前结果</span><strong id="wheelDecisionPrize">¥0</strong></div>
+<div class="alert-message" id="wheelDecisionMessage"></div>
+<div class="wheel-decision-odds" hidden id="wheelDecisionOdds"></div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="wheelDecisionRiskBtn" type="button">再搏一次</button>
+<button class="alert-button pressable" id="wheelDecisionAcceptBtn" type="button">稳稳收下</button>
+</div>
+</div>
+</div>
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="wheel" id="wheelResultLayer">
 <div aria-labelledby="wheelResultTitle" aria-modal="true" class="alert wheel-result-alert" role="alertdialog">
 <div class="alert-content">
@@ -7452,6 +7529,7 @@
 <div class="wheel-double-choice" id="wheelDoubleChoice">已自动选择更高奖励</div>
 </div>
 <div class="alert-message" id="wheelResultMessage"></div>
+<div class="wheel-result-extra" hidden id="wheelResultExtra"></div>
 </div>
 <div class="alert-actions vertical">
 <button class="alert-button primary-action pressable" id="wheelResultDoneBtn" type="button">开心收下 ✨</button>
@@ -7661,18 +7739,35 @@
         shopItemPrice: $("#shopItemPrice"),
         shopItemConfirmBtn: $("#shopItemConfirmBtn"),
         cancelRedeemBtn: $("#cancelRedeemBtn"),
+        shopRevealLayer: $("#shopRevealLayer"),
+        shopRevealPrize: $("#shopRevealPrize"),
+        shopRevealDoneBtn: $("#shopRevealDoneBtn"),
         wheelItemNotice: $("#wheelItemNotice"),
         wheelItemNoticeTitle: $("#wheelItemNoticeTitle"),
         wheelItemNoticeMeta: $("#wheelItemNoticeMeta"),
+        wheelChallengeProgress: $("#wheelChallengeProgress"),
+        wheelChallengeProgressText: $("#wheelChallengeProgressText"),
+        wheelChallengeHitText: $("#wheelChallengeHitText"),
+        wheelChallengeFoot: $("#wheelChallengeFoot"),
         wheelToolLayer: $("#wheelToolLayer"),
         wheelToolTitle: $("#wheelToolTitle"),
         wheelToolMessage: $("#wheelToolMessage"),
         wheelToolActiveBuff: $("#wheelToolActiveBuff"),
         wheelToolList: $("#wheelToolList"),
         wheelToolWarning: $("#wheelToolWarning"),
+        wheelWishSelector: $("#wheelWishSelector"),
+        wheelWishGrid: $("#wheelWishGrid"),
         wheelToolConfirmBtn: $("#wheelToolConfirmBtn"),
         wheelToolBareBtn: $("#wheelToolBareBtn"),
         wheelToolCancelBtn: $("#wheelToolCancelBtn"),
+        wheelDecisionLayer: $("#wheelDecisionLayer"),
+        wheelDecisionIcon: $("#wheelDecisionIcon"),
+        wheelDecisionTitle: $("#wheelDecisionTitle"),
+        wheelDecisionPrize: $("#wheelDecisionPrize"),
+        wheelDecisionMessage: $("#wheelDecisionMessage"),
+        wheelDecisionOdds: $("#wheelDecisionOdds"),
+        wheelDecisionRiskBtn: $("#wheelDecisionRiskBtn"),
+        wheelDecisionAcceptBtn: $("#wheelDecisionAcceptBtn"),
 
         wheelPreviewLayer: $("#wheelPreviewLayer"),
         wheelPreviewMessage: $("#wheelPreviewMessage"),
@@ -7706,6 +7801,7 @@
         wheelDoublePrizeB: $("#wheelDoublePrizeB"),
         wheelDoubleChoice: $("#wheelDoubleChoice"),
         wheelResultDoneBtn: $("#wheelResultDoneBtn"),
+        wheelResultExtra: $("#wheelResultExtra"),
         wheelWithdrawLayer: $("#wheelWithdrawLayer"),
         wheelWithdrawMessage: $("#wheelWithdrawMessage"),
         wheelWithdrawAmount: $("#wheelWithdrawAmount"),
@@ -7755,14 +7851,21 @@
         shopAvailable: null,
         shopView: "products",
         shopSelectedCode: null,
-        shopInventory: { shield30: 0, upgrade: 0, double_pick: 0, lucky100: 0 },
+        shopInventory: { shield30:0, upgrade:0, double_pick:0, lucky100:0, restart:0, wish:0, triple_challenge:0, no10:0, return10:0, heartbeat:0 },
         shopWeekly: {},
         shopEquipped: null,
+        shopEquippedParam: null,
         shopLuckyRemaining: 0,
+        shopChallengeActive: false,
+        shopChallengeSpinsDone: 0,
+        shopChallengeHits: 0,
+        shopPendingSpin: null,
         shopLoadedAt: 0,
         wheelToolPromptMode: null,
         wheelToolSelectedCode: null,
+        wheelToolWishTarget: 100,
         wheelToolUsePotion: false,
+        wheelToolUseChallenge: false,
         wheelVisualProbabilities: null,
         wheelVisualSegments: null,
         wheelVisualProfileKey: "base",
@@ -7921,7 +8024,7 @@
       function closeAllLayers() {
         [
           els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer,
-          els.changeLayer, els.redeemLayer, els.shopItemLayer, els.wheelToolLayer, els.wheelPreviewLayer, els.wheelResultLayer,
+          els.changeLayer, els.redeemLayer, els.shopItemLayer, els.shopRevealLayer, els.wheelToolLayer, els.wheelDecisionLayer, els.wheelPreviewLayer, els.wheelResultLayer,
           els.wheelWithdrawLayer, els.settleWithdrawalLayer,
           els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer, els.resetLayer
         ].filter(Boolean).forEach(layer => setLayer(layer, false));
@@ -7964,7 +8067,9 @@
         if (state.isAdmin) {
           if (els.redeemLayer?.classList.contains("open")) setLayer(els.redeemLayer, false);
           if (els.shopItemLayer?.classList.contains("open")) setLayer(els.shopItemLayer, false);
+          if (els.shopRevealLayer?.classList.contains("open")) setLayer(els.shopRevealLayer, false);
           if (els.wheelToolLayer?.classList.contains("open")) setLayer(els.wheelToolLayer, false);
+          if (els.wheelDecisionLayer?.classList.contains("open")) setLayer(els.wheelDecisionLayer, false);
           const email = state.session?.user?.email || "管理员";
           els.loginStateText.textContent = `管理员 · ${email}`;
           els.spinWheelActionBtn.querySelector("strong").textContent = "试玩";
@@ -8514,82 +8619,127 @@
 
       const SHOP_ITEMS = {
         wheel_ticket: {
-          code: "wheel_ticket", name: "正式转盘券", coverWord: "SPIN PASS", price: 10, theme: "wheel",
-          desc: "+1 次正式大转盘机会，正式中奖会进入可提现余额。", detail: "兑换后立即增加 1 次正式大转盘机会，不进入道具库存。", weeklyLimit: 0, immediate: true
+          code:"wheel_ticket", name:"正式转盘券", coverWord:"SPIN PASS", price:10, theme:"wheel",
+          desc:"+1 次正式大转盘机会，正式中奖会进入可提现余额。", detail:"兑换后立即增加 1 次正式大转盘机会，不进入道具库存。", weeklyLimit:0, immediate:true
         },
         cash_box: {
-          code: "cash_box", name: "30元小金库", coverWord: "CASH BOX", price: 10, theme: "cash",
-          desc: "直接获得 ¥30 可提现余额。", detail: "兑换后 ¥30 会立即进入可提现余额，不需要经过转盘。", weeklyLimit: 0, immediate: true
+          code:"cash_box", name:"30元小金库", coverWord:"CASH BOX", price:10, theme:"cash",
+          desc:"直接获得 ¥30 可提现余额。", detail:"兑换后 ¥30 会立即进入可提现余额，不需要经过转盘。", weeklyLimit:0, immediate:true
         },
         shield30: {
-          code: "shield30", name: "小幸运护盾", coverWord: "SAFE 30", price: 2, theme: "shield",
-          desc: "下一次正式抽奖最低 ¥30。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择是否使用；若本次原结果低于 ¥30，会自动提升到 ¥30，抽奖完成后消耗 1 个。", weeklyLimit: 2
+          code:"shield30", name:"小幸运护盾", coverWord:"SAFE 30", price:3, theme:"shield",
+          desc:"下一次正式抽奖最低 ¥30。", detail:"抽奖前选择使用。若本次原结果低于 ¥30，会自动提升到 ¥30；正式抽奖完成后消耗 1 个。", weeklyLimit:2
         },
         upgrade: {
-          code: "upgrade", name: "奖励升级卡", coverWord: "LEVEL UP", price: 3, theme: "upgrade",
-          desc: "下一抽 ≤¥30 自动升一档。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择是否使用；本次若抽到 ¥10→¥20、¥20→¥30、¥30→¥50，更高奖励保持原样。", weeklyLimit: 1
+          code:"upgrade", name:"奖励升级卡", coverWord:"LEVEL UP", price:3, theme:"upgrade",
+          desc:"下一抽低档奖励自动升一档。", detail:"抽奖前选择使用：¥10→¥20、¥20→¥30、¥30→¥50；¥50 及以上保持原样。", weeklyLimit:1
         },
         double_pick: {
-          code: "double_pick", name: "命运二选一", coverWord: "DOUBLE PICK", price: 3, theme: "double",
-          desc: "下一抽出现两个结果，自动取更高。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择是否使用；正式机会只扣 1 次，同时产生 A / B 两个结果，两个都会展示，并自动把更高的那一个存入可提现余额。", weeklyLimit: 1
+          code:"double_pick", name:"命运二选一", coverWord:"DOUBLE PICK", price:3, theme:"double",
+          desc:"一次机会出现两个结果，自动留下更高的那个。", detail:"只扣 1 次正式机会，同时生成 A / B 两个结果并全部展示，最终只结算更高奖励。", weeklyLimit:1
         },
         lucky100: {
-          code: "lucky100", name: "百元幸运药水", coverWord: "LUCKY +2%", price: 2, theme: "potion",
-          desc: "使用后连续 5 抽，¥100 概率 +2%。", detail: "兑换后保存到“我的道具”。点击转动大转盘时可选择开启；从本次起连续 5 次正式抽奖把 ¥100 概率提高 2 个百分点，并从 ¥10 档转移同等概率；可与 1 个单次类道具同时生效。", weeklyLimit: 1
+          code:"lucky100", name:"百元幸运药水", coverWord:"LUCKY +2%", price:2, theme:"potion",
+          desc:"开启后连续 5 抽，¥100 概率 +2%。", detail:"从本次起连续 5 次正式抽奖把 ¥100 概率提高 2 个百分点，并从 ¥10 档转移同等概率。它属于持续层，可与 1 个普通单次道具叠加，但不能与十元退散同时生效。", weeklyLimit:1
+        },
+        restart: {
+          code:"restart", name:"命运重启卡", coverWord:"REWRITE", price:3, theme:"restart",
+          desc:"抽到 ¥10 / ¥20 / ¥30 时，可以决定是否重抽。", detail:"抽奖前选择使用。第一抽若为 ¥10、¥20 或 ¥30，系统会询问“稳稳收下”还是“重新抽一次”；若选择重抽，第二个结果必须接受，不能反悔。第一抽若 ≥¥50 则直接结算。", weeklyLimit:2
+        },
+        wish: {
+          code:"wish", name:"许愿卡", coverWord:"MAKE A WISH", price:1, theme:"wish",
+          desc:"指定一个奖项，正好命中时额外奖励该金额的 50%。", detail:"抽奖前先选择 ¥10 / ¥20 / ¥30 / ¥50 / ¥60 / ¥80 / ¥100 中的一个愿望。只有转盘正好落在许愿金额时才触发，额外奖励该金额的 50%。概率本身不会被改变。", weeklyLimit:2
+        },
+        triple_challenge: {
+          code:"triple_challenge", name:"三连挑战卡", coverWord:"3 SPINS", price:2, theme:"challenge",
+          desc:"接下来 3 抽至少 2 次达到 ¥50，额外 +¥20。", detail:"开启后会在大转盘首页持续显示进度。连续计算接下来 3 次正式抽奖的最终结算金额，其中至少 2 次达到 ¥50 即挑战成功并额外获得 ¥20。挑战属于任务层，可以和药水及 1 个单次道具同时存在。", weeklyLimit:1
+        },
+        no10: {
+          code:"no10", name:"十元退散卡", coverWord:"NO ¥10", price:1, theme:"no10",
+          desc:"下一抽移除最多 10% 的 ¥10 概率。", detail:"抽奖前选择使用。会把 ¥10 档最多 10 个百分点的概率按比例分给其它奖励；转盘会在抽奖前平滑缩小 ¥10 扇区。由于它和百元幸运药水都会直接改概率，两者不能同时使用。", weeklyLimit:2
+        },
+        return10: {
+          code:"return10", name:"幸运返场卡", coverWord:"ONE MORE", price:1, theme:"return",
+          desc:"下一抽若中 ¥10，¥10 照拿并返还 1 次正式机会。", detail:"抽奖前选择使用。无论结果如何都会消耗这张卡；如果本次正好抽到 ¥10，奖金照常进入小金库，同时正式机会返还 1 次。返还后的下一抽不会继续继承本卡。", weeklyLimit:2
+        },
+        heartbeat: {
+          code:"heartbeat", name:"心跳翻倍卡", coverWord:"HEART BEAT", price:2, theme:"heartbeat",
+          desc:"未使用其它单次卡且抽到 ≤¥30 时，自动询问要不要搏一把。", detail:"无需抽奖前手动选择。只要本次没有使用其它单次道具，且最终初始落点为 ¥10 / ¥20 / ¥30，系统会自动询问是否使用。选择心跳一搏后：50% 奖励翻倍，50% 奖励减半；只有真的选择搏一把才消耗卡。", weeklyLimit:2, reactive:true
+        },
+        mystery_box: {
+          code:"mystery_box", name:"幸运盲盒", coverWord:"MYSTERY", price:2, theme:"mystery",
+          desc:"2 分开启一个随机道具，越高价值的道具越稀有。", detail:"兑换后立即开启，不进入背包。1 分道具单个概率 14%，2 分道具单个概率 10%，3 分道具单个概率 7%；总概率 100%。开出的道具会直接放入“我的道具”，不会占用那个道具本身的周限购次数。", weeklyLimit:2, instantOpen:true
         }
       };
+
+      const SHOP_INVENTORY_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat"];
+      const SHOP_ONE_SHOT_CODES = ["shield30","upgrade","double_pick","restart","wish","no10","return10"];
+      const SHOP_WHEEL_TOOL_CODES = [...SHOP_ONE_SHOT_CODES,"lucky100","triple_challenge","heartbeat"];
 
       function shopIconSVG(code) {
         const attrs = `fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"`;
         const icons = {
           wheel_ticket: `<svg ${attrs}><path d="M12 18.5h40v9.3c-3.8.6-6.2 3-6.2 6.2s2.4 5.6 6.2 6.2v9.3H12v-9.3c3.8-.6 6.2-3 6.2-6.2s-2.4-5.6-6.2-6.2v-9.3Z"/><path d="M34 18.5v31" stroke-dasharray="2.6 4.2" opacity=".48"/><circle cx="26" cy="34" r="6.4"/><path d="m22.9 34.1 2 2 4.4-5"/></svg>`,
           cash_box: `<svg ${attrs}><rect x="12.5" y="20" width="39" height="28.5" rx="8"/><path d="M12.5 28.5h39" opacity=".55"/><path d="M39.5 34.6H52v9.1H39.5a4.55 4.55 0 1 1 0-9.1Z"/><circle cx="41.5" cy="39.15" r="1.4" fill="currentColor" stroke="none"/><path d="M22 20c1.1-5.4 4.6-8.2 10-8.2S40.9 14.6 42 20"/></svg>`,
-          shield30: `<svg ${attrs}><path d="M32 8.8c5.8 3.8 11.1 5.4 17 7.1v13.4c0 12-6.7 20.8-17 26-10.3-5.2-17-14-17-26V15.9c5.9-1.7 11.2-3.3 17-7.1Z"/><path d="M32 15.1v33.7" opacity=".16"/><path d="M24.2 29.6c1.9-4.1 4.6-6.1 7.8-6.1 3.2 0 5.9 2 7.8 6.1-1.4 5.8-4 9.8-7.8 12.1-3.8-2.3-6.4-6.3-7.8-12.1Z" opacity=".38"/><path d="m32 24.7 1.9 4 4.4.6-3.2 3.1.8 4.4-3.9-2.1-3.9 2.1.8-4.4-3.2-3.1 4.4-.6 1.9-4Z" fill="currentColor" stroke="none" opacity=".86"/><path d="M22.5 17.9c-1.7.6-3 1-4.3 1.4" opacity=".35"/><path d="M41.5 17.9c1.7.6 3 1 4.3 1.4" opacity=".35"/></svg>`,
-          upgrade: `<svg ${attrs}><rect x="13" y="36" width="15" height="11.5" rx="4.2" opacity=".38"/><rect x="24.5" y="27" width="15.5" height="13" rx="4.5" opacity=".62"/><rect x="36" y="17" width="15" height="14" rx="4.5"/><path d="M18 32.3 30 20.5 37.1 20"/><path d="m32.8 15.9 4.7 4.1-4.1 4.7"/><path d="m17 18.5 1.5 3.2 3.5.5-2.5 2.4.6 3.5-3.1-1.7-3.1 1.7.6-3.5-2.5-2.4 3.5-.5 1.5-3.2Z" fill="currentColor" stroke="none" opacity=".58"/></svg>`,
-          double_pick: `<svg ${attrs}><g transform="rotate(-7 23 32)"><rect x="10.5" y="17" width="26" height="31" rx="9"/><path d="M17 25.5h13M17 31h9" opacity=".36"/><path d="m23.5 35.5 1.8 3.7 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6 1.8-3.7Z" fill="currentColor" stroke="none" opacity=".54"/></g><g transform="rotate(7 42 32)"><rect x="27.5" y="16" width="26" height="32" rx="9"/><path d="M34.5 24.5h12M34.5 30h8" opacity=".32"/><path d="m42.5 34 2.2 4.5 5 .7-3.6 3.5.8 4.9-4.4-2.4-4.4 2.4.8-4.9-3.6-3.5 5-.7 2.2-4.5Z" fill="currentColor" stroke="none" opacity=".82"/></g><path d="M27.5 12.5c2.8-2.8 6.2-4.1 10.2-4" opacity=".4"/><path d="m35.4 6.6 2.5 1.9-2 2.4" opacity=".62"/></svg>`,
-          lucky100: `<svg ${attrs}><path d="M25 10h14"/><path d="M28 10v13L17 42c-4 7 1 12 9 12h12c8 0 13-5 9-12L36 23V10"/><path d="M22 39h20"/><path d="M25 35c6 4 9-3 16 1" opacity=".65"/><path d="m45 13 2 4 4 2-4 2-2 4-2-4-4-2 4-2 2-4Z"/></svg>`
+          shield30: `<svg ${attrs}><path d="M32 8.5c6 4 11.2 5.5 17.4 7.3v13.1c0 12.3-6.9 21.2-17.4 26.5-10.5-5.3-17.4-14.2-17.4-26.5V15.8C20.8 14 26 12.5 32 8.5Z"/><path d="M21.8 27.7c2.7-5.4 6.1-8.1 10.2-8.1s7.5 2.7 10.2 8.1c-1.5 6.9-4.9 12-10.2 15.3-5.3-3.3-8.7-8.4-10.2-15.3Z" opacity=".22"/><path d="M24.5 34.2h15"/><path d="M27 29.5h10" opacity=".58"/><circle cx="32" cy="34.2" r="2.1" fill="currentColor" stroke="none"/></svg>`,
+          upgrade: `<svg ${attrs}><path d="M14 45.5h13.5V34H39V22.5h11" opacity=".33"/><path d="M17 42.5h8V31h11.5V19.5H48"/><path d="m41.5 13 6.5 6.5-6.5 6.5"/><path d="M15 20.5h9M19.5 16v9" opacity=".5"/><circle cx="17" cy="43" r="4.7" opacity=".3"/><circle cx="35.5" cy="29.5" r="4.7" opacity=".48"/><circle cx="48" cy="19.5" r="5.2"/></svg>`,
+          double_pick: `<svg ${attrs}><g transform="rotate(-6 23 33)"><rect x="10.5" y="17" width="27" height="32" rx="9"/><path d="M17 25.5h13M17 31h9" opacity=".34"/><circle cx="24" cy="40" r="4.2" opacity=".42"/></g><g transform="rotate(6 42 32)"><rect x="27.5" y="15.5" width="27" height="33" rx="9"/><path d="M34.5 24h12M34.5 29.5h8" opacity=".3"/><path d="m42 35 2 4.1 4.6.7-3.3 3.2.8 4.5-4.1-2.2-4.1 2.2.8-4.5-3.3-3.2 4.6-.7 2-4.1Z" fill="currentColor" stroke="none" opacity=".78"/></g></svg>`,
+          lucky100: `<svg ${attrs}><path d="M25 10h14"/><path d="M28 10v13L17 42c-4 7 1 12 9 12h12c8 0 13-5 9-12L36 23V10"/><path d="M22 39h20"/><path d="M25 35c6 4 9-3 16 1" opacity=".65"/><path d="m45 13 2 4 4 2-4 2-2 4-2-4-4-2 4-2 2-4Z"/></svg>`,
+          restart: `<svg ${attrs}><path d="M19 19.2A19 19 0 1 1 14.2 39"/><path d="M18.5 10.5v9.2h9.2"/><path d="M23.2 37.2c3.4 4 9.4 4.7 13.6 1.4 4.2-3.3 5-9.2 1.8-13.5" opacity=".28"/><path d="m32 23.5 2.2 4.5 5 .7-3.6 3.5.8 4.9-4.4-2.4-4.4 2.4.8-4.9-3.6-3.5 5-.7 2.2-4.5Z" fill="currentColor" stroke="none" opacity=".68"/></svg>`,
+          wish: `<svg ${attrs}><ellipse cx="32" cy="32" rx="22" ry="10.5" transform="rotate(-18 32 32)" opacity=".28"/><path d="m32 12 4.5 9.2 10.2 1.5-7.4 7.2 1.8 10.1-9.1-4.8-9.1 4.8 1.8-10.1-7.4-7.2 10.2-1.5L32 12Z"/><circle cx="51" cy="17" r="2.2" fill="currentColor" stroke="none" opacity=".48"/><circle cx="14" cy="42" r="1.7" fill="currentColor" stroke="none" opacity=".34"/></svg>`,
+          triple_challenge: `<svg ${attrs}><path d="M15 41.5 32 16l17 25.5" opacity=".28"/><circle cx="15" cy="41.5" r="6.5"/><circle cx="32" cy="16" r="6.5"/><circle cx="49" cy="41.5" r="6.5"/><path d="m32 12 1.4 2.8 3.1.5-2.2 2.2.5 3-2.8-1.5-2.8 1.5.5-3-2.2-2.2 3.1-.5L32 12Z" fill="currentColor" stroke="none" opacity=".65"/><path d="M21 41.5h22" stroke-dasharray="2.5 4" opacity=".36"/></svg>`,
+          no10: `<svg ${attrs}><circle cx="32" cy="32" r="22"/><path d="M16.5 47.5 47.5 16.5"/><path d="M23 26v12M20.5 28.5 23 26l2.5 2.5" opacity=".58"/><ellipse cx="37.5" cy="32" rx="5.5" ry="7.5" opacity=".7"/></svg>`,
+          return10: `<svg ${attrs}><path d="M17.5 24.5A18 18 0 1 1 17 40"/><path d="M18 15.5v9.5h9.5"/><path d="M25 29.5h14v12H25z" opacity=".36"/><path d="M28 33.5h8M28 37.5h5"/><path d="m14.5 38.5 2.5 2.5-2.5 2.5"/></svg>`,
+          heartbeat: `<svg ${attrs}><path d="M32 51S13 40.5 13 25.8C13 18 18.2 13 24.5 13c3.6 0 6.1 1.7 7.5 4.5C33.4 14.7 35.9 13 39.5 13 45.8 13 51 18 51 25.8 51 40.5 32 51 32 51Z"/><path d="M18.5 32h7l3.2-7.5 5.2 15 3.2-7.5h8.4" opacity=".72"/></svg>`,
+          mystery_box: `<svg ${attrs}><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/><path d="m49 35 1.8 3.7 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L49 35Z" fill="currentColor" stroke="none" opacity=".55"/></svg>`
         };
         return icons[code] || icons.wheel_ticket;
       }
 
       function shopMissingError(err) {
-        return /PGRST202|schema cache|Could not find|points_shop_/i.test(`${err?.code || ""} ${err?.message || ""} ${err?.details || ""}`);
+        return /PGRST202|schema cache|Could not find|points_shop_.*_v2|points_shop_/i.test(`${err?.code || ""} ${err?.message || ""} ${err?.details || ""}`);
       }
 
       function shopInventoryCount() {
-        return Object.values(state.shopInventory || {}).reduce((sum, value) => sum + Math.max(0, Number(value || 0)), 0);
+        return SHOP_INVENTORY_CODES.reduce((sum, code) => sum + Math.max(0, Number(state.shopInventory?.[code] || 0)), 0);
       }
 
-      function normalizeShopState(row) {
-        if (!row) return;
+      function normalizeShopState(raw) {
+        if (!raw) return;
+        let row = Array.isArray(raw) ? raw[0] : raw;
+        if (typeof row === "string") { try { row = JSON.parse(row); } catch (_) {} }
+        if (row?.state && typeof row.state === "object") row = row.state;
+        if (!row || typeof row !== "object") return;
         const inventory = row.inventory && typeof row.inventory === "object" ? row.inventory : {};
         const weekly = row.weekly_counts && typeof row.weekly_counts === "object" ? row.weekly_counts : {};
-        state.shopInventory = {
-          shield30: Math.max(0, Number(inventory.shield30 || 0)),
-          upgrade: Math.max(0, Number(inventory.upgrade || 0)),
-          double_pick: Math.max(0, Number(inventory.double_pick || 0)),
-          lucky100: Math.max(0, Number(inventory.lucky100 || 0))
-        };
+        state.shopInventory = Object.fromEntries(SHOP_INVENTORY_CODES.map(code => [code, Math.max(0, Number(inventory[code] || 0))]));
         state.shopWeekly = weekly;
-        state.shopEquipped = ["shield30", "upgrade", "double_pick"].includes(String(row.equipped_one_shot || "")) ? String(row.equipped_one_shot) : null;
+        state.shopEquipped = SHOP_ONE_SHOT_CODES.includes(String(row.equipped_one_shot || "")) ? String(row.equipped_one_shot) : null;
+        state.shopEquippedParam = state.shopEquipped === "wish" ? Number(row.equipped_param || 100) : null;
         state.shopLuckyRemaining = Math.max(0, Number(row.lucky100_remaining || 0));
+        state.shopChallengeActive = row.challenge_active === true;
+        state.shopChallengeSpinsDone = Math.max(0, Math.min(2, Number(row.challenge_spins_done || 0)));
+        state.shopChallengeHits = Math.max(0, Math.min(2, Number(row.challenge_hits || 0)));
+        state.shopPendingSpin = row.pending_spin && typeof row.pending_spin === "object" ? row.pending_spin : null;
         if (typeof row.score === "number") state.score = Number(row.score);
         state.shopLoadedAt = Date.now();
+        renderWheelChallengeProgress();
       }
 
       async function loadShopState({ silent = false } = {}) {
         try {
-          const { data, error } = await db.rpc("points_shop_get_state");
+          const { data, error } = await db.rpc("points_shop_get_state_v2");
           if (error) throw error;
-          const row = Array.isArray(data) ? data[0] : data;
-          normalizeShopState(row || {});
+          normalizeShopState(data);
           state.shopAvailable = true;
           renderWheelItemNotice();
+          renderWheelChallengeProgress();
           return true;
         } catch (err) {
           if (shopMissingError(err)) {
             state.shopAvailable = false;
             renderWheelItemNotice();
+            renderWheelChallengeProgress();
             return false;
           }
           console.error("loadShopState:", err);
@@ -8598,18 +8748,10 @@
         }
       }
 
-      function shopWeeklyCount(code) {
-        return Math.max(0, Number(state.shopWeekly?.[code] || 0));
-      }
-
-      function shopLimitText(item) {
-        if (!item.weeklyLimit) return "不限购";
-        return `本周 ${Math.min(item.weeklyLimit, shopWeeklyCount(item.code))}/${item.weeklyLimit}`;
-      }
-
+      function shopWeeklyCount(code) { return Math.max(0, Number(state.shopWeekly?.[code] || 0)); }
+      function shopLimitText(item) { return !item.weeklyLimit ? "不限购" : `本周 ${Math.min(item.weeklyLimit, shopWeeklyCount(item.code))}/${item.weeklyLimit}`; }
       function shopCardStatus(item) {
-        const score = Number(state.score || 0);
-        const count = shopWeeklyCount(item.code);
+        const score = Number(state.score || 0), count = shopWeeklyCount(item.code);
         if (item.weeklyLimit && count >= item.weeklyLimit) return "本周已兑换";
         if (score < item.price) return `还差 ${item.price - score} 分`;
         return item.weeklyLimit ? `${count}/${item.weeklyLimit} · 可兑换` : "可兑换";
@@ -8619,306 +8761,226 @@
         const affordable = Number(state.score || 0) >= item.price && (!item.weeklyLimit || shopWeeklyCount(item.code) < item.weeklyLimit);
         return `<button class="shop-product-card pressable${affordable ? " affordable" : ""}" data-shop-product="${item.code}" type="button">
           <span class="shop-product-cover shop-theme-${item.theme}">${shopIconSVG(item.code)}<span class="shop-cover-word">${escapeHTML(item.coverWord)}</span></span>
-          <span class="shop-product-body">
-            <strong class="shop-product-name">${escapeHTML(item.name)}</strong>
-            <small class="shop-product-desc">${escapeHTML(item.desc)}</small>
-            <span class="shop-product-footer"><b class="shop-product-price">${item.price} ✦</b><span class="shop-product-status">${escapeHTML(shopCardStatus(item))}</span></span>
-          </span>
+          <span class="shop-product-body"><strong class="shop-product-name">${escapeHTML(item.name)}</strong><small class="shop-product-desc">${escapeHTML(item.desc)}</small><span class="shop-product-footer"><b class="shop-product-price">${item.price} ✦</b><span class="shop-product-status">${escapeHTML(shopCardStatus(item))}</span></span></span>
         </button>`;
       }
 
       function renderShopFeatured() {
-        const item = SHOP_ITEMS.double_pick;
-        const count = shopWeeklyCount(item.code);
-        const locked = item.weeklyLimit && count >= item.weeklyLimit;
-        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-shop-product="${item.code}" type="button">
-          <span class="shop-featured-copy"><span class="shop-featured-label">✦ WEEKLY PICK</span><h3>${escapeHTML(item.name)}</h3><p>一次机会 · 两个结果<br>自动留下更高的那一个。</p><span class="shop-featured-price">${item.price} ✦ · ${locked ? "本周已兑换" : "查看详情"}</span></span>
-          <span class="shop-featured-art">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${escapeHTML(shopLimitText(item))}</span>
-        </button>`;
+        const item = SHOP_ITEMS.double_pick, count = shopWeeklyCount(item.code), locked = item.weeklyLimit && count >= item.weeklyLimit;
+        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-shop-product="${item.code}" type="button"><span class="shop-featured-copy"><span class="shop-featured-label">✦ WEEKLY PICK</span><h3>${escapeHTML(item.name)}</h3><p>一次机会 · 两个结果<br>自动留下更高的那一个。</p><span class="shop-featured-price">${item.price} ✦ · ${locked ? "本周已兑换" : "查看详情"}</span></span><span class="shop-featured-art">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${escapeHTML(shopLimitText(item))}</span></button>`;
       }
-
-      function renderShopProducts() {
-        renderShopFeatured();
-        els.shopGrid.innerHTML = Object.values(SHOP_ITEMS).map(shopProductCardHTML).join("");
-      }
+      function renderShopProducts() { renderShopFeatured(); els.shopGrid.innerHTML = Object.values(SHOP_ITEMS).map(shopProductCardHTML).join(""); }
 
       function renderShopInventory() {
-        const inventoryCodes = ["shield30", "upgrade", "double_pick", "lucky100"];
-        const rows = inventoryCodes.filter(code => Number(state.shopInventory?.[code] || 0) > 0 || (code === "lucky100" && state.shopLuckyRemaining > 0));
-        els.shopInventoryEmpty.hidden = rows.length > 0 || state.shopLuckyRemaining > 0;
+        const rows = SHOP_INVENTORY_CODES.filter(code => Number(state.shopInventory?.[code] || 0) > 0 || (code === "lucky100" && state.shopLuckyRemaining > 0) || (code === "triple_challenge" && state.shopChallengeActive));
+        els.shopInventoryEmpty.hidden = rows.length > 0;
         els.shopInventoryList.innerHTML = rows.map(code => {
-          const item = SHOP_ITEMS[code];
-          const qty = Math.max(0, Number(state.shopInventory?.[code] || 0));
+          const item = SHOP_ITEMS[code], qty = Math.max(0, Number(state.shopInventory?.[code] || 0));
           const activePotion = code === "lucky100" && state.shopLuckyRemaining > 0;
-          const copy = activePotion
-            ? `百元概率加成生效中 · 剩余 ${state.shopLuckyRemaining} 抽；无需再次选择`
-            : `已兑换库存 ×${qty} · 点击“转动大转盘”时再选择是否使用`;
-          return `<div class="shop-inventory-row">
-            <span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span>
-            <span class="shop-inventory-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(copy)}</small></span>
-            <span class="shop-inventory-count">${activePotion ? `剩 ${state.shopLuckyRemaining} 抽` : `× ${qty}`}</span>
-          </div>`;
+          const activeChallenge = code === "triple_challenge" && state.shopChallengeActive;
+          let copy = item.desc;
+          if (activePotion) copy = `生效中 · 还剩 ${state.shopLuckyRemaining} 抽；每抽 ¥100 +2%`;
+          if (activeChallenge) copy = `挑战进行中 · 已完成 ${state.shopChallengeSpinsDone}/3 抽 · ≥¥50 ${state.shopChallengeHits}/2`;
+          if (code === "heartbeat" && qty > 0) copy = "无需提前选择 · 当本抽没有使用其它单次卡且结果≤¥30时自动询问";
+          return `<div class="shop-inventory-row"><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="shop-inventory-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(copy)}</small></span><span class="shop-inventory-count">${activePotion ? `剩 ${state.shopLuckyRemaining} 抽` : activeChallenge ? `${state.shopChallengeSpinsDone}/3` : `× ${qty}`}</span></div>`;
         }).join("");
-        if (state.shopLuckyRemaining > 0) {
-          els.shopActiveBuff.hidden = false;
-          els.shopActiveBuff.innerHTML = `${shopIconSVG("lucky100")}<div><strong>百元幸运药水正在生效</strong><small>接下来还有 ${state.shopLuckyRemaining} 次正式抽奖享受 ¥100 +2% 加成</small></div>`;
-        } else {
-          els.shopActiveBuff.hidden = true;
-          els.shopActiveBuff.innerHTML = "";
-        }
+        const activeBits = [];
+        if (state.shopLuckyRemaining > 0) activeBits.push(`${shopIconSVG("lucky100")}<div><strong>百元幸运药水正在生效</strong><small>¥100 +2% · 还剩 ${state.shopLuckyRemaining} 次正式抽奖</small></div>`);
+        if (state.shopChallengeActive) activeBits.push(`${shopIconSVG("triple_challenge")}<div><strong>三连挑战进行中</strong><small>完成 ${state.shopChallengeSpinsDone}/3 · ≥¥50 ${state.shopChallengeHits}/2</small></div>`);
+        els.shopActiveBuff.hidden = activeBits.length === 0;
+        els.shopActiveBuff.innerHTML = activeBits.join(`<span style="width:1px;height:34px;background:rgba(120,100,90,.12)"></span>`);
       }
 
       function renderShop() {
         if (!els.shopBalanceValue) return;
         els.shopBalanceValue.textContent = String(Number(state.score ?? 0));
-        els.shopBalanceHint.textContent = Number(state.score || 0) >= 10 ? "今天也攒了好多小幸运 ✦" : "2 分起就有可以兑换的小道具 ♡";
+        els.shopBalanceHint.textContent = Number(state.score || 0) >= 10 ? "今天也攒了好多小幸运 ✦" : "1 分起就有可以兑换的小道具 ♡";
         els.shopDbNote.hidden = state.shopAvailable !== false;
-        const count = shopInventoryCount();
-        const badgeCount = count + (state.shopLuckyRemaining > 0 ? 1 : 0);
-        els.shopInventoryBadge.hidden = badgeCount <= 0;
-        els.shopInventoryBadge.textContent = String(badgeCount);
+        const count = shopInventoryCount() + (state.shopLuckyRemaining > 0 ? 1 : 0) + (state.shopChallengeActive ? 1 : 0);
+        els.shopInventoryBadge.hidden = count <= 0; els.shopInventoryBadge.textContent = String(count);
         const products = state.shopView !== "inventory";
-        els.shopProductsPanel.hidden = !products;
-        els.shopInventoryPanel.hidden = products;
-        els.shopTabs.querySelectorAll("[data-shop-view]").forEach(btn => {
-          const active = btn.dataset.shopView === state.shopView;
-          btn.classList.toggle("active", active);
-          btn.setAttribute("aria-selected", String(active));
-        });
-        renderShopProducts();
-        renderShopInventory();
+        els.shopProductsPanel.hidden = !products; els.shopInventoryPanel.hidden = products;
+        els.shopTabs.querySelectorAll("[data-shop-view]").forEach(btn => { const active = btn.dataset.shopView === state.shopView; btn.classList.toggle("active",active); btn.setAttribute("aria-selected",String(active)); });
+        renderShopProducts(); renderShopInventory();
+      }
+
+      function renderWheelChallengeProgress() {
+        if (!els.wheelChallengeProgress) return;
+        if (state.isAdmin || !state.shopChallengeActive) { els.wheelChallengeProgress.hidden = true; return; }
+        els.wheelChallengeProgress.hidden = false;
+        const done = Math.max(0, Math.min(2, Number(state.shopChallengeSpinsDone || 0))), hits = Math.max(0, Math.min(2, Number(state.shopChallengeHits || 0)));
+        els.wheelChallengeProgressText.textContent = `已完成 ${done} / 3 抽`;
+        els.wheelChallengeHitText.textContent = `≥¥50 · ${hits}/2`;
+        els.wheelChallengeFoot.textContent = done === 2 ? (hits >= 2 ? "最后一抽已稳稳完成条件 · 等待挑战结算" : `最后一抽还需要达到 ¥50 · 成功额外 +¥20`) : `3 抽中至少 2 次达到 ¥50 · 成功额外 +¥20`;
+        const dots = [...els.wheelChallengeProgress.querySelectorAll("[data-challenge-dot]")];
+        dots.forEach((dot,i) => dot.classList.toggle("done", i < done));
+        [...els.wheelChallengeProgress.querySelectorAll(".wheel-challenge-track span")].forEach((line,i) => line.classList.toggle("done", i < Math.max(0,done-1)));
       }
 
       function renderWheelItemNotice() {
         if (!els.wheelItemNotice) return;
         const inventoryCount = shopInventoryCount();
-        if (state.isAdmin || (inventoryCount <= 0 && state.shopLuckyRemaining <= 0)) {
-          els.wheelItemNotice.hidden = true;
+        if (state.isAdmin) { els.wheelItemNotice.hidden = true; return; }
+        if (state.shopPendingSpin) {
+          els.wheelItemNotice.hidden = false; els.wheelItemNoticeTitle.textContent = "上次抽奖等待决定";
+          els.wheelItemNoticeMeta.textContent = state.shopPendingSpin.type === "restart" ? `当前 ¥${state.shopPendingSpin.initial_prize} · 点击继续决定是否重抽` : `当前 ¥${state.shopPendingSpin.initial_prize} · 点击继续心跳选择`;
           return;
         }
+        if (inventoryCount <= 0 && state.shopLuckyRemaining <= 0 && !state.shopChallengeActive) { els.wheelItemNotice.hidden = true; return; }
         els.wheelItemNotice.hidden = false;
-        els.wheelItemNoticeTitle.textContent = state.shopLuckyRemaining > 0 ? "幸运药水生效中" : `我的道具 · ${inventoryCount}`;
-        const extras = [];
-        if (inventoryCount > 0) extras.push("开始抽奖时选择使用");
-        if (state.shopLuckyRemaining > 0) extras.push(`百元 +2% · 剩 ${state.shopLuckyRemaining} 抽`);
+        els.wheelItemNoticeTitle.textContent = state.shopChallengeActive ? "三连挑战进行中" : state.shopLuckyRemaining > 0 ? "幸运药水生效中" : `我的道具 · ${inventoryCount}`;
+        const extras=[]; if (inventoryCount>0) extras.push("开始抽奖时自动提醒"); if(state.shopLuckyRemaining>0) extras.push(`百元+2% · 剩${state.shopLuckyRemaining}抽`); if(state.shopChallengeActive) extras.push(`挑战 ${state.shopChallengeSpinsDone}/3 · 命中${state.shopChallengeHits}/2`);
         els.wheelItemNoticeMeta.textContent = extras.join(" · ");
       }
 
-      function setShopView(view) {
-        state.shopView = view === "inventory" ? "inventory" : "products";
-        renderShop();
-      }
-
-      async function openShop(view = "products") {
+      function setShopView(view) { state.shopView = view === "inventory" ? "inventory" : "products"; renderShop(); }
+      async function openShop(view="products") {
         if (state.isAdmin) return showToast("管理员模式不参与游客积分商城兑换");
         state.shopView = view === "inventory" ? "inventory" : "products";
-        await loadAppState({ silent: true });
-        await loadShopState({ silent: true });
-        renderShop();
-        setLayer(els.redeemLayer, true);
+        await loadAppState({silent:true}); await loadShopState({silent:true}); renderShop(); setLayer(els.redeemLayer,true);
       }
 
       function openShopItemDetail(code) {
-        const item = SHOP_ITEMS[code];
-        if (!item) return;
-        state.shopSelectedCode = code;
-        els.shopItemCover.className = `shop-detail-cover shop-theme-${item.theme}`;
-        els.shopItemCover.innerHTML = shopIconSVG(code);
-        els.shopItemTitle.textContent = item.name;
-        els.shopItemDescription.textContent = item.detail;
-        els.shopItemPrice.textContent = String(item.price);
-        const chips = [item.immediate ? "即时到账" : "存入我的道具"];
-        if (item.weeklyLimit) chips.push(shopLimitText(item));
-        if (code === "double_pick") chips.push("只消耗 1 次机会");
-        els.shopItemMeta.innerHTML = chips.map(x => `<span class="shop-detail-chip">${escapeHTML(x)}</span>`).join("");
-        const score = Number(state.score || 0);
-        const exhausted = item.weeklyLimit && shopWeeklyCount(code) >= item.weeklyLimit;
-        els.shopItemConfirmBtn.disabled = exhausted || score < item.price || (!item.immediate && state.shopAvailable === false);
-        els.shopItemConfirmBtn.textContent = exhausted ? "本周已兑换" : score < item.price ? `还差 ${item.price - score} 分` : (!item.immediate && state.shopAvailable === false) ? "请先启用商城 SQL" : `确认兑换 · ${item.price} ✦`;
-        setLayer(els.shopItemLayer, true);
+        const item=SHOP_ITEMS[code]; if(!item) return; state.shopSelectedCode=code;
+        els.shopItemCover.className=`shop-detail-cover shop-theme-${item.theme}`; els.shopItemCover.innerHTML=shopIconSVG(code);
+        els.shopItemTitle.textContent=item.name; els.shopItemDescription.textContent=item.detail; els.shopItemPrice.textContent=String(item.price);
+        const chips=[]; if(item.weeklyLimit) chips.push(shopLimitText(item)); if(item.reactive) chips.push("结果后自动询问"); if(item.instantOpen) chips.push("兑换后立即开启"); else if(!item.immediate) chips.push("兑换后进入道具系统");
+        els.shopItemMeta.innerHTML=chips.map(x=>`<span class="shop-detail-chip">${escapeHTML(x)}</span>`).join("");
+        const score=Number(state.score||0), exhausted=item.weeklyLimit&&shopWeeklyCount(code)>=item.weeklyLimit;
+        els.shopItemConfirmBtn.disabled=exhausted||score<item.price||(!item.immediate&&state.shopAvailable===false);
+        els.shopItemConfirmBtn.textContent=exhausted?"本周已兑换":score<item.price?`还差 ${item.price-score} 分`:(!item.immediate&&state.shopAvailable===false)?"请先启用商城 v2 SQL":item.instantOpen?`开启盲盒 · ${item.price} ✦`:`确认兑换 · ${item.price} ✦`;
+        setLayer(els.shopItemLayer,true);
+      }
+
+      function openMysteryReveal(code) {
+        const item=SHOP_ITEMS[code]; if(!item) return;
+        els.shopRevealPrize.innerHTML=`<span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><strong>${escapeHTML(item.name)}</strong>`;
+        setLayer(els.shopRevealLayer,true); vibrate([16,34,20]);
       }
 
       async function purchaseShopItem() {
-        const code = state.shopSelectedCode;
-        const item = SHOP_ITEMS[code];
-        if (!item || state.isAdmin) return;
-        setBusy(els.shopItemConfirmBtn, true);
+        const code=state.shopSelectedCode,item=SHOP_ITEMS[code]; if(!item||state.isAdmin)return;
+        setBusy(els.shopItemConfirmBtn,true);
         try {
-          let usedNewShop = false;
-          if (state.shopAvailable !== false) {
-            const { data, error } = await db.rpc("points_shop_purchase", { p_item_code: code });
-            if (error) {
-              if (!shopMissingError(error)) throw error;
-              state.shopAvailable = false;
-            } else {
-              const row = Array.isArray(data) ? data[0] : data;
-              normalizeShopState(row || {});
-              state.shopAvailable = true;
-              usedNewShop = true;
-            }
+          let usedV2=false, result=null;
+          if(state.shopAvailable!==false){
+            const {data,error}=await db.rpc("points_shop_purchase_v2",{p_item_code:code});
+            if(error){ if(!shopMissingError(error)) throw error; state.shopAvailable=false; }
+            else { result=Array.isArray(data)?data[0]:data; normalizeShopState(result||{}); state.shopAvailable=true; usedV2=true; }
           }
-          if (!usedNewShop) {
-            if (code !== "wheel_ticket" && code !== "cash_box") throw new Error("SHOP_SQL_REQUIRED");
-            const rpc = code === "wheel_ticket" ? "points_redeem_wheel_chance" : "points_redeem_cash";
-            const { data, error } = await db.rpc(rpc);
-            if (error) throw error;
-            const row = Array.isArray(data) ? data[0] : data;
-            state.score = Number(row?.score ?? Math.max(0, Number(state.score || 0) - 10));
-            state.wheelChances = Number(row?.spin_chances ?? state.wheelChances);
-            state.wheelCashBalance = Number(row?.cash_balance ?? state.wheelCashBalance + (code === "cash_box" ? 30 : 0));
+          if(!usedV2){
+            if(code!=="wheel_ticket"&&code!=="cash_box") throw new Error("SHOP_V2_SQL_REQUIRED");
+            const rpc=code==="wheel_ticket"?"points_redeem_wheel_chance":"points_redeem_cash";
+            const {data,error}=await db.rpc(rpc); if(error) throw error; const row=Array.isArray(data)?data[0]:data;
+            state.score=Number(row?.score??Math.max(0,Number(state.score||0)-10)); state.wheelChances=Number(row?.spin_chances??state.wheelChances); state.wheelCashBalance=Number(row?.cash_balance??state.wheelCashBalance+(code==="cash_box"?30:0));
           }
-          state.overviewLoadedAt = 0;
-          await loadAppState({ silent: true });
-          await loadShopState({ silent: true });
-          setLayer(els.shopItemLayer, false);
-          renderPrimaryMetric({ animate: true });
-          renderShop();
-          vibrate(18);
-          showToast(item.immediate ? `兑换成功 · ${item.name}已到账 ✦` : `兑换成功 · ${item.name}已加入我的道具 ✦`);
-          if (state.overviewMode !== "closed") await loadOverviewData(true);
-        } catch (err) {
-          console.error("purchaseShopItem:", err);
-          const msg = String(err?.message || "");
-          if (/SHOP_SQL_REQUIRED|points_shop_/i.test(msg)) showToast("请先运行积分商城数据库更新 SQL");
-          else if (/Insufficient score/i.test(msg)) { await loadAppState({ silent: true }); renderShop(); showToast("积分不够啦，再攒一点点 ♡"); }
-          else if (/Weekly limit/i.test(msg)) { await loadShopState({ silent: true }); renderShop(); showToast("这个商品本周已经达到限购啦"); }
+          state.overviewLoadedAt=0; await loadAppState({silent:true}); await loadShopState({silent:true}); setLayer(els.shopItemLayer,false); renderPrimaryMetric({animate:true}); renderShop(); renderWheelItemNotice(); renderWheelChallengeProgress();
+          const grant=result?.granted_item_code || null;
+          if(code==="mystery_box"&&grant){ openMysteryReveal(String(grant)); }
+          else { vibrate(18); showToast(item.immediate?`兑换成功 · ${item.name}已到账 ✦`:`兑换成功 · ${item.name}已加入我的道具 ✦`); }
+          if(state.overviewMode!=="closed") await loadOverviewData(true);
+        } catch(err){
+          console.error("purchaseShopItem:",err); const msg=String(err?.message||"");
+          if(/SHOP_V2_SQL_REQUIRED|points_shop_/i.test(msg)) showToast("请先运行积分商城 v2 数据库迁移 SQL");
+          else if(/Insufficient score/i.test(msg)){await loadAppState({silent:true});renderShop();showToast("积分不够啦，再攒一点点 ♡");}
+          else if(/Weekly limit/i.test(msg)){await loadShopState({silent:true});renderShop();showToast("这个商品本周已经达到限购啦");}
           else showToast("兑换失败，请稍后再试");
-        } finally {
-          setBusy(els.shopItemConfirmBtn, false);
-        }
+        } finally { setBusy(els.shopItemConfirmBtn,false); }
       }
 
       function ownedWheelToolCodes() {
-        const codes = ["shield30", "upgrade", "double_pick"]
-          .filter(code => Math.max(0, Number(state.shopInventory?.[code] || 0)) > 0);
-        if (state.shopLuckyRemaining <= 0 && Math.max(0, Number(state.shopInventory?.lucky100 || 0)) > 0) codes.push("lucky100");
-        return codes;
-      }
-
-      function affordableWheelToolCodes() {
-        const score = Math.max(0, Number(state.score || 0));
-        return ["shield30", "upgrade", "double_pick", "lucky100"].filter(code => {
-          const item = SHOP_ITEMS[code];
-          if (!item || score < item.price) return false;
-          return !item.weeklyLimit || shopWeeklyCount(code) < item.weeklyLimit;
+        return SHOP_WHEEL_TOOL_CODES.filter(code => {
+          if(code==="lucky100") return state.shopLuckyRemaining<=0 && Number(state.shopInventory?.lucky100||0)>0;
+          if(code==="triple_challenge") return !state.shopChallengeActive && Number(state.shopInventory?.triple_challenge||0)>0;
+          return Number(state.shopInventory?.[code]||0)>0;
         });
+      }
+      function affordableWheelToolCodes() {
+        const score=Math.max(0,Number(state.score||0));
+        return SHOP_WHEEL_TOOL_CODES.filter(code=>{const item=SHOP_ITEMS[code];if(!item||score<item.price)return false;if(code==="lucky100"&&state.shopLuckyRemaining>0)return false;if(code==="triple_challenge"&&state.shopChallengeActive)return false;return !item.weeklyLimit||shopWeeklyCount(code)<item.weeklyLimit;});
       }
 
       function renderWheelToolPrompt() {
-        const owned = ownedWheelToolCodes();
-        const activePotion = state.shopLuckyRemaining > 0;
-        const mode = state.wheelToolPromptMode;
-        els.wheelToolActiveBuff.hidden = !activePotion;
-        els.wheelToolActiveBuff.innerHTML = activePotion
-          ? `${shopIconSVG("lucky100")}<span>百元幸运药水正在生效 · 本次仍会享受 ¥100 +2% · 剩 ${state.shopLuckyRemaining} 抽</span>`
-          : "";
-        els.wheelToolWarning.hidden = true;
-        els.wheelToolList.innerHTML = "";
+        const owned=ownedWheelToolCodes(),activePotion=state.shopLuckyRemaining>0,activeChallenge=state.shopChallengeActive,mode=state.wheelToolPromptMode;
+        const strips=[];
+        if(activePotion) strips.push(`${shopIconSVG("lucky100")}<span>百元幸运药水生效中 · 本次 ¥100 +2% · 剩 ${state.shopLuckyRemaining} 抽</span>`);
+        if(activeChallenge) strips.push(`${shopIconSVG("triple_challenge")}<span>三连挑战 · ${state.shopChallengeSpinsDone}/3 抽 · ≥¥50 ${state.shopChallengeHits}/2</span>`);
+        els.wheelToolActiveBuff.hidden=strips.length===0; els.wheelToolActiveBuff.innerHTML=strips.join(`<span style="width:1px;height:24px;background:rgba(100,90,90,.13)"></span>`);
+        els.wheelToolWarning.hidden=true; els.wheelToolList.innerHTML=""; els.wheelWishSelector.hidden=true;
 
-        if (mode === "warning") {
-          const affordable = affordableWheelToolCodes();
-          const names = affordable.slice(0, 3).map(code => SHOP_ITEMS[code].name).join("、");
-          els.wheelToolTitle.textContent = "确定不用道具吗？";
-          els.wheelToolMessage.textContent = "你目前没有已兑换道具，但积分已经足够兑换转盘道具。";
-          els.wheelToolWarning.hidden = false;
-          els.wheelToolWarning.innerHTML = `当前有 <strong>${Math.max(0, Number(state.score || 0))} ✦</strong>${names ? `，可以兑换 ${escapeHTML(names)}${affordable.length > 3 ? " 等" : ""}` : ""}。如果继续，将不使用新道具直接抽奖。`;
-          els.wheelToolConfirmBtn.disabled = false;
-          els.wheelToolConfirmBtn.textContent = "去积分商城看看";
-          els.wheelToolBareBtn.textContent = activePotion ? "保持当前药水 · 直接抽" : "不用道具，直接抽";
-          return;
+        if(mode==="warning"){
+          const affordable=affordableWheelToolCodes(),names=affordable.slice(0,3).map(code=>SHOP_ITEMS[code].name).join("、");
+          els.wheelToolTitle.textContent="确定不用道具吗？"; els.wheelToolMessage.textContent="你目前没有已兑换的可选道具，但积分已经足够兑换转盘道具。";
+          els.wheelToolWarning.hidden=false; els.wheelToolWarning.innerHTML=`当前有 <strong>${Math.max(0,Number(state.score||0))} ✦</strong>${names?`，可以兑换 ${escapeHTML(names)}${affordable.length>3?" 等":""}`:""}。如果继续，将不额外兑换新道具。`;
+          els.wheelToolConfirmBtn.disabled=false; els.wheelToolConfirmBtn.textContent="去积分商城看看"; els.wheelToolBareBtn.textContent=activePotion?"保持当前状态 · 直接抽":"不用新道具，直接抽"; return;
         }
 
-        els.wheelToolTitle.textContent = "这次要带上幸运道具吗？";
-        els.wheelToolMessage.textContent = activePotion
-          ? "药水已经自动生效；你还可以再选择 1 个单次道具。"
-          : "选择 1 个单次道具；百元幸运药水可以同时开启，从本次开始连续生效 5 抽。";
-
-        const oneShotCodes = owned.filter(code => code !== "lucky100");
-        const potionOwned = owned.includes("lucky100");
-        const rows = [];
-        for (const code of oneShotCodes) {
-          const item = SHOP_ITEMS[code];
-          const selected = state.wheelToolSelectedCode === code;
-          rows.push(`<button class="wheel-tool-choice pressable${selected ? " selected" : ""}" data-wheel-tool-code="${code}" type="button">
-            <span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span>
-            <span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(item.desc)} · 库存 ×${Math.max(0, Number(state.shopInventory?.[code] || 0))}</small></span>
-            <span class="wheel-tool-choice-mark">${selected ? "已选择" : "选择"}</span>
-          </button>`);
+        els.wheelToolTitle.textContent="这次要带上哪一种幸运？";
+        els.wheelToolMessage.textContent="三连挑战属于任务层、药水属于持续层；除此之外，一次正式抽奖最多使用 1 个单次道具。";
+        const rows=[];
+        for(const code of SHOP_ONE_SHOT_CODES){
+          if(Number(state.shopInventory?.[code]||0)<=0) continue;
+          const item=SHOP_ITEMS[code],selected=state.wheelToolSelectedCode===code,conflict=code==="no10"&&(activePotion||state.wheelToolUsePotion);
+          rows.push(`<button class="wheel-tool-choice pressable${selected?" selected":""}${conflict?" disabled":""}" data-wheel-tool-code="${code}" type="button"${conflict?" disabled":""}><span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(conflict?"百元幸运药水生效期间不能使用十元退散":item.desc)} · 库存 ×${Math.max(0,Number(state.shopInventory?.[code]||0))}</small></span><span class="wheel-tool-choice-mark">${selected?"已选择":conflict?"冲突":"选择"}</span></button>`);
         }
-        if (potionOwned && !activePotion) {
-          const item = SHOP_ITEMS.lucky100;
-          const selected = state.wheelToolUsePotion;
-          rows.push(`<button class="wheel-tool-choice potion pressable${selected ? " selected" : ""}" data-wheel-potion-toggle="1" type="button">
-            <span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG("lucky100")}</span>
-            <span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(item.desc)} · 库存 ×${Math.max(0, Number(state.shopInventory?.lucky100 || 0))}</small></span>
-            <span class="wheel-tool-choice-mark">${selected ? "已开启" : "开启"}</span>
-          </button>`);
+        if(Number(state.shopInventory?.heartbeat||0)>0){
+          const item=SHOP_ITEMS.heartbeat;
+          rows.push(`<div class="wheel-tool-choice auto-trigger"><span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG("heartbeat")}</span><span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>不需要提前选择 · 本抽若没有使用其它单次卡且结果≤¥30，系统会自动询问 · 库存 ×${Math.max(0,Number(state.shopInventory?.heartbeat||0))}</small></span><span class="wheel-tool-choice-mark">自动询问</span></div>`);
         }
-        els.wheelToolList.innerHTML = rows.join("");
-        const hasSelection = !!state.wheelToolSelectedCode || state.wheelToolUsePotion;
-        els.wheelToolConfirmBtn.disabled = !hasSelection;
-        els.wheelToolConfirmBtn.textContent = hasSelection ? "使用并开始" : "请选择道具";
-        els.wheelToolBareBtn.textContent = activePotion ? "不加单次道具 · 直接抽" : "不用道具，直接抽";
+        if(Number(state.shopInventory?.lucky100||0)>0&&!activePotion){
+          const item=SHOP_ITEMS.lucky100,selected=state.wheelToolUsePotion,conflict=state.wheelToolSelectedCode==="no10";
+          rows.push(`<button class="wheel-tool-choice potion pressable${selected?" selected":""}${conflict?" disabled":""}" data-wheel-potion-toggle="1" type="button"${conflict?" disabled":""}><span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG("lucky100")}</span><span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(conflict?"已选择十元退散，两种概率道具不能同时使用":item.desc)} · 库存 ×${Math.max(0,Number(state.shopInventory?.lucky100||0))}</small></span><span class="wheel-tool-choice-mark">${selected?"已开启":conflict?"冲突":"开启"}</span></button>`);
+        }
+        if(Number(state.shopInventory?.triple_challenge||0)>0&&!activeChallenge){
+          const item=SHOP_ITEMS.triple_challenge,selected=state.wheelToolUseChallenge;
+          rows.push(`<button class="wheel-tool-choice challenge pressable${selected?" selected":""}" data-wheel-challenge-toggle="1" type="button"><span class="wheel-tool-choice-icon shop-theme-${item.theme}">${shopIconSVG("triple_challenge")}</span><span class="wheel-tool-choice-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(item.desc)} · 可与药水和单次道具叠加 · 库存 ×${Math.max(0,Number(state.shopInventory?.triple_challenge||0))}</small></span><span class="wheel-tool-choice-mark">${selected?"已开启":"开启"}</span></button>`);
+        }
+        els.wheelToolList.innerHTML=rows.join("");
+        if(state.wheelToolSelectedCode==="wish"){
+          els.wheelWishSelector.hidden=false;
+          els.wheelWishGrid.querySelectorAll("[data-wheel-wish]").forEach(btn=>btn.classList.toggle("selected",Number(btn.dataset.wheelWish)===Number(state.wheelToolWishTarget)));
+        }
+        const hasSelection=!!state.wheelToolSelectedCode||state.wheelToolUsePotion||state.wheelToolUseChallenge;
+        els.wheelToolConfirmBtn.disabled=!hasSelection; els.wheelToolConfirmBtn.textContent=hasSelection?"确认并开始":"请选择道具";
+        els.wheelToolBareBtn.textContent=Number(state.shopInventory?.heartbeat||0)>0?"先直接抽 · 低奖时再决定":"不用单次道具，直接抽";
       }
 
-      function openWheelToolPrompt(mode = "owned") {
-        state.wheelToolPromptMode = mode;
-        state.wheelToolSelectedCode = null;
-        state.wheelToolUsePotion = false;
-        renderWheelToolPrompt();
-        setLayer(els.wheelToolLayer, true);
+      function openWheelToolPrompt(mode="owned") {
+        state.wheelToolPromptMode=mode; state.wheelToolSelectedCode=null; state.wheelToolWishTarget=100; state.wheelToolUsePotion=false; state.wheelToolUseChallenge=false; renderWheelToolPrompt(); setLayer(els.wheelToolLayer,true);
+      }
+
+      async function prepareSpinSelection({oneShot=null,wishTarget=null,usePotion=false,useChallenge=false}={}) {
+        const {data,error}=await db.rpc("points_shop_prepare_spin_v2",{p_item_code:oneShot||null,p_param:oneShot==="wish"?Number(wishTarget||100):null,p_activate_potion:!!usePotion,p_activate_challenge:!!useChallenge});
+        if(error) throw error; normalizeShopState(data); state.shopAvailable=true; return data;
       }
 
       async function clearLegacyEquippedTool() {
-        if (state.shopAvailable !== true) return;
-        try {
-          const { error } = await db.rpc("points_shop_set_equipped", { p_item_code: null });
-          if (error && !shopMissingError(error)) throw error;
-          state.shopEquipped = null;
-        } catch (err) {
-          console.debug("clearLegacyEquippedTool:", err);
-        }
+        if(state.shopAvailable!==true) return;
+        try { await prepareSpinSelection({}); state.shopEquipped=null; state.shopEquippedParam=null; }
+        catch(err){console.debug("clearSpinSelection:",err);}
       }
 
       async function spinWithoutNewTool() {
-        setBusy(els.wheelToolBareBtn, true);
-        try {
-          await clearLegacyEquippedTool();
-          setLayer(els.wheelToolLayer, false);
-          await performFormalWheelSpin();
-        } finally {
-          setBusy(els.wheelToolBareBtn, false);
-        }
+        setBusy(els.wheelToolBareBtn,true);
+        try { if(state.shopAvailable===true) await prepareSpinSelection({}); setLayer(els.wheelToolLayer,false); await performFormalWheelSpin(); }
+        finally { setBusy(els.wheelToolBareBtn,false); }
       }
 
       async function confirmWheelToolChoice() {
-        if (state.wheelToolPromptMode === "warning") {
-          setLayer(els.wheelToolLayer, false);
-          return openShop("products");
-        }
-        const oneShot = state.wheelToolSelectedCode;
-        const usePotion = state.wheelToolUsePotion;
-        if (!oneShot && !usePotion) return;
-        if (state.shopAvailable !== true) return showToast("商城数据库尚未启用");
-        setBusy(els.wheelToolConfirmBtn, true);
+        if(state.wheelToolPromptMode==="warning"){setLayer(els.wheelToolLayer,false);return openShop("products");}
+        const oneShot=state.wheelToolSelectedCode,usePotion=state.wheelToolUsePotion,useChallenge=state.wheelToolUseChallenge;
+        if(!oneShot&&!usePotion&&!useChallenge) return;
+        if(state.shopAvailable!==true) return showToast("商城 v2 数据库尚未启用");
+        setBusy(els.wheelToolConfirmBtn,true);
         try {
-          const { error: equipError } = await db.rpc("points_shop_set_equipped", { p_item_code: oneShot || null });
-          if (equipError) throw equipError;
-          if (usePotion) {
-            const { error: potionError } = await db.rpc("points_shop_activate_lucky100");
-            if (potionError) throw potionError;
-          }
-          setLayer(els.wheelToolLayer, false);
-          await loadShopState({ silent: true });
-          await performFormalWheelSpin();
-        } catch (err) {
-          console.error("confirmWheelToolChoice:", err);
-          showToast(shopMissingError(err) ? "商城数据库尚未启用" : "道具暂时没有准备好，请再试一次");
-          await loadShopState({ silent: true });
-          renderWheelToolPrompt();
-        } finally {
-          setBusy(els.wheelToolConfirmBtn, false);
-        }
+          await prepareSpinSelection({oneShot,wishTarget:state.wheelToolWishTarget,usePotion,useChallenge});
+          setLayer(els.wheelToolLayer,false); await loadShopState({silent:true}); await performFormalWheelSpin();
+        } catch(err){
+          console.error("confirmWheelToolChoice:",err); const msg=String(err?.message||"");
+          if(/No10 cannot stack/i.test(msg)) showToast("十元退散和百元幸运药水不能同时使用");
+          else showToast(shopMissingError(err)?"商城 v2 数据库尚未启用":"道具暂时没有准备好，请再试一次");
+          await loadShopState({silent:true}); renderWheelToolPrompt();
+        } finally {setBusy(els.wheelToolConfirmBtn,false);}
       }
 
       // -------------------- Lucky wheel --------------------
@@ -9365,6 +9427,14 @@
           });
           return out;
         }
+        if (modifier === "no10") {
+          const shift = Math.min(10, p[10]);
+          p[10] -= shift;
+          const others = WHEEL_VISUAL_AMOUNTS.filter(a => a !== 10);
+          const totalOther = others.reduce((sum,a) => sum + p[a], 0);
+          if (shift > 0 && totalOther > 0) others.forEach(a => { p[a] += shift * p[a] / totalOther; });
+          return p;
+        }
         return p;
       }
 
@@ -9464,19 +9534,26 @@
         renderWheelVisualFrame(targetP);
       }
 
+      function setWishVisualHighlight(target = null) {
+        WHEEL_VISUAL_AMOUNTS.forEach(amount => wheelVisualLabelElement(amount)?.classList.toggle("wish-target", Number(target) === amount));
+      }
+
       async function prepareWheelVisualForCurrentTool() {
-        const modifier = ["shield30","upgrade","double_pick"].includes(String(state.shopEquipped || "")) ? String(state.shopEquipped) : null;
+        const modifier = ["shield30","upgrade","double_pick","no10"].includes(String(state.shopEquipped || "")) ? String(state.shopEquipped) : null;
         const luckyActive = Number(state.shopLuckyRemaining || 0) > 0;
+        const wishTarget = state.shopEquipped === "wish" ? Number(state.shopEquippedParam || 100) : null;
+        setWishVisualHighlight(wishTarget);
         const target = effectiveWheelVisualProbabilities(modifier, luckyActive);
         const hasTemporaryVisual = !!modifier || luckyActive;
         state.wheelVisualProfileKey = hasTemporaryVisual ? `${modifier || "none"}:${luckyActive ? "lucky2" : "plain"}` : "base";
-        state.wheelVisualRestorePending = hasTemporaryVisual;
+        state.wheelVisualRestorePending = hasTemporaryVisual || !!wishTarget;
         await animateWheelVisualProfile(target);
       }
 
       function restoreWheelVisualProfile({ immediate = false } = {}) {
         state.wheelVisualProfileKey = "base";
         state.wheelVisualRestorePending = false;
+        setWishVisualHighlight(null);
         if (immediate) renderWheelVisualFrame(WHEEL_VISUAL_BASE);
         else void animateWheelVisualProfile(WHEEL_VISUAL_BASE, { duration: 560 });
       }
@@ -9531,18 +9608,23 @@
         }
       }
 
-      function showWheelResult({ prize, preview, cashBefore = 0, cashAfter = 0, modifier = null, firstPrize = null, secondPrize = null, luckyRemaining = null, luckyApplied = false }) {
-        const amount = Number(prize || 0);
-        const first = Number(firstPrize ?? amount);
+      function showWheelResult({ prize, preview, cashBefore = 0, cashAfter = 0, modifier = null, firstPrize = null, secondPrize = null, luckyRemaining = null, luckyApplied = false, spinPayout = null, bonusAmount = 0, wishTarget = null, chanceRefunded = false, decisionType = null, decisionChoice = null, challengeCompleted = false, challengeWon = false, challengeBonus = 0, challengeActive = false, challengeSpinsDone = 0, challengeHits = 0 }) {
+        const credited = Number(prize || 0);
+        const mainAmount = Number(spinPayout ?? credited);
+        const first = Number(firstPrize ?? mainAmount);
         const second = secondPrize == null ? null : Number(secondPrize);
-        els.wheelResultPrize.textContent = `¥${amount}`;
+        els.wheelResultPrize.textContent = `¥${mainAmount}`;
         els.wheelDoubleResult.hidden = true;
         els.wheelDoubleCardA.classList.remove("selected");
         els.wheelDoubleCardB.classList.remove("selected");
+        els.wheelResultExtra.hidden = true;
+        els.wheelResultExtra.innerHTML = "";
+
+        const luckyCopy = luckyApplied ? (Number(luckyRemaining) > 0 ? ` · 药水剩 ${Number(luckyRemaining)} 抽` : " · 本次后药水已用完") : "";
 
         if (preview) {
-          els.wheelResultIcon.textContent = amount >= 80 ? "✨" : "🎀";
-          els.wheelResultTitle.textContent = `试玩转到了 ¥${amount} ♡`;
+          els.wheelResultIcon.textContent = mainAmount >= 80 ? "✨" : "🎀";
+          els.wheelResultTitle.textContent = `试玩转到了 ¥${mainAmount} ♡`;
           els.wheelResultMessage.textContent = "这次是快乐试玩，所以不会计入可提现余额，也不会留下中奖记录～下次用正式机会把好运带回家吧 ✨";
           els.wheelResultDoneBtn.textContent = "好耶，记住好运 ♡";
         } else if (modifier === "double_pick" && second != null) {
@@ -9553,126 +9635,184 @@
           els.wheelDoublePrizeB.textContent = `¥${second}`;
           if (first >= second) els.wheelDoubleCardA.classList.add("selected");
           if (second >= first) els.wheelDoubleCardB.classList.add("selected");
-          els.wheelDoubleChoice.textContent = `已自动选择更高奖励 ¥${amount}`;
-          els.wheelResultMessage.textContent = `一次正式机会产生了两个结果，系统已经自动把更高的 ¥${amount} 存进小金库。可提现余额 ¥${cashBefore} → ¥${cashAfter}${Number(luckyRemaining) >= 0 ? ` · 幸运药水剩余 ${Number(luckyRemaining)} 抽` : ""} ✨`;
+          els.wheelDoubleChoice.textContent = `已自动选择更高奖励 ¥${mainAmount}`;
+          els.wheelResultMessage.textContent = `一次正式机会产生两个结果，系统已经自动把更高的 ¥${mainAmount} 存进小金库。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy} ✨`;
           els.wheelResultDoneBtn.textContent = "收下更幸运的那个 ✦";
         } else if (modifier === "shield30") {
           els.wheelResultIcon.textContent = "✦";
           els.wheelResultTitle.textContent = "小幸运护盾生效 ♡";
-          els.wheelResultMessage.textContent = first < 30
-            ? `原本抽到 ¥${first}，护盾已经自动保底到 ¥${amount}。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`
-            : `这次原本就是 ¥${first}，护盾没有改动奖励。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`;
+          els.wheelResultMessage.textContent = first < 30 ? `原本抽到 ¥${first}，护盾已经自动保底到 ¥${mainAmount}。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy} ✨` : `这次原本就是 ¥${first}，护盾没有改动奖励。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy} ✨`;
           els.wheelResultDoneBtn.textContent = "开心收下 ✦";
         } else if (modifier === "upgrade") {
-          els.wheelResultIcon.textContent = "✦";
-          els.wheelResultTitle.textContent = "奖励升级卡生效 ♡";
-          els.wheelResultMessage.textContent = amount > first
-            ? `原结果 ¥${first} 已自动升级为 ¥${amount}。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`
-            : `这次抽到 ¥${first}，已经高于升级范围，奖励保持不变。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`;
+          els.wheelResultIcon.textContent = "↗";
+          els.wheelResultTitle.textContent = "奖励升级成功 ♡";
+          els.wheelResultMessage.textContent = mainAmount > first ? `原结果 ¥${first} 已自动升级为 ¥${mainAmount}。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy} ✨` : `这次抽到 ¥${first}，已经高于升级范围，奖励保持不变。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy} ✨`;
           els.wheelResultDoneBtn.textContent = "开心收下 ✦";
+        } else if (modifier === "wish") {
+          const hit = Number(bonusAmount || 0) > 0;
+          els.wheelResultIcon.textContent = hit ? "✦" : "☆";
+          els.wheelResultTitle.textContent = hit ? "愿望成真了 ♡" : "这次愿望擦肩而过";
+          els.wheelResultMessage.textContent = hit ? `你许愿 ¥${wishTarget}，转盘真的正好命中！原奖励 ¥${first}，许愿额外 +¥${bonusAmount}，本次共获得 ¥${mainAmount}。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy} ✨` : `你许愿 ¥${wishTarget}，这次转到了 ¥${first}。许愿卡已经使用，但没有额外奖励。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy}。`;
+          els.wheelResultDoneBtn.textContent = hit ? "收下愿望 ✦" : "下次一定会中 ✨";
+        } else if (modifier === "no10") {
+          els.wheelResultIcon.textContent = "✧";
+          els.wheelResultTitle.textContent = "十元退散生效 ♡";
+          els.wheelResultMessage.textContent = `本次抽奖已经移除了基础盘面中的 ¥10 档概率，最后获得 ¥${mainAmount}。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨`;
+          els.wheelResultDoneBtn.textContent = "收下好运 ✦";
+        } else if (modifier === "return10") {
+          els.wheelResultIcon.textContent = chanceRefunded ? "↻" : "✦";
+          els.wheelResultTitle.textContent = chanceRefunded ? "幸运返场触发！" : "幸运返场卡已使用";
+          els.wheelResultMessage.textContent = chanceRefunded ? `本次抽到 ¥10，¥10 已正常到账，同时正式机会已经返还 1 次。可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨` : `本次获得 ¥${mainAmount}，没有触发 ¥10 返场条件。可提现余额 ¥${cashBefore} → ¥${cashAfter}。`;
+          els.wheelResultDoneBtn.textContent = chanceRefunded ? "再给好运一次机会 ♡" : "开心收下";
+        } else if (modifier === "restart" || decisionType === "restart") {
+          const rerolled = decisionChoice === "reroll" && second != null;
+          els.wheelResultIcon.textContent = "↻";
+          els.wheelResultTitle.textContent = rerolled ? "命运已经重写 ♡" : "稳稳收下这一次";
+          els.wheelResultMessage.textContent = rerolled ? `第一次是 ¥${first}，你选择重启命运，第二次抽到 ¥${second}。第二个结果必须接受，本次最终获得 ¥${mainAmount}。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy}。` : `第一次是 ¥${first}，你决定不再重抽，稳稳收下 ¥${mainAmount}。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy}。`;
+          els.wheelResultDoneBtn.textContent = "接受这次命运 ✦";
+        } else if (decisionType === "heartbeat") {
+          const risked = decisionChoice === "risk_win" || decisionChoice === "risk_lose";
+          els.wheelResultIcon.textContent = risked ? "♡" : "✦";
+          els.wheelResultTitle.textContent = decisionChoice === "risk_win" ? "心跳一搏 · 翻倍成功！" : decisionChoice === "risk_lose" ? "心跳一搏 · 这次回落" : "稳稳收下 ♡";
+          els.wheelResultMessage.textContent = decisionChoice === "risk_win" ? `原结果 ¥${first}，心跳一搏成功翻倍，本次获得 ¥${mainAmount}！可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy}。` : decisionChoice === "risk_lose" ? `原结果 ¥${first}，这次心跳一搏落在减半结果，本次获得 ¥${mainAmount}。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy}。` : `你选择不使用心跳翻倍卡，¥${mainAmount} 正常到账，道具没有消耗。可提现余额 ¥${cashBefore} → ¥${cashAfter}${luckyCopy}。`;
+          els.wheelResultDoneBtn.textContent = "心跳结束 ♡";
         } else {
-          els.wheelResultIcon.textContent = amount >= 80 ? "🎉" : "💛";
+          els.wheelResultIcon.textContent = mainAmount >= 80 ? "🎉" : "💛";
           els.wheelResultTitle.textContent = "恭喜宝宝抽中啦 ♡";
-          const potionCopy = luckyApplied ? (Number(luckyRemaining) > 0 ? ` 百元幸运药水还剩 ${Number(luckyRemaining)} 抽。` : " 百元幸运药水本次已生效并用完。") : "";
-          els.wheelResultMessage.textContent = `可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨ 这次好运已经正式存进小金库啦！${potionCopy}`;
+          els.wheelResultMessage.textContent = `可提现余额 ¥${cashBefore} → ¥${cashAfter} ✨ 这次好运已经正式存进小金库啦！${luckyCopy}`;
           els.wheelResultDoneBtn.textContent = "开心收下 ✨";
+        }
+
+        if (challengeCompleted) {
+          els.wheelResultExtra.hidden = false;
+          els.wheelResultExtra.innerHTML = challengeWon ? `<strong>🔥 三连挑战完成</strong><br>3 抽里至少 2 次达到 ¥50，额外奖励 <b>+¥${Number(challengeBonus || 20)}</b> 已一起进入小金库。` : `<strong>三连挑战结束</strong><br>这组三抽没有达到 2 次 ¥50，不过下一张挑战卡还可以再来一次 ♡`;
+        } else if (challengeActive) {
+          els.wheelResultExtra.hidden = false;
+          els.wheelResultExtra.innerHTML = `<strong>🔥 三连挑战继续</strong><br>已完成 ${Number(challengeSpinsDone || 0)}/3 抽 · ≥¥50 已命中 ${Number(challengeHits || 0)}/2。`;
         }
         setLayer(els.wheelResultLayer, true);
       }
 
-      async function silentSyncBeforeWheelSpin() {
-        try {
-          const [scoreRes, wheelRes] = await Promise.all([
-            db.rpc("points_get_state"),
-            db.rpc("points_get_wheel_state")
-          ]);
-          if (!scoreRes.error) {
-            const row = Array.isArray(scoreRes.data) ? scoreRes.data[0] : scoreRes.data;
-            if (row && typeof row.score === "number") {
-              state.score = Number(row.score);
-              state.updatedAt = row.updated_at ?? state.updatedAt;
-            }
-          }
-          if (!wheelRes.error) {
-            const wheelRow = Array.isArray(wheelRes.data) ? wheelRes.data[0] : wheelRes.data;
-            if (wheelRow) {
-              state.wheelChances = Number(wheelRow.spin_chances ?? state.wheelChances ?? 0);
-              state.wheelCashBalance = Number(wheelRow.cash_balance ?? state.wheelCashBalance ?? 0);
-              state.wheelUpdatedAt = wheelRow.updated_at ?? state.wheelUpdatedAt ?? null;
-            }
-          }
-          renderPrimaryMetric();
-          return true;
-        } catch (err) {
-          console.debug("silentSyncBeforeWheelSpin:", err);
-          return false;
+      function openPendingDecision(pending) {
+        if (!pending) return;
+        const type = String(pending.type || pending.pending_type || ""), amount = Number(pending.initial_prize || pending.prize_amount || 0);
+        state.shopPendingSpin = { type, initial_prize: amount, initial_roll: Number(pending.initial_roll || pending.roll || 0) };
+        els.wheelDecisionPrize.textContent = `¥${amount}`;
+        els.wheelDecisionOdds.hidden = true;
+        if (type === "restart") {
+          els.wheelDecisionIcon.textContent = "↻";
+          els.wheelDecisionTitle.textContent = "命运重启 · 要改写结果吗？";
+          els.wheelDecisionMessage.textContent = `这一抽是 ¥${amount}。你可以稳稳收下，也可以放弃它重新抽一次；一旦重抽，第二个结果必须接受，可能更高，也可能更低。`;
+          els.wheelDecisionRiskBtn.textContent = "重新抽一次";
+          els.wheelDecisionAcceptBtn.textContent = `稳稳收下 ¥${amount}`;
+        } else {
+          els.wheelDecisionIcon.textContent = "♡";
+          els.wheelDecisionTitle.textContent = "心跳时刻 · 要搏一把吗？";
+          els.wheelDecisionMessage.textContent = "你背包里的心跳翻倍卡现在可以使用。只有真的选择“心跳一搏”才会消耗这张卡。";
+          els.wheelDecisionOdds.hidden = false;
+          els.wheelDecisionOdds.innerHTML = `<strong>50%</strong> → ¥${amount * 2}<br><strong>50%</strong> → ¥${amount / 2}`;
+          els.wheelDecisionRiskBtn.textContent = "心跳一搏";
+          els.wheelDecisionAcceptBtn.textContent = `稳稳收下 ¥${amount}`;
         }
+        setLayer(els.wheelDecisionLayer, true);
       }
 
-      async function silentSyncAfterWheelSpin() {
-        try { await loadAppState({ silent: true }); }
-        catch (err) { console.debug("silentSyncAfterWheelSpin:", err); }
+      async function resolvePendingWheelDecision(choice) {
+        if (!state.shopPendingSpin) return;
+        const type = String(state.shopPendingSpin.type || ""), cashBefore = Number(state.wheelCashBalance || 0), firstPrize = Number(state.shopPendingSpin.initial_prize || 0);
+        setBusy(els.wheelDecisionRiskBtn, true); setBusy(els.wheelDecisionAcceptBtn, true);
+        try {
+          const { data, error } = await db.rpc("points_shop_resolve_pending_spin_v2", { p_choice: choice });
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          setLayer(els.wheelDecisionLayer, false);
+          if (type === "restart" && choice === "reroll" && row?.second_prize != null) {
+            await animateWheelToPrize(Number(row.visual_prize ?? row.second_prize), Number(row.roll ?? row.second_roll));
+          }
+          state.wheelChances = Number(row?.spin_chances ?? state.wheelChances);
+          state.wheelCashBalance = Number(row?.cash_balance ?? cashBefore + Number(row?.prize_amount || 0));
+          state.wheelUpdatedAt = row?.wheel_updated_at ?? new Date().toISOString();
+          state.overviewLoadedAt = 0; state.shopPendingSpin = null;
+          renderPrimaryMetric(); await silentSyncAfterWheelSpin(); await loadShopState({ silent: true }); renderWheelItemNotice(); renderWheelChallengeProgress();
+          showWheelResult({
+            prize:Number(row?.prize_amount||0), spinPayout:Number(row?.spin_payout ?? row?.prize_amount ?? 0), preview:false, cashBefore, cashAfter:state.wheelCashBalance,
+            modifier:String(row?.modifier||"")||null, firstPrize:Number(row?.first_prize??firstPrize), secondPrize:row?.second_prize==null?null:Number(row.second_prize),
+            luckyRemaining:Number(row?.lucky100_remaining??state.shopLuckyRemaining), luckyApplied:row?.lucky100_applied===true,
+            bonusAmount:Number(row?.bonus_amount||0), wishTarget:row?.wish_target, chanceRefunded:row?.chance_refunded===true,
+            decisionType:String(row?.decision_type||type)||type, decisionChoice:String(row?.decision_choice||""),
+            challengeCompleted:row?.challenge_completed===true, challengeWon:row?.challenge_won===true, challengeBonus:Number(row?.challenge_bonus||0),
+            challengeActive:row?.challenge_active===true, challengeSpinsDone:Number(row?.challenge_spins_done||0), challengeHits:Number(row?.challenge_hits||0)
+          });
+          if (state.overviewMode !== "closed") await loadOverviewData(true);
+        } catch (err) {
+          console.error("resolvePendingWheelDecision:", err);
+          showToast(shopMissingError(err) ? "请先运行积分商城 v2 数据库迁移 SQL" : "这次决定没有保存成功，请再试一次");
+          await loadShopState({ silent: true });
+        } finally { setBusy(els.wheelDecisionRiskBtn, false); setBusy(els.wheelDecisionAcceptBtn, false); }
       }
+
+      async function silentSyncBeforeWheelSpin() {
+        try {
+          const [scoreRes, wheelRes] = await Promise.all([db.rpc("points_get_state"), db.rpc("points_get_wheel_state")]);
+          if (!scoreRes.error) { const row = Array.isArray(scoreRes.data) ? scoreRes.data[0] : scoreRes.data; if (row && typeof row.score === "number") { state.score = Number(row.score); state.updatedAt = row.updated_at ?? state.updatedAt; } }
+          if (!wheelRes.error) { const wheelRow = Array.isArray(wheelRes.data) ? wheelRes.data[0] : wheelRes.data; if (wheelRow) { state.wheelChances = Number(wheelRow.spin_chances ?? state.wheelChances ?? 0); state.wheelCashBalance = Number(wheelRow.cash_balance ?? state.wheelCashBalance ?? 0); state.wheelUpdatedAt = wheelRow.updated_at ?? state.wheelUpdatedAt ?? null; } }
+          renderPrimaryMetric(); return true;
+        } catch (err) { console.debug("silentSyncBeforeWheelSpin:", err); return false; }
+      }
+
+      async function silentSyncAfterWheelSpin() { try { await loadAppState({ silent: true }); } catch (err) { console.debug("silentSyncAfterWheelSpin:", err); } }
 
       async function performFormalWheelSpin() {
         if (state.wheelSpinning) return;
         if (state.isAdmin) return openWheelPreviewPrompt();
+        if (state.shopPendingSpin) return openPendingDecision(state.shopPendingSpin);
         if (state.wheelChances <= 0) return openWheelPreviewPrompt();
         const cashBefore = Number(state.wheelCashBalance || 0);
         try {
-          // Morph only for the temporary item state. Admin probability edits never enter this path.
           await prepareWheelVisualForCurrentTool();
-          let row = null;
-          let usedShopSpin = false;
+          let row = null, usedV2 = false;
           if (state.shopAvailable !== false) {
-            const { data, error } = await db.rpc("points_shop_spin_wheel");
-            if (error) {
-              if (!shopMissingError(error)) throw error;
-              state.shopAvailable = false;
-            } else {
-              row = Array.isArray(data) ? data[0] : data;
-              state.shopAvailable = true;
-              usedShopSpin = true;
-            }
+            const { data, error } = await db.rpc("points_shop_spin_wheel_v2");
+            if (error) { if (!shopMissingError(error)) throw error; state.shopAvailable = false; }
+            else { row = Array.isArray(data) ? data[0] : data; state.shopAvailable = true; usedV2 = true; }
           }
           if (!row) {
-            const { data, error } = await db.rpc("points_spin_wheel");
-            if (error) throw error;
-            row = Array.isArray(data) ? data[0] : data;
+            const { data, error } = await db.rpc("points_spin_wheel"); if (error) throw error; row = Array.isArray(data) ? data[0] : data;
           }
 
-          const prize = Number(row?.prize_amount || 0);
-          const roll = Number(row?.roll);
-          const modifier = usedShopSpin ? String(row?.modifier || "") || null : null;
-          const firstPrize = usedShopSpin && row?.first_prize != null ? Number(row.first_prize) : prize;
-          const secondPrize = usedShopSpin && row?.second_prize != null ? Number(row.second_prize) : null;
-          const luckyRemaining = usedShopSpin && row?.lucky100_remaining != null ? Number(row.lucky100_remaining) : null;
-          const luckyApplied = usedShopSpin && row?.lucky100_applied === true;
+          const visualPrize = Number(row?.visual_prize ?? row?.prize_amount ?? 0), roll = Number(row?.roll);
           state.wheelChances = Number(row?.spin_chances ?? Math.max(0, state.wheelChances - 1));
-          state.wheelCashBalance = Number(row?.cash_balance ?? cashBefore + prize);
+          state.wheelCashBalance = Number(row?.cash_balance ?? state.wheelCashBalance);
           state.wheelUpdatedAt = row?.wheel_updated_at ?? new Date().toISOString();
-          state.overviewLoadedAt = 0;
-          renderPrimaryMetric();
-          await animateWheelToPrize(prize, roll);
-          renderPrimaryMetric();
-          await silentSyncAfterWheelSpin();
-          if (usedShopSpin) await loadShopState({ silent: true });
-          renderWheelItemNotice();
-          showWheelResult({ prize, preview: false, cashBefore, cashAfter: state.wheelCashBalance, modifier, firstPrize, secondPrize, luckyRemaining, luckyApplied });
+          state.overviewLoadedAt = 0; renderPrimaryMetric();
+          await animateWheelToPrize(visualPrize, roll); renderPrimaryMetric();
+
+          if (usedV2 && String(row?.status || "") === "pending") {
+            await loadShopState({ silent: true }); renderWheelItemNotice(); renderWheelChallengeProgress();
+            openPendingDecision({ type: row.pending_type, initial_prize: visualPrize, initial_roll: roll });
+            return;
+          }
+
+          await silentSyncAfterWheelSpin(); if (usedV2) await loadShopState({ silent: true }); renderWheelItemNotice(); renderWheelChallengeProgress();
+          const modifier = usedV2 ? String(row?.modifier || "") || null : null;
+          showWheelResult({
+            prize:Number(row?.prize_amount||0), spinPayout:Number(row?.spin_payout ?? row?.prize_amount ?? 0), preview:false, cashBefore, cashAfter:state.wheelCashBalance,
+            modifier, firstPrize:usedV2?Number(row?.first_prize??visualPrize):visualPrize, secondPrize:usedV2&&row?.second_prize!=null?Number(row.second_prize):null,
+            luckyRemaining:usedV2?Number(row?.lucky100_remaining??state.shopLuckyRemaining):null, luckyApplied:usedV2&&row?.lucky100_applied===true,
+            bonusAmount:usedV2?Number(row?.bonus_amount||0):0, wishTarget:usedV2?row?.wish_target:null, chanceRefunded:usedV2&&row?.chance_refunded===true,
+            decisionType:usedV2?String(row?.decision_type||"")||null:null, decisionChoice:usedV2?String(row?.decision_choice||""):null,
+            challengeCompleted:usedV2&&row?.challenge_completed===true, challengeWon:usedV2&&row?.challenge_won===true, challengeBonus:usedV2?Number(row?.challenge_bonus||0):0,
+            challengeActive:usedV2&&row?.challenge_active===true, challengeSpinsDone:usedV2?Number(row?.challenge_spins_done||0):0, challengeHits:usedV2?Number(row?.challenge_hits||0):0
+          });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           if (state.wheelVisualRestorePending) restoreWheelVisualProfile();
-          console.error("performFormalWheelSpin:", err);
-          const message = String(err?.message || "");
-          if (/No wheel chance/i.test(message)) {
-            await loadAppState({ silent: true });
-            openWheelPreviewPrompt();
-          } else if (/Guest mode required|permission/i.test(message)) {
-            await refreshAuthState();
-            openWheelPreviewPrompt();
-          } else if (/PGRST202|schema cache|Could not find/i.test(message)) {
-            showToast("请先运行数据库迁移 SQL");
-          } else showToast("转盘暂时没有转起来，再试一次吧");
+          console.error("performFormalWheelSpin:", err); const message = String(err?.message || "");
+          if (/Pending spin/i.test(message)) { await loadShopState({ silent: true }); if (state.shopPendingSpin) openPendingDecision(state.shopPendingSpin); }
+          else if (/No wheel chance/i.test(message)) { await loadAppState({ silent: true }); openWheelPreviewPrompt(); }
+          else if (/Guest mode required|permission/i.test(message)) { await refreshAuthState(); openWheelPreviewPrompt(); }
+          else if (/PGRST202|schema cache|Could not find/i.test(message)) showToast("请先运行积分商城 v2 数据库迁移 SQL");
+          else showToast("转盘暂时没有转起来，再试一次吧");
         }
       }
 
@@ -10387,7 +10527,10 @@
         let content = "";
 
         if (action === "spin_win") {
-          content = `<div class="log-icon wheel-win">🎠</div><div class="log-copy"><div class="log-reason">转动大转盘 · 抽中 ¥${escapeHTML(prize)}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 机会 ${chanceBefore} → ${chanceAfter} · 余额 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(prize)}</div>`;
+          const paid = Math.max(0, cashDelta || prize);
+          const reason = String(log.reason || "").trim();
+          const title = reason && reason !== "正式转动大转盘" ? reason : `转动大转盘 · 抽中 ¥${prize}`;
+          content = `<div class="log-icon wheel-win">🎠</div><div class="log-copy"><div class="log-reason">${escapeHTML(title)}</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 落点 ¥${escapeHTML(prize)} · 机会 ${chanceBefore} → ${chanceAfter} · 余额 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(paid)}</div>`;
         } else if (action === "cash_redeem") {
           content = `<div class="log-icon wheel-chance">💰</div><div class="log-copy"><div class="log-reason">10 分兑换 ¥30 可提现余额</div><span class="log-meta">${escapeHTML(formatDateShort(log.created_at))} · ${escapeHTML(formatTime(log.created_at))} · 可提现 ¥${cashBefore} → ¥${cashAfter}</span></div><div class="log-delta wheel-cash-positive">+¥${escapeHTML(Math.max(0, cashDelta))}</div>`;
         } else if (action === "chance_redeem") {
@@ -10418,7 +10561,7 @@
         const logs = wheelLogsDescending();
         const withdrawals = [...state.withdrawals];
         const visibleWon = logs.filter(log => String(log.action) === "spin_win")
-          .reduce((sum, log) => sum + Math.max(0, Number(log.prize_amount ?? 0)), 0);
+          .reduce((sum, log) => sum + Math.max(0, Number(log.cash_delta ?? log.prize_amount ?? 0)), 0);
         const pendingRows = withdrawals.filter(row => String(row.status) === "pending");
         const settledRows = withdrawals.filter(row => String(row.status) === "settled");
         const pendingAmount = pendingRows.reduce((sum, row) => sum + Math.max(0, Number(row.amount ?? 0)), 0);
@@ -12475,7 +12618,13 @@
       els.shopItemLayer.addEventListener("click", (e) => { if (e.target === els.shopItemLayer) setLayer(els.shopItemLayer, false); });
       els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.shopItemLayer, false));
       els.shopItemConfirmBtn.addEventListener("click", () => void purchaseShopItem());
-      els.wheelItemNotice.addEventListener("click", () => { vibrate(6); void openShop("inventory"); });
+      els.shopRevealLayer.addEventListener("click", (e) => { if (e.target === els.shopRevealLayer) setLayer(els.shopRevealLayer, false); });
+      els.shopRevealDoneBtn.addEventListener("click", () => setLayer(els.shopRevealLayer, false));
+      els.wheelItemNotice.addEventListener("click", () => {
+        vibrate(6);
+        if (state.shopPendingSpin) return openPendingDecision(state.shopPendingSpin);
+        void openShop("inventory");
+      });
 
       // Normalize the initial wheel to the fixed design profile once.
       if (!state.wheelVisualProbabilities) renderWheelVisualFrame(WHEEL_VISUAL_BASE);
@@ -12485,9 +12634,9 @@
         vibrate(8);
         await silentSyncBeforeWheelSpin();
         if (state.isAdmin) return openWheelPreviewPrompt();
-        if (state.wheelChances <= 0) return openWheelPreviewPrompt();
-
         const shopReady = await loadShopState({ silent: true });
+        if (shopReady && state.shopPendingSpin) return openPendingDecision(state.shopPendingSpin);
+        if (state.wheelChances <= 0) return openWheelPreviewPrompt();
         if (shopReady) {
           if (ownedWheelToolCodes().length > 0) return openWheelToolPrompt("owned");
           if (affordableWheelToolCodes().length > 0) return openWheelToolPrompt("warning");
@@ -12499,20 +12648,44 @@
       els.wheelToolLayer.addEventListener("click", (e) => {
         const choice = e.target.closest("[data-wheel-tool-code]");
         const potion = e.target.closest("[data-wheel-potion-toggle]");
+        const challenge = e.target.closest("[data-wheel-challenge-toggle]");
+        const wish = e.target.closest("[data-wheel-wish]");
         if (choice) {
           const code = choice.dataset.wheelToolCode;
+          if (code === "no10" && (state.shopLuckyRemaining > 0 || state.wheelToolUsePotion)) return showToast("十元退散和百元幸运药水不能同时使用");
           state.wheelToolSelectedCode = state.wheelToolSelectedCode === code ? null : code;
+          if (state.wheelToolSelectedCode === "wish" && !WHEEL_VISUAL_AMOUNTS.includes(Number(state.wheelToolWishTarget))) state.wheelToolWishTarget = 100;
           vibrate(5); renderWheelToolPrompt(); return;
         }
         if (potion) {
+          if (state.wheelToolSelectedCode === "no10") return showToast("十元退散和百元幸运药水不能同时使用");
           state.wheelToolUsePotion = !state.wheelToolUsePotion;
           vibrate(5); renderWheelToolPrompt(); return;
+        }
+        if (challenge) {
+          state.wheelToolUseChallenge = !state.wheelToolUseChallenge;
+          vibrate(5); renderWheelToolPrompt(); return;
+        }
+        if (wish) {
+          state.wheelToolWishTarget = Number(wish.dataset.wheelWish);
+          vibrate(4); renderWheelToolPrompt(); return;
         }
         if (e.target === els.wheelToolLayer) setLayer(els.wheelToolLayer, false);
       });
       els.wheelToolCancelBtn.addEventListener("click", () => setLayer(els.wheelToolLayer, false));
       els.wheelToolBareBtn.addEventListener("click", () => void spinWithoutNewTool());
       els.wheelToolConfirmBtn.addEventListener("click", () => void confirmWheelToolChoice());
+
+      els.wheelDecisionLayer.addEventListener("click", (e) => {
+        // Pending decisions deliberately do not close on backdrop tap: the reserved formal spin must be resolved.
+        if (e.target === els.wheelDecisionLayer) vibrate(3);
+      });
+      els.wheelDecisionRiskBtn.addEventListener("click", () => {
+        const type = String(state.shopPendingSpin?.type || "");
+        void resolvePendingWheelDecision(type === "restart" ? "reroll" : "risk");
+      });
+      els.wheelDecisionAcceptBtn.addEventListener("click", () => void resolvePendingWheelDecision("accept"));
+
       els.adjustWheelChancesBtn.addEventListener("click", openWheelAdjustPrompt);
       [els.wheelAdjustMinusBtn, els.wheelAdjustPlusBtn].forEach(btn => btn.addEventListener("click", () => {
         state.wheelAdjustDelta = Number(btn.dataset.wheelAdjust) < 0 ? -1 : 1;
@@ -12658,7 +12831,9 @@
         if (els.wheelResultLayer.classList.contains("open")) return setLayer(els.wheelResultLayer, false);
         if (els.wheelWithdrawLayer.classList.contains("open")) return setLayer(els.wheelWithdrawLayer, false);
         if (els.wheelPreviewLayer.classList.contains("open")) return setLayer(els.wheelPreviewLayer, false);
+        if (els.shopRevealLayer.classList.contains("open")) return setLayer(els.shopRevealLayer, false);
         if (els.shopItemLayer.classList.contains("open")) return setLayer(els.shopItemLayer, false);
+        if (els.wheelDecisionLayer.classList.contains("open")) { vibrate(3); return; }
         if (els.wheelToolLayer.classList.contains("open")) return setLayer(els.wheelToolLayer, false);
         if (els.redeemLayer.classList.contains("open")) return setLayer(els.redeemLayer, false);
         if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
