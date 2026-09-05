@@ -6274,6 +6274,16 @@
     .shop-featured-art { position:absolute; right:18px; top:42px; z-index:2; width:92px; height:92px; display:grid; place-items:center; border-radius:28px; background:rgba(255,255,255,.34); border:1px solid rgba(255,255,255,.66); box-shadow:0 14px 28px rgba(94,65,111,.10),inset 0 1px 0 rgba(255,255,255,.72); transform:rotate(3deg); }
     .shop-featured-art svg { width:50px; height:50px; }
     .shop-featured-limit { position:absolute; right:15px; bottom:14px; z-index:2; color:rgba(86,65,98,.56); font-size:9px; font-weight:650; }
+    .shop-featured { position:relative; overflow:hidden; }
+    .shop-featured-art.shop-theme-wheel,.shop-featured-art.shop-theme-shield,.shop-featured-art.shop-theme-upgrade,.shop-featured-art.shop-theme-double,.shop-featured-art.shop-theme-potion,.shop-featured-art.shop-theme-restart,.shop-featured-art.shop-theme-wish,.shop-featured-art.shop-theme-challenge,.shop-featured-art.shop-theme-no10,.shop-featured-art.shop-theme-return,.shop-featured-art.shop-theme-heartbeat { color:inherit; }
+    .shop-featured-label.special { color:#99663b; }
+    .shop-featured-price s { opacity:.42; font-weight:650; text-decoration-thickness:1px; }
+    .shop-featured-price .shop-featured-sale { color:#986236; font-weight:850; }
+    .shop-featured-price.free { color:#986236; }
+    .shop-product-card.weekly-special::before { content:"本周 -1"; position:absolute; z-index:5; top:9px; right:9px; padding:4px 7px; border-radius:999px; background:rgba(255,250,241,.78); border:1px solid rgba(255,255,255,.80); color:#9b6a3f; font-size:7.8px; font-weight:820; letter-spacing:.02em; box-shadow:0 4px 12px rgba(111,77,50,.08); }
+    .shop-product-card.weekly-special.weekly-free::before { content:"本周免费"; }
+    .shop-product-price s { margin-right:4px; opacity:.40; font-weight:650; text-decoration-thickness:1px; }
+    .shop-product-price .sale { color:#9a653c; font-weight:850; }
 
     .shop-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
     .shop-product-card {
@@ -7853,6 +7863,8 @@
         shopSelectedCode: null,
         shopInventory: { shield30:0, upgrade:0, double_pick:0, lucky100:0, restart:0, wish:0, triple_challenge:0, no10:0, return10:0, heartbeat:0 },
         shopWeekly: {},
+        shopWeeklyFeature: null,
+        shopFeaturedIndex: 0,
         shopEquipped: null,
         shopEquippedParam: null,
         shopLuckyRemaining: 0,
@@ -8668,13 +8680,14 @@
         },
         mystery_box: {
           code:"mystery_box", name:"幸运盲盒", coverWord:"MYSTERY", price:2, theme:"mystery",
-          desc:"2 分开启一个随机道具，越高价值的道具越稀有。", detail:"兑换后立即开启，不进入背包。1 分道具单个概率 14%，2 分道具单个概率 10%，3 分道具单个概率 7%；总概率 100%。开出的道具会直接放入“我的道具”，不会占用那个道具本身的周限购次数。", weeklyLimit:2, instantOpen:true
+          desc:"2 分开启随机奖励，正式转盘券是 1% 超稀有掉落。", detail:"兑换后立即开启，不进入背包。¥30 小金库不会出现在盲盒中；正式转盘券以 1% 的超低概率出现。其余道具按积分价值分层：1 分道具单个 13.5%，2 分道具单个 9.5%，3 分道具单个 7.5%。开出的普通道具直接进入“我的道具”，转盘券则立即增加 1 次正式机会；盲盒掉落不会占用该道具本身的周限购次数。", weeklyLimit:2, instantOpen:true
         }
       };
 
       const SHOP_INVENTORY_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat"];
       const SHOP_ONE_SHOT_CODES = ["shield30","upgrade","double_pick","restart","wish","no10","return10"];
       const SHOP_WHEEL_TOOL_CODES = [...SHOP_ONE_SHOT_CODES,"lucky100","triple_challenge","heartbeat"];
+      const SHOP_FEATURE_ELIGIBLE_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat"];
 
       function shopIconSVG(code) {
         const attrs = `fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"`;
@@ -8714,6 +8727,14 @@
         const weekly = row.weekly_counts && typeof row.weekly_counts === "object" ? row.weekly_counts : {};
         state.shopInventory = Object.fromEntries(SHOP_INVENTORY_CODES.map(code => [code, Math.max(0, Number(inventory[code] || 0))]));
         state.shopWeekly = weekly;
+        const feature = row.weekly_feature && typeof row.weekly_feature === "object" ? row.weekly_feature : null;
+        state.shopWeeklyFeature = feature && SHOP_FEATURE_ELIGIBLE_CODES.includes(String(feature.code || "")) ? {
+          code:String(feature.code),
+          weekStart:String(feature.week_start || ""),
+          claimed:feature.discount_claimed === true,
+          originalPrice:Math.max(1,Number(feature.original_price || SHOP_ITEMS[String(feature.code)]?.price || 1)),
+          discountPrice:Math.max(0,Number(feature.discount_price ?? Math.max(0,(SHOP_ITEMS[String(feature.code)]?.price || 1)-1)))
+        } : null;
         state.shopEquipped = SHOP_ONE_SHOT_CODES.includes(String(row.equipped_one_shot || "")) ? String(row.equipped_one_shot) : null;
         state.shopEquippedParam = state.shopEquipped === "wish" ? Number(row.equipped_param || 100) : null;
         state.shopLuckyRemaining = Math.max(0, Number(row.lucky100_remaining || 0));
@@ -8750,24 +8771,48 @@
 
       function shopWeeklyCount(code) { return Math.max(0, Number(state.shopWeekly?.[code] || 0)); }
       function shopLimitText(item) { return !item.weeklyLimit ? "不限购" : `本周 ${Math.min(item.weeklyLimit, shopWeeklyCount(item.code))}/${item.weeklyLimit}`; }
+      function shopFeatureAvailableFor(code) { return state.shopWeeklyFeature?.code === code && state.shopWeeklyFeature?.claimed !== true; }
+      function shopEffectivePrice(item) { return shopFeatureAvailableFor(item.code) ? Math.max(0, Number(item.price || 0) - 1) : Number(item.price || 0); }
+      function shopPriceMarkup(item, featured=false) {
+        const price=shopEffectivePrice(item), promo=shopFeatureAvailableFor(item.code);
+        if (!promo) return `${item.price} ✦`;
+        if (price<=0) return featured ? `<s>${item.price} ✦</s><span class="shop-featured-sale">本周免费</span>` : `<s>${item.price}</s><span class="sale">免费</span>`;
+        return featured ? `<s>${item.price} ✦</s><span class="shop-featured-sale">${price} ✦</span>` : `<s>${item.price}</s><span class="sale">${price} ✦</span>`;
+      }
       function shopCardStatus(item) {
-        const score = Number(state.score || 0), count = shopWeeklyCount(item.code);
+        const price=shopEffectivePrice(item), score = Number(state.score || 0), count = shopWeeklyCount(item.code);
         if (item.weeklyLimit && count >= item.weeklyLimit) return "本周已兑换";
-        if (score < item.price) return `还差 ${item.price - score} 分`;
+        if (shopFeatureAvailableFor(item.code) && price===0) return "免费领 1 次";
+        if (score < price) return `还差 ${price - score} 分`;
+        if (shopFeatureAvailableFor(item.code)) return "本周特价 · 可兑换";
         return item.weeklyLimit ? `${count}/${item.weeklyLimit} · 可兑换` : "可兑换";
       }
 
       function shopProductCardHTML(item) {
-        const affordable = Number(state.score || 0) >= item.price && (!item.weeklyLimit || shopWeeklyCount(item.code) < item.weeklyLimit);
-        return `<button class="shop-product-card pressable${affordable ? " affordable" : ""}" data-shop-product="${item.code}" type="button">
+        const effective=shopEffectivePrice(item), promo=shopFeatureAvailableFor(item.code);
+        const affordable = Number(state.score || 0) >= effective && (!item.weeklyLimit || shopWeeklyCount(item.code) < item.weeklyLimit);
+        return `<button class="shop-product-card pressable${affordable ? " affordable" : ""}${promo?" weekly-special":""}${promo&&effective===0?" weekly-free":""}" data-shop-product="${item.code}" type="button">
           <span class="shop-product-cover shop-theme-${item.theme}">${shopIconSVG(item.code)}<span class="shop-cover-word">${escapeHTML(item.coverWord)}</span></span>
-          <span class="shop-product-body"><strong class="shop-product-name">${escapeHTML(item.name)}</strong><small class="shop-product-desc">${escapeHTML(item.desc)}</small><span class="shop-product-footer"><b class="shop-product-price">${item.price} ✦</b><span class="shop-product-status">${escapeHTML(shopCardStatus(item))}</span></span></span>
+          <span class="shop-product-body"><strong class="shop-product-name">${escapeHTML(item.name)}</strong><small class="shop-product-desc">${escapeHTML(item.desc)}</small><span class="shop-product-footer"><b class="shop-product-price">${shopPriceMarkup(item,false)}</b><span class="shop-product-status">${escapeHTML(shopCardStatus(item))}</span></span></span>
         </button>`;
       }
 
       function renderShopFeatured() {
-        const item = SHOP_ITEMS.double_pick, count = shopWeeklyCount(item.code), locked = item.weeklyLimit && count >= item.weeklyLimit;
-        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-shop-product="${item.code}" type="button"><span class="shop-featured-copy"><span class="shop-featured-label">✦ WEEKLY PICK</span><h3>${escapeHTML(item.name)}</h3><p>一次机会 · 两个结果<br>自动留下更高的那一个。</p><span class="shop-featured-price">${item.price} ✦ · ${locked ? "本周已兑换" : "查看详情"}</span></span><span class="shop-featured-art">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${escapeHTML(shopLimitText(item))}</span></button>`;
+        const code = state.shopWeeklyFeature?.code;
+        const item = SHOP_ITEMS[code];
+        if (!item || !SHOP_FEATURE_ELIGIBLE_CODES.includes(code)) {
+          els.shopFeatured.innerHTML = "";
+          return;
+        }
+        const promo = shopFeatureAvailableFor(code);
+        const count = shopWeeklyCount(code);
+        const locked = item.weeklyLimit && count >= item.weeklyLimit;
+        const label = promo
+          ? (shopEffectivePrice(item) === 0 ? "✦ WEEKLY FREE · 本周免费" : "✦ WEEKLY SALE · 本周立减 1 分")
+          : "✦ WEEKLY PICK · 本周优惠已领取";
+        let price = shopPriceMarkup(item, true);
+        if (!promo) price = `${item.price} ✦ · 本周优惠已领取`;
+        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-shop-product="${item.code}" type="button"><span class="shop-featured-copy"><span class="shop-featured-label special">${label}</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(item.desc)}</p><span class="shop-featured-price${promo&&shopEffectivePrice(item)===0?" free":""}">${price}${locked?" · 已达限购":""}</span></span><span class="shop-featured-art shop-theme-${item.theme}">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${escapeHTML(promo?"本周首次兑换享优惠":`本周精选 · ${shopLimitText(item)}`)}</span></button>`;
       }
       function renderShopProducts() { renderShopFeatured(); els.shopGrid.innerHTML = Object.values(SHOP_ITEMS).map(shopProductCardHTML).join(""); }
 
@@ -8843,12 +8888,13 @@
       function openShopItemDetail(code) {
         const item=SHOP_ITEMS[code]; if(!item) return; state.shopSelectedCode=code;
         els.shopItemCover.className=`shop-detail-cover shop-theme-${item.theme}`; els.shopItemCover.innerHTML=shopIconSVG(code);
-        els.shopItemTitle.textContent=item.name; els.shopItemDescription.textContent=item.detail; els.shopItemPrice.textContent=String(item.price);
-        const chips=[]; if(item.weeklyLimit) chips.push(shopLimitText(item)); if(item.reactive) chips.push("结果后自动询问"); if(item.instantOpen) chips.push("兑换后立即开启"); else if(!item.immediate) chips.push("兑换后进入道具系统");
+        const effectivePrice=shopEffectivePrice(item), featuredPromo=shopFeatureAvailableFor(code);
+        els.shopItemTitle.textContent=item.name; els.shopItemDescription.textContent=item.detail; els.shopItemPrice.textContent=String(effectivePrice);
+        const chips=[]; if(featuredPromo) chips.push(effectivePrice===0?"本周精选 · 免费领取 1 次":"本周精选 · 立减 1 分"); if(item.weeklyLimit) chips.push(shopLimitText(item)); if(item.reactive) chips.push("结果后自动询问"); if(item.instantOpen) chips.push("兑换后立即开启"); else if(!item.immediate) chips.push("兑换后进入道具系统");
         els.shopItemMeta.innerHTML=chips.map(x=>`<span class="shop-detail-chip">${escapeHTML(x)}</span>`).join("");
         const score=Number(state.score||0), exhausted=item.weeklyLimit&&shopWeeklyCount(code)>=item.weeklyLimit;
-        els.shopItemConfirmBtn.disabled=exhausted||score<item.price||(!item.immediate&&state.shopAvailable===false);
-        els.shopItemConfirmBtn.textContent=exhausted?"本周已兑换":score<item.price?`还差 ${item.price-score} 分`:(!item.immediate&&state.shopAvailable===false)?"请先启用商城 v2 SQL":item.instantOpen?`开启盲盒 · ${item.price} ✦`:`确认兑换 · ${item.price} ✦`;
+        els.shopItemConfirmBtn.disabled=exhausted||score<effectivePrice||(!item.immediate&&state.shopAvailable===false);
+        els.shopItemConfirmBtn.textContent=exhausted?"本周已兑换":score<effectivePrice?`还差 ${effectivePrice-score} 分`:(!item.immediate&&state.shopAvailable===false)?"请先启用商城 v3 SQL":effectivePrice===0?"本周免费领取":item.instantOpen?`开启盲盒 · ${effectivePrice} ✦`:`确认兑换 · ${effectivePrice} ✦`;
         setLayer(els.shopItemLayer,true);
       }
 
@@ -8881,7 +8927,7 @@
           if(state.overviewMode!=="closed") await loadOverviewData(true);
         } catch(err){
           console.error("purchaseShopItem:",err); const msg=String(err?.message||"");
-          if(/SHOP_V2_SQL_REQUIRED|points_shop_/i.test(msg)) showToast("请先运行积分商城 v2 数据库迁移 SQL");
+          if(/SHOP_V2_SQL_REQUIRED|points_shop_/i.test(msg)) showToast("请先运行积分商城 v3 数据库迁移 SQL");
           else if(/Insufficient score/i.test(msg)){await loadAppState({silent:true});renderShop();showToast("积分不够啦，再攒一点点 ♡");}
           else if(/Weekly limit/i.test(msg)){await loadShopState({silent:true});renderShop();showToast("这个商品本周已经达到限购啦");}
           else showToast("兑换失败，请稍后再试");
@@ -8970,7 +9016,7 @@
         if(state.wheelToolPromptMode==="warning"){setLayer(els.wheelToolLayer,false);return openShop("products");}
         const oneShot=state.wheelToolSelectedCode,usePotion=state.wheelToolUsePotion,useChallenge=state.wheelToolUseChallenge;
         if(!oneShot&&!usePotion&&!useChallenge) return;
-        if(state.shopAvailable!==true) return showToast("商城 v2 数据库尚未启用");
+        if(state.shopAvailable!==true) return showToast("商城 v3 数据库尚未启用");
         setBusy(els.wheelToolConfirmBtn,true);
         try {
           await prepareSpinSelection({oneShot,wishTarget:state.wheelToolWishTarget,usePotion,useChallenge});
@@ -9811,7 +9857,7 @@
           if (/Pending spin/i.test(message)) { await loadShopState({ silent: true }); if (state.shopPendingSpin) openPendingDecision(state.shopPendingSpin); }
           else if (/No wheel chance/i.test(message)) { await loadAppState({ silent: true }); openWheelPreviewPrompt(); }
           else if (/Guest mode required|permission/i.test(message)) { await refreshAuthState(); openWheelPreviewPrompt(); }
-          else if (/PGRST202|schema cache|Could not find/i.test(message)) showToast("请先运行积分商城 v2 数据库迁移 SQL");
+          else if (/PGRST202|schema cache|Could not find/i.test(message)) showToast("请先运行积分商城 v3 数据库迁移 SQL");
           else showToast("转盘暂时没有转起来，再试一次吧");
         }
       }
