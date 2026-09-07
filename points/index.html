@@ -9286,7 +9286,10 @@
         if(els.adminInventorySettingsValue) els.adminInventorySettingsValue.textContent=`共 ${total} 个`;
         els.adminInventoryList.innerHTML=SHOP_INVENTORY_CODES.map(code=>{
           const item=SHOP_ITEMS[code],qty=Math.max(0,Number(inv[code]||0));
-          return `<button class="admin-inventory-row pressable" data-admin-inventory-code="${code}" type="button"><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="admin-inventory-row-copy"><strong>${escapeHTML(item.name)}</strong><small>${code==="mystery_box"?"管理员发放后进入背包 · 游客手动开启":"库存数量可由管理员发放或回收"}</small></span><span class="admin-inventory-row-count">× ${qty}　›</span></button>`;
+          const summary=code==="mystery_box"
+            ? "手动打开后随机获得奖励 · 正式转盘券为 1% 超稀有掉落"
+            : item.desc;
+          return `<button class="admin-inventory-row pressable" data-admin-inventory-code="${code}" type="button"><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="admin-inventory-row-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(summary)}</small></span><span class="admin-inventory-row-count">× ${qty}　›</span></button>`;
         }).join("");
       }
 
