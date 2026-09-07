@@ -6434,7 +6434,56 @@
       .shop-product-cover { height:96px; }
     }
 
-  </style>
+  
+    /* 连续 7 天奖励设置：沿用当前统一居中玻璃弹窗语言 */
+    #scheduleRewardSettingsLayer.modal-layer.alert-layer .alert {
+      width:min(calc(100% - 28px),334px) !important;
+      border-radius:27px !important;
+      border:1px solid rgba(255,255,255,.88) !important;
+      background:linear-gradient(145deg,rgba(255,255,255,.34),rgba(255,239,247,.13) 48%),var(--glass-fill-strong) !important;
+      box-shadow:0 24px 72px rgba(126,79,105,.14),inset 0 1px 0 rgba(255,255,255,.54) !important;
+      -webkit-backdrop-filter:blur(36px) saturate(190%) !important;
+      backdrop-filter:blur(36px) saturate(190%) !important;
+      padding:0 !important; overflow:hidden !important;
+      transform:scale(.88) !important; opacity:0 !important;
+      transition:transform .28s var(--ease-ios),opacity .20s ease !important;
+    }
+    #scheduleRewardSettingsLayer.modal-layer.alert-layer.open .alert { transform:scale(1) !important; opacity:1 !important; }
+    #scheduleRewardSettingsLayer .alert-content { text-align:center !important; }
+    #scheduleRewardSettingsLayer .change-icon {
+      width:42px !important; height:42px !important; margin:0 auto 9px !important; border-radius:15px !important;
+      display:grid !important; place-items:center !important; font-size:21px !important; background:rgba(255,255,255,.38) !important;
+      border:1px solid rgba(255,255,255,.64) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 7px 18px rgba(40,45,60,.06) !important;
+    }
+    #scheduleRewardSettingsLayer .alert-title { color:var(--ink) !important; font-size:17px !important; font-weight:730 !important; }
+    #scheduleRewardSettingsLayer .alert-message { color:var(--secondary) !important; font-size:13px !important; line-height:1.45 !important; }
+    #scheduleRewardSettingsLayer .wheel-adjust-value-card {
+      margin:12px 0 8px !important; padding:6px 0 7px !important; border:0 !important; border-radius:0 !important;
+      background:transparent !important; box-shadow:none !important;
+    }
+    #scheduleRewardSettingsLayer .wheel-adjust-value-line strong { font-size:35px !important; }
+    #scheduleRewardSettingsLayer .wheel-adjust-stepper { margin:9px 0 5px !important; }
+    #scheduleRewardSettingsLayer .wheel-adjust-step,
+    #scheduleRewardSettingsLayer .wheel-adjust-next {
+      border-color:rgba(255,255,255,.58) !important; background:rgba(255,255,255,.22) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.58) !important;
+    }
+    #scheduleRewardSettingsLayer .wheel-adjust-preview {
+      background:transparent !important; border:0 !important; box-shadow:none !important; min-height:0 !important; padding:6px 0 0 !important;
+    }
+    #scheduleRewardSettingsLayer .alert-actions {
+      display:grid !important; grid-template-columns:1fr !important; gap:0 !important; margin:0 !important; padding:0 !important;
+      border-top:1px solid var(--hairline) !important; background:rgba(255,255,255,.06) !important;
+    }
+    #scheduleRewardSettingsLayer .alert-button {
+      min-height:49px !important; margin:0 !important; padding:0 14px !important; border:0 !important; border-radius:0 !important;
+      box-shadow:none !important; background:transparent !important; color:var(--secondary) !important; font-size:16px !important;
+    }
+    #scheduleRewardSettingsLayer .alert-button + .alert-button { border-top:1px solid var(--hairline) !important; }
+    #scheduleRewardSettingsLayer .alert-button.primary-action {
+      color:var(--blue) !important; background:rgba(255,255,255,.12) !important; font-weight:720 !important;
+    }
+</style>
 </head>
 <body>
 <div aria-hidden="true" class="background">
@@ -6582,7 +6631,7 @@
 <button class="score-reward-notice pressable" hidden id="scoreRewardNotice" type="button">
 <span aria-hidden="true" class="score-reward-notice-icon" id="scoreRewardNoticeIcon">🎉</span>
 <span class="score-reward-notice-copy">
-<strong id="scoreRewardNoticeText">连续 7 天排班已完成 · 待奖励 +1 分</strong>
+<strong id="scoreRewardNoticeText">连续 7 天排班已完成 · 待奖励 +2 分</strong>
 <small id="scoreRewardNoticeMeta">点击确认发放</small>
 </span>
 <span aria-hidden="true" class="score-reward-notice-chevron">›</span>
@@ -6782,6 +6831,13 @@
 <button class="settings-row destructive pressable" id="resetBtn" type="button">
 <span>重置积分</span>
 <span class="settings-value">恢复到 5 <span class="chevron">›</span></span>
+</button>
+</div>
+<div class="settings-label">排班奖励</div>
+<div class="settings-group">
+<button class="settings-row pressable" id="openScheduleRewardSettingsBtn" type="button">
+<span>连续 7 天奖励</span>
+<span class="settings-value"><span id="scheduleWeeklyRewardSettingsValue">2 分</span> <span class="chevron">›</span></span>
 </button>
 </div>
 <div class="settings-label">大转盘管理</div>
@@ -7494,6 +7550,36 @@
 </div>
 </div>
 
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="scheduleRewardSettingsLayer">
+<div aria-labelledby="scheduleRewardSettingsTitle" aria-modal="true" class="alert change-alert schedule-reward-settings-alert" role="alertdialog">
+<div class="alert-content">
+<div aria-hidden="true" class="change-icon">🎁</div>
+<div class="alert-title" id="scheduleRewardSettingsTitle">连续 7 天奖励</div>
+<div class="alert-message">管理员设置 · 修改后所有尚未领取的 7 天奖励会同步为新分数，已领取历史不会改变</div>
+
+<div class="wheel-adjust-value-card">
+<span>当前奖励</span>
+<div class="wheel-adjust-value-line"><strong id="scheduleRewardSettingsCurrent">2</strong><em>分</em></div>
+</div>
+
+<div class="wheel-adjust-stepper">
+<button aria-label="奖励减少一分" class="wheel-adjust-step pressable" id="scheduleRewardSettingsMinusBtn" type="button">−</button>
+<div class="wheel-adjust-next">
+<small>调整后</small>
+<strong id="scheduleRewardSettingsNext">2 分</strong>
+</div>
+<button aria-label="奖励增加一分" class="wheel-adjust-step pressable" id="scheduleRewardSettingsPlusBtn" type="button">+</button>
+</div>
+
+<div class="change-preview wheel-adjust-preview" id="scheduleRewardSettingsPreview">连续 7 天 → +2 分</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="scheduleRewardSettingsSaveBtn" type="button">保存奖励 · +2 分</button>
+<button class="alert-button pressable" id="scheduleRewardSettingsCancelBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="scheduleRewardLayer">
 <div aria-labelledby="scheduleRewardTitle" aria-modal="true" class="alert change-alert" role="alertdialog">
 <div class="alert-content">
@@ -7501,10 +7587,10 @@
 <div class="alert-title" id="scheduleRewardTitle">连续排班奖励</div>
 <div class="alert-message" id="scheduleRewardMessage">已满足奖励条件</div>
 <div class="schedule-reward-period" id="scheduleRewardPeriod"></div>
-<div class="schedule-reward-points" id="scheduleRewardPoints">+1</div>
+<div class="schedule-reward-points" id="scheduleRewardPoints">+2</div>
 </div>
 <div class="alert-actions vertical">
-<button class="alert-button primary-action pressable" id="scheduleRewardConfirmBtn" type="button">确认发放 +1</button>
+<button class="alert-button primary-action pressable" id="scheduleRewardConfirmBtn" type="button">确认发放 +2</button>
 <button class="alert-button pressable" id="scheduleRewardCancelBtn" type="button">稍后处理</button>
 </div>
 </div>
@@ -7679,6 +7765,8 @@
         openLoginBtn: $("#openLoginBtn"),
         logoutBtn: $("#logoutBtn"),
         resetBtn: $("#resetBtn"),
+        openScheduleRewardSettingsBtn: $("#openScheduleRewardSettingsBtn"),
+        scheduleWeeklyRewardSettingsValue: $("#scheduleWeeklyRewardSettingsValue"),
         openWheelProbabilityBtn: $("#openWheelProbabilityBtn"),
         openWheelProbabilityHistoryBtn: $("#openWheelProbabilityHistoryBtn"),
         wheelProbabilityLayer: $("#wheelProbabilityLayer"),
@@ -7791,6 +7879,14 @@
         wheelAdjustPlusBtn: $("#wheelAdjustPlusBtn"),
         wheelAdjustConfirmBtn: $("#wheelAdjustConfirmBtn"),
         wheelAdjustCancelBtn: $("#wheelAdjustCancelBtn"),
+        scheduleRewardSettingsLayer: $("#scheduleRewardSettingsLayer"),
+        scheduleRewardSettingsCurrent: $("#scheduleRewardSettingsCurrent"),
+        scheduleRewardSettingsNext: $("#scheduleRewardSettingsNext"),
+        scheduleRewardSettingsPreview: $("#scheduleRewardSettingsPreview"),
+        scheduleRewardSettingsMinusBtn: $("#scheduleRewardSettingsMinusBtn"),
+        scheduleRewardSettingsPlusBtn: $("#scheduleRewardSettingsPlusBtn"),
+        scheduleRewardSettingsSaveBtn: $("#scheduleRewardSettingsSaveBtn"),
+        scheduleRewardSettingsCancelBtn: $("#scheduleRewardSettingsCancelBtn"),
         scheduleRewardLayer: $("#scheduleRewardLayer"),
         scheduleRewardIcon: $("#scheduleRewardIcon"),
         scheduleRewardTitle: $("#scheduleRewardTitle"),
@@ -7890,6 +7986,8 @@
         changeSign: 1,
         changeMagnitude: 1,
         wheelAdjustDelta: 1,
+        scheduleWeeklyRewardPoints: 2,
+        scheduleRewardDraftPoints: 2,
         scheduleProgress: null,
         pendingScheduleRewards: [],
         selectedScheduleRewardId: null,
@@ -8038,7 +8136,8 @@
           els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer,
           els.changeLayer, els.redeemLayer, els.shopItemLayer, els.shopRevealLayer, els.wheelToolLayer, els.wheelDecisionLayer, els.wheelPreviewLayer, els.wheelResultLayer,
           els.wheelWithdrawLayer, els.settleWithdrawalLayer,
-          els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer, els.resetLayer
+          els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer,
+          els.scheduleRewardSettingsLayer, els.scheduleRewardLayer, els.resetLayer
         ].filter(Boolean).forEach(layer => setLayer(layer, false));
       }
 
@@ -8072,6 +8171,7 @@
           if (els.wheelProbabilityHistoryLayer.classList.contains("open")) setLayer(els.wheelProbabilityHistoryLayer, false);
           if (els.settleWithdrawalLayer.classList.contains("open")) setLayer(els.settleWithdrawalLayer, false);
           if (els.wheelAdjustLayer.classList.contains("open")) setLayer(els.wheelAdjustLayer, false);
+          if (els.scheduleRewardSettingsLayer.classList.contains("open")) setLayer(els.scheduleRewardSettingsLayer, false);
           if (els.scheduleRewardLayer.classList.contains("open")) setLayer(els.scheduleRewardLayer, false);
           state.pendingScheduleRewards = [];
         }
@@ -8134,6 +8234,7 @@
           const info = workScheduleModule.getHomeSummary();
           const progress = workScheduleModule.getProgressSummary();
           if (progress) {
+            const weeklyRewardPoints = scheduleWeeklyRewardPoints();
             const streak = Math.max(0, Number(progress.streak_days || 0));
             const roundDays = Math.max(0, Number(progress.days_in_current_week || 0));
             const remaining = Math.max(1, Number(progress.days_until_weekly || 7));
@@ -8143,10 +8244,10 @@
               primary.textContent = `🌷 已连续记录 ${streak} 天 · 今天登记后继续累计`;
             } else if (streak > 0 && roundDays === 0) {
               primary.textContent = weeklyPending > 0
-                ? `🎉 已连续记录 ${streak} 天 · +1 分等待管理员发放`
+                ? `🎉 已连续记录 ${streak} 天 · +${weeklyRewardPoints} 分等待管理员发放`
                 : `🎉 已连续记录 ${streak} 天 · 新一轮从下一天开始`;
             } else if (streak > 0) {
-              primary.textContent = `📅 已连续记录 ${streak} 天 · 再 ${remaining} 天获得 +1 分`;
+              primary.textContent = `📅 已连续记录 ${streak} 天 · 再 ${remaining} 天获得 +${weeklyRewardPoints} 分`;
             } else {
               primary.textContent = "📅 今天登记排班或休息，开始连续记录";
             }
@@ -8412,6 +8513,104 @@
         }
       }
 
+      function scheduleWeeklyRewardPoints() {
+        const raw = Number(state.scheduleWeeklyRewardPoints);
+        return Number.isInteger(raw) && raw >= 1 && raw <= 99 ? raw : 2;
+      }
+
+      function renderScheduleRewardConfigUI() {
+        const points = scheduleWeeklyRewardPoints();
+        if (els.scheduleWeeklyRewardSettingsValue) els.scheduleWeeklyRewardSettingsValue.textContent = `${points} 分`;
+      }
+
+      async function loadScheduleRewardConfig({ silent = true } = {}) {
+        try {
+          const { data, error } = await db.rpc("work_schedule_get_reward_config");
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          const points = Number(row?.weekly_points);
+          if (Number.isInteger(points) && points >= 1 && points <= 99) {
+            state.scheduleWeeklyRewardPoints = points;
+          }
+          renderScheduleRewardConfigUI();
+          if (state.activeMetric === "schedule") renderMetricSwitch();
+          return scheduleWeeklyRewardPoints();
+        } catch (err) {
+          console.error("loadScheduleRewardConfig:", err);
+          renderScheduleRewardConfigUI();
+          if (!silent) {
+            const message = String(err?.message || "");
+            showToast(/PGRST202|Could not find|work_schedule_get_reward_config/i.test(message)
+              ? "请先运行连续奖励设置 SQL"
+              : "读取连续奖励设置失败");
+          }
+          return scheduleWeeklyRewardPoints();
+        }
+      }
+
+      function renderScheduleRewardSettingsPrompt() {
+        const current = scheduleWeeklyRewardPoints();
+        const draft = Math.min(99, Math.max(1, Number(state.scheduleRewardDraftPoints || current)));
+        state.scheduleRewardDraftPoints = draft;
+        els.scheduleRewardSettingsCurrent.textContent = String(current);
+        els.scheduleRewardSettingsNext.textContent = `${draft} 分`;
+        els.scheduleRewardSettingsPreview.textContent = `连续 7 天 → +${draft} 分`;
+        els.scheduleRewardSettingsMinusBtn.disabled = draft <= 1;
+        els.scheduleRewardSettingsPlusBtn.disabled = draft >= 99;
+        els.scheduleRewardSettingsSaveBtn.textContent = `保存奖励 · +${draft} 分`;
+      }
+
+      async function openScheduleRewardSettings() {
+        if (!state.isAdmin) return showToast("需要管理员权限");
+        setLayer(els.settingsLayer, false);
+        await loadScheduleRewardConfig({ silent: false });
+        state.scheduleRewardDraftPoints = scheduleWeeklyRewardPoints();
+        renderScheduleRewardSettingsPrompt();
+        setLayer(els.scheduleRewardSettingsLayer, true);
+        vibrate(8);
+      }
+
+      function adjustScheduleRewardDraft(delta) {
+        const current = Number(state.scheduleRewardDraftPoints || scheduleWeeklyRewardPoints());
+        state.scheduleRewardDraftPoints = Math.min(99, Math.max(1, current + Number(delta || 0)));
+        renderScheduleRewardSettingsPrompt();
+        vibrate(4);
+      }
+
+      async function saveScheduleRewardSettings() {
+        if (!state.isAdmin) return showToast("需要管理员权限");
+        const points = Math.min(99, Math.max(1, Number(state.scheduleRewardDraftPoints || 2)));
+        setBusy(els.scheduleRewardSettingsSaveBtn, true);
+        try {
+          const { data, error } = await db.rpc("work_schedule_admin_set_weekly_reward_points", { p_points: points });
+          if (error) throw error;
+          const row = Array.isArray(data) ? data[0] : data;
+          const saved = Number(row?.weekly_points ?? points);
+          state.scheduleWeeklyRewardPoints = Number.isInteger(saved) ? saved : points;
+          renderScheduleRewardConfigUI();
+          setLayer(els.scheduleRewardSettingsLayer, false);
+          await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
+          renderPrimaryMetric();
+          vibrate(14);
+          showToast(`🎁 连续 7 天奖励已设为 +${scheduleWeeklyRewardPoints()} 分`);
+        } catch (err) {
+          console.error("saveScheduleRewardSettings:", err);
+          const message = String(err?.message || "");
+          if (/permission|admin/i.test(message)) {
+            await refreshAuthState();
+            showToast("管理员权限已失效");
+          } else if (/between 1 and 99|22023/i.test(message)) {
+            showToast("奖励分数只能设置为 1–99 分");
+          } else if (/PGRST202|Could not find|work_schedule_admin_set_weekly_reward_points/i.test(message)) {
+            showToast("请先运行连续奖励设置 SQL");
+          } else {
+            showToast("保存连续奖励设置失败");
+          }
+        } finally {
+          setBusy(els.scheduleRewardSettingsSaveBtn, false);
+        }
+      }
+
       function formatScheduleRewardDate(dateKey) {
         const [y,m,d] = String(dateKey || "").split("-").map(Number);
         if (!y || !m || !d) return String(dateKey || "");
@@ -8426,10 +8625,11 @@
         if (!visible) return;
 
         const isFourWeek = String(reward.reward_type) === "four_week";
+        const rewardPoints = Math.max(1, Number(reward.points || (isFourWeek ? 10 : scheduleWeeklyRewardPoints())));
         els.scoreRewardNoticeIcon.textContent = isFourWeek ? "🏆" : "🎉";
         els.scoreRewardNoticeText.textContent = isFourWeek
-          ? "连续 4 个七天已完成 · 待奖励 +10 分"
-          : "连续 7 天排班已完成 · 待奖励 +1 分";
+          ? `连续 4 个七天已完成 · 待奖励 +${rewardPoints} 分`
+          : `连续 7 天排班已完成 · 待奖励 +${rewardPoints} 分`;
         const extra = state.pendingScheduleRewards.length > 1 ? ` · 还有 ${state.pendingScheduleRewards.length - 1} 项` : "";
         els.scoreRewardNoticeMeta.textContent = `点击确认发放${extra}`;
       }
@@ -8445,7 +8645,7 @@
         if (!reward) return showToast("当前没有待发放的排班奖励");
         state.selectedScheduleRewardId = Number(reward.id);
         const isFourWeek = String(reward.reward_type) === "four_week";
-        const points = Number(reward.points || (isFourWeek ? 10 : 1));
+        const points = Number(reward.points || (isFourWeek ? 10 : scheduleWeeklyRewardPoints()));
         els.scheduleRewardIcon.textContent = isFourWeek ? "🏆" : "🎉";
         els.scheduleRewardTitle.textContent = isFourWeek ? "连续 4 周排班大奖" : "连续排班奖励";
         els.scheduleRewardMessage.textContent = isFourWeek
@@ -11679,6 +11879,7 @@
 
         async function refreshProgress({ sync = true, refreshPending = state.isAdmin } = {}) {
           const today = localDateKey();
+          await loadScheduleRewardConfig({ silent: true });
           try {
             if (sync) {
               const syncRes = await db.rpc("work_schedule_sync_rewards", { p_today: today });
@@ -12567,7 +12768,11 @@
       bindCompactSheetDrag(els.releaseNotesLayer);
 
       // -------------------- Events --------------------
-      els.settingsBtn.addEventListener("click", () => { vibrate(); setLayer(els.settingsLayer, true); });
+      els.settingsBtn.addEventListener("click", () => {
+        vibrate();
+        setLayer(els.settingsLayer, true);
+        if (state.isAdmin) void loadScheduleRewardConfig({ silent: true });
+      });
       els.settingsLayer.addEventListener("click", (e) => {
         if (performance.now() < suppressSettingsClickUntil) { e.preventDefault(); e.stopPropagation(); return; }
         if (e.target === els.settingsLayer) setLayer(els.settingsLayer, false);
@@ -12578,6 +12783,7 @@
       els.settingsSheet.addEventListener("pointercancel", endSettingsDrag);
 
       els.openVersionInfoBtn.addEventListener("click", () => { setLayer(els.settingsLayer, false); setLayer(els.versionInfoLayer, true); });
+      els.openScheduleRewardSettingsBtn.addEventListener("click", () => void openScheduleRewardSettings());
       els.openWheelProbabilityBtn.addEventListener("click", openWheelProbabilitySettings);
       els.openWheelProbabilityHistoryBtn.addEventListener("click", openWheelProbabilityHistory);
       els.wheelProbabilityGrid.addEventListener("input", () => { updateWheelProbabilityTotal(); renderWheelProbabilityStudio(); });
@@ -12810,6 +13016,11 @@
       els.scheduleRewardLayer.addEventListener("click", (e) => { if (e.target === els.scheduleRewardLayer) setLayer(els.scheduleRewardLayer, false); });
       els.scheduleRewardCancelBtn.addEventListener("click", () => { state.selectedScheduleRewardId = null; setLayer(els.scheduleRewardLayer, false); });
       els.scheduleRewardConfirmBtn.addEventListener("click", claimScheduleReward);
+      els.scheduleRewardSettingsMinusBtn.addEventListener("click", () => adjustScheduleRewardDraft(-1));
+      els.scheduleRewardSettingsPlusBtn.addEventListener("click", () => adjustScheduleRewardDraft(1));
+      els.scheduleRewardSettingsSaveBtn.addEventListener("click", () => void saveScheduleRewardSettings());
+      els.scheduleRewardSettingsCancelBtn.addEventListener("click", () => setLayer(els.scheduleRewardSettingsLayer, false));
+      els.scheduleRewardSettingsLayer.addEventListener("click", (e) => { if (e.target === els.scheduleRewardSettingsLayer) setLayer(els.scheduleRewardSettingsLayer, false); });
 
       window.addEventListener("resize", () => { if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit(); }, { passive: true });
       window.visualViewport?.addEventListener("resize", () => { if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit(); }, { passive: true });
@@ -12871,6 +13082,7 @@
         if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
         if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
         if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
+        if (els.scheduleRewardSettingsLayer.classList.contains("open")) return setLayer(els.scheduleRewardSettingsLayer, false);
         if (els.scheduleRewardLayer.classList.contains("open")) return setLayer(els.scheduleRewardLayer, false);
         if (els.wheelAdjustLayer.classList.contains("open")) return setLayer(els.wheelAdjustLayer, false);
         if (els.changeLayer.classList.contains("open")) { closeChangeAmountMenu(); return setLayer(els.changeLayer, false); }
