@@ -7498,8 +7498,8 @@
 <div aria-labelledby="shopWeeklyGiftTitle" aria-modal="true" class="alert shop-item-alert" role="alertdialog">
 <div class="alert-content">
 <div class="shop-detail-cover shop-theme-mystery"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/></svg></div>
-<div class="alert-title" id="shopWeeklyGiftTitle">领取本周免费盲盒？</div>
-<div class="alert-message">每周可以免费领取 1 个幸运盲盒。确认领取后会立刻打开，抽中的奖励会自动进入「我的道具」♡</div>
+<div class="alert-title" id="shopWeeklyGiftTitle">领取本周免费幸运盲盒？</div>
+<div class="alert-message">每周可以免费领取 1 个免费幸运盲盒。确认后会立刻使用免费奖励池开奖，抽中的奖励会自动进入「我的道具」♡</div>
 </div>
 <div class="alert-actions vertical">
 <button class="alert-button primary-action pressable" id="shopWeeklyGiftConfirmBtn" type="button">免费领取并打开 ✦</button>
@@ -7511,7 +7511,7 @@
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="shopMysteryOpenLayer">
 <div aria-labelledby="shopMysteryOpenTitle" aria-modal="true" class="alert shop-item-alert" role="alertdialog">
 <div class="alert-content">
-<div class="shop-detail-cover shop-theme-mystery"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/></svg></div>
+<div class="shop-detail-cover shop-theme-mystery" id="shopMysteryOpenCover"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/></svg></div>
 <div class="alert-title" id="shopMysteryOpenTitle">打开幸运盲盒？</div>
 <div class="alert-message" id="shopMysteryOpenMessage">会从背包消耗 1 个幸运盲盒，并立即揭晓奖励。</div>
 </div>
@@ -7960,6 +7960,8 @@
         shopWeeklyGiftConfirmBtn: $("#shopWeeklyGiftConfirmBtn"),
         shopWeeklyGiftCancelBtn: $("#shopWeeklyGiftCancelBtn"),
         shopMysteryOpenLayer: $("#shopMysteryOpenLayer"),
+        shopMysteryOpenCover: $("#shopMysteryOpenCover"),
+        shopMysteryOpenTitle: $("#shopMysteryOpenTitle"),
         shopMysteryOpenMessage: $("#shopMysteryOpenMessage"),
         shopMysteryOpenConfirmBtn: $("#shopMysteryOpenConfirmBtn"),
         shopMysteryOpenCancelBtn: $("#shopMysteryOpenCancelBtn"),
@@ -8087,7 +8089,8 @@
         shopAvailable: null,
         shopView: "products",
         shopSelectedCode: null,
-        shopInventory: { shield30:0, upgrade:0, double_pick:0, lucky100:0, restart:0, wish:0, triple_challenge:0, no10:0, return10:0, heartbeat:0 },
+        shopMysteryOpenCode: null,
+        shopInventory: { shield30:0, upgrade:0, double_pick:0, lucky100:0, restart:0, wish:0, triple_challenge:0, no10:0, return10:0, heartbeat:0, mystery_box:0, free_mystery_box:0 },
         shopWeekly: {},
         shopWeeklyFeature: null,
         adminInventory: {},
@@ -9016,11 +9019,15 @@
         },
         mystery_box: {
           code:"mystery_box", name:"幸运盲盒", coverWord:"MYSTERY", price:2, theme:"mystery",
-          desc:"2 分开启随机奖励，正式转盘券是 1% 超稀有掉落。", detail:"商城兑换后会立即开启；每周最多兑换 5 次。管理员发放到背包里的盲盒则需要你手动打开。¥30 小金库不会出现在盲盒中；正式转盘券以 1% 的超低概率出现，其余普通道具会直接进入“我的道具”。", weeklyLimit:5, instantOpen:true
+          desc:"2 分开启常规奖励池，正式转盘券是 1% 超稀有掉落。", detail:"商城兑换后会立即开启；每周最多兑换 5 次。管理员发放到背包里的常规盲盒则需要手动打开。¥30 小金库不会出现在盲盒中；正式转盘券以 1% 的超低概率出现，其余普通道具会直接进入“我的道具”。", weeklyLimit:5, instantOpen:true
+        },
+        free_mystery_box: {
+          code:"free_mystery_box", name:"免费幸运盲盒", coverWord:"WEEKLY GIFT", price:0, theme:"mystery", purchasable:false,
+          desc:"免费奖励池盲盒 · 弱道具权重更高，正式转盘券仍为 1%。", detail:"用于每周免费福利或管理员发放。进入背包后需要手动打开；开奖使用免费池：弱道具权重更高，但仍保留 1% 正式转盘券彩蛋。", weeklyLimit:0
         }
       };
 
-      const SHOP_INVENTORY_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat","mystery_box"];
+      const SHOP_INVENTORY_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat","mystery_box","free_mystery_box"];
       const SHOP_ONE_SHOT_CODES = ["shield30","upgrade","double_pick","restart","wish","no10","return10"];
       const SHOP_WHEEL_TOOL_CODES = [...SHOP_ONE_SHOT_CODES,"lucky100","triple_challenge","heartbeat"];
       const SHOP_FEATURE_ELIGIBLE_CODES = ["mystery_box"];
@@ -9040,7 +9047,8 @@
           no10: `<svg ${attrs}><circle cx="32" cy="32" r="22"/><path d="M16.5 47.5 47.5 16.5"/><path d="M23 26v12M20.5 28.5 23 26l2.5 2.5" opacity=".58"/><ellipse cx="37.5" cy="32" rx="5.5" ry="7.5" opacity=".7"/></svg>`,
           return10: `<svg ${attrs}><path d="M17.5 24.5A18 18 0 1 1 17 40"/><path d="M18 15.5v9.5h9.5"/><path d="M25 29.5h14v12H25z" opacity=".36"/><path d="M28 33.5h8M28 37.5h5"/><path d="m14.5 38.5 2.5 2.5-2.5 2.5"/></svg>`,
           heartbeat: `<svg ${attrs}><path d="M32 51S13 40.5 13 25.8C13 18 18.2 13 24.5 13c3.6 0 6.1 1.7 7.5 4.5C33.4 14.7 35.9 13 39.5 13 45.8 13 51 18 51 25.8 51 40.5 32 51 32 51Z"/><path d="M18.5 32h7l3.2-7.5 5.2 15 3.2-7.5h8.4" opacity=".72"/></svg>`,
-          mystery_box: `<svg ${attrs}><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/><path d="m49 35 1.8 3.7 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L49 35Z" fill="currentColor" stroke="none" opacity=".55"/></svg>`
+          mystery_box: `<svg ${attrs}><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/><path d="m49 35 1.8 3.7 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L49 35Z" fill="currentColor" stroke="none" opacity=".55"/></svg>`,
+          free_mystery_box: `<svg ${attrs}><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/><path d="m48 34 2.2 4.4 4.8.7-3.5 3.4.8 4.8-4.3-2.3-4.3 2.3.8-4.8-3.5-3.4 4.8-.7L48 34Z" fill="currentColor" stroke="none" opacity=".72"/><circle cx="16.5" cy="17" r="3.2" fill="currentColor" stroke="none" opacity=".32"/></svg>`
         };
         return icons[code] || icons.wheel_ticket;
       }
@@ -9128,14 +9136,14 @@
       }
 
       function renderShopFeatured() {
-        const item = SHOP_ITEMS.mystery_box;
+        const item = SHOP_ITEMS.free_mystery_box;
         const available = shopWeeklyGiftAvailable();
         const label = available ? "✦ WEEKLY GIFT · 本周免费" : "✦ WEEKLY GIFT · 本周已领取";
-        const price = available ? `<s>${item.price} ✦</s><span class="shop-featured-sale">免费</span>` : `下周一刷新`;
-        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-weekly-mystery-claim="1" type="button" ${available?"":"disabled"}><span class="shop-featured-copy"><span class="shop-featured-label special">${label}</span><h3>${escapeHTML(item.name)}</h3><p>${available?"每周免费领取 1 个 · 领取后自动打开，奖励直接进入背包 ♡":"这周的小礼物已经收下啦 ♡"}</p><span class="shop-featured-price${available?" free":""}">${price}</span></span><span class="shop-featured-art shop-theme-${item.theme}">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${available?"点击领取 · 不占每周 5 次付费限购":"下周再来看看新的幸运 ✦"}</span></button>`;
+        const price = available ? `<span class="shop-featured-sale">免费</span>` : `下周一刷新`;
+        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-weekly-mystery-claim="1" type="button" ${available?"":"disabled"}><span class="shop-featured-copy"><span class="shop-featured-label special">${label}</span><h3>${escapeHTML(item.name)}</h3><p>${available?"每周免费领取 1 个 · 使用免费奖励池 · 领取后自动打开 ♡":"这周的小礼物已经收下啦 ♡"}</p><span class="shop-featured-price${available?" free":""}">${price}</span></span><span class="shop-featured-art shop-theme-${item.theme}">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${available?"点击领取 · 不占每周 5 次付费限购":"下周再来看看新的幸运 ✦"}</span></button>`;
       }
 
-      function renderShopProducts() { renderShopFeatured(); els.shopGrid.innerHTML = Object.values(SHOP_ITEMS).map(shopProductCardHTML).join(""); }
+      function renderShopProducts() { renderShopFeatured(); els.shopGrid.innerHTML = Object.values(SHOP_ITEMS).filter(item=>item.purchasable!==false).map(shopProductCardHTML).join(""); }
 
       function renderShopInventory() {
         const rows = SHOP_INVENTORY_CODES.filter(code => Number(state.shopInventory?.[code] || 0) > 0 || (code === "lucky100" && state.shopLuckyRemaining > 0) || (code === "triple_challenge" && state.shopChallengeActive));
@@ -9148,10 +9156,12 @@
           if (activePotion) copy = `生效中 · 还剩 ${state.shopLuckyRemaining} 抽；每抽 ¥100 +2%`;
           if (activeChallenge) copy = `挑战进行中 · 已完成 ${state.shopChallengeSpinsDone}/3 抽 · ≥¥50 ${state.shopChallengeHits}/2`;
           if (code === "heartbeat" && qty > 0) copy = "无需提前选择 · 当本抽没有使用其它单次卡且结果≤¥30时自动询问";
-          if (code === "mystery_box") copy = "管理员发放的盲盒会保存在这里 · 点击手动开启";
-          const tag = code === "mystery_box" ? "button" : "div";
-          const attrs = code === "mystery_box" ? ` type="button" data-open-mystery-box="1"` : "";
-          return `<${tag} class="shop-inventory-row${code === "mystery_box" ? " openable pressable" : ""}"${attrs}><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="shop-inventory-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(copy)}</small></span><span class="shop-inventory-count">${activePotion ? `剩 ${state.shopLuckyRemaining} 抽` : activeChallenge ? `${state.shopChallengeSpinsDone}/3` : `× ${qty}`}</span></${tag}>`;
+          const isMysteryBox = code === "mystery_box" || code === "free_mystery_box";
+          if (code === "mystery_box") copy = "常规奖励池 · 点击手动开启";
+          if (code === "free_mystery_box") copy = "免费奖励池 · 弱道具权重更高 · 点击手动开启";
+          const tag = isMysteryBox ? "button" : "div";
+          const attrs = isMysteryBox ? ` type="button" data-open-mystery-box="${code}"` : "";
+          return `<${tag} class="shop-inventory-row${isMysteryBox ? " openable pressable" : ""}"${attrs}><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="shop-inventory-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(copy)}</small></span><span class="shop-inventory-count">${activePotion ? `剩 ${state.shopLuckyRemaining} 抽` : activeChallenge ? `${state.shopChallengeSpinsDone}/3` : `× ${qty}`}</span></${tag}>`;
         }).join("");
         const activeBits = [];
         if (state.shopLuckyRemaining > 0) activeBits.push(`${shopIconSVG("lucky100")}<div><strong>百元幸运药水正在生效</strong><small>¥100 +2% · 还剩 ${state.shopLuckyRemaining} 次正式抽奖</small></div>`);
@@ -9254,28 +9264,37 @@
         } finally { setBusy(els.shopWeeklyGiftConfirmBtn,false); }
       }
 
-      function openBackpackMysteryPrompt() {
-        const qty=Math.max(0,Number(state.shopInventory?.mystery_box||0));
-        if(qty<=0) return showToast("背包里没有幸运盲盒");
-        els.shopMysteryOpenMessage.textContent=`当前有 ${qty} 个幸运盲盒。打开后会消耗 1 个，并立即揭晓奖励。`;
+      function openBackpackMysteryPrompt(code="mystery_box") {
+        const boxCode = code === "free_mystery_box" ? "free_mystery_box" : "mystery_box";
+        const item = SHOP_ITEMS[boxCode];
+        const qty=Math.max(0,Number(state.shopInventory?.[boxCode]||0));
+        if(qty<=0) return showToast(`背包里没有${item.name}`);
+        state.shopMysteryOpenCode=boxCode;
+        if(els.shopMysteryOpenCover){ els.shopMysteryOpenCover.className=`shop-detail-cover shop-theme-${item.theme}`; els.shopMysteryOpenCover.innerHTML=shopIconSVG(boxCode); }
+        if(els.shopMysteryOpenTitle) els.shopMysteryOpenTitle.textContent=`打开${item.name}？`;
+        els.shopMysteryOpenMessage.textContent=boxCode==="free_mystery_box"
+          ? `当前有 ${qty} 个免费幸运盲盒。打开后会消耗 1 个，并按免费奖励池立即揭晓奖励。`
+          : `当前有 ${qty} 个幸运盲盒。打开后会消耗 1 个，并按常规奖励池立即揭晓奖励。`;
         setLayer(els.shopMysteryOpenLayer,true); vibrate(7);
       }
 
       async function openBackpackMysteryBox() {
+        const boxCode = state.shopMysteryOpenCode === "free_mystery_box" ? "free_mystery_box" : "mystery_box";
+        const rpc = boxCode === "free_mystery_box" ? "points_shop_open_free_mystery_box" : "points_shop_open_mystery_box";
         setBusy(els.shopMysteryOpenConfirmBtn,true);
         try {
-          const {data,error}=await db.rpc("points_shop_open_mystery_box");
+          const {data,error}=await db.rpc(rpc);
           if(error) throw error;
           const result=Array.isArray(data)?data[0]:data;
           normalizeShopState(result||{});
           await loadShopState({silent:true});
-          setLayer(els.shopMysteryOpenLayer,false); renderShop(); renderWheelItemNotice();
+          setLayer(els.shopMysteryOpenLayer,false); state.shopMysteryOpenCode=null; renderShop(); renderWheelItemNotice();
           const grant=String(result?.granted_item_code||"");
           if(grant) openMysteryReveal(grant);
         } catch(err) {
           console.error("openBackpackMysteryBox:",err);
           if(shopMissingError(err)) showToast("请先运行最新商城数据库更新 SQL");
-          else showToast(/No mystery box/i.test(String(err?.message||""))?"背包里已经没有盲盒啦":"盲盒开启失败，请稍后再试");
+          else showToast(/No .*mystery box/i.test(String(err?.message||""))?"背包里已经没有这个盲盒啦":"盲盒开启失败，请稍后再试");
         } finally { setBusy(els.shopMysteryOpenConfirmBtn,false); }
       }
 
@@ -9287,8 +9306,10 @@
         els.adminInventoryList.innerHTML=SHOP_INVENTORY_CODES.map(code=>{
           const item=SHOP_ITEMS[code],qty=Math.max(0,Number(inv[code]||0));
           const summary=code==="mystery_box"
-            ? "手动打开后随机获得奖励 · 正式转盘券为 1% 超稀有掉落"
-            : item.desc;
+            ? "常规奖励池 · 手动打开 · 正式转盘券 1%"
+            : code==="free_mystery_box"
+              ? "免费奖励池 · 弱道具权重更高 · 正式转盘券 1%"
+              : item.desc;
           return `<button class="admin-inventory-row pressable" data-admin-inventory-code="${code}" type="button"><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="admin-inventory-row-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(summary)}</small></span><span class="admin-inventory-row-count">× ${qty}　›</span></button>`;
         }).join("");
       }
@@ -13133,7 +13154,7 @@
         const product = e.target.closest("[data-shop-product]");
         const tab = e.target.closest("[data-shop-view]");
         if (weeklyGift) { vibrate(5); openWeeklyMysteryGiftPrompt(); return; }
-        if (mysteryOpen) { vibrate(5); openBackpackMysteryPrompt(); return; }
+        if (mysteryOpen) { vibrate(5); openBackpackMysteryPrompt(mysteryOpen.dataset.openMysteryBox); return; }
         if (product) { vibrate(5); openShopItemDetail(product.dataset.shopProduct); return; }
         if (tab) { vibrate(4); setShopView(tab.dataset.shopView); return; }
         if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false);
