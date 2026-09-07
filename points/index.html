@@ -6483,6 +6483,29 @@
     #scheduleRewardSettingsLayer .alert-button.primary-action {
       color:var(--blue) !important; background:rgba(255,255,255,.12) !important; font-weight:720 !important;
     }
+
+    .admin-inventory-alert { width:min(92vw,430px); max-height:min(82vh,720px); }
+    .admin-inventory-alert .alert-content { overflow:auto; }
+    .admin-inventory-list { margin-top:14px; display:grid; gap:8px; max-height:48vh; overflow:auto; }
+    .admin-inventory-row { width:100%; min-height:58px; border:1px solid rgba(255,255,255,.78); border-radius:17px; background:rgba(255,255,255,.28); display:grid; grid-template-columns:42px minmax(0,1fr) auto; gap:10px; align-items:center; padding:9px 11px; text-align:left; box-shadow:0 7px 20px rgba(46,55,74,.055), inset 0 1px 0 rgba(255,255,255,.62); }
+    .admin-inventory-row .shop-inventory-icon { width:42px;height:42px;border-radius:14px;display:grid;place-items:center; }
+    .admin-inventory-row .shop-inventory-icon svg, #adminInventoryAdjustIcon svg { width:28px;height:28px; }
+    .admin-inventory-row-copy strong { display:block;font-size:13.5px;font-weight:720; }
+    .admin-inventory-row-copy small { display:block;margin-top:3px;color:var(--secondary);font-size:10.5px; }
+    .admin-inventory-row-count { font-size:14px;font-weight:760;color:rgba(80,68,58,.78);white-space:nowrap; }
+    .admin-inventory-stepper { margin:17px auto 3px; display:grid; grid-template-columns:56px 90px 56px; align-items:center; justify-content:center; gap:10px; }
+    .admin-inventory-stepper button { width:56px;height:48px;border:none;border-radius:16px;background:rgba(255,255,255,.52);font-size:28px;font-weight:430;box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 6px 18px rgba(40,50,68,.06); }
+    .admin-inventory-stepper strong { font-size:36px;font-weight:560;text-align:center;letter-spacing:-.04em; }
+    #adminInventoryAdjustIcon { width:52px;height:52px;border-radius:17px;margin:0 auto 10px;display:grid;place-items:center; }
+    .admin-grant-notice-list { margin-top:12px;display:grid;gap:8px; }
+    .admin-grant-notice-item { display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:9px;padding:9px 10px;border-radius:16px;background:rgba(255,255,255,.34);border:1px solid rgba(255,255,255,.72); }
+    .admin-grant-notice-item .shop-inventory-icon { width:38px;height:38px;border-radius:13px;display:grid;place-items:center; }
+    .admin-grant-notice-item .shop-inventory-icon svg { width:25px;height:25px; }
+    .admin-grant-notice-item strong { font-size:13px;font-weight:720; }
+    .admin-grant-notice-item b { font-size:13px;font-weight:760; }
+    .admin-grant-foot { margin-top:10px; }
+    .shop-inventory-row.openable { cursor:pointer; border:1px solid rgba(255,255,255,.84); background:rgba(255,255,255,.35); }
+    .shop-inventory-row.openable .shop-inventory-count::after { content:"  ›"; opacity:.48; }
 </style>
 </head>
 <body>
@@ -6831,6 +6854,13 @@
 <button class="settings-row destructive pressable" id="resetBtn" type="button">
 <span>重置积分</span>
 <span class="settings-value">恢复到 5 <span class="chevron">›</span></span>
+</button>
+</div>
+<div class="settings-label">道具管理</div>
+<div class="settings-group">
+<button class="settings-row pressable" id="openAdminInventoryBtn" type="button">
+<span>游客道具背包</span>
+<span class="settings-value"><span id="adminInventorySettingsValue">读取中</span> <span class="chevron">›</span></span>
 </button>
 </div>
 <div class="settings-label">排班奖励</div>
@@ -7464,6 +7494,81 @@
 </div>
 </div>
 
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="shopWeeklyGiftLayer">
+<div aria-labelledby="shopWeeklyGiftTitle" aria-modal="true" class="alert shop-item-alert" role="alertdialog">
+<div class="alert-content">
+<div class="shop-detail-cover shop-theme-mystery"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/></svg></div>
+<div class="alert-title" id="shopWeeklyGiftTitle">领取本周免费盲盒？</div>
+<div class="alert-message">每周可以免费领取 1 个幸运盲盒。确认领取后会立刻打开，抽中的奖励会自动进入「我的道具」♡</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="shopWeeklyGiftConfirmBtn" type="button">免费领取并打开 ✦</button>
+<button class="alert-button pressable" id="shopWeeklyGiftCancelBtn" type="button">下次再领</button>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="shopMysteryOpenLayer">
+<div aria-labelledby="shopMysteryOpenTitle" aria-modal="true" class="alert shop-item-alert" role="alertdialog">
+<div class="alert-content">
+<div class="shop-detail-cover shop-theme-mystery"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"><path d="M14 25h36v27H14z"/><path d="M11.5 18h41v10h-41z"/><path d="M32 18v34" opacity=".38"/><path d="M20 18c-3.8-4.7-.7-9 3.2-8.4 4.5.7 8.8 8.4 8.8 8.4S35.9 9.7 40.5 9.6c4.4-.1 6.2 5.4 2.2 8.4"/></svg></div>
+<div class="alert-title" id="shopMysteryOpenTitle">打开幸运盲盒？</div>
+<div class="alert-message" id="shopMysteryOpenMessage">会从背包消耗 1 个幸运盲盒，并立即揭晓奖励。</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="shopMysteryOpenConfirmBtn" type="button">打开盲盒 ✦</button>
+<button class="alert-button pressable" id="shopMysteryOpenCancelBtn" type="button">先留着</button>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="adminInventoryLayer">
+<div aria-labelledby="adminInventoryTitle" aria-modal="true" class="alert admin-inventory-alert" role="alertdialog">
+<div class="alert-content">
+<div class="change-icon">🎒</div>
+<div class="alert-title" id="adminInventoryTitle">游客道具背包</div>
+<div class="alert-message">查看、发放或回收游客拥有的道具。已激活的药水/挑战不会被这里的库存调整中断。</div>
+<div class="admin-inventory-list" id="adminInventoryList"></div>
+</div>
+<div class="alert-actions vertical"><button class="alert-button pressable" id="adminInventoryCloseBtn" type="button">完成</button></div>
+</div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="adminInventoryAdjustLayer">
+<div aria-labelledby="adminInventoryAdjustTitle" aria-modal="true" class="alert admin-inventory-adjust-alert" role="alertdialog">
+<div class="alert-content">
+<div class="shop-inventory-icon" id="adminInventoryAdjustIcon"></div>
+<div class="alert-title" id="adminInventoryAdjustTitle">管理道具</div>
+<div class="alert-message" id="adminInventoryAdjustMessage"></div>
+<div class="admin-inventory-stepper">
+<button class="pressable" id="adminInventoryMinusBtn" type="button">−</button>
+<strong id="adminInventoryAdjustValue">0</strong>
+<button class="pressable" id="adminInventoryPlusBtn" type="button">+</button>
+</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="adminInventoryAdjustConfirmBtn" type="button">保存</button>
+<button class="alert-button pressable" id="adminInventoryAdjustCancelBtn" type="button">取消</button>
+</div>
+</div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="adminGrantNoticeLayer">
+<div aria-labelledby="adminGrantNoticeTitle" aria-modal="true" class="alert admin-grant-notice-alert" role="alertdialog">
+<div class="alert-content">
+<div class="change-icon">🎁</div>
+<div class="alert-title" id="adminGrantNoticeTitle">哥哥送来了小礼物 ♡</div>
+<div class="alert-message">管理员给你发放了：</div>
+<div class="admin-grant-notice-list" id="adminGrantNoticeList"></div>
+<div class="alert-message admin-grant-foot">已经放进「我的道具」啦 ✦</div>
+</div>
+<div class="alert-actions vertical">
+<button class="alert-button primary-action pressable" id="adminGrantNoticeOpenBagBtn" type="button">去看看我的道具</button>
+<button class="alert-button pressable" id="adminGrantNoticeDoneBtn" type="button">收下啦 ♡</button>
+</div>
+</div>
+</div>
+
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="score" id="shopRevealLayer">
 <div aria-labelledby="shopRevealTitle" aria-modal="true" class="alert shop-reveal-alert" role="alertdialog">
 <div class="alert-content">
@@ -7767,6 +7872,20 @@
         resetBtn: $("#resetBtn"),
         openScheduleRewardSettingsBtn: $("#openScheduleRewardSettingsBtn"),
         scheduleWeeklyRewardSettingsValue: $("#scheduleWeeklyRewardSettingsValue"),
+        openAdminInventoryBtn: $("#openAdminInventoryBtn"),
+        adminInventorySettingsValue: $("#adminInventorySettingsValue"),
+        adminInventoryLayer: $("#adminInventoryLayer"),
+        adminInventoryList: $("#adminInventoryList"),
+        adminInventoryCloseBtn: $("#adminInventoryCloseBtn"),
+        adminInventoryAdjustLayer: $("#adminInventoryAdjustLayer"),
+        adminInventoryAdjustIcon: $("#adminInventoryAdjustIcon"),
+        adminInventoryAdjustTitle: $("#adminInventoryAdjustTitle"),
+        adminInventoryAdjustMessage: $("#adminInventoryAdjustMessage"),
+        adminInventoryAdjustValue: $("#adminInventoryAdjustValue"),
+        adminInventoryMinusBtn: $("#adminInventoryMinusBtn"),
+        adminInventoryPlusBtn: $("#adminInventoryPlusBtn"),
+        adminInventoryAdjustConfirmBtn: $("#adminInventoryAdjustConfirmBtn"),
+        adminInventoryAdjustCancelBtn: $("#adminInventoryAdjustCancelBtn"),
         openWheelProbabilityBtn: $("#openWheelProbabilityBtn"),
         openWheelProbabilityHistoryBtn: $("#openWheelProbabilityHistoryBtn"),
         wheelProbabilityLayer: $("#wheelProbabilityLayer"),
@@ -7837,6 +7956,17 @@
         shopItemPrice: $("#shopItemPrice"),
         shopItemConfirmBtn: $("#shopItemConfirmBtn"),
         cancelRedeemBtn: $("#cancelRedeemBtn"),
+        shopWeeklyGiftLayer: $("#shopWeeklyGiftLayer"),
+        shopWeeklyGiftConfirmBtn: $("#shopWeeklyGiftConfirmBtn"),
+        shopWeeklyGiftCancelBtn: $("#shopWeeklyGiftCancelBtn"),
+        shopMysteryOpenLayer: $("#shopMysteryOpenLayer"),
+        shopMysteryOpenMessage: $("#shopMysteryOpenMessage"),
+        shopMysteryOpenConfirmBtn: $("#shopMysteryOpenConfirmBtn"),
+        shopMysteryOpenCancelBtn: $("#shopMysteryOpenCancelBtn"),
+        adminGrantNoticeLayer: $("#adminGrantNoticeLayer"),
+        adminGrantNoticeList: $("#adminGrantNoticeList"),
+        adminGrantNoticeOpenBagBtn: $("#adminGrantNoticeOpenBagBtn"),
+        adminGrantNoticeDoneBtn: $("#adminGrantNoticeDoneBtn"),
         shopRevealLayer: $("#shopRevealLayer"),
         shopRevealPrize: $("#shopRevealPrize"),
         shopRevealDoneBtn: $("#shopRevealDoneBtn"),
@@ -7960,6 +8090,11 @@
         shopInventory: { shield30:0, upgrade:0, double_pick:0, lucky100:0, restart:0, wish:0, triple_challenge:0, no10:0, return10:0, heartbeat:0 },
         shopWeekly: {},
         shopWeeklyFeature: null,
+        adminInventory: {},
+        adminInventorySelectedCode: null,
+        adminInventoryOriginalQty: 0,
+        adminInventoryDraftQty: 0,
+        unseenAdminGrants: [],
         shopFeaturedIndex: 0,
         shopEquipped: null,
         shopEquippedParam: null,
@@ -8199,6 +8334,7 @@
 
         renderPrimaryMetric();
         renderScheduleRewardNotice();
+        if (state.isAdmin) void loadAdminInventory({silent:true});
         if (state.overviewMode !== "closed") renderWheelOverview();
         if (els.settingsLayer.classList.contains("open")) scheduleSettingsFit();
       }
@@ -8880,14 +9016,14 @@
         },
         mystery_box: {
           code:"mystery_box", name:"幸运盲盒", coverWord:"MYSTERY", price:2, theme:"mystery",
-          desc:"2 分开启随机奖励，正式转盘券是 1% 超稀有掉落。", detail:"兑换后立即开启，不进入背包。¥30 小金库不会出现在盲盒中；正式转盘券以 1% 的超低概率出现。其余道具按积分价值分层：1 分道具单个 13.5%，2 分道具单个 9.5%，3 分道具单个 7.5%。开出的普通道具直接进入“我的道具”，转盘券则立即增加 1 次正式机会；盲盒掉落不会占用该道具本身的周限购次数。", weeklyLimit:2, instantOpen:true
+          desc:"2 分开启随机奖励，正式转盘券是 1% 超稀有掉落。", detail:"商城兑换后会立即开启；每周最多兑换 5 次。管理员发放到背包里的盲盒则需要你手动打开。¥30 小金库不会出现在盲盒中；正式转盘券以 1% 的超低概率出现，其余普通道具会直接进入“我的道具”。", weeklyLimit:5, instantOpen:true
         }
       };
 
-      const SHOP_INVENTORY_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat"];
+      const SHOP_INVENTORY_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat","mystery_box"];
       const SHOP_ONE_SHOT_CODES = ["shield30","upgrade","double_pick","restart","wish","no10","return10"];
       const SHOP_WHEEL_TOOL_CODES = [...SHOP_ONE_SHOT_CODES,"lucky100","triple_challenge","heartbeat"];
-      const SHOP_FEATURE_ELIGIBLE_CODES = ["shield30","upgrade","double_pick","lucky100","restart","wish","triple_challenge","no10","return10","heartbeat"];
+      const SHOP_FEATURE_ELIGIBLE_CODES = ["mystery_box"];
 
       function shopIconSVG(code) {
         const attrs = `fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.45" viewBox="0 0 64 64"`;
@@ -8971,20 +9107,14 @@
 
       function shopWeeklyCount(code) { return Math.max(0, Number(state.shopWeekly?.[code] || 0)); }
       function shopLimitText(item) { return !item.weeklyLimit ? "不限购" : `本周 ${Math.min(item.weeklyLimit, shopWeeklyCount(item.code))}/${item.weeklyLimit}`; }
-      function shopFeatureAvailableFor(code) { return state.shopWeeklyFeature?.code === code && state.shopWeeklyFeature?.claimed !== true; }
-      function shopEffectivePrice(item) { return shopFeatureAvailableFor(item.code) ? Math.max(0, Number(item.price || 0) - 1) : Number(item.price || 0); }
-      function shopPriceMarkup(item, featured=false) {
-        const price=shopEffectivePrice(item), promo=shopFeatureAvailableFor(item.code);
-        if (!promo) return `${item.price} ✦`;
-        if (price<=0) return featured ? `<s>${item.price} ✦</s><span class="shop-featured-sale">本周免费</span>` : `<s>${item.price}</s><span class="sale">免费</span>`;
-        return featured ? `<s>${item.price} ✦</s><span class="shop-featured-sale">${price} ✦</span>` : `<s>${item.price}</s><span class="sale">${price} ✦</span>`;
-      }
+      function shopWeeklyGiftAvailable() { return state.shopWeeklyFeature?.code === "mystery_box" && state.shopWeeklyFeature?.claimed !== true; }
+      function shopFeatureAvailableFor(_code) { return false; }
+      function shopEffectivePrice(item) { return Number(item?.price || 0); }
+      function shopPriceMarkup(item, _featured=false) { return `${item.price} ✦`; }
       function shopCardStatus(item) {
         const price=shopEffectivePrice(item), score = Number(state.score || 0), count = shopWeeklyCount(item.code);
         if (item.weeklyLimit && count >= item.weeklyLimit) return "本周已兑换";
-        if (shopFeatureAvailableFor(item.code) && price===0) return "免费领 1 次";
         if (score < price) return `还差 ${price - score} 分`;
-        if (shopFeatureAvailableFor(item.code)) return "本周特价 · 可兑换";
         return item.weeklyLimit ? `${count}/${item.weeklyLimit} · 可兑换` : "可兑换";
       }
 
@@ -8998,22 +9128,13 @@
       }
 
       function renderShopFeatured() {
-        const code = state.shopWeeklyFeature?.code;
-        const item = SHOP_ITEMS[code];
-        if (!item || !SHOP_FEATURE_ELIGIBLE_CODES.includes(code)) {
-          els.shopFeatured.innerHTML = "";
-          return;
-        }
-        const promo = shopFeatureAvailableFor(code);
-        const count = shopWeeklyCount(code);
-        const locked = item.weeklyLimit && count >= item.weeklyLimit;
-        const label = promo
-          ? (shopEffectivePrice(item) === 0 ? "✦ WEEKLY FREE · 本周免费" : "✦ WEEKLY SALE · 本周立减 1 分")
-          : "✦ WEEKLY PICK · 本周优惠已领取";
-        let price = shopPriceMarkup(item, true);
-        if (!promo) price = `${item.price} ✦ · 本周优惠已领取`;
-        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-shop-product="${item.code}" type="button"><span class="shop-featured-copy"><span class="shop-featured-label special">${label}</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(item.desc)}</p><span class="shop-featured-price${promo&&shopEffectivePrice(item)===0?" free":""}">${price}${locked?" · 已达限购":""}</span></span><span class="shop-featured-art shop-theme-${item.theme}">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${escapeHTML(promo?"本周首次兑换享优惠":`本周精选 · ${shopLimitText(item)}`)}</span></button>`;
+        const item = SHOP_ITEMS.mystery_box;
+        const available = shopWeeklyGiftAvailable();
+        const label = available ? "✦ WEEKLY GIFT · 本周免费" : "✦ WEEKLY GIFT · 本周已领取";
+        const price = available ? `<s>${item.price} ✦</s><span class="shop-featured-sale">免费</span>` : `下周一刷新`;
+        els.shopFeatured.innerHTML = `<button class="shop-featured-card pressable" data-weekly-mystery-claim="1" type="button" ${available?"":"disabled"}><span class="shop-featured-copy"><span class="shop-featured-label special">${label}</span><h3>${escapeHTML(item.name)}</h3><p>${available?"每周免费领取 1 个 · 领取后自动打开，奖励直接进入背包 ♡":"这周的小礼物已经收下啦 ♡"}</p><span class="shop-featured-price${available?" free":""}">${price}</span></span><span class="shop-featured-art shop-theme-${item.theme}">${shopIconSVG(item.code)}</span><span class="shop-featured-limit">${available?"点击领取 · 不占每周 5 次付费限购":"下周再来看看新的幸运 ✦"}</span></button>`;
       }
+
       function renderShopProducts() { renderShopFeatured(); els.shopGrid.innerHTML = Object.values(SHOP_ITEMS).map(shopProductCardHTML).join(""); }
 
       function renderShopInventory() {
@@ -9027,7 +9148,10 @@
           if (activePotion) copy = `生效中 · 还剩 ${state.shopLuckyRemaining} 抽；每抽 ¥100 +2%`;
           if (activeChallenge) copy = `挑战进行中 · 已完成 ${state.shopChallengeSpinsDone}/3 抽 · ≥¥50 ${state.shopChallengeHits}/2`;
           if (code === "heartbeat" && qty > 0) copy = "无需提前选择 · 当本抽没有使用其它单次卡且结果≤¥30时自动询问";
-          return `<div class="shop-inventory-row"><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="shop-inventory-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(copy)}</small></span><span class="shop-inventory-count">${activePotion ? `剩 ${state.shopLuckyRemaining} 抽` : activeChallenge ? `${state.shopChallengeSpinsDone}/3` : `× ${qty}`}</span></div>`;
+          if (code === "mystery_box") copy = "管理员发放的盲盒会保存在这里 · 点击手动开启";
+          const tag = code === "mystery_box" ? "button" : "div";
+          const attrs = code === "mystery_box" ? ` type="button" data-open-mystery-box="1"` : "";
+          return `<${tag} class="shop-inventory-row${code === "mystery_box" ? " openable pressable" : ""}"${attrs}><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="shop-inventory-copy"><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(copy)}</small></span><span class="shop-inventory-count">${activePotion ? `剩 ${state.shopLuckyRemaining} 抽` : activeChallenge ? `${state.shopChallengeSpinsDone}/3` : `× ${qty}`}</span></${tag}>`;
         }).join("");
         const activeBits = [];
         if (state.shopLuckyRemaining > 0) activeBits.push(`${shopIconSVG("lucky100")}<div><strong>百元幸运药水正在生效</strong><small>¥100 +2% · 还剩 ${state.shopLuckyRemaining} 次正式抽奖</small></div>`);
@@ -9088,7 +9212,7 @@
       function openShopItemDetail(code) {
         const item=SHOP_ITEMS[code]; if(!item) return; state.shopSelectedCode=code;
         els.shopItemCover.className=`shop-detail-cover shop-theme-${item.theme}`; els.shopItemCover.innerHTML=shopIconSVG(code);
-        const effectivePrice=shopEffectivePrice(item), featuredPromo=shopFeatureAvailableFor(code);
+        const effectivePrice=shopEffectivePrice(item), featuredPromo=false;
         els.shopItemTitle.textContent=item.name; els.shopItemDescription.textContent=item.detail; els.shopItemPrice.textContent=String(effectivePrice);
         const chips=[]; if(featuredPromo) chips.push(effectivePrice===0?"本周精选 · 免费领取 1 次":"本周精选 · 立减 1 分"); if(item.weeklyLimit) chips.push(shopLimitText(item)); if(item.reactive) chips.push("结果后自动询问"); if(item.instantOpen) chips.push("兑换后立即开启"); else if(!item.immediate) chips.push("兑换后进入道具系统");
         els.shopItemMeta.innerHTML=chips.map(x=>`<span class="shop-detail-chip">${escapeHTML(x)}</span>`).join("");
@@ -9101,7 +9225,147 @@
       function openMysteryReveal(code) {
         const item=SHOP_ITEMS[code]; if(!item) return;
         els.shopRevealPrize.innerHTML=`<span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><strong>${escapeHTML(item.name)}</strong>`;
+        els.shopRevealMessage.textContent = code === "wheel_ticket" ? "正式大转盘机会 +1 已经到账啦 ♡" : "已经放进“我的道具”啦 ♡";
         setLayer(els.shopRevealLayer,true); vibrate([16,34,20]);
+      }
+
+      function openWeeklyMysteryGiftPrompt() {
+        if (!shopWeeklyGiftAvailable()) return showToast("本周免费盲盒已经领取啦 ♡");
+        setLayer(els.shopWeeklyGiftLayer, true); vibrate(8);
+      }
+
+      async function claimWeeklyMysteryGift() {
+        setBusy(els.shopWeeklyGiftConfirmBtn, true);
+        try {
+          const {data,error}=await db.rpc("points_shop_claim_weekly_mystery_box");
+          if(error) throw error;
+          const result=Array.isArray(data)?data[0]:data;
+          normalizeShopState(result||{});
+          await loadAppState({silent:true}); await loadShopState({silent:true});
+          setLayer(els.shopWeeklyGiftLayer,false); renderShop(); renderPrimaryMetric();
+          const grant=String(result?.granted_item_code||"");
+          if(grant) openMysteryReveal(grant); else showToast("本周免费盲盒已领取 ✦");
+        } catch(err) {
+          console.error("claimWeeklyMysteryGift:",err);
+          const msg=String(err?.message||"");
+          if(/already claimed/i.test(msg)) { await loadShopState({silent:true}); renderShop(); showToast("本周免费盲盒已经领取啦 ♡"); }
+          else if(shopMissingError(err)) showToast("请先运行最新商城数据库更新 SQL");
+          else showToast("领取失败，请稍后再试");
+        } finally { setBusy(els.shopWeeklyGiftConfirmBtn,false); }
+      }
+
+      function openBackpackMysteryPrompt() {
+        const qty=Math.max(0,Number(state.shopInventory?.mystery_box||0));
+        if(qty<=0) return showToast("背包里没有幸运盲盒");
+        els.shopMysteryOpenMessage.textContent=`当前有 ${qty} 个幸运盲盒。打开后会消耗 1 个，并立即揭晓奖励。`;
+        setLayer(els.shopMysteryOpenLayer,true); vibrate(7);
+      }
+
+      async function openBackpackMysteryBox() {
+        setBusy(els.shopMysteryOpenConfirmBtn,true);
+        try {
+          const {data,error}=await db.rpc("points_shop_open_mystery_box");
+          if(error) throw error;
+          const result=Array.isArray(data)?data[0]:data;
+          normalizeShopState(result||{});
+          await loadShopState({silent:true});
+          setLayer(els.shopMysteryOpenLayer,false); renderShop(); renderWheelItemNotice();
+          const grant=String(result?.granted_item_code||"");
+          if(grant) openMysteryReveal(grant);
+        } catch(err) {
+          console.error("openBackpackMysteryBox:",err);
+          if(shopMissingError(err)) showToast("请先运行最新商城数据库更新 SQL");
+          else showToast(/No mystery box/i.test(String(err?.message||""))?"背包里已经没有盲盒啦":"盲盒开启失败，请稍后再试");
+        } finally { setBusy(els.shopMysteryOpenConfirmBtn,false); }
+      }
+
+      function renderAdminInventory() {
+        if(!els.adminInventoryList) return;
+        const inv=state.adminInventory||{};
+        const total=SHOP_INVENTORY_CODES.reduce((sum,code)=>sum+Math.max(0,Number(inv[code]||0)),0);
+        if(els.adminInventorySettingsValue) els.adminInventorySettingsValue.textContent=`共 ${total} 个`;
+        els.adminInventoryList.innerHTML=SHOP_INVENTORY_CODES.map(code=>{
+          const item=SHOP_ITEMS[code],qty=Math.max(0,Number(inv[code]||0));
+          return `<button class="admin-inventory-row pressable" data-admin-inventory-code="${code}" type="button"><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><span class="admin-inventory-row-copy"><strong>${escapeHTML(item.name)}</strong><small>${code==="mystery_box"?"管理员发放后进入背包 · 游客手动开启":"库存数量可由管理员发放或回收"}</small></span><span class="admin-inventory-row-count">× ${qty}　›</span></button>`;
+        }).join("");
+      }
+
+      async function loadAdminInventory({open=false,silent=false}={}) {
+        if(!state.isAdmin) return false;
+        try {
+          const {data,error}=await db.rpc("points_admin_get_shop_inventory");
+          if(error) throw error;
+          let row=Array.isArray(data)?data[0]:data;
+          if(typeof row==="string"){try{row=JSON.parse(row)}catch(_){}}
+          const inventory=row?.inventory&&typeof row.inventory==="object"?row.inventory:{};
+          state.adminInventory=Object.fromEntries(SHOP_INVENTORY_CODES.map(code=>[code,Math.max(0,Number(inventory[code]||0))]));
+          renderAdminInventory();
+          if(open) { setLayer(els.settingsLayer,false); setLayer(els.adminInventoryLayer,true); }
+          return true;
+        } catch(err) {
+          console.error("loadAdminInventory:",err);
+          if(!silent) showToast(shopMissingError(err)?"请先运行最新商城数据库更新 SQL":"读取游客背包失败");
+          return false;
+        }
+      }
+
+      function openAdminInventoryAdjust(code) {
+        if(!state.isAdmin||!SHOP_INVENTORY_CODES.includes(code)) return;
+        const item=SHOP_ITEMS[code],qty=Math.max(0,Number(state.adminInventory?.[code]||0));
+        state.adminInventorySelectedCode=code; state.adminInventoryOriginalQty=qty; state.adminInventoryDraftQty=qty;
+        els.adminInventoryAdjustIcon.className=`shop-inventory-icon shop-theme-${item.theme}`; els.adminInventoryAdjustIcon.innerHTML=shopIconSVG(code);
+        els.adminInventoryAdjustTitle.textContent=item.name; renderAdminInventoryAdjust();
+        setLayer(els.adminInventoryAdjustLayer,true); vibrate(6);
+      }
+
+      function renderAdminInventoryAdjust() {
+        const code=state.adminInventorySelectedCode,item=SHOP_ITEMS[code]; if(!item) return;
+        const before=Math.max(0,Number(state.adminInventoryOriginalQty||0));
+        const next=Math.max(0,Math.min(999,Number(state.adminInventoryDraftQty||0)));
+        state.adminInventoryDraftQty=next; els.adminInventoryAdjustValue.textContent=String(next);
+        const delta=next-before;
+        els.adminInventoryMinusBtn.disabled=next<=0; els.adminInventoryPlusBtn.disabled=next>=999;
+        els.adminInventoryAdjustMessage.textContent=delta>0?`将发放 ${delta} 个${item.name}给游客。`:delta<0?`将从游客背包回收 ${Math.abs(delta)} 个${item.name}。`:`当前背包里有 ${before} 个${item.name}。`;
+        els.adminInventoryAdjustConfirmBtn.disabled=delta===0;
+        els.adminInventoryAdjustConfirmBtn.textContent=delta>0?`确认发放 +${delta}`:delta<0?`确认回收 −${Math.abs(delta)}`:"数量未变化";
+        els.adminInventoryAdjustConfirmBtn.classList.toggle("destructive",delta<0);
+      }
+
+      async function saveAdminInventoryAdjust() {
+        const code=state.adminInventorySelectedCode,item=SHOP_ITEMS[code]; if(!state.isAdmin||!item)return;
+        const delta=Number(state.adminInventoryDraftQty)-Number(state.adminInventoryOriginalQty); if(!delta)return;
+        setBusy(els.adminInventoryAdjustConfirmBtn,true);
+        try {
+          const {data,error}=await db.rpc("points_admin_adjust_shop_inventory",{p_item_code:code,p_delta:delta});
+          if(error) throw error;
+          const row=Array.isArray(data)?data[0]:data;
+          const inv=row?.inventory&&typeof row.inventory==="object"?row.inventory:{};
+          state.adminInventory=Object.fromEntries(SHOP_INVENTORY_CODES.map(c=>[c,Math.max(0,Number(inv[c]||0))]));
+          setLayer(els.adminInventoryAdjustLayer,false); renderAdminInventory(); vibrate(14);
+          showToast(delta>0?`已发放 ${item.name} ×${delta}`:`已回收 ${item.name} ×${Math.abs(delta)}`);
+        } catch(err) {
+          console.error("saveAdminInventoryAdjust:",err);
+          showToast(shopMissingError(err)?"请先运行最新商城数据库更新 SQL":"道具调整失败");
+        } finally { setBusy(els.adminInventoryAdjustConfirmBtn,false); }
+      }
+
+      async function refreshGuestGrantNotice() {
+        if(state.isAdmin) return;
+        try {
+          const {data,error}=await db.rpc("points_shop_get_unseen_admin_grants");
+          if(error) { if(shopMissingError(error)) return; throw error; }
+          const rows=Array.isArray(data)?data:[]; state.unseenAdminGrants=rows;
+          if(!rows.length||els.adminGrantNoticeLayer.classList.contains("open")) return;
+          const totals={}; rows.forEach(r=>{const c=String(r.item_code||"");if(SHOP_ITEMS[c])totals[c]=(totals[c]||0)+Math.max(0,Number(r.delta||0));});
+          els.adminGrantNoticeList.innerHTML=Object.entries(totals).map(([code,qty])=>{const item=SHOP_ITEMS[code];return `<div class="admin-grant-notice-item"><span class="shop-inventory-icon shop-theme-${item.theme}">${shopIconSVG(code)}</span><strong>${escapeHTML(item.name)}</strong><b>× ${qty}</b></div>`;}).join("");
+          if(Object.keys(totals).length) { setLayer(els.adminGrantNoticeLayer,true); vibrate([12,30,16]); }
+        } catch(err) { console.error("refreshGuestGrantNotice:",err); }
+      }
+
+      async function ackGuestGrantNotice({openBag=false}={}) {
+        try { await db.rpc("points_shop_ack_admin_grants"); } catch(err) { console.error("ackGuestGrantNotice:",err); }
+        state.unseenAdminGrants=[]; setLayer(els.adminGrantNoticeLayer,false);
+        if(openBag) { await loadShopState({silent:true}); void openShop("inventory"); }
       }
 
       async function purchaseShopItem() {
@@ -12861,8 +13125,12 @@
       bindCompactSheetDrag(els.redeemLayer);
       els.redeemRewardBtn.addEventListener("click", () => { vibrate(8); void openShop("products"); });
       els.redeemLayer.addEventListener("click", (e) => {
+        const weeklyGift = e.target.closest("[data-weekly-mystery-claim]");
+        const mysteryOpen = e.target.closest("[data-open-mystery-box]");
         const product = e.target.closest("[data-shop-product]");
         const tab = e.target.closest("[data-shop-view]");
+        if (weeklyGift) { vibrate(5); openWeeklyMysteryGiftPrompt(); return; }
+        if (mysteryOpen) { vibrate(5); openBackpackMysteryPrompt(); return; }
         if (product) { vibrate(5); openShopItemDetail(product.dataset.shopProduct); return; }
         if (tab) { vibrate(4); setShopView(tab.dataset.shopView); return; }
         if (e.target === els.redeemLayer) setLayer(els.redeemLayer, false);
@@ -12870,6 +13138,21 @@
       els.shopItemLayer.addEventListener("click", (e) => { if (e.target === els.shopItemLayer) setLayer(els.shopItemLayer, false); });
       els.cancelRedeemBtn.addEventListener("click", () => setLayer(els.shopItemLayer, false));
       els.shopItemConfirmBtn.addEventListener("click", () => void purchaseShopItem());
+      els.shopWeeklyGiftLayer.addEventListener("click", e => { if(e.target===els.shopWeeklyGiftLayer) setLayer(els.shopWeeklyGiftLayer,false); });
+      els.shopWeeklyGiftCancelBtn.addEventListener("click",()=>setLayer(els.shopWeeklyGiftLayer,false));
+      els.shopWeeklyGiftConfirmBtn.addEventListener("click",()=>void claimWeeklyMysteryGift());
+      els.shopMysteryOpenLayer.addEventListener("click",e=>{if(e.target===els.shopMysteryOpenLayer)setLayer(els.shopMysteryOpenLayer,false);});
+      els.shopMysteryOpenCancelBtn.addEventListener("click",()=>setLayer(els.shopMysteryOpenLayer,false));
+      els.shopMysteryOpenConfirmBtn.addEventListener("click",()=>void openBackpackMysteryBox());
+      els.openAdminInventoryBtn?.addEventListener("click",()=>void loadAdminInventory({open:true}));
+      els.adminInventoryCloseBtn?.addEventListener("click",()=>setLayer(els.adminInventoryLayer,false));
+      els.adminInventoryLayer?.addEventListener("click",e=>{const row=e.target.closest("[data-admin-inventory-code]");if(row)return openAdminInventoryAdjust(row.dataset.adminInventoryCode);if(e.target===els.adminInventoryLayer)setLayer(els.adminInventoryLayer,false);});
+      els.adminInventoryMinusBtn?.addEventListener("click",()=>{state.adminInventoryDraftQty=Math.max(0,Number(state.adminInventoryDraftQty||0)-1);renderAdminInventoryAdjust();vibrate(3);});
+      els.adminInventoryPlusBtn?.addEventListener("click",()=>{state.adminInventoryDraftQty=Math.min(999,Number(state.adminInventoryDraftQty||0)+1);renderAdminInventoryAdjust();vibrate(3);});
+      els.adminInventoryAdjustCancelBtn?.addEventListener("click",()=>setLayer(els.adminInventoryAdjustLayer,false));
+      els.adminInventoryAdjustConfirmBtn?.addEventListener("click",()=>void saveAdminInventoryAdjust());
+      els.adminGrantNoticeDoneBtn?.addEventListener("click",()=>void ackGuestGrantNotice());
+      els.adminGrantNoticeOpenBagBtn?.addEventListener("click",()=>void ackGuestGrantNotice({openBag:true}));
       els.shopRevealLayer.addEventListener("click", (e) => { if (e.target === els.shopRevealLayer) setLayer(els.shopRevealLayer, false); });
       els.shopRevealDoneBtn.addEventListener("click", () => setLayer(els.shopRevealLayer, false));
       els.wheelItemNotice.addEventListener("click", () => {
@@ -13089,6 +13372,11 @@
         if (els.wheelResultLayer.classList.contains("open")) return setLayer(els.wheelResultLayer, false);
         if (els.wheelWithdrawLayer.classList.contains("open")) return setLayer(els.wheelWithdrawLayer, false);
         if (els.wheelPreviewLayer.classList.contains("open")) return setLayer(els.wheelPreviewLayer, false);
+        if (els.adminGrantNoticeLayer?.classList.contains("open")) return setLayer(els.adminGrantNoticeLayer, false);
+        if (els.adminInventoryAdjustLayer?.classList.contains("open")) return setLayer(els.adminInventoryAdjustLayer, false);
+        if (els.adminInventoryLayer?.classList.contains("open")) return setLayer(els.adminInventoryLayer, false);
+        if (els.shopMysteryOpenLayer?.classList.contains("open")) return setLayer(els.shopMysteryOpenLayer, false);
+        if (els.shopWeeklyGiftLayer?.classList.contains("open")) return setLayer(els.shopWeeklyGiftLayer, false);
         if (els.shopRevealLayer.classList.contains("open")) return setLayer(els.shopRevealLayer, false);
         if (els.shopItemLayer.classList.contains("open")) return setLayer(els.shopItemLayer, false);
         if (els.wheelDecisionLayer.classList.contains("open")) { vibrate(3); return; }
@@ -13111,6 +13399,7 @@
       async function scheduledDatabaseRefresh() {
         await loadAppState({ silent: true });
         await loadShopState({ silent: true });
+        if (!state.isAdmin) await refreshGuestGrantNotice();
         await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
         if (state.isAdmin) await workScheduleModule.refreshAdminNotice({ forceRefresh: true });
         if (state.activeMetric === "schedule") await workScheduleModule.refreshHome(true);
@@ -13129,6 +13418,8 @@
         ]);
         await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
         renderPrimaryMetric();
+        if (state.isAdmin) await loadAdminInventory({silent:true});
+        else await refreshGuestGrantNotice();
 
         // Then refresh at a low-frequency 30-minute cadence.
         // iOS may suspend timers while a web app is fully backgrounded, so
