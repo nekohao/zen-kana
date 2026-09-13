@@ -6506,6 +6506,113 @@
     .admin-grant-foot { margin-top:10px; }
     .shop-inventory-row.openable { cursor:pointer; border:1px solid rgba(255,255,255,.84); background:rgba(255,255,255,.35); }
     .shop-inventory-row.openable .shop-inventory-count::after { content:"  ›"; opacity:.48; }
+
+
+    /* ============================================================
+       DIET / WEIGHT-LOSS MODULE · V1
+       Fourth home metric. Public UI only receives relative weight change.
+       ============================================================ */
+    :root {
+      --diet-accent:#55bfae;
+      --diet-accent-strong:#2d9f91;
+      --diet-soft:rgba(116,221,202,.18);
+      --diet-ink:#397f79;
+      --diet-danger:#c47f66;
+    }
+    .metric-switch { width:min(96vw,408px) !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
+    .metric-switch-thumb { width:calc((100% - 8px)/4) !important; }
+    .metric-switch.wheel-active .metric-switch-thumb { transform:translate3d(100%,0,0) !important; }
+    .metric-switch.schedule-active .metric-switch-thumb { transform:translate3d(200%,0,0) !important; }
+    .metric-switch.diet-active .metric-switch-thumb { transform:translate3d(300%,0,0) !important; background:linear-gradient(145deg,rgba(227,255,249,.92),rgba(205,241,235,.78)) !important; box-shadow:0 7px 22px rgba(63,159,145,.12),inset 0 1px 0 rgba(255,255,255,.92) !important; }
+    .metric-switch.diet-active .metric-option.active { color:var(--diet-ink) !important; }
+    .metric-option { min-width:0 !important; }
+    @media(max-width:370px){ .metric-switch{width:min(98vw,356px)!important}.metric-option{font-size:9.5px!important;gap:3px!important}.metric-option svg{width:11px!important;height:11px!important} }
+
+    .diet-stage {
+      position:absolute; inset:0; display:grid; place-items:center;
+      opacity:0; visibility:hidden; pointer-events:none;
+      transition:opacity .28s ease,visibility 0s linear .28s;
+    }
+    .home.diet-active .diet-stage { opacity:1;visibility:visible;transition-delay:0s; }
+    .home.diet-active .score { opacity:0!important;visibility:hidden!important; }
+    .home.diet-active .wheel-stage,.home.diet-active .schedule-stage { opacity:0!important;visibility:hidden!important;pointer-events:none!important; }
+    .diet-ring { position:relative;width:92%;height:92%;border-radius:50%;display:grid;place-items:center; }
+    .diet-ring::before { content:"";position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(77,170,157,.12);box-shadow:inset 0 0 30px rgba(100,213,195,.06),0 12px 35px rgba(70,149,141,.06); }
+    .diet-ring::after { content:"";position:absolute;inset:19px;border-radius:50%;background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.62),rgba(217,250,244,.13) 56%,transparent 70%);pointer-events:none; }
+    .diet-ring-dots { position:absolute;inset:0;border-radius:50%; }
+    .diet-day-dot { --i:0;position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:rgba(78,148,141,.18);transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-100px);transform-origin:center;box-shadow:0 0 0 rgba(79,194,176,0);transition:background .35s ease,box-shadow .35s ease,transform .35s ease; }
+    .diet-day-dot.active { background:rgba(62,183,164,.92);box-shadow:0 0 7px rgba(72,196,177,.38); }
+    .diet-day-dot.milestone { width:7px;height:7px;margin:-3.5px;background:rgba(116,156,184,.22);transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-100px) rotate(45deg);border-radius:2px; }
+    .diet-day-dot.milestone.active { background:linear-gradient(145deg,#dffcff,#74d8c8 55%,#7ea9dc);box-shadow:0 0 9px rgba(76,193,179,.42); }
+    .diet-center { position:relative;z-index:2;text-align:center;display:grid;place-items:center; }
+    .diet-streak { font-size:64px;line-height:.92;font-weight:690;letter-spacing:-.055em;color:rgba(38,92,88,.92);font-variant-numeric:tabular-nums; }
+    .diet-streak-label { margin-top:8px;font-size:12px;font-weight:720;letter-spacing:.08em;color:rgba(57,127,121,.68); }
+    .diet-mini-row { margin-top:13px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:11px;font-weight:680;color:rgba(55,105,102,.70); }
+    .diet-mini-pill { min-width:58px;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.46);border:1px solid rgba(255,255,255,.82);box-shadow:inset 0 1px 0 rgba(255,255,255,.72); }
+    .diet-stage.uninitialized .diet-streak { font-size:25px;letter-spacing:-.02em;line-height:1.1;max-width:150px; }
+    .diet-stage.uninitialized .diet-streak-label { max-width:145px;line-height:1.35; }
+
+    .diet-actions { display:none; width:min(100%,350px);grid-template-columns:1fr 1fr;gap:10px; }
+    .home.diet-active .diet-actions { display:grid; }
+    .home.diet-active .score-redeem-button,.home.diet-active .admin-controls,.home.diet-active .wheel-item-notice,.home.diet-active .wheel-challenge-progress,.home.diet-active .wheel-actions,.home.diet-active .schedule-actions,.home.diet-active .score-reward-notice { display:none!important; }
+    .diet-action-button { min-height:50px;border:1px solid rgba(255,255,255,.82);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(220,249,244,.42)),rgba(255,255,255,.30);box-shadow:0 9px 24px rgba(55,137,126,.08),inset 0 1px 0 rgba(255,255,255,.80);display:flex;align-items:center;justify-content:center;gap:8px;color:var(--diet-ink);font-size:14px;font-weight:700; }
+    .diet-action-button svg { width:18px;height:18px; }
+    .diet-actions.guest-only { grid-template-columns:1fr; }
+
+    .diet-sheet { width:min(calc(100% - 8px),620px);height:min(84dvh,760px);max-height:calc(100% - max(calc(var(--safe-top) + 40px),54px));margin:0 auto;padding:0 16px calc(var(--safe-bottom) + 18px);overflow:auto;border-radius:30px 30px 0 0;background:linear-gradient(145deg,rgba(255,255,255,.30),rgba(237,253,250,.10)),var(--glass-fill-strong);border:1px solid var(--glass-border);border-bottom:0;box-shadow:0 -20px 60px rgba(44,113,104,.13),inset 0 1px 0 rgba(255,255,255,.54);-webkit-backdrop-filter:blur(36px) saturate(185%);backdrop-filter:blur(36px) saturate(185%);transform:translateY(calc(100% + 30px));transition:transform .46s var(--ease-ios); }
+    .modal-layer.open .diet-sheet { transform:translateY(0); }
+    .diet-sheet-head { position:sticky;top:0;z-index:6;margin:0 -16px 10px;padding:9px 16px 13px;text-align:center;background:linear-gradient(180deg,rgba(248,255,253,.88),rgba(248,255,253,.58) 78%,transparent);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border-bottom:1px solid rgba(67,136,128,.10); }
+    .diet-sheet-head .grabber { margin:0 auto 10px; }
+    .diet-sheet-title { font-size:18px;font-weight:760;letter-spacing:-.02em; }
+    .diet-sheet-subtitle { margin-top:5px;font-size:11px;color:var(--secondary); }
+    .diet-overview-tabs { display:grid;grid-template-columns:repeat(3,1fr);gap:3px;height:38px;padding:3px;margin:10px 0 15px;border-radius:13px;background:rgba(88,151,142,.08); }
+    .diet-tab { border:0;border-radius:10px;background:transparent;color:var(--secondary);font-size:12px;font-weight:690; }
+    .diet-tab.active { color:var(--diet-ink);background:rgba(255,255,255,.72);box-shadow:0 2px 8px rgba(56,123,114,.08); }
+    .diet-panel[hidden] { display:none!important; }
+    .diet-summary-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:13px; }
+    .diet-summary-card { min-height:82px;padding:14px;border-radius:20px;background:rgba(255,255,255,.29);border:1px solid rgba(255,255,255,.76);box-shadow:inset 0 1px 0 rgba(255,255,255,.68); }
+    .diet-summary-card small { display:block;color:var(--secondary);font-size:10.5px;font-weight:620; }
+    .diet-summary-card strong { display:block;margin-top:7px;font-size:24px;font-weight:720;letter-spacing:-.04em;color:var(--diet-ink); }
+    .diet-month-head { display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin:6px 0 8px; }
+    .diet-month-head strong { text-align:center;font-size:15px;font-weight:740; }
+    .diet-month-nav { width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.30);font-size:20px;color:var(--diet-ink); }
+    .diet-weekdays,.diet-calendar { display:grid;grid-template-columns:repeat(7,1fr); }
+    .diet-weekdays span { padding:5px 0;text-align:center;font-size:10px;font-weight:650;color:var(--tertiary); }
+    .diet-calendar-day { position:relative;min-height:48px;border:0;background:transparent;border-radius:14px;display:grid;place-items:center;color:var(--ink);font-size:12px;font-weight:650; }
+    .diet-calendar-day.placeholder { pointer-events:none; }
+    .diet-calendar-day.before-start,.diet-calendar-day.future { opacity:.20;pointer-events:none; }
+    .diet-calendar-day .diet-day-core { width:30px;height:30px;border-radius:50%;display:grid;place-items:center; }
+    .diet-calendar-day.steady .diet-day-core { background:rgba(111,214,196,.12);color:rgba(42,132,119,.90); }
+    .diet-calendar-day.indulgence .diet-day-core { background:rgba(207,139,112,.12);color:var(--diet-danger);box-shadow:inset 0 0 0 1px rgba(193,118,90,.18); }
+    .diet-calendar-day.today .diet-day-core { box-shadow:0 0 0 1.5px rgba(69,176,160,.60); }
+    .diet-day-mark { position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:rgba(68,182,166,.72); }
+    .diet-calendar-day.indulgence .diet-day-mark { background:rgba(195,118,89,.76); }
+    .diet-chart-card { padding:13px;border-radius:22px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.76); }
+    .diet-range-switch { display:grid;grid-template-columns:repeat(3,1fr);gap:3px;height:36px;padding:3px;border-radius:12px;background:rgba(88,151,142,.08);margin-bottom:10px; }
+    .diet-range-switch button { border:0;border-radius:9px;background:transparent;color:var(--secondary);font-size:11px;font-weight:680; }
+    .diet-range-switch button.active { background:rgba(255,255,255,.72);color:var(--diet-ink); }
+    #dietTrendCanvas { width:100%;height:220px;display:block; }
+    .diet-empty { padding:30px 12px;text-align:center;color:var(--secondary);font-size:13px;line-height:1.6; }
+    .diet-list { display:grid;gap:8px; }
+    .diet-list-row { padding:12px 13px;border-radius:17px;background:rgba(255,255,255,.30);border:1px solid rgba(255,255,255,.72);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center; }
+    .diet-list-row strong { display:block;font-size:13px;font-weight:720; }
+    .diet-list-row small { display:block;margin-top:4px;color:var(--secondary);font-size:10.5px;line-height:1.35; }
+    .diet-list-row b { font-size:14px;color:var(--diet-ink);white-space:nowrap; }
+    .diet-list-row b.negative { color:var(--diet-danger); }
+    .diet-input-card { margin:15px 0 5px;padding:14px;border-radius:20px;background:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.76); }
+    .diet-number-input { width:100%;height:58px;border:1px solid rgba(80,150,141,.15);border-radius:17px;background:rgba(255,255,255,.55);text-align:center;font-size:28px;font-weight:620;color:var(--diet-ink);outline:0; }
+    .diet-input-note { margin-top:8px;text-align:center;font-size:10.5px;line-height:1.45;color:var(--secondary); }
+    .diet-confirm-row { display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px; }
+    .diet-sheet-button { min-height:48px;border:0;border-radius:16px;background:rgba(105,105,110,.10);font-size:14px;font-weight:700; }
+    .diet-sheet-button.primary { color:white;background:linear-gradient(145deg,#5ecab8,#399f92);box-shadow:0 9px 20px rgba(46,155,139,.18); }
+    .diet-sheet-button.destructive { color:var(--diet-danger); }
+    .diet-shop-balance { display:flex;align-items:center;justify-content:space-between;padding:15px 16px;margin:9px 0 13px;border-radius:21px;background:linear-gradient(145deg,rgba(224,255,251,.60),rgba(229,237,255,.36));border:1px solid rgba(255,255,255,.80); }
+    .diet-shop-balance span { color:var(--secondary);font-size:12px;font-weight:650; }
+    .diet-shop-balance strong { color:var(--diet-ink);font-size:24px;font-weight:740; }
+    .diet-product { width:100%;padding:13px;border:1px solid rgba(255,255,255,.76);border-radius:18px;background:rgba(255,255,255,.30);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;text-align:left; }
+    .diet-product strong{font-size:13px}.diet-product small{display:block;margin-top:4px;color:var(--secondary);font-size:10.5px}.diet-product b{align-self:center;color:var(--diet-ink)}
+    .diet-private-weight { font-variant-numeric:tabular-nums;color:rgba(47,96,93,.90)!important; }
+
 </style>
 </head>
 <body>
@@ -6567,6 +6674,12 @@
 <rect height="16" rx="3" width="18" x="3" y="5"></rect><path d="M8 3v4M16 3v4M3 10h18"></path><path d="M8 14h3M13 14h3M8 18h3"></path>
 </svg>
 <span>排班</span>
+</button>
+<button aria-selected="false" class="metric-option" data-metric="diet" role="tab" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24">
+<path d="M12 3c3.6 3 6 5.7 6 9.1A6 6 0 0 1 6 12c0-3.4 2.4-6.1 6-9Z"></path><path d="M8.8 14.1c1.8.5 4.6.5 6.4 0"></path>
+</svg>
+<span>减脂</span>
 </button>
 </div>
 <div aria-live="polite" class="eyebrow reward-message" hidden="" id="metricEyebrow"></div>
@@ -6648,6 +6761,19 @@
 </div>
 <div aria-live="polite" class="schedule-duration" id="scheduleDuration">今日未排班</div>
 </div>
+<div aria-hidden="true" class="diet-stage uninitialized" id="dietStage">
+  <div class="diet-ring">
+    <div aria-hidden="true" class="diet-ring-dots" id="dietRingDots"></div>
+    <div class="diet-center">
+      <div class="diet-streak" id="dietStreakValue">未开启</div>
+      <div class="diet-streak-label" id="dietStreakLabel">等待管理员设置起始体重</div>
+      <div class="diet-mini-row">
+        <span class="diet-mini-pill" id="dietDiamondMini">💎 —</span>
+        <span class="diet-mini-pill" id="dietWeightMini">— kg</span>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 </div>
 <div aria-label="当前数据操作" class="metric-action-slot">
@@ -6702,6 +6828,16 @@
 </div>
 <div aria-hidden="true" class="schedule-actions" id="scheduleActions">
 <button class="schedule-primary-button pressable" id="scheduleEditHomeBtn" type="button">登记排班</button>
+</div>
+<div aria-hidden="true" class="diet-actions" id="dietActions">
+<button class="diet-action-button pressable" id="dietRecordWeightBtn" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 19h14M7 16V8a5 5 0 0 1 10 0v8"></path><path d="m12 9 2.5-2.5"></path></svg>
+<span>记录体重</span>
+</button>
+<button class="diet-action-button pressable" id="dietShopBtn" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 9.5 6.3 4h11.4L20 9.5"></path><path d="M5 9.5V20h14V9.5"></path><path d="M9 20v-6h6v6"></path></svg>
+<span>钻石商城</span>
+</button>
 </div>
 </div>
 </div>
@@ -6870,6 +7006,13 @@
 <span class="settings-value"><span id="scheduleWeeklyRewardSettingsValue">2 分</span> <span class="chevron">›</span></span>
 </button>
 </div>
+<div class="settings-label">减脂管理</div>
+<div class="settings-group">
+<button class="settings-row pressable" id="openDietAdminDataBtn" type="button">
+<span>真实体重数据</span>
+<span class="settings-value">仅管理员可见 <span class="chevron">›</span></span>
+</button>
+</div>
 <div class="settings-label">大转盘管理</div>
 <div class="settings-group">
 <button class="settings-row pressable" id="openWheelProbabilityBtn" type="button">
@@ -6899,6 +7042,91 @@
 </div>
 </div>
 </div>
+
+
+<!-- ==================== Diet module layers ==================== -->
+<div aria-hidden="true" class="modal-layer" id="dietOverviewLayer">
+  <div aria-modal="true" class="diet-sheet" role="dialog">
+    <header class="diet-sheet-head">
+      <div aria-hidden="true" class="grabber"></div>
+      <div class="diet-sheet-title">减脂总览</div>
+      <div class="diet-sheet-subtitle" id="dietOverviewSubtitle">坚持不是每天完美，而是一直回到轨道</div>
+    </header>
+    <div class="diet-summary-grid">
+      <div class="diet-summary-card"><small>当前连续</small><strong id="dietOverviewStreak">—</strong></div>
+      <div class="diet-summary-card"><small>可用钻石</small><strong id="dietOverviewDiamonds">—</strong></div>
+      <div class="diet-summary-card"><small>相比起始体重</small><strong id="dietOverviewWeight">—</strong></div>
+      <div class="diet-summary-card"><small>距离下一颗</small><strong id="dietOverviewNext">—</strong></div>
+    </div>
+    <div class="diet-overview-tabs" role="tablist">
+      <button class="diet-tab active pressable" data-diet-tab="calendar" type="button">坚持日历</button>
+      <button class="diet-tab pressable" data-diet-tab="trend" type="button">体重趋势</button>
+      <button class="diet-tab pressable" data-diet-tab="diamonds" type="button">钻石记录</button>
+    </div>
+    <section class="diet-panel" id="dietCalendarPanel">
+      <div class="diet-month-head"><button class="diet-month-nav pressable" id="dietPrevMonthBtn" type="button">‹</button><strong id="dietMonthLabel">—</strong><button class="diet-month-nav pressable" id="dietNextMonthBtn" type="button">›</button></div>
+      <div class="diet-weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+      <div class="diet-calendar" id="dietCalendar"></div>
+    </section>
+    <section class="diet-panel" hidden id="dietTrendPanel">
+      <div class="diet-chart-card">
+        <div class="diet-range-switch" id="dietRangeSwitch"><button class="active pressable" data-diet-range="30" type="button">近30天</button><button class="pressable" data-diet-range="90" type="button">近90天</button><button class="pressable" data-diet-range="all" type="button">全部</button></div>
+        <canvas aria-label="相对起始体重变化折线图" id="dietTrendCanvas"></canvas>
+        <div class="diet-empty" hidden id="dietTrendEmpty">记录第二次体重后，这里会出现长期变化曲线。</div>
+      </div>
+    </section>
+    <section class="diet-panel" hidden id="dietDiamondPanel"><div class="diet-list" id="dietDiamondList"></div></section>
+    <div class="diet-confirm-row"><button class="diet-sheet-button" id="dietOverviewCloseBtn" type="button">关闭</button><button class="diet-sheet-button primary" id="dietOverviewShopBtn" type="button">钻石商城</button></div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" id="dietSetupLayer">
+  <div aria-modal="true" class="alert glass" role="dialog">
+    <div class="alert-content">
+      <div class="alert-title">开启减脂记录</div>
+      <div class="alert-message">输入一次真实起始体重。它会永久作为长期基准，普通前台不会显示真实体重。</div>
+      <div class="diet-input-card"><input class="diet-number-input" id="dietStartWeightInput" inputmode="decimal" min="30" max="300" placeholder="例如 100.0" step="0.1" type="number"/><div class="diet-input-note">仅管理员设置页可查看真实数值 · 起始基准不会按 7 天或 28 天重置</div></div>
+    </div>
+    <div class="alert-actions"><button class="alert-button" id="dietSetupCancelBtn" type="button">取消</button><button class="alert-button" id="dietSetupConfirmBtn" type="button">确认开启</button></div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" id="dietWeightLayer">
+  <div aria-modal="true" class="alert glass" role="dialog">
+    <div class="alert-content">
+      <div class="alert-title">记录今天体重</div>
+      <div class="alert-message">输入真实体重用于后台计算。保存后普通前台只显示相对起始体重的变化量。</div>
+      <div class="diet-input-card"><input class="diet-number-input" id="dietWeightInput" inputmode="decimal" min="30" max="300" placeholder="kg" step="0.1" type="number"/><div class="diet-input-note">真实数字不会出现在游客界面，也不会出现在管理员普通减脂首页。</div></div>
+    </div>
+    <div class="alert-actions"><button class="alert-button" id="dietWeightCancelBtn" type="button">取消</button><button class="alert-button" id="dietWeightConfirmBtn" type="button">保存</button></div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" id="dietDayLayer">
+  <div aria-modal="true" class="alert glass" role="dialog">
+    <div class="alert-content"><div class="alert-title" id="dietDayTitle">这一天</div><div class="alert-message" id="dietDayMessage">—</div></div>
+    <div class="alert-actions"><button class="alert-button" id="dietDayCancelBtn" type="button">取消</button><button class="alert-button destructive" id="dietDayToggleBtn" type="button">标记为放纵日</button></div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal-layer" id="dietShopLayer">
+  <div aria-modal="true" class="diet-sheet" role="dialog">
+    <header class="diet-sheet-head"><div aria-hidden="true" class="grabber"></div><div class="diet-sheet-title">钻石商城</div><div class="diet-sheet-subtitle" id="dietShopSubtitle">哥哥用坚持赚钻石 · 宝宝负责兑现服务 ♡</div></header>
+    <div class="diet-shop-balance"><span>当前可用钻石</span><strong id="dietShopBalance">💎 —</strong></div>
+    <div class="settings-label" style="margin-top:10px">服务商品</div><div class="diet-list" id="dietShopItems"></div>
+    <div class="settings-label">待兑现 / 历史</div><div class="diet-list" id="dietRedemptionList"></div>
+    <div class="diet-confirm-row"><button class="diet-sheet-button" id="dietShopCloseBtn" type="button">关闭</button><button class="diet-sheet-button primary" id="dietShopRefreshBtn" type="button">刷新</button></div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal-layer" id="dietAdminDataLayer">
+  <div aria-modal="true" class="diet-sheet" role="dialog">
+    <header class="diet-sheet-head"><div aria-hidden="true" class="grabber"></div><div class="diet-sheet-title">真实体重数据</div><div class="diet-sheet-subtitle">仅管理员可见 · 普通前台只显示相对变化</div></header>
+    <div class="diet-list" id="dietPrivateWeightList"></div>
+    <div class="diet-confirm-row"><button class="diet-sheet-button" id="dietAdminDataCloseBtn" type="button">关闭</button><button class="diet-sheet-button primary" id="dietAdminDataAddBtn" type="button">记录今天体重</button></div>
+  </div>
+</div>
+<!-- ================== Diet module layers end ================== -->
 
 <div aria-hidden="true" class="modal-layer alert-layer" data-theme="schedule" id="workScheduleLayer">
 <div aria-labelledby="workScheduleTitle" aria-modal="true" class="alert work-schedule-sheet schedule-editor-sheet schedule-editor-alert" role="dialog">
@@ -8349,12 +8577,15 @@
       function renderMetricSwitch() {
         const wheel = state.activeMetric === "wheel";
         const schedule = state.activeMetric === "schedule";
+        const diet = state.activeMetric === "diet";
         els.metricSwitch.classList.remove("gift-active");
         els.home?.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
         els.home?.classList.toggle("wheel-active", wheel);
         els.metricSwitch.classList.toggle("schedule-active", schedule);
         els.home?.classList.toggle("schedule-active", schedule);
+        els.metricSwitch.classList.toggle("diet-active", diet);
+        els.home?.classList.toggle("diet-active", diet);
 
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === state.activeMetric;
@@ -8362,14 +8593,17 @@
           btn.setAttribute("aria-selected", String(active));
         });
 
-        els.scoreRefreshBtn.setAttribute("aria-label", schedule ? "刷新当前排班" : (wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据"));
+        els.scoreRefreshBtn.setAttribute("aria-label", diet ? "刷新减脂数据" : (schedule ? "刷新当前排班" : (wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据")));
 
         const primary = document.createElement("span");
         const secondary = document.createElement("span");
         primary.className = "reward-line-primary";
         secondary.className = "reward-line-secondary";
 
-        if (schedule) {
+        if (diet) {
+          dietModule.renderHeadline(primary, secondary);
+          els.wheelActions.setAttribute("aria-hidden", "true");
+        } else if (schedule) {
           const info = workScheduleModule.getHomeSummary();
           const progress = workScheduleModule.getProgressSummary();
           if (progress) {
@@ -8442,6 +8676,11 @@
           workScheduleModule.renderHomeSchedule();
           return;
         }
+        if (state.activeMetric === "diet") {
+          els.score.classList.remove("loading");
+          dietModule.renderHome();
+          return;
+        }
         const value = activeMetricValue();
         if (typeof value !== "number") return;
         els.score.textContent = value;
@@ -8460,9 +8699,11 @@
       function previewMetricSwitch(nextMetric) {
         const wheel = nextMetric === "wheel";
         const schedule = nextMetric === "schedule";
+        const diet = nextMetric === "diet";
         els.metricSwitch.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
         els.metricSwitch.classList.toggle("schedule-active", schedule);
+        els.metricSwitch.classList.toggle("diet-active", diet);
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === nextMetric;
           btn.classList.toggle("active", active);
@@ -8471,7 +8712,7 @@
       }
 
       function switchMetric(nextMetric) {
-        if (!["score", "wheel", "schedule"].includes(nextMetric) || nextMetric === state.activeMetric) return;
+        if (!["score", "wheel", "schedule", "diet"].includes(nextMetric) || nextMetric === state.activeMetric) return;
         if (state.wheelSpinning) {
           showToast("🎠 转盘还在转呀，等它停稳一下 ♡");
           return;
@@ -8490,8 +8731,9 @@
           if (token !== metricSwitchToken) return;
           state.activeMetric = nextMetric;
           renderPrimaryMetric({ animate: false });
-          if (nextMetric !== "schedule") renderOverviewContentMode();
-          else void workScheduleModule.refreshHome(false);
+          if (nextMetric === "schedule") void workScheduleModule.refreshHome(false);
+          else if (nextMetric === "diet") void dietModule.refresh(false);
+          else renderOverviewContentMode();
           home?.classList.remove("metric-fading-out");
           void home?.offsetWidth;
           home?.classList.add("metric-fading-in");
@@ -12990,6 +13232,120 @@
       // WORK SCHEDULE MODULE END
       // ============================================================
 
+      // ============================================================
+      // DIET / WEIGHT-LOSS MODULE START
+      // ============================================================
+      const dietModule = (() => {
+        const q = (sel) => document.querySelector(sel);
+        const d = {
+          stage:q("#dietStage"), dots:q("#dietRingDots"), streak:q("#dietStreakValue"), streakLabel:q("#dietStreakLabel"), diamondMini:q("#dietDiamondMini"), weightMini:q("#dietWeightMini"),
+          actions:q("#dietActions"), recordBtn:q("#dietRecordWeightBtn"), shopBtn:q("#dietShopBtn"),
+          overview:q("#dietOverviewLayer"), overviewClose:q("#dietOverviewCloseBtn"), overviewShop:q("#dietOverviewShopBtn"), overviewStreak:q("#dietOverviewStreak"), overviewDiamonds:q("#dietOverviewDiamonds"), overviewWeight:q("#dietOverviewWeight"), overviewNext:q("#dietOverviewNext"),
+          calendarPanel:q("#dietCalendarPanel"), trendPanel:q("#dietTrendPanel"), diamondPanel:q("#dietDiamondPanel"), calendar:q("#dietCalendar"), monthLabel:q("#dietMonthLabel"), prevMonth:q("#dietPrevMonthBtn"), nextMonth:q("#dietNextMonthBtn"), canvas:q("#dietTrendCanvas"), trendEmpty:q("#dietTrendEmpty"), rangeSwitch:q("#dietRangeSwitch"), diamondList:q("#dietDiamondList"),
+          setup:q("#dietSetupLayer"), startInput:q("#dietStartWeightInput"), setupCancel:q("#dietSetupCancelBtn"), setupConfirm:q("#dietSetupConfirmBtn"),
+          weight:q("#dietWeightLayer"), weightInput:q("#dietWeightInput"), weightCancel:q("#dietWeightCancelBtn"), weightConfirm:q("#dietWeightConfirmBtn"),
+          day:q("#dietDayLayer"), dayTitle:q("#dietDayTitle"), dayMessage:q("#dietDayMessage"), dayCancel:q("#dietDayCancelBtn"), dayToggle:q("#dietDayToggleBtn"),
+          shop:q("#dietShopLayer"), shopBalance:q("#dietShopBalance"), shopItems:q("#dietShopItems"), redemptionList:q("#dietRedemptionList"), shopClose:q("#dietShopCloseBtn"), shopRefresh:q("#dietShopRefreshBtn"),
+          privateLayer:q("#dietAdminDataLayer"), privateList:q("#dietPrivateWeightList"), privateClose:q("#dietAdminDataCloseBtn"), privateAdd:q("#dietAdminDataAddBtn"), openPrivate:q("#openDietAdminDataBtn")
+        };
+        const local = { initialized:false,startDate:null,streak:0,daysInWeek:0,daysUntil:7,weeksCycle:0,diamonds:0,change:null,hasProgress:false,lastWeightAt:null,longest:0,month:startOfMonth(new Date()),indulgences:new Map(),trend:[],ledger:[],items:[],redemptions:[],range:"30",selectedDay:null,tab:"calendar",available:null };
+
+        function dateFromKey(key){ const [y,m,day]=String(key||"").split("-").map(Number); return new Date(y,m-1,day,0,0,0,0); }
+        function formatDay(key){ const x=dateFromKey(key); return new Intl.DateTimeFormat("zh-CN",{month:"long",day:"numeric",weekday:"short"}).format(x); }
+        function formatDelta(v){ if(v==null || !Number.isFinite(Number(v))) return "—"; const n=Number(v); if(Math.abs(n)<.05) return "±0.0 kg"; return `${n>0?"+":""}${n.toFixed(1)} kg`; }
+        function missing(err){ return /diet_|PGRST202|Could not find|schema cache|relation/i.test(String(err?.message||"")); }
+        function currentCycleDay(){ if(!local.streak) return 0; const mod=local.streak%28; return mod===0?28:mod; }
+
+        function ensureDots(){ if(d.dots.children.length===28) return; d.dots.innerHTML=Array.from({length:28},(_,i)=>`<i class="diet-day-dot ${(i+1)%7===0?"milestone":""}" style="--i:${i}" data-diet-dot="${i+1}"></i>`).join(""); }
+        function renderDots(){ ensureDots(); const n=currentCycleDay(); d.dots.querySelectorAll("[data-diet-dot]").forEach(el=>el.classList.toggle("active",Number(el.dataset.dietDot)<=n)); }
+
+        function renderHome(){
+          const init=!!local.initialized;
+          d.stage.classList.toggle("uninitialized",!init);
+          d.actions.classList.toggle("guest-only",!state.isAdmin);
+          d.recordBtn.hidden=!state.isAdmin;
+          if(!init){ d.streak.textContent=state.isAdmin?"设置起点":"尚未开启"; d.streakLabel.textContent=state.isAdmin?"输入一次起始体重，开始长期记录":"等待管理员开启减脂记录"; d.diamondMini.textContent="💎 —"; d.weightMini.textContent="— kg"; d.recordBtn.querySelector("span").textContent="设置起始体重"; renderDots(); return; }
+          d.streak.textContent=String(Math.max(0,local.streak)); d.streakLabel.textContent="连续坚持 · 天"; d.diamondMini.textContent=`💎 ${local.diamonds}`; d.weightMini.textContent=local.hasProgress?formatDelta(local.change):"等待复测"; d.recordBtn.querySelector("span").textContent="记录体重"; renderDots();
+        }
+
+        function renderHeadline(primary,secondary){
+          if(!local.initialized){ primary.textContent=state.isAdmin?"🌿 设置一次起始体重，开启长期减脂记录":"🌿 减脂记录还没有开启"; secondary.textContent=state.isAdmin?"真实体重只在管理员设置中可见 · 前台只显示相对变化":"等待管理员设置起点后，这里会自动开始记录坚持天数"; return; }
+          const weight=local.hasProgress?formatDelta(local.change):"等待第二次体重记录";
+          primary.textContent=`🌿 已连续坚持 ${local.streak} 天 · 再 ${local.daysUntil} 天获得 +1 💎`;
+          secondary.textContent=`💎 ${local.diamonds} · ${weight}${local.weeksCycle?` · 四周进度 ${local.weeksCycle}/4`:""}`;
+        }
+
+        function applyState(row){
+          local.available=true; local.initialized=!!row?.initialized; local.startDate=row?.start_date||null; local.streak=Number(row?.streak_days||0); local.daysInWeek=Number(row?.days_in_current_week||0); local.daysUntil=Number(row?.days_until_weekly||7); local.weeksCycle=Number(row?.completed_weeks_in_cycle||0); local.diamonds=Number(row?.diamond_balance||0); local.change=row?.current_change_kg==null?null:Number(row.current_change_kg); local.hasProgress=!!row?.has_weight_progress; local.lastWeightAt=row?.last_weight_at||null; local.longest=Number(row?.longest_streak_days||0);
+        }
+
+        async function loadState(silent=true){
+          try{ const {data,error}=await db.rpc("diet_get_state"); if(error) throw error; applyState(Array.isArray(data)?data[0]:data); renderHome(); if(state.activeMetric==="diet") renderMetricSwitch(); return true; }
+          catch(err){ console.error("diet.loadState:",err); local.available=false; if(!silent) showToast(missing(err)?"请先运行减脂模块数据库 SQL":"读取减脂数据失败"); renderHome(); return false; }
+        }
+
+        async function loadIndulgences(){
+          if(!local.initialized) { local.indulgences.clear(); return; }
+          const from=dateKey(startOfMonth(local.month)); const to=dateKey(new Date(local.month.getFullYear(),local.month.getMonth()+1,0));
+          const {data,error}=await db.rpc("diet_get_indulgence_days",{p_from:from,p_to:to}); if(error) throw error; local.indulgences=new Map((data||[]).map(x=>[String(x.day),x]));
+        }
+        async function loadTrend(){ const p=local.range==="all"?null:Number(local.range); const {data,error}=await db.rpc("diet_get_weight_trend",{p_days:p}); if(error) throw error; local.trend=Array.isArray(data)?data:[]; }
+        async function loadLedger(){ const {data,error}=await db.rpc("diet_get_diamond_ledger",{p_limit:120}); if(error) throw error; local.ledger=Array.isArray(data)?data:[]; }
+
+        async function refresh(silent=true){ const ok=await loadState(silent); if(!ok) return; if(d.overview.classList.contains("open")) await refreshOverview(); }
+
+        function renderSummary(){ d.overviewStreak.textContent=local.initialized?`${local.streak} 天`:"未开启"; d.overviewDiamonds.textContent=local.initialized?`💎 ${local.diamonds}`:"—"; d.overviewWeight.textContent=local.hasProgress?formatDelta(local.change):"等待复测"; d.overviewNext.textContent=local.initialized?`${local.daysUntil} 天`:"—"; }
+        function renderCalendar(){
+          const y=local.month.getFullYear(),m=local.month.getMonth(); d.monthLabel.textContent=`${y}年${m+1}月`; const first=new Date(y,m,1); const last=new Date(y,m+1,0).getDate(); const lead=(first.getDay()+6)%7; const today=dateKey(new Date()); const cells=[]; for(let i=0;i<lead;i++) cells.push('<button class="diet-calendar-day placeholder" type="button"></button>');
+          for(let day=1;day<=last;day++){ const key=dateKey(new Date(y,m,day)); const before=local.startDate&&key<local.startDate, future=key>today, indulgence=local.indulgences.has(key); const cls=["diet-calendar-day",before?"before-start":"",future?"future":"",(!before&&!future&&local.initialized?(indulgence?"indulgence":"steady"):""),key===today?"today":""].filter(Boolean).join(" "); cells.push(`<button class="${cls}" data-diet-day="${key}" type="button"><span class="diet-day-core">${day}</span>${(!before&&!future&&local.initialized)?'<i class="diet-day-mark"></i>':''}</button>`); }
+          d.calendar.innerHTML=cells.join("");
+        }
+        function drawTrend(){
+          const canvas=d.canvas,rect=canvas.getBoundingClientRect(),ratio=Math.min(window.devicePixelRatio||1,2); if(rect.width<40)return; canvas.width=Math.round(rect.width*ratio);canvas.height=Math.round(220*ratio);const c=canvas.getContext("2d");c.setTransform(ratio,0,0,ratio,0,0);c.clearRect(0,0,rect.width,220);
+          const rows=local.trend; d.trendEmpty.hidden=rows.length>1; canvas.hidden=rows.length<=1; if(rows.length<=1)return; const vals=rows.map(r=>Number(r.delta_kg)); let min=Math.min(...vals,0),max=Math.max(...vals,0); if(max-min<1){max+=.6;min-=.6;} const pad={l:38,r:12,t:18,b:28},w=rect.width-pad.l-pad.r,h=220-pad.t-pad.b; const x=i=>pad.l+(rows.length===1?0:w*i/(rows.length-1)); const y=v=>pad.t+(max-v)/(max-min)*h;
+          c.strokeStyle="rgba(63,125,119,.12)";c.lineWidth=1; for(let i=0;i<=4;i++){const yy=pad.t+h*i/4;c.beginPath();c.moveTo(pad.l,yy);c.lineTo(rect.width-pad.r,yy);c.stroke(); const val=max-(max-min)*i/4;c.fillStyle="rgba(60,60,67,.48)";c.font='10px -apple-system';c.textAlign='right';c.fillText(`${val>0?'+':''}${val.toFixed(1)}`,pad.l-6,yy+3);}
+          const grad=c.createLinearGradient(pad.l,pad.t,rect.width-pad.r,220-pad.b);grad.addColorStop(0,"rgba(83,190,173,.72)");grad.addColorStop(1,"rgba(93,143,205,.72)"); c.strokeStyle=grad;c.lineWidth=2.6;c.lineCap="round";c.lineJoin="round";c.beginPath();rows.forEach((r,i)=>{const xx=x(i),yy=y(Number(r.delta_kg));if(i===0)c.moveTo(xx,yy);else c.lineTo(xx,yy)});c.stroke(); rows.forEach((r,i)=>{const xx=x(i),yy=y(Number(r.delta_kg));c.fillStyle="rgba(255,255,255,.96)";c.beginPath();c.arc(xx,yy,4.5,0,Math.PI*2);c.fill();c.strokeStyle="rgba(65,171,157,.82)";c.lineWidth=2;c.stroke(); if(r.is_start){c.fillStyle="rgba(57,127,121,.72)";c.font='10px -apple-system';c.textAlign='left';c.fillText("起点",Math.min(xx+7,rect.width-32),Math.max(12,yy-7));}});
+          c.fillStyle="rgba(60,60,67,.48)";c.font='10px -apple-system';c.textAlign='left';c.fillText(String(rows[0].recorded_on).slice(5).replace('-','/'),pad.l,215);c.textAlign='right';c.fillText(String(rows.at(-1).recorded_on).slice(5).replace('-','/'),rect.width-pad.r,215);
+        }
+        function renderLedger(){ if(!local.ledger.length){d.diamondList.innerHTML='<div class="diet-empty">还没有钻石记录。连续坚持 7 天后，第一颗钻石会自动到账 💎</div>';return;} d.diamondList.innerHTML=local.ledger.map(r=>{const a=Number(r.amount||0);return `<div class="diet-list-row"><span><strong>${escapeHTML(r.note||"钻石变动")}</strong><small>${escapeHTML(String(r.created_at||"").replace('T',' ').slice(0,16))}</small></span><b class="${a<0?'negative':''}">${a>0?'+':''}${a} 💎</b></div>`}).join(""); }
+        function setTab(tab){ local.tab=["calendar","trend","diamonds"].includes(tab)?tab:"calendar"; d.overview.querySelectorAll("[data-diet-tab]").forEach(b=>b.classList.toggle("active",b.dataset.dietTab===local.tab)); d.calendarPanel.hidden=local.tab!=="calendar";d.trendPanel.hidden=local.tab!=="trend";d.diamondPanel.hidden=local.tab!=="diamonds"; if(local.tab==="trend") requestAnimationFrame(drawTrend); }
+        async function refreshOverview(){ try{ renderSummary(); if(local.tab==="calendar"){await loadIndulgences();renderCalendar();}else if(local.tab==="trend"){await loadTrend();requestAnimationFrame(drawTrend);}else{await loadLedger();renderLedger();}}catch(err){console.error("diet.refreshOverview:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":"读取减脂总览失败");} }
+        async function openOverview(){ await loadState(false); if(!local.available)return; setLayer(d.overview,true); setTab(local.tab); await refreshOverview(); vibrate(7); }
+
+        function openSetup(){ if(!state.isAdmin)return showToast("只有管理员可以设置起始体重"); d.startInput.value=""; setLayer(d.setup,true);setTimeout(()=>d.startInput.focus(),220); }
+        async function confirmSetup(){ const w=Number(d.startInput.value); if(!Number.isFinite(w)||w<30||w>300)return showToast("请输入 30–300 kg 的有效体重"); setBusy(d.setupConfirm,true); try{const {error}=await db.rpc("diet_admin_initialize",{p_start_weight:w});if(error)throw error;setLayer(d.setup,false);await loadState(false);renderPrimaryMetric();vibrate(16);showToast("🌿 减脂起点已建立");}catch(err){console.error("diet.initialize:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":String(err.message||"").includes("already initialized")?"减脂起点已经存在":"开启失败");}finally{setBusy(d.setupConfirm,false);} }
+        function openWeight(){ if(!state.isAdmin)return showToast("只有管理员可以记录真实体重"); if(!local.initialized)return openSetup(); d.weightInput.value="";setLayer(d.weight,true);setTimeout(()=>d.weightInput.focus(),220); }
+        async function saveWeight(){ const w=Number(d.weightInput.value); if(!Number.isFinite(w)||w<30||w>300)return showToast("请输入 30–300 kg 的有效体重"); setBusy(d.weightConfirm,true);try{const {error}=await db.rpc("diet_admin_add_weight",{p_weight:w,p_recorded_on:dateKey(new Date())});if(error)throw error;setLayer(d.weight,false);await loadState(false);renderPrimaryMetric();if(d.privateLayer.classList.contains("open"))await loadPrivate();vibrate(14);showToast(`已记录 · 前台更新为 ${local.hasProgress?formatDelta(local.change):"等待变化"}`);}catch(err){console.error("diet.saveWeight:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":"保存体重失败");}finally{setBusy(d.weightConfirm,false);} }
+
+        function openDay(key){ if(!local.initialized)return; const indulgence=local.indulgences.get(key); local.selectedDay=key; d.dayTitle.textContent=formatDay(key); d.dayMessage.textContent=indulgence?`这一天目前标记为放纵日 · ${indulgence.marked_by==="admin"?"管理员":"游客"}标记。恢复后会重新计算连续天数和钻石。`:`默认状态为“坚持”。如果这一天实际放纵了，可以由管理员或游客共同监督并标记。`; d.dayToggle.textContent=indulgence?"恢复为坚持":"标记为放纵日";d.dayToggle.classList.toggle("destructive",!indulgence);setLayer(d.day,true); }
+        async function toggleDay(){ if(!local.selectedDay)return; const indulgent=!local.indulgences.has(local.selectedDay);setBusy(d.dayToggle,true);try{const {error}=await db.rpc("diet_set_indulgence",{p_day:local.selectedDay,p_indulgent:indulgent});if(error)throw error;setLayer(d.day,false);await loadState(false);await loadIndulgences();renderCalendar();renderSummary();renderPrimaryMetric();vibrate(12);showToast(indulgent?"已标记为放纵日 · 连续记录已重新计算":"已恢复为坚持 · 连续记录已重新计算");}catch(err){console.error("diet.toggleDay:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":"修改记录失败");}finally{setBusy(d.dayToggle,false);} }
+
+        async function loadShop(){ try{const [a,b,c]=await Promise.all([db.rpc("diet_shop_get_items"),db.rpc("diet_get_redemptions",{p_limit:100}),db.rpc("diet_get_state")]);if(a.error)throw a.error;if(b.error)throw b.error;if(c.error)throw c.error;local.items=a.data||[];local.redemptions=b.data||[];applyState(Array.isArray(c.data)?c.data[0]:c.data);renderShop();}catch(err){console.error("diet.loadShop:",err);d.shopItems.innerHTML='<div class="diet-empty">请先运行减脂模块数据库 SQL。</div>';d.redemptionList.innerHTML="";} }
+        function renderShop(){ d.shopBalance.textContent=`💎 ${local.diamonds}`; if(!local.items.length)d.shopItems.innerHTML='<div class="diet-empty">钻石商城框架已经准备好 ✦<br>商品内容下一步再一起设计。</div>';else d.shopItems.innerHTML=local.items.map(i=>`<button class="diet-product pressable" data-diet-product="${escapeHTML(i.code)}" type="button"><span><strong>${escapeHTML(i.name)}</strong><small>${escapeHTML(i.description||"由宝宝兑现的服务")}</small></span><b>💎 ${Number(i.price)}</b></button>`).join("");
+          if(!local.redemptions.length)d.redemptionList.innerHTML='<div class="diet-empty">还没有服务兑换记录。</div>';else d.redemptionList.innerHTML=local.redemptions.map(r=>{const pending=r.status==="pending";const action=pending?(state.isAdmin?`<button class="diet-sheet-button destructive" data-diet-cancel-redemption="${r.id}" type="button">撤销</button>`:`<button class="diet-sheet-button primary" data-diet-fulfill="${r.id}" type="button">已经兑现</button>`):`<b>${r.status==="fulfilled"?"已兑现":"已取消"}</b>`;return `<div class="diet-list-row"><span><strong>${escapeHTML(r.item_name)}</strong><small>💎 ${Number(r.price)} · ${pending?"等待宝宝兑现":r.status==="fulfilled"?"服务已完成":"已撤销并退回钻石"}</small></span>${action}</div>`}).join(""); }
+        async function openShop(){ if(!local.initialized){ if(state.isAdmin)return openSetup(); return showToast("减脂记录尚未开启"); }setLayer(d.shop,true);await loadShop();vibrate(7); }
+        async function redeem(code){ if(!state.isAdmin)return showToast("钻石由管理员兑换服务");try{const {error}=await db.rpc("diet_admin_redeem",{p_item_code:code});if(error)throw error;await loadShop();await loadState(true);renderPrimaryMetric();showToast("💎 已兑换 · 等待宝宝兑现");}catch(err){console.error("diet.redeem:",err);showToast(/Insufficient diamonds/i.test(String(err.message||""))?"钻石不够啦": "兑换失败");} }
+        async function fulfill(id){ if(state.isAdmin)return showToast("请切换到游客模式后兑现服务");try{const {error}=await db.rpc("diet_guest_fulfill_redemption",{p_redemption_id:Number(id)});if(error)throw error;await loadShop();showToast("♡ 已确认兑现服务");vibrate(14);}catch(err){console.error("diet.fulfill:",err);showToast("兑现失败");} }
+        async function cancelRedemption(id){ if(!state.isAdmin)return;try{const {error}=await db.rpc("diet_admin_cancel_redemption",{p_redemption_id:Number(id)});if(error)throw error;await loadShop();await loadState(true);renderPrimaryMetric();showToast("已撤销兑换 · 钻石已退回");}catch(err){console.error("diet.cancelRedemption:",err);showToast("撤销失败");} }
+
+        async function loadPrivate(){ if(!state.isAdmin){setLayer(d.privateLayer,false);return showToast("需要管理员权限");}try{const {data,error}=await db.rpc("diet_admin_get_private_weights");if(error)throw error;const rows=data||[]; if(!rows.length){d.privateList.innerHTML='<div class="diet-empty">还没有起始体重。请先进入减脂模块设置起点。</div>';d.privateAdd.textContent="设置起始体重";return;}d.privateAdd.textContent="记录今天体重";d.privateList.innerHTML=rows.map(r=>`<div class="diet-list-row"><span><strong>${r.is_start?"起始体重":"体重记录"}</strong><small>${escapeHTML(String(r.recorded_on))}${r.is_start?" · 永久基准":""}</small></span><b class="diet-private-weight">${Number(r.weight).toFixed(1)} kg</b></div>`).join("");}catch(err){console.error("diet.loadPrivate:",err);d.privateList.innerHTML='<div class="diet-empty">读取失败，请确认已运行减脂模块数据库 SQL。</div>';} }
+        async function openPrivate(){ if(!state.isAdmin)return showToast("需要管理员权限");setLayer(els.settingsLayer,false);setLayer(d.privateLayer,true);await loadPrivate(); }
+
+        d.recordBtn.addEventListener("click",openWeight); d.shopBtn.addEventListener("click",openShop); d.overviewShop.addEventListener("click",openShop); d.overviewClose.addEventListener("click",()=>setLayer(d.overview,false)); d.overview.addEventListener("click",e=>{if(e.target===d.overview)setLayer(d.overview,false); const tab=e.target.closest("[data-diet-tab]");if(tab){setTab(tab.dataset.dietTab);void refreshOverview();} const day=e.target.closest("[data-diet-day]");if(day)openDay(day.dataset.dietDay);});
+        d.prevMonth.addEventListener("click",async()=>{local.month=addMonths(local.month,-1);await loadIndulgences();renderCalendar();});d.nextMonth.addEventListener("click",async()=>{const next=addMonths(local.month,1);if(next<=startOfMonth(new Date()))local.month=next;await loadIndulgences();renderCalendar();});
+        d.rangeSwitch.addEventListener("click",async e=>{const b=e.target.closest("[data-diet-range]");if(!b)return;local.range=b.dataset.dietRange;d.rangeSwitch.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));await loadTrend();requestAnimationFrame(drawTrend);});
+        d.setupCancel.addEventListener("click",()=>setLayer(d.setup,false));d.setupConfirm.addEventListener("click",confirmSetup);d.setup.addEventListener("click",e=>{if(e.target===d.setup)setLayer(d.setup,false)});d.weightCancel.addEventListener("click",()=>setLayer(d.weight,false));d.weightConfirm.addEventListener("click",saveWeight);d.weight.addEventListener("click",e=>{if(e.target===d.weight)setLayer(d.weight,false)});d.dayCancel.addEventListener("click",()=>setLayer(d.day,false));d.dayToggle.addEventListener("click",toggleDay);d.day.addEventListener("click",e=>{if(e.target===d.day)setLayer(d.day,false)});
+        d.shopClose.addEventListener("click",()=>setLayer(d.shop,false));d.shopRefresh.addEventListener("click",loadShop);d.shop.addEventListener("click",e=>{if(e.target===d.shop)setLayer(d.shop,false);const p=e.target.closest("[data-diet-product]");if(p)void redeem(p.dataset.dietProduct);const f=e.target.closest("[data-diet-fulfill]");if(f)void fulfill(f.dataset.dietFulfill);const c=e.target.closest("[data-diet-cancel-redemption]");if(c)void cancelRedemption(c.dataset.dietCancelRedemption);});
+        d.openPrivate.addEventListener("click",openPrivate);d.privateClose.addEventListener("click",()=>setLayer(d.privateLayer,false));d.privateAdd.addEventListener("click",()=>{setLayer(d.privateLayer,false);openWeight();});d.privateLayer.addEventListener("click",e=>{if(e.target===d.privateLayer)setLayer(d.privateLayer,false)});
+        window.addEventListener("resize",()=>{if(d.overview.classList.contains("open")&&local.tab==="trend")requestAnimationFrame(drawTrend)});
+        document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;for(const layer of [d.day,d.weight,d.setup,d.privateLayer,d.shop,d.overview]){if(layer.classList.contains("open")){e.stopImmediatePropagation();setLayer(layer,false);return;}}});
+        ensureDots();renderHome();
+        return Object.freeze({refresh,renderHome,renderHeadline,openOverview,openShop,openWeight,openPrivate});
+      })();
+      // ============================================================
+      // DIET / WEIGHT-LOSS MODULE END
+      // ============================================================
+
       // Simple downward-to-close drag for compact unified sheets.
       function bindCompactSheetDrag(layer) {
         if (!layer) return;
@@ -13130,12 +13486,14 @@
       }
       els.scoreRefreshBtn.addEventListener("click", () => {
         if (state.activeMetric === "schedule") void workScheduleModule.refreshHome(true);
+        else if (state.activeMetric === "diet") void dietModule.refresh(false);
         else manualRefreshApp();
       });
       els.scoreRefreshBtn.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           if (state.activeMetric === "schedule") void workScheduleModule.refreshHome(true);
+          else if (state.activeMetric === "diet") void dietModule.refresh(false);
           else manualRefreshApp();
         }
       });
@@ -13339,6 +13697,7 @@
 
       els.overviewBtn.addEventListener("click", async () => {
         if (state.activeMetric === "schedule") return workScheduleModule.openOverview();
+        if (state.activeMetric === "diet") return dietModule.openOverview();
         vibrate(); openOverviewSheet(); renderOverview();
         requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
         await loadOverviewData(false);
@@ -13427,6 +13786,7 @@
         await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
         if (state.isAdmin) await workScheduleModule.refreshAdminNotice({ forceRefresh: true });
         if (state.activeMetric === "schedule") await workScheduleModule.refreshHome(true);
+        await dietModule.refresh(true);
 
         if (els.overview.classList.contains("open")) {
           await loadOverviewData(true);
@@ -13441,6 +13801,7 @@
           loadShopState({ silent: true })
         ]);
         await workScheduleModule.refreshProgress({ sync: true, refreshPending: state.isAdmin });
+        await dietModule.refresh(true);
         renderPrimaryMetric();
         if (state.isAdmin) await loadAdminInventory({silent:true});
         else await refreshGuestGrantNotice();
