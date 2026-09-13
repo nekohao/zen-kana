@@ -6613,6 +6613,135 @@
     .diet-product strong{font-size:13px}.diet-product small{display:block;margin-top:4px;color:var(--secondary);font-size:10.5px}.diet-product b{align-self:center;color:var(--diet-ink)}
     .diet-private-weight { font-variant-numeric:tabular-nums;color:rgba(47,96,93,.90)!important; }
 
+    /* ============================================================
+       DIET MODULE · V1.1 VISUAL POLISH
+       - four home tabs are strictly equal-sized
+       - remove the heavy white rim in diet mode
+       - unify diet surfaces with the app's soft glass language
+       ============================================================ */
+    .metric-switch {
+      width:min(94vw,360px) !important;
+      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+      padding:4px !important;
+      column-gap:0 !important;
+    }
+    .metric-switch-thumb {
+      width:calc((100% - 8px)/4) !important;
+    }
+    .metric-switch .metric-option {
+      width:100% !important;
+      min-width:0 !important;
+      height:36px !important;
+      padding:0 3px !important;
+      margin:0 !important;
+      gap:4px !important;
+      font-size:10.5px !important;
+      line-height:1 !important;
+      justify-content:center !important;
+    }
+    .metric-switch .metric-option svg {
+      width:13px !important;
+      height:13px !important;
+    }
+    @media (max-width:370px) {
+      .metric-switch { width:min(96vw,348px) !important; }
+      .metric-switch .metric-option { font-size:9.7px !important; gap:3px !important; }
+      .metric-switch .metric-option svg { width:12px !important; height:12px !important; }
+    }
+
+    .home.diet-active .score-lens {
+      overflow:hidden !important;
+      border:1px solid rgba(77,164,152,.13) !important;
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.34), transparent 43%),
+        linear-gradient(145deg, rgba(245,255,253,.38), rgba(224,247,242,.13)),
+        rgba(255,255,255,.16) !important;
+      box-shadow:
+        0 22px 58px rgba(46,118,109,.075),
+        inset 0 1px 0 rgba(255,255,255,.26),
+        inset 0 -1px 0 rgba(68,128,120,.025) !important;
+      -webkit-backdrop-filter:blur(36px) saturate(160%) !important;
+      backdrop-filter:blur(36px) saturate(160%) !important;
+    }
+    .home.diet-active .score-lens::before {
+      background:radial-gradient(circle at 33% 23%, rgba(255,255,255,.18), transparent 48%) !important;
+      opacity:.48 !important;
+    }
+    .home.diet-active .score-lens::after { opacity:0 !important; }
+
+    .diet-ring { width:90%; height:90%; }
+    .diet-ring::before {
+      inset:10px;
+      border:1px solid rgba(70,164,151,.095);
+      background:radial-gradient(circle at 50% 50%, rgba(236,253,249,.12), transparent 70%);
+      box-shadow:inset 0 0 26px rgba(87,193,177,.035),0 12px 32px rgba(65,139,130,.035);
+    }
+    .diet-ring::after {
+      inset:21px;
+      background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.22),rgba(220,248,242,.065) 54%,transparent 72%);
+      opacity:.72;
+    }
+    .diet-day-dot {
+      transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-98px);
+    }
+    .diet-day-dot.milestone {
+      transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-98px) rotate(45deg);
+    }
+    .diet-streak { color:rgba(43,103,97,.94); }
+    .diet-streak-label { color:rgba(61,122,116,.62); }
+    .diet-mini-row { gap:8px; }
+    .diet-mini-pill {
+      min-width:62px;
+      padding:6px 10px;
+      background:rgba(249,255,254,.42);
+      border:1px solid rgba(111,190,179,.14);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.50);
+      color:rgba(55,112,106,.74);
+    }
+
+    .diet-action-button,
+    .diet-summary-card,
+    .diet-chart-card,
+    .diet-list-row,
+    .diet-input-card,
+    .diet-product,
+    .diet-shop-balance {
+      border-color:rgba(104,183,173,.13) !important;
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.42),rgba(232,250,247,.16)),
+        rgba(255,255,255,.18) !important;
+      box-shadow:0 9px 24px rgba(51,120,111,.045),inset 0 1px 0 rgba(255,255,255,.48) !important;
+    }
+    .diet-action-button {
+      color:rgba(52,111,105,.92);
+      border-radius:18px;
+    }
+    .diet-sheet {
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.22),rgba(233,250,247,.08)),
+        rgba(248,252,251,.70) !important;
+      border-color:rgba(255,255,255,.62) !important;
+      box-shadow:0 -20px 60px rgba(45,104,98,.10),inset 0 1px 0 rgba(255,255,255,.50) !important;
+    }
+    .diet-sheet-head {
+      background:linear-gradient(180deg,rgba(250,255,254,.90),rgba(246,253,252,.67) 76%,transparent) !important;
+      border-bottom-color:rgba(70,145,136,.075) !important;
+    }
+    .diet-overview-tabs,.diet-range-switch { background:rgba(79,151,142,.065) !important; }
+    .diet-tab.active,.diet-range-switch button.active {
+      background:rgba(255,255,255,.68) !important;
+      box-shadow:0 2px 8px rgba(54,115,108,.055) !important;
+    }
+    .diet-product { min-height:64px; align-items:center; }
+    .diet-product b {
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(223,248,243,.54);
+      border:1px solid rgba(89,177,164,.12);
+      font-size:11px;
+      white-space:nowrap;
+    }
+
 </style>
 </head>
 <body>
@@ -13315,7 +13444,7 @@
         function openSetup(){ if(!state.isAdmin)return showToast("只有管理员可以设置起始体重"); d.startInput.value=""; setLayer(d.setup,true);setTimeout(()=>d.startInput.focus(),220); }
         async function confirmSetup(){ const w=Number(d.startInput.value); if(!Number.isFinite(w)||w<30||w>300)return showToast("请输入 30–300 kg 的有效体重"); setBusy(d.setupConfirm,true); try{const {error}=await db.rpc("diet_admin_initialize",{p_start_weight:w});if(error)throw error;setLayer(d.setup,false);await loadState(false);renderPrimaryMetric();vibrate(16);showToast("🌿 减脂起点已建立");}catch(err){console.error("diet.initialize:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":String(err.message||"").includes("already initialized")?"减脂起点已经存在":"开启失败");}finally{setBusy(d.setupConfirm,false);} }
         function openWeight(){ if(!state.isAdmin)return showToast("只有管理员可以记录真实体重"); if(!local.initialized)return openSetup(); d.weightInput.value="";setLayer(d.weight,true);setTimeout(()=>d.weightInput.focus(),220); }
-        async function saveWeight(){ const w=Number(d.weightInput.value); if(!Number.isFinite(w)||w<30||w>300)return showToast("请输入 30–300 kg 的有效体重"); setBusy(d.weightConfirm,true);try{const {error}=await db.rpc("diet_admin_add_weight",{p_weight:w,p_recorded_on:dateKey(new Date())});if(error)throw error;setLayer(d.weight,false);await loadState(false);renderPrimaryMetric();if(d.privateLayer.classList.contains("open"))await loadPrivate();vibrate(14);showToast(`已记录 · 前台更新为 ${local.hasProgress?formatDelta(local.change):"等待变化"}`);}catch(err){console.error("diet.saveWeight:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":"保存体重失败");}finally{setBusy(d.weightConfirm,false);} }
+        async function saveWeight(){ const w=Number(d.weightInput.value); if(!Number.isFinite(w)||w<30||w>300)return showToast("请输入 30–300 kg 的有效体重"); setBusy(d.weightConfirm,true);try{const {error}=await db.rpc("diet_admin_add_weight",{p_weight:w,p_recorded_on:dateKey(new Date())});if(error)throw error;setLayer(d.weight,false);await loadState(false);renderPrimaryMetric();if(d.privateLayer.classList.contains("open"))await loadPrivate();vibrate(14);showToast(`已记录 · 前台更新为 ${local.hasProgress?formatDelta(local.change):"等待变化"}`);}catch(err){console.error("diet.saveWeight:",err);const msg=String(err?.message||"");if(missing(err))showToast("请先运行最新减脂数据库补丁 SQL");else if(/Start weight is locked|duplicate key|recorded_on/i.test(msg))showToast("请先运行最新减脂数据库补丁 SQL，再记录第二次体重");else if(/permission|admin|required/i.test(msg))showToast("管理员权限已失效，请重新登录");else if(/between 30 and 300|out of range/i.test(msg))showToast("体重或日期超出允许范围");else showToast(`保存体重失败${msg?` · ${msg}`:""}`);}finally{setBusy(d.weightConfirm,false);} }
 
         function openDay(key){ if(!local.initialized)return; const indulgence=local.indulgences.get(key); local.selectedDay=key; d.dayTitle.textContent=formatDay(key); d.dayMessage.textContent=indulgence?`这一天目前标记为放纵日 · ${indulgence.marked_by==="admin"?"管理员":"游客"}标记。恢复后会重新计算连续天数和钻石。`:`默认状态为“坚持”。如果这一天实际放纵了，可以由管理员或游客共同监督并标记。`; d.dayToggle.textContent=indulgence?"恢复为坚持":"标记为放纵日";d.dayToggle.classList.toggle("destructive",!indulgence);setLayer(d.day,true); }
         async function toggleDay(){ if(!local.selectedDay)return; const indulgent=!local.indulgences.has(local.selectedDay);setBusy(d.dayToggle,true);try{const {error}=await db.rpc("diet_set_indulgence",{p_day:local.selectedDay,p_indulgent:indulgent});if(error)throw error;setLayer(d.day,false);await loadState(false);await loadIndulgences();renderCalendar();renderSummary();renderPrimaryMetric();vibrate(12);showToast(indulgent?"已标记为放纵日 · 连续记录已重新计算":"已恢复为坚持 · 连续记录已重新计算");}catch(err){console.error("diet.toggleDay:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":"修改记录失败");}finally{setBusy(d.dayToggle,false);} }
