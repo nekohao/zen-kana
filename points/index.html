@@ -6742,6 +6742,155 @@
       white-space:nowrap;
     }
 
+
+    /* ============================================================
+       DIET MODULE · V1.2 STRUCTURE REFINEMENT
+       One integrated progress ring + content-sized sheets.
+       ============================================================ */
+
+    /* One visual circle only: the home lens is the circle.
+       The diet ring is only a positioning plane for the 28 markers. */
+    .home.diet-active .score-lens {
+      border:0 !important;
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.26), transparent 39%),
+        radial-gradient(circle at 52% 58%, rgba(221,250,245,.18), transparent 64%),
+        rgba(247,253,252,.24) !important;
+      box-shadow:
+        0 18px 48px rgba(44,112,103,.065),
+        inset 0 0 0 1px rgba(83,164,153,.055),
+        inset 0 1px 0 rgba(255,255,255,.30) !important;
+    }
+    .home.diet-active .score-lens::before {
+      opacity:.28 !important;
+      background:radial-gradient(circle at 31% 22%,rgba(255,255,255,.20),transparent 46%) !important;
+    }
+    .diet-ring {
+      width:100% !important;
+      height:100% !important;
+      border-radius:50%;
+    }
+    .diet-ring::before,
+    .diet-ring::after { content:none !important; display:none !important; }
+    .diet-ring-dots { inset:0 !important; }
+    .diet-day-dot {
+      width:5px;
+      height:5px;
+      margin:-2.5px;
+      background:rgba(66,135,128,.15);
+      transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-112px) !important;
+      box-shadow:none;
+    }
+    .diet-day-dot.active {
+      background:rgba(55,177,159,.92);
+      box-shadow:0 0 8px rgba(65,190,172,.32);
+    }
+    .diet-day-dot.milestone {
+      width:8px;
+      height:8px;
+      margin:-4px;
+      border-radius:2.2px;
+      transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-112px) rotate(45deg) !important;
+      background:rgba(104,151,180,.20);
+    }
+    .diet-day-dot.milestone.active {
+      background:linear-gradient(145deg,#e8ffff,#71d5c5 58%,#88aee0);
+      box-shadow:0 0 10px rgba(67,186,170,.35);
+    }
+    .diet-center { transform:translateY(1px); }
+    .diet-streak { font-size:68px; }
+    .diet-streak-label { margin-top:7px; }
+    .diet-mini-row { margin-top:12px; }
+    .diet-mini-pill {
+      min-width:64px;
+      padding:6px 10px;
+      background:rgba(248,255,254,.30) !important;
+      border:1px solid rgba(88,164,154,.10) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.38) !important;
+    }
+
+    /* Diet sheets should behave like the mature sheets elsewhere in the app:
+       content-sized first; only scroll once max-height is reached. */
+    .diet-sheet {
+      height:auto !important;
+      min-height:0 !important;
+      max-height:calc(100dvh - max(calc(var(--safe-top) + 74px), 90px)) !important;
+      overflow-y:auto !important;
+      overscroll-behavior-y:contain;
+      scrollbar-width:none;
+    }
+    .diet-sheet::-webkit-scrollbar { display:none; }
+    .diet-overview-sheet {
+      max-height:min(76dvh,650px) !important;
+      padding-bottom:calc(var(--safe-bottom) + 14px) !important;
+    }
+    .diet-shop-sheet {
+      width:min(calc(100% - 12px),540px) !important;
+      max-height:min(68dvh,570px) !important;
+      padding-bottom:calc(var(--safe-bottom) + 14px) !important;
+      border-radius:28px 28px 0 0 !important;
+    }
+    .diet-shop-sheet .diet-sheet-head { margin-bottom:5px; }
+    .diet-shop-sheet .diet-shop-balance { margin:4px 0 2px; min-height:54px; padding:10px 13px; }
+    .diet-shop-sheet .settings-label { margin:11px 5px 6px !important; }
+    .diet-shop-sheet .diet-product { min-height:58px; padding:10px 12px; border-radius:16px; }
+    .diet-shop-sheet .diet-empty { padding:17px 10px; }
+    .diet-shop-sheet .diet-confirm-row { margin-top:12px; }
+
+    /* Replace the four dashboard cards with a single quiet summary ribbon. */
+    .diet-summary-grid { display:none !important; }
+    .diet-summary-strip {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr) 1px minmax(0,1.28fr) 1px minmax(0,1fr);
+      align-items:center;
+      gap:5px;
+      min-height:54px;
+      margin:2px 0 11px;
+      padding:8px 10px;
+      border-radius:18px;
+      background:linear-gradient(145deg,rgba(255,255,255,.38),rgba(231,249,246,.12)),rgba(255,255,255,.14);
+      border:1px solid rgba(99,178,168,.11);
+      box-shadow:0 8px 20px rgba(52,118,110,.035),inset 0 1px 0 rgba(255,255,255,.42);
+    }
+    .diet-summary-strip > span { min-width:0;text-align:center; }
+    .diet-summary-strip small {
+      display:block;
+      margin-bottom:4px;
+      color:var(--secondary);
+      font-size:8.5px;
+      line-height:1;
+      font-weight:650;
+      white-space:nowrap;
+    }
+    .diet-summary-strip strong {
+      display:block;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:rgba(50,111,105,.94);
+      font-size:13px;
+      line-height:1.1;
+      font-weight:760;
+      letter-spacing:-.025em;
+      white-space:nowrap;
+      font-variant-numeric:tabular-nums;
+    }
+    .diet-summary-strip > i { width:1px;height:25px;background:rgba(69,139,131,.09); }
+
+    .diet-overview-tabs { margin:7px 0 11px !important; }
+    .diet-month-head { margin:2px 0 5px; }
+    .diet-calendar-day { min-height:43px; }
+    .diet-chart-card { padding:11px; }
+    #dietTrendCanvas { height:190px; }
+    .diet-confirm-row { margin-top:12px; }
+
+    @media (max-width:390px) {
+      .diet-day-dot { transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-106px) !important; }
+      .diet-day-dot.milestone { transform:rotate(calc(var(--i) * 12.857142deg)) translateY(-106px) rotate(45deg) !important; }
+      .diet-summary-strip { padding-left:7px;padding-right:7px;gap:3px; }
+      .diet-summary-strip small { font-size:8px; }
+      .diet-summary-strip strong { font-size:12px; }
+    }
+
 </style>
 </head>
 <body>
@@ -7175,17 +7324,20 @@
 
 <!-- ==================== Diet module layers ==================== -->
 <div aria-hidden="true" class="modal-layer" id="dietOverviewLayer">
-  <div aria-modal="true" class="diet-sheet" role="dialog">
+  <div aria-modal="true" class="diet-sheet diet-overview-sheet" role="dialog">
     <header class="diet-sheet-head">
       <div aria-hidden="true" class="grabber"></div>
       <div class="diet-sheet-title">减脂总览</div>
       <div class="diet-sheet-subtitle" id="dietOverviewSubtitle">坚持不是每天完美，而是一直回到轨道</div>
     </header>
-    <div class="diet-summary-grid">
-      <div class="diet-summary-card"><small>当前连续</small><strong id="dietOverviewStreak">—</strong></div>
-      <div class="diet-summary-card"><small>可用钻石</small><strong id="dietOverviewDiamonds">—</strong></div>
-      <div class="diet-summary-card"><small>相比起始体重</small><strong id="dietOverviewWeight">—</strong></div>
-      <div class="diet-summary-card"><small>距离下一颗</small><strong id="dietOverviewNext">—</strong></div>
+    <div class="diet-summary-strip" aria-label="减脂摘要">
+      <span><small>连续</small><strong id="dietOverviewStreak">—</strong></span>
+      <i aria-hidden="true"></i>
+      <span><small>钻石</small><strong id="dietOverviewDiamonds">—</strong></span>
+      <i aria-hidden="true"></i>
+      <span><small>体重变化</small><strong id="dietOverviewWeight">—</strong></span>
+      <i aria-hidden="true"></i>
+      <span><small>下一颗</small><strong id="dietOverviewNext">—</strong></span>
     </div>
     <div class="diet-overview-tabs" role="tablist">
       <button class="diet-tab active pressable" data-diet-tab="calendar" type="button">坚持日历</button>
@@ -7239,7 +7391,7 @@
 </div>
 
 <div aria-hidden="true" class="modal-layer" id="dietShopLayer">
-  <div aria-modal="true" class="diet-sheet" role="dialog">
+  <div aria-modal="true" class="diet-sheet diet-shop-sheet" role="dialog">
     <header class="diet-sheet-head"><div aria-hidden="true" class="grabber"></div><div class="diet-sheet-title">钻石商城</div><div class="diet-sheet-subtitle" id="dietShopSubtitle">哥哥用坚持赚钻石 · 宝宝负责兑现服务 ♡</div></header>
     <div class="diet-shop-balance"><span>当前可用钻石</span><strong id="dietShopBalance">💎 —</strong></div>
     <div class="settings-label" style="margin-top:10px">服务商品</div><div class="diet-list" id="dietShopItems"></div>
