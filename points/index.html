@@ -6891,6 +6891,82 @@
       .diet-summary-strip strong { font-size:12px; }
     }
 
+
+
+    /* ==========================================================
+       Diet shop v2.2 · dual exchange + mandatory service flow
+       ========================================================== */
+    .diet-product-prices { align-self:center; display:flex; flex-direction:column; align-items:flex-end; gap:3px; white-space:nowrap; }
+    .diet-product-prices b { font-size:12px !important; line-height:1.1; color:var(--diet-ink); }
+    .diet-product-prices b.wheel { color:#6b73aa; }
+
+    .diet-shop-exchange-note { margin:7px 3px 3px; padding:8px 10px; border-radius:14px; background:rgba(232,247,255,.34); border:1px solid rgba(255,255,255,.72); color:var(--secondary); font-size:10.5px; line-height:1.42; text-align:center; }
+
+    .diet-redemption-row { grid-template-columns:minmax(0,1fr); align-items:stretch; }
+    .diet-redemption-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+    .diet-redemption-head > span { min-width:0; }
+    .diet-redemption-state { flex:0 0 auto; padding:4px 8px; border-radius:999px; background:rgba(92,160,150,.09); color:var(--diet-ink); font-size:10px; font-weight:720; white-space:nowrap; }
+    .diet-redemption-state.waiting { background:rgba(225,172,104,.11); color:#9a7240; }
+    .diet-redemption-state.done { background:rgba(87,177,125,.10); color:#4c946c; }
+    .diet-redemption-state.cancelled { background:rgba(118,118,128,.08); color:var(--secondary); }
+    .diet-redemption-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:9px; }
+    .diet-redemption-actions.single { grid-template-columns:1fr; }
+    .diet-redemption-action { min-height:38px; border:0; border-radius:13px; background:rgba(118,118,128,.09); color:var(--ink); font-size:12px; font-weight:700; }
+    .diet-redemption-action.primary { color:white; background:linear-gradient(145deg,#5ecab8,#399f92); box-shadow:0 7px 15px rgba(46,155,139,.13); }
+    .diet-redemption-action.destructive { color:var(--diet-danger); }
+    .diet-redemption-action.confirm { color:white; background:linear-gradient(145deg,#66c98f,#43a96d); }
+
+    .diet-payment-sheet .alert-content { padding-bottom:15px; }
+    .diet-payment-item { margin:7px auto 13px; display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:999px; background:rgba(85,191,174,.09); color:var(--diet-ink); font-size:12px; font-weight:720; }
+    .diet-payment-options { display:grid; gap:9px; margin-top:10px; }
+    .diet-payment-option { width:100%; min-height:64px; padding:10px 12px; border:1px solid rgba(255,255,255,.78); border-radius:18px; background:linear-gradient(145deg,rgba(255,255,255,.66),rgba(230,250,246,.34)); box-shadow:inset 0 1px 0 rgba(255,255,255,.76); display:grid; grid-template-columns:42px minmax(0,1fr) auto; align-items:center; gap:10px; text-align:left; }
+    .diet-payment-option .icon { width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.66); font-size:21px; }
+    .diet-payment-option strong { display:block; font-size:13px; font-weight:750; }
+    .diet-payment-option small { display:block; margin-top:3px; color:var(--secondary); font-size:10.5px; line-height:1.3; }
+    .diet-payment-option b { color:var(--diet-ink); font-size:14px; white-space:nowrap; }
+    .diet-payment-option.wheel b { color:#6b73aa; }
+    .diet-payment-option:disabled { opacity:.42; }
+
+    .diet-use-preview { margin:11px 0 2px; padding:13px; border-radius:18px; background:rgba(235,253,249,.42); border:1px solid rgba(255,255,255,.78); color:var(--diet-ink); font-size:14px; font-weight:730; text-align:center; }
+
+    #dietServiceLockLayer {
+      z-index:10000 !important;
+      align-items:center;
+      justify-content:center;
+      padding:calc(var(--safe-top) + 18px) 18px calc(var(--safe-bottom) + 18px);
+      background:rgba(237,249,247,.78) !important;
+      -webkit-backdrop-filter:blur(30px) saturate(150%) !important;
+      backdrop-filter:blur(30px) saturate(150%) !important;
+      transition:opacity .28s ease,visibility 0s linear .34s !important;
+    }
+    #dietServiceLockLayer.open { transition-delay:0s !important; }
+    .diet-service-lock-card {
+      width:min(100%,390px);
+      padding:23px 20px 20px;
+      border-radius:32px;
+      text-align:center;
+      background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(226,250,246,.70));
+      border:1px solid rgba(255,255,255,.94);
+      box-shadow:0 28px 80px rgba(47,112,104,.18),inset 0 1px 0 rgba(255,255,255,.92);
+      transform:scale(.94) translateY(8px);
+      opacity:0;
+      transition:transform .34s var(--ease-ios),opacity .24s ease;
+    }
+    #dietServiceLockLayer.open .diet-service-lock-card { transform:scale(1) translateY(0); opacity:1; }
+    .diet-service-lock-level { display:inline-flex; align-items:center; gap:5px; padding:5px 9px; border-radius:999px; background:rgba(208,104,95,.09); color:#a25d56; font-size:10px; font-weight:760; letter-spacing:.05em; }
+    .diet-service-lock-icon { width:74px; height:74px; margin:15px auto 10px; border-radius:24px; display:grid; place-items:center; font-size:38px; background:linear-gradient(145deg,rgba(255,255,255,.90),rgba(220,248,243,.64)); border:1px solid rgba(255,255,255,.94); box-shadow:0 12px 30px rgba(54,135,124,.10); }
+    .diet-service-lock-title { font-size:21px; font-weight:790; letter-spacing:-.025em; }
+    .diet-service-lock-item { margin-top:8px; font-size:16px; font-weight:760; color:var(--diet-ink); }
+    .diet-service-lock-message { margin:10px auto 0; max-width:310px; color:var(--secondary); font-size:12.5px; line-height:1.55; }
+    .diet-service-lock-confirm { width:100%; min-height:52px; margin-top:20px; border:0; border-radius:18px; color:white; background:linear-gradient(145deg,#61cab8,#3ca091); box-shadow:0 11px 26px rgba(46,155,139,.18); font-size:15px; font-weight:760; }
+    .diet-service-lock-waiting { margin-top:18px; padding:12px 13px; border-radius:16px; background:rgba(104,136,177,.08); color:#68789b; font-size:12px; font-weight:700; line-height:1.45; }
+    .diet-service-lock-waiting::before { content:""; display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%; background:#7e91b7; box-shadow:0 0 0 0 rgba(126,145,183,.24); animation:dietServicePulse 1.5s ease-out infinite; vertical-align:1px; }
+    @keyframes dietServicePulse { 0%{box-shadow:0 0 0 0 rgba(126,145,183,.25)} 70%{box-shadow:0 0 0 8px rgba(126,145,183,0)} 100%{box-shadow:0 0 0 0 rgba(126,145,183,0)} }
+    body.diet-service-locked { overflow:hidden !important; }
+    body.diet-service-locked .app,
+    body.diet-service-locked .overview,
+    body.diet-service-locked > .modal-layer:not(#dietServiceLockLayer) { pointer-events:none !important; user-select:none !important; -webkit-user-select:none !important; }
+
 </style>
 </head>
 <body>
@@ -7392,11 +7468,55 @@
 
 <div aria-hidden="true" class="modal-layer" id="dietShopLayer">
   <div aria-modal="true" class="diet-sheet diet-shop-sheet" role="dialog">
-    <header class="diet-sheet-head"><div aria-hidden="true" class="grabber"></div><div class="diet-sheet-title">钻石商城</div><div class="diet-sheet-subtitle" id="dietShopSubtitle">哥哥用坚持赚钻石 · 宝宝负责兑现服务 ♡</div></header>
+    <header class="diet-sheet-head"><div aria-hidden="true" class="grabber"></div><div class="diet-sheet-title">钻石商城</div><div class="diet-sheet-subtitle" id="dietShopSubtitle">哥哥兑换服务 · 宝宝兑现 · 支持 💎 或 🎡 两种方式 ♡</div></header>
     <div class="diet-shop-balance"><span>当前可用钻石</span><strong id="dietShopBalance">💎 —</strong></div>
+    <div class="diet-shop-exchange-note">🎡 选择“正式大转盘机会”兑换时，会立即把对应机会发给宝宝，并同步写入大转盘历史。</div>
     <div class="settings-label" style="margin-top:10px">服务商品</div><div class="diet-list" id="dietShopItems"></div>
-    <div class="settings-label">待兑现 / 历史</div><div class="diet-list" id="dietRedemptionList"></div>
+    <div class="settings-label">已兑换 / 服务进度</div><div class="diet-list" id="dietRedemptionList"></div>
     <div class="diet-confirm-row"><button class="diet-sheet-button" id="dietShopCloseBtn" type="button">关闭</button><button class="diet-sheet-button primary" id="dietShopRefreshBtn" type="button">刷新</button></div>
+  </div>
+</div>
+
+
+<div aria-hidden="true" class="modal-layer alert-layer" id="dietRedeemLayer">
+  <div aria-modal="true" class="alert glass diet-payment-sheet" role="dialog">
+    <div class="alert-content">
+      <div class="alert-title">选择兑换方式</div>
+      <div class="diet-payment-item" id="dietRedeemItemName">吃棒棒糖🍭</div>
+      <div class="alert-message">两种方式任选一种。正式大转盘机会会在兑换成功后立即发给宝宝。</div>
+      <div class="diet-payment-options">
+        <button class="diet-payment-option pressable" id="dietRedeemDiamondBtn" type="button">
+          <span class="icon">💎</span><span><strong>使用钻石</strong><small id="dietRedeemDiamondMeta">从哥哥的钻石余额扣除</small></span><b id="dietRedeemDiamondPrice">1 💎</b>
+        </button>
+        <button class="diet-payment-option wheel pressable" id="dietRedeemWheelBtn" type="button">
+          <span class="icon">🎡</span><span><strong>发放正式机会</strong><small>兑换后立即进入宝宝的大转盘正式机会</small></span><b id="dietRedeemWheelPrice">+1 次</b>
+        </button>
+      </div>
+    </div>
+    <div class="alert-actions"><button class="alert-button" id="dietRedeemCancelBtn" type="button">取消</button><button class="alert-button" disabled type="button" style="color:var(--tertiary)">选择上方方式</button></div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal-layer alert-layer" id="dietUseServiceLayer">
+  <div aria-modal="true" class="alert glass" role="dialog">
+    <div class="alert-content">
+      <div class="alert-title">使用这项服务？</div>
+      <div class="diet-use-preview" id="dietUseServiceName">吃棒棒糖🍭</div>
+      <div class="alert-message">确认后，宝宝的小世界会立即进入最高等级强提醒。宝宝确认完成后，还需要哥哥最终确认才会解除。</div>
+    </div>
+    <div class="alert-actions"><button class="alert-button" id="dietUseServiceCancelBtn" type="button">暂时不用</button><button class="alert-button" id="dietUseServiceConfirmBtn" type="button">确认使用</button></div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal-layer" id="dietServiceLockLayer">
+  <div aria-live="assertive" aria-modal="true" class="diet-service-lock-card" role="alertdialog">
+    <div class="diet-service-lock-level">最高等级提醒 · 必须处理</div>
+    <div class="diet-service-lock-icon">🍭</div>
+    <div class="diet-service-lock-title" id="dietServiceLockTitle">哥哥正在使用一项奖励 ♡</div>
+    <div class="diet-service-lock-item" id="dietServiceLockItem">吃棒棒糖🍭 · 1 次</div>
+    <div class="diet-service-lock-message" id="dietServiceLockMessage">完成这项已经兑换的服务后，点击下面按钮。确认后仍需等待哥哥最终确认。</div>
+    <button class="diet-service-lock-confirm pressable" id="dietServiceLockConfirmBtn" type="button">确认已经完成服务</button>
+    <div class="diet-service-lock-waiting" hidden id="dietServiceLockWaiting">已提交完成确认 · 等待哥哥确认是否已经兑现</div>
   </div>
 </div>
 
@@ -13527,9 +13647,12 @@
           weight:q("#dietWeightLayer"), weightInput:q("#dietWeightInput"), weightCancel:q("#dietWeightCancelBtn"), weightConfirm:q("#dietWeightConfirmBtn"),
           day:q("#dietDayLayer"), dayTitle:q("#dietDayTitle"), dayMessage:q("#dietDayMessage"), dayCancel:q("#dietDayCancelBtn"), dayToggle:q("#dietDayToggleBtn"),
           shop:q("#dietShopLayer"), shopBalance:q("#dietShopBalance"), shopItems:q("#dietShopItems"), redemptionList:q("#dietRedemptionList"), shopClose:q("#dietShopCloseBtn"), shopRefresh:q("#dietShopRefreshBtn"),
+          redeemLayer:q("#dietRedeemLayer"), redeemItem:q("#dietRedeemItemName"), redeemDiamond:q("#dietRedeemDiamondBtn"), redeemDiamondMeta:q("#dietRedeemDiamondMeta"), redeemDiamondPrice:q("#dietRedeemDiamondPrice"), redeemWheel:q("#dietRedeemWheelBtn"), redeemWheelPrice:q("#dietRedeemWheelPrice"), redeemCancel:q("#dietRedeemCancelBtn"),
+          useLayer:q("#dietUseServiceLayer"), useName:q("#dietUseServiceName"), useCancel:q("#dietUseServiceCancelBtn"), useConfirm:q("#dietUseServiceConfirmBtn"),
+          lockLayer:q("#dietServiceLockLayer"), lockTitle:q("#dietServiceLockTitle"), lockItem:q("#dietServiceLockItem"), lockMessage:q("#dietServiceLockMessage"), lockConfirm:q("#dietServiceLockConfirmBtn"), lockWaiting:q("#dietServiceLockWaiting"),
           privateLayer:q("#dietAdminDataLayer"), privateList:q("#dietPrivateWeightList"), privateClose:q("#dietAdminDataCloseBtn"), privateAdd:q("#dietAdminDataAddBtn"), openPrivate:q("#openDietAdminDataBtn")
         };
-        const local = { initialized:false,startDate:null,streak:0,daysInWeek:0,daysUntil:7,weeksCycle:0,diamonds:0,change:null,hasProgress:false,lastWeightAt:null,longest:0,month:startOfMonth(new Date()),indulgences:new Map(),trend:[],ledger:[],items:[],redemptions:[],range:"30",selectedDay:null,tab:"calendar",available:null };
+        const local = { initialized:false,startDate:null,streak:0,daysInWeek:0,daysUntil:7,weeksCycle:0,diamonds:0,change:null,hasProgress:false,lastWeightAt:null,longest:0,month:startOfMonth(new Date()),indulgences:new Map(),trend:[],ledger:[],items:[],redemptions:[],range:"30",selectedDay:null,tab:"calendar",available:null,selectedProduct:null,selectedUseId:null,activeService:null,lockClosing:false,guestSyncTick:0,servicePollBusy:false };
 
         function dateFromKey(key){ const [y,m,day]=String(key||"").split("-").map(Number); return new Date(y,m-1,day,0,0,0,0); }
         function formatDay(key){ const x=dateFromKey(key); return new Intl.DateTimeFormat("zh-CN",{month:"long",day:"numeric",weekday:"short"}).format(x); }
@@ -13573,7 +13696,7 @@
         async function loadTrend(){ const p=local.range==="all"?null:Number(local.range); const {data,error}=await db.rpc("diet_get_weight_trend",{p_days:p}); if(error) throw error; local.trend=Array.isArray(data)?data:[]; }
         async function loadLedger(){ const {data,error}=await db.rpc("diet_get_diamond_ledger",{p_limit:120}); if(error) throw error; local.ledger=Array.isArray(data)?data:[]; }
 
-        async function refresh(silent=true){ const ok=await loadState(silent); if(!ok) return; if(d.overview.classList.contains("open")) await refreshOverview(); }
+        async function refresh(silent=true){ const ok=await loadState(silent); if(!ok) return; await refreshServiceLock(true); if(d.overview.classList.contains("open")) await refreshOverview(); }
 
         function renderSummary(){ d.overviewStreak.textContent=local.initialized?`${local.streak} 天`:"未开启"; d.overviewDiamonds.textContent=local.initialized?`💎 ${local.diamonds}`:"—"; d.overviewWeight.textContent=local.hasProgress?formatDelta(local.change):"等待复测"; d.overviewNext.textContent=local.initialized?`${local.daysUntil} 天`:"—"; }
         function renderCalendar(){
@@ -13601,13 +13724,173 @@
         function openDay(key){ if(!local.initialized)return; const indulgence=local.indulgences.get(key); local.selectedDay=key; d.dayTitle.textContent=formatDay(key); d.dayMessage.textContent=indulgence?`这一天目前标记为放纵日 · ${indulgence.marked_by==="admin"?"管理员":"游客"}标记。恢复后会重新计算连续天数和钻石。`:`默认状态为“坚持”。如果这一天实际放纵了，可以由管理员或游客共同监督并标记。`; d.dayToggle.textContent=indulgence?"恢复为坚持":"标记为放纵日";d.dayToggle.classList.toggle("destructive",!indulgence);setLayer(d.day,true); }
         async function toggleDay(){ if(!local.selectedDay)return; const indulgent=!local.indulgences.has(local.selectedDay);setBusy(d.dayToggle,true);try{const {error}=await db.rpc("diet_set_indulgence",{p_day:local.selectedDay,p_indulgent:indulgent});if(error)throw error;setLayer(d.day,false);await loadState(false);await loadIndulgences();renderCalendar();renderSummary();renderPrimaryMetric();vibrate(12);showToast(indulgent?"已标记为放纵日 · 连续记录已重新计算":"已恢复为坚持 · 连续记录已重新计算");}catch(err){console.error("diet.toggleDay:",err);showToast(missing(err)?"请先运行减脂模块数据库 SQL":"修改记录失败");}finally{setBusy(d.dayToggle,false);} }
 
-        async function loadShop(){ try{const [a,b,c]=await Promise.all([db.rpc("diet_shop_get_items"),db.rpc("diet_get_redemptions",{p_limit:100}),db.rpc("diet_get_state")]);if(a.error)throw a.error;if(b.error)throw b.error;if(c.error)throw c.error;local.items=a.data||[];local.redemptions=b.data||[];applyState(Array.isArray(c.data)?c.data[0]:c.data);renderShop();}catch(err){console.error("diet.loadShop:",err);d.shopItems.innerHTML='<div class="diet-empty">请先运行减脂模块数据库 SQL。</div>';d.redemptionList.innerHTML="";} }
-        function renderShop(){ d.shopBalance.textContent=`💎 ${local.diamonds}`; if(!local.items.length)d.shopItems.innerHTML='<div class="diet-empty">钻石商城框架已经准备好 ✦<br>商品内容下一步再一起设计。</div>';else d.shopItems.innerHTML=local.items.map(i=>`<button class="diet-product pressable" data-diet-product="${escapeHTML(i.code)}" type="button"><span><strong>${escapeHTML(i.name)}</strong><small>${escapeHTML(i.description||"由宝宝兑现的服务")}</small></span><b>💎 ${Number(i.price)}</b></button>`).join("");
-          if(!local.redemptions.length)d.redemptionList.innerHTML='<div class="diet-empty">还没有服务兑换记录。</div>';else d.redemptionList.innerHTML=local.redemptions.map(r=>{const pending=r.status==="pending";const action=pending?(state.isAdmin?`<button class="diet-sheet-button destructive" data-diet-cancel-redemption="${r.id}" type="button">撤销</button>`:`<button class="diet-sheet-button primary" data-diet-fulfill="${r.id}" type="button">已经兑现</button>`):`<b>${r.status==="fulfilled"?"已兑现":"已取消"}</b>`;return `<div class="diet-list-row"><span><strong>${escapeHTML(r.item_name)}</strong><small>💎 ${Number(r.price)} · ${pending?"等待宝宝兑现":r.status==="fulfilled"?"服务已完成":"已撤销并退回钻石"}</small></span>${action}</div>`}).join(""); }
+        async function loadShop(){
+          try{
+            const [a,b,c]=await Promise.all([db.rpc("diet_shop_get_items"),db.rpc("diet_get_redemptions",{p_limit:100}),db.rpc("diet_get_state")]);
+            if(a.error)throw a.error;if(b.error)throw b.error;if(c.error)throw c.error;
+            local.items=Array.isArray(a.data)?a.data:[];local.redemptions=Array.isArray(b.data)?b.data:[];
+            applyState(Array.isArray(c.data)?c.data[0]:c.data);renderShop();
+          }catch(err){console.error("diet.loadShop:",err);d.shopItems.innerHTML='<div class="diet-empty">请先运行减脂商城 v2.2 数据库补丁。</div>';d.redemptionList.innerHTML="";}
+        }
+
+        function paymentLabel(row){
+          return String(row.payment_method)==="wheel_chance" ? `🎡 ${Number(row.payment_amount||0)} 次正式机会` : `💎 ${Number(row.payment_amount||row.price||0)}`;
+        }
+        function statusLabel(status){
+          return status==="owned"?"已兑换":status==="service_requested"?"使用中":status==="guest_confirmed"?"待哥哥确认":status==="completed"?"已兑现":status==="cancelled"?"已取消":String(status||"");
+        }
+        function statusClass(status){ return status==="completed"?"done":status==="cancelled"?"cancelled":status==="service_requested"||status==="guest_confirmed"?"waiting":""; }
+
+        function renderShop(){
+          d.shopBalance.textContent=`💎 ${local.diamonds}`;
+          if(!local.items.length){
+            d.shopItems.innerHTML='<div class="diet-empty">还没有可兑换的服务。</div>';
+          }else{
+            d.shopItems.innerHTML=local.items.map(i=>{
+              const wheel=Number(i.wheel_chance_price||0);
+              const prices=`<span class="diet-product-prices"><b>💎 ${Number(i.price)}</b>${wheel>0?`<b class="wheel">🎡 ${wheel}</b>`:""}</span>`;
+              return `<button class="diet-product pressable" data-diet-product="${escapeHTML(i.code)}" type="button"><span><strong>${escapeHTML(i.name)}</strong><small>${escapeHTML(i.description||"由宝宝兑现的服务")}</small></span>${prices}</button>`;
+            }).join("");
+          }
+
+          if(!local.redemptions.length){d.redemptionList.innerHTML='<div class="diet-empty">还没有服务兑换记录。</div>';return;}
+          d.redemptionList.innerHTML=local.redemptions.map(r=>{
+            const status=String(r.status||"");
+            let actions="";
+            if(state.isAdmin){
+              if(status==="owned") actions=`<div class="diet-redemption-actions"><button class="diet-redemption-action primary pressable" data-diet-use-service="${r.id}" type="button">使用服务</button><button class="diet-redemption-action destructive pressable" data-diet-cancel-redemption="${r.id}" type="button">取消兑换</button></div>`;
+              else if(status==="service_requested") actions=`<div class="diet-redemption-actions single"><button class="diet-redemption-action destructive pressable" data-diet-cancel-use="${r.id}" type="button">取消本次使用</button></div>`;
+              else if(status==="guest_confirmed") actions=`<div class="diet-redemption-actions"><button class="diet-redemption-action pressable" data-diet-reject-service="${r.id}" type="button">还没有完成</button><button class="diet-redemption-action confirm pressable" data-diet-confirm-service="${r.id}" type="button">确认已兑现</button></div>`;
+            }
+            const statusCopy=status==="owned"?(state.isAdmin?"已购买 · 点击“使用服务”后宝宝会收到强制提醒":"哥哥已兑换 · 等待哥哥使用"):
+              status==="service_requested"?"哥哥已开始使用 · 等待宝宝完成并确认":
+              status==="guest_confirmed"?"宝宝已确认完成 · 等待哥哥最终确认":
+              status==="completed"?"双方已确认 · 服务完成":
+              status==="cancelled"?"兑换已取消":"";
+            return `<div class="diet-list-row diet-redemption-row"><div class="diet-redemption-head"><span><strong>${escapeHTML(r.item_name)}</strong><small>${escapeHTML(paymentLabel(r))} · ${escapeHTML(statusCopy)}</small></span><em class="diet-redemption-state ${statusClass(status)}">${escapeHTML(statusLabel(status))}</em></div>${actions}</div>`;
+          }).join("");
+        }
+
         async function openShop(){ if(!local.initialized){ if(state.isAdmin)return openSetup(); return showToast("减脂记录尚未开启"); }setLayer(d.shop,true);await loadShop();vibrate(7); }
-        async function redeem(code){ if(!state.isAdmin)return showToast("钻石由管理员兑换服务");try{const {error}=await db.rpc("diet_admin_redeem",{p_item_code:code});if(error)throw error;await loadShop();await loadState(true);renderPrimaryMetric();showToast("💎 已兑换 · 等待宝宝兑现");}catch(err){console.error("diet.redeem:",err);showToast(/Insufficient diamonds/i.test(String(err.message||""))?"钻石不够啦": "兑换失败");} }
-        async function fulfill(id){ if(state.isAdmin)return showToast("请切换到游客模式后兑现服务");try{const {error}=await db.rpc("diet_guest_fulfill_redemption",{p_redemption_id:Number(id)});if(error)throw error;await loadShop();showToast("♡ 已确认兑现服务");vibrate(14);}catch(err){console.error("diet.fulfill:",err);showToast("兑现失败");} }
-        async function cancelRedemption(id){ if(!state.isAdmin)return;try{const {error}=await db.rpc("diet_admin_cancel_redemption",{p_redemption_id:Number(id)});if(error)throw error;await loadShop();await loadState(true);renderPrimaryMetric();showToast("已撤销兑换 · 钻石已退回");}catch(err){console.error("diet.cancelRedemption:",err);showToast("撤销失败");} }
+
+        function openRedeemChoice(code){
+          if(!state.isAdmin)return showToast("服务由哥哥兑换，宝宝负责兑现 ♡");
+          const item=local.items.find(x=>String(x.code)===String(code));if(!item)return;
+          local.selectedProduct=item;
+          d.redeemItem.textContent=item.name;
+          d.redeemDiamondPrice.textContent=`${Number(item.price)} 💎`;
+          d.redeemDiamondMeta.textContent=local.diamonds<Number(item.price)?`当前只有 ${local.diamonds} 💎 · 钻石不足`:`兑换后剩 ${local.diamonds-Number(item.price)} 💎`;
+          d.redeemDiamond.disabled=local.diamonds<Number(item.price);
+          const wheel=Number(item.wheel_chance_price||0);
+          d.redeemWheel.hidden=!(wheel>0);d.redeemWheel.disabled=!(wheel>0);d.redeemWheelPrice.textContent=`+${wheel} 次`;
+          setLayer(d.redeemLayer,true);vibrate(6);
+        }
+
+        async function redeem(method){
+          const item=local.selectedProduct;if(!state.isAdmin||!item)return;
+          const btn=method==="wheel_chance"?d.redeemWheel:d.redeemDiamond;setBusy(btn,true);
+          try{
+            const {error}=await db.rpc("diet_admin_redeem",{p_item_code:item.code,p_payment_method:method});if(error)throw error;
+            setLayer(d.redeemLayer,false);local.selectedProduct=null;
+            await Promise.all([loadShop(),loadState(true),loadAppState({silent:true})]);renderPrimaryMetric();
+            if(state.overviewMode!=="closed")await loadOverviewData(true);
+            const copy=method==="wheel_chance"?`🎡 已兑换 · 宝宝正式大转盘机会 +${Number(item.wheel_chance_price||1)}`:`💎 已兑换 ${item.name}`;
+            showToast(copy);vibrate(16);
+          }catch(err){console.error("diet.redeem:",err);const msg=String(err?.message||"");showToast(/Insufficient diamonds/i.test(msg)?"钻石不够啦":missing(err)?"请先运行减脂商城 v2.2 数据库补丁":"兑换失败");}
+          finally{setBusy(btn,false);}
+        }
+
+        function openUseService(id){
+          if(!state.isAdmin)return;
+          const row=local.redemptions.find(x=>Number(x.id)===Number(id));if(!row||row.status!=="owned")return;
+          local.selectedUseId=Number(id);d.useName.textContent=`${row.item_name} · 1 次`;setLayer(d.useLayer,true);vibrate(7);
+        }
+        async function startService(){
+          if(!state.isAdmin||!local.selectedUseId)return;setBusy(d.useConfirm,true);
+          try{const {error}=await db.rpc("diet_admin_start_service",{p_redemption_id:local.selectedUseId});if(error)throw error;setLayer(d.useLayer,false);local.selectedUseId=null;await loadShop();showToast("🍭 已开始使用 · 宝宝界面已进入强提醒");vibrate(18);}
+          catch(err){console.error("diet.startService:",err);showToast(/Another service is already active/i.test(String(err?.message||""))?"请先完成当前正在使用的奖励":missing(err)?"请先运行减脂商城 v2.2 数据库补丁":"开始使用失败");}
+          finally{setBusy(d.useConfirm,false);}
+        }
+        async function cancelServiceUse(id){
+          if(!state.isAdmin)return;
+          try{const {error}=await db.rpc("diet_admin_cancel_service_use",{p_redemption_id:Number(id)});if(error)throw error;await loadShop();showToast("已取消本次使用 · 服务仍保留在已兑换中");}
+          catch(err){console.error("diet.cancelServiceUse:",err);showToast("取消本次使用失败");}
+        }
+        async function confirmService(id){
+          if(!state.isAdmin)return;
+          try{const {error}=await db.rpc("diet_admin_confirm_service",{p_redemption_id:Number(id)});if(error)throw error;await loadShop();showToast("♡ 已确认兑现 · 宝宝的小世界会自动解除锁定");vibrate(18);}
+          catch(err){console.error("diet.confirmService:",err);showToast("确认兑现失败");}
+        }
+        async function rejectService(id){
+          if(!state.isAdmin)return;
+          try{const {error}=await db.rpc("diet_admin_reject_guest_confirmation",{p_redemption_id:Number(id)});if(error)throw error;await loadShop();showToast("已退回继续完成 · 宝宝仍会保持强提醒");}
+          catch(err){console.error("diet.rejectService:",err);showToast("状态更新失败");}
+        }
+        async function cancelRedemption(id){
+          if(!state.isAdmin)return;
+          try{
+            const row=local.redemptions.find(x=>Number(x.id)===Number(id));
+            const {error}=await db.rpc("diet_admin_cancel_redemption",{p_redemption_id:Number(id)});if(error)throw error;
+            await Promise.all([loadShop(),loadState(true),loadAppState({silent:true})]);renderPrimaryMetric();
+            if(state.overviewMode!=="closed")await loadOverviewData(true);
+            showToast(row?.payment_method==="wheel_chance"?"已取消兑换 · 正式大转盘机会已收回":"已取消兑换 · 钻石已退回");
+          }catch(err){console.error("diet.cancelRedemption:",err);const msg=String(err?.message||"");showToast(/already been used/i.test(msg)?"这次兑换发放的正式机会已经被使用，无法取消兑换":"取消兑换失败");}
+        }
+
+        function renderServiceLock(){
+          const row=local.activeService;
+          const guest=!state.session&&!state.isAdmin;
+          if(!guest||!row){document.body.classList.remove("diet-service-locked");setLayer(d.lockLayer,false);return;}
+          document.body.classList.add("diet-service-locked");
+          d.lockItem.textContent=`${row.item_name} · 1 次`;
+          const confirmed=String(row.status)==="guest_confirmed";
+          d.lockTitle.textContent=confirmed?"已提交完成确认 ✓":"哥哥正在使用一项奖励 ♡";
+          d.lockMessage.textContent=confirmed?"哥哥确认这项服务已经兑现后，小世界才会恢复使用。":"完成这项已经兑换的服务后，点击下面按钮。确认后仍需等待哥哥最终确认。";
+          d.lockConfirm.hidden=confirmed;d.lockWaiting.hidden=!confirmed;
+          if(confirmed)d.lockWaiting.textContent="已提交完成确认 · 等待哥哥确认是否已经兑现";
+          setLayer(d.lockLayer,true);
+        }
+
+        async function refreshServiceLock(silent=true){
+          const guest=!state.session&&!state.isAdmin;
+          if(!guest){local.activeService=null;local.lockClosing=false;renderServiceLock();return;}
+          try{
+            const {data,error}=await db.rpc("diet_get_active_service_lock");if(error)throw error;
+            const row=Array.isArray(data)?(data[0]||null):data||null;
+            if(!row&&local.activeService&&!local.lockClosing){
+              local.lockClosing=true;
+              let finalStatus="";
+              try{const statusRes=await db.rpc("diet_get_redemptions",{p_limit:100});if(!statusRes.error){const hit=(statusRes.data||[]).find(x=>Number(x.id)===Number(local.activeService.id));finalStatus=String(hit?.status||"");}}catch(_){}
+              const completed=finalStatus==="completed";
+              d.lockTitle.textContent=completed?"奖励已兑现 ♡":"本次使用已取消";
+              d.lockItem.textContent=local.activeService.item_name;
+              d.lockMessage.textContent=completed?"哥哥已经确认服务完成，小世界现在恢复使用。":"哥哥取消了这次使用，服务仍保留在已兑换记录中，小世界现在恢复使用。";
+              d.lockConfirm.hidden=true;d.lockWaiting.hidden=false;d.lockWaiting.textContent=completed?"确认完成 · 正在恢复小世界":"使用已取消 · 正在恢复小世界";setLayer(d.lockLayer,true);
+              setTimeout(()=>{local.activeService=null;local.lockClosing=false;document.body.classList.remove("diet-service-locked");setLayer(d.lockLayer,false);showToast(completed?"♡ 奖励已兑现，小世界已恢复":"本次使用已取消 · 小世界已恢复");},780);
+              return;
+            }
+            local.activeService=row;local.lockClosing=false;renderServiceLock();
+          }catch(err){if(!silent)console.error("diet.refreshServiceLock:",err);}
+        }
+
+        async function guestConfirmService(){
+          const row=local.activeService;if(state.session||state.isAdmin||!row||row.status!=="service_requested")return;
+          setBusy(d.lockConfirm,true);
+          try{const {error}=await db.rpc("diet_guest_confirm_service",{p_redemption_id:Number(row.id)});if(error)throw error;await refreshServiceLock(false);vibrate(18);}
+          catch(err){console.error("diet.guestConfirmService:",err);showToast(missing(err)?"请先运行减脂商城 v2.2 数据库补丁":"确认失败，请再试一次");}
+          finally{setBusy(d.lockConfirm,false);}
+        }
+
+        async function servicePoll(){
+          if(local.servicePollBusy||document.visibilityState!=="visible")return;local.servicePollBusy=true;
+          try{
+            await refreshServiceLock(true);
+            if(!state.session&&!state.isAdmin){
+              local.guestSyncTick+=1;
+              if(local.guestSyncTick%3===0){await loadAppState({silent:true});if(state.activeMetric==="wheel")renderPrimaryMetric();}
+            }
+          }finally{local.servicePollBusy=false;}
+        }
 
         async function loadPrivate(){ if(!state.isAdmin){setLayer(d.privateLayer,false);return showToast("需要管理员权限");}try{const {data,error}=await db.rpc("diet_admin_get_private_weights");if(error)throw error;const rows=data||[]; if(!rows.length){d.privateList.innerHTML='<div class="diet-empty">还没有起始体重。请先进入减脂模块设置起点。</div>';d.privateAdd.textContent="设置起始体重";return;}d.privateAdd.textContent="记录今天体重";d.privateList.innerHTML=rows.map(r=>`<div class="diet-list-row"><span><strong>${r.is_start?"起始体重":"体重记录"}</strong><small>${escapeHTML(String(r.recorded_on))}${r.is_start?" · 永久基准":""}</small></span><b class="diet-private-weight">${Number(r.weight).toFixed(1)} kg</b></div>`).join("");}catch(err){console.error("diet.loadPrivate:",err);d.privateList.innerHTML='<div class="diet-empty">读取失败，请确认已运行减脂模块数据库 SQL。</div>';} }
         async function openPrivate(){ if(!state.isAdmin)return showToast("需要管理员权限");setLayer(els.settingsLayer,false);setLayer(d.privateLayer,true);await loadPrivate(); }
@@ -13616,12 +13899,18 @@
         d.prevMonth.addEventListener("click",async()=>{local.month=addMonths(local.month,-1);await loadIndulgences();renderCalendar();});d.nextMonth.addEventListener("click",async()=>{const next=addMonths(local.month,1);if(next<=startOfMonth(new Date()))local.month=next;await loadIndulgences();renderCalendar();});
         d.rangeSwitch.addEventListener("click",async e=>{const b=e.target.closest("[data-diet-range]");if(!b)return;local.range=b.dataset.dietRange;d.rangeSwitch.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));await loadTrend();requestAnimationFrame(drawTrend);});
         d.setupCancel.addEventListener("click",()=>setLayer(d.setup,false));d.setupConfirm.addEventListener("click",confirmSetup);d.setup.addEventListener("click",e=>{if(e.target===d.setup)setLayer(d.setup,false)});d.weightCancel.addEventListener("click",()=>setLayer(d.weight,false));d.weightConfirm.addEventListener("click",saveWeight);d.weight.addEventListener("click",e=>{if(e.target===d.weight)setLayer(d.weight,false)});d.dayCancel.addEventListener("click",()=>setLayer(d.day,false));d.dayToggle.addEventListener("click",toggleDay);d.day.addEventListener("click",e=>{if(e.target===d.day)setLayer(d.day,false)});
-        d.shopClose.addEventListener("click",()=>setLayer(d.shop,false));d.shopRefresh.addEventListener("click",loadShop);d.shop.addEventListener("click",e=>{if(e.target===d.shop)setLayer(d.shop,false);const p=e.target.closest("[data-diet-product]");if(p)void redeem(p.dataset.dietProduct);const f=e.target.closest("[data-diet-fulfill]");if(f)void fulfill(f.dataset.dietFulfill);const c=e.target.closest("[data-diet-cancel-redemption]");if(c)void cancelRedemption(c.dataset.dietCancelRedemption);});
+        d.shopClose.addEventListener("click",()=>setLayer(d.shop,false));d.shopRefresh.addEventListener("click",loadShop);d.shop.addEventListener("click",e=>{if(e.target===d.shop)setLayer(d.shop,false);const p=e.target.closest("[data-diet-product]");if(p)openRedeemChoice(p.dataset.dietProduct);const use=e.target.closest("[data-diet-use-service]");if(use)openUseService(use.dataset.dietUseService);const cu=e.target.closest("[data-diet-cancel-use]");if(cu)void cancelServiceUse(cu.dataset.dietCancelUse);const cs=e.target.closest("[data-diet-confirm-service]");if(cs)void confirmService(cs.dataset.dietConfirmService);const rs=e.target.closest("[data-diet-reject-service]");if(rs)void rejectService(rs.dataset.dietRejectService);const cr=e.target.closest("[data-diet-cancel-redemption]");if(cr)void cancelRedemption(cr.dataset.dietCancelRedemption);});
+        d.redeemCancel.addEventListener("click",()=>{local.selectedProduct=null;setLayer(d.redeemLayer,false);});d.redeemDiamond.addEventListener("click",()=>void redeem("diamond"));d.redeemWheel.addEventListener("click",()=>void redeem("wheel_chance"));d.redeemLayer.addEventListener("click",e=>{if(e.target===d.redeemLayer){local.selectedProduct=null;setLayer(d.redeemLayer,false);}});
+        d.useCancel.addEventListener("click",()=>{local.selectedUseId=null;setLayer(d.useLayer,false);});d.useConfirm.addEventListener("click",()=>void startService());d.useLayer.addEventListener("click",e=>{if(e.target===d.useLayer){local.selectedUseId=null;setLayer(d.useLayer,false);}});
+        d.lockConfirm.addEventListener("click",()=>void guestConfirmService());
         d.openPrivate.addEventListener("click",openPrivate);d.privateClose.addEventListener("click",()=>setLayer(d.privateLayer,false));d.privateAdd.addEventListener("click",()=>{setLayer(d.privateLayer,false);openWeight();});d.privateLayer.addEventListener("click",e=>{if(e.target===d.privateLayer)setLayer(d.privateLayer,false)});
         window.addEventListener("resize",()=>{if(d.overview.classList.contains("open")&&local.tab==="trend")requestAnimationFrame(drawTrend)});
-        document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;for(const layer of [d.day,d.weight,d.setup,d.privateLayer,d.shop,d.overview]){if(layer.classList.contains("open")){e.stopImmediatePropagation();setLayer(layer,false);return;}}});
+        document.addEventListener("keydown",e=>{if(local.activeService&&!state.session&&!state.isAdmin){e.preventDefault();e.stopImmediatePropagation();return;}if(e.key!=="Escape")return;for(const layer of [d.useLayer,d.redeemLayer,d.day,d.weight,d.setup,d.privateLayer,d.shop,d.overview]){if(layer.classList.contains("open")){e.stopImmediatePropagation();setLayer(layer,false);return;}}},true);
         ensureDots();renderHome();
-        return Object.freeze({refresh,renderHome,renderHeadline,openOverview,openShop,openWeight,openPrivate});
+        setInterval(()=>void servicePoll(),4000);
+        document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")void servicePoll();});
+        window.addEventListener("pageshow",()=>void servicePoll());
+        return Object.freeze({refresh,refreshServiceLock,renderHome,renderHeadline,openOverview,openShop,openWeight,openPrivate});
       })();
       // ============================================================
       // DIET / WEIGHT-LOSS MODULE END
@@ -14056,7 +14345,7 @@
       });
       db.auth.onAuthStateChange((_event, session) => {
         state.session = session;
-        setTimeout(refreshAuthState, 0);
+        setTimeout(async () => { await refreshAuthState(); await dietModule.refresh(true); }, 0);
       });
 
       // -------------------- Boot --------------------
