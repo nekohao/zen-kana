@@ -1,111 +1,96 @@
-        const btn = e.target.closest("[data-overview-section]");
-        if (!btn || btn.dataset.overviewSection === state.overviewSection) return;
-        vibrate(6); openOverviewSection(btn.dataset.overviewSection);
-      });
-      els.overviewBackdrop.addEventListener("click", () => { if (performance.now() >= suppressOverviewClickUntil) closeOverviewSheet(); });
-      els.overviewShell.addEventListener("pointerdown", beginOverviewDrag);
-      els.overviewShell.addEventListener("pointermove", moveOverviewDrag, { passive: false });
-      els.overviewShell.addEventListener("pointerup", endOverviewDrag);
-      els.overviewShell.addEventListener("pointercancel", endOverviewDrag);
-      els.overview.addEventListener("click", (e) => {
-        if (performance.now() < suppressOverviewClickUntil) { e.preventDefault(); e.stopPropagation(); }
-      }, true);
+<!DOCTYPE html>
 
-      els.trendSegments.addEventListener("click", (e) => {
-        const monthOption = e.target.closest("[data-month-week]");
-        if (monthOption) {
-          state.trendMonthWeek = Number(monthOption.dataset.monthWeek);
-          state.trendRange = "month";
-          setTrendMonthMenu(false); renderTrend(); return;
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
+<meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
+<meta content="light" name="color-scheme"/>
+<script>
+  (() => {
+    const FINGERPRINT_KEY = "appRemoteHtmlFingerprintV1";
+    const UPDATE_PARAM = "__app_refresh";
+    const CACHE_BUST_PARAM = "__html_fingerprint_check";
+    const CHECK_DEBOUNCE_MS = 1200;
+    const RELOAD_GUARD_KEY = "appFingerprintReloadGuardV1";
+    const RELOAD_GUARD_MS = 45000;
+
+    let lastCheckAt = 0;
+    let checkPromise = null;
+
+    function pageUrl({ forCheck = false } = {}) {
+      const url = new URL(window.location.href);
+      url.hash = "";
+      url.searchParams.delete(UPDATE_PARAM);
+      url.searchParams.delete(CACHE_BUST_PARAM);
+      if (forCheck) url.searchParams.set(CACHE_BUST_PARAM, String(Date.now()));
+      return url;
+    }
+
+    function cleanUpdateParams() {
+      try {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.has(UPDATE_PARAM) && !url.searchParams.has(CACHE_BUST_PARAM)) return;
+        url.searchParams.delete(UPDATE_PARAM);
+        url.searchParams.delete(CACHE_BUST_PARAM);
+        history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
+      } catch (_) {}
+    }
+
+    async function sha256Hex(text) {
+      try {
+        if (window.crypto?.subtle && window.TextEncoder) {
+          const bytes = new TextEncoder().encode(text);
+          const digest = await crypto.subtle.digest("SHA-256", bytes);
+          return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
         }
-        if (e.target.closest("#trendMonthBtn")) { setTrendMonthMenu(els.trendMonthMenu.hidden); return; }
-        const btn = e.target.closest(".segment[data-range]"); if (!btn) return;
-        state.trendRange = btn.dataset.range; setTrendMonthMenu(false); renderTrend();
-      });
-      document.addEventListener("click", (e) => {
-        if (!els.changeAmountMenu.hidden && !e.target.closest(".change-amount-picker-wrap")) closeChangeAmountMenu();
-        if (els.trendMonthMenu.hidden || e.target.closest(".trend-month-control")) return;
-        setTrendMonthMenu(false);
-      });
-      els.prevMonthBtn.addEventListener("click", () => { state.calendarDate = addMonths(state.calendarDate, -1); state.selectedDayKey = null; renderCalendar(); });
-      els.nextMonthBtn.addEventListener("click", () => { state.calendarDate = addMonths(state.calendarDate, 1); state.selectedDayKey = null; renderCalendar(); });
+      } catch (_) {}
 
-      document.addEventListener("keydown", (e) => {
-        if (e.key !== "Escape") return;
-        if (!els.trendMonthMenu.hidden) return setTrendMonthMenu(false);
-        if (els.wheelProbabilityHistoryLayer.classList.contains("open")) return setLayer(els.wheelProbabilityHistoryLayer, false);
-        if (els.wheelProbabilityLayer.classList.contains("open")) return setLayer(els.wheelProbabilityLayer, false);
-        if (els.settleWithdrawalLayer.classList.contains("open")) return setLayer(els.settleWithdrawalLayer, false);
-        if (els.resetLayer.classList.contains("open")) return setLayer(els.resetLayer, false);
-        if (els.releaseNotesLayer.classList.contains("open")) return setLayer(els.releaseNotesLayer, false);
-        if (els.versionInfoLayer.classList.contains("open")) return setLayer(els.versionInfoLayer, false);
-        if (els.wheelAdjustLayer.classList.contains("open")) return setLayer(els.wheelAdjustLayer, false);
-        if (els.changeLayer.classList.contains("open")) { closeChangeAmountMenu(); return setLayer(els.changeLayer, false); }
-        if (els.wheelResultLayer.classList.contains("open")) return setLayer(els.wheelResultLayer, false);
-        if (els.wheelWithdrawLayer.classList.contains("open")) return setLayer(els.wheelWithdrawLayer, false);
-        if (els.wheelPreviewLayer.classList.contains("open")) return setLayer(els.wheelPreviewLayer, false);
-        if (els.adminGrantNoticeLayer?.classList.contains("open")) return setLayer(els.adminGrantNoticeLayer, false);
-        if (els.adminInventoryAdjustLayer?.classList.contains("open")) return setLayer(els.adminInventoryAdjustLayer, false);
-        if (els.adminInventoryLayer?.classList.contains("open")) return setLayer(els.adminInventoryLayer, false);
-        if (els.shopMysteryOpenLayer?.classList.contains("open")) return setLayer(els.shopMysteryOpenLayer, false);
-        if (els.shopWeeklyGiftLayer?.classList.contains("open")) return setLayer(els.shopWeeklyGiftLayer, false);
-        if (els.shopRevealLayer.classList.contains("open")) return setLayer(els.shopRevealLayer, false);
-        if (els.shopItemLayer.classList.contains("open")) return setLayer(els.shopItemLayer, false);
-        if (els.wheelDecisionLayer.classList.contains("open")) { vibrate(3); return; }
-        if (els.wheelToolLayer.classList.contains("open")) return setLayer(els.wheelToolLayer, false);
-        if (els.redeemLayer.classList.contains("open")) return setLayer(els.redeemLayer, false);
-        if (els.loginLayer.classList.contains("open")) return setLayer(els.loginLayer, false);
-        if (els.settingsLayer.classList.contains("open")) return setLayer(els.settingsLayer, false);
-        if (state.overviewMode !== "closed") closeOverviewSheet();
-      });
-
-      window.addEventListener("resize", () => {
-        if (els.overview.classList.contains("open")) drawTrend(buildTrendPoints(state.trendRange));
-      });
-      db.auth.onAuthStateChange((_event, session) => {
-        state.session = session;
-      });
-
-      // -------------------- Boot --------------------
-
-      async function periodicDatabaseRefresh() {
-        await loadAppState({ silent: true });
-        await loadShopState({ silent: true });
-        if (!state.isAdmin) await refreshGuestGrantNotice();
-        if (els.overview.classList.contains("open")) {
-          await loadOverviewData(true);
-        }
+      // Small deterministic fallback for browsers where SubtleCrypto is unavailable.
+      let h1 = 0x811c9dc5;
+      let h2 = 0x9e3779b9;
+      for (let i = 0; i < text.length; i += 1) {
+        const c = text.charCodeAt(i);
+        h1 ^= c;
+        h1 = Math.imul(h1, 0x01000193);
+        h2 ^= c + ((i & 255) << 8);
+        h2 = Math.imul(h2, 0x85ebca6b);
       }
+      return `fallback-${(h1 >>> 0).toString(16).padStart(8, "0")}${(h2 >>> 0).toString(16).padStart(8, "0")}-${text.length}`;
+    }
 
-      async function boot() {
-        await Promise.all([
-          loadAppState(),
-          refreshAuthState(),
-          loadShopState({ silent: true })
-        ]);
-        renderPrimaryMetric();
-        if (state.isAdmin) await loadAdminInventory({silent:true});
-        else await refreshGuestGrantNotice();
+    function getReloadGuard() {
+      try { return JSON.parse(sessionStorage.getItem(RELOAD_GUARD_KEY) || "null"); }
+      catch (_) { return null; }
+    }
 
-        setInterval(periodicDatabaseRefresh, 30 * 60 * 1000);
+    function setReloadGuard(fingerprint) {
+      try {
+        sessionStorage.setItem(RELOAD_GUARD_KEY, JSON.stringify({ fingerprint, at: Date.now() }));
+      } catch (_) {}
+    }
 
-        document.addEventListener("visibilitychange", () => {
-          if (document.visibilityState !== "visible") return;
-          const last = state.lastRefreshAt instanceof Date ? state.lastRefreshAt.getTime() : 0;
-          const elapsed = Date.now() - last;
-          if (!last || elapsed >= 30 * 60 * 1000) periodicDatabaseRefresh();
-        });
+    function clearReloadGuard() {
+      try { sessionStorage.removeItem(RELOAD_GUARD_KEY); } catch (_) {}
+    }
 
-        window.addEventListener("pageshow", () => {
-          const last = state.lastRefreshAt instanceof Date ? state.lastRefreshAt.getTime() : 0;
-          const elapsed = Date.now() - last;
-          if (!last || elapsed >= 30 * 60 * 1000) periodicDatabaseRefresh();
-        });
+    function reloadLatest(fingerprint) {
+      const guard = getReloadGuard();
+      if (guard && guard.fingerprint === fingerprint && Date.now() - Number(guard.at || 0) < RELOAD_GUARD_MS) {
+        return false;
       }
+      setReloadGuard(fingerprint);
+      const url = pageUrl();
+      url.searchParams.set(UPDATE_PARAM, fingerprint.slice(0, 16));
+      url.searchParams.set(CACHE_BUST_PARAM, String(Date.now()));
+      window.location.replace(url.href);
+      return true;
+    }
 
-
-      boot();
-    })();
-  </script>
-</body>
-</html>
+    async function fetchRemoteFingerprint() {
+      const response = await fetch(pageUrl({ forCheck: true }).href, {
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: { "Cache-Control": "no-cache" }
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
