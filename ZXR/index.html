@@ -1,440 +1,4102 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-<meta name="theme-color" content="#090a10"/>
-<meta name="color-scheme" content="dark"/>
-<meta name="format-detection" content="telephone=no"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="攻略 ZXR"/>
-<link rel="manifest" href="./manifest.webmanifest"/>
-<link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png"/>
-<title>攻略 ZXR：重新认识你一次 · 试玩版</title>
-<style>
-:root{
-  --bg:#08090d; --panel:rgba(17,18,26,.76); --panel2:rgba(26,27,38,.72);
-  --line:rgba(255,255,255,.08); --text:#f5f1ea; --muted:#a7a5ad;
-  --rose:#e7b6bf; --rose2:#c98998; --gold:#d9c29a; --ink:#12131a;
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
+  <meta content="#090a10" name="theme-color"/>
+  <meta content="dark" name="color-scheme"/>
+  <meta content="telephone=no" name="format-detection"/>
+  <meta content="yes" name="apple-mobile-web-app-capable"/>
+  <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+  <meta content="攻略 ZXR" name="apple-mobile-web-app-title"/>
+  <meta content="2026.09.22.2345-alpha061-readable" name="zxr-build"/>
+  <meta content="0.6.1-alpha" name="zxr-version"/>
+  <link href="data:image/png;base64,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" rel="apple-touch-icon" sizes="180x180"/>
+  <title>
+   攻略 ZXR：重新认识你一次 · Alpha
+  </title>
+  <style>
+/* ==========================================================================
+   01. DESIGN TOKENS / BASE
+   ========================================================================== */
+   
+:root {
+  --bg:#08090d;
+  --panel:rgba(17,18,26,.76);
+  --panel2:rgba(26,27,38,.72);
+  --line:rgba(255,255,255,.08);
+  --text:#f5f1ea;
+  --muted:#a7a5ad;
+  --rose:#e7b6bf;
+  --rose2:#c98998;
+  --gold:#d9c29a;
+  --ink:#12131a;
   --safe:env(safe-area-inset-bottom,0px);
-  --safe-top:env(safe-area-inset-top,0px); --safe-left:env(safe-area-inset-left,0px); --safe-right:env(safe-area-inset-right,0px);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
   --app-h:100dvh;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;min-height:100%;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif} body{position:fixed;inset:0;height:var(--app-h)}
-button{font:inherit;color:inherit}
-body:before,body:after{content:"";position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none}
-body:before{width:48vw;height:48vw;left:-18vw;top:-20vw;background:#75384f}
-body:after{width:55vw;height:55vw;right:-20vw;bottom:-25vw;background:#2b355e}
-#app{position:relative;width:100%;height:var(--app-h);min-height:0;display:grid;place-items:center;padding:18px;isolation:isolate}
-.ambient{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
-.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.08;animation:float var(--d) linear infinite}
-@keyframes float{from{transform:translateY(8vh)}to{transform:translateY(-110vh)}}
-.shell{width:min(1200px,100%);height:min(900px,calc(var(--app-h) - 36px));min-height:0;display:grid;grid-template-columns:minmax(220px,260px) minmax(380px,560px) minmax(220px,260px);justify-content:center;gap:20px;align-items:stretch}
-.side,.game{border:1px solid var(--line);background:linear-gradient(180deg,rgba(21,22,31,.82),rgba(11,12,18,.82));box-shadow:0 30px 90px rgba(0,0,0,.36);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-.side{border-radius:28px;padding:22px;display:flex;flex-direction:column;min-height:0}
-.brand small{display:block;color:var(--muted);letter-spacing:.22em;font-size:10px;margin-bottom:10px}.brand h1{font-size:22px;line-height:1.15;margin:0;font-weight:650;letter-spacing:-.03em}.brand p{color:var(--muted);font-size:12px;line-height:1.65;margin:12px 0 0}
-.chapterRail{margin-top:24px;overflow:auto;padding-right:4px}.chapterDot{display:flex;gap:12px;align-items:flex-start;padding:12px 10px;border-radius:15px;color:#777882;transition:.2s}.chapterDot.active{background:rgba(255,255,255,.055);color:var(--text)}.chapterDot.done{color:#c9c4c5}.num{width:29px;height:29px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:10px;flex:0 0 auto}.active .num{border-color:rgba(231,182,191,.5);box-shadow:0 0 0 4px rgba(231,182,191,.06);color:var(--rose)}.chapterDot b{font-size:12px;font-weight:600}.chapterDot span{display:block;color:#777882;font-size:10px;margin-top:4px}.locked{opacity:.38;filter:blur(.15px)}
-.sideFooter{margin-top:auto;padding-top:16px}.ghostRow{display:flex;gap:8px}.ghost{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:14px;padding:9px 12px;font-size:11px;cursor:pointer}.ghost:hover{background:rgba(255,255,255,.06)}
-.game{position:relative;border-radius:34px;overflow:hidden;display:flex;flex-direction:column;min-height:0}.game:before{content:"";position:absolute;inset:0 0 auto;height:130px;background:linear-gradient(180deg,rgba(231,182,191,.09),transparent);pointer-events:none}
-.topbar{height:76px;display:flex;align-items:center;padding:0 18px;border-bottom:1px solid var(--line);position:relative;z-index:2;flex:0 0 auto}.backBtn{margin-right:9px;font-size:23px;line-height:1;padding-bottom:2px}.backBtn:disabled{opacity:.25;cursor:default}.avatar{width:38px;height:38px;border-radius:14px;background:linear-gradient(145deg,#f1c8cf,#a76478);display:grid;place-items:center;color:#2d1820;font-weight:800;box-shadow:0 7px 20px rgba(177,98,122,.22)}.who{margin-left:11px;min-width:0}.who b{display:block;font-size:14px}.who span{font-size:10px;color:var(--muted)}.topActions{margin-left:auto;display:flex;gap:8px}.iconBtn{width:34px;height:34px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:12px;cursor:pointer;display:grid;place-items:center;color:#c8c6ca}.progressLine{height:2px;background:rgba(255,255,255,.03)}.progressLine i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rose2),var(--gold));box-shadow:0 0 18px rgba(231,182,191,.45);transition:width .5s ease}
-.chat{flex:1;min-height:0;overflow:auto;padding:22px 18px 28px;scroll-behavior:smooth;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.day{font-size:10px;color:#6f7078;text-align:center;margin:9px 0 18px;letter-spacing:.12em}.msg{display:flex;margin:9px 0;animation:msgIn .32s cubic-bezier(.2,.8,.2,1) both}.msg.z{justify-content:flex-start}.msg.g{justify-content:flex-end}.msg.n{justify-content:center}.bubble{max-width:82%;font-size:14px;line-height:1.55;padding:10px 13px;border-radius:18px;white-space:pre-wrap;word-break:break-word}.z .bubble{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.045);border-bottom-left-radius:7px}.g .bubble{background:linear-gradient(145deg,#e0a9b4,#c88294);color:#24171b;border-bottom-right-radius:7px;box-shadow:0 9px 26px rgba(177,98,122,.14)}.n .bubble{background:transparent;color:#777982;text-align:center;font-size:11px;max-width:92%;padding:5px}.typing{display:inline-flex;gap:4px;align-items:center}.typing i{width:5px;height:5px;border-radius:50%;background:#999;animation:bounce 1s infinite}.typing i:nth-child(2){animation-delay:.12s}.typing i:nth-child(3){animation-delay:.24s}@keyframes bounce{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-4px);opacity:1}}@keyframes msgIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
-.choiceArea{border-top:1px solid var(--line);padding:13px 14px calc(14px + var(--safe));background:linear-gradient(180deg,rgba(14,15,22,.92),rgba(10,11,17,.98));min-height:132px;max-height:min(42%,340px);flex:0 0 auto}.prompt{font-size:10px;color:#8a8990;margin:0 2px 9px;display:flex;justify-content:space-between}.choices{display:grid;gap:8px;max-height:260px;overflow:auto}.choice{position:relative;text-align:left;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);border-radius:15px;padding:11px 13px;cursor:pointer;transition:.18s;overflow:hidden}.choice:hover{transform:translateY(-1px);background:rgba(255,255,255,.065);border-color:rgba(231,182,191,.22)}.choice:active{transform:scale(.985)}.choice b{display:block;font-size:13px;font-weight:560}.choice small{display:block;margin-top:4px;color:#777983;font-size:10px}.choice.silence{border-style:dashed;color:#b7b4b6}.choice.danger:after{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:rgba(231,182,191,.45)}
-.sceneTitle{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:#85858d;font-size:9px;margin-bottom:7px}
-.cover{position:absolute;inset:0;background:radial-gradient(circle at 50% 25%,rgba(149,76,99,.2),transparent 34%),linear-gradient(180deg,#0c0d13,#08090d);z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:36px}.cover.hidden{display:none}.coverMark{width:84px;height:84px;border-radius:28px;background:linear-gradient(145deg,#efc7ce,#9d566d);display:grid;place-items:center;color:#2f1720;font-family:Georgia,serif;font-size:38px;box-shadow:0 24px 70px rgba(168,82,110,.28);margin-bottom:28px}.coverEyebrow{font-size:10px;letter-spacing:.28em;color:#9f9ca2}.cover h2{font-family:Georgia,"Songti SC",serif;font-size:34px;line-height:1.15;font-weight:500;margin:13px 0 12px}.cover p{max-width:370px;color:#9c9aa1;font-size:12px;line-height:1.8;margin:0}.primary{margin-top:28px;border:0;border-radius:17px;padding:13px 22px;background:linear-gradient(135deg,#e6b6c0,#c98597);color:#25161b;font-weight:700;cursor:pointer;box-shadow:0 12px 32px rgba(190,111,135,.2)}.secondary{margin-top:10px;border:1px solid var(--line);border-radius:15px;padding:10px 17px;background:rgba(255,255,255,.03);color:#b8b6bb;cursor:pointer}
-.chapterCard{position:absolute;inset:0;z-index:15;display:none;align-items:center;justify-content:center;background:rgba(7,8,12,.94);padding:30px;text-align:center}.chapterCard.show{display:flex}.chapterCard .inner{max-width:380px}.chapterCard .kicker{color:var(--rose);letter-spacing:.22em;font-size:9px}.chapterCard h3{font-family:Georgia,"Songti SC",serif;font-size:30px;font-weight:500;margin:12px 0 12px}.chapterCard p{font-size:12px;line-height:1.7;color:#98969d}.chapterCard .quote{margin:20px auto 0;border-left:2px solid rgba(231,182,191,.35);padding:8px 0 8px 14px;text-align:left;color:#cbc6c8;font-size:12px}
-.rightTitle{font-size:10px;letter-spacing:.18em;color:#8f8d94;margin-bottom:14px}.echo{padding:14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.025);margin-bottom:11px}.echo b{display:block;font-size:11px;font-weight:600}.echo span{display:block;font-size:10px;color:#7f7e86;margin-top:6px;line-height:1.5}.signal{display:flex;gap:7px;align-items:center;color:#aaa7ac;font-size:10px;margin:9px 0}.signal i{width:7px;height:7px;border-radius:50%;background:#7b6570;box-shadow:0 0 0 4px rgba(231,182,191,.04)}
-.builder{display:grid;gap:10px}.builderBlock{border:1px solid var(--line);border-radius:16px;padding:11px}.builderBlock h4{font-size:10px;color:#8e8d94;margin:0 0 8px}.pillWrap{display:flex;flex-wrap:wrap;gap:6px}.pill{border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03);font-size:10px;padding:7px 9px;cursor:pointer;color:#bdb9bc}.pill.on{background:rgba(231,182,191,.13);border-color:rgba(231,182,191,.34);color:#f2dce1}.builderSend{border:0;border-radius:13px;background:#dba6b2;color:#28181d;padding:10px;font-weight:700;cursor:pointer;opacity:.45}.builderSend.ready{opacity:1}
-.toast{position:absolute;left:50%;bottom:160px;transform:translateX(-50%) translateY(10px);background:rgba(28,29,39,.94);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:10px;color:#c7c4c9;opacity:0;pointer-events:none;transition:.25s;z-index:30}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.modal{position:absolute;inset:0;background:rgba(6,7,10,.78);z-index:40;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(14px)}.modal.show{display:flex}.modalBox{width:min(430px,100%);max-height:80vh;overflow:auto;border:1px solid var(--line);border-radius:24px;background:#12131b;padding:20px;box-shadow:0 28px 80px #0008}.modalBox h3{margin:0 0 12px;font-size:16px}.setting{display:flex;justify-content:space-between;gap:18px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.toggle{border:1px solid var(--line);border-radius:12px;background:#1b1c26;padding:7px 10px;cursor:pointer;font-size:11px}.dangerBtn{margin-top:16px;width:100%;border:1px solid rgba(231,182,191,.2);background:rgba(231,182,191,.06);color:#d8a5b0;border-radius:13px;padding:10px;cursor:pointer}
-.endCard{padding:10px 0 2px}.endCard h4{font-family:Georgia,"Songti SC",serif;font-size:22px;font-weight:500;margin:8px 0}.memoryChips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.mem{font-size:10px;padding:7px 9px;border-radius:999px;background:rgba(231,182,191,.07);border:1px solid rgba(231,182,191,.14);color:#cdb8bd}
-@media (max-width:1180px) and (min-width:861px){
-  .shell{width:min(900px,100%);grid-template-columns:minmax(210px,250px) minmax(440px,600px);gap:18px}
-  .shell>aside.side:last-child{display:none}
+* {
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent
 }
-@media (min-width:861px) and (max-height:760px){
-  #app{padding:10px}.shell{height:calc(var(--app-h) - 20px)}.topbar{height:62px}.chat{padding-top:14px;padding-bottom:16px}
-  .choiceArea{min-height:108px;max-height:43%;padding-top:10px}.choices{max-height:190px}.side{padding:16px}.chapterRail{margin-top:14px}
+html,body {
+  margin:0;
+  width:100%;
+  height:100%;
+  min-height:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif
 }
-@media (max-width:860px){
-  #app{padding:0}.shell{display:block;width:100%;height:var(--app-h)}.side{display:none}.game{width:100%;height:var(--app-h);border:0;border-radius:0}
-  .bubble{font-size:15px}.topbar{height:calc(64px + var(--safe-top));padding-top:var(--safe-top);padding-left:max(12px,var(--safe-left));padding-right:max(12px,var(--safe-right))}
-  .chat{padding-left:max(15px,var(--safe-left));padding-right:max(15px,var(--safe-right));padding-bottom:22px}
-  .choiceArea{padding-left:max(12px,var(--safe-left));padding-right:max(12px,var(--safe-right));max-height:45%}
-  .cover,.chapterCard{padding-left:max(28px,calc(var(--safe-left) + 20px));padding-right:max(28px,calc(var(--safe-right) + 20px));padding-top:calc(28px + var(--safe-top));padding-bottom:calc(28px + var(--safe))}
+body {
+  position:fixed;
+  inset:0;
+  height:var(--app-h)
 }
-@media (max-width:460px){.cover h2{font-size:30px}.choice{padding:12px 12px}.choiceArea{min-height:145px}.topActions{gap:6px}.iconBtn{width:32px;height:32px}.avatar{width:36px;height:36px}.who{margin-left:9px}}
-@media (display-mode:standalone){body:before{opacity:.28}.game{user-select:none;-webkit-user-select:none}.choice,.pill,.iconBtn,.primary,.secondary,.toggle{user-select:none;-webkit-user-select:none}}
+button {
+  font:inherit;
+  color:inherit
+}
+body:before,body:after {
+  content:"";
+  position:fixed;
+  border-radius:50%;
+  filter:blur(90px);
+  opacity:.35;
+  pointer-events:none
+}
+body:before {
+  width:48vw;
+  height:48vw;
+  left:-18vw;
+  top:-20vw;
+  background:#75384f
+}
+body:after {
+  width:55vw;
+  height:55vw;
+  right:-20vw;
+  bottom:-25vw;
+  background:#2b355e
+}
+#app {
+  position:relative;
+  width:100%;
+  height:var(--app-h);
+  min-height:0;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  isolation:isolate
+}
+.ambient {
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:-1
+}
+.star {
+  position:absolute;
+  width:2px;
+  height:2px;
+  border-radius:50%;
+  background:#fff;
+  opacity:.08;
+  animation:float var(--d) linear infinite
+}
+@keyframes float {
+  from {
+    transform:translateY(8vh)
+  }
+  to {
+    transform:translateY(-110vh)
+  }
+}
+.shell {
+  width:min(1200px,100%);
+  height:min(900px,calc(var(--app-h) - 36px));
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(220px,260px) minmax(380px,560px) minmax(220px,260px);
+  justify-content:center;
+  gap:20px;
+  align-items:stretch
+}
+.side,.game {
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(21,22,31,.82),rgba(11,12,18,.82));
+  box-shadow:0 30px 90px rgba(0,0,0,.36);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px)
+}
+.side {
+  border-radius:28px;
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  min-height:0
+}
+.brand small {
+  display:block;
+  color:var(--muted);
+  letter-spacing:.22em;
+  font-size:10px;
+  margin-bottom:10px
+}
+.brand h1 {
+  font-size:22px;
+  line-height:1.15;
+  margin:0;
+  font-weight:650;
+  letter-spacing:-.03em
+}
+.brand p {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.65;
+  margin:12px 0 0
+}
+.chapterRail {
+  margin-top:24px;
+  overflow:auto;
+  padding-right:4px
+}
+.chapterDot {
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:12px 10px;
+  border-radius:15px;
+  color:#777882;
+  transition:.2s
+}
+.chapterDot.active {
+  background:rgba(255,255,255,.055);
+  color:var(--text)
+}
+.chapterDot.done {
+  color:#c9c4c5
+}
+.num {
+  width:29px;
+  height:29px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  display:grid;
+  place-items:center;
+  font-size:10px;
+  flex:0 0 auto
+}
+.active .num {
+  border-color:rgba(231,182,191,.5);
+  box-shadow:0 0 0 4px rgba(231,182,191,.06);
+  color:var(--rose)
+}
+.chapterDot b {
+  font-size:12px;
+  font-weight:600
+}
+.chapterDot span {
+  display:block;
+  color:#777882;
+  font-size:10px;
+  margin-top:4px
+}
+.locked {
+  opacity:.38;
+  filter:blur(.15px)
+}
+.sideFooter {
+  margin-top:auto;
+  padding-top:16px
+}
+.ghostRow {
+  display:flex;
+  gap:8px
+}
+.ghost {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  border-radius:14px;
+  padding:9px 12px;
+  font-size:11px;
+  cursor:pointer
+}
+.ghost:hover {
+  background:rgba(255,255,255,.06)
+}
+.game {
+  position:relative;
+  border-radius:34px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height:0
+}
+.game:before {
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:130px;
+  background:linear-gradient(180deg,rgba(231,182,191,.09),transparent);
+  pointer-events:none
+}
+.topbar {
+  height:76px;
+  display:flex;
+  align-items:center;
+  padding:0 18px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+  z-index:2;
+  flex:0 0 auto
+}
+.backBtn {
+  margin-right:9px;
+  font-size:23px;
+  line-height:1;
+  padding-bottom:2px
+}
+.backBtn:disabled {
+  opacity:.25;
+  cursor:default
+}
+.avatar {
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  background:linear-gradient(145deg,#f1c8cf,#a76478);
+  display:grid;
+  place-items:center;
+  color:#2d1820;
+  font-weight:800;
+  box-shadow:0 7px 20px rgba(177,98,122,.22)
+}
+.who {
+  margin-left:11px;
+  min-width:0
+}
+.who b {
+  display:block;
+  font-size:14px
+}
+.who span {
+  font-size:10px;
+  color:var(--muted)
+}
+.topActions {
+  margin-left:auto;
+  display:flex;
+  gap:8px
+}
+.iconBtn {
+  width:34px;
+  height:34px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  border-radius:12px;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  color:#c8c6ca
+}
+.progressLine {
+  height:2px;
+  background:rgba(255,255,255,.03)
+}
+.progressLine i {
+  display:block;
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--rose2),var(--gold));
+  box-shadow:0 0 18px rgba(231,182,191,.45);
+  transition:width .5s ease
+}
+.chat {
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding:22px 18px 28px;
+  scroll-behavior:smooth;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch
+}
+.day {
+  font-size:10px;
+  color:#6f7078;
+  text-align:center;
+  margin:9px 0 18px;
+  letter-spacing:.12em
+}
+.msg {
+  display:flex;
+  margin:9px 0;
+  animation:msgIn .32s cubic-bezier(.2,.8,.2,1) both
+}
+.msg.z {
+  justify-content:flex-start
+}
+.msg.g {
+  justify-content:flex-end
+}
+.msg.n {
+  justify-content:center
+}
+.bubble {
+  max-width:82%;
+  font-size:14px;
+  line-height:1.55;
+  padding:10px 13px;
+  border-radius:18px;
+  white-space:pre-wrap;
+  word-break:break-word
+}
+.z .bubble {
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.045);
+  border-bottom-left-radius:7px
+}
+.g .bubble {
+  background:linear-gradient(145deg,#e0a9b4,#c88294);
+  color:#24171b;
+  border-bottom-right-radius:7px;
+  box-shadow:0 9px 26px rgba(177,98,122,.14)
+}
+.n .bubble {
+  background:transparent;
+  color:#777982;
+  text-align:center;
+  font-size:11px;
+  max-width:92%;
+  padding:5px
+}
+.typing {
+  display:inline-flex;
+  gap:4px;
+  align-items:center
+}
+.typing i {
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#999;
+  animation:bounce 1s infinite
+}
+.typing i:nth-child(2) {
+  animation-delay:.12s
+}
+.typing i:nth-child(3) {
+  animation-delay:.24s
+}
+@keyframes bounce {
+  0%,60%,100% {
+    transform:none;
+    opacity:.4
+  }
+  30% {
+    transform:translateY(-4px);
+    opacity:1
+  }
+}
+@keyframes msgIn {
+  from {
+    opacity:0;
+    transform:translateY(8px) scale(.985)
+  }
+  to {
+    opacity:1;
+    transform:none
+  }
+}
+.choiceArea {
+  border-top:1px solid var(--line);
+  padding:13px 14px calc(14px + var(--safe));
+  background:linear-gradient(180deg,rgba(14,15,22,.92),rgba(10,11,17,.98));
+  min-height:132px;
+  max-height:min(42%,340px);
+  flex:0 0 auto
+}
+.prompt {
+  font-size:10px;
+  color:#8a8990;
+  margin:0 2px 9px;
+  display:flex;
+  justify-content:space-between
+}
+.choices {
+  display:grid;
+  gap:8px;
+  max-height:260px;
+  overflow:auto
+}
+.choice {
+  position:relative;
+  text-align:left;
+  border:1px solid rgba(255,255,255,.075);
+  background:rgba(255,255,255,.035);
+  border-radius:15px;
+  padding:11px 13px;
+  cursor:pointer;
+  transition:.18s;
+  overflow:hidden
+}
+.choice:hover {
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.065);
+  border-color:rgba(231,182,191,.22)
+}
+.choice:active {
+  transform:scale(.985)
+}
+.choice b {
+  display:block;
+  font-size:13px;
+  font-weight:560
+}
+.choice small {
+  display:block;
+  margin-top:4px;
+  color:#777983;
+  font-size:10px
+}
+.choice.silence {
+  border-style:dashed;
+  color:#b7b4b6
+}
+.choice.danger:after {
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:rgba(231,182,191,.45)
+}
+.sceneTitle {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:5px 9px;
+  color:#85858d;
+  font-size:9px;
+  margin-bottom:7px
+}
+.cover {
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 25%,rgba(149,76,99,.2),transparent 34%),linear-gradient(180deg,#0c0d13,#08090d);
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:36px
+}
+.cover.hidden {
+  display:none
+}
+.coverMark {
+  width:84px;
+  height:84px;
+  border-radius:28px;
+  background:linear-gradient(145deg,#efc7ce,#9d566d);
+  display:grid;
+  place-items:center;
+  color:#2f1720;
+  font-family:Georgia,serif;
+  font-size:38px;
+  box-shadow:0 24px 70px rgba(168,82,110,.28);
+  margin-bottom:28px
+}
+.coverEyebrow {
+  font-size:10px;
+  letter-spacing:.28em;
+  color:#9f9ca2
+}
+.cover h2 {
+  font-family:Georgia,"Songti SC",serif;
+  font-size:34px;
+  line-height:1.15;
+  font-weight:500;
+  margin:13px 0 12px
+}
+.cover p {
+  max-width:370px;
+  color:#9c9aa1;
+  font-size:12px;
+  line-height:1.8;
+  margin:0
+}
+.primary {
+  margin-top:28px;
+  border:0;
+  border-radius:17px;
+  padding:13px 22px;
+  background:linear-gradient(135deg,#e6b6c0,#c98597);
+  color:#25161b;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 12px 32px rgba(190,111,135,.2)
+}
+.secondary {
+  margin-top:10px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:10px 17px;
+  background:rgba(255,255,255,.03);
+  color:#b8b6bb;
+  cursor:pointer
+}
+/* ==========================================================================
+   02. CHAPTER / STORY UI
+   ========================================================================== */
+.chapterCard {
+  position:absolute;
+  inset:0;
+  z-index:15;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(7,8,12,.94);
+  padding:30px;
+  text-align:center
+}
+.chapterCard.show {
+  display:flex
+}
+.chapterCard .inner {
+  max-width:380px
+}
+.chapterCard .kicker {
+  color:var(--rose);
+  letter-spacing:.22em;
+  font-size:9px
+}
+.chapterCard h3 {
+  font-family:Georgia,"Songti SC",serif;
+  font-size:30px;
+  font-weight:500;
+  margin:12px 0 12px
+}
+.chapterCard p {
+  font-size:12px;
+  line-height:1.7;
+  color:#98969d
+}
+.chapterCard .quote {
+  margin:20px auto 0;
+  border-left:2px solid rgba(231,182,191,.35);
+  padding:8px 0 8px 14px;
+  text-align:left;
+  color:#cbc6c8;
+  font-size:12px
+}
+.rightTitle {
+  font-size:10px;
+  letter-spacing:.18em;
+  color:#8f8d94;
+  margin-bottom:14px
+}
+.echo {
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.025);
+  margin-bottom:11px
+}
+.echo b {
+  display:block;
+  font-size:11px;
+  font-weight:600
+}
+.echo span {
+  display:block;
+  font-size:10px;
+  color:#7f7e86;
+  margin-top:6px;
+  line-height:1.5
+}
+.signal {
+  display:flex;
+  gap:7px;
+  align-items:center;
+  color:#aaa7ac;
+  font-size:10px;
+  margin:9px 0
+}
+.signal i {
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#7b6570;
+  box-shadow:0 0 0 4px rgba(231,182,191,.04)
+}
+.builder {
+  display:grid;
+  gap:10px
+}
+.builderBlock {
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:11px
+}
+.builderBlock h4 {
+  font-size:10px;
+  color:#8e8d94;
+  margin:0 0 8px
+}
+.pillWrap {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px
+}
+.pill {
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  font-size:10px;
+  padding:7px 9px;
+  cursor:pointer;
+  color:#bdb9bc
+}
+.pill.on {
+  background:rgba(231,182,191,.13);
+  border-color:rgba(231,182,191,.34);
+  color:#f2dce1
+}
+.builderSend {
+  border:0;
+  border-radius:13px;
+  background:#dba6b2;
+  color:#28181d;
+  padding:10px;
+  font-weight:700;
+  cursor:pointer;
+  opacity:.45
+}
+.builderSend.ready {
+  opacity:1
+}
+.toast {
+  position:absolute;
+  left:50%;
+  bottom:160px;
+  transform:translateX(-50%) translateY(10px);
+  background:rgba(28,29,39,.94);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:10px;
+  color:#c7c4c9;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:30
+}
+.toast.show {
+  opacity:1;
+  transform:translateX(-50%) translateY(0)
+}
+/* ==========================================================================
+   03. SETTINGS / MODALS
+   ========================================================================== */
+.modal {
+  position:absolute;
+  inset:0;
+  background:rgba(6,7,10,.78);
+  z-index:40;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  backdrop-filter:blur(14px)
+}
+.modal.show {
+  display:flex
+}
+.modalBox {
+  width:min(430px,100%);
+  max-height:80vh;
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:#12131b;
+  padding:20px;
+  box-shadow:0 28px 80px #0008
+}
+.modalBox h3 {
+  margin:0 0 12px;
+  font-size:16px
+}
+.setting {
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+  font-size:12px
+}
+.toggle {
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#1b1c26;
+  padding:7px 10px;
+  cursor:pointer;
+  font-size:11px
+}
+.dangerBtn {
+  margin-top:16px;
+  width:100%;
+  border:1px solid rgba(231,182,191,.2);
+  background:rgba(231,182,191,.06);
+  color:#d8a5b0;
+  border-radius:13px;
+  padding:10px;
+  cursor:pointer
+}
+.settingsHead {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px
+}
+.settingsTitle small {
+  display:block;
+  color:#777882;
+  font-size:9px;
+  letter-spacing:.16em;
+  margin-bottom:6px
+}
+.settingsTitle h3 {
+  margin:0;
+  font-size:17px
+}
+.settingsVersion {
+  font-size:10px;
+  color:var(--rose);
+  border:1px solid rgba(231,182,191,.18);
+  background:rgba(231,182,191,.05);
+  padding:6px 9px;
+  border-radius:999px;
+  white-space:nowrap
+}
+.settingsTabs {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  padding:4px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-bottom:12px
+}
+.settingsTab {
+  border:0;
+  background:transparent;
+  color:#777882;
+  border-radius:10px;
+  padding:9px 10px;
+  font-size:11px;
+  cursor:pointer
+}
+.settingsTab.active {
+  background:rgba(255,255,255,.07);
+  color:var(--text);
+  box-shadow:0 5px 18px #0003
+}
+.settingsPane {
+  display:none
+}
+.settingsPane.active {
+  display:block
+}
+.settingMeta {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  text-align:right;
+  gap:6px;
+  color:#85848b;
+  font-size:10px
+}
+.settingHint {
+  color:#73727b;
+  font-size:10px;
+  line-height:1.55;
+  margin-top:4px;
+  max-width:245px
+}
+.updateStatus {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#85848b;
+  font-size:10px
+}
+.updateDot {
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#7e9d88;
+  box-shadow:0 0 0 4px rgba(126,157,136,.08)
+}
+.miniAction {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.035);
+  border-radius:11px;
+  padding:7px 9px;
+  font-size:10px;
+  cursor:pointer;
+  color:#b7b3b7
+}
+.versionList {
+  display:flex;
+  flex-direction:column;
+  gap:9px
+}
+.versionCard {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  border-radius:16px;
+  padding:12px 13px
+}
+.versionTop {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:baseline
+}
+.versionTop b {
+  font-size:12px
+}
+.versionTop span {
+  font-size:9px;
+  color:#74737c
+}
+.versionCard p {
+  margin:7px 0 0;
+  color:#a3a0a7;
+  font-size:10px;
+  line-height:1.65
+}
+.versionCard.current {
+  border-color:rgba(231,182,191,.18);
+  background:rgba(231,182,191,.04)
+}
+.singleFileNote {
+  margin-top:11px;
+  border:1px dashed rgba(255,255,255,.09);
+  border-radius:14px;
+  padding:10px 12px;
+  color:#777882;
+  font-size:9px;
+  line-height:1.6
+}
+@media(max-width:640px) {
+  .modal {
+    padding:10px
+  }
+  .modalBox {
+    max-height:84dvh;
+    border-radius:21px;
+    padding:16px
+  }
+  .setting {
+    gap:12px
+  }
+  .settingHint {
+    max-width:205px
+  }
+}
+.endCard {
+  padding:10px 0 2px
+}
+.endCard h4 {
+  font-family:Georgia,"Songti SC",serif;
+  font-size:22px;
+  font-weight:500;
+  margin:8px 0
+}
+.memoryChips {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px
+}
+.mem {
+  font-size:10px;
+  padding:7px 9px;
+  border-radius:999px;
+  background:rgba(231,182,191,.07);
+  border:1px solid rgba(231,182,191,.14);
+  color:#cdb8bd
+}
+@media (max-width:1180px) and (min-width:861px) {
+  .shell {
+    width:min(900px,100%);
+    grid-template-columns:minmax(210px,250px) minmax(440px,600px);
+    gap:18px
+  }
+  .shell>aside.side:last-child {
+    display:none
+  }
+}
+@media (min-width:861px) and (max-height:760px) {
+  #app {
+    padding:10px
+  }
+  .shell {
+    height:calc(var(--app-h) - 20px)
+  }
+  .topbar {
+    height:62px
+  }
+  .chat {
+    padding-top:14px;
+    padding-bottom:16px
+  }
+  .choiceArea {
+    min-height:108px;
+    max-height:43%;
+    padding-top:10px
+  }
+  .choices {
+    max-height:190px
+  }
+  .side {
+    padding:16px
+  }
+  .chapterRail {
+    margin-top:14px
+  }
+}
+@media (max-width:860px) {
+  #app {
+    padding:0
+  }
+  .shell {
+    display:block;
+    width:100%;
+    height:var(--app-h)
+  }
+  .side {
+    display:none
+  }
+  .game {
+    width:100%;
+    height:var(--app-h);
+    border:0;
+    border-radius:0
+  }
+  .bubble {
+    font-size:15px
+  }
+  .topbar {
+    height:calc(64px + var(--safe-top));
+    padding-top:var(--safe-top);
+    padding-left:max(12px,var(--safe-left));
+    padding-right:max(12px,var(--safe-right))
+  }
+  .chat {
+    padding-left:max(15px,var(--safe-left));
+    padding-right:max(15px,var(--safe-right));
+    padding-bottom:22px
+  }
+  .choiceArea {
+    padding-left:max(12px,var(--safe-left));
+    padding-right:max(12px,var(--safe-right));
+    max-height:45%
+  }
+  .cover,.chapterCard {
+    padding-left:max(28px,calc(var(--safe-left) + 20px));
+    padding-right:max(28px,calc(var(--safe-right) + 20px));
+    padding-top:calc(28px + var(--safe-top));
+    padding-bottom:calc(28px + var(--safe))
+  }
+}
+@media (max-width:460px) {
+  .cover h2 {
+    font-size:30px
+  }
+  .choice {
+    padding:12px 12px
+  }
+  .choiceArea {
+    min-height:145px
+  }
+  .topActions {
+    gap:6px
+  }
+  .iconBtn {
+    width:32px;
+    height:32px
+  }
+  .avatar {
+    width:36px;
+    height:36px
+  }
+  .who {
+    margin-left:9px
+  }
+}
+@media (display-mode:standalone) {
+  body:before {
+    opacity:.28
+  }
+  .game {
+    user-select:none;
+    -webkit-user-select:none
+  }
+  .choice,.pill,.iconBtn,.primary,.secondary,.toggle {
+    user-select:none;
+    -webkit-user-select:none
+  }
+}
+/* ==========================================================================
+   04. FORMAL INTERACTION LAYERS
+   ========================================================================== */
+.draftBox {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  border-radius:17px;
+  padding:11px;
+  display:grid;
+  gap:9px
+}
+.draftLabel {
+  font-size:9px;
+  letter-spacing:.12em;
+  color:#797780;
+  text-transform:uppercase
+}
+.draftPreview {
+  min-height:44px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:13px;
+  background:#0d0e14;
+  padding:11px 12px;
+  font-size:13px;
+  line-height:1.55;
+  color:#e7e2df
+}
+.draftPreview.empty {
+  color:#5e5d65
+}
+.draftCandidates {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px
+}
+.draftChip {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
+  border-radius:999px;
+  padding:8px 10px;
+  font-size:10px;
+  color:#b8b4b7;
+  cursor:pointer
+}
+.draftChip.on {
+  border-color:rgba(231,182,191,.35);
+  background:rgba(231,182,191,.1);
+  color:#f1dbe0
+}
+.draftActions {
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px
+}
+.draftSend {
+  border:0;
+  border-radius:12px;
+  background:#dba6b2;
+  color:#28181d;
+  padding:10px 12px;
+  font-weight:700;
+  cursor:pointer
+}
+.draftDelete {
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:transparent;
+  color:#89878f;
+  padding:10px 12px;
+  cursor:pointer
+}
+.replyOrder {
+  display:grid;
+  gap:8px
+}
+.replyTarget {
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.028);
+  padding:10px 12px;
+  cursor:pointer;
+  text-align:left
+}
+.replyTarget span {
+  display:block;
+  font-size:9px;
+  color:#77757e;
+  margin-bottom:4px
+}
+.replyTarget b {
+  font-size:13px;
+  font-weight:550
+}
+.replyTarget:hover {
+  border-color:rgba(231,182,191,.24);
+  background:rgba(255,255,255,.05)
+}
+.waitPanel {
+  border:1px dashed rgba(255,255,255,.11);
+  border-radius:17px;
+  padding:12px;
+  background:rgba(255,255,255,.018)
+}
+.waitPanel p {
+  margin:0 0 9px;
+  color:#8e8c94;
+  font-size:10px;
+  line-height:1.55
+}
+.devGrid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:10px 0
+}
+.devGrid button {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.035);
+  color:#b9b5ba;
+  border-radius:12px;
+  padding:9px;
+  font-size:10px;
+  cursor:pointer
+}
+.devPre {
+  white-space:pre-wrap;
+  word-break:break-word;
+  border:1px solid var(--line);
+  background:#0b0c11;
+  border-radius:14px;
+  padding:10px;
+  font-size:9px;
+  line-height:1.5;
+  color:#9d99a2;
+  max-height:260px;
+  overflow:auto
+}
+.devSeed {
+  font-size:9px;
+  color:#77757e;
+  margin:7px 0
+}
+.settingsTabs.devOn {
+  grid-template-columns:1fr 1fr 1fr
+}
+.settingsVersion {
+  cursor:pointer
+}
+.chapterDot.locked {
+  opacity:.45
+}
+.choice.continueOnly {
+  text-align:center
+}
+.choice.continueOnly b {
+  font-size:12px
+}
+.choice.flavor {
+  border-color:rgba(217,194,154,.13)
+}
+@media(max-width:460px) {
+  .draftActions {
+    grid-template-columns:1fr
+  }
+  .draftDelete {
+    order:2
+  }
+  .devGrid {
+    grid-template-columns:1fr 1fr
+  }
+}
 
-</style>
-</head>
-<body>
-<div id="app">
-  <div class="ambient" id="ambient"></div>
-  <div class="shell">
+  </style>
+ </head>
+ <body>
+  <div id="app">
+   <div class="ambient" id="ambient">
+   </div>
+   <div class="shell">
     <aside class="side">
-      <div class="brand"><small>INTERACTIVE STORY · DEMO</small><h1>攻略 ZXR<br>重新认识你一次</h1><p>不是选“正确答案”，而是让她记住你怎么回应、怎么沉默、怎么兑现，以及你有没有自己的生活。</p></div>
-      <div class="chapterRail" id="chapterRail"></div>
-      <div class="sideFooter"><div class="ghostRow"><button class="ghost" id="mapBtn">章节</button><button class="ghost" id="resetBtn">重开</button></div></div>
+     <div class="brand">
+      <small>
+       INTERACTIVE STORY · ALPHA
+      </small>
+      <h1>
+       攻略 ZXR
+       <br/>
+       重新认识你一次
+      </h1>
+      <p>
+       不是选“正确答案”，而是让她记住你怎么回应、怎么沉默、怎么兑现，以及你有没有自己的生活。
+      </p>
+     </div>
+     <div class="chapterRail" id="chapterRail">
+     </div>
+     <div class="sideFooter">
+      <div class="ghostRow">
+       <button class="ghost" id="mapBtn">
+        章节
+       </button>
+       <button class="ghost" id="resetBtn">
+        重开
+       </button>
+      </div>
+     </div>
     </aside>
-
     <main class="game">
-      <div class="topbar"><button class="iconBtn backBtn" id="backBtn" aria-label="回退一步" title="回退一步">‹</button><div class="avatar">Z</div><div class="who"><b>ZXR</b><span id="statusText">在线状态未知</span></div><div class="topActions"><button class="iconBtn" id="soundBtn" aria-label="音效">♪</button><button class="iconBtn" id="settingsBtn" aria-label="设置">•••</button></div></div>
-      <div class="progressLine"><i id="progress"></i></div>
-      <div class="chat" id="chat"></div>
-      <div class="choiceArea"><div class="prompt"><span id="promptText">你准备怎么回？</span><span id="sceneId"></span></div><div class="choices" id="choices"></div></div>
-      <div class="toast" id="toast"></div>
-
-      <section class="cover" id="cover">
-        <div class="coverMark">Z</div><div class="coverEyebrow">CHAPTER 00—03 · PLAYABLE DEMO</div><h2>攻略 ZXR<br>重新认识你一次</h2><p>一条虚构的平行时间线。她会记住你的节奏，而不是只记住某一句“高分台词”。<br><br>本试玩版包含序章至 Chapter 03，约 40 个有效决策。</p><button class="primary" id="startBtn">开始试玩</button><button class="secondary" id="continueBtn" style="display:none">继续上次进度</button>
-      </section>
-
-      <section class="chapterCard" id="chapterCard"><div class="inner"><div class="kicker" id="chapterKicker"></div><h3 id="chapterTitle"></h3><p id="chapterDesc"></p><div class="quote" id="chapterQuote"></div><button class="primary" id="chapterStart">进入这一章</button></div></section>
-
-      <div class="modal" id="settings"><div class="modalBox"><h3>游戏设置</h3><div class="setting"><span>演出速度</span><button class="toggle" id="speedToggle">快节奏</button></div><div class="setting"><span>轻音效</span><button class="toggle" id="soundToggle">开启</button></div><div class="setting"><span>自动存档</span><span style="color:#85848b">已开启</span></div><div class="setting"><span>运行方式</span><span id="pwaMode" style="color:#85848b">浏览器</span></div><div class="setting"><span>回退</span><span style="color:#85848b">恢复上一次选择前的完整状态</span></div><button class="dangerBtn" id="closeSettings">关闭</button></div></div>
+     <div class="topbar">
+      <button aria-label="回退一步" class="iconBtn backBtn" id="backBtn" title="回退一步">
+       ‹
+      </button>
+      <div class="avatar">
+       Z
+      </div>
+      <div class="who">
+       <b>
+        ZXR
+       </b>
+       <span id="statusText">
+        在线状态未知
+       </span>
+      </div>
+      <div class="topActions">
+       <button aria-label="音效" class="iconBtn" id="soundBtn">
+        ♪
+       </button>
+       <button aria-label="设置" class="iconBtn" id="settingsBtn">
+        •••
+       </button>
+      </div>
+     </div>
+     <div class="progressLine">
+      <i id="progress">
+      </i>
+     </div>
+     <div class="chat" id="chat">
+     </div>
+     <div class="choiceArea">
+      <div class="prompt">
+       <span id="promptText">
+        你准备怎么回？
+       </span>
+       <span id="sceneId">
+       </span>
+      </div>
+      <div class="choices" id="choices">
+      </div>
+     </div>
+     <div class="toast" id="toast">
+     </div>
+     <section class="cover" id="cover">
+      <div class="coverMark">
+       Z
+      </div>
+      <div class="coverEyebrow">
+       CHAPTER 00—02 · FORMAL ALPHA
+      </div>
+      <h2>
+       攻略 ZXR
+       <br/>
+       重新认识你一次
+      </h2>
+      <p>
+       一条虚构的平行时间线。她会记住你的节奏，而不是只记住某一句“高分台词”。
+       <br/>
+       <br/>
+       第一批正式 Alpha：Chapter 00—02 已按全局审查后的节奏重做。内容更厚，但不靠灌水拉时长。
+      </p>
+      <button class="primary" id="startBtn">
+       开始 Alpha
+      </button>
+      <button class="secondary" id="continueBtn" style="display:none">
+       继续上次进度
+      </button>
+     </section>
+     <section class="chapterCard" id="chapterCard">
+      <div class="inner">
+       <div class="kicker" id="chapterKicker">
+       </div>
+       <h3 id="chapterTitle">
+       </h3>
+       <p id="chapterDesc">
+       </p>
+       <div class="quote" id="chapterQuote">
+       </div>
+       <button class="primary" id="chapterStart">
+        进入这一章
+       </button>
+      </div>
+     </section>
+     <div class="modal" id="settings">
+      <div class="modalBox">
+       <div class="settingsHead">
+        <div class="settingsTitle">
+         <small>
+          SYSTEM · ZXR
+         </small>
+         <h3>
+          游戏设置
+         </h3>
+        </div>
+        <div class="settingsVersion" id="settingsVersion">
+         v0.5.0
+        </div>
+       </div>
+       <div class="settingsTabs">
+        <button class="settingsTab active" data-pane="game">
+         游戏设置
+        </button>
+        <button class="settingsTab" data-pane="versions">
+         版本记录
+        </button>
+       </div>
+       <div class="settingsPane active" id="settingsPaneGame">
+        <div class="setting">
+         <div>
+          <span>
+           演出速度
+          </span>
+          <div class="settingHint">
+           快节奏保持当前试玩的紧凑反馈；电影感会留更多停顿。
+          </div>
+         </div>
+         <button class="toggle" id="speedToggle">
+          快节奏
+         </button>
+        </div>
+        <div class="setting">
+         <div>
+          <span>
+           轻音效
+          </span>
+          <div class="settingHint">
+           消息、选择和章节转场的轻反馈。
+          </div>
+         </div>
+         <button class="toggle" id="soundToggle">
+          开启
+         </button>
+        </div>
+        <div class="setting">
+         <div>
+          <span>
+           自动存档
+          </span>
+          <div class="settingHint">
+           有效选择后保存；版本更新不会清空本地进度。
+          </div>
+         </div>
+         <span style="color:#85848b">
+          已开启
+         </span>
+        </div>
+        <div class="setting">
+         <div>
+          <span>
+           运行方式
+          </span>
+          <div class="settingHint">
+           iPhone 从主屏幕打开时保持独立 Web App 外观。
+          </div>
+         </div>
+         <span id="pwaMode" style="color:#85848b">
+          浏览器
+         </span>
+        </div>
+        <div class="setting">
+         <div>
+          <span>
+           自动更新
+          </span>
+          <div class="settingHint">
+           启动和回前台时直接读取线上同一个 HTML 的版本号。
+          </div>
+         </div>
+         <div class="settingMeta">
+          <div class="updateStatus">
+           <i class="updateDot">
+           </i>
+           <span id="updateStatusText">
+            自动检查
+           </span>
+          </div>
+          <button class="miniAction" id="checkUpdateBtn">
+           立即检查
+          </button>
+         </div>
+        </div>
+        <div class="setting">
+         <div>
+          <span>
+           回退
+          </span>
+          <div class="settingHint">
+           恢复到上一次选择前，包括 Flags、隐藏状态和聊天记录。
+          </div>
+         </div>
+         <span style="color:#85848b">
+          已开启
+         </span>
+        </div>
+        <div class="setting">
+         <div>
+          <span>
+           章节检查点
+          </span>
+          <div class="settingHint">
+           可回到当前章节开始；用于试玩不同路线，不影响游戏内一步回退。
+          </div>
+         </div>
+         <button class="miniAction" id="restartChapterBtn">
+          重开本章
+         </button>
+        </div>
+        <div class="singleFileNote">
+         单文件模式：以后 GitHub 只需覆盖这个 HTML。新版会自动注销旧 Service Worker，避免旧缓存锁住页面。因为不再依赖 Service Worker，本模式不提供真正的离线缓存。
+        </div>
+       </div>
+       <div class="settingsPane" id="settingsPaneVersions">
+        <div class="versionList" id="versionList">
+        </div>
+       </div>
+       <button class="dangerBtn" id="closeSettings">
+        关闭
+       </button>
+      </div>
+     </div>
     </main>
-
-    <aside class="side"><div class="rightTitle">RELATIONSHIP ECHO</div><div class="echo"><b>这一周目不显示数值</b><span>你只能从她的语气、主动性、停顿和后续事件里判断关系正在怎么变化。</span></div><div id="echoList"></div><div class="sideFooter"><div class="signal"><i></i><span id="saveState">本地自动存档</span></div><div class="signal"><i></i><span>剧情：00—03 / Demo</span></div></div></aside>
+    <aside class="side">
+     <div class="rightTitle">
+      RELATIONSHIP ECHO
+     </div>
+     <div class="echo">
+      <b>
+       这一周目不显示数值
+      </b>
+      <span>
+       你只能从她的语气、主动性、停顿和后续事件里判断关系正在怎么变化。
+      </span>
+     </div>
+     <div id="echoList">
+     </div>
+     <div class="sideFooter">
+      <div class="signal">
+       <i>
+       </i>
+       <span id="saveState">
+        本地自动存档
+       </span>
+      </div>
+      <div class="signal">
+       <i>
+       </i>
+       <span>
+        剧情：00—02 / Formal Alpha
+       </span>
+      </div>
+     </div>
+    </aside>
+   </div>
   </div>
-</div>
-<script>
+  <script>
+   
 const $=s=>document.querySelector(s);
-const SAVE='zxr_demo_00_03_v2';
+// ============================================================================
+// 01. VERSION / BUILD / STORAGE
+// ============================================================================
+const APP_VERSION='0.6.1-alpha';
+const APP_BUILD=document.querySelector('meta[name="zxr-build"]')?.content||'2026.09.22.2345-alpha061-readable';
+const SAVE='zxr_game_save_v2';
+const LEGACY_SAVE='zxr_demo_00_03_v2';
 const CFG_SAVE='zxr_demo_cfg_v1';
-let audioCtx=null,UI_LOCKED=false;
-const CFG={speed:'fast',sound:true};
-const baseState=()=>({chapter:0,scene:0,seenIntro:{},history:[],flags:{},vars:{trust:30,safety:31,spark:17,pressure:10,listening:34,consistency:48,autonomy:50,reciprocity:30,tone:35,unresolved:4,familiarity:18,oldScript:8,newConnection:6,initiative:25,strategic:0,truth:25,accountability:20,coherence:40,promise:0},finished:false,phase:'cover',undoStack:[],lastView:null});
-let S=baseState();
-function clamp(n){return Math.max(0,Math.min(100,n))}
-function fx(obj={}){for(const [k,v] of Object.entries(obj)){S.vars[k]=clamp((S.vars[k]??0)+v)}}
-function flag(...xs){xs.filter(Boolean).forEach(x=>S.flags[x]=true)}
-function has(x){return !!S.flags[x]}
-function cloneData(x){return JSON.parse(JSON.stringify(x))}
-function coreState(){return {chapter:S.chapter,scene:S.scene,seenIntro:cloneData(S.seenIntro||{}),history:cloneData(S.history||[]),flags:cloneData(S.flags||{}),vars:cloneData(S.vars||{}),finished:!!S.finished,phase:S.phase||'play'}}
-function captureView(){if($('#chat'))S.lastView={chatHTML:$('#chat').innerHTML,ts:Date.now()}}
-function updateBackButton(){const b=$('#backBtn');if(b)b.disabled=UI_LOCKED||!(S.undoStack&&S.undoStack.length)}
-function save(capture=true){if(capture)captureView();localStorage.setItem(SAVE,JSON.stringify(S));$('#saveState').textContent='刚刚已自动存档';updateBackButton()}
-function saveCfg(){localStorage.setItem(CFG_SAVE,JSON.stringify(CFG))}
-function load(){try{const x=JSON.parse(localStorage.getItem(SAVE));if(x)S={...baseState(),...x,undoStack:Array.isArray(x.undoStack)?x.undoStack:[]}}catch(e){} try{const c=JSON.parse(localStorage.getItem(CFG_SAVE));if(c)Object.assign(CFG,c)}catch(e){} if(!S.phase||S.phase==='cover')S.phase=S.finished?'finish':((CH[S.chapter]&&S.scene>=CH[S.chapter].scenes.length)?'chapterEnd':'play')}
-function pushUndo(){captureView();S.undoStack=S.undoStack||[];S.undoStack.push({state:coreState(),chatHTML:$('#chat').innerHTML});if(S.undoStack.length>36)S.undoStack.shift();updateBackButton()}
-function restoreCore(st){const stack=S.undoStack||[];S={...baseState(),...cloneData(st),undoStack:stack,lastView:null}}
-function setUILocked(v){UI_LOCKED=!!v;updateBackButton()}
-
-function tone(freq=640,d=0.055,vol=.025){if(!CFG.sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type='sine';g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d)}catch(e){}}
-function haptic(){try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
-function delay(ms){return new Promise(r=>setTimeout(r,CFG.speed==='fast'?ms*.48:ms))}
-function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1200)}
-const CH=[
- {n:'00',title:'序章 · 在吗',desc:'重新打开联系窗口。你不会得到答案，只会留下第一批“她以后会记住的东西”。',quote:'「在吗」',scenes:[]},
- {n:'01',title:'最近可好',desc:'聊天开始变成双向生活。真正的难点不是会不会说甜话，而是能不能读懂节奏。',quote:'「刚下课」「快饿死了」',scenes:[]},
- {n:'02',title:'好好说',desc:'旧问题终于被摆到桌面上。解释、承担、道歉和承诺第一次被拆开。',quote:'「你能不能好好说」',scenes:[]},
- {n:'03',title:'又熟悉起来了',desc:'熟悉感和心动一起回来，但“像以前”不等于“重新开始”。',quote:'「想你了」',scenes:[]}
-];
-function C(id,prompt,msgs,choices,opt={}){return {id,prompt,msgs,choices,...opt}}
-function Q(text,reply,zxr,effects={},flags=[],small='',cls=''){return {text,reply,zxr,effects,flags,small,cls}}
-
-CH[0].scenes=[
- C('00-A','你什么时候回？',[['n','22:17 · 锁屏亮起'],['z','在吗']], [
-  Q('现在回','',[],{spark:0,trust:1},['REPLIED_IMMEDIATELY'],'你正好看见了'),
-  Q('把手里的事做完，十几分钟后回','',[],{autonomy:2,safety:1},['REPLIED_NATURALLY'],'不是故意晾她'),
-  Q('明明看见了，故意等一个多小时','',[],{trust:-1,consistency:-1,strategic:3},['DELAYED_FOR_GAME'],'“不能显得太在乎”','danger'),
-  Q('明天再说','',[],{safety:-1,trust:-1},['IGNORED_OVERNIGHT'],'先让这条消息过夜','danger')
- ],{noReply:true}),
- C('00-B','第一句话怎么回？',[],[
-  Q('在，咋啦','在，咋啦',['哈哈哈没事','[表情]'],{safety:2,trust:1},['OPENING_NATURAL']),
-  Q('咋啦美女','咋啦美女',['哈哈哈没事','[表情]'],{spark:2,trust:0},['OPENING_FLIRT']),
-  Q('这么晚突然找我？','这么晚突然找我？',['不能找你吗'],{trust:1,safety:-1,spark:1},['OPENING_GUARDED']),
-  Q('想我了？','想我了？',['你想多了吧','[表情]'],{spark:3,pressure:3},['ASSUMED_SHE_MISSED_ME','OPENING_OVERPLAY'],'爽，但你替她定义了动机','danger'),
-  Q('怎么，想复合？','怎么，想复合？',['？？？','我就问问你在不在'],{spark:1,pressure:6,trust:-2},['RUSHED_RELATIONSHIP_LABEL'],'一步跨太远','danger')
- ]),
- C('00-C','她没马上解释。你要填补这个空白吗？',[],[
-  Q('也回一个表情','[表情]',['最近可好？'],{safety:1,trust:1}),
-  Q('咋了，有事？','咋了，有事？',['没事','就问问','最近可好？'],{listening:1}),
-  Q('什么都不补，让她继续','', ['最近可好？'],{pressure:-1},['ALLOWED_AMBIGUITY'],'沉默也可以是一种选择','silence'),
-  Q('不会是喝多了吧哈哈哈','不会是喝多了吧哈哈哈',['滚','最近可好'],{spark:1,safety:1})
- ]),
- C('00-D','“最近可好？” 你准备怎么说？',[],[
-  Q('真实讲一点近况','还行，工作最近有点烦，不过也在想换个环境。',['咋了','工作又折腾你了？'],{trust:3,listening:1},['FIRST_REAL_SELF_DISCLOSURE']),
-  Q('只展示自己过得特别好','挺好的啊，最近什么都挺顺。',['那挺好的'],{trust:-1},['FIRST_PERFORMATIVE_SUCCESS']),
-  Q('没有你以后一直都不好','不好，没有你以后一直都不好。',['……','我说最近'],{spark:2,pressure:5,trust:-2},['EMOTIONAL_OVERLOAD'],'一下把重量全压上去','danger'),
-  Q('拿工作开玩笑','被工作 PUA，在线等，挺急的。',['哈哈哈哈','那你为什么不 PUA 回去'],{safety:3,spark:1}),
-  Q('还行，你呢？','还行，你呢？',['我也就那样','最近课挺多的'],{listening:2,safety:2},['ASKED_HER_BACK'])
- ]),
- C('00-E','聊完你的事，你会不会真的问回去？',[['z','明天上午还有课']], [
-  Q('你呢，最近怎么样？','你呢，最近怎么样？',['我最近也挺忙','课一堆'],{listening:3,reciprocity:2},['ASKED_HER_BACK','CLASS_SEED']),
-  Q('继续讲自己的事','然后我最近还有个……',['哈哈'],{listening:-2,reciprocity:-2},['ONLY_TALKED_ABOUT_SELF','CLASS_SEED']),
-  Q('你突然找我不会就是问工作吧','你突然找我不会就是问工作吧',['不然呢','哈哈哈'],{spark:1,pressure:2},['CLASS_SEED']),
-  Q('不问，等她自己说','',null,{pressure:-1},['CLASS_SEED'],'她会不会继续，取决于前面的气氛','silence')
- ],{dynamic:'askback'}),
- C('00-F','工作群突然弹出一条消息。',[['n','工作群：临时有个东西要处理。']], [
-  Q('我这边突然有点事，半小时左右回来找你。','我这边突然有点事，半小时左右回来找你。',['好'],{autonomy:2,trust:2},['SAID_COME_BACK_LATER']),
-  Q('不说，直接去处理','',[],{consistency:-1},['DISAPPEARED_FOR_WORK'],'她不会立刻追问','silence'),
-  Q('先陪你聊，工作放着','没事，先陪你聊。',['？','你有事你先忙啊'],{spark:1,autonomy:-3,pressure:1},['DROPS_LIFE_FOR_HER'],'短期很甜，长期未必','danger'),
-  Q('等会，领导找我','等会，领导找我。',['嗯呐'],{autonomy:1},['SAID_COME_BACK_LATER'])
- ]),
- C('00-G','手里的事已经处理完。', [['n','32 分钟后']], [
-  Q('主动回来','弄完了。',['这么快'],{consistency:4,trust:2},['RETURNED_AFTER_BUSY']),
-  Q('先刷一会别的，两个小时后再回','刚弄完',['嗯'],{consistency:-2},['LATE_FOLLOWUP']),
-  Q('忘了，第二天才打开','',[],{consistency:-4,trust:-1},['MISSED_FIRST_FOLLOWUP'],'承诺没有消失，只是晚点回来找你','silence')
- ]),
- C('00-H','她说你“感觉跟以前不太一样了”。',[],[
-  Q('人总会变点吧，你也不一样了。','人总会变点吧，你也不一样了。',null,{trust:2},['ALLOWED_AMBIGUITY']),
-  Q('为了你变的。','为了你变的。',['少来'],{spark:2,pressure:2}),
-  Q('所以你喜欢现在的我还是以前的？','所以你喜欢现在的我还是以前的？',['你怎么又开始了'],{spark:1,pressure:3}),
-  Q('你觉得哪里不一样？','你觉得哪里不一样？',null,{listening:3,trust:2},['FIRST_LISTEN_SIGNAL'])
- ],{dynamic:'different'}),
- C('00-I','她停了一会。',[['z','我这几天一直想一个问题']], [
-  Q('你说，我听着。','你说，我听着。',['算了','改天再说'],{trust:3,safety:2},['INVITED_SERIOUS_TALK']),
-  Q('什么问题，突然这么严肃。','什么问题，突然这么严肃。',['没什么','之后再问你'],{trust:1,safety:1}),
-  Q('是不是想我了哈哈哈','是不是想我了哈哈哈',['你能不能正经一点','算了'],{spark:2,pressure:2},['DEFLECTED_SERIOUS_TALK'],'好玩，但你错过了她切换语气的信号','danger'),
-  Q('你现在说，不然我今晚睡不着。','你现在说，不然我今晚睡不着。',['那你别睡了','我还没想好怎么说'],{pressure:5},['PRESSURED_HER_TO_SAY_NOW'],'把她的节奏变成了你的焦虑','danger')
- ]),
- C('00-J','她反复显示“正在输入…”，最后什么也没发。',[['n','对方正在输入…'],['n','……'],['n','对方正在输入…']], [Q('结束这一晚','',[],{},['CH00_DONE'],'有些话，没有当晚得到答案。','silence')],{end:true})
-];
-
-CH[1].scenes=[
- C('01-A','第二天，她先发来一条没有问号的信息。',[['n','10:36 · 第二天'],['z','刚下课']], [
-  Q('昨天不是说上午有课，终于下了？','昨天不是说上午有课，终于下了？',['对啊','饿死了'],{listening:3,reciprocity:1},['REMEMBERED_CLASS']),
-  Q('吃饭没？','吃饭没？',['没呢','准备去'],{safety:1}),
-  Q('想我没有？','想我没有？',['没有','饿死了'],{spark:2,pressure:1}),
-  Q('嗯','嗯',['？'],{trust:-1},['DRY_REPLY'])
- ]),
- C('01-B','她说“快饿死了”。你读到的重点是什么？',[['z','快饿死了']], [
-  Q('那还聊啥，赶紧去吃，吃完再说。','那还聊啥，赶紧去吃，吃完再说。',['马上去','不知道吃啥'],{safety:2,tone:1}),
-  Q('想吃啥？','想吃啥？',['不知道','食堂都吃腻了'],{listening:2}),
-  Q('我给你点一个？','我给你点一个？',['不用不用','我自己去吃'],{pressure:1},['OFFERED_FOOD']),
-  Q('又不按时吃饭。','又不按时吃饭。',['我还没下课我咋吃'],{tone:-1,pressure:1},['CARE_BECAME_CONTROL'])
- ]),
- C('01-C','食堂这件小事，你要把它聊成什么？',[['z','食堂今天那个面看着就难吃']], [
-  Q('跟着吐槽','吃一口直接申请退学。',['哈哈哈哈','滚'],{tone:2,spark:1}),
-  Q('给个现实建议','那出去买点？',['懒得动'],{listening:1}),
-  Q('拍给我看看有多难吃','拍给我看看有多难吃。',['[图片]','是不是'],{trust:1},['SHARED_PHOTO_REQUEST']),
-  Q('硬转暧昧','你吃啥都行，反正你可爱。',['？','和我吃饭有什么关系'],{spark:2,tone:-1},['EVERYTHING_BECOMES_FLIRT'],'短期甜，长期可能只剩一种聊天方式','danger')
- ]),
- C('01-D','轮到你有事了。',[['n','下午 · 你收到明天工作 Review 的通知']], [
-  Q('自然分享一点','我明天下午还有个挺麻烦的事，多少有点烦。',['啥事','工作那个？'],{reciprocity:3,trust:2},['FIRST_MUTUAL_DAILY_SHARE']),
-  Q('什么也不说，继续问她','你下午还有课？',['有啊'],{reciprocity:-2},['INTERVIEW_MODE']),
-  Q('把自己说得特别惨','明天那个事烦死了，我现在脑子都炸了。',['别紧张','你可以的'],{pressure:1}),
-  Q('装作轻松拿捏','没啥，轻松拿捏。',['这么牛'],{spark:1})
- ]),
- C('01-E','她在安慰你。',[['z','别紧张'],['z','你可以的'],['z','大不了不干了哈哈哈']], [
-  Q('哈哈哈，还得是你。','哈哈哈，还得是你。',['那当然'],{tone:2,spark:1}),
-  Q('你这么说我真舒服多了。','你这么说我真舒服多了。',['那就行'],{trust:2},['ACCEPTED_SUPPORT']),
-  Q('有什么好紧张的，我本来也没当回事。','有什么好紧张的，我本来也没当回事。',['那你刚才说烦'],{trust:-1,coherence:-2}),
-  Q('继续讲现实细节','主要是那个需求来回改……',['哈哈哈','你好能说'],{reciprocity:1})
- ]),
- C('01-F','她一次发来三条。先回哪一句？',[['z','我回宿舍了'],['z','累死'],['z','[表情]']], [
-  Q('先回“累死”','今天怎么这么累？',['上了一天课啊'],{listening:2},['RESPONDED_TO_STATE']),
-  Q('先回“回宿舍了”','终于回去了。',['嗯呐'],{safety:1}),
-  Q('先回表情','[表情]',['[表情]'],{safety:1},['LOW_EFFORT_COMFORT']),
-  Q('趁机追问昨晚那个问题','对了，你昨天说的那个问题到底是什么？',['你怎么还记着呢','之后说'],{pressure:3,unresolved:1})
- ]),
- C('01-G','聊得正正常常，她 12 分钟没回。',[],[
-  Q('什么都不做','', ['刚洗澡去了'],{safety:2,autonomy:1},['BENIGN_ABSENCE'],'去做你自己的事','silence'),
-  Q('十分钟后问“洗澡去了？”','洗澡去了？',['你咋知道哈哈哈'],{safety:1}),
-  Q('三分钟后发“人呢”','人呢',['洗澡啊'],{pressure:1}),
-  Q('连发“？ / 咋了 / 生气了？”','？\n咋了\n生气了？',['？','我洗澡去了'],{pressure:4},['CATASTROPHIZED_SILENCE'],'你把一个空白解释成了危机','danger')
- ]),
- C('01-H','23:46，她说有点困了。',[['z','有点困了']], [
-  Q('那你睡吧，明天聊。','那你睡吧，明天聊。',['嗯呐','晚安'],{safety:2,autonomy:2},['RESPECTED_ENDING']),
-  Q('再聊五分钟。','再聊五分钟。',['五分钟哈'],{spark:1,pressure:1}),
-  Q('你是不是不想跟我聊了？','你是不是不想跟我聊了？',['？','我困了啊'],{pressure:4},['SPACE_INTERPRETED_AS_REJECTION'],'把困意翻译成了关系信号','danger'),
-  Q('睡之前回答我一个问题。','睡之前回答我一个问题。',['不回答','困死了'],{pressure:3})
- ]),
- C('01-I','第二天，她抱怨了一件小事。',[['n','DAY 2'],['z','今天烦死了'],['z','我们那个老师又临时改东西']], [
-  Q('先跟着她吐槽','这谁顶得住，临时改最烦。',['就是'],{tone:2,listening:2}),
-  Q('马上给解决方案','那你直接跟他说别改了。',['哪有那么简单'],{listening:-1}),
-  Q('问现实细节','改啥了？',['一堆','我都做完了又改'],{listening:2,reciprocity:1}),
-  Q('长篇“情绪价值”','你要接纳自己的情绪，别被这些事影响……',['？'],{tone:-3,pressure:1},['OVERTHERAPY_PATTERN'],'说得很完整，但不像在聊天','danger')
- ]),
- C('01-J','这一章结束前，你会把生活全让给聊天吗？',[['n','朋友喊你出去吃饭'],['z','干嘛呢']], [
-  Q('老实说在外面，晚点聊','跟朋友吃饭呢，晚点回去跟你说。',['行'],{autonomy:3,trust:1},['KEPT_OWN_LIFE']),
-  Q('立刻推掉朋友陪她','没干嘛，陪你聊。',['？'],{spark:1,autonomy:-4},['DROPS_LIFE_FOR_HER']),
-  Q('一边吃饭一边偶尔回','在外面吃饭，看到就回你。',['嗯呢'],{autonomy:2,safety:1},['ASYNC_CONTACT_SAFE']),
-  Q('故意说忙，其实想让她追你','忙着呢。',['哦'],{strategic:3,trust:-1},['STRATEGIC_WITHHOLDING'],'这不是空间，是博弈','danger')
- ],{end:true})
-];
-
-CH[2].scenes=[
- C('02-A','她终于把那个问题说出来。',[['n','两天后 · 晚上'],['z','我这几天一直想一个问题'],['z','为什么当时突然不联系了']], [
-  Q('直接认真回答','我慢慢少找你，最后就干脆没联系。',null,{truth:2},['GAVE_SPECIFIC_EXPLANATION']),
-  Q('先确认她到底想知道什么','你是想知道当时发生啥，还是为什么我没跟你说？',['都想知道'],{listening:2,truth:1}),
-  Q('先开个玩笑','因为我当时脑子坏了。',['好好说'],{spark:1,pressure:1},['DEFLECTED_SERIOUS_TALK']),
-  Q('都过去这么久了，还问这个干嘛','都过去那么久了，还问这个干嘛。',['因为我想知道'],{unresolved:3,trust:-2},['PAST_AVOIDED'],'问题没有消失，只是被你推远','danger')
- ]),
- C('02-B','她没有被一句话打发。',[['z','好好说']], [
-  Q('行，我认真说。','行，我认真说。',['嗯'],{truth:2,trust:1}),
-  Q('真的啊，我当时就是这么想的。','真的啊，我当时就是这么想的。',['那你继续说'],{truth:1}),
-  Q('你不懂。','你不懂。',['？'],{trust:-2,pressure:2},['CLOSED_OFF']),
-  Q('我有点不知道怎么说，给我想一下。','我有点不知道怎么说，给我想一下。',['行'],{truth:2,safety:1},['ADMITTED_UNCERTAINTY'])
- ]),
- {id:'02-C',special:'builder',prompt:'把“发生了什么 / 为什么 / 现在怎么看”拼成你自己的回答。',msgs:[['z','那到底为什么？']]},
- C('02-D','她抓住了一个真正的分水岭。',[['z','所以你当时就自己决定不联系了？']], [
-  Q('嗯，现在看确实是。','嗯，现在看确实是。',['嗯'],{accountability:3,trust:2},['RECOGNIZED_DECIDING_FOR_HER']),
-  Q('我当时也只能这样。','我当时也只能这样。',['你可以跟我说啊'],{accountability:-2,pressure:1},['DEFENSIVE_EXPLANATION']),
-  Q('我就是不想让自己更难受。','我就是不想让自己更难受。',['那我呢？'],{truth:2},['SELF_PROTECTION_ADMITTED']),
-  Q('对不起。','对不起。',['我不是让你道歉','我就是想知道为什么'],{accountability:1},['APOLOGY_TOO_EARLY'])
- ]),
- C('02-E','“你不想让自己难受，那我呢？”',[['z','那我呢？']], [
-  Q('你会更莫名其妙。','你会更莫名其妙。',['对啊'],{accountability:2,listening:3},['ACKNOWLEDGED_IMPACT']),
-  Q('你应该也挺难受的。','你应该也挺难受的。',['不只是难受','我那时候一直不知道发生啥了'],{listening:2}),
-  Q('我当时顾不上想那么多。','我当时顾不上想那么多。',['嗯'],{truth:1,accountability:-2},['SELF_CENTERED_IMPACT']),
-  Q('所以我现在特别后悔。','所以我现在特别后悔。',['我没问你后不后悔'],{spark:1,listening:-2},['REGRET_AS_ANSWER'])
- ]),
- C('02-F','轮到她讲她的版本。你会不会让她说完？',[['z','其实我那时候……'],['z','我一开始还以为你忙']], [
-  Q('先听完','', ['后来发现你就是没再找我','我就觉得挺莫名其妙的'],{listening:4,trust:1},['LET_HER_FINISH'],'先不抢着解释','silence'),
-  Q('中间插一句“我不是故意的”','不是，我不是故意的。',['你先让我说完'],{pressure:1},['INTERRUPTED_TO_DEFEND']),
-  Q('立刻道歉','对不起。',['你先听我说'],{accountability:1},['APOLOGY_INTERRUPTED'])
- ]),
- C('02-G','她说完以后，你最先回应哪一层？',[],[
-  Q('强调“我不是故意的”','我真的不是故意伤你的。',['我知道'],{truth:1}),
-  Q('回应她当时的体验','原来你当时不是觉得我不喜欢你，是根本不知道我为什么消失。',['嗯'],{listening:3,accountability:2},['REFLECTED_HER_EXPERIENCE']),
-  Q('强调自己一直很喜欢她','其实我一直都很喜欢你。',['我知道','不是这个问题'],{spark:3,unresolved:1},['USES_LOVE_AS_DEFENSE']),
-  Q('用现在覆盖过去','至少我们现在又聊起来了。',['所以以前就不说了？'],{unresolved:3},['USES_PRESENT_TO_ERASE_PAST'])
- ]),
- C('02-H','现在才到了真正适合道歉的位置。',[],[
-  Q('这件事确实是我处理得很差，对不起。','这件事确实是我处理得很差，对不起。',['嗯'],{accountability:3,trust:2},['APOLOGIZED_SPECIFICALLY']),
-  Q('都是我的错，是我太垃圾了。','都是我的错，是我太垃圾了。',['我又没说你垃圾'],{accountability:1,pressure:2},['SELF_ERASURE_APOLOGY']),
-  Q('我特别爱你，所以你原谅我吧。','我真的特别特别爱你，所以你原谅我吧。',['这和爱不爱不是一回事'],{spark:3,pressure:4},['USES_LOVE_AS_DEFENSE','FORGIVENESS_PRESSURE_HIGH']),
-  Q('我不想只说对不起，我想把这件事说清楚。','我不想只说对不起，我想把这件事说清楚。',['你已经说了啊'],{truth:2})
- ]),
- C('02-I','你要不要给未来下一个保证？',[],[
-  Q('以后我绝对不会再这样。','以后我绝对不会再这样。',['你别绝对'],{promise:5,spark:1},['MADE_ABSOLUTE_PROMISE'],'听起来很甜，但未来会被验证','danger'),
-  Q('以后我要是想躲，我至少会直接告诉你。','以后我要是想躲，我至少会直接告诉你。',['那你记住'],{promise:2,accountability:3},['MADE_SPECIFIC_REPAIR_PLAN']),
-  Q('如果再这样你就直接骂我。','如果再这样你就直接骂我。',['那我不得骂死你'],{spark:1,accountability:1}),
-  Q('我不想给一个不知道能不能做到的绝对保证。','我现在不想给你保证一个我不知道能不能做到的绝对话。',['那你能做到啥'],{trust:3,promise:-1},['REFUSED_EMPTY_PROMISE'])
- ]),
- C('02-J','她没有给你一个“通关式原谅”。',[['z','行吧'],['z','反正我就是一直想知道']], [
-  Q('不追着要结果','嗯。',['你吃饭没'],{safety:2,unresolved:-2},['PAST_PARTIALLY_RESOLVED'],'关系回到生活里','silence'),
-  Q('所以你原谅我了吗？','所以你原谅我了吗？',['你怎么又问'],{pressure:3},['NEEDED_IMMEDIATE_RESOLUTION']),
-  Q('那我们是不是可以重新开始了？','那我们是不是可以重新开始了？',['你跳得也太快了'],{pressure:5,spark:1},['RUSHED_RELATIONSHIP_LABEL'])
- ],{end:true})
-];
-
-CH[3].scenes=[
- C('03-A','谈完那么重的话以后，她却只问了一句。',[['z','你吃了吗']], [
-  Q('正常聊吃饭','还没，准备去。',['吃去'],{safety:2},['RETURNED_TO_NORMAL']),
-  Q('继续追问“所以你原谅我了吗”','所以你现在原谅我了吗？',['刚不是说完了吗'],{pressure:3},['NEEDED_IMMEDIATE_RESOLUTION']),
-  Q('开个很轻的玩笑','没，你请我？',['做梦'],{spark:1,familiarity:1}),
-  Q('谢谢你愿意跟我说这些','谢谢你愿意跟我说这些。',['嗯','吃饭去'],{trust:2})
- ]),
- C('03-B','老梗重新出现。',[['z','你还是这么能说']], [
-  Q('接以前的梗','你第一天认识我？',['烦人'],{familiarity:3,oldScript:1,spark:1}),
-  Q('顺手造一个新梗','今天限量版，过时不候。',['什么鬼哈哈哈'],{newConnection:3,spark:1},['CREATED_NEW_INSIDE_JOKE']),
-  Q('你还记得啊','你还记得啊。',['我又没失忆'],{spark:2,familiarity:1}),
-  Q('以前我们每天也是这样','以前我们每天也是这样。',['是啊'],{familiarity:3,oldScript:3},['LIVING_IN_MEMORY'])
- ]),
- C('03-C','聊天里第一次出现了一个明显更亲密的称呼。',[],[
-  Q('同级回应','行，宝。',['嗯'],{spark:2,safety:1},['MATCHED_NICKNAME']),
-  Q('你刚叫我啥？','你刚叫我啥？',['没叫啥'],{spark:3,pressure:1}),
-  Q('宝宝我就知道你还是爱我','宝宝我就知道你还是爱我。',['你又开始脑补了'],{spark:2,pressure:4},['ASSUMED_RECONCILIATION_FROM_INITIATIVE']),
-  Q('当没看见，正常继续','那你下午几点下课？',['五点'],{safety:1},['MISSED_BID'])
- ],{dynamic:'nickname'}),
- C('03-D','她说今天头发很丑。你提出“看看”，她拒绝了。',[['z','我今天头发好丑'],['g','看看'],['z','不'],['z','见真人得了']], [
-  Q('行，那就留着见真人。','行，那就留着见真人。',['嗯呢'],{safety:3,spark:2},['RESPECTED_LIGHT_BOUNDARY']),
-  Q('就一张嘛','就一张嘛。',['不发'],{pressure:1},['ASKED_AGAIN']),
-  Q('继续求“发一个 / 求你了”','发一个嘛\n求你了',['不'],{pressure:4,trust:-1},['PUSHED_AFTER_NO'],'真正被记住的是拒绝以后你怎么做','danger'),
-  Q('不给看算了','不给看算了。',['？'],{safety:-2},['PUNISHED_BOUNDARY'])
- ]),
- C('03-E','下午空出半天。你其实想找她。',[],[
-  Q('想到她就自然发点东西','[表情]',['你干嘛哈哈哈'],{initiative:2,spark:1},['NATURAL_INITIATIVE']),
-  Q('确实有事，等晚上再聊','',null,{autonomy:2,safety:1},['NATURAL_GAP'],'真实的忙和博弈不是一回事','silence'),
-  Q('故意不找，看她会不会先来','',null,{strategic:4,trust:-1},['STRATEGIC_WITHHOLDING'],'把沉默当成测试','danger'),
-  Q('每半小时找一次','干嘛呢\n干嘛呢\n在干嘛',['？'],{pressure:3},['OVER_INITIATING'])
- ],{dynamic:'initiative'}),
- C('03-F','她对“谁先找谁”给出了反馈。',[],[
-  Q('有点，我想看看你会不会找我。','有点，我想看看你会不会找我。',['有病哈哈哈'],{truth:3,trust:1,strategic:-2},['GAME_PLAYING_ACKNOWLEDGED']),
-  Q('没有，我刚才真在忙。','没有，我刚才真在忙。',null,{trust:1}),
-  Q('那你不是也没找我。','那你不是也没找我。',['又来了'],{strategic:2,trust:-1},['BLAME_SHIFT']),
-  Q('以后想你我就直接找你。','那以后我想你就直接找你。',['行啊'],{spark:2,initiative:3},['NATURAL_INITIATIVE'])
- ],{dynamic:'initiativeFollow'}),
- C('03-G','一个很普通的下午，消息突然变得不普通。',[],[
-  Q('我也是。','我也是。',['嗯'],{spark:3,safety:2},['MATCHED_DIRECT_AFFECTION']),
-  Q('谁不是呢','谁不是呢。',['你就不能好好说'],{familiarity:2,spark:3,tone:2},['PLAYFUL_AFFECTION']),
-  Q('那什么时候见？','那什么时候见？',['你最近什么时候有时间'],{spark:3,pressure:1},['FIRST_MEETING_ANTICIPATION']),
-  Q('终于承认了？','终于承认了？',['当我没说'],{spark:1},['TEASED_AFFECTION']),
-  Q('那复合。','那复合。',['你怎么什么都能绕到复合'],{spark:1,pressure:5},['RUSHED_RELATIONSHIP_LABEL'])
- ],{dynamic:'missyou'}),
- C('03-H','她开始拿措辞里的“小细节”逗你。',[['g','等忙完以后，又能工作又能经常陪你了。'],['z','所以工作放前面是吧']], [
-  Q('错了，先说能陪你，再说工作。','错了，应该先说能陪你，然后再说工作。',['这还差不多'],{tone:3,spark:2}),
-  Q('你咋连这个都挑哈哈哈','你咋连这个都挑哈哈哈。',['小细节'],{familiarity:2}),
-  Q('工作当然更重要啊','工作当然更重要啊。',['行'],{spark:1}),
-  Q('立刻发一大段解释','不是不是你最重要我真的不是那个意思……',['我就随便说说'],{pressure:2},['OVER_REASSURE'],'把小玩笑修成了大事故','danger')
- ]),
- C('03-I','她打错了一个字。一个新梗的机会出现了。',[['z','我刚刚差点睡着写成“睡猪”了']], [
-  Q('抓住它做成新外号','行，睡猪。',['滚啊哈哈哈'],{newConnection:4,spark:1},['NEW_INSIDE_JOKE_01']),
-  Q('正常略过','哈哈哈，困成啥了。',['真的困'],{safety:1}),
-  Q('硬拉回旧梗','跟以前一样，你打字还是这样。',['？哈哈哈'],{oldScript:2,familiarity:2}),
-  Q('笑得太狠','哈哈哈哈哈哈你也太笨了吧。',['你才笨'],{spark:1,pressure:1})
- ]),
- C('03-J','试玩版最后，她开始主动找你。',[['n','DAY 4 · 21:08']], [
-  Q('打开聊天','',null,{},['CH03_DONE'],'这一条消息会根据你前面怎么接住她而变化。','silence')
- ],{dynamic:'finale',end:true})
-];
-
-const chapterMeta=[
- ['00','序章 · 在吗'],['01','最近可好'],['02','好好说'],['03','又熟悉起来了'],['04','她开始找你'],['05','靠得太近'],['06','你到底懂不懂我'],['07','第一次危机'],['08','要不要见面'],['09','见到你了'],['10','我们现在算什么'],['11','再赌一次吗'],['12','终章 · 后来']
-];
-function renderRail(){const el=$('#chapterRail');el.innerHTML=chapterMeta.map((x,i)=>`<div class="chapterDot ${i===S.chapter?'active':''} ${i<S.chapter?'done':''} ${i>3?'locked':''}"><div class="num">${x[0]}</div><div><b>${x[1]}</b><span>${i<4?(i<S.chapter?'已完成':i===S.chapter?'进行中':'未开始'):'正式版锁定'}</span></div></div>`).join('')}
-function echoText(){const xs=[];if(has('RETURNED_AFTER_BUSY'))xs.push(['你兑现过一句小承诺','她不一定夸你，但这件事会被后面读取。']);if(has('CATASTROPHIZED_SILENCE'))xs.push(['你曾把沉默解释成危机','这不会立刻判错，但会改变她以后表达空间的方式。']);if(has('LET_HER_FINISH'))xs.push(['你让她把自己的版本说完了','“听懂”与“抢着道歉”第一次被分开。']);if(has('MADE_ABSOLUTE_PROMISE'))xs.push(['你留下过一句“绝对”','甜度很高，未来也会真的被验证。']);if(has('RESPECTED_LIGHT_BOUNDARY'))xs.push(['你接住了一个轻松的“不”','边界没有把聊天弄冷。']);if(has('STRATEGIC_WITHHOLDING'))xs.push(['你试过用沉默测试主动性','短期可能有效，长期会累积另一种东西。']);if(has('NEW_INSIDE_JOKE_01'))xs.push(['你们有了新的共同语言','不是所有亲密都靠旧记忆。']);if(!xs.length)xs.push(['她还在观察你的节奏','第一章最重要的不是“说对”，而是别急着证明。']);return xs.slice(-4)}
-function renderEcho(){const box=$('#echoList');box.innerHTML=echoText().map(x=>`<div class="echo"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}
-function addMsg(who,text){if(text==null||text==='')return;const wrap=document.createElement('div');wrap.className='msg '+who;const b=document.createElement('div');b.className='bubble';b.textContent=text;wrap.appendChild(b);$('#chat').appendChild(wrap);$('#chat').scrollTop=$('#chat').scrollHeight;tone(who==='z'?670:520,.04,.012)}
-async function addMsgs(arr=[]){for(const [w,t] of arr){addMsg(w,t);await delay(w==='n'?520:760)}}
-async function typing(ms=650){const wrap=document.createElement('div');wrap.className='msg z';wrap.innerHTML='<div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>';$('#chat').appendChild(wrap);$('#chat').scrollTop=$('#chat').scrollHeight;await delay(ms);wrap.remove()}
-function setChoices(scene){const box=$('#choices');box.innerHTML='';if(scene.special==='builder'){renderBuilder(scene);return}scene.choices.forEach((c,i)=>{const b=document.createElement('button');b.className='choice '+(c.cls||'');b.innerHTML=`<b>${c.text}</b>${c.small?`<small>${c.small}</small>`:''}`;b.onclick=()=>choose(scene,c,i);box.appendChild(b)})}
-async function sceneDynamic(scene){if(scene.dynamic==='askback'){if(scene.choices[3]&&S.vars.safety>=32)scene.choices[3].zxr=['我最近也挺忙'];else if(scene.choices[3])scene.choices[3].zxr=['哈哈'];}
- if(scene.dynamic==='different'){
-  let line=S.vars.pressure>19?'你怎么还是那么急':S.vars.spark>24?'还是那么贫':'感觉你现在挺稳的';
-  scene.msgs=[['z',line]];
-  if(scene.choices[3])scene.choices[3].zxr=S.vars.pressure>19?['就……还是挺急的']:S.vars.spark>24?['比以前更会贫了']:['说话没以前那么飘了'];
- }
- if(scene.dynamic==='nickname'){
-   const nick=S.vars.spark>34?'好呢宝':S.vars.familiarity>25?'行吧小郭':'你个猪';scene.msgs=[['z',nick]];
- }
- if(scene.dynamic==='initiative'){
-   if(has('STRATEGIC_WITHHOLDING')||S.vars.strategic>4)scene.choices[2].zxr = S.vars.safety>35?['你是不是非得我找你你才说话']:[];
-   if(scene.choices[1])scene.choices[1].zxr=S.vars.safety>36?[S.vars.spark>33?'消失了？':'干嘛呢']:[];
- }
- if(scene.dynamic==='initiativeFollow'){
-   if(!(has('STRATEGIC_WITHHOLDING')||S.vars.strategic>4)){scene.msgs=[['z',S.vars.safety>35?'干嘛呢':'[表情]']];scene.prompt='她主动开了一个很普通的话题。你怎么接？';scene.choices=[Q('自然接住','刚忙完，你呢？',['躺着'],{initiative:1,safety:1}),Q('立刻说“想我了？”','想我了？',['你想多了'],{spark:1,pressure:1}),Q('故意晚点再回','',[],{strategic:2},['STRATEGIC_WITHHOLDING'],'又一次把主动当测试','silence')];}
- }
- if(scene.dynamic==='missyou'){
-   const direct=(S.vars.spark+S.vars.safety+S.vars.trust)>102 && S.vars.pressure<31;
-   scene.msgs=direct?[['z','想你了']]:[['z',S.vars.familiarity>25?'你干嘛呢':'在干嘛']];
-   if(!direct){scene.prompt='这不是“想你了”，但它仍然是一种主动靠近。';scene.choices=[Q('正常告诉她你在干嘛','刚弄完东西，准备躺会。',['我也躺着'],{safety:2,initiative:1}),Q('顺势问她','你呢？',['无聊'],{reciprocity:2}),Q('把普通主动强行翻译成暧昧','咋，想我了？',['……'],{spark:1,pressure:2},['EVERYTHING_BECOMES_FLIRT'])];}
- }
- if(scene.dynamic==='finale'){
-   let lines;if(has('MATCHED_DIRECT_AFFECTION')||S.vars.spark>40)lines=[['z','干嘛呢'],['z','突然有点想找你']];else if(S.vars.safety>38)lines=[['z','干嘛呢']];else lines=[['z','[表情]']];scene.choices[0].zxr=lines;
- }
+const SCHEMA_VERSION=2;
+const VERSION_HISTORY=[
+{
+  v:'0.6.1-alpha',
+  date:'2026-09-22',
+  title:'源码可读性整理',
+  items:[
+    '保持 v0.6.0-alpha 游戏内容与玩法不变',
+    'HTML / CSS / JavaScript 全量重新排版，统一两空格缩进',
+    '拆分超长单行函数和样式规则，增加正式代码分区注释',
+    '源码从约 566 行整理为 4000+ 行，方便后续 03—12 持续维护'
+  ]
+},
+{
+  v:'0.6.0-alpha', date:'2026-09-22', title:'正式 Alpha · 00—02', items:['00—02 从压缩 Vertical Slice 升级为正式体量', '新 Save Schema / 稳定回退 / 章节检查点',
+  'Seeded Random：刷新和回退不改变本周目随机事件', '00 增加等待、草稿、生活插曲；01 增加 Reply Order、DAY 2 与主动话题；02 扩展解释链与 Composer', '隐藏 Developer Mode 与本地运行统计',
+  '继续保持单 HTML 自动更新；旧 Demo 存档自动迁移，不清空设置']
+},
+{
+  v:'0.5.0-demo', date:'2026-09-22', title:'单 HTML 自更新', items:['版本号与迭代记录全部内置到 HTML', '游戏设置 / 版本记录双页签', '启动与回前台读取线上同一 HTML 检查更新',
+  '保持高级手机游戏 UI']
+},
+{
+  v:'0.4.0-demo', date:'2026-09-22', title:'PWA 自动更新', items:['加入 GitHub Pages 版本检查', '启动与回前台自动检查', '更新后保留本地存档']
+},
+{
+  v:'0.3.0-demo', date:'2026-09-22', title:'响应式与剧情回退', items:['加入真正的剧情状态回退', '桌面三栏 / 两栏 / 单栏自适应', 'iPhone safe-area 与动态视口']
+},
+{
+  v:'0.2.0-demo', date:'2026-09-22', title:'00—03 Vertical Slice', items:['高级游戏 UI', '00—03 压缩试玩剧情', '条件分支、隐藏 Flags、本地存档',
+  'Chapter 02 回答拼装器']
 }
-function progressUI(scene){$('#sceneId').textContent=scene?.id||'';$('#promptText').textContent=scene?.prompt||'你准备怎么回？';const total=CH.reduce((a,c)=>a+c.scenes.length,0),done=CH.slice(0,S.chapter).reduce((a,c)=>a+c.scenes.length,0)+S.scene;$('#progress').style.width=((done/total)*100)+'%'}
-function getScene(){const raw=CH[S.chapter]?.scenes[S.scene];return raw?cloneData(raw):null}
-async function renderScene(){const ch=CH[S.chapter];if(!ch){finishGame();return}const scene=getScene();if(!scene){chapterEnd();return}S.phase='play';await sceneDynamic(scene);progressUI(scene);setUILocked(true);await addMsgs(scene.msgs||[]);setUILocked(false);setChoices(scene);renderRail();renderEcho();save()}
-async function renderCurrentWithoutMessages(){const scene=getScene();if(!scene){chapterEnd(true);return}S.phase='play';await sceneDynamic(scene);progressUI(scene);setChoices(scene);renderRail();renderEcho();setUILocked(false);save()}
-
-async function choose(scene,c,i){if(UI_LOCKED)return;pushUndo();setUILocked(true);haptic();tone(500,.05,.018);[...$('#choices').children].forEach(x=>x.disabled=true);if(c.reply){addMsg('g',c.reply);await delay(420)}fx(c.effects);flag(...(c.flags||[]));S.history.push({scene:scene.id,choice:i,text:c.text});if(c.zxr&&c.zxr.length){await typing();await addMsgs(c.zxr.map(t=>['z',t]))}S.scene++;save();await delay(260);setUILocked(false);renderScene()}
-const builderData={facts:[['我慢慢少找你，最后就没联系。',{truth:2},'GAVE_SPECIFIC_EXPLANATION'],['那阵子现实有点乱，我也在躲事。',{truth:1},'REALITY_PRESSURE_STORY'],['我感觉你当时也没那么想理我。',{truth:1,accountability:-1},'ATTRIBUTED_TO_HER'],['我当时觉得自己不配。',{spark:1,truth:1},'ROMANTICIZED_CAUSE']], reasons:[['我是不敢直接问你。',{truth:2,accountability:1},'FEAR_OF_REJECTION'],['我不太会处理那种不确定。',{truth:2},'UNCERTAINTY_AVOIDANCE'],['我就想先保护自己。',{truth:1},'SELF_PROTECTION'],['主要还是因为你也没给信号。',{accountability:-2},'BLAME_SHIFT']], impacts:[['现在看，我等于替你决定了。',{accountability:3,listening:2},'RECOGNIZED_DECIDING_FOR_HER'],['我没想到你会一直不知道发生了什么。',{accountability:2},'ACKNOWLEDGED_IMPACT'],['反正我也很难受。',{accountability:-1},'CENTERED_SELF'],['但至少现在又聊起来了。',{unresolved:2},'USES_PRESENT_TO_ERASE_PAST']]};
-function renderBuilder(scene){const box=$('#choices');const selected={facts:null,reasons:null,impacts:null};box.innerHTML='<div class="builder" id="builder"></div>';const root=$('#builder');[['facts','发生了什么'],['reasons','为什么'],['impacts','现在怎么看']].forEach(([key,title])=>{const sec=document.createElement('div');sec.className='builderBlock';sec.innerHTML=`<h4>${title}</h4><div class="pillWrap"></div>`;const wrap=sec.querySelector('.pillWrap');builderData[key].forEach((item,idx)=>{const b=document.createElement('button');b.className='pill';b.textContent=item[0];b.onclick=()=>{[...wrap.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');selected[key]=idx;send.classList.toggle('ready',Object.values(selected).every(v=>v!==null))};wrap.appendChild(b)});root.appendChild(sec)});const send=document.createElement('button');send.className='builderSend';send.textContent='把这句话发出去';send.onclick=async()=>{if(UI_LOCKED||!Object.values(selected).every(v=>v!==null))return;pushUndo();setUILocked(true);let parts=[];for(const key of ['facts','reasons','impacts']){const it=builderData[key][selected[key]];parts.push(it[0]);fx(it[1]);flag(it[2])}addMsg('g',parts.join('\n'));await typing(900);let z='嗯';if(has('ATTRIBUTED_TO_HER')||has('BLAME_SHIFT'))z='所以还是因为我？';else if(has('RECOGNIZED_DECIDING_FOR_HER'))z='对';else if(has('USES_PRESENT_TO_ERASE_PAST'))z='现在是现在';else if(has('ROMANTICIZED_CAUSE'))z='你别又说得这么玄';addMsg('z',z);S.scene++;save();await delay(300);setUILocked(false);renderScene()};root.appendChild(send)}
-function chapterEnd(preserve=false){const ch=CH[S.chapter];S.phase='chapterEnd';$('#choices').innerHTML='';$('#promptText').textContent='章节结束';$('#sceneId').textContent='';if(!preserve||!$('#chat').querySelector('.endCard')){const m=document.createElement('div');m.className='endCard';const mem=echoText().slice(-3);m.innerHTML=`<div class="sceneTitle">CHAPTER ${ch.n} COMPLETE</div><h4>${ch.title}</h4><div style="font-size:11px;color:#8f8d94;line-height:1.7">这一章没有“完美答案”。系统只记下了你反复做出的模式。</div><div class="memoryChips">${mem.map(x=>`<span class="mem">${x[0]}</span>`).join('')}</div>`;$('#chat').appendChild(m);$('#chat').scrollTop=$('#chat').scrollHeight}const b=document.createElement('button');b.className='choice';b.innerHTML=`<b>${S.chapter===3?'结束试玩，查看尾声':'进入下一章'}</b><small>${S.chapter===3?'后续 04—12 将在正式版继续':'你的前章选择不会被清空'}</small>`;b.onclick=()=>{if(S.chapter===3){finishGame();return}S.chapter++;S.scene=0;S.phase='intro';save();showChapterIntro()};$('#choices').appendChild(b);renderRail();renderEcho();setUILocked(false);save()}
-function showChapterIntro(){const ch=CH[S.chapter];S.phase='intro';$('#chapterKicker').textContent='CHAPTER '+ch.n;$('#chapterTitle').textContent=ch.title;$('#chapterDesc').textContent=ch.desc;$('#chapterQuote').textContent=ch.quote;$('#chapterCard').classList.add('show');save()}
-$('#chapterStart').onclick=()=>{$('#chapterCard').classList.remove('show');$('#chat').innerHTML='';S.seenIntro[S.chapter]=true;S.phase='play';save();renderScene()};
-function finishGame(preserve=false){S.finished=true;S.phase='finish';$('#chapterCard').classList.remove('show');if(!preserve){$('#chat').innerHTML='';addMsg('n','试玩版结束');setTimeout(()=>addMsg('z','干嘛呢'),280);setTimeout(()=>addMsg('z','怎么不说话'),720);setTimeout(()=>addMsg('n','04《她开始找你》 · 正式版继续'),1220)}$('#choices').innerHTML='';$('#promptText').textContent='DEMO COMPLETE';$('#sceneId').textContent='';const b=document.createElement('button');b.className='choice';b.innerHTML='<b>从序章重新玩一周目</b><small>试试完全不同的节奏，很多回复会变化。</small>';b.onclick=()=>{localStorage.removeItem(SAVE);location.reload()};$('#choices').appendChild(b);renderRail();renderEcho();save()}
-function startNew(){S=baseState();S.phase='intro';save();$('#cover').classList.add('hidden');renderRail();renderEcho();showChapterIntro()}
-async function resumeGame(){$('#cover').classList.add('hidden');$('#chapterCard').classList.remove('show');renderRail();renderEcho();if(S.lastView?.chatHTML)$('#chat').innerHTML=S.lastView.chatHTML;if(S.phase==='finish'||S.finished){finishGame(true);return}if(S.phase==='intro'||!S.seenIntro?.[S.chapter]){showChapterIntro();return}if(S.phase==='chapterEnd'){chapterEnd(true);return}await renderCurrentWithoutMessages()}
-$('#startBtn').onclick=startNew;$('#continueBtn').onclick=resumeGame;
-function openSettings(){ $('#settings').classList.add('show') } $('#settingsBtn').onclick=openSettings;$('#closeSettings').onclick=()=>$('#settings').classList.remove('show');$('#settings').onclick=e=>{if(e.target.id==='settings')$('#settings').classList.remove('show')};
-$('#speedToggle').onclick=e=>{CFG.speed=CFG.speed==='fast'?'cinema':'fast';e.target.textContent=CFG.speed==='fast'?'快节奏':'电影感';saveCfg()};$('#soundToggle').onclick=e=>{CFG.sound=!CFG.sound;e.target.textContent=CFG.sound?'开启':'关闭';$('#soundBtn').style.opacity=CFG.sound?1:.4;saveCfg()};$('#soundBtn').onclick=()=>{CFG.sound=!CFG.sound;$('#soundBtn').style.opacity=CFG.sound?1:.4;$('#soundToggle').textContent=CFG.sound?'开启':'关闭';saveCfg();toast(CFG.sound?'轻音效已开启':'轻音效已关闭')};
-$('#resetBtn').onclick=()=>{if(confirm('重新开始试玩？当前本地存档会被覆盖。')){localStorage.removeItem(SAVE);location.reload()}};$('#mapBtn').onclick=()=>toast('试玩版已开放 00—03，04—12 正式版解锁');
-async function undoOne(){if(UI_LOCKED){toast('等这条消息显示完再回退');return}if(!(S.undoStack&&S.undoStack.length)){toast('还没有可以回退的选择');return}const cp=S.undoStack.pop();restoreCore(cp.state);S.phase='play';S.finished=false;$('#cover').classList.add('hidden');$('#chapterCard').classList.remove('show');$('#settings').classList.remove('show');$('#chat').innerHTML=cp.chatHTML||'';await renderCurrentWithoutMessages();toast('已回到上一次选择前')}
+];
+let audioCtx=null, UI_LOCKED=false, PENDING_UPDATE_URL=null, DEV_UNLOCKED=false, DEV_TAPS=0;
+const CFG= {
+  speed:'fast', sound:true
+};
+// ============================================================================
+// 02. CORE STATE / ROUTE STATE
+// ============================================================================
+const CORE_KEYS=['closeness', 'trust', 'spark', 'safety', 'pressure', 'autonomy', 'listening', 'consistency', 'reciprocity',
+'uncertainty_tolerance', 'old_script', 'new_connection', 'mutual_understanding', 'repair_trust', 'residual_hurt', 'boundary_safety',
+'promise_credibility', 'loss_acceptance', 'self_betrayal', 'life_expansion'];
+const ROUTE_KEYS=['romantic_rebuild_affinity', 'friendship_affinity', 'chosen_family_affinity', 'push_pull_affinity', 'fake_good_affinity',
+'open_ambiguity_affinity', 'rupture_risk'];
+function makeMap(keys, v=0) {
+  return Object.fromEntries(keys.map(k=>[k, v]))
+}
+function makeId(prefix='run') {
+  try {
+    return prefix+'_'+crypto.getRandomValues(new Uint32Array(2)).join('_')
+  }
+  catch(e) {
+    return prefix+'_'+Date.now()+'_'+Math.floor(Math.random()*1e8)
+  }
+}
+function hash32(str) {
+  let h=2166136261>>>0;
+  for(let i=0; i<str.length; i++) {
+    h^=str.charCodeAt(i);
+    h=Math.imul(h, 16777619)
+  }
+  h+=h<<13;
+  h^=h>>>7;
+  h+=h<<3;
+  h^=h>>>17;
+  h+=h<<5;
+  return h>>>0
+}
+function seeded01(key) {
+  return hash32(String(S.runSeed)+'|'+key)/4294967296
+}
+// ============================================================================
+// 03. SAVE STATE / STATE MUTATION
+// ============================================================================
+function baseState() {
+  return {
+    schemaVersion:SCHEMA_VERSION, gameVersion:APP_VERSION, buildId:APP_BUILD, runId:makeId(), runSeed:makeId('seed'), ngPlusCount:0,
+    chapter:0, flowIndex:0, phase:'cover', finished:false, presentedSceneId:null, core:makeMap(CORE_KEYS), patterns: {
+    },
+    memories: {
+    },
+    routes:makeMap(ROUTE_KEYS), chapterState: {
+    },
+    sceneHistory:[], messageHistory:[], randomState: {
+      picks: {
+      }
+    },
+    checkpoints: {
+    },
+    undoStack:[], stats: {
+      choices:0, tierA:0, tierB:0, tierC:0, tierD:0, unsent:0, undos:0, startedAt:Date.now(), chapterStartedAt:Date.now()
+    },
+    migrationNotice:false
+  }
+}
+let S=baseState();
+const clone=x=>JSON.parse(JSON.stringify(x));
+const clamp=(n, a=-50, b=50)=>Math.max(a, Math.min(b, n));
+const mem=k=>!!S.memories[k];
+const pat=k=>Number(S.patterns[k]||0);
+const core=k=>Number(S.core[k]||0);
+const route=k=>Number(S.routes[k]||0);
+function applyEffects(e= {
+}
+) {
+  for(const [k, v] of Object.entries(e.core|| {
+  }
+  )) {
+    if(CORE_KEYS.includes(k))S.core[k]=clamp(core(k)+v)
+  }
+  for(const [k, v] of Object.entries(e.patterns|| {
+  }
+  ))S.patterns[k]=clamp(pat(k)+v, 0, 20);
+  for(const k of e.memories||[])S.memories[k]=true;
+  for(const [k, v] of Object.entries(e.routes|| {
+  }
+  )) {
+    if(ROUTE_KEYS.includes(k))S.routes[k]=clamp(route(k)+v, 0, 100)
+  }
+}
+function E(core= {
+},
+patterns= {
+},
+memories=[], routes= {
+}
+) {
+  return {
+    core, patterns, memories, routes
+  }
+}
+function Q(text, reply, zxr, effects=E(), tier='B', small='', cls='') {
+  return {
+    text, reply, zxr, effects, tier, small, cls
+  }
+}
+function C(id, prompt, msgs, choices, opt= {
+}
+) {
+  return {
+    id, prompt, msgs, choices, ...opt
+  }
+}
+function snapshot() {
+  return {
+    chapter:S.chapter, flowIndex:S.flowIndex, phase:S.phase, finished:S.finished, presentedSceneId:S.presentedSceneId, core:clone(S.core),
+    patterns:clone(S.patterns), memories:clone(S.memories), routes:clone(S.routes), chapterState:clone(S.chapterState), randomState:clone(S.randomState),
+    sceneHistoryLen:S.sceneHistory.length, messageHistoryLen:S.messageHistory.length, stats:clone(S.stats)
+  }
+}
+function pushUndo() {
+  S.undoStack=S.undoStack||[];
+  S.undoStack.push(snapshot());
+  if(S.undoStack.length>55)S.undoStack.shift();
+  updateBackButton()
+}
+function restoreSnapshot(cp) {
+  S.chapter=cp.chapter;
+  S.flowIndex=cp.flowIndex;
+  S.phase=cp.phase;
+  S.finished=cp.finished;
+  S.presentedSceneId=cp.presentedSceneId;
+  S.core=clone(cp.core);
+  S.patterns=clone(cp.patterns);
+  S.memories=clone(cp.memories);
+  S.routes=clone(cp.routes);
+  S.chapterState=clone(cp.chapterState);
+  S.randomState=clone(cp.randomState);
+  S.sceneHistory=S.sceneHistory.slice(0, cp.sceneHistoryLen);
+  S.messageHistory=S.messageHistory.slice(0, cp.messageHistoryLen);
+  S.stats=clone(cp.stats)
+}
+function checkpoint(name) {
+  S.checkpoints[name]=snapshot()
+}
+function restoreCheckpoint(name) {
+  const cp=S.checkpoints[name];
+  if(!cp)return false;
+  restoreSnapshot(cp);
+  S.undoStack=[];
+  return true
+}
+function migrateLegacy(x) {
+  const n=baseState();
+  n.migrationNotice=true;
+  n.memories= {
+    ...(x.flags|| {
+    }
+    )
+  };
+  const v=x.vars|| {
+  };
+  n.core.trust=clamp((v.trust??30)-30);
+  n.core.safety=clamp((v.safety??31)-31);
+  n.core.spark=clamp((v.spark??17)-17);
+  n.core.pressure=clamp((v.pressure??10)-10);
+  n.core.listening=clamp((v.listening??34)-34);
+  n.core.consistency=clamp((v.consistency??48)-48);
+  n.core.autonomy=clamp((v.autonomy??50)-50);
+  n.core.reciprocity=clamp((v.reciprocity??30)-30);
+  n.core.old_script=clamp((v.oldScript??8)-8);
+  n.core.new_connection=clamp((v.newConnection??6)-6);
+  n.core.promise_credibility=clamp(-(v.promise??0));
+  if(x.flags?.STRATEGIC_WITHHOLDING)n.patterns.strategic_withholding=3;
+  if(x.flags?.CARE_BECAME_CONTROL)n.patterns.care_as_control=3;
+  if(x.flags?.CATASTROPHIZED_SILENCE)n.patterns.catastrophic_interpretation=3;
+  if(x.flags?.DROPS_LIFE_FOR_HER)n.patterns.self_suppression=3;
+  if(x.flags?.MADE_ABSOLUTE_PROMISE)n.patterns.promise_inflation=3;
+  if(x.flags?.LET_HER_FINISH)n.patterns.accountability=2;
+  n.chapter=Math.min(Number(x.chapter||0), 2);
+  if(Number(x.chapter||0)>2||x.finished) {
+    n.chapter=2;
+    n.flowIndex=CH[2].flow.length;
+    n.phase='chapterEnd'
+  }
+  else {
+    const last=(x.history||[]).filter(h=>String(h.scene||'').startsWith('0'+n.chapter+'-')).at(-1)?.scene;
+    const idx=last?CH[n.chapter].flow.findIndex(z=>z===last):-1;
+    n.flowIndex=Math.max(0, idx+1);
+    n.phase='play'
+  }
+  return n
+}
+function save() {
+  S.schemaVersion=SCHEMA_VERSION;
+  S.gameVersion=APP_VERSION;
+  S.buildId=APP_BUILD;
+  try {
+    localStorage.setItem(SAVE, JSON.stringify(S));
+    $('#saveState').textContent='刚刚已自动存档'
+  }
+  catch(e) {
+    $('#saveState').textContent='存档空间不足'
+  }
+  updateBackButton();
+  refreshDev()
+}
+function saveCfg() {
+  localStorage.setItem(CFG_SAVE, JSON.stringify(CFG))
+}
+function load() {
+  try {
+    const cur=JSON.parse(localStorage.getItem(SAVE));
+    if(cur&&cur.schemaVersion===SCHEMA_VERSION)S= {
+      ...baseState(), ...cur, core: {
+        ...makeMap(CORE_KEYS), ...(cur.core|| {
+        }
+        )
+      },
+      routes: {
+        ...makeMap(ROUTE_KEYS), ...(cur.routes|| {
+        }
+        )
+      }
+    };
+    else {
+      const legacy=JSON.parse(localStorage.getItem(LEGACY_SAVE));
+      if(legacy) {
+        S=migrateLegacy(legacy);
+        save()
+      }
+    }
+  }
+  catch(e) {
+  }
+  try {
+    const c=JSON.parse(localStorage.getItem(CFG_SAVE));
+    if(c)Object.assign(CFG, c)
+  }
+  catch(e) {
+  }
+}
+function setUILocked(v) {
+  UI_LOCKED=!!v;
+  updateBackButton()
+}
+function updateBackButton() {
+  const b=$('#backBtn');
+  if(b)b.disabled=UI_LOCKED||!(S.undoStack&&S.undoStack.length)
+}
+function tone(freq=640, d=.055, vol=.025) {
+  if(!CFG.sound)return;
+  try {
+    audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.frequency.value=freq;
+    o.type='sine';
+    g.gain.value=vol;
+    o.connect(g);
+    g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime+d);
+    o.stop(audioCtx.currentTime+d)
+  }
+  catch(e) {
+  }
+}
+function haptic() {
+  try {
+    navigator.vibrate&&navigator.vibrate(8)
+  }
+  catch(e) {
+  }
+}
+function delay(ms) {
+  const scale=CFG.speed==='fast'?.46:CFG.speed==='cinema'?1:0.7;
+  return new Promise(r=>setTimeout(r, Math.max(40, ms*scale)))
+}
+function toast(t) {
+  const e=$('#toast');
+  e.textContent=t;
+  e.classList.add('show');
+  setTimeout(()=>e.classList.remove('show'), 1450)
+}
+const SC= {
+};
+function addScene(s) {
+  SC[s.id]=s;
+  return s
+}
+// ============================================================================
+// 04. CHAPTER METADATA / STORY DATA
+// ============================================================================
+const CH=[
+{
+  n:'00', title:'序章 · 在吗', desc:'重新打开联系窗口。正式版不靠“更多台词”扩容，而是让等待、草稿、现实打断和小承诺真的成为玩法。', quote:'「在吗」', flow:['00-A', '00-B', '00-C',
+  '00-D', '00-E', '@R00', '00-F', '00-G', '00-H', '00-I', '00-J', '00-K', '00-L']
+},
+{
+  n:'01', title:'最近可好', desc:'聊天开始变成双向生活。重点不是把每句话都说漂亮，而是让日常真的有节奏、有遗漏、有自己的生活。', quote:'「刚下课」「快饿死了」', flow:['01-A', '01-B',
+  '01-C', '@R01A', '01-D', '01-E', '01-F', '01-G', '01-H', '01-I', '01-J', '01-K', '01-L', '01-M', '01-N']
+},
+{
+  n:'02', title:'好好说', desc:'旧问题终于被摆到桌面上。你可以说错、改口、停一下；解释不是一次完美答题。', quote:'「好好说」', flow:['02-A', '02-B', '02-C', '02-D', '02-E',
+  '02-F', '02-G', '@R02', '02-H', '02-I', '02-J', '02-K', '02-L', '02-M']
+}
+];
+const chapterMeta=[['00', '序章 · 在吗'], ['01', '最近可好'], ['02', '好好说'], ['03', '又熟悉起来了'], ['04', '她开始找你'], ['05', '靠得太近'],
+['06', '你到底懂不懂我'], ['07', '第一次危机'], ['08', '要不要见面'], ['09', '见到你了'], ['10', '我们现在算什么'], ['11', '再赌一次吗'], ['12', '终章 · 后来']];
+const DECKS= {
+  '@R00':['R00-FOOD', 'R00-GAP', 'R00-SLEEP', 'R00-JOKE'],
+  '@R01A':['R01-TAKEOUT', 'R01-EMOJI', 'R01-WORK', 'R01-TIRED'],
+  '@R02':['R02-DELIVERY', 'R02-PAUSE', 'R02-EMOJI', 'R02-FEAR']
+};
+function resolveFlowToken(token) {
+  if(!token?.startsWith('@'))return token;
+  if(S.randomState.picks[token])return S.randomState.picks[token];
+  const deck=DECKS[token]||[];
+  const pick=deck[Math.floor(seeded01(token)*deck.length)]||null;
+  S.randomState.picks[token]=pick;
+  return pick
+}
+function getScene() {
+  const ch=CH[S.chapter];
+  if(!ch)return null;
+  while(S.flowIndex<ch.flow.length) {
+    const id=resolveFlowToken(ch.flow[S.flowIndex]);
+    const s=SC[id];
+    if(s&&eligible(s))return clone(s);
+    S.flowIndex++
+  }
+  return null
+}
+function eligible(s) {
+  if(s.requires&&!(s.requires||[]).every(mem))return false;
+  if(s.unless&&(s.unless||[]).some(mem))return false;
+  return true
+}
+// ---------- Chapter 00 ----------
+addScene(C('00-A', '你什么时候回？', [['n', '22:17 · 锁屏亮起'], ['z', '在吗']], [
+Q('现在回', '', [], E( {
+  trust:1
+},
+{
+},
+['REPLIED_IMMEDIATELY'], {
+  friendship_affinity:1
+}
+), 'B', '你正好看见了'),
+Q('把手里的事做完，十几分钟后回', '', [], E( {
+  autonomy:2, safety:1, life_expansion:1
+},
+{
+},
+['REPLIED_NATURALLY'], {
+  romantic_rebuild_affinity:1, chosen_family_affinity:1
+}
+), 'B', '不是故意晾她'),
+Q('明明看见了，故意等一个多小时', '', [], E( {
+  trust:-1, consistency:-1
+},
+{
+  strategic_withholding:3
+},
+['DELAYED_FOR_GAME'], {
+  push_pull_affinity:2, rupture_risk:1
+}
+), 'A', '“不能显得太在乎”', 'danger'),
+Q('明天再说', '', [], E( {
+  safety:-1, trust:-1
+},
+{
+},
+['IGNORED_OVERNIGHT'], {
+  open_ambiguity_affinity:1
+}
+), 'A', '让这条消息过夜', 'danger')
+], {
+  special:'timing'
+}
+));
+addScene(C('00-B', '第一句话先在输入框里出现。你可以改，也可以删。', [], [
+Q('在，咋啦', '在，咋啦', ['哈哈哈没事', '[表情]'], E( {
+  safety:2, trust:1
+},
+{
+},
+['OPENING_NATURAL'], {
+  friendship_affinity:1
+}
+), 'B'),
+Q('咋啦美女', '咋啦美女', ['哈哈哈没事', '[表情]'], E( {
+  spark:2
+},
+{
+},
+['OPENING_FLIRT'], {
+  romantic_rebuild_affinity:1, push_pull_affinity:1
+}
+), 'B'),
+Q('这么晚突然找我？', '这么晚突然找我？', ['不能找你吗'], E( {
+  trust:1, safety:-1
+},
+{
+},
+['OPENING_GUARDED'], {
+  open_ambiguity_affinity:1
+}
+), 'B'),
+Q('想我了？', '想我了？', ['你想多了吧', '[表情]'], E( {
+  spark:2, pressure:2
+},
+{
+  overflirt:2
+},
+['ASSUMED_SHE_MISSED_ME', 'OPENING_OVERPLAY'], {
+  push_pull_affinity:2
+}
+), 'A', '很爽，但你替她定义了动机', 'danger'),
+Q('怎么，想复合？', '怎么，想复合？', ['？？？', '我就问问你在不在'], E( {
+  pressure:4, trust:-2
+},
+{
+  overflirt:2
+},
+['RUSHED_RELATIONSHIP_LABEL'], {
+  rupture_risk:1, fake_good_affinity:1
+}
+), 'A', '一步跨太远', 'danger')
+], {
+  special:'draft'
+}
+));
+addScene(C('00-C', '她没马上解释。这个空白要不要填？', [], [
+Q('也回一个表情', '[表情]', ['最近可好？'], E( {
+  safety:1
+},
+{
+},
+[], {
+  friendship_affinity:1
+}
+), 'C', '轻轻接一下', 'flavor'),
+Q('咋了，有事？', '咋了，有事？', ['没事', '就问问', '最近可好？'], E( {
+  listening:1
+}
+), 'B'),
+Q('什么都不补，让她继续', '', ['最近可好？'], E( {
+  pressure:-1, uncertainty_tolerance:2
+},
+{
+},
+['ALLOWED_AMBIGUITY'], {
+  romantic_rebuild_affinity:1
+}
+), 'D', '沉默也可以是选择', 'silence'),
+Q('不会是喝多了吧哈哈哈', '不会是喝多了吧哈哈哈', ['滚', '最近可好'], E( {
+  spark:1, safety:1
+}
+), 'C', '', 'flavor')
+]));
+addScene(C('00-D', '“最近可好？” 你准备怎么说？', [], [
+Q('真实讲一点近况', '还行，工作最近有点烦，不过也在想换个环境。', ['咋了', '工作又折腾你了？'], E( {
+  trust:3, reciprocity:1
+},
+{
+  accountability:1
+},
+['FIRST_REAL_SELF_DISCLOSURE'], {
+  romantic_rebuild_affinity:1, friendship_affinity:1
+}
+), 'A'),
+Q('只展示自己过得特别好', '挺好的啊，最近什么都挺顺。', ['那挺好的'], E( {
+  trust:-1
+},
+{
+},
+['FIRST_PERFORMATIVE_SUCCESS'], {
+  open_ambiguity_affinity:1
+}
+), 'B'),
+Q('没有你以后一直都不好', '不好，没有你以后一直都不好。', ['……', '我说最近'], E( {
+  spark:2, pressure:4
+},
+{
+  self_suppression:1
+},
+['EMOTIONAL_OVERLOAD'], {
+  push_pull_affinity:2
+}
+), 'A', '重量一下全压过去', 'danger'),
+Q('拿工作开玩笑', '被工作 PUA，在线等，挺急的。', ['哈哈哈哈', '那你为什么不 PUA 回去'], E( {
+  safety:2, spark:1
+}
+), 'C', '', 'flavor'),
+Q('还行，你呢？', '还行，你呢？', ['我也就那样', '最近课挺多的'], E( {
+  listening:2, safety:2, reciprocity:2
+},
+{
+},
+['ASKED_HER_BACK'], {
+  friendship_affinity:1
+}
+), 'B')
+]));
+addScene(C('00-E', '她顺手提到明天上午还有课。你会真的接住吗？', [['z', '明天上午还有课'], ['z', '烦']], [
+Q('你呢，最近课是不是很多？', '你呢，最近课是不是很多？', ['多死了'], E( {
+  listening:3, reciprocity:2
+},
+{
+},
+['ASKED_HER_BACK', 'CLASS_SEED'], {
+  friendship_affinity:1
+}
+), 'B'),
+Q('明天几点？', '明天几点？', ['上午'], E( {
+  listening:2
+},
+{
+},
+['CLASS_SEED', 'SMALL_DETAIL_SEEDED'], {
+  chosen_family_affinity:1
+}
+), 'B'),
+Q('继续讲自己的工作', '然后我最近还有个……', ['哈哈'], E( {
+  listening:-2, reciprocity:-2
+},
+{
+},
+['ONLY_TALKED_ABOUT_SELF', 'CLASS_SEED']), 'B'),
+Q('不追问，等她自己往下说', '', null, E( {
+  pressure:-1, uncertainty_tolerance:1
+},
+{
+},
+['CLASS_SEED']), 'D', '她会不会继续，取决于前面的气氛', 'silence')
+], {
+  dynamic:'askback'
+}
+));
+addScene(C('R00-FOOD', '一张很普通的照片突然把气氛拉回日常。', [['z', '[食物照片]'], ['z', '难吃']], [
+Q('看着就像诈骗。', '看着就像诈骗。', ['哈哈哈哈'], E( {
+  spark:1
+}
+), 'C', '', 'flavor'),
+Q('你居然还吃完了？', '你居然还吃完了？', ['饿啊'], E( {
+  reciprocity:1
+}
+), 'C', '', 'flavor'),
+Q('不评价，回个表情', '[表情]', ['[表情]'], E(), 'C', '', 'flavor')
+]));
+addScene(C('R00-GAP', '她五分钟没回。什么都没有发生。', [['n', '5 分钟']], [
+Q('继续做自己的事', '', ['刚去倒水了'], E( {
+  autonomy:1, uncertainty_tolerance:1
+},
+{
+  benign_interpretation:1
+}
+), 'D', '不用每个空白都有答案', 'silence'),
+Q('发一个“？”', '？', ['？'], E( {
+  pressure:1
+},
+{
+  catastrophic_interpretation:1
+}
+), 'B'),
+Q('发个离谱表情', '[表情]', ['你干嘛哈哈哈'], E( {
+  spark:1
+}
+), 'C', '', 'flavor')
+]));
+addScene(C('R00-SLEEP', '她突然说困。', [['z', '困死了']], [
+Q('那你早点睡。', '那你早点睡。', ['还没洗脸'], E( {
+  safety:1, autonomy:1
+}
+), 'B'),
+Q('困了还找我。', '困了还找我。', ['你少自恋'], E( {
+  spark:1
+}
+), 'C', '', 'flavor'),
+Q('那我陪你到睡。', '那我陪你到睡。', ['不用啊'], E( {
+  spark:1, autonomy:-1
+},
+{
+  self_suppression:1
+}
+), 'B')
+]));
+addScene(C('R00-JOKE', '一个以前的小梗突然又出现了。', [['z', '你还是这么欠']], [
+Q('你第一天知道？', '你第一天知道？', ['滚'], E( {
+  spark:1, old_script:1
+}
+), 'C', '', 'flavor'),
+Q('今天已经很收敛了。', '今天已经很收敛了。', ['那你挺厉害'], E( {
+  new_connection:1
+}
+), 'C', '', 'flavor'),
+Q('以前你就喜欢这么说我。', '以前你就喜欢这么说我。', ['是吗'], E( {
+  old_script:2
+}
+), 'B')
+]));
+addScene(C('00-F', '工作群突然弹出一条临时消息。', [['n', '工作群：临时有个东西要处理。']], [
+Q('我这边突然有点事，半小时左右回来找你。', '我这边突然有点事，半小时左右回来找你。', ['好'], E( {
+  autonomy:2, consistency:1, life_expansion:1
+},
+{
+},
+['SAID_COME_BACK_LATER'], {
+  romantic_rebuild_affinity:1
+}
+), 'A'),
+Q('不说，直接去处理', '', [], E( {
+  consistency:-1
+},
+{
+},
+['DISAPPEARED_FOR_WORK'], {
+  open_ambiguity_affinity:1
+}
+), 'B', '她不会立刻追问', 'silence'),
+Q('工作先放着，继续陪她', '没事，先陪你聊。', ['？', '你有事你先忙啊'], E( {
+  spark:1, autonomy:-3, life_expansion:-2
+},
+{
+  self_suppression:2
+},
+['DROPS_LIFE_FOR_HER'], {
+  fake_good_affinity:1
+}
+), 'A', '短期很甜，长期未必', 'danger'),
+Q('等会，领导找我', '等会，领导找我。', ['嗯呐'], E( {
+  autonomy:1, life_expansion:1
+},
+{
+},
+['SAID_COME_BACK_LATER']), 'B')
+]));
+addScene(C('00-G', '你处理完了。刚才那句“回来找你”现在还在。', [['n', '32 分钟后']], [
+Q('主动回来', '弄完了。', ['这么快'], E( {
+  consistency:3, trust:2
+},
+{
+  promise_followthrough:2
+},
+['RETURNED_AFTER_BUSY'], {
+  romantic_rebuild_affinity:2, chosen_family_affinity:1
+}
+), 'A'),
+Q('先刷会别的，两个小时后再回', '刚弄完', ['嗯'], E( {
+  consistency:-2
+},
+{
+  promise_inflation:1
+},
+['LATE_FOLLOWUP'], {
+  fake_good_affinity:1
+}
+), 'B'),
+Q('忘了，第二天才打开', '', [], E( {
+  consistency:-4, trust:-1
+},
+{
+  promise_inflation:2
+},
+['MISSED_FIRST_FOLLOWUP'], {
+  rupture_risk:1
+}
+), 'A', '承诺不会因为你忘了就消失', 'silence')
+]));
+addScene(C('00-H', '回来以后，你要不要解释得很用力？', [['z', '弄完啦？']], [
+Q('嗯，刚弄完。', '嗯，刚弄完。', ['辛苦'], E( {
+  safety:1
+}
+), 'C', '', 'flavor'),
+Q('不好意思让你等了这么久。', '不好意思让你等了这么久。', ['我又没等你'], E( {
+  pressure:1
+}
+), 'B'),
+Q('你居然还在。', '你居然还在。', ['不然呢'], E( {
+  spark:1
+}
+), 'C', '', 'flavor'),
+Q('先不解释，接着聊刚才的话题', '刚才你说课很多，最近都这样？', ['差不多'], E( {
+  listening:2, reciprocity:1
+}
+), 'B')
+]));
+addScene(C('00-I', '她说你“感觉跟以前不太一样了”。', [], [
+Q('人总会变点吧，你也不一样了。', '人总会变点吧，你也不一样了。', null, E( {
+  trust:2, uncertainty_tolerance:1
+},
+{
+  change_acceptance:1
+},
+['ALLOWED_AMBIGUITY'], {
+  chosen_family_affinity:1
+}
+), 'B'),
+Q('为了你变的。', '为了你变的。', ['少来'], E( {
+  spark:2, pressure:1
+},
+{
+  overflirt:1
+}
+), 'B'),
+Q('所以你喜欢现在的我还是以前的？', '所以你喜欢现在的我还是以前的？', ['你怎么又开始了'], E( {
+  spark:1, pressure:3
+},
+{
+  overflirt:1
+}
+), 'A'),
+Q('你觉得哪里不一样？', '你觉得哪里不一样？', null, E( {
+  listening:3, trust:2
+},
+{
+  change_acceptance:1
+},
+['FIRST_LISTEN_SIGNAL'], {
+  romantic_rebuild_affinity:1
+}
+), 'A')
+], {
+  dynamic:'different'
+}
+));
+addScene(C('00-J', '她说完后，聊天突然变得很普通。', [['z', '你明天上班不']], [
+Q('上，早八。', '上，早八。', ['惨'], E( {
+  reciprocity:1, life_expansion:1
+}
+), 'C', '', 'flavor'),
+Q('你明天不是也有课？', '你明天不是也有课？', ['对啊'], E( {
+  listening:2
+},
+{
+},
+['REMEMBERED_TOMORROW_CLASS']), 'B'),
+Q('那今晚多陪我会。', '那今晚多陪我会。', ['你不上班了？'], E( {
+  spark:1, autonomy:-1
+},
+{
+  self_suppression:1
+}
+), 'B')
+]));
+addScene(C('00-K', '她停了一会。', [['z', '我这几天一直想一个问题']], [
+Q('你说，我听着。', '你说，我听着。', ['算了', '改天再说'], E( {
+  trust:3, safety:2
+},
+{
+},
+['INVITED_SERIOUS_TALK'], {
+  romantic_rebuild_affinity:1
+}
+), 'A'),
+Q('什么问题，突然这么严肃。', '什么问题，突然这么严肃。', ['没什么', '之后再问你'], E( {
+  trust:1, safety:1
+}
+), 'B'),
+Q('是不是想我了哈哈哈', '是不是想我了哈哈哈', ['你能不能正经一点', '算了'], E( {
+  spark:2, pressure:2
+},
+{
+  overflirt:2
+},
+['DEFLECTED_SERIOUS_TALK'], {
+  push_pull_affinity:2
+}
+), 'A', '好玩，但你错过了她换语气的信号', 'danger'),
+Q('你现在说，不然我今晚睡不着。', '你现在说，不然我今晚睡不着。', ['那你别睡了', '我还没想好怎么说'], E( {
+  pressure:4
+},
+{
+},
+['PRESSURED_HER_TO_SAY_NOW'], {
+  rupture_risk:1
+}
+), 'A', '把她的节奏变成你的焦虑', 'danger')
+]));
+addScene(C('00-L', '她反复显示“正在输入…”，最后什么也没发。', [['n', '对方正在输入…'], ['n', '……'], ['n', '对方正在输入…']], [
+Q('把手机放下，睡觉', '', [], E( {
+  uncertainty_tolerance:2, autonomy:1
+},
+{
+  benign_interpretation:1
+},
+['CH00_DONE']), 'D', '有些话，不会当晚得到答案', 'silence'),
+Q('留一句“晚安”', '晚安', ['晚安'], E( {
+  safety:1
+},
+{
+},
+['CH00_DONE']), 'C', '', 'flavor')
+], {
+  end:true
+}
+));
+// ---------- Chapter 01 ----------
+addScene(C('01-A', '第二天，她先发来一条没有问号的信息。', [['n', '10:36 · 第二天'], ['z', '刚下课']], [
+Q('昨天不是说上午有课，终于下了？', '昨天不是说上午有课，终于下了？', ['对啊', '饿死了'], E( {
+  listening:3, reciprocity:1
+},
+{
+},
+['REMEMBERED_SMALL_DETAIL'], {
+  friendship_affinity:2, chosen_family_affinity:1
+}
+), 'A'),
+Q('吃饭没？', '吃饭没？', ['没呢', '准备去'], E( {
+  safety:1
+}
+), 'B'),
+Q('想我没有？', '想我没有？', ['没有', '饿死了'], E( {
+  spark:2, pressure:1
+},
+{
+  overflirt:1
+},
+[], {
+  push_pull_affinity:1
+}
+), 'B'),
+Q('嗯', '嗯', ['？'], E( {
+  trust:-1
+}
+), 'C', '', 'flavor')
+]));
+addScene(C('01-B', '她说“快饿死了”。你读到的重点是什么？', [['z', '快饿死了']], [
+Q('那还聊啥，赶紧去吃，吃完再说。', '那还聊啥，赶紧去吃，吃完再说。', ['马上去', '不知道吃啥'], E( {
+  safety:2, autonomy:1
+},
+{
+  care_without_control:1
+},
+['CARE_WITHOUT_CONTROL']), 'B'),
+Q('想吃啥？', '想吃啥？', ['不知道', '食堂都吃腻了'], E( {
+  listening:2
+}
+), 'B'),
+Q('我给你点一个？', '我给你点一个？', ['不用不用', '我自己去吃'], E( {
+  pressure:1
+},
+{
+  care_as_control:1
+}
+), 'B'),
+Q('又不按时吃饭。', '又不按时吃饭。', ['我还没下课我咋吃'], E( {
+  pressure:1, listening:-1
+},
+{
+  care_as_control:2
+},
+['CARE_BECAME_CONTROL'], {
+  rupture_risk:1
+}
+), 'A')
+]));
+addScene(C('01-C', '食堂这件小事，你要把它聊成什么？', [['z', '食堂今天那个面看着就难吃']], [
+Q('吃一口直接申请退学。', '吃一口直接申请退学。', ['哈哈哈哈', '滚'], E( {
+  spark:1
+}
+), 'C', '', 'flavor'),
+Q('那出去买点？', '那出去买点？', ['懒得动'], E( {
+  listening:1
+}
+), 'C', '', 'flavor'),
+Q('拍给我看看有多难吃', '拍给我看看有多难吃。', ['[图片]', '是不是'], E( {
+  trust:1
+},
+{
+},
+['SHARED_PHOTO_REQUEST']), 'C', '', 'flavor'),
+Q('你吃啥都行，反正你可爱。', '你吃啥都行，反正你可爱。', ['？', '和我吃饭有什么关系'], E( {
+  spark:2
+},
+{
+  overflirt:2
+},
+['EVERYTHING_BECOMES_FLIRT'], {
+  fake_good_affinity:1
+}
+), 'A', '如果所有话题都回到暧昧，日常会变窄', 'danger')
+]));
+addScene(C('R01-TAKEOUT', '她后来真点了吃的。', [['z', '外卖到了'], ['z', '难吃死']], [
+Q('今天食物跟你有仇。', '今天食物跟你有仇。', ['哈哈哈哈'], E( {
+  spark:1
+}
+), 'C', '', 'flavor'),
+Q('还能吃不？', '还能吃不？', ['能', '凑合'], E( {
+  listening:1
+}
+), 'C', '', 'flavor'),
+Q('给差评。', '给差评。', ['懒得'], E(), 'C', '', 'flavor')
+]));
+addScene(C('R01-EMOJI', '她没来由发了一个表情。', [['z', '[表情]']], [
+Q('回一个更离谱的', '[表情]', ['？', '哈哈哈哈'], E( {
+  spark:1, new_connection:1
+},
+{
+},
+['NEW_MICRO_JOKE'], {
+  friendship_affinity:1
+}
+), 'C', '', 'flavor'),
+Q('咋了', '咋了', ['没咋'], E( {
+  listening:1
+}
+), 'B'),
+Q('当成没看见', '', [], E(), 'C', '不是每个表情都要分析', 'silence')
+]));
+addScene(C('R01-WORK', '你的工作突然又冒出一件小破事。', [['n', '工作群又亮了']], [
+Q('先处理，再回来', '等我十分钟', ['去吧'], E( {
+  life_expansion:1, consistency:1
+},
+{
+  promise_followthrough:1
+}
+), 'B'),
+Q('边聊边处理', '我边弄边回你', ['你先弄'], E( {
+  autonomy:0
+}
+), 'B'),
+Q('假装没看见工作', '没事', ['你不是有工作吗'], E( {
+  life_expansion:-1
+},
+{
+  self_suppression:1
+}
+), 'B')
+]));
+addScene(C('R01-TIRED', '她说困，但消息没有停。', [['z', '困死了'], ['z', '但是还不想睡']], [
+Q('那就再聊会，困了就滚去睡。', '那就再聊会，困了就滚去睡。', ['你才滚'], E( {
+  spark:1, safety:1
+}
+), 'C', '', 'flavor'),
+Q('直接赶她睡', '睡觉去。', ['不'], E( {
+  autonomy:1
+}
+), 'B'),
+Q('趁机聊关系', '那你是不是舍不得我', ['……'], E( {
+  pressure:2
+},
+{
+  overflirt:1
+}
+), 'B')
+]));
+addScene(C('01-D', '轮到你有事了。', [['n', '下午 · 你收到明天工作 Review 的通知']], [
+Q('自然分享一点', '我明天下午还有个挺麻烦的事，多少有点烦。', ['啥事', '工作那个？'], E( {
+  reciprocity:3, trust:2
+},
+{
+},
+['FIRST_MUTUAL_DAILY_SHARE'], {
+  friendship_affinity:1
+}
+), 'A'),
+Q('什么也不说，继续问她', '你下午还有课？', ['有啊'], E( {
+  reciprocity:-2
+},
+{
+  initiative_imbalance:1
+},
+['INTERVIEW_MODE']), 'A'),
+Q('把自己说得特别惨', '明天那个事烦死了，我现在脑子都炸了。', ['别紧张', '你可以的'], E( {
+  pressure:1, trust:1
+}
+), 'B'),
+Q('装作轻松拿捏', '没啥，轻松拿捏。', ['这么牛'], E( {
+  spark:1
+}
+), 'C', '', 'flavor')
+]));
+addScene(C('01-E', '她在安慰你。', [['z', '别紧张'], ['z', '你可以的'], ['z', '大不了不干了哈哈哈']], [
+Q('哈哈哈，还得是你。', '哈哈哈，还得是你。', ['那当然'], E( {
+  spark:1
+}
+), 'C', '', 'flavor'),
+Q('你这么说我真舒服多了。', '你这么说我真舒服多了。', ['那就行'], E( {
+  trust:2
+},
+{
+},
+['ACCEPTED_SUPPORT'], {
+  chosen_family_affinity:1
+}
+), 'B'),
+Q('有什么好紧张的，我本来也没当回事。', '有什么好紧张的，我本来也没当回事。', ['那你刚才说烦'], E( {
+  trust:-1, listening:-1
+}
+), 'B'),
+Q('继续讲现实细节', '主要是那个需求来回改……', ['哈哈哈', '你好能说'], E( {
+  reciprocity:1
+}
+), 'C', '', 'flavor')
+]));
+addScene(C('01-F', '她一次发来三条。你第一眼先点哪一句？', [['z', '我回宿舍了'], ['z', '累死'], ['z', '[表情]']], [
+Q('先回「累死」', '今天怎么这么累？', ['上了一天课啊'], E( {
+  listening:2
+},
+{
+},
+['RESPONDED_TO_STATE']), 'B'),
+Q('先回「回宿舍了」', '终于回去了。', ['嗯呐'], E( {
+  safety:1
+}
+), 'B'),
+Q('先回表情', '[表情]', ['[表情]'], E( {
+  safety:1
+},
+{
+},
+['LOW_EFFORT_COMFORT']), 'C', '', 'flavor'),
+Q('趁机追问昨晚那个问题', '对了，你昨天说的那个问题到底是什么？', ['你怎么还记着呢', '之后说'], E( {
+  pressure:2, residual_hurt:1
+}
+), 'A')
+], {
+  special:'replyOrder'
+}
+));
+addScene(C('01-G', '聊得正正常常，她 12 分钟没回。', [], [
+Q('什么都不做', '', ['刚洗澡去了'], E( {
+  safety:2, autonomy:1, uncertainty_tolerance:1
+},
+{
+  benign_interpretation:2
+},
+['BENIGN_ABSENCE'], {
+  romantic_rebuild_affinity:1
+}
+), 'B', '去做你自己的事', 'silence'),
+Q('十分钟后问“洗澡去了？”', '洗澡去了？', ['你咋知道哈哈哈'], E( {
+  safety:1
+}
+), 'B'),
+Q('三分钟后发“人呢”', '人呢', ['洗澡啊'], E( {
+  pressure:1
+},
+{
+  catastrophic_interpretation:1
+}
+), 'B'),
+Q('连发“？ / 咋了 / 生气了？”', '？\n咋了\n生气了？', ['？', '我洗澡去了'], E( {
+  pressure:4
+},
+{
+  catastrophic_interpretation:3
+},
+['CATASTROPHIZED_SILENCE'], {
+  push_pull_affinity:1, rupture_risk:1
+}
+), 'A', '把一个空白解释成了危机', 'danger')
+]));
+addScene(C('01-H', '23:46，她说有点困了。', [['z', '有点困了']], [
+Q('那你睡吧，明天聊。', '那你睡吧，明天聊。', ['嗯呐', '晚安'], E( {
+  safety:2, autonomy:2
+},
+{
+},
+['RESPECTED_ENDING'], {
+  romantic_rebuild_affinity:1
+}
+), 'B'),
+Q('再聊五分钟。', '再聊五分钟。', ['五分钟哈'], E( {
+  spark:1, pressure:1
+}
+), 'B'),
+Q('你是不是不想跟我聊了？', '你是不是不想跟我聊了？', ['？', '我困了啊'], E( {
+  pressure:4
+},
+{
+  catastrophic_interpretation:2
+},
+['SPACE_INTERPRETED_AS_REJECTION'], {
+  push_pull_affinity:1
+}
+), 'A'),
+Q('睡之前回答我一个问题。', '睡之前回答我一个问题。', ['不回答', '困死了'], E( {
+  pressure:3
+}
+), 'A')
+]));
+addScene(C('01-I', 'DAY 2。她说：“终于弄完了。” 你记得她昨天在忙什么吗？', [['n', 'DAY 2 · 16:18'], ['z', '终于弄完了']], [
+Q('你昨天说老师临时改的那个？', '你昨天说老师临时改的那个？', ['对', '终于'], E( {
+  listening:3, mutual_understanding:1
+},
+{
+},
+['REMEMBERED_SMALL_DETAIL'], {
+  friendship_affinity:1, chosen_family_affinity:1
+}
+), 'A'),
+Q('下课了？', '下课了？', ['不是', '作业'], E( {
+  listening:0
+}
+), 'B'),
+Q('啥结束了', '啥结束了', ['……', '昨天那个啊'], E( {
+  listening:-1
+},
+{
+},
+['MISSED_SMALL_DETAIL']), 'B'),
+Q('我不太记得，是昨天那个老师的事？', '我不太记得，是昨天那个老师的事？', ['对啊'], E( {
+  trust:1, mutual_understanding:1
+},
+{
+},
+['ADMITTED_FORGETTING_EARLY']), 'B', '不装记得也可以')
+]));
+addScene(C('01-J', '她开始抱怨。', [['z', '今天烦死了'], ['z', '我们那个老师又临时改东西']], [
+Q('这谁顶得住，临时改最烦。', '这谁顶得住，临时改最烦。', ['就是'], E( {
+  listening:2
+}
+), 'B'),
+Q('那你直接跟他说别改了。', '那你直接跟他说别改了。', ['哪有那么简单'], E( {
+  listening:-1
+},
+{
+  care_as_control:1
+}
+), 'B'),
+Q('改啥了？', '改啥了？', ['一堆', '我都做完了又改'], E( {
+  listening:2, reciprocity:1
+}
+), 'B'),
+Q('你要接纳自己的情绪，别被这些事影响……', '你要接纳自己的情绪，别被这些事影响……', ['？'], E( {
+  safety:-2
+},
+{
+},
+['OVERTHERAPY_PATTERN']), 'A', '说得很完整，但不像聊天', 'danger')
+]));
+addScene(C('01-K', '她不是要你立刻解决。你接下来怎么陪这段情绪？', [], [
+Q('想骂就骂，我听着。', '想骂就骂，我听着。', ['傻逼老师', '舒服了'], E( {
+  listening:2, safety:1
+}
+), 'B'),
+Q('咋了，我帮你想办法。', '咋了，我帮你想办法。', ['不用', '我就吐槽'], E( {
+  listening:1
+}
+), 'B'),
+Q('别想那么多。', '别想那么多。', ['说得轻松'], E( {
+  listening:-2
+},
+{
+  care_as_control:1
+}
+), 'B'),
+Q('发一个离谱表情', '[表情]', ['哈哈哈哈'], E( {
+  spark:1
+}
+), 'C', '', 'flavor')
+]));
+addScene(C('01-L', '朋友已经在催你出门。她这时又问了一句。', [['n', '朋友：到了没？'], ['z', '干嘛呢']], [
+Q('跟朋友吃饭呢，晚点回去跟你说。', '跟朋友吃饭呢，晚点回去跟你说。', ['行'], E( {
+  autonomy:3, life_expansion:2, trust:1
+},
+{
+},
+['KEPT_OWN_LIFE'], {
+  chosen_family_affinity:1
+}
+), 'A'),
+Q('立刻推掉朋友陪她', '没干嘛，陪你聊。', ['？'], E( {
+  spark:1, autonomy:-4, life_expansion:-3
+},
+{
+  self_suppression:3
+},
+['DROPS_LIFE_FOR_HER'], {
+  fake_good_affinity:2
+}
+), 'A'),
+Q('一边吃饭一边偶尔回', '在外面吃饭，看到就回你。', ['嗯呢'], E( {
+  autonomy:2, safety:1, life_expansion:1
+},
+{
+},
+['ASYNC_CONTACT_SAFE']), 'B'),
+Q('故意说忙，其实什么都没做', '忙着呢。', ['哦'], E( {
+  trust:-1
+},
+{
+  strategic_withholding:3
+},
+['STRATEGIC_WITHHOLDING'], {
+  push_pull_affinity:2
+}
+), 'A', '这不是空间，是博弈', 'danger')
+]));
+addScene(C('01-M', '第二天傍晚，没有人欠谁一条消息。你想不想主动开个话题？', [['n', '17:42']], [
+Q('分享一个工作里的离谱事', '我今天碰到个巨离谱的事。', ['啥', '说'], E( {
+  reciprocity:2, new_connection:1
+},
+{
+  initiative_reciprocity:2
+},
+['PLAYER_STILL_INITIATES'], {
+  friendship_affinity:1
+}
+), 'A'),
+Q('问她今天怎么样', '今天咋样？', ['还行', '刚下课'], E( {
+  reciprocity:1
+},
+{
+  initiative_reciprocity:1
+}
+), 'B'),
+Q('发一个轻微暧昧的梗', '今天突然想起来你昨天那个表情。', ['有病哈哈哈'], E( {
+  spark:1, new_connection:1
+},
+{
+  initiative_reciprocity:1
+}
+), 'C', '', 'flavor'),
+Q('继续等她先找', '', null, E( {
+},
+{
+  strategic_withholding:1
+},
+['WAITED_FOR_HER']), 'D', '一次等待不代表博弈', 'silence')
+], {
+  dynamic:'initiative'
+}
+));
+addScene(C('01-N', '章尾没有大告白。只是一个普通窗口。', [], [
+Q('继续这个普通话题', '', null, E( {
+  safety:1, new_connection:1
+},
+{
+},
+['CH01_DONE'], {
+  friendship_affinity:1
+}
+), 'D', '普通消息也可以是奖励', 'continueOnly')
+], {
+  dynamic:'chapter1Final', end:true
+}
+));
+// ---------- Chapter 02 ----------
+addScene(C('02-A', '她终于把那个问题说出来。', [['n', '两天后 · 晚上'], ['z', '我这几天一直想一个问题'], ['z', '为什么当时突然不联系了']], [
+Q('直接认真回答', '我慢慢少找你，最后就干脆没联系。', null, E( {
+  trust:1, mutual_understanding:1
+},
+{
+  accountability:1
+},
+['GAVE_SPECIFIC_EXPLANATION'], {
+  romantic_rebuild_affinity:1
+}
+), 'A'),
+Q('先确认她到底想知道什么', '你是想知道当时发生啥，还是为什么我没跟你说？', ['都想知道'], E( {
+  listening:2, mutual_understanding:1
+}
+), 'B'),
+Q('先开个玩笑', '因为我当时脑子坏了。', ['好好说'], E( {
+  spark:1, pressure:1
+},
+{
+  explanation_avoidance:1
+},
+['DEFLECTED_SERIOUS_TALK']), 'B'),
+Q('都过去这么久了，还问这个干嘛', '都过去那么久了，还问这个干嘛。', ['因为我想知道'], E( {
+  residual_hurt:3, trust:-2
+},
+{
+  explanation_avoidance:3
+},
+['PAST_AVOIDED'], {
+  rupture_risk:2
+}
+), 'A', '问题没有消失，只是被推远', 'danger')
+]));
+addScene(C('02-B', '她没有被一句话打发。', [['z', '好好说']], [
+Q('行，我认真说。', '行，我认真说。', ['嗯'], E( {
+  trust:1
+},
+{
+  accountability:1
+}
+), 'B'),
+Q('真的啊，我当时就是这么想的。', '真的啊，我当时就是这么想的。', ['那你继续说'], E( {
+  trust:0
+}
+), 'B'),
+Q('你不懂。', '你不懂。', ['？'], E( {
+  trust:-2, pressure:2
+},
+{
+  correction_defense:2
+},
+['CLOSED_OFF']), 'A'),
+Q('我有点不知道怎么说，给我想一下。', '我有点不知道怎么说，给我想一下。', ['行'], E( {
+  safety:1, trust:1
+},
+{
+},
+['ADMITTED_UNCERTAINTY']), 'B')
+]));
+addScene(C('02-C', '先把“发生了什么”说清楚。', [], [
+Q('我那时候慢慢少找你，最后就没联系。', '我那时候慢慢少找你，最后就没联系。', ['然后呢'], E( {
+  mutual_understanding:1
+},
+{
+  accountability:1
+},
+['GAVE_SPECIFIC_EXPLANATION']), 'B'),
+Q('那阵子现实有点乱，我也在躲事。', '那阵子现实有点乱，我也在躲事。', ['你躲我？'], E( {
+  trust:1
+},
+{
+  explanation_avoidance:1
+},
+['REALITY_PRESSURE_STORY']), 'B'),
+Q('我感觉你当时也没那么想理我。', '我感觉你当时也没那么想理我。', ['所以怪我？'], E( {
+  trust:-1
+},
+{
+  accountability:-1
+},
+['ATTRIBUTED_TO_HER']), 'A'),
+Q('因为我觉得我不配。', '因为我觉得我不配。', ['好好说'], E( {
+  spark:1
+},
+{
+  explanation_avoidance:1
+},
+['ROMANTICIZED_CAUSE']), 'B')
+]));
+addScene( {
+  id:'02-D', special:'builder', prompt:'不是答题。把你真正愿意承担的三层拼起来。', msgs:[['z', '那到底为什么？']]
+}
+);
+addScene(C('02-E', '她追问：“那你为什么不直接问我？”', [], [
+Q('我不敢。', '我不敢。', ['为什么不敢'], E( {
+  trust:1
+},
+{
+  accountability:1
+},
+['FEAR_OF_REJECTION']), 'B'),
+Q('我觉得问了答案也不会好。', '我觉得问了答案也不会好。', ['你又没问'], E( {
+  mutual_understanding:1
+},
+{
+  model_lock:1
+},
+['ASSUMED_BAD_OUTCOME']), 'B'),
+Q('因为你当时也没给我什么信号。', '因为你当时也没给我什么信号。', ['所以还是怪我？'], E( {
+  trust:-1
+},
+{
+  accountability:-2
+},
+['BLAME_SHIFT']), 'A'),
+Q('现在说这些也没意义了。', '现在说这些也没意义了。', ['那我问你干嘛'], E( {
+  residual_hurt:2
+},
+{
+  explanation_avoidance:3
+},
+['PAST_AVOIDED']), 'A')
+]));
+addScene(C('02-F', '她抓住真正的分水岭。', [['z', '所以你当时就自己决定不联系了？']], [
+Q('嗯，现在看确实是。', '嗯，现在看确实是。', ['嗯'], E( {
+  trust:2, mutual_understanding:2
+},
+{
+  accountability:3
+},
+['RECOGNIZED_DECIDING_FOR_HER'], {
+  romantic_rebuild_affinity:2
+}
+), 'A'),
+Q('我当时也只能这样。', '我当时也只能这样。', ['你可以跟我说啊'], E( {
+  trust:-1
+},
+{
+  accountability:-2
+},
+['DEFENSIVE_EXPLANATION']), 'A'),
+Q('我就是不想让自己更难受。', '我就是不想让自己更难受。', ['那我呢？'], E( {
+  trust:1
+},
+{
+  accountability:1
+},
+['SELF_PROTECTION_ADMITTED']), 'B'),
+Q('对不起。', '对不起。', ['我不是让你道歉', '我就是想知道为什么'], E( {
+  trust:0
+},
+{
+  accountability:1
+},
+['APOLOGY_TOO_EARLY']), 'B')
+]));
+addScene(C('02-G', '“你不想让自己难受，那我呢？”', [['z', '那我呢？']], [
+Q('你会更莫名其妙。', '你会更莫名其妙。', ['对啊'], E( {
+  listening:3, mutual_understanding:2
+},
+{
+  accountability:2
+},
+['ACKNOWLEDGED_IMPACT']), 'A'),
+Q('你应该也挺难受的。', '你应该也挺难受的。', ['不只是难受', '我那时候一直不知道发生啥了'], E( {
+  listening:2
+}
+), 'B'),
+Q('我当时顾不上想那么多。', '我当时顾不上想那么多。', ['嗯'], E( {
+  trust:-1
+},
+{
+  accountability:-2
+},
+['SELF_CENTERED_IMPACT']), 'A'),
+Q('所以我现在特别后悔。', '所以我现在特别后悔。', ['我没问你后不后悔'], E( {
+  spark:1, listening:-2
+},
+{
+},
+['REGRET_AS_ANSWER']), 'B')
+]));
+addScene(C('R02-DELIVERY', '谈到一半，她突然跑了。', [['z', '等下'], ['n', '3 分钟后'], ['z', '拿外卖去了']], [
+Q('继续刚才的话题', '好，刚才说到哪了。', ['你继续'], E( {
+  consistency:1
+}
+), 'D'),
+Q('先问外卖好不好吃', '好吃不', ['还行'], E( {
+  safety:1
+}
+), 'C', '', 'flavor'),
+Q('你能不能认真点', '你能不能认真点', ['？', '我拿个外卖'], E( {
+  pressure:2
+}
+), 'A')
+]));
+addScene(C('R02-PAUSE', '你自己也有点乱。系统允许你暂时离开聊天框。', [], [
+Q('去洗把脸，五分钟后回来', '我缓一下，五分钟。', ['行'], E( {
+  autonomy:1, consistency:1
+},
+{
+  pause_and_return:2
+},
+['TOOK_CLEAR_PAUSE']), 'D'),
+Q('硬撑着继续', '没事，继续。', ['嗯'], E( {
+  self_betrayal:1
+},
+{
+  self_suppression:1
+}
+), 'B'),
+Q('直接消失', '', [], E( {
+  consistency:-2
+},
+{
+  punishment_silence:2
+},
+['LEFT_WITHOUT_WORD']), 'A', '她不知道你还回不回来', 'silence')
+]));
+addScene(C('R02-EMOJI', '她发了一个以前常用的表情。气氛突然松了一秒。', [['z', '[旧表情]']], [
+Q('回一个同系列', '[表情]', ['哈哈哈哈'], E( {
+  old_script:1
+}
+), 'C', '', 'flavor'),
+Q('继续刚才的话', '刚说到你那时候一直不知道发生啥。', ['嗯'], E( {
+  listening:1
+}
+), 'B'),
+Q('趁机把严肃话题带走', '算了别聊这个了哈哈哈', ['？'], E( {
+  pressure:-1
+},
+{
+  explanation_avoidance:2
+}
+), 'A')
+]));
+addScene(C('R02-FEAR', '她突然问了一句很短的。', [['z', '那以后呢']], [
+Q('我还没想说那么大。', '我还没想说那么大。', ['嗯'], E( {
+  promise_credibility:1
+}
+), 'B'),
+Q('以后肯定不会了。', '以后肯定不会了。', ['你别肯定'], E( {
+  spark:1
+},
+{
+  promise_inflation:2
+},
+['MADE_ABSOLUTE_PROMISE']), 'A'),
+Q('先把今天这个说完。', '先把今天这个说完。', ['行'], E( {
+  consistency:1, listening:1
+}
+), 'B')
+]));
+addScene(C('02-H', '轮到她讲她的版本。你会不会让她说完？', [['z', '其实我那时候……'], ['z', '我一开始还以为你忙']], [
+Q('先听完', '', ['后来发现你就是没再找我', '我就觉得挺莫名其妙的'], E( {
+  listening:4, trust:1
+},
+{
+  accountability:2
+},
+['LET_HER_FINISH'], {
+  romantic_rebuild_affinity:1
+}
+), 'A', '先不抢着解释', 'silence'),
+Q('中间插一句“我不是故意的”', '不是，我不是故意的。', ['你先让我说完'], E( {
+  pressure:1
+},
+{
+  correction_defense:1
+},
+['INTERRUPTED_TO_DEFEND']), 'A'),
+Q('立刻道歉', '对不起。', ['你先听我说'], E( {
+},
+{
+  accountability:1
+},
+['APOLOGY_INTERRUPTED']), 'B')
+]));
+addScene(C('02-I', '她说完以后，你最先回应哪一层？', [], [
+Q('强调“我不是故意的”', '我真的不是故意伤你的。', ['我知道'], E( {
+  trust:0
+}
+), 'B'),
+Q('回应她当时的体验', '原来你当时不是觉得我不喜欢你，是根本不知道我为什么消失。', ['嗯'], E( {
+  listening:3, mutual_understanding:3
+},
+{
+  accountability:2
+},
+['REFLECTED_HER_EXPERIENCE']), 'A'),
+Q('强调自己一直很喜欢她', '其实我一直都很喜欢你。', ['我知道', '不是这个问题'], E( {
+  spark:3, residual_hurt:1
+},
+{
+  affection_as_defense:2
+},
+['USES_LOVE_AS_DEFENSE'], {
+  fake_good_affinity:2
+}
+), 'A'),
+Q('用现在覆盖过去', '至少我们现在又聊起来了。', ['所以以前就不说了？'], E( {
+  residual_hurt:3
+},
+{
+  explanation_avoidance:2
+},
+['USES_PRESENT_TO_ERASE_PAST']), 'A')
+]));
+addScene(C('02-J', '现在才到了真正适合道歉的位置。', [], [
+Q('这件事确实是我处理得很差，对不起。', '这件事确实是我处理得很差，对不起。', ['嗯'], E( {
+  trust:2, repair_trust:1
+},
+{
+  accountability:3
+},
+['APOLOGIZED_SPECIFICALLY'], {
+  romantic_rebuild_affinity:1
+}
+), 'A'),
+Q('都是我的错，是我太垃圾了。', '都是我的错，是我太垃圾了。', ['我又没说你垃圾'], E( {
+  pressure:2, self_betrayal:1
+},
+{
+  self_suppression:2
+},
+['SELF_ERASURE_APOLOGY']), 'A'),
+Q('我特别爱你，所以你原谅我吧。', '我真的特别特别爱你，所以你原谅我吧。', ['这和爱不爱不是一回事'], E( {
+  spark:3, pressure:4
+},
+{
+  affection_as_defense:3
+},
+['USES_LOVE_AS_DEFENSE', 'FORGIVENESS_PRESSURE_HIGH'], {
+  fake_good_affinity:2, push_pull_affinity:1
+}
+), 'A'),
+Q('我不想只说对不起，我想把这件事说清楚。', '我不想只说对不起，我想把这件事说清楚。', ['你已经说了啊'], E( {
+  trust:1, consistency:1
+}
+), 'B')
+]));
+addScene(C('02-K', '你要不要给未来下一个保证？', [], [
+Q('以后我绝对不会再这样。', '以后我绝对不会再这样。', ['你别绝对'], E( {
+  spark:1, promise_credibility:-2
+},
+{
+  promise_inflation:3
+},
+['MADE_ABSOLUTE_PROMISE'], {
+  fake_good_affinity:2
+}
+), 'A', '听起来很甜，未来也会被验证', 'danger'),
+Q('以后我要是想躲，我至少会直接告诉你。', '以后我要是想躲，我至少会直接告诉你。', ['那你记住'], E( {
+  promise_credibility:3, repair_trust:1
+},
+{
+  promise_followthrough:1
+},
+['MADE_SPECIFIC_REPAIR_PLAN'], {
+  romantic_rebuild_affinity:2
+}
+), 'A'),
+Q('如果真再这样你就直接骂我。', '如果真再这样你就直接骂我。', ['那我不得骂死你'], E( {
+  spark:1, promise_credibility:0
+}
+), 'C', '', 'flavor'),
+Q('我不想给一个不知道能不能做到的绝对保证。', '我现在不想给你保证一个我不知道能不能做到的绝对话。', ['那你能做到啥'], E( {
+  trust:2, promise_credibility:3
+},
+{
+},
+['REFUSED_EMPTY_PROMISE'], {
+  romantic_rebuild_affinity:2
+}
+), 'A')
+]));
+addScene(C('02-L', '“那你能做到啥？” 这次别说太大。', [['z', '那你能做到啥']], [
+Q('有问题我说，不自己消失。', '有问题我说，不自己消失。', ['那你记着'], E( {
+  promise_credibility:2, repair_trust:1
+},
+{
+  promise_followthrough:1
+},
+['MADE_SPECIFIC_REPAIR_PLAN']), 'A'),
+Q('我尽量。', '我尽量。', ['嗯'], E( {
+  promise_credibility:0
+}
+), 'B'),
+Q('我肯定能做到。', '我肯定能做到。', ['……'], E( {
+  promise_credibility:-2
+},
+{
+  promise_inflation:2
+},
+['PROMISE_DOUBLED_DOWN']), 'A'),
+Q('你提醒我。', '你提醒我。', ['凭啥我提醒你'], E( {
+  autonomy:-1
+},
+{
+  initiative_imbalance:1
+}
+), 'B')
+]));
+addScene(C('02-M', '她没有给你一个“通关式原谅”。', [['z', '行吧'], ['z', '反正我就是一直想知道']], [
+Q('不追着要结果', '嗯。', ['你吃饭没'], E( {
+  safety:2, residual_hurt:-2, uncertainty_tolerance:1
+},
+{
+},
+['PAST_PARTIALLY_RESOLVED'], {
+  romantic_rebuild_affinity:1, friendship_affinity:1
+}
+), 'A', '关系回到生活里', 'silence'),
+Q('所以你原谅我了吗？', '所以你原谅我了吗？', ['你怎么又问'], E( {
+  pressure:3
+},
+{
+},
+['NEEDED_IMMEDIATE_RESOLUTION']), 'A'),
+Q('那我们是不是可以重新开始了？', '那我们是不是可以重新开始了？', ['你跳得也太快了'], E( {
+  pressure:5, spark:1
+},
+{
+  overflirt:2
+},
+['RUSHED_RELATIONSHIP_LABEL'], {
+  fake_good_affinity:1
+}
+), 'A'),
+Q('先问个很普通的', '你吃啥了？', ['还没吃'], E( {
+  safety:1, new_connection:1
+},
+{
+},
+['CH02_DONE'], {
+  friendship_affinity:1
+}
+), 'C', '', 'flavor')
+], {
+  end:true
+}
+));
+// ============================================================================
+// 05. CHAPTER-SPECIFIC INTERACTION DATA
+// ============================================================================
+const builderData= {
+  facts:[
+  {
+    t:'我慢慢少找你，最后就没联系。', e:E( {
+      mutual_understanding:1
+    },
+    {
+      accountability:1
+    },
+    ['GAVE_SPECIFIC_EXPLANATION'])
+  },
+  {
+    t:'那阵子现实有点乱，我也在躲事。', e:E( {
+      trust:1
+    },
+    {
+      explanation_avoidance:1
+    },
+    ['REALITY_PRESSURE_STORY'])
+  },
+  {
+    t:'我感觉你当时也没那么想理我。', e:E( {
+      trust:-1
+    },
+    {
+      accountability:-1
+    },
+    ['ATTRIBUTED_TO_HER'])
+  },
+  {
+    t:'我当时觉得自己不配。', e:E( {
+      spark:1
+    },
+    {
+      explanation_avoidance:1
+    },
+    ['ROMANTICIZED_CAUSE'])
+  }
+  ],
+  reasons:[
+  {
+    t:'我是不敢直接问你。', e:E( {
+      trust:1
+    },
+    {
+      accountability:1
+    },
+    ['FEAR_OF_REJECTION'])
+  },
+  {
+    t:'我不太会处理那种不确定。', e:E( {
+      uncertainty_tolerance:-1
+    },
+    {
+      model_lock:1
+    },
+    ['UNCERTAINTY_AVOIDANCE'])
+  },
+  {
+    t:'我就想先保护自己。', e:E( {
+    },
+    {
+      accountability:1
+    },
+    ['SELF_PROTECTION'])
+  },
+  {
+    t:'主要还是因为你也没给信号。', e:E( {
+      trust:-1
+    },
+    {
+      accountability:-2
+    },
+    ['BLAME_SHIFT'])
+  }
+  ],
+  impacts:[
+  {
+    t:'现在看，我等于替你决定了。', e:E( {
+      mutual_understanding:2
+    },
+    {
+      accountability:3
+    },
+    ['RECOGNIZED_DECIDING_FOR_HER'])
+  },
+  {
+    t:'我没想到你会一直不知道发生了什么。', e:E( {
+      listening:2
+    },
+    {
+      accountability:2
+    },
+    ['ACKNOWLEDGED_IMPACT'])
+  },
+  {
+    t:'反正我也很难受。', e:E( {
+    },
+    {
+      accountability:-1
+    },
+    ['CENTERED_SELF'])
+  },
+  {
+    t:'但至少现在又聊起来了。', e:E( {
+      residual_hurt:2
+    },
+    {
+      explanation_avoidance:1
+    },
+    ['USES_PRESENT_TO_ERASE_PAST'])
+  }
+  ]
+};
+function renderRail() {
+  const el=$('#chapterRail');
+  el.innerHTML=chapterMeta.map((x, i)=>`<div class="chapterDot ${i===S.chapter?'active':''} ${i<S.chapter?'done':''} ${i>2?'locked':''}"><div class="num">${x[0]}</div><div><b>${x[1]}</b><span>${i<3?(i<S.chapter?'已完成':i===S.chapter?'进行中':'未开始'):'后续正式版'}</span></div></div>`).join('')
+}
+function echoText() {
+  const xs=[];
+  if(mem('RETURNED_AFTER_BUSY'))xs.push(['你兑现过一句小承诺', '她未必夸，但系统会把“说了回来，真的回来”留到后面。']);
+  if(pat('catastrophic_interpretation')>=3)xs.push(['你曾把沉默解释成危机', '一次不是定论；如果重复，它会慢慢成为你们的相处模式。']);
+  if(mem('LET_HER_FINISH'))xs.push(['你让她把自己的版本说完了', '解释、道歉和倾听第一次被拆开。']);
+  if(mem('MADE_ABSOLUTE_PROMISE'))xs.push(['你留下过一句“绝对”', '甜话没有当场扣分，但未来会真的验证。']);
+  if(mem('REFUSED_EMPTY_PROMISE'))xs.push(['你没有把保证说满', '承诺变小了，但可能更可信。']);
+  if(mem('KEPT_OWN_LIFE'))xs.push(['聊天没有吞掉你的生活', '这会影响后面亲密变高以后，你还能不能呼吸。']);
+  if(mem('OVERTHERAPY_PATTERN'))xs.push(['你有一次说得太像“标准答案”', '完整不一定等于自然。']);
+  if(!xs.length)xs.push(['她还在观察你的节奏', '第一批选择不会立刻告诉你“对不对”。']);
+  return xs.slice(-4)
+}
+function renderEcho() {
+  const box=$('#echoList');
+  if(box)box.innerHTML=echoText().map(x=>`<div class="echo"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')
+}
+function renderMessages() {
+  const box=$('#chat');
+  box.innerHTML='';
+  const msgs=S.messageHistory.filter(m=>m.chapter===S.chapter).slice(-120);
+  for(const m of msgs) {
+    const wrap=document.createElement('div');
+    wrap.className='msg '+m.who;
+    const b=document.createElement('div');
+    b.className='bubble';
+    b.textContent=m.text;
+    wrap.appendChild(b);
+    box.appendChild(wrap)
+  }
+  box.scrollTop=box.scrollHeight
+}
+function addMsg(who, text, record=true) {
+  if(text==null||text==='')return;
+  if(record)S.messageHistory.push( {
+    who, text, chapter:S.chapter, sceneId:S.presentedSceneId||null, ts:Date.now()
+  }
+  );
+  const wrap=document.createElement('div');
+  wrap.className='msg '+who;
+  const b=document.createElement('div');
+  b.className='bubble';
+  b.textContent=text;
+  wrap.appendChild(b);
+  $('#chat').appendChild(wrap);
+  $('#chat').scrollTop=$('#chat').scrollHeight;
+  tone(who==='z'?670:who==='g'?520:430, .04, .012)
+}
+async function addMsgs(arr=[]) {
+  for(const [w, t] of arr) {
+    addMsg(w, t);
+    await delay(w==='n'?430:650)
+  }
+}
+async function typing(ms=650) {
+  const wrap=document.createElement('div');
+  wrap.className='msg z';
+  wrap.innerHTML='<div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>';
+  $('#chat').appendChild(wrap);
+  $('#chat').scrollTop=$('#chat').scrollHeight;
+  await delay(ms);
+  wrap.remove()
+}
+function tierCount(t) {
+  S.stats.choices++;
+  const k='tier'+(t||'B');
+  S.stats[k]=(S.stats[k]||0)+1
+}
+function progressUI(scene) {
+  $('#sceneId').textContent=scene?.id||'';
+  $('#promptText').textContent=scene?.prompt||'你准备怎么回？';
+  const total=CH.reduce((a, c)=>a+c.flow.length, 0), done=CH.slice(0, S.chapter).reduce((a, c)=>a+c.flow.length, 0)+S.flowIndex;
+  $('#progress').style.width=Math.min(100, (done/total)*100)+'%'
+}
+function dynamicScene(scene) {
+  if(scene.dynamic==='askback'&&scene.choices[3])scene.choices[3].zxr=core('safety')>=0?['我最近也挺忙']:['哈哈'];
+  if(scene.dynamic==='different') {
+    let line=core('pressure')>4?'你怎么还是那么急':core('spark')>3?'还是那么贫':'感觉你现在挺稳的';
+    scene.msgs=[['z', line]];
+    scene.choices[3].zxr=core('pressure')>4?['就……还是挺急的']:core('spark')>3?['比以前更会贫了']:['说话没以前那么飘了']
+  }
+  if(scene.dynamic==='initiative') {
+    if(pat('strategic_withholding')>=3)scene.choices[3].small='前面你已经有过一次“等她先找”的模式';
+  }
+  if(scene.dynamic==='chapter1Final') {
+    let lines;
+    if(core('safety')+core('trust')>4)lines=[['z', '干嘛呢'], ['z', core('spark')>3?'给你看个东西':'刚到宿舍']];
+    else lines=[['z', '[表情]']];
+    scene.msgs=lines;
+    scene.choices[0].zxr=core('spark')>3?['[图片]', '哈哈哈哈']:['嗯呐']
+  }
+}
+// ============================================================================
+// 06. STORY ENGINE / SCENE RENDERING
+// ============================================================================
+async function renderScene() {
+  const scene=getScene();
+  if(!scene) {
+    chapterEnd();
+    return
+  }
+  dynamicScene(scene);
+  S.phase='play';
+  progressUI(scene);
+  setUILocked(true);
+  if(S.presentedSceneId!==scene.id) {
+    S.presentedSceneId=scene.id;
+    await addMsgs(scene.msgs||[]);
+    save()
+  }
+  setUILocked(false);
+  setChoices(scene);
+  renderRail();
+  renderEcho();
+  save()
+}
+function renderCurrent() {
+  renderMessages();
+  const scene=getScene();
+  if(!scene) {
+    chapterEnd(true);
+    return
+  }
+  dynamicScene(scene);
+  progressUI(scene);
+  setChoices(scene);
+  renderRail();
+  renderEcho();
+  setUILocked(false);
+  save()
+}
+function setChoices(scene) {
+  const box=$('#choices');
+  box.innerHTML='';
+  if(scene.special==='builder') {
+    renderBuilder(scene);
+    return
+  }
+  if(scene.special==='draft') {
+    renderDraft(scene);
+    return
+  }
+  if(scene.special==='replyOrder') {
+    renderReplyOrder(scene);
+    return
+  }
+  for(const [i, c] of scene.choices.entries()) {
+    const b=document.createElement('button');
+    b.className='choice '+(c.cls||'')+(c.tier==='C'?' flavor':'');
+    b.innerHTML=`<b>${c.text}</b>${c.small?`<small>${c.small}</small>`:''}`;
+    b.addEventListener('click', ()=>choose(scene, c, i));
+    box.appendChild(b)
+  }
+}
+async function choose(scene, c, i) {
+  if(UI_LOCKED)return;
+  pushUndo();
+  setUILocked(true);
+  haptic();
+  tone(500, .05, .018);
+  [...$('#choices').children].forEach(x=>x.disabled=true);
+  tierCount(c.tier);
+  if(c.reply) {
+    addMsg('g', c.reply);
+    await delay(320)
+  }
+  applyEffects(c.effects);
+  S.sceneHistory.push( {
+    scene:scene.id, choice:i, text:c.text, tier:c.tier, ts:Date.now()
+  }
+  );
+  if(c.zxr&&c.zxr.length) {
+    await typing();
+    await addMsgs(c.zxr.map(t=>['z', t]))
+  }
+  S.flowIndex++;
+  S.presentedSceneId=null;
+  save();
+  await delay(180);
+  setUILocked(false);
+  if(PENDING_UPDATE_URL&&safeForReload())applyPendingUpdate();
+  else renderScene()
+}
+function renderDraft(scene) {
+  const box=$('#choices');
+  let selected=-1;
+  box.innerHTML='<div class="draftBox"><div class="draftLabel">DRAFT · 还没有发送</div><div class="draftPreview empty" id="draftPreview">点一句放进输入框</div><div class="draftCandidates" id="draftCandidates"></div><div class="draftActions"><button class="draftSend" id="draftSend" disabled>发送</button><button class="draftDelete" id="draftDelete">删掉，先不发</button></div></div>';
+  const cand=$('#draftCandidates'), preview=$('#draftPreview'), send=$('#draftSend');
+  scene.choices.forEach((c, i)=> {
+    const b=document.createElement('button'); b.className='draftChip'; b.textContent=c.reply||c.text; b.onclick=()=> {
+      selected=i; [...cand.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); preview.textContent=c.reply||c.text; preview.classList.remove('empty'); send.disabled=false
+    };
+    cand.appendChild(b)
+  }
+  );
+  send.onclick=()=>selected>=0&&choose(scene, scene.choices[selected], selected);
+  $('#draftDelete').onclick=()=> {
+    S.stats.unsent++;
+    const fallback=Q('删掉草稿，等几秒再写', '', [], E( {
+      uncertainty_tolerance:1
+    }
+    ), 'D', '');
+    pushUndo();
+    tierCount('D');
+    S.sceneHistory.push( {
+      scene:scene.id, choice:'delete', text:'删掉草稿', tier:'D'
+    }
+    );
+    addMsg('n', '草稿已删除');
+    setTimeout(()=> {
+      setChoices( {
+        ...scene, special:null, choices:scene.choices
+      }
+      ); save()
+    },
+    140);
+    save()
+  }
+}
+function renderReplyOrder(scene) {
+  const box=$('#choices');
+  box.innerHTML='<div class="replyOrder" id="replyOrder"></div>';
+  const root=$('#replyOrder');
+  scene.choices.forEach((c, i)=> {
+    const b=document.createElement('button'); b.className='replyTarget'; b.innerHTML=`<span>先回应</span><b>${c.text}</b>${c.small?`<small>${c.small}</small>`:''}`; b.onclick=()=>choose(scene, c, i); root.appendChild(b)
+  }
+  )
+}
+function renderBuilder(scene) {
+  const box=$('#choices');
+  const selected= {
+    facts:null, reasons:null, impacts:null
+  };
+  box.innerHTML='<div class="builder" id="builder"></div>';
+  const root=$('#builder');
+  for(const [key, title] of [['facts', '发生了什么'], ['reasons', '为什么'], ['impacts', '现在怎么看']]) {
+    const sec=document.createElement('div');
+    sec.className='builderBlock';
+    sec.innerHTML=`<h4>${title}</h4><div class="pillWrap"></div>`;
+    const wrap=sec.querySelector('.pillWrap');
+    builderData[key].forEach((item, idx)=> {
+      const b=document.createElement('button'); b.className='pill'; b.textContent=item.t; b.onclick=()=> {
+        [...wrap.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); selected[key]=idx; send.classList.toggle('ready', Object.values(selected).every(v=>v!==null))
+      };
+      wrap.appendChild(b)
+    }
+    );
+    root.appendChild(sec)
+  }
+  const send=document.createElement('button');
+  send.className='builderSend';
+  send.textContent='把这段话发出去';
+  send.onclick=async()=> {
+    if(UI_LOCKED||!Object.values(selected).every(v=>v!==null))return;
+    pushUndo();
+    setUILocked(true);
+    tierCount('A');
+    let parts=[];
+    for(const key of ['facts', 'reasons', 'impacts']) {
+      const it=builderData[key][selected[key]];
+      parts.push(it.t);
+      applyEffects(it.e)
+    }
+    addMsg('g', parts.join('\n'));
+    S.sceneHistory.push( {
+      scene:scene.id, choice:'builder', text:parts.join(' / '), tier:'A'
+    }
+    );
+    await typing(850);
+    let z='嗯';
+    if(mem('BLAME_SHIFT')||mem('ATTRIBUTED_TO_HER'))z='所以还是因为我？';
+    else if(mem('RECOGNIZED_DECIDING_FOR_HER'))z='对';
+    else if(mem('USES_PRESENT_TO_ERASE_PAST'))z='现在是现在';
+    else if(mem('ROMANTICIZED_CAUSE'))z='你别又说得这么玄';
+    addMsg('z', z);
+    S.flowIndex++;
+    S.presentedSceneId=null;
+    save();
+    await delay(200);
+    setUILocked(false);
+    renderScene()
+  };
+  root.appendChild(send)
+}
+function chapterEnd(preserve=false) {
+  const ch=CH[S.chapter];
+  S.phase='chapterEnd';
+  S.presentedSceneId=null;
+  $('#choices').innerHTML='';
+  $('#promptText').textContent='章节结束';
+  $('#sceneId').textContent='';
+  if(!preserve) {
+    const m=document.createElement('div');
+    m.className='endCard';
+    const chips=echoText().slice(-3);
+    m.innerHTML=`<div class="sceneTitle">CHAPTER ${ch.n} COMPLETE</div><h4>${ch.title}</h4><div style="font-size:11px;color:#8f8d94;line-height:1.7">这一章没有“正确率”。系统只把真正会回到后面的模式留下来。</div><div class="memoryChips">${chips.map(x=>`<span class="mem">${x[0]}</span>`).join('')}</div>`;
+    $('#chat').appendChild(m);
+    $('#chat').scrollTop=$('#chat').scrollHeight
+  }
+  const b=document.createElement('button');
+  b.className='choice';
+  if(S.chapter===2) {
+    b.innerHTML='<b>完成 v0.6.0 Alpha</b><small>下一批将正式实现 03—05；你的存档会继续沿用。</small>';
+    b.onclick=finishAlpha
+  }
+  else {
+    b.innerHTML='<b>进入下一章</b><small>前面的选择不会被清空</small>';
+    b.onclick=()=> {
+      S.chapter++;
+      S.flowIndex=0;
+      S.chapterState= {
+      };
+      S.presentedSceneId=null;
+      S.phase='intro';
+      S.stats.chapterStartedAt=Date.now();
+      checkpoint('chapter_'+S.chapter);
+      save();
+      showChapterIntro()
+    }
+  }
+  $('#choices').appendChild(b);
+  renderRail();
+  renderEcho();
+  save();
+  if(PENDING_UPDATE_URL)setTimeout(applyPendingUpdate, 220)
+}
+function showChapterIntro() {
+  const ch=CH[S.chapter];
+  S.phase='intro';
+  $('#chapterKicker').textContent='CHAPTER '+ch.n;
+  $('#chapterTitle').textContent=ch.title;
+  $('#chapterDesc').textContent=ch.desc;
+  $('#chapterQuote').textContent=ch.quote;
+  $('#chapterCard').classList.add('show');
+  save()
+}
+$('#chapterStart').onclick=()=> {
+  $('#chapterCard').classList.remove('show');
+  S.phase='play';
+  S.messageHistory=S.messageHistory.filter(m=>m.chapter!==S.chapter);
+  S.presentedSceneId=null;
+  checkpoint('chapter_'+S.chapter);
+  save();
+  renderMessages();
+  renderScene()
+};
+function finishAlpha(preserve=false) {
+  S.finished=true;
+  S.phase='finish';
+  $('#choices').innerHTML='';
+  $('#promptText').textContent='ALPHA COMPLETE';
+  $('#sceneId').textContent='';
+  if(!preserve) {
+    addMsg('n', 'v0.6.0 · 第一批正式 Alpha 完成');
+    setTimeout(()=>addMsg('z', '你还是这么能说'), 180);
+    setTimeout(()=>addMsg('n', 'NEXT · 03《又熟悉起来了》— 05《靠得太近》'), 580)
+  }
+  const b=document.createElement('button');
+  b.className='choice';
+  b.innerHTML='<b>从序章开始新周目</b><small>换一种节奏，随机生活事件也可能不同。</small>';
+  b.onclick=()=> {
+    if(confirm('开始新周目？当前这一周目会被覆盖。')) {
+      const keep=clone(CFG);
+      S=baseState();
+      save();
+      Object.assign(CFG, keep);
+      location.reload()
+    }
+  };
+  $('#choices').appendChild(b);
+  save()
+}
+function startNew() {
+  S=baseState();
+  S.phase='intro';
+  checkpoint('chapter_0');
+  save();
+  $('#cover').classList.add('hidden');
+  renderMessages();
+  renderRail();
+  renderEcho();
+  showChapterIntro()
+}
+function resumeGame() {
+  $('#cover').classList.add('hidden');
+  $('#chapterCard').classList.remove('show');
+  renderMessages();
+  renderRail();
+  renderEcho();
+  if(S.migrationNotice) {
+    S.migrationNotice=false;
+    save();
+    toast('旧试玩存档已迁移到正式 Alpha')
+  }
+  if(S.phase==='finish'||S.finished) {
+    finishAlpha(true);
+    return
+  }
+  if(S.phase==='intro') {
+    showChapterIntro();
+    return
+  }
+  if(S.phase==='chapterEnd') {
+    chapterEnd(true);
+    return
+  }
+  renderCurrent()
+}
+// ============================================================================
+// 07. SETTINGS / VERSION HISTORY / DEVELOPER MODE
+// ============================================================================
+function renderVersionHistory() {
+  const box=$('#versionList');
+  if(!box)return;
+  box.innerHTML=VERSION_HISTORY.map((x, i)=>`<div class="versionCard ${i===0?'current':''}"><div class="versionTop"><b>${x.v}${i===0?' · 当前':''}</b><span>${x.date}</span></div><p><strong style="color:#c9c4c5;font-weight:600">${x.title}</strong><br>${x.items.map(t=>'• '+t).join('<br>')}</p></div>`).join('');
+  $('#settingsVersion').textContent='v'+APP_VERSION.replace('-alpha', ' α')
+}
+function setSettingsPane(name) {
+  document.querySelectorAll('.settingsTab').forEach(b=>b.classList.toggle('active', b.dataset.pane===name));
+  document.querySelectorAll('.settingsPane').forEach(p=>p.classList.remove('active'));
+  $('#settingsPane'+name[0].toUpperCase()+name.slice(1))?.classList.add('active')
+}
+function injectDev() {
+  if($('#devTab'))return;
+  const tabs=$('.settingsTabs');
+  const tab=document.createElement('button');
+  tab.className='settingsTab';
+  tab.dataset.pane='dev';
+  tab.id='devTab';
+  tab.textContent='开发';
+  tabs.appendChild(tab);
+  tabs.classList.add('devOn');
+  const pane=document.createElement('div');
+  pane.className='settingsPane';
+  pane.id='settingsPaneDev';
+  pane.innerHTML='<div class="devSeed" id="devSeed"></div><div class="devGrid"><button id="devRefresh">刷新状态</button><button id="devNext">跳下一场景</button><button data-jump="0">跳 Chapter 00</button><button data-jump="1">跳 Chapter 01</button><button data-jump="2">跳 Chapter 02</button><button id="devClearUndo">清回退栈</button></div><pre class="devPre" id="devPre"></pre>';
+  $('#settingsPaneVersions').after(pane);
+  tab.onclick=()=>setSettingsPane('dev');
+  pane.querySelector('#devRefresh').onclick=refreshDev;
+  pane.querySelector('#devNext').onclick=()=> {
+    S.flowIndex++;
+    S.presentedSceneId=null;
+    save();
+    $('#settings').classList.remove('show');
+    renderScene()
+  };
+  pane.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=> {
+    S.chapter=Number(b.dataset.jump); S.flowIndex=0; S.phase='intro'; S.messageHistory=S.messageHistory.filter(m=>m.chapter!==S.chapter); S.presentedSceneId=null; S.finished=false; checkpoint('chapter_'+S.chapter); save(); $('#settings').classList.remove('show'); showChapterIntro()
+  }
+  );
+  pane.querySelector('#devClearUndo').onclick=()=> {
+    S.undoStack=[];
+    save();
+    refreshDev()
+  };
+  refreshDev()
+}
+function refreshDev() {
+  if(!DEV_UNLOCKED||!$('#devPre'))return;
+  $('#devSeed').textContent='RUN '+S.runId+' · SEED '+S.runSeed;
+  const view= {
+    chapter:S.chapter, flowIndex:S.flowIndex, scene:getScene()?.id||'END', core:S.core, patterns:S.patterns, memories:Object.keys(S.memories).filter(k=>S.memories[k]),
+    routes:S.routes, stats:S.stats, random:S.randomState.picks
+  };
+  $('#devPre').textContent=JSON.stringify(view, null, 2)
+}
+function openSettings() {
+  renderVersionHistory();
+  setSettingsPane('game');
+  $('#settings').classList.add('show')
+}
+document.querySelectorAll('.settingsTab').forEach(b=>b.onclick=()=>setSettingsPane(b.dataset.pane));
+$('#settingsBtn').onclick=openSettings;
+$('#closeSettings').onclick=()=>$('#settings').classList.remove('show');
+$('#settings').onclick=e=> {
+  if(e.target.id==='settings')$('#settings').classList.remove('show')
+};
+$('#settingsVersion').onclick=()=> {
+  DEV_TAPS++;
+  if(DEV_TAPS>=7&&!DEV_UNLOCKED) {
+    DEV_UNLOCKED=true;
+    injectDev();
+    toast('Developer Mode 已解锁')
+  }
+};
+$('#speedToggle').onclick=e=> {
+  CFG.speed=CFG.speed==='fast'?'standard':CFG.speed==='standard'?'cinema':'fast';
+  e.target.textContent=CFG.speed==='fast'?'快节奏':CFG.speed==='standard'?'标准':'电影感';
+  saveCfg()
+};
+$('#soundToggle').onclick=e=> {
+  CFG.sound=!CFG.sound;
+  e.target.textContent=CFG.sound?'开启':'关闭';
+  $('#soundBtn').style.opacity=CFG.sound?1:.4;
+  saveCfg()
+};
+$('#soundBtn').onclick=()=> {
+  CFG.sound=!CFG.sound;
+  $('#soundBtn').style.opacity=CFG.sound?1:.4;
+  $('#soundToggle').textContent=CFG.sound?'开启':'关闭';
+  saveCfg();
+  toast(CFG.sound?'轻音效已开启':'轻音效已关闭')
+};
+$('#restartChapterBtn').onclick=()=> {
+  const key='chapter_'+S.chapter;
+  if(!S.checkpoints[key])checkpoint(key);
+  if(confirm('回到当前章节开始？本章之后的选择会重置。')) {
+    restoreCheckpoint(key);
+    S.phase='intro';
+    S.presentedSceneId=null;
+    S.messageHistory=S.messageHistory.filter(m=>m.chapter!==S.chapter);
+    save();
+    $('#settings').classList.remove('show');
+    renderMessages();
+    showChapterIntro()
+  }
+};
+$('#resetBtn').onclick=()=> {
+  if(confirm('重新开始这一周目？当前本地存档会被覆盖。')) {
+    localStorage.removeItem(SAVE);
+    localStorage.removeItem(LEGACY_SAVE);
+    location.reload()
+  }
+};
+$('#mapBtn').onclick=()=>toast('正式 Alpha：00—02；03—12 已完成设计，分批接入');
+async function undoOne() {
+  if(UI_LOCKED) {
+    toast('等这条消息显示完再回退');
+    return
+  }
+  if(!(S.undoStack&&S.undoStack.length)) {
+    toast('还没有可以回退的选择');
+    return
+  }
+  const cp=S.undoStack.pop();
+  restoreSnapshot(cp);
+  S.stats.undos=(S.stats.undos||0)+1;
+  S.finished=false;
+  $('#cover').classList.add('hidden');
+  $('#chapterCard').classList.remove('show');
+  $('#settings').classList.remove('show');
+  renderMessages();
+  renderCurrent();
+  toast('已回到上一次选择前')
+}
 $('#backBtn').onclick=undoOne;
-function setViewportHeight(){const h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;document.documentElement.style.setProperty('--app-h',`${Math.round(h)}px`)}
-setViewportHeight();window.addEventListener('resize',setViewportHeight,{passive:true});window.visualViewport&&window.visualViewport.addEventListener('resize',setViewportHeight,{passive:true});
-function updatePwaMode(){const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;$('#pwaMode').textContent=standalone?'主屏幕应用 · 全屏':'浏览器 · 可添加到主屏幕';document.body.classList.toggle('standalone',standalone)}
-updatePwaMode();window.matchMedia('(display-mode: standalone)').addEventListener?.('change',updatePwaMode);
-if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+$('#startBtn').onclick=startNew;
+$('#continueBtn').onclick=resumeGame;
+function setViewportHeight() {
+  const h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;
+  document.documentElement.style.setProperty('--app-h', `${Math.round(h)}px`)
+}
+setViewportHeight();
+window.addEventListener('resize', setViewportHeight, {
+  passive:true
+}
+);
+window.visualViewport&&window.visualViewport.addEventListener('resize', setViewportHeight, {
+  passive:true
+}
+);
+function updatePwaMode() {
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  $('#pwaMode').textContent=standalone?'主屏幕应用 · 全屏':'浏览器 · 可添加到主屏幕';
+  document.body.classList.toggle('standalone', standalone)
+}
+updatePwaMode();
+window.matchMedia('(display-mode: standalone)').addEventListener?.('change', updatePwaMode);
+let UPDATE_CHECK_BUSY=false, LAST_UPDATE_CHECK=0;
+function canonicalHtmlUrl() {
+  const u=new URL(location.href);
+  u.hash='';
+  u.search='';
+  return u
+}
+function setUpdateStatus(text, busy=false) {
+  const el=$('#updateStatusText');
+  if(el)el.textContent=text;
+  const btn=$('#checkUpdateBtn');
+  if(btn) {
+    btn.disabled=busy;
+    btn.style.opacity=busy?.55:1
+  }
+}
+function safeForReload() {
+  return !UI_LOCKED&&(!$('#cover').classList.contains('hidden')||S.phase==='cover'||S.phase==='intro'||S.phase==='chapterEnd'||S.phase==='finish')
+}
+function applyPendingUpdate() {
+  if(!PENDING_UPDATE_URL)return;
+  if(!safeForReload()) {
+    toast('新版本将在下个安全点应用');
+    return
+  }
+  save();
+  const u=PENDING_UPDATE_URL;
+  PENDING_UPDATE_URL=null;
+  location.replace(u)
+}
+// ============================================================================
+// 08. SINGLE-HTML UPDATE / LEGACY PWA CLEANUP
+// ============================================================================
+async function cleanupLegacyPwa() {
+  if(!/^https?:$/.test(location.protocol))return false;
+  const appScope=new URL('./', canonicalHtmlUrl()).href;
+  const hadController=!!navigator.serviceWorker?.controller;
+  try {
+    if('serviceWorker'in navigator) {
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.filter(r=>r.scope===appScope).map(r=>r.unregister()))
+    }
+  }
+  catch(e) {
+  }
+  try {
+    if('caches'in window) {
+      const keys=await caches.keys();
+      await Promise.all(keys.filter(k=>/^zxr-demo-pwa-/i.test(k)).map(k=>caches.delete(k)))
+    }
+  }
+  catch(e) {
+  }
+  if(hadController&&!sessionStorage.getItem('zxr_singlefile_migrated')) {
+    sessionStorage.setItem('zxr_singlefile_migrated', '1');
+    const u=canonicalHtmlUrl();
+    u.searchParams.set('__zxr_migrate', String(Date.now()));
+    location.replace(u.toString());
+    return true
+  }
+  return false
+}
+async function checkForAppUpdate(reason='launch', manual=false) {
+  if(!/^https?:$/.test(location.protocol)) {
+    if(manual)toast('本地文件模式无法检查线上更新');
+    return false
+  }
+  if(UPDATE_CHECK_BUSY)return false;
+  const now=Date.now();
+  if(reason==='resume'&&now-LAST_UPDATE_CHECK<15000)return false;
+  LAST_UPDATE_CHECK=now;
+  UPDATE_CHECK_BUSY=true;
+  setUpdateStatus('正在检查…', true);
+  try {
+    const u=canonicalHtmlUrl();
+    u.searchParams.set('__zxr_probe', String(now));
+    const res=await fetch(u.toString(), {
+      cache:'no-store', headers: {
+        'Cache-Control':'no-cache', 'Pragma':'no-cache'
+      }
+    }
+    );
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const text=await res.text();
+    const doc=new DOMParser().parseFromString(text, 'text/html');
+    const latest=doc.querySelector('meta[name="zxr-build"]')?.content||'';
+    if(!latest) {
+      setUpdateStatus('线上版本号缺失');
+      if(manual)toast('没有读到线上版本号');
+      return false
+    }
+    if(latest===APP_BUILD) {
+      setUpdateStatus('已是最新版');
+      if(manual)toast('已经是最新版');
+      return false
+    }
+    const guard='zxr_update_guard_'+latest;
+    if(now-Number(sessionStorage.getItem(guard)||0)<30000) {
+      setUpdateStatus('等待新版本载入');
+      return false
+    }
+    sessionStorage.setItem(guard, String(now));
+    sessionStorage.setItem('zxr_update_notice', latest);
+    const go=canonicalHtmlUrl();
+    go.searchParams.set('__zxr_update', String(now));
+    PENDING_UPDATE_URL=go.toString();
+    setUpdateStatus('发现新版本');
+    if(reason==='launch'&&safeForReload())applyPendingUpdate();
+    else toast('发现新版本，将在下个安全点更新');
+    return true
+  }
+  catch(e) {
+    setUpdateStatus(navigator.onLine===false?'当前离线':'检查失败');
+    if(manual)toast(navigator.onLine===false?'当前离线，稍后再试':'更新检查失败');
+    return false
+  }
+  finally {
+    UPDATE_CHECK_BUSY=false;
+    const b=$('#checkUpdateBtn');
+    if(b) {
+      b.disabled=false;
+      b.style.opacity=1
+    }
+  }
+}
+$('#checkUpdateBtn').onclick=()=>checkForAppUpdate('manual', true);
+window.addEventListener('load', async()=> {
+  renderVersionHistory(); const migrated=await cleanupLegacyPwa(); if(migrated)return; const updated=sessionStorage.getItem('zxr_update_notice'); if(updated===APP_BUILD) {
+    sessionStorage.removeItem('zxr_update_notice'); setTimeout(()=>toast('已自动更新到 '+APP_VERSION), 450)
+  }
+  checkForAppUpdate('launch')
+}
+);
+window.addEventListener('pageshow', ()=>checkForAppUpdate('launch'));
+document.addEventListener('visibilitychange', ()=> {
+  if(document.visibilityState==='visible')checkForAppUpdate('resume')
+}
+);
+for(let i=0; i<35; i++) {
+  const s=document.createElement('i');
+  s.className='star';
+  s.style.left=(hash32(APP_BUILD+'x'+i)%10000)/100+'%';
+  s.style.top=(hash32(APP_BUILD+'y'+i)%12000)/100+'%';
+  s.style.setProperty('--d', (10+(hash32('d'+i)%2400)/100)+'s');
+  s.style.animationDelay=(-(hash32('a'+i)%2000)/100)+'s';
+  $('#ambient').appendChild(s)
+}
+load();
+$('#speedToggle').textContent=CFG.speed==='fast'?'快节奏':CFG.speed==='standard'?'标准':'电影感';
+$('#soundToggle').textContent=CFG.sound?'开启':'关闭';
+$('#soundBtn').style.opacity=CFG.sound?1:.4;
+renderRail();
+renderEcho();
+updateBackButton();
+renderVersionHistory();
+if(localStorage.getItem(SAVE)||localStorage.getItem(LEGACY_SAVE)) {
+  $('#continueBtn').style.display='inline-block';
+  $('#startBtn').textContent='新周目'
+}
 
-for(let i=0;i<35;i++){const s=document.createElement('i');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*120+'%';s.style.setProperty('--d',(10+Math.random()*24)+'s');s.style.animationDelay=(-Math.random()*20)+'s';$('#ambient').appendChild(s)}
-load();$('#speedToggle').textContent=CFG.speed==='fast'?'快节奏':'电影感';$('#soundToggle').textContent=CFG.sound?'开启':'关闭';$('#soundBtn').style.opacity=CFG.sound?1:.4;renderRail();renderEcho();updateBackButton();if(localStorage.getItem(SAVE)){ $('#continueBtn').style.display='inline-block';$('#startBtn').textContent='新周目' }
-</script>
-</body></html>
+  </script>
+ </body>
+</html>
