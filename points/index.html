@@ -6558,7 +6558,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         vibrate(7); switchMetric(btn.dataset.metric);
       });
 
-      bindCompactSheetDrag(els.redeemLayer);
+      if (typeof bindCompactSheetDrag === "function") bindCompactSheetDrag(els.redeemLayer);
       els.redeemRewardBtn.addEventListener("click", () => { vibrate(8); void openShop("products"); });
       els.redeemLayer.addEventListener("click", (e) => {
         const weeklyGift = e.target.closest("[data-weekly-mystery-claim]");
