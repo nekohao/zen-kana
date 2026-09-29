@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
-<title>AUTOSAR BSW 跳槽学习系统｜合理合并版 v2026.09.29.6</title>
+<title>AUTOSAR BSW 跳槽学习系统｜合理合并版 v2026.09.29.7</title>
 <style>
 :root{
  --bg:#08101e;--panel:#111a2c;--panel2:#17243b;--panel3:#0d1627;--text:#eaf1ff;
@@ -299,11 +299,166 @@ html.ios-browser .pwa-install-note{display:block}
 .reference-card .point-row{padding:5px 0}
 .reference-chapter>summary{background:linear-gradient(90deg,#1d2030,#141824)!important;color:#d3daea}
 @media print{.reference-card{break-inside:avoid;background:#fff;color:#111}}
+
+
+/* ===== iPhone App Shell v2026.09.29.7 ===== */
+.mobile-app,.mobile-detail-page,.mobile-bottom-sheet,.mobile-return-app{display:none}
+
+@media(max-width:820px){
+  html{background:#07101d}
+  body{
+    margin:0!important;padding:0!important;min-height:100dvh!important;
+    background:#07101d!important;overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body:not(.mobile-force-desktop) > .container{display:none!important}
+  body.mobile-force-desktop > .container{display:block!important;padding-top:calc(10px + env(safe-area-inset-top))}
+  body.mobile-force-desktop .mobile-app{display:none!important}
+  body.mobile-force-desktop .mobile-return-app{display:flex}
+
+  .mobile-app{
+    --m-bg:#07101d;--m-card:#0f1a2d;--m-card2:#13223a;--m-soft:#172943;
+    --m-text:#f4f7ff;--m-muted:#91a2bf;--m-line:rgba(119,151,197,.16);
+    --m-blue:#76aaff;--m-green:#65d49a;--m-yellow:#ffd36b;--m-red:#ff7d87;
+    display:block;min-height:100dvh;background:
+      radial-gradient(circle at 88% -8%,rgba(76,130,227,.18),transparent 31%),
+      linear-gradient(180deg,#08111f 0%,#07101d 58%,#091321 100%);
+    color:var(--m-text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  .mobile-app button,.mobile-detail-page button,.mobile-bottom-sheet button{font-family:inherit;touch-action:manipulation}
+  .mobile-main{
+    min-height:100dvh;padding:calc(10px + env(safe-area-inset-top)) 16px calc(98px + env(safe-area-inset-bottom));
+  }
+  .m-view{display:none;animation:mFade .18s ease both}.m-view.active{display:block}
+  @keyframes mFade{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+  .m-topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:46px;margin-bottom:12px}
+  .m-brand{font-size:22px;font-weight:850;letter-spacing:-.02em}.m-brand small{display:block;font-size:11px;color:var(--m-muted);font-weight:650;letter-spacing:.02em;margin-top:1px}
+  .m-icon-btn{
+    width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--m-line);border-radius:13px;
+    background:rgba(18,31,51,.82);color:#dbe7fb;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:0
+  }
+  .m-icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .m-kicker{font-size:12px;color:var(--m-muted);font-weight:700;letter-spacing:.02em}
+  .m-title{font-size:28px;line-height:1.16;font-weight:880;letter-spacing:-.035em;margin:2px 0 6px}
+  .m-subtitle{font-size:13px;color:var(--m-muted);line-height:1.55}
+
+  .m-continue{
+    width:100%;text-align:left;color:var(--m-text);font:inherit;
+    position:relative;overflow:hidden;margin:20px 0 18px;padding:19px;border:1px solid rgba(116,170,255,.24);
+    border-radius:24px;background:linear-gradient(145deg,rgba(34,64,105,.95),rgba(16,31,53,.98));
+    box-shadow:0 18px 45px rgba(0,0,0,.22)
+  }
+  .m-continue:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-74px;top:-88px;background:rgba(116,170,255,.11)}
+  .m-continue-label{font-size:11px;color:#b8cff5;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+  .m-continue-id{display:inline-flex;margin-top:16px;padding:4px 8px;border-radius:8px;background:rgba(120,171,255,.14);color:#a9c9ff;font:800 12px ui-monospace,SFMono-Regular,Consolas,monospace}
+  .m-continue-title{font-size:21px;line-height:1.34;font-weight:820;margin:8px 48px 7px 0;letter-spacing:-.02em}
+  .m-continue-meta{font-size:12px;color:#a8bbd7}.m-continue-action{margin-top:17px;display:flex;justify-content:space-between;align-items:center;font-weight:780;font-size:14px;color:#f4f8ff}
+  .m-arrow-circle{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#edf4ff;color:#15345f;font-size:18px;box-shadow:0 7px 18px rgba(0,0,0,.18)}
+
+  .m-section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:20px 1px 10px}.m-section-head h2{margin:0;font-size:17px;letter-spacing:-.01em}.m-section-head span{font-size:11px;color:var(--m-muted)}
+  .m-progress-card{padding:16px;border:1px solid var(--m-line);border-radius:20px;background:rgba(15,26,45,.88);box-shadow:0 10px 28px rgba(0,0,0,.12)}
+  .m-progress-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.m-progress-number{font-size:26px;font-weight:860}.m-progress-number small{font-size:12px;color:var(--m-muted);font-weight:650}.m-progress-pct{font-size:13px;font-weight:800;color:#bdd5ff}
+  .m-progress-track{height:8px;border-radius:999px;background:#07101b;overflow:hidden;margin-top:11px}.m-progress-track>i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#76aaff,#65d49a);width:0}
+  .m-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.m-stat{padding:14px 15px;border:1px solid var(--m-line);border-radius:18px;background:rgba(15,26,45,.76)}.m-stat strong{display:block;font-size:23px;margin-bottom:1px}.m-stat span{font-size:11px;color:var(--m-muted)}
+
+  .m-quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.m-quick{
+    text-align:left;min-height:76px;padding:13px 14px;border:1px solid var(--m-line);border-radius:18px;background:linear-gradient(145deg,#101d31,#0d1829);color:var(--m-text)
+  }.m-quick b{display:block;font-size:14px;margin-top:5px}.m-quick small{font-size:10.5px;color:var(--m-muted)}.m-quick .m-qicon{font-size:18px}
+
+  .m-recent-list,.m-chapter-list,.m-lesson-list,.m-kp-list,.m-settings-list{display:flex;flex-direction:column;gap:9px}
+  .m-row,.m-chapter-card,.m-lesson-card,.m-setting-row{
+    width:100%;text-align:left;border:1px solid var(--m-line);background:rgba(15,26,45,.82);color:var(--m-text);border-radius:18px;padding:14px 15px
+  }
+  .m-row{display:flex;align-items:center;gap:12px}.m-row-id{flex:0 0 auto;color:#9fc2ff;font:800 12px ui-monospace,SFMono-Regular,Consolas,monospace}.m-row-main{min-width:0;flex:1}.m-row-title{font-size:13.5px;font-weight:760;line-height:1.35}.m-row-meta{font-size:10.5px;color:var(--m-muted);margin-top:3px}.m-row-go{font-size:20px;color:#657a9a}
+
+  .m-search-wrap{position:sticky;top:calc(env(safe-area-inset-top) + 4px);z-index:20;padding:6px 0 10px;background:linear-gradient(180deg,#08111f 78%,rgba(8,17,31,0))}
+  .m-search{display:flex;align-items:center;gap:9px;border:1px solid var(--m-line);border-radius:15px;background:#0e1a2b;padding:0 12px;height:44px;box-shadow:0 7px 20px rgba(0,0,0,.10)}
+  .m-search svg{width:18px;height:18px;stroke:#7f93b2;fill:none;stroke-width:2}.m-search input{width:100%;min-width:0;background:transparent!important;border:0!important;color:#eef4ff!important;font-size:15px!important;padding:0!important;outline:none!important}.m-search input::placeholder{color:#6f819d}
+  .m-segment{display:flex;gap:5px;padding:4px;margin:2px 0 14px;border-radius:14px;background:#0c1727;border:1px solid rgba(111,143,189,.10)}.m-segment button{flex:1;border:0;background:transparent;color:#8294b0;border-radius:10px;height:34px;font-size:12px;font-weight:750}.m-segment button.active{background:#1a3152;color:#f2f6ff;box-shadow:0 3px 12px rgba(0,0,0,.16)}
+
+  .m-chapter-card{padding:15px 16px}.m-chapter-top{display:flex;align-items:flex-start;gap:12px}.m-chapter-num{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto;background:#152b49;color:#9ec2ff;font:850 13px ui-monospace,SFMono-Regular,Consolas,monospace}.m-chapter-main{flex:1;min-width:0}.m-chapter-title{font-size:14px;line-height:1.4;font-weight:790}.m-chapter-meta{font-size:10.5px;color:var(--m-muted);margin-top:4px}.m-mini-track{height:4px;border-radius:99px;background:#08101c;margin-top:10px;overflow:hidden}.m-mini-track i{display:block;height:100%;background:#659ef4;border-radius:99px}
+
+  .m-lesson-card{display:flex;align-items:center;gap:11px;padding:13px 14px}.m-check-ring{width:24px;height:24px;border-radius:50%;border:1.5px solid #465d7d;display:grid;place-items:center;flex:0 0 auto;color:white;font-size:13px}.m-check-ring.done{border-color:#55c98d;background:#2b9a67}.m-lesson-info{flex:1;min-width:0}.m-lesson-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.m-lesson-id{font:800 11.5px ui-monospace,SFMono-Regular,Consolas,monospace;color:#9fc2ff}.m-priority{font-size:9px;font-weight:850;padding:2px 6px;border-radius:999px}.m-priority.P0{background:rgba(255,116,116,.13);color:#ff9a9f}.m-priority.P1{background:rgba(255,211,107,.13);color:#ffe29c}.m-priority.P2{background:rgba(116,219,167,.13);color:#91e8bb}.m-lesson-title{font-size:13.5px;font-weight:760;line-height:1.4;margin-top:3px}.m-lesson-meta{font-size:10.5px;color:var(--m-muted);margin-top:3px}.m-chevron{font-size:19px;color:#5e7391}
+
+  .m-empty{padding:34px 18px;text-align:center;color:var(--m-muted);font-size:13px;border:1px dashed rgba(119,151,197,.2);border-radius:18px}
+
+  .m-kp-group{margin:18px 0 7px;font-size:12px;font-weight:800;color:#8499b8}.m-kp-card{display:flex;align-items:flex-start;gap:11px;padding:12px 13px;border-bottom:1px solid rgba(116,145,184,.09);background:rgba(15,26,45,.58)}.m-kp-card:first-of-type{border-radius:16px 16px 0 0}.m-kp-card:last-of-type{border-radius:0 0 16px 16px;border-bottom:0}.m-kp-toggle{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:1.5px solid #465d7d;border-radius:7px;flex:0 0 auto;margin:1px 0 0;background:#0a1423;display:grid;place-content:center}.m-kp-toggle:checked{background:#2a9c68;border-color:#4bc487}.m-kp-toggle:checked:after{content:"✓";color:white;font-size:14px;font-weight:900}.m-kp-content{min-width:0;flex:1}.m-kp-line{display:flex;gap:7px;align-items:baseline}.m-kp-code{font:800 11px ui-monospace,SFMono-Regular,Consolas,monospace;color:#91baff}.m-kp-title{font-size:13.5px;font-weight:770}.m-kp-desc{font-size:11.5px;color:#90a1bb;line-height:1.5;margin-top:4px;-webkit-user-select:text;user-select:text}
+
+  .m-profile-card{padding:17px;border:1px solid var(--m-line);border-radius:21px;background:linear-gradient(145deg,#12233b,#0d192b);display:flex;align-items:center;gap:13px;margin:12px 0 18px}.m-avatar{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:#213c62;color:#cfe0ff;font-weight:850;font-size:18px}.m-profile-main{flex:1;min-width:0}.m-profile-email{font-size:14px;font-weight:790;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.m-profile-sync{font-size:11px;color:#79d9a7;margin-top:3px}.m-settings-group{margin:19px 2px 8px;font-size:11px;color:#7f92ae;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.m-setting-row{display:flex;align-items:center;gap:12px;border-radius:15px;padding:13px 14px}.m-setting-icon{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:#18304f;font-size:15px}.m-setting-copy{flex:1}.m-setting-title{display:block;font-size:13.5px;font-weight:760}.m-setting-sub{display:block;font-size:10.5px;color:var(--m-muted);margin-top:2px}.m-version-note{text-align:center;color:#5f7391;font-size:10.5px;margin:18px 0 2px}
+
+  .m-tabbar{
+    position:fixed;left:10px;right:10px;bottom:max(8px,env(safe-area-inset-bottom));z-index:5000;
+    height:68px;padding:7px 6px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;
+    border:1px solid rgba(132,163,205,.18);border-radius:23px;background:rgba(13,24,40,.91);
+    -webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%);
+    box-shadow:0 18px 50px rgba(0,0,0,.34)
+  }
+  .m-tab{border:0;background:transparent;color:#778aa7;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9.5px;font-weight:750;padding:0}.m-tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.m-tab.active{color:#dceaff;background:rgba(91,143,221,.13)}
+
+  .mobile-detail-page{
+    display:block;position:fixed;inset:0;z-index:6200;background:linear-gradient(180deg,#08111f,#07101d 62%);color:#eef4ff;
+    transform:translateX(104%);opacity:.8;transition:transform .26s cubic-bezier(.22,.8,.2,1),opacity .22s ease;pointer-events:none;overflow:hidden
+  }
+  .mobile-detail-page.open{transform:none;opacity:1;pointer-events:auto}
+  .m-detail-head{height:calc(60px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(116,145,184,.10);background:rgba(8,17,31,.93);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  .m-back{height:40px;min-width:40px;display:flex;align-items:center;gap:4px;border:0;background:transparent;color:#91b8f7;font-size:14px;font-weight:720;padding:0 5px}.m-back span{font-size:25px;line-height:1;margin-top:-2px}.m-detail-titlebar{min-width:0;flex:1;text-align:center;padding-right:44px}.m-detail-titlebar b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.m-detail-titlebar small{font-size:9.5px;color:#768ba9}.m-detail-scroll{height:calc(100dvh - 60px - env(safe-area-inset-top));overflow:auto;padding:15px 16px calc(34px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+  .m-detail-hero{padding:14px 2px 10px}.m-detail-id{font:850 12px ui-monospace,SFMono-Regular,Consolas,monospace;color:#94bdff}.m-detail-hero h1{font-size:27px;line-height:1.22;margin:6px 0 10px;letter-spacing:-.03em}.m-meta-line{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.m-meta-pill{font-size:10.5px;padding:4px 8px;border:1px solid rgba(122,155,201,.15);border-radius:999px;background:#101f35;color:#a9b9d1}
+  .m-info-card{margin:12px 0;padding:15px;border:1px solid var(--m-line);border-radius:18px;background:rgba(15,26,45,.82)}.m-info-card h3{font-size:13px;margin:0 0 8px;color:#d8e7ff}.m-info-card p{font-size:12px;color:#95a7c0;line-height:1.6;margin:0}
+  .m-detail-kps{margin-top:13px}.m-detail-kp{display:flex;align-items:flex-start;gap:11px;padding:13px 3px;border-bottom:1px solid rgba(117,145,183,.10)}.m-detail-kp:last-child{border-bottom:0}.m-detail-kp-main{flex:1}.m-detail-kp-top{display:flex;align-items:baseline;gap:7px}.m-detail-kp-code{font:800 10.5px ui-monospace,SFMono-Regular,Consolas,monospace;color:#8fb8ff}.m-detail-kp-title{font-size:13.5px;font-weight:780}.m-detail-kp-desc{font-size:11.5px;color:#8fa1bb;line-height:1.55;margin-top:4px;-webkit-user-select:text;user-select:text}
+  .m-primary-cta{width:100%;min-height:54px;border:0;border-radius:17px;background:linear-gradient(135deg,#4f84d8,#6d9eed);color:white;font-size:15px;font-weight:840;box-shadow:0 13px 28px rgba(51,105,187,.25);margin-top:18px}.m-secondary-cta{width:100%;min-height:48px;border:1px solid rgba(118,151,195,.18);border-radius:15px;background:#101d30;color:#c7d5e8;font-size:13px;font-weight:760;margin-top:9px}.m-secondary-cta.done{border-color:rgba(87,199,137,.28);background:rgba(38,119,82,.18);color:#96e8bb}
+
+  .m-protocol-clone{font-size:13px}.m-protocol-clone .hero{display:none}.m-protocol-clone .notice{margin-top:0}.m-protocol-clone .protocol{padding:14px;border-radius:16px}.m-protocol-clone .protocol h2{font-size:17px}.m-protocol-clone .protocol h3{font-size:14px}.m-protocol-clone table{display:block;overflow-x:auto;font-size:11px;white-space:normal}.m-protocol-clone th,.m-protocol-clone td{min-width:120px}
+
+  .mobile-bottom-sheet{display:flex;position:fixed;inset:0;z-index:25000;align-items:flex-end;justify-content:center;background:rgba(1,6,14,.55);opacity:0;pointer-events:none;transition:.2s;padding:12px}.mobile-bottom-sheet.open{opacity:1;pointer-events:auto}.m-sheet{width:100%;max-width:520px;border:1px solid rgba(134,166,207,.18);border-radius:24px;background:#111d30;padding:10px 16px calc(14px + env(safe-area-inset-bottom));transform:translateY(18px);transition:.24s cubic-bezier(.22,.8,.2,1);box-shadow:0 -14px 55px rgba(0,0,0,.38)}.mobile-bottom-sheet.open .m-sheet{transform:none}.m-sheet-handle{width:42px;height:4px;border-radius:999px;background:#42546e;margin:2px auto 15px}.m-sheet-icon{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;margin:0 auto 12px;background:rgba(68,164,112,.18);color:#82dfaa;font-size:24px}.m-sheet h3{text-align:center;margin:0;font-size:18px}.m-sheet p{text-align:center;color:#8fa1bc;font-size:12px;line-height:1.5;margin:7px 18px 16px}.m-sheet-actions{display:grid;gap:8px}.m-sheet-actions button{min-height:48px;border-radius:15px;font-weight:790;font-size:14px}.m-sheet-open{border:0;background:#4f84d8;color:white}.m-sheet-close{border:1px solid rgba(119,151,194,.16);background:#0d1829;color:#b9c8dc}
+
+  .mobile-return-app{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:30000;align-items:center;gap:7px;border:1px solid #4e78ae;background:#173860;color:#edf5ff;border-radius:999px;padding:10px 14px;font-size:12px;font-weight:850;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .cloud-mini{bottom:calc(87px + env(safe-area-inset-bottom))!important}
+  .version-toast{bottom:calc(90px + env(safe-area-inset-bottom))!important}
+  .auth-card{max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow:auto}
+}
 </style>
-<meta content="2026.09.29.6" name="app-version"/><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><meta content="#08101e" name="theme-color"/><meta content="yes" name="mobile-web-app-capable"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><meta content="BSW 学习" name="apple-mobile-web-app-title"/><link href="./manifest.webmanifest" rel="manifest"/><link href="./icons/apple-touch-icon.png" rel="apple-touch-icon"/><link href="./icons/icon-192.png" rel="icon" sizes="192x192" type="image/png"/><link href="./icons/icon-512.png" rel="icon" sizes="512x512" type="image/png"/></head>
+<meta content="2026.09.29.7" name="app-version"/><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><meta content="#08101e" name="theme-color"/><meta content="yes" name="mobile-web-app-capable"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><meta content="BSW 学习" name="apple-mobile-web-app-title"/><link href="./manifest.webmanifest" rel="manifest"/><link href="./icons/apple-touch-icon.png" rel="apple-touch-icon"/><link href="./icons/icon-192.png" rel="icon" sizes="192x192" type="image/png"/><link href="./icons/icon-512.png" rel="icon" sizes="512x512" type="image/png"/></head>
 <body>
+
+<!-- ===== iPhone App Shell ===== -->
+<div class="mobile-app" id="mobileApp" aria-label="BSW Learning mobile app">
+  <main class="mobile-main">
+    <section class="m-view active" id="mViewHome"></section>
+    <section class="m-view" id="mViewCourses"></section>
+    <section class="m-view" id="mViewKnowledge"></section>
+    <section class="m-view" id="mViewMe"></section>
+  </main>
+  <nav class="m-tabbar" aria-label="App 主导航">
+    <button class="m-tab active" data-mtab="home" type="button" onclick="mSwitchTab('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 10.7 12 3l9 7.7v9.1a1.2 1.2 0 0 1-1.2 1.2H4.2A1.2 1.2 0 0 1 3 19.8z"/><path d="M9 21v-7h6v7"/></svg><span>首页</span>
+    </button>
+    <button class="m-tab" data-mtab="courses" type="button" onclick="mSwitchTab('courses')">
+      <svg viewBox="0 0 24 24"><path d="M4 4.5h6.5A2.5 2.5 0 0 1 13 7v13a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 4.5h-6.5A2.5 2.5 0 0 0 11 7v13a2.5 2.5 0 0 1 2.5-2.5H20z"/></svg><span>课程</span>
+    </button>
+    <button class="m-tab" data-mtab="knowledge" type="button" onclick="mSwitchTab('knowledge')">
+      <svg viewBox="0 0 24 24"><path d="M12 3 4.5 7.2 12 11.5l7.5-4.3z"/><path d="M4.5 12 12 16.3l7.5-4.3M4.5 16.8 12 21l7.5-4.2"/></svg><span>知识库</span>
+    </button>
+    <button class="m-tab" data-mtab="me" type="button" onclick="mSwitchTab('me')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><span>我的</span>
+    </button>
+  </nav>
+</div>
+<div class="mobile-detail-page" id="mobileDetailPage" aria-hidden="true">
+  <div class="m-detail-head"><button class="m-back" id="mBackBtn" type="button" onclick="mBack()"><span>‹</span><em style="font-style:normal">返回</em></button><div class="m-detail-titlebar" id="mDetailTitlebar"></div></div>
+  <div class="m-detail-scroll" id="mDetailBody"></div>
+</div>
+<div class="mobile-bottom-sheet" id="mobileBottomSheet" onclick="mSheetBackdrop(event)">
+  <div class="m-sheet">
+    <div class="m-sheet-handle"></div><div class="m-sheet-icon">✓</div>
+    <h3>学习提示词已复制</h3><p>已包含本课全部 Z 知识点和教学协议。打开 ChatGPT 后直接粘贴即可开始。</p>
+    <div class="m-sheet-actions"><button class="m-sheet-open" type="button" onclick="mOpenChatGPT()">打开 ChatGPT</button><button class="m-sheet-close" type="button" onclick="mCloseSheet()">留在这里</button></div>
+  </div>
+</div>
+<button class="mobile-return-app" id="mobileReturnApp" type="button" onclick="mExitDesktopMode()">← 返回 App</button>
+
 <div class="container">
-<nav aria-label="知识库模块切换" class="top-tabs"><button class="top-tab active" id="tab-courses" onclick="switchTopModule('courses')">📚 总课程</button><button class="top-tab" id="tab-knowledge" onclick="switchTopModule('knowledge')">🧩 392 个知识点</button><button class="top-tab" id="tab-protocol" onclick="switchTopModule('protocol')">🤖 教学协议（给 ChatGPT）</button><span class="nav-spacer"></span><button class="editor-btn" id="editToggle" onclick="toggleEditMode()">✏ 编辑</button><button class="editor-btn danger-btn" disabled="disabled" id="deleteRegionBtn" onclick="deleteSelectedRegion()">🗑 删除选中区域</button><button class="editor-btn download-btn" id="downloadHtmlBtn" onclick="downloadEditedHtml()">⬇ 下载新 HTML</button><button class="cloud-account-btn" id="cloudAccountBtn" onclick="openAuthPanel()" type="button">☁ 云同步：未登录</button><span class="version-status" id="versionStatus">v2026.09.29.6</span></nav><div class="editor-hint" id="editorHint">编辑模式关闭。点击“编辑”后，可直接修改文字；鼠标移到各个方块上会出现“删除此块”，也可使用顶部删除按钮。</div>
+<nav aria-label="知识库模块切换" class="top-tabs"><button class="top-tab active" id="tab-courses" onclick="switchTopModule('courses')">📚 总课程</button><button class="top-tab" id="tab-knowledge" onclick="switchTopModule('knowledge')">🧩 392 个知识点</button><button class="top-tab" id="tab-protocol" onclick="switchTopModule('protocol')">🤖 教学协议（给 ChatGPT）</button><span class="nav-spacer"></span><button class="editor-btn" id="editToggle" onclick="toggleEditMode()">✏ 编辑</button><button class="editor-btn danger-btn" disabled="disabled" id="deleteRegionBtn" onclick="deleteSelectedRegion()">🗑 删除选中区域</button><button class="editor-btn download-btn" id="downloadHtmlBtn" onclick="downloadEditedHtml()">⬇ 下载新 HTML</button><button class="cloud-account-btn" id="cloudAccountBtn" onclick="openAuthPanel()" type="button">☁ 云同步：未登录</button><span class="version-status" id="versionStatus">v2026.09.29.7</span></nav><div class="editor-hint" id="editorHint">编辑模式关闭。点击“编辑”后，可直接修改文字；鼠标移到各个方块上会出现“删除此块”，也可使用顶部删除按钮。</div>
 <div class="module-panel active" id="module-courses">
 <section class="hero">
 <h1 data-editable-text="1">AUTOSAR Classic / BSW 跳槽面试 · 总课程</h1>
@@ -4894,7 +5049,7 @@ document.getElementById('knowledge-search').addEventListener('input',()=>applyFi
 syncUI();
 </script>
 <script id="github-learning-runtime">
-const APP_VERSION = "2026.09.29.6";
+const APP_VERSION = "2026.09.29.7";
 let lastVersionCheckAt = 0;
 
 function htmlToPlain(el){
@@ -5090,7 +5245,7 @@ function downloadEditedHtml(){
   const newVersion=makeDownloadVersion();
   const meta=clone.querySelector('meta[name="app-version"]');if(meta)meta.setAttribute('content',newVersion);
   const runtime=[...clone.querySelectorAll('script')].find(s=>s.id==='github-learning-runtime');
-  if(runtime)runtime.textContent=runtime.textContent.replace(/const APP_VERSION = ["'][^"']+["'];/,`const APP_VERSION = "2026.09.29.6";`);
+  if(runtime)runtime.textContent=runtime.textContent.replace(/const APP_VERSION = ["'][^"']+["'];/,`const APP_VERSION = "2026.09.29.7";`);
   const vs=clone.querySelector('#versionStatus');if(vs)vs.textContent='v'+newVersion;
   clone.querySelectorAll('.module-panel').forEach(x=>x.classList.remove('active'));
   clone.querySelector('#module-courses')?.classList.add('active');
@@ -5382,7 +5537,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
 });
 </script>
 <script id="pwa-runtime">
-const PWA_VERSION = "2026.09.29.6";
+const PWA_VERSION = "2026.09.29.7";
 (function(){
   const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -5406,5 +5561,234 @@ const PWA_VERSION = "2026.09.29.6";
   }
 })();
 </script>
+
+<script id="mobile-app-runtime">
+(function(){
+  const M={
+    data:null,tab:'home',courseFilter:'ALL',courseQuery:'',kpFilter:'ALL',kpQuery:'',
+    currentChapter:null,currentLesson:null,detailKind:null,backLabel:'返回',ready:false
+  };
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const txt=el=>(el?.textContent||'').replace(/\s+/g,' ').trim();
+  const summaryTitle=(summary)=>{
+    if(!summary)return'';
+    const clone=summary.cloneNode(true);clone.querySelectorAll('.pill,.depth,.lesson-count').forEach(x=>x.remove());
+    return txt(clone);
+  };
+  function buildData(){
+    const chapters=$$('#module-courses .course-chapter').map((ch,idx)=>{
+      const id=Number((ch.id.match(/lesson-ch-(\d+)/)||[])[1]||idx+1);
+      const title=summaryTitle($(':scope > summary',ch)).replace(/^第\s*\d+\s*章\s*[·・]\s*/,'');
+      const lessons=$$('.course-item',ch).map(item=>{
+        const id=txt($('.lesson-id',item));
+        const title=txt($('.lesson-title',item));
+        const count=txt($('.lesson-count',item));
+        const priority=item.dataset.priority||ch.dataset.priority||'P1';
+        const depth=txt($(':scope > summary .depth',ch))||'';
+        const points=$$('.point-row',item).map(row=>({id:txt($('.zcode',row)),title:txt($('.ptitle',row)),desc:txt($('.pdesc',row))})).filter(x=>x.id);
+        return {id,title,count,priority,depth,points,chapter:id.split('.')[0],search:(item.dataset.search||'')};
+      });
+      return {id,title,priority:ch.dataset.priority||'P1',lessons};
+    }).filter(x=>x.lessons.length);
+
+    const kpChapters=$$('#module-knowledge .knowledge-chapter').map((ch,idx)=>{
+      const cid=(ch.id.match(/kp-ch-(\d+)/)||[])[1]||String(idx+1);
+      const title=summaryTitle($(':scope > summary',ch)).replace(/^第\s*\d+\s*章\s*[·・]\s*/,'');
+      const items=$$('.knowledge-item',ch).map(row=>({
+        id:row.querySelector('.kp-check')?.dataset.kp||txt($('.zcode',row)),
+        title:txt($('.ptitle',row)),desc:txt($('.pdesc',row)),priority:row.dataset.priority||ch.dataset.priority||'P1',chapter:cid
+      })).filter(x=>x.id);
+      return {id:cid,title,items};
+    }).filter(x=>x.items.length);
+    const lessons=chapters.flatMap(x=>x.lessons);
+    const knowledge=kpChapters.flatMap(x=>x.items);
+    return {chapters,lessons,kpChapters,knowledge};
+  }
+  function kpDone(id){return localStorage.getItem('autosar-kp-'+id)==='1'}
+  function courseDone(id){const ids=((typeof COURSE_MAP!=='undefined'?COURSE_MAP:{})[id])||[];return !!ids.length&&ids.every(kpDone)}
+  function chapterProgress(ch){const done=ch.lessons.filter(x=>courseDone(x.id)).length;return {done,total:ch.lessons.length,pct:ch.lessons.length?Math.round(done/ch.lessons.length*100):0}}
+  function allProgress(){
+    const cDone=M.data.lessons.filter(x=>courseDone(x.id)).length;
+    const kpDoneN=M.data.knowledge.filter(x=>kpDone(x.id)).length;
+    return {cDone,cTotal:M.data.lessons.length,kpDone:kpDoneN,kpTotal:M.data.knowledge.length,cPct:M.data.lessons.length?Math.round(cDone/M.data.lessons.length*100):0,kpPct:M.data.knowledge.length?Math.round(kpDoneN/M.data.knowledge.length*100):0};
+  }
+  function recentIds(){try{return JSON.parse(localStorage.getItem('autosar-mobile-recent')||'[]').filter(Boolean)}catch(e){return[]}}
+  function rememberLesson(id){
+    localStorage.setItem('autosar-mobile-last-course',id);
+    const arr=[id,...recentIds().filter(x=>x!==id)].slice(0,6);localStorage.setItem('autosar-mobile-recent',JSON.stringify(arr));
+    if(typeof window.saveAutosarSettings==='function')window.saveAutosarSettings({last_course:id});
+  }
+  function lastLesson(){
+    const local=localStorage.getItem('autosar-mobile-last-course');
+    const cloud=(typeof autosarSettingsCache!=='undefined'?autosarSettingsCache?.last_course:null);
+    const id=local||cloud;
+    return M.data.lessons.find(x=>x.id===id)||M.data.lessons.find(x=>!courseDone(x.id))||M.data.lessons[0];
+  }
+  function iconSettings(){return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.55v-.1A1.7 1.7 0 0 0 8.45 19a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4.05 14.6a1.7 1.7 0 0 0-.6-1A1.7 1.7 0 0 0 2.35 13.2H2V9.15h.1A1.7 1.7 0 0 0 4 8.05a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.86-2.86.06.06A1.7 1.7 0 0 0 8.4 3.65a1.7 1.7 0 0 0 1-.6A1.7 1.7 0 0 0 9.8 1.95V2h4.05v.1a1.7 1.7 0 0 0 1.1 1.9 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 .6 1 1.7 1.7 0 0 0 1.1.4H21v4.05h-.1A1.7 1.7 0 0 0 19.4 15z"/></svg>'}
+  function iconSearch(){return '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>'}
+  function topbar(title,sub='',right='settings'){
+    return `<div class="m-topbar"><div class="m-brand">${esc(title)}${sub?`<small>${esc(sub)}</small>`:''}</div>${right==='settings'?`<button class="m-icon-btn" type="button" onclick="mSwitchTab('me')">${iconSettings()}</button>`:''}</div>`
+  }
+  function renderHome(){
+    const root=$('#mViewHome'); if(!root)return;
+    const p=allProgress(),lesson=lastLesson();
+    const recent=recentIds().map(id=>M.data.lessons.find(x=>x.id===id)).filter(Boolean).slice(0,3);
+    const weekAgo=Date.now()-7*24*3600*1000;
+    const recentKps=M.data.knowledge.filter(k=>kpDone(k.id)&&Number(localStorage.getItem((typeof KP_TS_PREFIX!=='undefined'?KP_TS_PREFIX:'autosar-kp-ts-')+k.id)||0)>=weekAgo).length;
+    const recentCourses=M.data.lessons.filter(l=>courseDone(l.id)&&Math.max(0,...(((typeof COURSE_MAP!=='undefined'?COURSE_MAP:{})[l.id]||[])).map(k=>Number(localStorage.getItem((typeof KP_TS_PREFIX!=='undefined'?KP_TS_PREFIX:'autosar-kp-ts-')+k)||0)))>=weekAgo).length;
+    const meta=[lesson?.priority,lesson?.depth,lesson?.count?.replace(/·.*$/,'').trim()].filter(Boolean).join(' · ');
+    root.innerHTML=`${topbar('BSW Learning','AUTOSAR Classic · Interview Prep')}
+      <div class="m-kicker">继续你的学习</div><div class="m-title">把复杂 BSW，拆成每天一课。</div><div class="m-subtitle">107 节正式课程 · 392 个底层知识点 · 进度自动同步</div>
+      ${lesson?`<button class="m-continue" type="button" onclick="mOpenLesson('${esc(lesson.id)}')"><div class="m-continue-label">Continue Learning</div><div class="m-continue-id">${esc(lesson.id)}</div><div class="m-continue-title">${esc(lesson.title)}</div><div class="m-continue-meta">${esc(meta)}</div><div class="m-continue-action"><span>${courseDone(lesson.id)?'再次复习':'继续学习'}</span><span class="m-arrow-circle">→</span></div></button>`:''}
+      <div class="m-section-head"><h2>学习进度</h2><span>${p.cDone} / ${p.cTotal} 课</span></div>
+      <div class="m-progress-card"><div class="m-progress-top"><div class="m-progress-number">${p.cDone}<small> / ${p.cTotal}</small></div><div class="m-progress-pct">${p.cPct}%</div></div><div class="m-progress-track"><i style="width:${p.cPct}%"></i></div></div>
+      <div class="m-stats-grid"><div class="m-stat"><strong>${recentCourses}</strong><span>近 7 天完成课程</span></div><div class="m-stat"><strong>${recentKps}</strong><span>近 7 天掌握知识点</span></div></div>
+      <div class="m-section-head"><h2>快速入口</h2><span>按主航道进入</span></div><div class="m-quick-grid">
+        <button class="m-quick" type="button" onclick="mQuickP0()"><span class="m-qicon">🔥</span><b>P0 必修</b><small>只看最重要课程</small></button>
+        <button class="m-quick" type="button" onclick="mQuickSearch('Debug')"><span class="m-qicon">🧰</span><b>Debug</b><small>故障定位场景</small></button>
+        <button class="m-quick" type="button" onclick="mOpenChapter('6')"><span class="m-qicon">📡</span><b>ComStack</b><small>COM / PduR / CanIf</small></button>
+        <button class="m-quick" type="button" onclick="mOpenChapter('9')"><span class="m-qicon">🩺</span><b>UDS / DCM</b><small>诊断主链路</small></button>
+      </div>
+      <div class="m-section-head"><h2>最近学习</h2><span>${recent.length?'继续上次节奏':'还没有记录'}</span></div>
+      <div class="m-recent-list">${recent.length?recent.map(l=>lessonRow(l)).join(''):'<div class="m-empty">打开一节课程后，这里会保存最近学习记录。</div>'}</div>`;
+  }
+  function lessonRow(l){return `<button class="m-row" type="button" onclick="mOpenLesson('${esc(l.id)}')"><span class="m-row-id">${esc(l.id)}</span><span class="m-row-main"><span class="m-row-title">${esc(l.title)}</span><span class="m-row-meta">${esc(l.priority)} · ${esc(l.count||'')}</span></span><span class="m-row-go">›</span></button>`}
+  function renderCourses(){
+    const root=$('#mViewCourses');if(!root)return;
+    const q=M.courseQuery.trim().toLowerCase(),f=M.courseFilter;
+    const matched=M.data.lessons.filter(l=>(f==='ALL'||l.priority===f)&&(!q||(l.title+' '+l.id+' '+l.search+' '+l.points.map(p=>p.title+' '+p.desc).join(' ')).toLowerCase().includes(q)));
+    let body='';
+    if(q){body=matched.length?`<div class="m-lesson-list">${matched.map(lessonCard).join('')}</div>`:'<div class="m-empty">没有找到匹配课程。</div>'}
+    else{
+      const chapters=M.data.chapters.map(ch=>{
+        const visible=ch.lessons.filter(l=>f==='ALL'||l.priority===f);if(!visible.length)return'';
+        const done=visible.filter(l=>courseDone(l.id)).length,pct=Math.round(done/visible.length*100);
+        return `<button class="m-chapter-card" type="button" onclick="mOpenChapter('${ch.id}')"><div class="m-chapter-top"><div class="m-chapter-num">${String(ch.id).padStart(2,'0')}</div><div class="m-chapter-main"><div class="m-chapter-title">${esc(ch.title)}</div><div class="m-chapter-meta">${done} / ${visible.length} 完成 · ${f==='ALL'?esc(ch.priority):esc(f)}</div><div class="m-mini-track"><i style="width:${pct}%"></i></div></div><div class="m-chevron">›</div></div></button>`;
+      }).join(''); body=`<div class="m-chapter-list">${chapters||'<div class="m-empty">当前筛选下没有课程。</div>'}</div>`;
+    }
+    root.innerHTML=`${topbar('课程','19 个正式章节 · 107 节')}
+      <div class="m-search-wrap"><label class="m-search">${iconSearch()}<input id="mCourseSearch" value="${esc(M.courseQuery)}" placeholder="搜索课程、模块或知识点" oninput="mCourseSearch(this.value)"></label></div>
+      <div class="m-segment">${['ALL','P0','P1','P2'].map(x=>`<button class="${f===x?'active':''}" type="button" onclick="mSetCourseFilter('${x}')">${x==='ALL'?'全部':x}</button>`).join('')}</div>${body}`;
+  }
+  function lessonCard(l){const done=courseDone(l.id);return `<button class="m-lesson-card" type="button" onclick="mOpenLesson('${esc(l.id)}')"><span class="m-check-ring ${done?'done':''}">${done?'✓':''}</span><span class="m-lesson-info"><span class="m-lesson-line"><span class="m-lesson-id">${esc(l.id)}</span><span class="m-priority ${esc(l.priority)}">${esc(l.priority)}</span></span><span class="m-lesson-title">${esc(l.title)}</span><span class="m-lesson-meta">${esc(l.count||'')}</span></span><span class="m-chevron">›</span></button>`}
+  function renderKnowledge(){
+    const root=$('#mViewKnowledge');if(!root)return;
+    const q=M.kpQuery.trim().toLowerCase(),f=M.kpFilter;
+    const groups=M.data.kpChapters.map(ch=>{
+      const items=ch.items.filter(k=>(f==='ALL'||k.priority===f)&&(!q||(k.id+' '+k.title+' '+k.desc).toLowerCase().includes(q)));
+      if(!items.length)return'';
+      return `<div class="m-kp-group">第 ${esc(ch.id)} 章 · ${esc(ch.title)}</div><div class="m-kp-list">${items.map(k=>`<label class="m-kp-card"><input class="m-kp-toggle" type="checkbox" ${kpDone(k.id)?'checked':''} onchange="mToggleKnowledge('${esc(k.id)}',this.checked)"><span class="m-kp-content"><span class="m-kp-line"><span class="m-kp-code">${esc(k.id)}</span><span class="m-kp-title">${esc(k.title)}</span></span><span class="m-kp-desc">${esc(k.desc)}</span></span></label>`).join('')}</div>`;
+    }).join('');
+    const p=allProgress();
+    root.innerHTML=`${topbar('知识库',`${p.kpDone} / ${p.kpTotal} 已掌握`)}<div class="m-search-wrap"><label class="m-search">${iconSearch()}<input value="${esc(M.kpQuery)}" placeholder="搜索 Z 编号、标题或描述" oninput="mKnowledgeSearch(this.value)"></label></div><div class="m-segment">${['ALL','P0','P1','P2'].map(x=>`<button class="${f===x?'active':''}" type="button" onclick="mSetKpFilter('${x}')">${x==='ALL'?'全部':x}</button>`).join('')}</div>${groups||'<div class="m-empty">没有找到匹配知识点。</div>'}`;
+  }
+  function renderMe(){
+    const root=$('#mViewMe');if(!root)return; const p=allProgress();
+    const user=(typeof autosarUser!=='undefined'?autosarUser:null); const email=user?.email||'未登录 Supabase';
+    const sync=user?'云端同步已启用':'仅保存在本机'; const v=document.querySelector('meta[name="app-version"]')?.content||'';
+    root.innerHTML=`${topbar('我的','账户、同步与高级工具','none')}<div class="m-profile-card" onclick="openAuthPanel()"><div class="m-avatar">${user?'☁':'●'}</div><div class="m-profile-main"><div class="m-profile-email">${esc(email)}</div><div class="m-profile-sync">${esc(sync)}</div></div><div class="m-chevron">›</div></div>
+      <div class="m-stats-grid"><div class="m-stat"><strong>${p.cDone}</strong><span>已完成课程 / ${p.cTotal}</span></div><div class="m-stat"><strong>${p.kpDone}</strong><span>已掌握知识点 / ${p.kpTotal}</span></div></div>
+      <div class="m-settings-group">学习</div><div class="m-settings-list">
+        ${settingRow('☁','云同步',user?'已登录，点击查看同步状态':'登录后可在电脑与 iPhone 同步','openAuthPanel()')}
+        ${settingRow('🤖','教学协议','查看 ChatGPT 上课与打印笔记规则','mOpenProtocol()')}
+        ${settingRow('📊','学习统计','查看课程与知识点完成情况','mOpenStats()')}
+      </div>
+      <div class="m-settings-group">高级</div><div class="m-settings-list">
+        ${settingRow('✏️','内容编辑','切换到原桌面知识库与编辑器','mEnterDesktopMode()')}
+        ${settingRow('⬇️','导出 HTML','导出当前完整知识库','mExportHtml()')}
+        ${settingRow('↻','检查更新','检查 GitHub Pages 是否有新版本','mCheckUpdate()')}
+      </div><div class="m-version-note">BSW Learning · v${esc(v)}</div>`;
+  }
+  function settingRow(ic,title,sub,action){return `<button class="m-setting-row" type="button" onclick="${action}"><span class="m-setting-icon">${ic}</span><span class="m-setting-copy"><span class="m-setting-title">${esc(title)}</span><span class="m-setting-sub">${esc(sub)}</span></span><span class="m-chevron">›</span></button>`}
+  function switchTab(name){
+    M.tab=name; $$('.m-view').forEach(x=>x.classList.remove('active')); $('#mView'+name[0].toUpperCase()+name.slice(1))?.classList.add('active');
+    $$('.m-tab').forEach(x=>x.classList.toggle('active',x.dataset.mtab===name));
+    if(name==='home')renderHome(); if(name==='courses')renderCourses(); if(name==='knowledge')renderKnowledge(); if(name==='me')renderMe();
+    window.scrollTo(0,0);
+  }
+  function openChapter(id,push=true){
+    const ch=M.data.chapters.find(x=>String(x.id)===String(id));if(!ch)return;
+    M.currentChapter=ch;M.currentLesson=null;M.detailKind='chapter';M.backLabel=M.tab==='home'?'首页':'课程';
+    const p=chapterProgress(ch);
+    $('#mDetailTitlebar').innerHTML=`<b>第 ${esc(ch.id)} 章</b><small>${p.done} / ${p.total} 完成</small>`;
+    $('#mDetailBody').innerHTML=`<div class="m-detail-hero"><div class="m-detail-id">CHAPTER ${String(ch.id).padStart(2,'0')}</div><h1>${esc(ch.title)}</h1><div class="m-meta-line"><span class="m-meta-pill">${esc(ch.priority)}</span><span class="m-meta-pill">${p.total} 节课程</span><span class="m-meta-pill">完成 ${p.pct}%</span></div></div><div class="m-progress-card"><div class="m-progress-top"><div class="m-progress-number">${p.done}<small> / ${p.total}</small></div><div class="m-progress-pct">${p.pct}%</div></div><div class="m-progress-track"><i style="width:${p.pct}%"></i></div></div><div class="m-section-head"><h2>本章课程</h2><span>按顺序学习</span></div><div class="m-lesson-list">${ch.lessons.map(lessonCard).join('')}</div>`;
+    $('#mBackBtn em').textContent=M.backLabel; openDetail();
+    if(push)history.pushState({mPage:'chapter',id:String(id),tab:M.tab},'');
+  }
+  function openLesson(id,push=true){
+    const l=M.data.lessons.find(x=>x.id===id);if(!l)return; rememberLesson(id);M.currentLesson=l;M.detailKind='lesson';
+    const ch=M.data.chapters.find(x=>String(x.id)===String(l.chapter));M.currentChapter=ch||null;
+    const currentState=history.state?.mPage;M.backLabel=currentState==='chapter'?'第 '+l.chapter+' 章':(M.tab==='home'?'首页':'课程');
+    const done=courseDone(id); const meta=[l.priority,l.depth,l.count].filter(Boolean);
+    $('#mDetailTitlebar').innerHTML=`<b>${esc(id)}</b><small>${esc(l.priority)} · ${l.points.length} 个知识点</small>`;
+    $('#mDetailBody').innerHTML=`<div class="m-detail-hero"><div class="m-detail-id">COURSE ${esc(id)}</div><h1>${esc(l.title)}</h1><div class="m-meta-line">${meta.map(x=>`<span class="m-meta-pill">${esc(x)}</span>`).join('')}</div></div>
+      <div class="m-info-card"><h3>本课目标</h3><p>把下面 ${l.points.length} 个 Z 知识点作为一个完整工程主题学习；课程范围以这里列出的知识点为准。</p></div>
+      <div class="m-section-head"><h2>本课知识点</h2><span>${l.points.filter(p=>kpDone(p.id)).length} / ${l.points.length} 已掌握</span></div><div class="m-detail-kps">${l.points.map(p=>`<label class="m-detail-kp"><input class="m-kp-toggle" type="checkbox" ${kpDone(p.id)?'checked':''} onchange="mToggleKnowledge('${esc(p.id)}',this.checked,true)"><span class="m-detail-kp-main"><span class="m-detail-kp-top"><span class="m-detail-kp-code">${esc(p.id)}</span><span class="m-detail-kp-title">${esc(p.title)}</span></span><span class="m-detail-kp-desc">${esc(p.desc)}</span></span></label>`).join('')}</div>
+      <button class="m-primary-cta" type="button" onclick="mCopyLessonPrompt('${esc(id)}')">✨ 开始本课 · 复制到 ChatGPT</button>
+      <button class="m-secondary-cta ${done?'done':''}" type="button" onclick="mToggleCourse('${esc(id)}',${done?'false':'true'})">${done?'✓ 本课已完成 · 点击撤销':'标记本课完成'}</button>`;
+    $('#mBackBtn em').textContent=M.backLabel;openDetail();renderHome();
+    if(push)history.pushState({mPage:'lesson',id,tab:M.tab,fromChapter:currentState==='chapter'},'');
+  }
+  function openDetail(){const p=$('#mobileDetailPage');p.classList.add('open');p.setAttribute('aria-hidden','false');$('#mDetailBody').scrollTop=0}
+  function closeDetail(){const p=$('#mobileDetailPage');p.classList.remove('open');p.setAttribute('aria-hidden','true');M.detailKind=null;M.currentLesson=null;M.currentChapter=null}
+  function back(){if(history.state?.mPage)history.back();else closeDetail()}
+  function onPop(e){const s=e.state;if(s?.mPage==='chapter'){switchTab(s.tab||M.tab);openChapter(s.id,false)}else if(s?.mPage==='lesson'){switchTab(s.tab||M.tab);openLesson(s.id,false)}else closeDetail()}
+  function toggleKnowledge(id,checked,stayLesson=false){
+    const orig=document.querySelector(`.kp-check[data-kp="${id}"]`);if(orig){orig.checked=checked;orig.dispatchEvent(new Event('change',{bubbles:true}))}else{localStorage.setItem('autosar-kp-'+id,checked?'1':'0');if(typeof window.syncUI==='function')window.syncUI()}
+    refreshViews(); if(stayLesson&&M.currentLesson)openLesson(M.currentLesson.id,false)
+  }
+  function toggleCourse(id,checked){
+    const orig=document.querySelector(`.course-check[data-course="${id}"]`);if(orig){orig.checked=checked;orig.dispatchEvent(new Event('change',{bubbles:true}))}else{(((typeof COURSE_MAP!=='undefined'?COURSE_MAP:{})[id])||[]).forEach(k=>localStorage.setItem('autosar-kp-'+k,checked?'1':'0'));if(typeof window.syncUI==='function')window.syncUI()}
+    refreshViews();openLesson(id,false)
+  }
+  async function copyLessonPrompt(id){
+    const content=typeof window.buildCoursePrompt==='function'?window.buildCoursePrompt(id):'';
+    const ok=content&&typeof window.copyTextRobust==='function'?await window.copyTextRobust(content):false;
+    if(ok)openSheet();else if(typeof window.showVersionToast==='function')window.showVersionToast('复制失败，请重试。');
+  }
+  function openSheet(){$('#mobileBottomSheet').classList.add('open')}
+  function closeSheet(){$('#mobileBottomSheet').classList.remove('open')}
+  function sheetBackdrop(e){if(e.target===e.currentTarget)closeSheet()}
+  function openChatGPT(){closeSheet();window.open('https://chatgpt.com/','_blank','noopener')}
+  function quickP0(){M.courseFilter='P0';M.courseQuery='';switchTab('courses')}
+  function quickSearch(q){M.courseFilter='ALL';M.courseQuery=q;switchTab('courses')}
+  function courseSearch(v){M.courseQuery=v;renderCourses();setTimeout(()=>$('#mCourseSearch')?.focus(),0)}
+  function setCourseFilter(v){M.courseFilter=v;renderCourses()}
+  function knowledgeSearch(v){M.kpQuery=v;renderKnowledge()}
+  function setKpFilter(v){M.kpFilter=v;renderKnowledge()}
+  function openProtocol(push=true){
+    M.detailKind='protocol';M.backLabel='我的';$('#mDetailTitlebar').innerHTML='<b>教学协议</b><small>给 ChatGPT 的上课规则</small>';
+    const src=$('#module-protocol');$('#mDetailBody').innerHTML=`<div class="m-protocol-clone">${src?src.innerHTML:'<div class="m-empty">未找到教学协议。</div>'}</div>`;$('#mBackBtn em').textContent='我的';openDetail();if(push)history.pushState({mPage:'protocol',tab:'me'},'')
+  }
+  function openStats(push=true){
+    const p=allProgress();const chapters=M.data.chapters.map(ch=>{const x=chapterProgress(ch);return `<div class="m-row"><span class="m-row-id">${String(ch.id).padStart(2,'0')}</span><span class="m-row-main"><span class="m-row-title">${esc(ch.title)}</span><span class="m-row-meta">${x.done} / ${x.total} 完成</span><span class="m-mini-track"><i style="width:${x.pct}%"></i></span></span></div>`}).join('');
+    M.detailKind='stats';$('#mDetailTitlebar').innerHTML='<b>学习统计</b><small>按正式课程统计</small>';$('#mDetailBody').innerHTML=`<div class="m-detail-hero"><div class="m-detail-id">PROGRESS</div><h1>你的 BSW 学习进度</h1></div><div class="m-stats-grid"><div class="m-stat"><strong>${p.cDone}</strong><span>课程 / ${p.cTotal}</span></div><div class="m-stat"><strong>${p.kpDone}</strong><span>知识点 / ${p.kpTotal}</span></div></div><div class="m-section-head"><h2>章节进度</h2><span>${p.cPct}%</span></div><div class="m-recent-list">${chapters}</div>`;$('#mBackBtn em').textContent='我的';openDetail();if(push)history.pushState({mPage:'stats',tab:'me'},'')
+  }
+  function enterDesktopMode(){document.body.classList.add('mobile-force-desktop');closeDetail();window.scrollTo(0,0)}
+  function exitDesktopMode(){document.body.classList.remove('mobile-force-desktop');if((typeof editorMode!=='undefined'&&editorMode)&&typeof window.toggleEditMode==='function')window.toggleEditMode(false);switchTab(M.tab)}
+  function exportHtml(){if(typeof window.downloadEditedHtml==='function')window.downloadEditedHtml();else window.alert('当前版本未找到导出功能。')}
+  function checkUpdate(){if(typeof window.checkForNewVersion==='function'){window.checkForNewVersion(true);if(typeof window.showVersionToast==='function')window.showVersionToast('正在检查 GitHub Pages 新版本…')}else window.alert('当前版本未找到版本检查功能。')}
+  function refreshViews(){renderHome();if(M.tab==='courses')renderCourses();if(M.tab==='knowledge')renderKnowledge();if(M.tab==='me')renderMe()}
+  function patchExisting(){
+    if(typeof window.syncUI==='function'&&!window.__mobileSyncPatched){const old=window.syncUI;window.syncUI=function(){const r=old.apply(this,arguments);if(M.ready)refreshViews();return r};window.__mobileSyncPatched=true}
+    if(typeof window.updateAuthUI==='function'&&!window.__mobileAuthPatched){const old=window.updateAuthUI;window.updateAuthUI=function(){const r=old.apply(this,arguments);if(M.ready)renderMe();return r};window.__mobileAuthPatched=true}
+  }
+  function init(){
+    if(M.ready)return;M.data=buildData();M.ready=true;patchExisting();
+    history.replaceState({...history.state,mobileRoot:true},'');window.addEventListener('popstate',onPop);
+    renderHome();renderCourses();renderKnowledge();renderMe();
+    setTimeout(()=>{renderHome();renderMe()},1400);
+  }
+  window.mSwitchTab=switchTab;window.mOpenChapter=openChapter;window.mOpenLesson=openLesson;window.mBack=back;
+  window.mToggleKnowledge=toggleKnowledge;window.mToggleCourse=toggleCourse;window.mCopyLessonPrompt=copyLessonPrompt;
+  window.mCloseSheet=closeSheet;window.mSheetBackdrop=sheetBackdrop;window.mOpenChatGPT=openChatGPT;
+  window.mQuickP0=quickP0;window.mQuickSearch=quickSearch;window.mCourseSearch=courseSearch;window.mSetCourseFilter=setCourseFilter;
+  window.mKnowledgeSearch=knowledgeSearch;window.mSetKpFilter=setKpFilter;window.mOpenProtocol=openProtocol;window.mOpenStats=openStats;
+  window.mEnterDesktopMode=enterDesktopMode;window.mExitDesktopMode=exitDesktopMode;window.mExportHtml=exportHtml;window.mCheckUpdate=checkUpdate;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
 </body>
 </html>
