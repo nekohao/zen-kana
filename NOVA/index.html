@@ -3,8 +3,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>AUTOSAR BSW 跳槽面试知识库｜Supabase同步版 v2026.09.29.4</title>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>AUTOSAR BSW 跳槽学习系统｜PWA v2026.09.29.5</title>
 <style>
 :root{
  --bg:#08101e;--panel:#111a2c;--panel2:#17243b;--panel3:#0d1627;--text:#eaf1ff;
@@ -258,11 +258,41 @@ body.edit-mode .lesson-detail{
  .auth-card{padding:16px;border-radius:15px}.auth-actions{display:grid;grid-template-columns:1fr}.auth-primary,.auth-secondary{min-height:42px}
 }
 @media print{.auth-overlay,.cloud-mini,.cloud-account-btn{display:none!important}}
+
+/* ===== iPhone / PWA standalone ===== */
+html,body{min-height:100%}
+body{
+  min-height:100dvh;
+  padding-top:env(safe-area-inset-top);
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+@media (display-mode: standalone){
+  body{overscroll-behavior-y:none}
+  .top-tabs{top:0}
+}
+html.ios-standalone body{
+  overscroll-behavior-y:none;
+  -webkit-user-select:none;
+}
+html.ios-standalone [contenteditable="true"],
+html.ios-standalone input,
+html.ios-standalone textarea{
+  -webkit-user-select:text;
+}
+.pwa-install-note{
+  display:none;
+  margin:12px 0;padding:10px 12px;border-radius:10px;
+  background:#14243d;border:1px solid #35557d;color:#d7e6fb;font-size:12px
+}
+html.ios-browser .pwa-install-note{display:block}
+@media print{.pwa-install-note{display:none!important}}
 </style>
-<meta content="2026.09.29.4" name="app-version"/><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
+<meta content="2026.09.29.5" name="app-version"/><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><meta content="#08101e" name="theme-color"/><meta content="yes" name="mobile-web-app-capable"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><meta content="BSW 学习" name="apple-mobile-web-app-title"/><link href="./manifest.webmanifest" rel="manifest"/><link href="./icons/apple-touch-icon.png" rel="apple-touch-icon"/><link href="./icons/icon-192.png" rel="icon" sizes="192x192" type="image/png"/><link href="./icons/icon-512.png" rel="icon" sizes="512x512" type="image/png"/></head>
 <body>
 <div class="container">
-<nav aria-label="知识库模块切换" class="top-tabs"><button class="top-tab active" id="tab-courses" onclick="switchTopModule('courses')">📚 总课程</button><button class="top-tab" id="tab-knowledge" onclick="switchTopModule('knowledge')">🧩 392 个知识点</button><button class="top-tab" id="tab-protocol" onclick="switchTopModule('protocol')">🤖 教学协议（给 ChatGPT）</button><span class="nav-spacer"></span><button class="editor-btn" id="editToggle" onclick="toggleEditMode()">✏ 编辑</button><button class="editor-btn danger-btn" disabled="disabled" id="deleteRegionBtn" onclick="deleteSelectedRegion()">🗑 删除选中区域</button><button class="editor-btn download-btn" id="downloadHtmlBtn" onclick="downloadEditedHtml()">⬇ 下载新 HTML</button><button class="cloud-account-btn" id="cloudAccountBtn" onclick="openAuthPanel()" type="button">☁ 云同步：未登录</button><span class="version-status" id="versionStatus">v2026.09.29.4</span></nav><div class="editor-hint" id="editorHint">编辑模式关闭。点击“编辑”后，可直接修改文字；鼠标移到各个方块上会出现“删除此块”，也可使用顶部删除按钮。</div>
+<nav aria-label="知识库模块切换" class="top-tabs"><button class="top-tab active" id="tab-courses" onclick="switchTopModule('courses')">📚 总课程</button><button class="top-tab" id="tab-knowledge" onclick="switchTopModule('knowledge')">🧩 392 个知识点</button><button class="top-tab" id="tab-protocol" onclick="switchTopModule('protocol')">🤖 教学协议（给 ChatGPT）</button><span class="nav-spacer"></span><button class="editor-btn" id="editToggle" onclick="toggleEditMode()">✏ 编辑</button><button class="editor-btn danger-btn" disabled="disabled" id="deleteRegionBtn" onclick="deleteSelectedRegion()">🗑 删除选中区域</button><button class="editor-btn download-btn" id="downloadHtmlBtn" onclick="downloadEditedHtml()">⬇ 下载新 HTML</button><button class="cloud-account-btn" id="cloudAccountBtn" onclick="openAuthPanel()" type="button">☁ 云同步：未登录</button><span class="version-status" id="versionStatus">v2026.09.29.5</span></nav><div class="editor-hint" id="editorHint">编辑模式关闭。点击“编辑”后，可直接修改文字；鼠标移到各个方块上会出现“删除此块”，也可使用顶部删除按钮。</div>
 <div class="module-panel active" id="module-courses">
 <section class="hero">
 <h1 data-editable-text="1">AUTOSAR Classic / BSW 跳槽面试 · 总课程</h1>
@@ -273,7 +303,7 @@ body.edit-mode .lesson-detail{
 </div>
 <div class="progress"><div id="courseProgressBar"></div></div>
 <div class="small" id="courseProgressText">课程进度 0 / 137</div>
-</section>
+</section><div class="pwa-install-note" id="pwaInstallNote">iPhone：请用 Safari 的“分享 → 添加到主屏幕”。如果以前已经添加过旧版，请先删除旧图标，再重新添加，才能以独立 App 模式启动。</div>
 <div class="notice editable-region" data-editable-text="1"><b>现在的学习单位是“课程”，不是单个知识点。</b>例如 <span class="cmd">学习 7.2</span> 会一次学完 Flow Control、Block Size、STmin、N_xx timeout；这些底层点仍分别保留为 Z7-06～Z7-09，方便以后精确复习。</div>
 <div class="toolbar">
 <input id="course-search" placeholder="搜索课程或知识点：CanTp / COM timeout / Bus-Off / DEM ..." type="search"/>
@@ -4885,7 +4915,7 @@ document.getElementById('knowledge-search').addEventListener('input',()=>applyFi
 syncUI();
 </script>
 <script id="github-learning-runtime">
-const APP_VERSION = "2026.09.29.4";
+const APP_VERSION = "2026.09.29.5";
 let lastVersionCheckAt = 0;
 
 function htmlToPlain(el){
@@ -5081,7 +5111,7 @@ function downloadEditedHtml(){
   const newVersion=makeDownloadVersion();
   const meta=clone.querySelector('meta[name="app-version"]');if(meta)meta.setAttribute('content',newVersion);
   const runtime=[...clone.querySelectorAll('script')].find(s=>s.id==='github-learning-runtime');
-  if(runtime)runtime.textContent=runtime.textContent.replace(/const APP_VERSION = ["'][^"']+["'];/,`const APP_VERSION = "2026.09.29.4";`);
+  if(runtime)runtime.textContent=runtime.textContent.replace(/const APP_VERSION = ["'][^"']+["'];/,`const APP_VERSION = "2026.09.29.5";`);
   const vs=clone.querySelector('#versionStatus');if(vs)vs.textContent='v'+newVersion;
   clone.querySelectorAll('.module-panel').forEach(x=>x.classList.remove('active'));
   clone.querySelector('#module-courses')?.classList.add('active');
@@ -5095,7 +5125,6 @@ function downloadEditedHtml(){
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);
 }
 </script>
-
 <div aria-hidden="true" class="auth-overlay" id="authOverlay">
 <div aria-labelledby="authTitle" aria-modal="true" class="auth-card" role="dialog">
 <div class="auth-head">
@@ -5372,6 +5401,32 @@ window.addEventListener('DOMContentLoaded',async()=>{
   bindAutosarCloudEvents();
   await initAutosarSupabase();
 });
+</script>
+
+<script id="pwa-runtime">
+const PWA_VERSION = "2026.09.29.5";
+(function(){
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if(standalone) document.documentElement.classList.add('ios-standalone');
+  else if(isiOS) document.documentElement.classList.add('ios-browser');
+
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', async () => {
+      try {
+        const reg = await navigator.serviceWorker.register('./sw.js?v='+encodeURIComponent(PWA_VERSION), {scope:'./'});
+        await reg.update();
+      } catch(e) {
+        console.warn('Service Worker registration failed', e);
+      }
+    });
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if(sessionStorage.getItem('pwa-sw-reloaded') === PWA_VERSION) return;
+      sessionStorage.setItem('pwa-sw-reloaded', PWA_VERSION);
+      location.reload();
+    });
+  }
+})();
 </script>
 </body>
 </html>
