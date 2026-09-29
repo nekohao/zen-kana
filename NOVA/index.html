@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
-<title>AUTOSAR BSW 跳槽学习系统｜合理合并版 v2026.09.29.8</title>
+<title>AUTOSAR BSW 跳槽学习系统｜合理合并版 v2026.09.29.10</title>
 <style>
 :root{
  --bg:#08101e;--panel:#111a2c;--panel2:#17243b;--panel3:#0d1627;--text:#eaf1ff;
@@ -25,8 +25,12 @@ h1{font-size:30px;line-height:1.25;margin:0 0 8px} h2{font-size:23px;margin:24px
 .sub{color:var(--muted);max-width:980px}
 .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .badge,.pill,.kp-chip{display:inline-block;border-radius:999px;border:1px solid #334b72;background:#172540;padding:4px 9px;font-size:12px}
-.p0{background:#4a1d2b;border-color:#803447;color:#ffd9d9}.p1{background:#493819;border-color:#735a28;color:#fff0ad}.p2{background:#15382a;border-color:#2d654a;color:#caffdf}
-.depth{background:#18335a;border-color:#325e95;color:#d8e7ff}
+/* ===== 统一强度色阶：0 低 / 1 中 / 2 高 ===== */
+/* 重要性与学习深度共用同一套视觉语言：冷灰 → 琥珀 → 红橙 */
+.importance-0,.depth-0{background:#202a3a;border-color:#405069;color:#b9c6d8}
+.importance-1,.depth-1{background:#4b3412;border-color:#8b6723;color:#ffd873}
+.importance-2,.depth-2{background:#4b201c;border-color:#a54a39;color:#ff9a72;box-shadow:0 0 0 1px rgba(255,112,81,.05),0 0 16px rgba(255,92,62,.07)}
+.depth{}
 .notice{margin:16px 0;background:#111d33;border-left:4px solid var(--accent);padding:13px 16px;border-radius:9px;color:#d1dcf0}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:16px 0}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px}.stat b{display:block;font-size:22px}
@@ -301,7 +305,7 @@ html.ios-browser .pwa-install-note{display:block}
 @media print{.reference-card{break-inside:avoid;background:#fff;color:#111}}
 
 
-/* ===== iPhone App Shell v2026.09.29.8 ===== */
+/* ===== iPhone App Shell v2026.09.29.10 ===== */
 .mobile-app,.mobile-detail-page,.mobile-bottom-sheet,.mobile-return-app{display:none}
 
 @media(max-width:820px){
@@ -379,11 +383,28 @@ html.ios-browser .pwa-install-note{display:block}
 
   .m-chapter-card{padding:15px 16px}.m-chapter-top{display:flex;align-items:flex-start;gap:12px}.m-chapter-num{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto;background:#152b49;color:#9ec2ff;font:850 13px ui-monospace,SFMono-Regular,Consolas,monospace}.m-chapter-main{flex:1;min-width:0}.m-chapter-title{font-size:14px;line-height:1.4;font-weight:790}.m-chapter-meta{font-size:10.5px;color:var(--m-muted);margin-top:4px}.m-mini-track{height:4px;border-radius:99px;background:#08101c;margin-top:10px;overflow:hidden}.m-mini-track i{display:block;height:100%;background:#659ef4;border-radius:99px}
 
-  .m-lesson-card{display:flex;align-items:center;gap:11px;padding:13px 14px}.m-check-ring{width:24px;height:24px;border-radius:50%;border:1.5px solid #465d7d;display:grid;place-items:center;flex:0 0 auto;color:white;font-size:13px}.m-check-ring.done{border-color:#55c98d;background:#2b9a67}.m-lesson-info{flex:1;min-width:0}.m-lesson-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.m-lesson-id{font:800 11.5px ui-monospace,SFMono-Regular,Consolas,monospace;color:#9fc2ff}.m-priority{font-size:9px;font-weight:850;padding:2px 6px;border-radius:999px}.m-priority.P0{background:rgba(255,116,116,.13);color:#ff9a9f}.m-priority.P1{background:rgba(255,211,107,.13);color:#ffe29c}.m-priority.P2{background:rgba(116,219,167,.13);color:#91e8bb}.m-lesson-title{font-size:13.5px;font-weight:760;line-height:1.4;margin-top:3px}.m-lesson-meta{font-size:10.5px;color:var(--m-muted);margin-top:3px}.m-chevron{font-size:19px;color:#5e7391}
+  .m-lesson-card{display:flex;align-items:center;gap:11px;padding:13px 14px}.m-check-ring{width:24px;height:24px;border-radius:50%;border:1.5px solid #465d7d;display:grid;place-items:center;flex:0 0 auto;color:white;font-size:13px}.m-check-ring.done{border-color:#55c98d;background:#2b9a67}.m-lesson-info{flex:1;min-width:0}.m-lesson-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.m-lesson-id{font:800 11.5px ui-monospace,SFMono-Regular,Consolas,monospace;color:#9fc2ff}.m-importance,.m-depth-chip{font-size:9px;font-weight:850;padding:2px 6px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.m-importance.i0,.m-depth-chip.d0{background:rgba(135,151,176,.11);border-color:rgba(146,163,190,.24);color:#b8c5d8;box-shadow:inset 0 0 12px rgba(133,151,180,.03)}
+.m-importance.i1,.m-depth-chip.d1{background:rgba(255,190,61,.14);border-color:rgba(255,194,69,.34);color:#ffd56f;box-shadow:0 0 12px rgba(255,181,42,.05)}
+.m-importance.i2,.m-depth-chip.d2{background:linear-gradient(135deg,rgba(255,91,63,.22),rgba(255,132,72,.13));border-color:rgba(255,112,79,.50);color:#ff9a72;box-shadow:0 0 14px rgba(255,77,50,.10),inset 0 0 10px rgba(255,108,64,.05)}
+
+  /* 课程气氛：重要性 + 学习深度共同决定整张卡的“热度”，不增加第三个标签 */
+  .m-lesson-card,.m-chapter-card,.m-row,.m-continue,.m-detail-hero{position:relative;overflow:hidden;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
+  .m-intensity-0{border-color:rgba(124,145,175,.13)!important;background:linear-gradient(145deg,rgba(15,26,45,.78),rgba(11,20,35,.84))!important}
+  .m-intensity-1{border-color:rgba(141,160,187,.20)!important;background:linear-gradient(145deg,rgba(19,31,50,.90),rgba(12,22,38,.92))!important}
+  .m-intensity-2{border-color:rgba(241,181,61,.28)!important;background:radial-gradient(circle at 100% 0,rgba(255,191,68,.08),transparent 36%),linear-gradient(145deg,rgba(37,31,27,.92),rgba(16,25,40,.94))!important;box-shadow:0 10px 28px rgba(0,0,0,.13),0 0 18px rgba(255,179,47,.035)!important}
+  .m-intensity-3{border-color:rgba(255,132,69,.40)!important;background:radial-gradient(circle at 100% 0,rgba(255,125,63,.13),transparent 40%),linear-gradient(145deg,rgba(48,29,25,.94),rgba(18,25,40,.96))!important;box-shadow:0 12px 30px rgba(0,0,0,.17),0 0 22px rgba(255,112,55,.055)!important}
+  .m-intensity-4{border-color:rgba(255,91,65,.58)!important;background:radial-gradient(circle at 98% -5%,rgba(255,86,56,.22),transparent 43%),linear-gradient(145deg,rgba(59,28,24,.97),rgba(18,24,39,.98))!important;box-shadow:0 14px 34px rgba(0,0,0,.20),0 0 28px rgba(255,72,46,.11),inset 0 1px 0 rgba(255,160,125,.04)!important}
+  .m-intensity-3::after,.m-intensity-4::after{content:"";position:absolute;pointer-events:none;right:-38px;top:-54px;width:128px;height:128px;border-radius:50%;background:radial-gradient(circle,rgba(255,118,72,.14),rgba(255,100,58,0) 70%)}
+  .m-intensity-4::before{content:"";position:absolute;pointer-events:none;left:0;top:16%;bottom:16%;width:3px;border-radius:0 8px 8px 0;background:linear-gradient(180deg,#ffb16f,#ff5d47);box-shadow:0 0 12px rgba(255,82,56,.40)}
+  .m-detail-hero.m-intensity-0,.m-detail-hero.m-intensity-1,.m-detail-hero.m-intensity-2,.m-detail-hero.m-intensity-3,.m-detail-hero.m-intensity-4{padding:17px 15px 16px;margin:0 0 14px;border:1px solid;border-radius:22px}
+  .m-segment button.m-level-0.active{background:#202a3a;color:#c1ccdc;box-shadow:0 3px 12px rgba(0,0,0,.16)}
+  .m-segment button.m-level-1.active{background:#4a3515;color:#ffda76;box-shadow:0 3px 14px rgba(255,180,35,.06)}
+  .m-segment button.m-level-2.active{background:linear-gradient(135deg,#5a251e,#47231f);color:#ff9a72;box-shadow:0 3px 16px rgba(255,75,47,.10),inset 0 0 0 1px rgba(255,112,79,.18)}.m-lesson-title{font-size:13.5px;font-weight:760;line-height:1.4;margin-top:3px}.m-lesson-meta{font-size:10.5px;color:var(--m-muted);margin-top:3px}.m-chevron{font-size:19px;color:#5e7391}
 
   .m-empty{padding:34px 18px;text-align:center;color:var(--m-muted);font-size:13px;border:1px dashed rgba(119,151,197,.2);border-radius:18px}
 
-  .m-kp-group{margin:18px 0 7px;font-size:12px;font-weight:800;color:#8499b8}.m-kp-card{display:flex;align-items:flex-start;gap:11px;padding:12px 13px;border-bottom:1px solid rgba(116,145,184,.09);background:rgba(15,26,45,.58)}.m-kp-card:first-of-type{border-radius:16px 16px 0 0}.m-kp-card:last-of-type{border-radius:0 0 16px 16px;border-bottom:0}.m-kp-toggle{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:1.5px solid #465d7d;border-radius:7px;flex:0 0 auto;margin:1px 0 0;background:#0a1423;display:grid;place-content:center}.m-kp-toggle:checked{background:#2a9c68;border-color:#4bc487}.m-kp-toggle:checked:after{content:"✓";color:white;font-size:14px;font-weight:900}.m-kp-content{min-width:0;flex:1}.m-kp-line{display:flex;gap:7px;align-items:baseline}.m-kp-code{font:800 11px ui-monospace,SFMono-Regular,Consolas,monospace;color:#91baff}.m-kp-title{font-size:13.5px;font-weight:770}.m-kp-desc{font-size:11.5px;color:#90a1bb;line-height:1.5;margin-top:4px;-webkit-user-select:text;user-select:text}
+  .m-kp-group{margin:18px 0 7px;font-size:12px;font-weight:800;color:#8499b8}.m-kp-card{display:flex;align-items:flex-start;gap:11px;padding:12px 13px;border-bottom:1px solid rgba(116,145,184,.09);background:rgba(15,26,45,.58)}.m-kp-card:first-of-type{border-radius:16px 16px 0 0}.m-kp-card:last-of-type{border-radius:0 0 16px 16px;border-bottom:0}.m-kp-toggle{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:1.5px solid #465d7d;border-radius:7px;flex:0 0 auto;margin:1px 0 0;background:#0a1423;display:grid;place-content:center}.m-kp-toggle:checked{background:#2a9c68;border-color:#4bc487}.m-kp-toggle:checked:after{content:"✓";color:white;font-size:14px;font-weight:900}.m-kp-content{min-width:0;flex:1}.m-kp-line{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.m-kp-code{font:800 11px ui-monospace,SFMono-Regular,Consolas,monospace;color:#91baff}.m-kp-title{font-size:13.5px;font-weight:770}.m-kp-desc{font-size:11.5px;color:#90a1bb;line-height:1.5;margin-top:4px;-webkit-user-select:text;user-select:text}
 
   .m-profile-card{padding:17px;border:1px solid var(--m-line);border-radius:21px;background:linear-gradient(145deg,#12233b,#0d192b);display:flex;align-items:center;gap:13px;margin:12px 0 18px}.m-avatar{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:#213c62;color:#cfe0ff;font-weight:850;font-size:18px}.m-profile-main{flex:1;min-width:0}.m-profile-email{font-size:14px;font-weight:790;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.m-profile-sync{font-size:11px;color:#79d9a7;margin-top:3px}.m-settings-group{margin:19px 2px 8px;font-size:11px;color:#7f92ae;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.m-setting-row{display:flex;align-items:center;gap:12px;border-radius:15px;padding:13px 14px}.m-setting-icon{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:#18304f;font-size:15px}.m-setting-copy{flex:1}.m-setting-title{display:block;font-size:13.5px;font-weight:760}.m-setting-sub{display:block;font-size:10.5px;color:var(--m-muted);margin-top:2px}.m-version-note{text-align:center;color:#5f7391;font-size:10.5px;margin:18px 0 2px}
 
@@ -419,7 +440,7 @@ html.ios-browser .pwa-install-note{display:block}
   .auth-card{max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow:auto}
 }
 </style>
-<meta content="2026.09.29.8" name="app-version"/><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><meta content="#08101e" name="theme-color"/><meta content="yes" name="mobile-web-app-capable"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><meta content="BSW 学习" name="apple-mobile-web-app-title"/><link href="./manifest.webmanifest" rel="manifest"/><link href="./icons/apple-touch-icon.png" rel="apple-touch-icon"/><link href="./icons/icon-192.png" rel="icon" sizes="192x192" type="image/png"/><link href="./icons/icon-512.png" rel="icon" sizes="512x512" type="image/png"/></head>
+<meta content="2026.09.29.10" name="app-version"/><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><meta content="#08101e" name="theme-color"/><meta content="yes" name="mobile-web-app-capable"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><meta content="BSW 学习" name="apple-mobile-web-app-title"/><link href="./manifest.webmanifest" rel="manifest"/><link href="./icons/apple-touch-icon.png" rel="apple-touch-icon"/><link href="./icons/icon-192.png" rel="icon" sizes="192x192" type="image/png"/><link href="./icons/icon-512.png" rel="icon" sizes="512x512" type="image/png"/></head>
 <body>
 
 <!-- ===== iPhone App Shell ===== -->
@@ -459,12 +480,12 @@ html.ios-browser .pwa-install-note{display:block}
 <button class="mobile-return-app" id="mobileReturnApp" type="button" onclick="mExitDesktopMode()">← 返回 App</button>
 
 <div class="container">
-<nav aria-label="知识库模块切换" class="top-tabs"><button class="top-tab active" id="tab-courses" onclick="switchTopModule('courses')">📚 总课程</button><button class="top-tab" id="tab-knowledge" onclick="switchTopModule('knowledge')">🧩 392 个知识点</button><button class="top-tab" id="tab-protocol" onclick="switchTopModule('protocol')">🤖 教学协议（给 ChatGPT）</button><span class="nav-spacer"></span><button class="editor-btn" id="editToggle" onclick="toggleEditMode()">✏ 编辑</button><button class="editor-btn danger-btn" disabled="disabled" id="deleteRegionBtn" onclick="deleteSelectedRegion()">🗑 删除选中区域</button><button class="editor-btn download-btn" id="downloadHtmlBtn" onclick="downloadEditedHtml()">⬇ 下载新 HTML</button><button class="cloud-account-btn" id="cloudAccountBtn" onclick="openAuthPanel()" type="button">☁ 云同步：未登录</button><span class="version-status" id="versionStatus">v2026.09.29.8</span></nav><div class="editor-hint" id="editorHint">编辑模式关闭。点击“编辑”后，可直接修改文字；鼠标移到各个方块上会出现“删除此块”，也可使用顶部删除按钮。</div>
+<nav aria-label="知识库模块切换" class="top-tabs"><button class="top-tab active" id="tab-courses" onclick="switchTopModule('courses')">📚 总课程</button><button class="top-tab" id="tab-knowledge" onclick="switchTopModule('knowledge')">🧩 392 个知识点</button><button class="top-tab" id="tab-protocol" onclick="switchTopModule('protocol')">🤖 教学协议（给 ChatGPT）</button><span class="nav-spacer"></span><button class="editor-btn" id="editToggle" onclick="toggleEditMode()">✏ 编辑</button><button class="editor-btn danger-btn" disabled="disabled" id="deleteRegionBtn" onclick="deleteSelectedRegion()">🗑 删除选中区域</button><button class="editor-btn download-btn" id="downloadHtmlBtn" onclick="downloadEditedHtml()">⬇ 下载新 HTML</button><button class="cloud-account-btn" id="cloudAccountBtn" onclick="openAuthPanel()" type="button">☁ 云同步：未登录</button><span class="version-status" id="versionStatus">v2026.09.29.10</span></nav><div class="editor-hint" id="editorHint">编辑模式关闭。点击“编辑”后，可直接修改文字；鼠标移到各个方块上会出现“删除此块”，也可使用顶部删除按钮。</div>
 <div class="module-panel active" id="module-courses">
 <section class="hero">
 <h1 data-editable-text="1">AUTOSAR Classic / BSW 跳槽面试 · 总课程</h1>
 <div class="sub" data-editable-text="1">合理合并后的正式学习体系：<b>107 节正式课程</b>，底层 <b>392 个 Z 知识点一个不删</b>。课程不是为了凑数量而压缩：只有属于同一机制、同一调用链、同一状态机或同一 Debug 闭环的内容才合并；单课建议约 25～35 分钟，少数重型课约 35～40 分钟。公司映射、学习避坑和路线规划降为参考专题，不计入课程进度。</div>
-<div class="meta"><span class="badge">19 章正式技术/求职课程</span><span class="badge">107 节正式课程</span><span class="badge">392 个知识点</span><span class="badge">4 个参考专题</span><span class="badge">P0 必须吃透</span><span class="badge">P1 重要补强</span><span class="badge">P2 JD/项目驱动</span></div>
+<div class="meta"><span class="badge">19 章正式技术/求职课程</span><span class="badge">107 节正式课程</span><span class="badge">392 个知识点</span><span class="badge">4 个参考专题</span><span class="badge importance-2">重要性 2</span><span class="badge importance-1">重要性 1</span><span class="badge importance-0">重要性 0</span></div>
 <div class="progress"><div id="courseProgressBar"></div></div>
 <div class="small" id="courseProgressText">课程进度 0 / 107</div>
 </section><div class="pwa-install-note" id="pwaInstallNote">iPhone：请用 Safari 的“分享 → 添加到主屏幕”。如果以前已经添加过旧版，请先删除旧图标，再重新添加，才能以独立 App 模式启动。</div>
@@ -472,9 +493,9 @@ html.ios-browser .pwa-install-note{display:block}
 <div class="toolbar">
 <input id="course-search" placeholder="搜索课程或知识点：CanTp / COM timeout / Bus-Off / DEM ..." type="search"/>
 <button class="ctrl" onclick="setFilter('ALL','course')">全部</button>
-<button class="ctrl" onclick="setFilter('P0','course')">P0</button>
-<button class="ctrl" onclick="setFilter('P1','course')">P1</button>
-<button class="ctrl" onclick="setFilter('P2','course')">P2</button>
+<button class="ctrl" onclick="setFilter('P0','course')">重要性 2</button>
+<button class="ctrl" onclick="setFilter('P1','course')">重要性 1</button>
+<button class="ctrl" onclick="setFilter('P2','course')">重要性 0</button>
 <button class="ctrl" onclick="toggleAll('course',true)">全部展开</button>
 <button class="ctrl" onclick="toggleAll('course',false)">全部折叠</button>
 <button class="ctrl" onclick="window.print()">打印</button>
@@ -483,8 +504,8 @@ html.ios-browser .pwa-install-note{display:block}
 <div class="toc editable-region"><a href="#lesson-ch-1">第1章 · 面试总策略：项目深挖与工程化表达</a><a href="#lesson-ch-2">第2章 · Embedded C、编译链接与内存基础</a><a href="#lesson-ch-3">第3章 · MCU、异常、中断、RTOS 与 AUTOSAR OS</a><a href="#lesson-ch-4">第4章 · AUTOSAR Classic 架构、方法学、RTE 与 ARXML</a><a href="#lesson-ch-5">第5章 · CAN / CAN FD：协议、控制器与物理层</a><a href="#lesson-ch-6">第6章 · AUTOSAR Communication Stack：COM / PduR / CanIf / Can Driver</a><a href="#lesson-ch-7">第7章 · CanTp / ISO-TP (ISO 15765-2)</a><a href="#lesson-ch-8">第8章 · 网络管理与模式管理：ComM / CanSM / Nm / CanNm / BswM / EcuM</a><a href="#lesson-ch-9">第9章 · UDS 与 DCM</a><a href="#lesson-ch-10">第10章 · DEM / FIM：故障管理与 DTC</a><a href="#lesson-ch-11">第11章 · NvM / MemIf / Fee / Ea / Fls：非易失存储栈</a><a href="#lesson-ch-12">第12章 · 系统服务：EcuM / BswM / WdgM / DET / SchM / CRC</a><a href="#lesson-ch-13">第13章 · E2E、功能安全机制与 SecOC/网络安全</a><a href="#lesson-ch-14">第14章 · Bootloader / OTA / XCP / 标定</a><a href="#lesson-ch-15">第15章 · 车载以太网、SOME/IP、DoIP、Time Sync（未来型 BSW 补强）</a><a href="#lesson-ch-16">第16章 · 工具链、集成、测试与调试</a><a href="#lesson-ch-17">第17章 · ASPICE、ISO 26262、软件质量与测试方法</a><a href="#lesson-ch-18">第18章 · 必须练熟的 18 类 Debug 场景题</a><a href="#lesson-ch-19">第19章 · 行为面、英文、系统思维与资深工程师问题</a><a href="#ref-ch-20">参考 · 按目标公司反推学习重点（2026-09）</a><a href="#ref-ch-21">参考 · 低优先级 / 容易浪费时间的内容</a><a href="#ref-ch-22">参考 · 建议学习顺序与“毕业标准”</a></div>
 <h2>全部课程</h2><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-1" open="">
 <summary data-editable-text="1">第1章 · 面试总策略：项目深挖与工程化表达
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">4 课 / 12 点</span>
 </summary>
 <div class="chapter-body">
@@ -552,8 +573,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-2" open="">
 <summary data-editable-text="1">第2章 · Embedded C、编译链接与内存基础
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">9 课 / 23 点</span>
 </summary>
 <div class="chapter-body">
@@ -696,8 +717,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-3" open="">
 <summary data-editable-text="1">第3章 · MCU、异常、中断、RTOS 与 AUTOSAR OS
-        <span class="pill p0">P0</span>
-<span class="pill depth">L2-L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">7 课 / 21 点</span>
 </summary>
 <div class="chapter-body">
@@ -810,8 +831,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-4" open="">
 <summary data-editable-text="1">第4章 · AUTOSAR Classic 架构、方法学、RTE 与 ARXML
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">6 课 / 22 点</span>
 </summary>
 <div class="chapter-body">
@@ -909,8 +930,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-5" open="">
 <summary data-editable-text="1">第5章 · CAN / CAN FD：协议、控制器与物理层
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">7 课 / 24 点</span>
 </summary>
 <div class="chapter-body">
@@ -1023,8 +1044,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-6" open="">
 <summary data-editable-text="1">第6章 · AUTOSAR Communication Stack：COM / PduR / CanIf / Can Driver
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">8 课 / 30 点</span>
 </summary>
 <div class="chapter-body">
@@ -1152,8 +1173,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-7" open="">
 <summary data-editable-text="1">第7章 · CanTp / ISO-TP (ISO 15765-2)
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">4 课 / 15 点</span>
 </summary>
 <div class="chapter-body">
@@ -1221,8 +1242,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-8" open="">
 <summary data-editable-text="1">第8章 · 网络管理与模式管理：ComM / CanSM / Nm / CanNm / BswM / EcuM
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">6 课 / 23 点</span>
 </summary>
 <div class="chapter-body">
@@ -1320,8 +1341,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-9" open="">
 <summary data-editable-text="1">第9章 · UDS 与 DCM
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">7 课 / 26 点</span>
 </summary>
 <div class="chapter-body">
@@ -1435,13 +1456,13 @@ html.ios-browser .pwa-install-note{display:block}
 <div class="reference-card editable-region">
 <div class="reference-title" data-editable-text="1">📎 参考：OBD 基础（目标岗位/项目涉及时再深入）</div>
 <div class="small">不计入正式课程进度；需要时再补。</div>
-<div class="point-row"><span class="zcode" data-editable-text="1">Z9-26</span><span class="ptitle" data-editable-text="1">OBD 基础</span><span class="pdesc" data-editable-text="1">若岗位/项目涉及法规诊断，再深入 Mode/PID/DTC 体系；否则 P1。</span></div>
+<div class="point-row"><span class="zcode" data-editable-text="1">Z9-26</span><span class="ptitle" data-editable-text="1">OBD 基础</span><span class="pdesc" data-editable-text="1">若岗位/项目涉及法规诊断，再深入 Mode/PID/DTC 体系；否则按重要性 1 处理。</span></div>
 </div></div>
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-10" open="">
 <summary data-editable-text="1">第10章 · DEM / FIM：故障管理与 DTC
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">6 课 / 22 点</span>
 </summary>
 <div class="chapter-body">
@@ -1539,8 +1560,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P1" id="lesson-ch-11" open="">
 <summary data-editable-text="1">第11章 · NvM / MemIf / Fee / Ea / Fls：非易失存储栈
-        <span class="pill p1">P1</span>
-<span class="pill depth">L2-L3</span>
+        <span class="pill importance importance-1">重要性 1</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">5 课 / 18 点</span>
 </summary>
 <div class="chapter-body">
@@ -1623,8 +1644,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P1" id="lesson-ch-12" open="">
 <summary data-editable-text="1">第12章 · 系统服务：EcuM / BswM / WdgM / DET / SchM / CRC
-        <span class="pill p1">P1</span>
-<span class="pill depth">L2-L3</span>
+        <span class="pill importance importance-1">重要性 1</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">4 课 / 15 点</span>
 </summary>
 <div class="chapter-body">
@@ -1692,8 +1713,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P1" id="lesson-ch-13" open="">
 <summary data-editable-text="1">第13章 · E2E、功能安全机制与 SecOC/网络安全
-        <span class="pill p1">P1</span>
-<span class="pill depth">L2-L3</span>
+        <span class="pill importance importance-1">重要性 1</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">4 课 / 15 点</span>
 </summary>
 <div class="chapter-body">
@@ -1761,8 +1782,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P1" id="lesson-ch-14" open="">
 <summary data-editable-text="1">第14章 · Bootloader / OTA / XCP / 标定
-        <span class="pill p1">P1</span>
-<span class="pill depth">L2-L3</span>
+        <span class="pill importance importance-1">重要性 1</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">3 课 / 14 点</span>
 </summary>
 <div class="chapter-body">
@@ -1815,8 +1836,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P1" id="lesson-ch-15" open="">
 <summary data-editable-text="1">第15章 · 车载以太网、SOME/IP、DoIP、Time Sync（未来型 BSW 补强）
-        <span class="pill p1">P1</span>
-<span class="pill depth">L2</span>
+        <span class="pill importance importance-1">重要性 1</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">5 课 / 14 点</span>
 </summary>
 <div class="chapter-body">
@@ -1899,8 +1920,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-16" open="">
 <summary data-editable-text="1">第16章 · 工具链、集成、测试与调试
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">6 课 / 22 点</span>
 </summary>
 <div class="chapter-body">
@@ -1998,8 +2019,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-17" open="">
 <summary data-editable-text="1">第17章 · ASPICE、ISO 26262、软件质量与测试方法
-        <span class="pill p0">P0</span>
-<span class="pill depth">L2</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">5 课 / 22 点</span>
 </summary>
 <div class="chapter-body">
@@ -2082,8 +2103,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P0" id="lesson-ch-18" open="">
 <summary data-editable-text="1">第18章 · 必须练熟的 18 类 Debug 场景题
-        <span class="pill p0">P0</span>
-<span class="pill depth">L3</span>
+        <span class="pill importance importance-2">重要性 2</span>
+<span class="pill depth depth-2">学习深度 2</span>
 <span class="pill">8 课 / 18 点</span>
 </summary>
 <div class="chapter-body">
@@ -2211,8 +2232,8 @@ html.ios-browser .pwa-install-note{display:block}
 </div>
 </details><details class="chapter course-chapter editable-region" data-priority="P1" id="lesson-ch-19" open="">
 <summary data-editable-text="1">第19章 · 行为面、英文、系统思维与资深工程师问题
-        <span class="pill p1">P1</span>
-<span class="pill depth">L2</span>
+        <span class="pill importance importance-1">重要性 1</span>
+<span class="pill depth depth-1">学习深度 1</span>
 <span class="pill">3 课 / 12 点</span>
 </summary>
 <div class="chapter-body">
@@ -2271,7 +2292,7 @@ html.ios-browser .pwa-install-note{display:block}
 <div class="reference-card editable-region">
 <div class="reference-title" data-editable-text="1">📎 目标公司能力映射：Bosch / ZF / AUMOVIO / Nexteer 与共同交集</div>
 <div class="small">参考专题，不计入 107 节正式课程。</div>
-<div class="point-row"><span class="zcode" data-editable-text="1">Z20-01</span><span class="ptitle" data-editable-text="1">Bosch / 博世</span><span class="pdesc" data-editable-text="1">第一梯队：Classic AUTOSAR、CAN/CAN FD/ETH、DCM、DEM/FIM、PduR/NvM/Wdg、C/C++、CANoe/CANalyzer、Lauterbach/GDB、问题定位、ISO26262/ASPICE。苏州新型 BSW/通信岗位还明显加强 SOME/IP、DoIP、DDS、gPTP/TSN、Wireshark。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-02</span><span class="ptitle" data-editable-text="1">ZF / 采埃孚</span><span class="pdesc" data-editable-text="1">第一梯队：COM/DCM/DEM/NvM、CAN/CAN FD/FlexRay、UDS、BSW Mode Mgmt、OS、DaVinci、Vector SIP/第三方组件集成、Trace32、QAC/Polyspace/TESSY、ARXML、MISRA、ISO26262、ASPICE/V-cycle。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-03</span><span class="ptitle" data-editable-text="1">AUMOVIO / 原大陆汽车电子</span><span class="pdesc" data-editable-text="1">第一梯队：Embedded C、AUTOSAR 配置集成、EB tresos/DaVinci/AUTOSAR Builder、CAN/SPI/LIN、CANoe/CAPL、debug/problem solving、ASPICE；不同团队再叠加 Bootloader/OTA、诊断、RTE/Mode/NM。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-04</span><span class="ptitle" data-editable-text="1">Nexteer / 耐世特</span><span class="pdesc" data-editable-text="1">第一梯队：Embedded C、实时性/性能、AUTOSAR 软件基础设施与集成、CAN、MCU/外设、Vector/ETAS、ISO26262、ASPICE、MISRA、调试/RCA；安全机制如 MPU/Watchdog，EPS/SbW 相关团队还看控制系统与系统集成。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-05</span><span class="ptitle" data-editable-text="1">共同交集</span><span class="pdesc" data-editable-text="1">C + CAN + AUTOSAR CP + 项目/Debug + UDS/Diagnostics + Toolchain + ASPICE/ISO26262，是最值得优先投入的交集。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-06</span><span class="ptitle" data-editable-text="1">你的差异化方向</span><span class="pdesc" data-editable-text="1">如果目标继续是 Communication BSW，把 COM/PduR/CanIf/CanTp/ComM/CanSM/CanNm/BswM/E2E 学到 L3；这会比平均补所有 MCAL 更有回报。</span></div>
+<div class="point-row"><span class="zcode" data-editable-text="1">Z20-01</span><span class="ptitle" data-editable-text="1">Bosch / 博世</span><span class="pdesc" data-editable-text="1">第一梯队：Classic AUTOSAR、CAN/CAN FD/ETH、DCM、DEM/FIM、PduR/NvM/Wdg、C/C++、CANoe/CANalyzer、Lauterbach/GDB、问题定位、ISO26262/ASPICE。苏州新型 BSW/通信岗位还明显加强 SOME/IP、DoIP、DDS、gPTP/TSN、Wireshark。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-02</span><span class="ptitle" data-editable-text="1">ZF / 采埃孚</span><span class="pdesc" data-editable-text="1">第一梯队：COM/DCM/DEM/NvM、CAN/CAN FD/FlexRay、UDS、BSW Mode Mgmt、OS、DaVinci、Vector SIP/第三方组件集成、Trace32、QAC/Polyspace/TESSY、ARXML、MISRA、ISO26262、ASPICE/V-cycle。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-03</span><span class="ptitle" data-editable-text="1">AUMOVIO / 原大陆汽车电子</span><span class="pdesc" data-editable-text="1">第一梯队：Embedded C、AUTOSAR 配置集成、EB tresos/DaVinci/AUTOSAR Builder、CAN/SPI/LIN、CANoe/CAPL、debug/problem solving、ASPICE；不同团队再叠加 Bootloader/OTA、诊断、RTE/Mode/NM。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-04</span><span class="ptitle" data-editable-text="1">Nexteer / 耐世特</span><span class="pdesc" data-editable-text="1">第一梯队：Embedded C、实时性/性能、AUTOSAR 软件基础设施与集成、CAN、MCU/外设、Vector/ETAS、ISO26262、ASPICE、MISRA、调试/RCA；安全机制如 MPU/Watchdog，EPS/SbW 相关团队还看控制系统与系统集成。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-05</span><span class="ptitle" data-editable-text="1">共同交集</span><span class="pdesc" data-editable-text="1">C + CAN + AUTOSAR CP + 项目/Debug + UDS/Diagnostics + Toolchain + ASPICE/ISO26262，是最值得优先投入的交集。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z20-06</span><span class="ptitle" data-editable-text="1">你的差异化方向</span><span class="pdesc" data-editable-text="1">如果目标继续是 Communication BSW，把 COM/PduR/CanIf/CanTp/ComM/CanSM/CanNm/BswM/E2E 学到学习深度 2；这会比平均补所有 MCAL 更有回报。</span></div>
 </div></div>
 </details><details class="chapter reference-chapter editable-region" id="ref-ch-21" open="">
 <summary data-editable-text="1">参考 · 原第21章 · 低优先级 / 容易浪费时间的内容
@@ -2291,7 +2312,7 @@ html.ios-browser .pwa-install-note{display:block}
 <div class="reference-card editable-region">
 <div class="reference-title" data-editable-text="1">📎 学习路线、毕业标准、模拟面试与投递前定制</div>
 <div class="small">参考专题，不计入 107 节正式课程。</div>
-<div class="point-row"><span class="zcode" data-editable-text="1">Z22-01</span><span class="ptitle" data-editable-text="1">阶段 A：底座</span><span class="pdesc" data-editable-text="1">2 → 3 → 4 → 5；保证 C/MCU/AUTOSAR/CAN 不存在硬伤。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-02</span><span class="ptitle" data-editable-text="1">阶段 B：你的主航道</span><span class="pdesc" data-editable-text="1">6 → 7 → 8；通信栈必须做到能画调用链、状态机、配置和 debug。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-03</span><span class="ptitle" data-editable-text="1">阶段 C：诊断闭环</span><span class="pdesc" data-editable-text="1">9 → 10 → 11；打通 UDS/DCM/DEM/NvM。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-04</span><span class="ptitle" data-editable-text="1">阶段 D：系统级</span><span class="pdesc" data-editable-text="1">12 → 13 → 14；Mode/Wdg/E2E/Safety/Boot。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-05</span><span class="ptitle" data-editable-text="1">阶段 E：现代补强</span><span class="pdesc" data-editable-text="1">15；重点补 Ethernet/SOMEIP/DoIP/TimeSync，尤其 Bosch 新岗位。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-06</span><span class="ptitle" data-editable-text="1">阶段 F：工程化</span><span class="pdesc" data-editable-text="1">16 → 17 → 18 → 19；工具、流程、场景、表达。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-07</span><span class="ptitle" data-editable-text="1">P0 毕业标准</span><span class="pdesc" data-editable-text="1">任一 P0 主题：能在白板画结构；3 分钟解释；回答 3 层追问；给出至少一个项目/Debug 例子。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-08</span><span class="ptitle" data-editable-text="1">L3 毕业标准</span><span class="pdesc" data-editable-text="1">不是“知道定义”，而是能解释运行时数据流/状态机、关键配置、异常模式、观测点和定位顺序。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-09</span><span class="ptitle" data-editable-text="1">模拟面试标准</span><span class="pdesc" data-editable-text="1">连续 45–60 分钟：项目深挖 + C + CAN + AUTOSAR + 通信/诊断 + Debug，不靠查资料。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-10</span><span class="ptitle" data-editable-text="1">投递前公司化</span><span class="pdesc" data-editable-text="1">拿到具体 JD 后，只做 20% 定制：按第 20 章的公司映射提高对应模块优先级，不推翻整个知识树。</span></div>
+<div class="point-row"><span class="zcode" data-editable-text="1">Z22-01</span><span class="ptitle" data-editable-text="1">阶段 A：底座</span><span class="pdesc" data-editable-text="1">2 → 3 → 4 → 5；保证 C/MCU/AUTOSAR/CAN 不存在硬伤。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-02</span><span class="ptitle" data-editable-text="1">阶段 B：你的主航道</span><span class="pdesc" data-editable-text="1">6 → 7 → 8；通信栈必须做到能画调用链、状态机、配置和 debug。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-03</span><span class="ptitle" data-editable-text="1">阶段 C：诊断闭环</span><span class="pdesc" data-editable-text="1">9 → 10 → 11；打通 UDS/DCM/DEM/NvM。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-04</span><span class="ptitle" data-editable-text="1">阶段 D：系统级</span><span class="pdesc" data-editable-text="1">12 → 13 → 14；Mode/Wdg/E2E/Safety/Boot。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-05</span><span class="ptitle" data-editable-text="1">阶段 E：现代补强</span><span class="pdesc" data-editable-text="1">15；重点补 Ethernet/SOMEIP/DoIP/TimeSync，尤其 Bosch 新岗位。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-06</span><span class="ptitle" data-editable-text="1">阶段 F：工程化</span><span class="pdesc" data-editable-text="1">16 → 17 → 18 → 19；工具、流程、场景、表达。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-07</span><span class="ptitle" data-editable-text="1">重要性 2 毕业标准</span><span class="pdesc" data-editable-text="1">任一重要性 2 主题：能在白板画结构；3 分钟解释；回答 3 层追问；给出至少一个项目/Debug 例子。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-08</span><span class="ptitle" data-editable-text="1">学习深度 2 毕业标准</span><span class="pdesc" data-editable-text="1">不是“知道定义”，而是能解释运行时数据流/状态机、关键配置、异常模式、观测点和定位顺序。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-09</span><span class="ptitle" data-editable-text="1">模拟面试标准</span><span class="pdesc" data-editable-text="1">连续 45–60 分钟：项目深挖 + C + CAN + AUTOSAR + 通信/诊断 + Debug，不靠查资料。</span></div><div class="point-row"><span class="zcode" data-editable-text="1">Z22-10</span><span class="ptitle" data-editable-text="1">投递前公司化</span><span class="pdesc" data-editable-text="1">拿到具体 JD 后，只做 20% 定制：按第 20 章的公司映射提高对应模块优先级，不推翻整个知识树。</span></div>
 </div></div>
 </details>
 
@@ -2327,15 +2348,15 @@ html.ios-browser .pwa-install-note{display:block}
 <div class="toolbar">
 <input id="knowledge-search" placeholder="搜索 Z 编号、标题或描述 ..." type="search"/>
 <button class="ctrl" onclick="setFilter('ALL','knowledge')">全部</button>
-<button class="ctrl" onclick="setFilter('P0','knowledge')">P0</button>
-<button class="ctrl" onclick="setFilter('P1','knowledge')">P1</button>
-<button class="ctrl" onclick="setFilter('P2','knowledge')">P2</button>
+<button class="ctrl" onclick="setFilter('P0','knowledge')">重要性 2</button>
+<button class="ctrl" onclick="setFilter('P1','knowledge')">重要性 1</button>
+<button class="ctrl" onclick="setFilter('P2','knowledge')">重要性 0</button>
 <button class="ctrl" onclick="toggleAll('knowledge',true)">全部展开</button>
 <button class="ctrl" onclick="toggleAll('knowledge',false)">全部折叠</button>
 </div>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-1" open="">
 <summary data-editable-text="1">第1章 · 面试总策略：项目深挖与工程化表达
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">12 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -2414,7 +2435,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-2" open="">
 <summary data-editable-text="1">第2章 · Embedded C、编译链接与内存基础
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">23 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -2559,7 +2580,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-3" open="">
 <summary data-editable-text="1">第3章 · MCU、异常、中断、RTOS 与 AUTOSAR OS
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">21 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -2692,7 +2713,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-4" open="">
 <summary data-editable-text="1">第4章 · AUTOSAR Classic 架构、方法学、RTE 与 ARXML
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">22 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -2831,7 +2852,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-5" open="">
 <summary data-editable-text="1">第5章 · CAN / CAN FD：协议、控制器与物理层
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">24 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -2982,7 +3003,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-6" open="">
 <summary data-editable-text="1">第6章 · AUTOSAR Communication Stack：COM / PduR / CanIf / Can Driver
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">30 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -3169,7 +3190,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-7" open="">
 <summary data-editable-text="1">第7章 · CanTp / ISO-TP (ISO 15765-2)
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">15 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -3266,7 +3287,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-8" open="">
 <summary data-editable-text="1">第8章 · 网络管理与模式管理：ComM / CanSM / Nm / CanNm / BswM / EcuM
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">23 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -3411,7 +3432,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-9" open="">
 <summary data-editable-text="1">第9章 · UDS 与 DCM
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">26 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -3565,16 +3586,16 @@ html.ios-browser .pwa-install-note{display:block}
 <span class="ptitle" data-editable-text="1">DCM Debug</span>
 <span class="pdesc" data-editable-text="1">无响应、错误 NRC、0x78 超时、session/security 不对时如何分层。</span>
 </div>
-<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="OBD 基础 若岗位/项目涉及法规诊断，再深入 Mode/PID/DTC 体系；否则 P1。 Z9-26">
+<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="OBD 基础 若岗位/项目涉及法规诊断，再深入 Mode/PID/DTC 体系；否则按重要性 1 处理。 Z9-26">
 <input class="kp-check" data-kp="Z9-26" type="checkbox"/>
 <span class="zcode" data-editable-text="1">Z9-26</span>
 <span class="ptitle" data-editable-text="1">OBD 基础</span>
-<span class="pdesc" data-editable-text="1">若岗位/项目涉及法规诊断，再深入 Mode/PID/DTC 体系；否则 P1。</span>
+<span class="pdesc" data-editable-text="1">若岗位/项目涉及法规诊断，再深入 Mode/PID/DTC 体系；否则按重要性 1 处理。</span>
 </div></div>
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-10" open="">
 <summary data-editable-text="1">第10章 · DEM / FIM：故障管理与 DTC
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">22 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -3713,7 +3734,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P1" id="kp-ch-11" open="">
 <summary data-editable-text="1">第11章 · NvM / MemIf / Fee / Ea / Fls：非易失存储栈
-        <span class="pill p1">P1</span>
+        <span class="pill importance importance-1">重要性 1</span>
 <span class="pill">18 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -3828,7 +3849,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P1" id="kp-ch-12" open="">
 <summary data-editable-text="1">第12章 · 系统服务：EcuM / BswM / WdgM / DET / SchM / CRC
-        <span class="pill p1">P1</span>
+        <span class="pill importance importance-1">重要性 1</span>
 <span class="pill">15 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -3925,7 +3946,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P1" id="kp-ch-13" open="">
 <summary data-editable-text="1">第13章 · E2E、功能安全机制与 SecOC/网络安全
-        <span class="pill p1">P1</span>
+        <span class="pill importance importance-1">重要性 1</span>
 <span class="pill">15 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4022,7 +4043,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P1" id="kp-ch-14" open="">
 <summary data-editable-text="1">第14章 · Bootloader / OTA / XCP / 标定
-        <span class="pill p1">P1</span>
+        <span class="pill importance importance-1">重要性 1</span>
 <span class="pill">14 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4113,7 +4134,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P1" id="kp-ch-15" open="">
 <summary data-editable-text="1">第15章 · 车载以太网、SOME/IP、DoIP、Time Sync（未来型 BSW 补强）
-        <span class="pill p1">P1</span>
+        <span class="pill importance importance-1">重要性 1</span>
 <span class="pill">14 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4204,7 +4225,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-16" open="">
 <summary data-editable-text="1">第16章 · 工具链、集成、测试与调试
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">22 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4343,7 +4364,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-17" open="">
 <summary data-editable-text="1">第17章 · ASPICE、ISO 26262、软件质量与测试方法
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">22 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4482,7 +4503,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-18" open="">
 <summary data-editable-text="1">第18章 · 必须练熟的 18 类 Debug 场景题
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">18 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4597,7 +4618,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P1" id="kp-ch-19" open="">
 <summary data-editable-text="1">第19章 · 行为面、英文、系统思维与资深工程师问题
-        <span class="pill p1">P1</span>
+        <span class="pill importance importance-1">重要性 1</span>
 <span class="pill">12 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4676,7 +4697,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-20" open="">
 <summary data-editable-text="1">第20章 · 按目标公司反推学习重点（2026-09）
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">6 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4710,16 +4731,16 @@ html.ios-browser .pwa-install-note{display:block}
 <span class="ptitle" data-editable-text="1">共同交集</span>
 <span class="pdesc" data-editable-text="1">C + CAN + AUTOSAR CP + 项目/Debug + UDS/Diagnostics + Toolchain + ASPICE/ISO26262，是最值得优先投入的交集。</span>
 </div>
-<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="你的差异化方向 如果目标继续是 Communication BSW，把 COM/PduR/CanIf/CanTp/ComM/CanSM/CanNm/BswM/E2E 学到 L3；这会比平均补所有 MCAL 更有回报。 Z20-06">
+<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="你的差异化方向 如果目标继续是 Communication BSW，把 COM/PduR/CanIf/CanTp/ComM/CanSM/CanNm/BswM/E2E 学到学习深度 2；这会比平均补所有 MCAL 更有回报。 Z20-06">
 <input class="kp-check" data-kp="Z20-06" type="checkbox"/>
 <span class="zcode" data-editable-text="1">Z20-06</span>
 <span class="ptitle" data-editable-text="1">你的差异化方向</span>
-<span class="pdesc" data-editable-text="1">如果目标继续是 Communication BSW，把 COM/PduR/CanIf/CanTp/ComM/CanSM/CanNm/BswM/E2E 学到 L3；这会比平均补所有 MCAL 更有回报。</span>
+<span class="pdesc" data-editable-text="1">如果目标继续是 Communication BSW，把 COM/PduR/CanIf/CanTp/ComM/CanSM/CanNm/BswM/E2E 学到学习深度 2；这会比平均补所有 MCAL 更有回报。</span>
 </div></div>
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P2" id="kp-ch-21" open="">
 <summary data-editable-text="1">第21章 · 低优先级 / 容易浪费时间的内容
-        <span class="pill p2">P2</span>
+        <span class="pill importance importance-0">重要性 0</span>
 <span class="pill">8 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4774,7 +4795,7 @@ html.ios-browser .pwa-install-note{display:block}
 </details>
 <details class="chapter kp-section knowledge-chapter editable-region" data-priority="P0" id="kp-ch-22" open="">
 <summary data-editable-text="1">第22章 · 建议学习顺序与“毕业标准”
-        <span class="pill p0">P0</span>
+        <span class="pill importance importance-2">重要性 2</span>
 <span class="pill">10 个知识点</span>
 </summary>
 <div class="chapter-body">
@@ -4814,16 +4835,16 @@ html.ios-browser .pwa-install-note{display:block}
 <span class="ptitle" data-editable-text="1">阶段 F：工程化</span>
 <span class="pdesc" data-editable-text="1">16 → 17 → 18 → 19；工具、流程、场景、表达。</span>
 </div>
-<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="P0 毕业标准 任一 P0 主题：能在白板画结构；3 分钟解释；回答 3 层追问；给出至少一个项目/Debug 例子。 Z22-07">
+<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="重要性 2 毕业标准 任一重要性 2 主题：能在白板画结构；3 分钟解释；回答 3 层追问；给出至少一个项目/Debug 例子。 Z22-07">
 <input class="kp-check" data-kp="Z22-07" type="checkbox"/>
 <span class="zcode" data-editable-text="1">Z22-07</span>
-<span class="ptitle" data-editable-text="1">P0 毕业标准</span>
-<span class="pdesc" data-editable-text="1">任一 P0 主题：能在白板画结构；3 分钟解释；回答 3 层追问；给出至少一个项目/Debug 例子。</span>
+<span class="ptitle" data-editable-text="1">重要性 2 毕业标准</span>
+<span class="pdesc" data-editable-text="1">任一重要性 2 主题：能在白板画结构；3 分钟解释；回答 3 层追问；给出至少一个项目/Debug 例子。</span>
 </div>
-<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="L3 毕业标准 不是“知道定义”，而是能解释运行时数据流/状态机、关键配置、异常模式、观测点和定位顺序。 Z22-08">
+<div class="point-row knowledge-item editable-region" data-priority="P0" data-search="学习深度 2 毕业标准 不是“知道定义”，而是能解释运行时数据流/状态机、关键配置、异常模式、观测点和定位顺序。 Z22-08">
 <input class="kp-check" data-kp="Z22-08" type="checkbox"/>
 <span class="zcode" data-editable-text="1">Z22-08</span>
-<span class="ptitle" data-editable-text="1">L3 毕业标准</span>
+<span class="ptitle" data-editable-text="1">学习深度 2 毕业标准</span>
 <span class="pdesc" data-editable-text="1">不是“知道定义”，而是能解释运行时数据流/状态机、关键配置、异常模式、观测点和定位顺序。</span>
 </div>
 <div class="point-row knowledge-item editable-region" data-priority="P0" data-search="模拟面试标准 连续 45–60 分钟：项目深挖 + C + CAN + AUTOSAR + 通信/诊断 + Debug，不靠查资料。 Z22-09">
@@ -4929,15 +4950,15 @@ html.ios-browser .pwa-install-note{display:block}
 <h3 data-editable-text="1">A3｜运行时链路 / 状态机 / 时序优先</h3><p data-editable-text="1">必须把数据流、调用链、状态转换条件或时序串起来。适合画图的内容课堂先用简图，打印笔记优先改成 SVG。</p>
 <h3 data-editable-text="1">A4｜配置必须落到 Runtime 行为</h3><p data-editable-text="1">讲 AUTOSAR 标准概念后，再对应 EB tresos / DaVinci。厂商字段名只有确认过才写；无法确认必须标“版本/供应商相关”。</p>
 <h3 data-editable-text="1">A5｜API / Callback / MainFunction</h3><p data-editable-text="1">涉及接口时讲清“谁调用谁、什么时候调用、参数代表什么、异常时会怎样”，但不为显得深入而贴无意义的大段源码。</p>
-<h3 data-editable-text="1">A6｜Debug 是 P0/L3 的硬要求</h3><p data-editable-text="1">至少给出一个完整“现象 → 假设 → 观测点 → 证据 → 根因 → 修复 → 回归”。通信、诊断等主航道课程尽量给 2～3 个。</p>
-<h3 data-editable-text="1">A7｜面试追问树</h3><p data-editable-text="1">至少 3 层：定义 → 机制/配置 → 项目/异常；P0/L3 尽量达到 4～5 层，并指出哪些回答会暴露“只会配不会原理”。</p>
+<h3 data-editable-text="1">A6｜Debug：重要性 2 / 学习深度 2 的硬要求</h3><p data-editable-text="1">至少给出一个完整“现象 → 假设 → 观测点 → 证据 → 根因 → 修复 → 回归”。通信、诊断等主航道课程尽量给 2～3 个。</p>
+<h3 data-editable-text="1">A7｜面试追问树</h3><p data-editable-text="1">至少 3 层：定义 → 机制/配置 → 项目/异常；重要性 2 / 学习深度 2 尽量达到 4～5 层，并指出哪些回答会暴露“只会配不会原理”。</p>
 <h3 data-editable-text="1">A8｜小测闭环</h3><p data-editable-text="1">课程结束用 3～8 题确认理解，概念题和场景题混合。错误先纠正，再进入下一课。</p>
 <h2 data-editable-text="1">B. 每节课固定结构</h2>
 <table>
 <tr><th data-editable-text="1">顺序</th><th data-editable-text="1">内容</th><th data-editable-text="1">最低要求</th></tr>
 <tr><td data-editable-text="1">① 目标</td><td data-editable-text="1">本课学完会什么</td><td data-editable-text="1">告诉用户为什么值得学</td></tr>
 <tr><td data-editable-text="1">② 心智模型</td><td data-editable-text="1">职责、边界、上下游</td><td data-editable-text="1">一句话 + 一张图能复述</td></tr>
-<tr><td data-editable-text="1">③ 原理</td><td data-editable-text="1">机制、状态、时序、因果</td><td data-editable-text="1">P0 必须讲“为什么”</td></tr>
+<tr><td data-editable-text="1">③ 原理</td><td data-editable-text="1">机制、状态、时序、因果</td><td data-editable-text="1">重要性 2 的核心课必须讲“为什么”</td></tr>
 <tr><td data-editable-text="1">④ 配置</td><td data-editable-text="1">参数/reference/开关联动</td><td data-editable-text="1">解释配置如何改变 runtime</td></tr>
 <tr><td data-editable-text="1">⑤ 运行时</td><td data-editable-text="1">API/callback/MainFunction/任务</td><td data-editable-text="1">从触发一路追到结果</td></tr>
 <tr><td data-editable-text="1">⑥ Debug</td><td data-editable-text="1">故障、观测点、工具</td><td data-editable-text="1">完整 RCA</td></tr>
@@ -4960,9 +4981,9 @@ html.ios-browser .pwa-install-note{display:block}
 <tr><td data-editable-text="1">来源</td><td data-editable-text="1">AUTOSAR/ISO/OEM/Tier1 官方资料优先；面经只用来判断考察方向；项目特例必须标注。</td></tr>
 </table>
 <h2 data-editable-text="1">E. 详细度底线</h2>
-<p data-editable-text="1"><b>P0 / L3：</b>职责、机制、状态/时序、关键配置、API/调用链、常见错误、Debug、面试追问、项目映射必须齐。笔记不设死页数。</p>
-<p data-editable-text="1"><b>P1：</b>保留工程核心路径和排查能力；岗位不相关的深层实现可以明确“了解即可”。</p>
-<p data-editable-text="1"><b>P2：</b>只有目标 JD、简历或实际项目触发时扩写，避免时间浪费。</p>
+<p data-editable-text="1"><b>重要性 2 / 学习深度 2：</b>职责、机制、状态/时序、关键配置、API/调用链、常见错误、Debug、面试追问、项目映射必须齐。笔记不设死页数。</p>
+<p data-editable-text="1"><b>重要性 1：</b>保留工程核心路径和排查能力；岗位不相关的深层实现可以明确“了解即可”。</p>
+<p data-editable-text="1"><b>重要性 0：</b>只有目标 JD、简历或实际项目触发时扩写，避免时间浪费。</p>
 </div>
 </div>
 </div>
@@ -5050,7 +5071,7 @@ document.getElementById('knowledge-search').addEventListener('input',()=>applyFi
 syncUI();
 </script>
 <script id="github-learning-runtime">
-const APP_VERSION = "2026.09.29.8";
+const APP_VERSION = "2026.09.29.10";
 let lastVersionCheckAt = 0;
 
 function htmlToPlain(el){
@@ -5070,8 +5091,10 @@ function buildCoursePrompt(courseId){
     clone.querySelectorAll('.pill,.depth,.lesson-count').forEach(x=>x.remove());
     return (clone.textContent||'').replace(/\s+/g,' ').trim();
   })();
-  const priority=lesson.dataset.priority||chapter?.dataset.priority||'P1';
-  const depth=chapterSummary?.querySelector('.depth')?.textContent.trim()||'L2';
+  const legacyPriority=lesson.dataset.priority||chapter?.dataset.priority||'P1';
+  const importance=legacyPriority==='P0'?2:(legacyPriority==='P1'?1:0);
+  const depthText=chapterSummary?.querySelector('.depth')?.textContent.trim()||'';
+  const studyDepth=/2\s*$/.test(depthText)?2:(/0\s*$/.test(depthText)?0:1);
   const countText=lesson.querySelector('.lesson-count')?.textContent.replace(/\s+/g,' ').trim()||'';
   const duration=(countText.match(/≈?\s*[^·]+?min/i)||[])[0]?.trim()||'约 25～35 min';
   const points=[...lesson.querySelectorAll('.point-row')].map(row=>({
@@ -5081,13 +5104,16 @@ function buildCoursePrompt(courseId){
   })).filter(p=>p.id);
   const pointText=points.map(p=>`- ${p.id}｜${p.title}：${p.desc}`).join('\n');
 
-  const depthRule=(priority==='P0'&&depth==='L3')
-    ? '这是 P0/L3 核心课：必须达到能解释机制、追 Runtime、做 Debug，并承受中高级 BSW 面试连续追问的程度。'
-    : (priority==='P0'
-      ? '这是 P0 核心课：必须讲清机制、关键配置、Runtime 行为、Debug 与面试表达，不能只停留在定义。'
-      : (priority==='P1'
-        ? '这是 P1 重要补强课：优先吃透工程主链、关键机制和排查方法；非岗位核心的过深实现可明确标为“了解即可”。'
-        : '这是 P2 岗位/项目驱动课：先建立可用的工程理解；只有与 JD、项目或当前问题直接相关时再向深层实现展开。'));
+  const importanceRule={
+    0:'重要性 0：低优先投入。先建立可用理解，命中具体 JD / 项目需求时再扩展。',
+    1:'重要性 1：中等优先。掌握工程主链、关键机制和常见排查方法。',
+    2:'重要性 2：最高优先。必须形成稳定、可复述、可 Debug、可承受面试追问的能力。'
+  }[importance];
+  const depthRule={
+    0:'学习深度 0（了解）：知道它解决什么问题、基本边界和典型使用场景即可，不做无收益的实现深挖。',
+    1:'学习深度 1（工程掌握）：要能解释主数据流/调用链、关键配置如何影响 Runtime、常见异常和基本 Debug。',
+    2:'学习深度 2（深入掌握）：必须能解释状态机/时序/Runtime 因果、关键配置、异常路径、观测点和完整 RCA，并能承受中高级面试连续追问。'
+  }[studyDepth];
 
   return `我要直接开始学习 AUTOSAR BSW 课程 ${courseId}《${title}》。请把下面内容视为本次新对话的完整学习上下文，不需要再问我“想学什么”“基础如何”或让我重新选择教学模式，直接按流程开课。
 
@@ -5100,18 +5126,24 @@ function buildCoursePrompt(courseId){
 【当前课程元信息】
 - 课程：${courseId}《${title}》
 - 所属章节：${chapterTitle||('第 '+courseId.split('.')[0]+' 章')}
-- 优先级：${priority}
-- 深度：${depth}
+- 重要性：${importance}
+- 学习深度：${studyDepth}
 - 建议学习单元：${duration}
-- 深度要求：${depthRule}
-- 注意：上面的时间只用于限制“主题边界”，不是回答字数上限。知识密度高时允许分多个教学回合完成，绝不能为了塞进 30 分钟而删掉关键机制。
+- ${importanceRule}
+- ${depthRule}
+- 注意：建议时间只用于限制“主题边界”，不是回答字数上限。知识密度高时允许分多个教学回合完成，不能为了塞进 30 分钟而删掉关键机制。
+
+【等级定义】
+- 重要性 0 = 低；1 = 中；2 = 高。数字越大，学习优先级越高。
+- 学习深度 0 = 浅；1 = 中；2 = 深。数字越大，需要掌握得越深入。
+- “重要性”和“学习深度”是两条独立轴：重要性决定投入优先级，学习深度决定需要理解到什么程度。
 
 【本课必须完整覆盖的 Z 知识点】
 ${pointText}
 
 【教学总原则】
 1. 把本课作为一个完整工程主题讲。Z 点是覆盖清单，不是让你逐条念定义；要主动把它们串成同一条数据流、调用链、状态机、时序或 Debug 闭环。
-2. 每个关键结论都尽量回答“为什么”。尤其是 ${priority}/${depth} 内容，不接受只背 API、参数名或状态名。
+2. 每个关键结论都尽量回答“为什么”。本课为“重要性 ${importance} / 学习深度 ${studyDepth}”，教学深度必须匹配上面的等级定义。
 3. AUTOSAR 标准行为、供应商实现、项目特例必须明确区分。不要把 EB/Vector/某 OEM 的实现习惯说成 AUTOSAR 通用规定。
 4. 严禁为了显得专业而编造：AUTOSAR API、配置字段、SWS 条款号、回调关系、标准时序、供应商菜单路径或项目数据。无法确认就明确说“未核实 / 版本相关 / 供应商相关”。
 5. 资料可信度优先级：AUTOSAR 官方 SWS/EXP > ISO/CiA/IEEE 等正式标准 > 芯片/Vector/Elektrobit/ETAS 等官方资料 > OEM/Tier1 公开技术资料 > 明确标注的工程经验。真实面经只用于判断“怎么考”，不能当技术事实来源。
@@ -5125,8 +5157,8 @@ C. 核心原理：机制、状态转换条件、关键时序、数据流/调用�
 D. Runtime：涉及 API / Callback / MainFunction / Task / ISR 时，明确“谁调用谁、何时调用、数据怎么走、失败路径怎样”。能画 ASCII 图时就画简洁图。
 E. 配置工程化：关键 AUTOSAR 配置如何改变 Runtime 行为；再映射到 EB tresos/DaVinci 等工具。具体厂商字段只有确认可靠时才写。
 F. 工程场景：至少给 1 个与真实 ECU 开发接近的例子，把配置、Runtime 和总线/诊断现象串起来。
-G. Debug：至少完成 1 个“现象 → 假设 → 分层观测点 → 证据 → 根因 → 修复 → 回归”的完整 RCA；通信/诊断主航道尽量 2～3 个。要告诉我 CANoe/Trace32/日志/变量/总线抓包分别看什么。
-H. 面试模式：对核心问题同时给出“理解版”与“面试回答骨架”。重要问题至少准备：30 秒回答 → 2 分钟展开 → 面试官继续追问 3～5 层，并指出哪些回答会暴露“只会配置不会原理”。
+G. Debug：如果学习深度 >= 1，至少完成 1 个“现象 → 假设 → 分层观测点 → 证据 → 根因 → 修复 → 回归”的完整 RCA；重要性 2 或学习深度 2 的通信/诊断主航道尽量给 2～3 个。要告诉我 CANoe/Trace32/日志/变量/总线抓包分别看什么。
+H. 面试模式：重要性 2/1 的核心问题同时给出“理解版”与“面试回答骨架”。重要性 2 + 学习深度 2 的问题至少准备：30 秒回答 → 2 分钟展开 → 面试官继续追问 3～5 层，并指出哪些回答会暴露“只会配置不会原理”。
 I. 小测闭环：本课末尾给 3～8 题，不要立即给答案。题目混合：定义/概念、因果、Runtime/时序、真实 Debug 场景。等我回答后逐题标记 ✓正确 / △不完整 / ✗错误，只针对薄弱点纠正；确认掌握后再宣布本课完成。
 
 【互动节奏】
@@ -5138,9 +5170,8 @@ I. 小测闭环：本课末尾给 3～8 题，不要立即给答案。题目混�
 【课后打印笔记协议】
 当我说“现在总结打印笔记吧”时，为本课生成独立、可打印的 A4 单文件 HTML 工程笔记。必须覆盖本课全部 Z 点，并包含：范围/目录、总体心智模型、原理/状态机/时序、关键配置、API/Runtime、Debug 手册、面试追问、易错点、“最后只记这些”速查、权威来源。状态机/调用链/时序优先用内嵌 SVG；高密度但可读，不要为了少页数压掉关键原理。
 
-现在不要先复述这份提示词，也不要问确认问题。直接开始：先给我课程 ${courseId}《${title}》的【A. 本课路线图】，然后进入【B. 心智模型】第一部分。`;
+现在不要复述以上规则，也不要先问问题。直接输出本课路线图，然后开始第一个教学模块。`;
 }
-
 async function copyTextRobust(text){
   if(navigator.clipboard && window.isSecureContext){
     try{ await navigator.clipboard.writeText(text); return true; }catch(e){}
@@ -5298,7 +5329,7 @@ function downloadEditedHtml(){
   const newVersion=makeDownloadVersion();
   const meta=clone.querySelector('meta[name="app-version"]');if(meta)meta.setAttribute('content',newVersion);
   const runtime=[...clone.querySelectorAll('script')].find(s=>s.id==='github-learning-runtime');
-  if(runtime)runtime.textContent=runtime.textContent.replace(/const APP_VERSION = ["'][^"']+["'];/,`const APP_VERSION = "2026.09.29.8";`);
+  if(runtime)runtime.textContent=runtime.textContent.replace(/const APP_VERSION = ["'][^"']+["'];/,`const APP_VERSION = "2026.09.29.10";`);
   const vs=clone.querySelector('#versionStatus');if(vs)vs.textContent='v'+newVersion;
   clone.querySelectorAll('.module-panel').forEach(x=>x.classList.remove('active'));
   clone.querySelector('#module-courses')?.classList.add('active');
@@ -5590,7 +5621,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
 });
 </script>
 <script id="pwa-runtime">
-const PWA_VERSION = "2026.09.29.8";
+const PWA_VERSION = "2026.09.29.10";
 (function(){
   const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -5625,6 +5656,13 @@ const PWA_VERSION = "2026.09.29.8";
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const txt=el=>(el?.textContent||'').replace(/\s+/g,' ').trim();
+  const importanceFromPriority=p=>p==='P0'?2:(p==='P1'?1:0);
+  const depthFromText=t=>/2\s*$/.test(String(t||''))?2:(/0\s*$/.test(String(t||''))?0:1);
+  const importanceLabel=n=>`重要性 ${n}`;
+  const depthLabel=n=>`学习深度 ${n}`;
+  const importanceChip=n=>`<span class="m-importance i${n}">${importanceLabel(n)}</span>`;
+  const depthChip=n=>`<span class="m-depth-chip d${n}">${depthLabel(n)}</span>`;
+  const intensityClass=(importance,depth)=>`m-intensity-${Math.max(0,Math.min(4,Number(importance||0)+Number(depth||0)))}`;
   const summaryTitle=(summary)=>{
     if(!summary)return'';
     const clone=summary.cloneNode(true);clone.querySelectorAll('.pill,.depth,.lesson-count').forEach(x=>x.remove());
@@ -5639,11 +5677,17 @@ const PWA_VERSION = "2026.09.29.8";
         const title=txt($('.lesson-title',item));
         const count=txt($('.lesson-count',item));
         const priority=item.dataset.priority||ch.dataset.priority||'P1';
+        const importance=importanceFromPriority(priority);
         const depth=txt($(':scope > summary .depth',ch))||'';
+        const studyDepth=depthFromText(depth);
         const points=$$('.point-row',item).map(row=>({id:txt($('.zcode',row)),title:txt($('.ptitle',row)),desc:txt($('.pdesc',row))})).filter(x=>x.id);
-        return {id,title,count,priority,depth,points,chapter:id.split('.')[0],search:(item.dataset.search||'')};
+        return {id,title,count,priority,importance,depth,studyDepth,points,chapter:id.split('.')[0],search:(item.dataset.search||'')};
       });
-      return {id,title,priority:ch.dataset.priority||'P1',lessons};
+      const priority=ch.dataset.priority||'P1';
+      const importance=importanceFromPriority(priority);
+      const depth=txt($(':scope > summary .depth',ch))||'';
+      const studyDepth=depthFromText(depth);
+      return {id,title,priority,importance,depth,studyDepth,lessons};
     }).filter(x=>x.lessons.length);
 
     const kpChapters=$$('#module-knowledge .knowledge-chapter').map((ch,idx)=>{
@@ -5651,7 +5695,7 @@ const PWA_VERSION = "2026.09.29.8";
       const title=summaryTitle($(':scope > summary',ch)).replace(/^第\s*\d+\s*章\s*[·・]\s*/,'');
       const items=$$('.knowledge-item',ch).map(row=>({
         id:row.querySelector('.kp-check')?.dataset.kp||txt($('.zcode',row)),
-        title:txt($('.ptitle',row)),desc:txt($('.pdesc',row)),priority:row.dataset.priority||ch.dataset.priority||'P1',chapter:cid
+        title:txt($('.ptitle',row)),desc:txt($('.pdesc',row)),priority:row.dataset.priority||ch.dataset.priority||'P1',importance:importanceFromPriority(row.dataset.priority||ch.dataset.priority||'P1'),chapter:cid
       })).filter(x=>x.id);
       return {id:cid,title,items};
     }).filter(x=>x.items.length);
@@ -5691,15 +5735,15 @@ const PWA_VERSION = "2026.09.29.8";
     const weekAgo=Date.now()-7*24*3600*1000;
     const recentKps=M.data.knowledge.filter(k=>kpDone(k.id)&&Number(localStorage.getItem((typeof KP_TS_PREFIX!=='undefined'?KP_TS_PREFIX:'autosar-kp-ts-')+k.id)||0)>=weekAgo).length;
     const recentCourses=M.data.lessons.filter(l=>courseDone(l.id)&&Math.max(0,...(((typeof COURSE_MAP!=='undefined'?COURSE_MAP:{})[l.id]||[])).map(k=>Number(localStorage.getItem((typeof KP_TS_PREFIX!=='undefined'?KP_TS_PREFIX:'autosar-kp-ts-')+k)||0)))>=weekAgo).length;
-    const meta=[lesson?.priority,lesson?.depth,lesson?.count?.replace(/·.*$/,'').trim()].filter(Boolean).join(' · ');
+    const meta=lesson?[importanceLabel(lesson.importance),depthLabel(lesson.studyDepth),lesson.count?.replace(/·.*$/,'').trim()].filter(Boolean).join(' · '):'';
     root.innerHTML=`${topbar('BSW Learning','AUTOSAR Classic · Interview Prep')}
       <div class="m-kicker">继续你的学习</div><div class="m-title">把复杂 BSW，拆成每天一课。</div><div class="m-subtitle">107 节正式课程 · 392 个底层知识点 · 进度自动同步</div>
-      ${lesson?`<button class="m-continue" type="button" onclick="mOpenLesson('${esc(lesson.id)}')"><div class="m-continue-label">Continue Learning</div><div class="m-continue-id">${esc(lesson.id)}</div><div class="m-continue-title">${esc(lesson.title)}</div><div class="m-continue-meta">${esc(meta)}</div><div class="m-continue-action"><span>${courseDone(lesson.id)?'再次复习':'继续学习'}</span><span class="m-arrow-circle">→</span></div></button>`:''}
+      ${lesson?`<button class="m-continue ${intensityClass(lesson.importance,lesson.studyDepth)}" type="button" onclick="mOpenLesson('${esc(lesson.id)}')"><div class="m-continue-label">Continue Learning</div><div class="m-continue-id">${esc(lesson.id)}</div><div class="m-continue-title">${esc(lesson.title)}</div><div class="m-continue-meta">${esc(meta)}</div><div class="m-continue-action"><span>${courseDone(lesson.id)?'再次复习':'继续学习'}</span><span class="m-arrow-circle">→</span></div></button>`:''}
       <div class="m-section-head"><h2>学习进度</h2><span>${p.cDone} / ${p.cTotal} 课</span></div>
       <div class="m-progress-card"><div class="m-progress-top"><div class="m-progress-number">${p.cDone}<small> / ${p.cTotal}</small></div><div class="m-progress-pct">${p.cPct}%</div></div><div class="m-progress-track"><i style="width:${p.cPct}%"></i></div></div>
       <div class="m-stats-grid"><div class="m-stat"><strong>${recentCourses}</strong><span>近 7 天完成课程</span></div><div class="m-stat"><strong>${recentKps}</strong><span>近 7 天掌握知识点</span></div></div>
       <div class="m-section-head"><h2>快速入口</h2><span>按主航道进入</span></div><div class="m-quick-grid">
-        <button class="m-quick" type="button" onclick="mQuickP0()"><span class="m-qicon">🔥</span><b>P0 必修</b><small>只看最重要课程</small></button>
+        <button class="m-quick" type="button" onclick="mQuickP0()"><span class="m-qicon">🔥</span><b>重要性 2</b><small>筛选最高重要性课程</small></button>
         <button class="m-quick" type="button" onclick="mQuickSearch('Debug')"><span class="m-qicon">🧰</span><b>Debug</b><small>故障定位场景</small></button>
         <button class="m-quick" type="button" onclick="mOpenChapter('6')"><span class="m-qicon">📡</span><b>ComStack</b><small>COM / PduR / CanIf</small></button>
         <button class="m-quick" type="button" onclick="mOpenChapter('9')"><span class="m-qicon">🩺</span><b>UDS / DCM</b><small>诊断主链路</small></button>
@@ -5707,7 +5751,7 @@ const PWA_VERSION = "2026.09.29.8";
       <div class="m-section-head"><h2>最近学习</h2><span>${recent.length?'继续上次节奏':'还没有记录'}</span></div>
       <div class="m-recent-list">${recent.length?recent.map(l=>lessonRow(l)).join(''):'<div class="m-empty">打开一节课程后，这里会保存最近学习记录。</div>'}</div>`;
   }
-  function lessonRow(l){return `<button class="m-row" type="button" onclick="mOpenLesson('${esc(l.id)}')"><span class="m-row-id">${esc(l.id)}</span><span class="m-row-main"><span class="m-row-title">${esc(l.title)}</span><span class="m-row-meta">${esc(l.priority)} · ${esc(l.count||'')}</span></span><span class="m-row-go">›</span></button>`}
+  function lessonRow(l){return `<button class="m-row ${intensityClass(l.importance,l.studyDepth)}" type="button" onclick="mOpenLesson('${esc(l.id)}')"><span class="m-row-id">${esc(l.id)}</span><span class="m-row-main"><span class="m-row-title">${esc(l.title)}</span><span class="m-row-meta">${esc(importanceLabel(l.importance))} · ${esc(depthLabel(l.studyDepth))} · ${esc(l.count||'')}</span></span><span class="m-row-go">›</span></button>`}
   function renderCourses(){
     const root=$('#mViewCourses');if(!root)return;
     const q=M.courseQuery.trim().toLowerCase(),f=M.courseFilter;
@@ -5718,24 +5762,24 @@ const PWA_VERSION = "2026.09.29.8";
       const chapters=M.data.chapters.map(ch=>{
         const visible=ch.lessons.filter(l=>f==='ALL'||l.priority===f);if(!visible.length)return'';
         const done=visible.filter(l=>courseDone(l.id)).length,pct=Math.round(done/visible.length*100);
-        return `<button class="m-chapter-card" type="button" onclick="mOpenChapter('${ch.id}')"><div class="m-chapter-top"><div class="m-chapter-num">${String(ch.id).padStart(2,'0')}</div><div class="m-chapter-main"><div class="m-chapter-title">${esc(ch.title)}</div><div class="m-chapter-meta">${done} / ${visible.length} 完成 · ${f==='ALL'?esc(ch.priority):esc(f)}</div><div class="m-mini-track"><i style="width:${pct}%"></i></div></div><div class="m-chevron">›</div></div></button>`;
+        return `<button class="m-chapter-card ${intensityClass(ch.importance,ch.studyDepth)}" type="button" onclick="mOpenChapter('${ch.id}')"><div class="m-chapter-top"><div class="m-chapter-num">${String(ch.id).padStart(2,'0')}</div><div class="m-chapter-main"><div class="m-chapter-title">${esc(ch.title)}</div><div class="m-chapter-meta">${done} / ${visible.length} 完成 · ${esc(importanceLabel(f==='ALL'?ch.importance:importanceFromPriority(f)))} · ${esc(depthLabel(ch.studyDepth))}</div><div class="m-mini-track"><i style="width:${pct}%"></i></div></div><div class="m-chevron">›</div></div></button>`;
       }).join(''); body=`<div class="m-chapter-list">${chapters||'<div class="m-empty">当前筛选下没有课程。</div>'}</div>`;
     }
     root.innerHTML=`${topbar('课程','19 个正式章节 · 107 节')}
       <div class="m-search-wrap"><label class="m-search">${iconSearch()}<input id="mCourseSearch" value="${esc(M.courseQuery)}" placeholder="搜索课程、模块或知识点" oninput="mCourseSearch(this.value)"></label></div>
-      <div class="m-segment">${['ALL','P0','P1','P2'].map(x=>`<button class="${f===x?'active':''}" type="button" onclick="mSetCourseFilter('${x}')">${x==='ALL'?'全部':x}</button>`).join('')}</div>${body}`;
+      <div class="m-filter-caption">重要性</div><div class="m-segment">${['ALL','P0','P1','P2'].map(x=>`<button class="${f===x?'active':''} ${x==='ALL'?'':('m-level-'+importanceFromPriority(x))}" type="button" onclick="mSetCourseFilter('${x}')">${x==='ALL'?'全部':importanceFromPriority(x)}</button>`).join('')}</div>${body}`;
   }
-  function lessonCard(l){const done=courseDone(l.id);return `<button class="m-lesson-card" type="button" onclick="mOpenLesson('${esc(l.id)}')"><span class="m-check-ring ${done?'done':''}">${done?'✓':''}</span><span class="m-lesson-info"><span class="m-lesson-line"><span class="m-lesson-id">${esc(l.id)}</span><span class="m-priority ${esc(l.priority)}">${esc(l.priority)}</span></span><span class="m-lesson-title">${esc(l.title)}</span><span class="m-lesson-meta">${esc(l.count||'')}</span></span><span class="m-chevron">›</span></button>`}
+  function lessonCard(l){const done=courseDone(l.id);return `<button class="m-lesson-card ${intensityClass(l.importance,l.studyDepth)}" type="button" onclick="mOpenLesson('${esc(l.id)}')"><span class="m-check-ring ${done?'done':''}">${done?'✓':''}</span><span class="m-lesson-info"><span class="m-lesson-line"><span class="m-lesson-id">${esc(l.id)}</span>${importanceChip(l.importance)}${depthChip(l.studyDepth)}</span><span class="m-lesson-title">${esc(l.title)}</span><span class="m-lesson-meta">${esc(l.count||'')}</span></span><span class="m-chevron">›</span></button>`}
   function renderKnowledge(){
     const root=$('#mViewKnowledge');if(!root)return;
     const q=M.kpQuery.trim().toLowerCase(),f=M.kpFilter;
     const groups=M.data.kpChapters.map(ch=>{
       const items=ch.items.filter(k=>(f==='ALL'||k.priority===f)&&(!q||(k.id+' '+k.title+' '+k.desc).toLowerCase().includes(q)));
       if(!items.length)return'';
-      return `<div class="m-kp-group">第 ${esc(ch.id)} 章 · ${esc(ch.title)}</div><div class="m-kp-list">${items.map(k=>`<label class="m-kp-card"><input class="m-kp-toggle" type="checkbox" ${kpDone(k.id)?'checked':''} onchange="mToggleKnowledge('${esc(k.id)}',this.checked)"><span class="m-kp-content"><span class="m-kp-line"><span class="m-kp-code">${esc(k.id)}</span><span class="m-kp-title">${esc(k.title)}</span></span><span class="m-kp-desc">${esc(k.desc)}</span></span></label>`).join('')}</div>`;
+      return `<div class="m-kp-group">第 ${esc(ch.id)} 章 · ${esc(ch.title)}</div><div class="m-kp-list">${items.map(k=>`<label class="m-kp-card"><input class="m-kp-toggle" type="checkbox" ${kpDone(k.id)?'checked':''} onchange="mToggleKnowledge('${esc(k.id)}',this.checked)"><span class="m-kp-content"><span class="m-kp-line"><span class="m-kp-code">${esc(k.id)}</span><span class="m-kp-title">${esc(k.title)}</span>${importanceChip(k.importance)}</span><span class="m-kp-desc">${esc(k.desc)}</span></span></label>`).join('')}</div>`;
     }).join('');
     const p=allProgress();
-    root.innerHTML=`${topbar('知识库',`${p.kpDone} / ${p.kpTotal} 已掌握`)}<div class="m-search-wrap"><label class="m-search">${iconSearch()}<input value="${esc(M.kpQuery)}" placeholder="搜索 Z 编号、标题或描述" oninput="mKnowledgeSearch(this.value)"></label></div><div class="m-segment">${['ALL','P0','P1','P2'].map(x=>`<button class="${f===x?'active':''}" type="button" onclick="mSetKpFilter('${x}')">${x==='ALL'?'全部':x}</button>`).join('')}</div>${groups||'<div class="m-empty">没有找到匹配知识点。</div>'}`;
+    root.innerHTML=`${topbar('知识库',`${p.kpDone} / ${p.kpTotal} 已掌握`)}<div class="m-search-wrap"><label class="m-search">${iconSearch()}<input value="${esc(M.kpQuery)}" placeholder="搜索 Z 编号、标题或描述" oninput="mKnowledgeSearch(this.value)"></label></div><div class="m-filter-caption">重要性</div><div class="m-segment">${['ALL','P0','P1','P2'].map(x=>`<button class="${f===x?'active':''} ${x==='ALL'?'':('m-level-'+importanceFromPriority(x))}" type="button" onclick="mSetKpFilter('${x}')">${x==='ALL'?'全部':importanceFromPriority(x)}</button>`).join('')}</div>${groups||'<div class="m-empty">没有找到匹配知识点。</div>'}`;
   }
   function renderMe(){
     const root=$('#mViewMe');if(!root)return; const p=allProgress();
@@ -5766,7 +5810,7 @@ const PWA_VERSION = "2026.09.29.8";
     M.currentChapter=ch;M.currentLesson=null;M.detailKind='chapter';M.backLabel=M.tab==='home'?'首页':'课程';
     const p=chapterProgress(ch);
     $('#mDetailTitlebar').innerHTML=`<b>第 ${esc(ch.id)} 章</b><small>${p.done} / ${p.total} 完成</small>`;
-    $('#mDetailBody').innerHTML=`<div class="m-detail-hero"><div class="m-detail-id">CHAPTER ${String(ch.id).padStart(2,'0')}</div><h1>${esc(ch.title)}</h1><div class="m-meta-line"><span class="m-meta-pill">${esc(ch.priority)}</span><span class="m-meta-pill">${p.total} 节课程</span><span class="m-meta-pill">完成 ${p.pct}%</span></div></div><div class="m-progress-card"><div class="m-progress-top"><div class="m-progress-number">${p.done}<small> / ${p.total}</small></div><div class="m-progress-pct">${p.pct}%</div></div><div class="m-progress-track"><i style="width:${p.pct}%"></i></div></div><div class="m-section-head"><h2>本章课程</h2><span>按顺序学习</span></div><div class="m-lesson-list">${ch.lessons.map(lessonCard).join('')}</div>`;
+    $('#mDetailBody').innerHTML=`<div class="m-detail-hero ${intensityClass(ch.importance,ch.studyDepth)}"><div class="m-detail-id">CHAPTER ${String(ch.id).padStart(2,'0')}</div><h1>${esc(ch.title)}</h1><div class="m-meta-line">${importanceChip(ch.importance)}${depthChip(ch.studyDepth)}<span class="m-meta-pill">${p.total} 节课程</span><span class="m-meta-pill">完成 ${p.pct}%</span></div></div><div class="m-progress-card"><div class="m-progress-top"><div class="m-progress-number">${p.done}<small> / ${p.total}</small></div><div class="m-progress-pct">${p.pct}%</div></div><div class="m-progress-track"><i style="width:${p.pct}%"></i></div></div><div class="m-section-head"><h2>本章课程</h2><span>按顺序学习</span></div><div class="m-lesson-list">${ch.lessons.map(lessonCard).join('')}</div>`;
     $('#mBackBtn em').textContent=M.backLabel; openDetail();
     if(push)history.pushState({mPage:'chapter',id:String(id),tab:M.tab},'');
   }
@@ -5774,9 +5818,9 @@ const PWA_VERSION = "2026.09.29.8";
     const l=M.data.lessons.find(x=>x.id===id);if(!l)return; rememberLesson(id);M.currentLesson=l;M.detailKind='lesson';
     const ch=M.data.chapters.find(x=>String(x.id)===String(l.chapter));M.currentChapter=ch||null;
     const currentState=history.state?.mPage;M.backLabel=currentState==='chapter'?'第 '+l.chapter+' 章':(M.tab==='home'?'首页':'课程');
-    const done=courseDone(id); const meta=[l.priority,l.depth,l.count].filter(Boolean);
-    $('#mDetailTitlebar').innerHTML=`<b>${esc(id)}</b><small>${esc(l.priority)} · ${l.points.length} 个知识点</small>`;
-    $('#mDetailBody').innerHTML=`<div class="m-detail-hero"><div class="m-detail-id">COURSE ${esc(id)}</div><h1>${esc(l.title)}</h1><div class="m-meta-line">${meta.map(x=>`<span class="m-meta-pill">${esc(x)}</span>`).join('')}</div></div>
+    const done=courseDone(id);
+    $('#mDetailTitlebar').innerHTML=`<b>${esc(id)}</b><small>${esc(importanceLabel(l.importance))} · ${esc(depthLabel(l.studyDepth))} · ${l.points.length} 个知识点</small>`;
+    $('#mDetailBody').innerHTML=`<div class="m-detail-hero ${intensityClass(l.importance,l.studyDepth)}"><div class="m-detail-id">COURSE ${esc(id)}</div><h1>${esc(l.title)}</h1><div class="m-meta-line">${importanceChip(l.importance)}${depthChip(l.studyDepth)}<span class="m-meta-pill">${esc(l.count||'')}</span></div></div>
       <div class="m-info-card"><h3>本课目标</h3><p>把下面 ${l.points.length} 个 Z 知识点作为一个完整工程主题学习；课程范围以这里列出的知识点为准。</p></div>
       <div class="m-section-head"><h2>本课知识点</h2><span>${l.points.filter(p=>kpDone(p.id)).length} / ${l.points.length} 已掌握</span></div><div class="m-detail-kps">${l.points.map(p=>`<label class="m-detail-kp"><input class="m-kp-toggle" type="checkbox" ${kpDone(p.id)?'checked':''} onchange="mToggleKnowledge('${esc(p.id)}',this.checked,true)"><span class="m-detail-kp-main"><span class="m-detail-kp-top"><span class="m-detail-kp-code">${esc(p.id)}</span><span class="m-detail-kp-title">${esc(p.title)}</span></span><span class="m-detail-kp-desc">${esc(p.desc)}</span></span></label>`).join('')}</div>
       <button class="m-primary-cta" type="button" onclick="mCopyLessonPrompt('${esc(id)}')">✨ 开始本课 · 复制到 ChatGPT</button>
