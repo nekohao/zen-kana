@@ -1,5 +1,5 @@
 const CACHE_PREFIX='bsw-learning-'+encodeURIComponent(self.registration.scope)+'-';
-const CACHE=CACHE_PREFIX+'v2026.09.30.5';
+const CACHE=CACHE_PREFIX+'v2026.09.30.6';
 const SHELL=[
   './index.html','./manifest.webmanifest','./data/courses.json',
   './icons/apple-touch-icon.png','./icons/icon-192.png','./icons/icon-512.png',
