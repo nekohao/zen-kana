@@ -923,7 +923,8 @@
               "title": "CanIf 动态 ID/元数据",
               "desc": "只需在项目用到时深入。"
             }
-          ]
+          ],
+          "note": "notes/06/6.2.html"
         },
         {
           "id": "6.3",
@@ -1249,7 +1250,8 @@
               "title": "ComM 与 CanSM",
               "desc": "FullCom/NoCom 请求如何落到 CAN 网络状态。"
             }
-          ]
+          ],
+          "note": "notes/08/8.1.html"
         },
         {
           "id": "8.2",
@@ -1273,7 +1275,8 @@
               "title": "Bus-Off Recovery",
               "desc": "检测来源、恢复阶段、计数/延迟策略、恢复失败。"
             }
-          ]
+          ],
+          "note": "notes/08/8.2.html"
         },
         {
           "id": "8.3",
@@ -1317,7 +1320,8 @@
               "title": "Passive Mode",
               "desc": "只监听不主动发 NM 的应用场景。"
             }
-          ]
+          ],
+          "note": "notes/08/8.3.html"
         },
         {
           "id": "8.4",
@@ -1341,7 +1345,8 @@
               "title": "PN Filter",
               "desc": "CanNm/CanIf/Transceiver 层可能参与的过滤思路。"
             }
-          ]
+          ],
+          "note": "notes/08/8.4.html"
         },
         {
           "id": "8.5",
@@ -1384,7 +1389,8 @@
               "title": "典型故障",
               "desc": "睡不下去、醒不来、FullCom 不发报文、Bus-Off 循环恢复、PNC 误唤醒。"
             }
-          ]
+          ],
+          "note": "notes/08/8.6.html"
         }
       ]
     },

@@ -1,9 +1,10 @@
 const CACHE_PREFIX='bsw-learning-'+encodeURIComponent(self.registration.scope)+'-';
-const CACHE=CACHE_PREFIX+'v2026.09.30.6';
+const CACHE=CACHE_PREFIX+'v2026.09.30.7';
 const SHELL=[
   './index.html','./manifest.webmanifest','./data/courses.json',
   './icons/apple-touch-icon.png','./icons/icon-192.png','./icons/icon-512.png',
-  './notes/07/7.1.html','./notes/07/7.2.html','./notes/07/7.3.html','./notes/07/7.4.html'
+  './notes/07/7.1.html','./notes/07/7.2.html','./notes/07/7.3.html','./notes/07/7.4.html',
+  './notes/06/6.2.html','./notes/08/8.1.html','./notes/08/8.2.html','./notes/08/8.3.html','./notes/08/8.4.html','./notes/08/8.6.html'
 ];
 async function boundedFetch(req,options={},timeoutMs=5000){
   const controller=new AbortController();let timer;

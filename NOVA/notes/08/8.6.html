@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>8.6 · Ignition ON/OFF 全链路与典型网络管理故障</title><style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1b2340;--accent:#4f88d8}
+body{color:#1a1c2e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+#wrap{margin:auto}#main{background:white;box-shadow:0 1px 6px #0000001a}
+#main h1{border-bottom:2px solid #1b2340;padding-bottom:10px;margin-bottom:14px;color:#0d1530}
+#main h2{color:#152060;border-bottom:1.5px solid #3a6ab8;padding-bottom:5px}
+#main h3{color:#1a346a;padding-left:9px;border-left:3px solid var(--accent)}
+#main h4{color:#253872}#main ul,#main ol{padding-left:22px}
+#main hr{border:0;border-top:1px solid #dde2ee;margin:10px 0}
+#main pre{background:#f2f4f8;border-left:3px solid #9aadd0;border-radius:0 4px 4px 0;margin:8px 0;overflow-wrap:anywhere}
+#main pre,#main code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+#main code{background:#e6ecf7;padding:0 3px;border-radius:2px;overflow-wrap:anywhere}
+#main pre code{background:none;padding:0;font-size:inherit}
+#main blockquote{border-left:3px solid #aab8d8;padding:8px 12px;background:#f5f7fc;color:#555}
+#main table{width:100%;border-collapse:collapse;table-layout:fixed}
+#main th,#main td{border:1px solid #d9e1f2;vertical-align:top;overflow-wrap:anywhere}
+#main th{background:#eaf0fb;color:#1a346a}#main tr:nth-child(even) td{background:#fbfcff}
+#main .key-cell{font-weight:700;color:#10235a}
+#main .keybox,#main .dense-note,#main .chapter-scan-note{border-left:3px solid #4f88d8;background:#f5f8ff;padding:10px 12px;margin:12px 0}
+#main .warnbox{border-left:3px solid #c7832f;background:#fff8ed;padding:10px 12px;margin:12px 0}
+#main .tag{display:inline-block;font-size:12px;font-weight:700;background:#405d95;color:white;border-radius:999px;padding:2px 6px;margin-right:5px}
+#main .muted{color:#65708a}
+#main .compact-grid,#main .param-grid,#main .flow-grid,#main .chapter-dense-grid,#main .chapter-dense-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:12px 0}
+#main .compact-card,#main .param-card,#main .flow-card{border:1px solid #d8e1f2;background:#fbfcff;border-radius:6px;padding:12px;min-width:0;break-inside:avoid}
+#main .param-title,#main .flow-title,#main .card-title{font-weight:800;color:#152060;background:#edf3fc;margin:-12px -12px 10px;border-bottom:1px solid #d8e1f2;overflow-wrap:anywhere}
+#main .wide{grid-column:1/-1}#main .param-card pre,#main .compact-card pre{border:0}
+
+
+/* inserted-dfxy-nm-state-machine: DF_XY 项目应用层 NM 状态机矢量图 */
+#main .nm-state-section { margin: 4pt 0 5pt; }
+
+#main .nm-state-section .keybox { margin: 3pt 0; }
+
+#main .nm-state-svg {
+  width: 100%; height: auto; display: block; margin: 3pt 0;
+  border: 1px solid #d8e1f2; border-radius: 4px; background: #fbfdff;
+}
+
+#main .nm-state-svg text { font-family: inherit; fill: #17213a; }
+
+#main .nm-state-svg .lane { fill: #f3f6fb; stroke: #d9e1f0; stroke-width: 1; }
+
+#main .nm-state-svg .node { fill: #fff; stroke: #2f5f9f; stroke-width: 1.4; }
+
+#main .nm-state-svg .node-app { fill: #f6fbff; stroke: #2369a5; }
+
+#main .nm-state-svg .node-sleep { fill: #fff8ed; stroke: #bf7a24; }
+
+#main .nm-state-svg .node-proto { fill: #f8fbf4; stroke: #4f7f35; }
+
+#main .nm-state-svg .title { font-size: 17px; font-weight: 800; fill: #12245a; }
+
+#main .nm-state-svg .label { font-size: 13px; font-weight: 800; }
+
+#main .nm-state-svg .small { font-size: 11.5px; }
+
+#main .nm-state-svg .edge { stroke: #1f4e87; stroke-width: 1.7; fill: none; marker-end: url(#nmArrow); }
+
+#main .nm-state-svg .edge-warn { stroke: #b06a00; stroke-width: 1.6; fill: none; marker-end: url(#nmArrowWarn); }
+
+#main .nm-state-svg .edge-soft { stroke: #60708c; stroke-width: 1.3; stroke-dasharray: 4 3; fill: none; marker-end: url(#nmArrowSoft); }
+
+#main .nm-state-svg .edge-label rect { fill: #fff; stroke: #bfd0e8; stroke-width: .8; opacity: .96; }
+
+#main .nm-state-svg .edge-label text { font-size: 10.8px; font-weight: 800; fill: #18233a; }
+
+#main .nm-clean-svg .band { fill: #f7f9fe; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-clean-svg .state-box { fill: #fff; stroke: #426da9; stroke-width: 1.35; }
+
+#main .nm-clean-svg .state-box-wake { fill: #f5fbff; stroke: #2369a5; }
+
+#main .nm-clean-svg .state-box-sleep { fill: #fff8ed; stroke: #b87222; }
+
+#main .nm-clean-svg .state-box-proto { fill: #f8fbf4; stroke: #4f7f35; }
+
+#main .nm-clean-svg .band-title { font-size: 16px; font-weight: 800; fill: #12245a; }
+
+#main .nm-clean-svg .box-title { font-size: 13px; font-weight: 800; fill: #17213a; }
+
+#main .nm-clean-svg .box-note { font-size: 10.6px; fill: #38445c; }
+
+#main .nm-clean-svg .lane-title { font-size: 11.5px; font-weight: 800; fill: #40506f; }
+
+#main .nm-clean-svg .arrow { stroke: #1f4e87; stroke-width: 1.7; fill: none; marker-end: url(#nmCleanArrow); }
+
+#main .nm-clean-svg .arrow-warn { stroke: #b06a00; stroke-width: 1.7; fill: none; marker-end: url(#nmCleanArrowWarn); }
+
+#main .nm-clean-svg .num { fill: #12245a; font-size: 10.2px; font-weight: 800; }
+
+#main .nm-clean-svg .num-dot { fill: #fff; stroke: #4f88d8; stroke-width: 1.2; }
+
+#main .nm-clean-svg .num-dot-warn { fill: #fff; stroke: #b06a00; stroke-width: 1.2; }
+
+#main .nm-clean-svg .observe-card { fill: #fff; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-wide-svg .wide-band { fill: #f7f9fe; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-wide-svg .wide-title { font-size: 16px; font-weight: 800; fill: #12245a; }
+
+#main .nm-wide-svg .lane-title { font-size: 12px; font-weight: 800; fill: #40506f; }
+
+#main .nm-wide-svg .wide-box { fill: #fff; stroke: #426da9; stroke-width: 1.35; }
+
+#main .nm-wide-svg .wide-box-wake { fill: #f5fbff; stroke: #2369a5; }
+
+#main .nm-wide-svg .wide-box-sleep { fill: #fff8ed; stroke: #b87222; }
+
+#main .nm-wide-svg .wide-box-proto { fill: #f8fbf4; stroke: #4f7f35; }
+
+#main .nm-wide-svg .wide-box-note { fill: #fff; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-wide-svg .box-title { font-size: 13px; font-weight: 800; fill: #17213a; }
+
+#main .nm-wide-svg .box-note { font-size: 10.8px; fill: #38445c; }
+
+#main .nm-wide-svg .flow-line { stroke: #1f4e87; stroke-width: 1.75; fill: none; marker-end: url(#nmWideArrow); }
+
+#main .nm-wide-svg .flow-line-warn { stroke: #b06a00; stroke-width: 1.75; fill: none; marker-end: url(#nmWideArrowWarn); }
+
+#main .nm-wide-svg .flow-line-soft { stroke: #60708c; stroke-width: 1.45; stroke-dasharray: 4 3; fill: none; marker-end: url(#nmWideArrowSoft); }
+
+#main .nm-wide-svg .line-label rect { fill: #fff; stroke: #b9cbe5; stroke-width: .9; opacity: .98; }
+
+#main .nm-wide-svg .line-label.warn rect { stroke: #d6a25a; }
+
+#main .nm-wide-svg .line-label text { font-size: 10.8px; font-weight: 800; fill: #17213a; }
+
+  #main .nm-wide-svg .wide-title { font-size: 15px; }
+
+  #main .nm-wide-svg .box-title { font-size: 12.4px; }
+
+  #main .nm-wide-svg .box-note, #main .nm-wide-svg .line-label text { font-size: 10px; }
+ #main .nm-clean-svg .box-title { font-size: 12.4px; }
+ #main .nm-clean-svg .box-note { font-size: 10px; }
+
+#main .nm-state-table { font-size: 7.85pt; line-height: 1.18; margin: 3pt 0; }
+
+#main .nm-state-table th, #main .nm-state-table td { padding: 2.2px 4px; }
+
+#main .nm-state-note { margin: 2pt 0; padding: 4px 7px; background: #f7f9fe; border-left: 3px solid #4f88d8; line-height: 1.28; }
+
+  #main .nm-state-svg { margin: 2pt 0; }
+
+  #main .nm-state-table { font-size: 7.15pt; line-height: 1.12; }
+
+  #main .nm-state-table th, #main .nm-state-table td { padding: 1.8px 3px; }
+
+  #main .nm-state-svg { margin: 1pt 0; }
+
+  #main .nm-state-table { font-size: 6.45pt; line-height: 1.04; margin: .8pt 0; }
+
+  #main .nm-state-table th, #main .nm-state-table td { padding: .8px 1.5px; }
+
+:root{--bar-h:0px}
+body{font-size:15px;line-height:1.6;background:#edf1f6}
+#wrap{max-width:960px;padding:18px 14px 32px}
+#main{padding:20px 18px;border-radius:12px;overflow-wrap:anywhere}
+#main h1{font-size:23px;line-height:1.35;text-align:left}
+#main h2{font-size:20px;line-height:1.4;margin:24px 0 12px}
+#main h3{font-size:17px;line-height:1.4;margin:18px 0 8px}
+#main h4{font-size:15px}
+#main p,#main li{font-size:15px;line-height:1.65;margin:7px 0}
+#main code{font-size:13px}
+#main pre,#main pre.dense-pre{font-size:13px;line-height:1.55;padding:10px;white-space:pre-wrap}
+#main .param-card pre,#main .flow-card pre,#main .compact-card pre{font-size:13px;line-height:1.55}
+#main table{font-size:13px;line-height:1.55;margin:12px 0}
+#main th,#main td{padding:8px 7px}
+#main .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+#main .table-scroll>table{min-width:620px}
+#main .param-title,#main .flow-title,#main .card-title{font-size:15px;line-height:1.5;padding:8px}
+#main .chapter-dense-grid .param-card table,#main .chapter-quickref table{font-size:13px;line-height:1.55}
+#main .chapter-dense-grid .param-card pre,#main .chapter-quickref pre{font-size:13px;line-height:1.55}
+#main .chapter-dense-grid .param-card h4{font-size:15px}
+#main .compact-grid,#main .param-grid,#main .flow-grid,#main .chapter-dense-grid,#main .chapter-dense-intro{gap:12px}
+#main .nm-state-svg{min-width:800px}
+#main .figure-scroll{overflow-x:auto}
+#main .lesson-toc{padding:12px 16px;background:#f3f6fc;border-radius:8px}
+#main .lesson-toc a{display:block;padding:6px 0;color:#27558a}
+#main .source-note{font-size:13px;color:#52627c;background:#f3f6fc;padding:12px;border-left:3px solid #4f88d8}
+@media(max-width:600px){
+ #main .compact-grid,#main .param-grid,#main .flow-grid,#main .chapter-dense-grid,#main .chapter-dense-intro{grid-template-columns:1fr}
+ #main{padding:18px 14px}#wrap{padding:12px 8px 24px}
+ #main .table-scroll:before{content:'左右滑动查看表格';display:block;font-size:12px;color:#65708a;margin-top:8px}
+ #main .figure-scroll:before{content:'左右滑动查看完整状态图';display:block;font-size:12px;color:#65708a;margin-top:8px}
+}
+@media print{
+ body{font-size:10pt;background:white}#wrap,#main{padding:0}
+ #main .lesson-toc{display:none}#main .table-scroll,#main .figure-scroll{overflow:visible}
+ #main .table-scroll>table,#main .nm-state-svg{min-width:0}
+ #main h2.major-break{break-before:auto!important;page-break-before:auto!important}
+ #main table,#main p,#main li{font-size:9pt}#main pre,#main code{font-size:8pt}
+}
+
+</style></head><body><div id="wrap"><main id="main">
+<h1>8.6 · Ignition ON/OFF 全链路与典型网络管理故障</h1>
+<p class="source-note">整理自 NM 配置打印版笔记。DF_XY、ESC_M / ESC_S、参数数值及开关状态均为原笔记中的项目示例，请结合实际项目核对。本笔记覆盖本课相关内容，不代表完整课程教案。</p>
+<nav class="lesson-toc" aria-label="本课目录"><a href="#4-DF-XY-当前关键快照">4. DF_XY 当前关键快照</a><a href="#12-客户需求怎么落配置">12. 客户需求怎么落配置</a><a href="#13-排查清单-故障现象到定位路径">13. 排查清单：故障现象到定位路径</a><a href="#14-开关联动速查-不用全背但要知道谁影响谁">14. 开关联动速查：不用全背但要知道谁影响谁</a><a href="#15-常见排查入口-一页现场卡">15. 常见排查入口：一页现场卡</a></nav>
+<h2 class="major-break" id="4-DF-XY-当前关键快照">4. DF_XY 当前关键快照</h2>
+<h3 id="4-1-DF-XY-快照逐项解释">4.1 DF_XY 快照逐项解释</h3>
+<pre class="dense-pre"><code><strong>ComM Channel = ESC_M, ID 0</strong>
+    意味着 ComM 里有一个通道叫 ESC_M，通道 ID 是 0。 App / DCM / PNC / BswM 如果要请求这一路 CAN 通信，最终都要落到这个 ComM Channel。
+    当前结论：后面 Nm、CanNm、CanSM 都必须引用同一个 ESC_M，否则通路断。
+<strong>Nm Channel = ChassisCan1NmCluster, ID 0</strong>
+    意味着 Nm 抽象层有一个 NM 通道，通道 ID 是 0。 Nm 不直接发 CAN，它负责把 ComM 的 NM 请求转给具体 BusNm。
+    当前结论：这个 Nm Channel 必须通过 ComMChannelRef / NmComMChannelRef(EB) 对到 ComM 的 ESC_M。
+<strong>StandardBusType / NmStandardBusType(EB) = NM_BUSNM_CANNM</strong>
+    意味着 Nm 这个通道下面接的是 CanNm， ComM 调 Nm_NetworkRequest 后，会走到 CanNm_NetworkRequest。
+    当前结论：这是 CAN NM 通路，后续排查要看 CanNm / CanIf / CanSM。
+<strong>CanNm_ChanConfig / CanNmChannelConfig_0(EB)</strong>
+    意味着 CanNm 当前只有一个主要 Channel 配置实例。
+    这个实例里放 NM 周期、Timeout、NID/CBV、UserData、PNC、CarWakeUp 等配置。
+    当前结论：改 NM 报文和 NM 状态机参数，主要看这个 Channel。
+<strong>nmChannelId / CanNmComMNetworkHandleRef(EB) = ESC_M</strong>
+    意味着 CanNm Channel 绑定到 ComM 的 ESC_M。 ComM 请求 ESC_M 后，Nm/CanNm 才知道操作哪一路 NM。
+    当前结论：这条引用是通的；如果发不出 NM，不能优先怀疑这里断。
+<strong>CanSM Network = ESC_M</strong>
+    意味着 CanSM 也有一个名为 ESC_M 的 CAN Network。
+    ComM 请求 FullCom / SilentCom / NoCom 后，CanSM 用这个 Network 去控制底层 Controller。
+    当前结论：CanSM 侧也和 ComM 通道名对齐。
+<strong>CtrlRef / CanSMController(EB) = ESC_M / ESC_S</strong>
+    意味着 CanSM 的 <b>ESC_M Network 会一起控制两个 CAN Controller</b>。
+    ComM 只有一路 ESC_M 请求时，CanSM 可以把 ESC_M 和 ESC_S 两个 controller 一起 START/STOP/SLEEP。
+    当前结论：这不是“两路 NM”，而是一条逻辑 Network 控两个 Controller。
+<strong>CanIf Controllers: ESC_M = 0, ESC_S = 1</strong>
+    意味着 CanIf 底层有两个 Controller ID。
+    CanIf 的 Rx/Tx PDU 会具体绑定到某个 Controller/HRH/HTH。
+    当前结论：NM 报文真正走哪个物理 Controller，要看 CanIf PDU，不只看 CanSM controller list。</code></pre>
+<p>核心时间快照：</p>
+<pre class="dense-pre"><code><strong>MainFunctionPeriod / CanNmMainFunctionPeriod(EB) = 5 ms</strong>
+    意味着 CanNm 主函数 5ms 调一次。
+<strong>MsgCycleTime / CanNmMsgCycleTime(EB) = 100 ms</strong>
+    意味着正常 NM 周期发送间隔是 100ms。 CanNm 处于需要周期发 NM 且底层可发时生效。
+    当前结论：客户说“NM 周期”，主要看这个参数；但底层未 FullCom/未 STARTED 时它不会让 NM 发出来。
+<strong>CanNmMsgCycleOffset / CanNmMsgCycleOffset(EB) = 5 ms</strong>
+    意味着本节点 NM 首发相位偏移 5ms。 用来避免多个节点同一时刻一起发 NM。
+    当前结论：它影响首发错峰，不是正常周期本身。
+<strong>MsgTimeoutTime / CanNmMsgTimeoutTime(EB) = 40 ms</strong>
+    意味着本节点发出 NM 后，等待 TxConfirmation 的超时时间是 40ms。 目的是“我这帧 NM 有没有发送确认”。
+    当前结论：它不是网络管理 Timeout；发不出/TxConfirm 不回时看它。
+<strong>CanNmTime / CanNmTimeoutTime(EB) = 1 s</strong>
+<p>意味着 CanNm 的 NM Timeout Timer 时间是 1s。它不能简单理解为“1s 没收到 NM 报文就进入 ReadySleep”。</p><pre><code>需要区分当前 CanNm 所在状态：
+1. 如果当前在 Normal Operation：
+   CanNmTimeoutTime 到期后，通常是重启 NM Timeout Timer，并可能报 CANNM_E_NETWORK_TIMEOUT。
+   它不会因为 Timeout 到期就直接进入 ReadySleep。
+   从 Normal Operation 进入 ReadySleep 的关键条件是本地 Network Release，也就是本节点已经释放网络请求。
+2. 如果当前已经在 ReadySleep：
+   此时如果 1s 内没有有效 NM 活动继续刷新 / 保持 NM Timeout Timer， CanNm 才会从 ReadySleep 进入 PrepareBusSleep。
+当前结论：客户问“对端不发后多久认为网络释放”，不能只看 CanNmTimeoutTime。
+这个配置项更准确表示为：本节点已释放网络并处于 ReadySleep 后，如果 1s 内没有有效 NM 活动，则进入 PrepareBusSleep。
+   它不等于最终睡眠时间，最终进入 BusSleep 还要继续叠加 CanNmWaitBusSleepTime，并受 ComM / CanSM / 本地 Network Request / 其它节点 NM 活动影响。</code></pre><strong>RMSTime / CanNmRepeatMessageTime(EB) = 515 ms</strong>
+    意味着 RMS 持续 515ms。 这是状态持续窗口，不是快发慢发周期。
+    当前结论：客户问“Repeat Message 持续多久”，看它；客户问“NM 周期”，看 MsgCycleTime / CanNmMsgCycleTime(EB)。
+<strong>WBSTime / CanNmWaitBusSleepTime(EB) = 5 s</strong>
+    意味着在 PrepareBusSleep 后等待 5s 才进入 BusSleep。 它是 NM 睡眠前等待，不是 EcuM 最终下电。
+<strong>COMM_T_MIN_FULL_COM_MODE_DURATION / ComMTMinFullComModeDuration(EB) = 5 s</strong>
+    意味着 ComM 进入 FullCom 后至少保持 5s。 即使上层释放请求，也可能要等最短 FullCom 时间到。
+    当前结论：诊断/应用释放后不立刻睡，先查这个是否还没到。
+<strong>ModeReqRepTime / CanSMModeRequestRepetitionTime(EB) = 5 ms</strong>
+    意味着 CanSM 请求 CanIf/CanDrv 切 Controller 模式失败时，每 5ms 重试一次。
+    它影响 Controller START/STOP/SLEEP 模式切换重试节奏。
+    当前结论：ComM 请求 FullCom 但 Controller 起不来时，要看 CanSM 重试和 mode indication。
+<strong>BorTimeL1 / CanSMBorTimeL1(EB) = 0.5 s</strong>
+    意味着 BusOff 后 L1 快速恢复等待 0.5s。 偶发 BusOff 时恢复比较快。
+    当前结论：BusOff 快恢复阶段看它。
+<strong>BorTimeL2 / CanSMBorTimeL2(EB) = 2.0 s</strong>
+    意味着连续 BusOff 进入 L2 后，恢复等待 2s。 L2 比 L1 更保守。
+    当前结论：频繁 BusOff 后恢复变慢，是这个阶段在起作用。
+<strong>BorTimeTxEnsured / CanSMBorTimeTxEnsured(EB) = 1.0 s</strong>
+    意味着 BusOff 恢复后还要观察 1s 稳定发送。 稳定后 CanSM 才认为恢复可靠。
+    当前结论：BusOff 恢复不是 Controller 一 STARTED 就算彻底结束。</code></pre>
+<p>功能开关快照：</p>
+<pre class="dense-pre"><code><strong>COMM_PNC_SUPPORT / ComMPncSupport(EB) = false</strong>
+    意味着 ComM 全局不支持 PNC。 ComM 不会按 PNC 对象管理功能簇请求。
+<strong>CANNM_PN_SUPPORTED / CanNmPnSupported(EB) = false</strong>
+    意味着 CanNm 全局不支持 PNC。 CanNm 不会按 PN vector / PN filter mask 解析 NM 里的 PN 信息。
+    当前结论：即使 CANNM_PN_INFO_OFFSET / CanNmPnInfoOffset(EB) 有值，当前也不生效。
+<strong>CANIF_PUBLIC_PN_SUPPORT / CanIfPublicPnSupport(EB) = false</strong>
+    意味着 CanIf 不启用 Partial Network features。
+    CanIf PN filter 和部分 transceiver PN 通知链不会按 PN 生效。
+    当前结论：底层 PN 支持当前关闭。
+<strong>CANSM_PNSUPPORT / CanSMPNSupport(EB) = false</strong>
+    意味着 CanSM 不启用 Partial Networking 支持。
+    CANSM_PARTIALNETWORKING / CanSMActivatePN(EB) 即使有字段，也不能形成有效 PN 模式管理。
+    当前结论：CanSM 当前不参与 PN 唤醒链。
+<strong>CanNmCarWakeUpRxEnabled / CanNmCarWakeUpRxEnabled(EB) = false</strong>
+    意味着 CanNm 不解析收到 NM PDU 里的 CarWakeUp bit。 byte/bit 配置值不会触发 CarWakeUp 语义。
+<strong>NM_CAR_WAKEUPRX_INDICATION / NmCarWakeUpRxEnabled(EB) = false</strong>
+    意味着 Nm 抽象层也不启用 CarWakeUp 接收语义。 即使 CanNm 侧打开，Nm/BswM/EcuM 上报链也要同步确认。
+    当前结论：当前 CarWakeUp 链路整体不成立。
+<strong>CANNM_USER_DATA_ENABLED / CanNmUserDataEnabled(EB) = true</strong>
+    意味着 CanNm 支持 UserData API 方式访问 NM UserData。
+    可以通过 <b>Nm_SetUserData / CanNm_SetUserData</b> 类接口处理用户数据，具体看配置和实现。。
+<strong>CANNM_COM_USER_DATA_SUPPORT / CanNmComUserDataSupport(EB) = false</strong>
+    意味着 NM UserData 不是由 COM 信号来填。 不能按“ComSignal 自动填 NM UserData”理解当前工程。
+    当前结论：当前 UserData 是 API/内部方式，不是 COM 信号来填。
+<strong>UserDataLength / CanNmUserDataLength(EB) = 6</strong>
+    意味着 8 字节 NM PDU 扣掉 NID 和 CBV 后，剩余 6 字节 UserData。 当前布局就是 Byte2~Byte7。
+    当前结论：PNC/CarWakeUp/UserData 如果启用，通常都要在这 6 字节里分配含义。
+<strong>CANNM_NODE_ID_ENABLED / CanNmNodeIdEnabled(EB) = true</strong>
+    意味着 NM PDU 会携带 Node ID。 对端可以从 NM 报文识别发送节点。
+    当前结论：当前 Byte0 的 NID 有效。
+<strong>CanNmNodeId / CanNmNodeId(EB) = 8</strong>
+    意味着本节点发送 NM 时，NID 字节填 8。
+<strong>NidPos / CanNmPduNidPosition(EB) = CANNM_PDU_BYTE_0</strong>
+    当前结论：NM 报文 Byte0 = NodeId。
+<strong>CbvPos / CanNmPduCbvPosition(EB) = CANNM_PDU_BYTE_1</strong>
+    意味着 CBV 放在 Byte1。CBV 承载 Repeat Message Request、Active Wakeup、PNI 等控制位。
+<strong>COMM_NM_VARIANT_OF_CHANNEL / ComMNmVariant(EB) = FULL</strong>
+    意味着ComM 会通过 Nm_NetworkRequest / Nm_NetworkRelease 参与 NM 网络管理。
+    当前结论：ComM 不只是控制 CanSM，还会联动 Nm/CanNm。
+<strong>CANSM_ENHANCED_BUSOFF_REPORTING / CanSMEnhancedBusOffReporting(EB) = true</strong>
+    意味着 CanSM 启用增强 BusOff 上报能力。 BusOff 恢复状态和 DEM 上报会更完整。
+    当前结论：BusOff 排查要看 CanSM BOR 和 DEM 事件，不要只看 CanNm。</code></pre>
+<h2 class="major-break" id="12-客户需求怎么落配置">12. 客户需求怎么落配置</h2>
+<div class="table-scroll"><table class="resizable-table"><colgroup><col style="width: 11.58%;"><col style="width: 18.057%;"><col style="width: 29.197%;"><col style="width: 21.166%;"><col style="width: 20.001%;"></colgroup>
+<thead><tr><th>客户需求/问题</th><th>先确认</th><th>主改/主查配置</th><th>联动风险</th><th>验证点</th></tr></thead>
+<tbody>
+<tr><td>NM 周期改为 X ms</td><td>是正常周期，还是唤醒初期快发？</td><td class="key-cell"><code>MsgCycleTime / CanNmMsgCycleTime(EB)</code></td><td>周期变小会增加 BusLoad；周期变大可能影响对端 Timeout。</td><td>Trace 看 NM 周期</td></tr>
+<tr><td>唤醒后快速发 N 帧，间隔 X ms</td><td>N 是否大于 1；是否真的需要 immediate NM。</td><td class="key-cell"><code>ImmediateNmTransmissions / CanNmImmediateNmTransmissions(EB)</code>、<code>ImmediateNmCycleTime / CanNmImmediateNmCycleTime(EB)</code></td><td>短时间负载增加；<code>RepeatMessageTime</code>必须大于快发序列时间。</td><td>Trace 看唤醒初期是否出现 N 帧快发</td></tr>
+<tr><td>Repeat Message 持续 X ms</td><td>客户说的是 Repeat 状态窗口，不是 NM 周期。</td><td class="key-cell"><code>RMSTime / CanNmRepeatMessageTime(EB)</code></td><td>影响唤醒扩散、节点发现、Repeat Message Request 行为。</td><td>状态机日志/Trace 看 RMS 持续时间。</td></tr>
+<tr><td>节点 ID 是 X，放 Byte Y</td><td>NodeId 是否启用；对端 NM Matrix 是否一致。</td><td class="key-cell"><code>CANNM_NODE_ID_ENABLED / CanNmNodeIdEnabled(EB)</code>、<code>CanNmNodeId / CanNmNodeId(EB)</code>、<code>NidPos / CanNmPduNidPosition(EB)</code></td><td>改 NID 位置会影响 UserData/PN/CarWakeUp 布局。</td><td>Trace 看 ByteY 是否为 NodeId；对端是否能识别节点。</td></tr>
+<tr><td>CBV 放 Byte Y</td><td>客户对 Repeat/ActiveWakeup/PNI 的 bit 定义。</td><td class="key-cell"><code>CbvPos / CanNmPduCbvPosition(EB)</code></td><td>对端 CBV 解析必须同步；PNI/ActiveWakeup 都依赖 CBV。</td><td>Trace 看 CBV Byte；对端是否正确解析 control bits。</td></tr>
+<tr><td>NM UserData 长度/内容</td><td>UserData 是 API/internal，还是 COM 信号承载？</td><td class="key-cell"><code>CANNM_USER_DATA_ENABLED / CanNmUserDataEnabled(EB)</code>、<code>UserDataLength / CanNmUserDataLength(EB)</code>、<code>CANNM_COM_USER_DATA_SUPPORT / CanNmComUserDataSupport(EB)</code></td><td>PN Info、CarWakeUp、UserData 可能争用字节布局。</td><td>Trace 看 Byte2~Byte7；生成代码/接口确认数据来源。</td></tr>
+<tr><td>开启 PNC</td><td>客户是否真的要求 PNC，还是普通唤醒/网络保持？</td><td class="key-cell"><code>COMM_PNC_SUPPORT / ComMPncSupport(EB)</code>、<code>CANNM_PN_SUPPORTED / CanNmPnSupported(EB)</code>、<code>CANIF_PUBLIC_PN_SUPPORT / CanIfPublicPnSupport(EB)</code>、<code>CANSM_PNSUPPORT / CanSMPNSupport(EB)</code></td><td>必须端到端配 ComM/CanNm/CanIf/CanSM/Com/PduR/BswM，不能只开一个模块。</td><td>看 PN bit、EIRA/ERA、BswM rule、目标 PNC 是否保持网络。</td></tr>
+<tr><td>PN 信息从 Byte X 开始，长度 Y</td><td>是否和 NID/CBV/UserData 冲突。</td><td class="key-cell"><code>CANNM_PN_INFO_OFFSET / CanNmPnInfoOffset(EB)</code>、<code>CANNM_PN_INFO_LENGTH / CanNmPnInfoLength(EB)</code>、<code>PnFilterMask / CanNmPnFilterMaskByte(EB)</code></td><td>PNI bit、PN vector、PN filter mask 必须一致。</td><td>构造 PN vector，验证目标 PNC 是否被识别/保持。</td></tr>
+<tr><td>Car WakeUp bit 在 byte/bit</td><td>这是 NM 报文语义，还是硬件唤醒源？</td><td class="key-cell"><code>CanNmCarWakeUpRxEnabled / CanNmCarWakeUpRxEnabled(EB)</code>、<code>NM_CAR_WAKEUPRX_INDICATION / NmCarWakeUpRxEnabled(EB)</code>、<br><code>CanNmCarWakeUpBytePosition / CanNmCarWakeUpBytePosition(EB)</code>、<code>CanNmCarWakeUpBitPosition / CanNmCarWakeUpBitPosition(EB)</code></td><td class="key-cell">CanNm/Nm/BswM/EcuM 链路要同步；不要和 Active Wakeup bit 混。</td><td>发带 CarWakeUp bit 的 NM，看是否上报到上层。</td></tr>
+<tr><td>诊断时保持不睡</td><td>诊断是否通过 DCM 正常进入 ActiveDiagnostic。</td><td class="key-cell"><code>COMM_DCM_ENABLED / ComMDcmUsage(EB)</code>、<br><code>Dcm_RxComMChannelIDs / DcmDslProtocolRxComMChannelRef(EB)</code></td><td>还会受 NoCom/NoWakeup/CommunicationAllowed 限制。</td><td>诊断开始看 <code>ComM_DCM_ActiveDiagnostic</code>；结束看 <code>InactiveDiagnostic</code>。</td></tr>
+<tr><td>BusOff 恢复慢/快一点</td><td>是 L1 慢，还是连续 BusOff 进入 L2。</td><td class="key-cell"><code>BorTimeL1 / CanSMBorTimeL1(EB)</code>、<code>BorTimeL2 / CanSMBorTimeL2(EB)</code>、<code>BorCounterL1ToL2 / CanSMBorCounterL1ToL2(EB)</code>、<code>BorTimeTxEnsured / CanSMBorTimeTxEnsured(EB)</code></td><td>调短恢复时间不能解决物理层/ACK/波特率/ID 冲突问题。</td><td>制造 BusOff，看恢复节奏、DEM、CanSM 状态。</td></tr>
+<tr><td>收不到对端 NM</td><td>总线上有没有这帧；CAN ID/DLC 是否匹配。</td><td class="key-cell"><code>sortedRxLPduConfig / CanIfRxPduCanIdRange(EB)</code>、<code>canId / CanIfRxPduCanIdRangeLowerCanId(EB) (0x0 -&gt; 0x1fffffff)</code>、<code>upperRangeCanId / CanIfRxPduCanIdRangeUpperCanId(EB) (0x0 -&gt; 0x1fffffff)</code>、<code>targetPduId / CanIfRxPduTargetPduID(EB) (0 -&gt; 65535)</code>、<code>userType / CanIfRxPduUpperLayerRef(EB)</code>、<code>RxPduId / CanNmRxPduRef(EB)</code></td><td class="key-cell">CanIf 区间没覆盖对端 CAN ID，或 TargetPduID / UpperLayerRef / CanNmRxPduRef 没对齐时，CanNm 不会有有效 RxIndication。</td><td>Trace + Lower/UpperCanId + TargetPduID + UpperLayerRef + CanNm_RxIndication 闭环。</td></tr>
+<tr><td>发不出本节点 NM</td><td>Controller 是否 STARTED；CanNm 是否在 Network Mode。</td><td class="key-cell"><code>COMM_NM_VARIANT_OF_CHANNEL / ComMNmVariant(EB)</code>、<code>CtrlRef / CanSMController(EB)</code>、<code>TxPduId / CanNmTxPduRef(EB)</code>、<code>hthConfigPtr / CanIfHthCfg(EB)</code></td><td>不要只改 CanNmMsgCycleTime；底层没起来再短周期也发不出。</td><td>看 ComM/CanSM/CanNm 状态、CanIf TxConfirmation、总线 Trace。</td></tr>
+</tbody></table></div>
+<h2 id="13-排查清单-故障现象到定位路径">13. 排查清单：故障现象到定位路径</h2>
+<div class="keybox"><span class="tag">定位原则</span>排查要从“现象”倒推链路，不要从“字段名”倒推。每个问题都要同时看状态机、PDU 映射、生成代码和总线 Trace。</div>
+<h3 id="13-1-改配置前先确认">13.1 改配置前先确认</h3>
+<div class="table-scroll"><table class="resizable-table"><colgroup><col style="width: 46.762%;"><col style="width: 53.238%;"></colgroup><thead><tr><th>确认项</th><th>为什么重要</th></tr></thead><tbody>
+<tr><td>客户需求到底是周期、状态持续时间、Timeout，还是物理唤醒？</td><td>同一句“多久睡/多久发”可能分别对应 CanNm、ComM、CanSM、EcuM。</td></tr>
+<tr><td>当前通道是哪个 ComM Channel / CanSM Network / CanNm Channel？</td><td>防止改错网络或改了一个没有被引用的 Channel。</td></tr>
+<tr><td>NM 报文物理走哪个 Controller？</td><td class="key-cell">CanSM 管两个 Controller 不等于一帧 NM 自动发到两个 Controller。</td></tr>
+<tr><td>当前功能是否真的开启？</td><td>PNC、CarWakeUp、BusLoadReduction、Immediate NM 等都有总开关/通道开关。</td></tr>
+<tr><td>客户 Matrix 和 EB 配置是否一致？</td><td>NID/CBV/PN/UserData 字节位置必须和对端一致。</td></tr>
+</tbody></table></div>
+<h3 id="13-3-故障现象到排查路径">13.3 故障现象到排查路径</h3>
+<div class="table-scroll"><table class="resizable-table"><colgroup><col style="width: 11.321%;"><col style="width: 24.016%;"><col style="width: 23.627%;"><col style="width: 21.036%;"><col style="width: 20.001%;"></colgroup>
+<thead><tr><th>现象</th><th>第一层</th><th>第二层</th><th>第三层</th><th>最后确认</th></tr></thead>
+<tbody>
+<tr><td>不发 NM</td><td class="key-cell">ComM 是否 FullCom，是否被 NoCom/NoWakeup/CommunicationAllowed 压住。</td><td class="key-cell">CanSM Controller 是否 STARTED，CanIf PDU mode 是否允许 Tx。</td><td class="key-cell">CanNm 是否 NetworkRequested / Repeat / Normal，TxPduRef 是否正确。</td><td class="key-cell">CanIf TxConfirmation、总线 Trace、HTH/CAN ID/DLC。</td></tr>
+<tr><td>收不到 NM</td><td>Trace 先确认总线上是否有对端 NM。</td><td class="key-cell">CanIf Rx ID/Range/HRH/DLC 是否匹配。</td><td class="key-cell">CanNmRxPduRef 是否引用正确 CanIf Rx PDU。</td><td class="key-cell">CanNm_RxIndication 是否进来，CBV/NID/PN 解析是否正确。</td></tr>
+<tr><td>释放后不睡</td><td class="key-cell">ComM User/DCM/BswM/App/PNC 是否还保持 FullCom。</td><td class="key-cell">ComMTMinFullComModeDuration 是否未到。</td><td class="key-cell">CanNmTimeoutTime、ReadySleep、PrepareBusSleep、WaitBusSleepTime 是否按预期走。</td><td class="key-cell">EcuM/CanTrcv/硬件下电链路是否还有保持源。</td></tr>
+<tr><td>FullCom 不起来</td><td>User Mapping、ComM_RequestComMode 是否正确。</td><td>CommunicationAllowed、Mode Limitation、Wakeup Inhibition 是否挡住。</td><td class="key-cell">CanSMComMNetworkHandleRef、Controller mode indication 是否正确。</td><td class="key-cell">Nm/CanNm 引用是否对齐，CanIf PDU 是否通。</td></tr>
+<tr><td>PNC 不工作</td><td>确认 ComM/CanNm/CanIf/CanSM PNC 总开关都打开。</td><td>PNC mapping、PN info offset/length、PN filter mask 是否一致。</td><td>Com EIRA/ERA、PduR routes、BswM rules 是否完整。</td><td>Trace 看 PNI + PN vector；验证目标 PNC 是否保持/释放。</td></tr>
+<tr><td>时间不准</td><td>确认主函数周期是否就是配置里的 MainFunctionPeriod。</td><td>确认配置值是否能被 MainFunctionPeriod 整除。</td><td>生成代码 tick 是否按预期换算。</td><td>Trace/日志测量是否从正确状态边界开始。</td></tr>
+<tr><td>BusOff 反复</td><td>先确认是 L1 还是 L2 阶段。</td><td>看 CanSM BOR 参数和 DEM 上报。</td><td>查 CanIf/CanDrv mode、TxEnsured 观察期。</td><td>查物理层、ACK、波特率、采样点、终端电阻、ID 冲突、BusLoad。</td></tr>
+</tbody></table></div>
+<h2 id="14-开关联动速查-不用全背但要知道谁影响谁">14. 开关联动速查：不用全背但要知道谁影响谁</h2>
+<div class="keybox"><span class="tag">记忆方式</span>不用机械背所有开关，但要知道哪些开关会改变状态机、报文布局、收发路径和跨模块联动。</div>
+<div class="table-scroll"><table class="resizable-table"><colgroup><col style="width: 13.99%;"><col style="width: 33.808%;"><col style="width: 27.202%;"><col style="width: 25%;"></colgroup>
+<thead><tr><th>类型</th><th>必须关注的开关/参数</th><th>影响范围</th><th>现场判断</th></tr></thead>
+<tbody>
+<tr><td class="key-cell">ComM 模式控制</td><td class="key-cell"><code>ComMNmVariant</code>、<code>ComMDcmUsage</code>、<code>ComMTMinFullComModeDuration</code></td><td>决定是否通过 Nm 管网络、诊断是否能保持通信、FullCom 最短保持时间。</td><td>诊断后不睡、FullCom 不起来，先看这些。</td></tr>
+<tr><td class="key-cell">ComM 限制/抑制</td><td class="key-cell"><code>ComMNoCom</code>、<code>ComMNoWakeup</code>、<code>ComMModeLimitationEnabled</code>、<code>ComMWakeupInhibitionEnabled</code></td><td>可能压住 FullCom 或阻止唤醒。</td><td>请求存在但通道不起，查 MaxMode 和 inhibition status。</td></tr>
+<tr><td class="key-cell">CanNm 时间</td><td><code>MsgCycleTime</code>、<code>MsgTimeoutTime</code>、<code>TimeoutTime</code>、<code>RepeatMessageTime</code>、<code>WaitBusSleepTime</code></td><td>决定 NM 周期、TxConfirm 超时、网络超时、Repeat 状态、PrepareBusSleep 等待。</td><td>客户说“时间不对”，先分清是哪种时间。</td></tr>
+<tr><td class="key-cell">CanNm 报文布局</td><td><code>NidPosition</code>、<code>CbvPosition</code>、<code>UserDataLength</code>、<code>NodeId</code></td><td>影响对端解析和本节点 NM 内容。</td><td>内容不对时查 Matrix、CanNm、CanIf 三者一致性。</td></tr>
+<tr><td>PNC</td><td class="key-cell"><code>ComMPncSupport</code>、<code>CanNmPnSupported</code>、<code>CanIfPublicPnSupport</code>、<code>CanSMPNSupport</code></td><td>必须端到端打开才形成 PNC 链路。</td><td>当前 DF_XY 全关，不能用 PNC 解释当前网络保持。</td></tr>
+<tr><td>CarWakeUp</td><td class="key-cell"><code>CanNmCarWakeUpRxEnabled</code>、<code>NmCarWakeUpRxEnabled</code></td><td>决定是否解析 NM PDU 里的 CarWakeUp bit 并上报。</td><td>当前关闭，byte/bit 配置不会形成 CarWakeUp 语义。</td></tr>
+<tr><td class="key-cell">CanSM BusOff</td><td><code>BorTimeL1</code>、<code>BorTimeL2</code>、<code>BorCounterL1ToL2</code>、<code>BorTimeTxEnsured</code>、DEM event</td><td>决定 BusOff 恢复节奏和诊断上报。</td><td>BusOff 问题不要只看 CanNm。</td></tr>
+<tr><td class="key-cell">CanIf 收发路径</td><td>Rx/Tx PDU、CAN ID、HRH/HTH、Range、DLC、UpperLayer</td><td>决定 NM 报文能不能进/出 CanNm。</td><td>Controller 已 STARTED 但报文不通，重点查 CanIf。</td></tr>
+</tbody></table></div>
+<h2 id="15-常见排查入口-一页现场卡">15. 常见排查入口：一页现场卡</h2>
+<div class="table-scroll"><table class="resizable-table"><colgroup><col style="width: 8.981%;"><col style="width: 55.742%;"><col style="width: 35.277%;"></colgroup>
+<thead><tr><th>入口</th><th>一眼判断链路</th><th>最容易误判的点</th></tr></thead>
+<tbody>
+<tr><td>不发 NM</td><td class="key-cell">ComM FullCom -&gt; CanSM STARTED -&gt; Nm/CanNm NetworkRequest -&gt; CanIf TxPdu/HTH -&gt; TxConfirmation/Trace</td><td>只改 <code>CanNmMsgCycleTime</code> 不能让没起来的 Controller 发 NM。</td></tr>
+<tr><td>收不到 NM</td><td>Trace 有帧 -&gt; CanIf Rx ID/Range/HRH/DLC -&gt; CanNmRxPduRef -&gt; CanNm_RxIndication</td><td class="key-cell">CanIf 收不到时，CanNm 配再对也没用。</td></tr>
+<tr><td>诊断不通</td><td class="key-cell">ComM FullCom -&gt; CanSM STARTED -&gt; CanIf PDU mode -&gt; CanTp/PduR/DCM 路由 -&gt; 会话/安全/S3</td><td>诊断报文内容归 DCM/CanTp；通道能不能通信归 ComM/CanSM。</td></tr>
+<tr><td>诊断后不睡</td><td class="key-cell">DCM Inactive -&gt; ComM 请求源清空 -&gt; TMinFullCom 到期 -&gt; CanNm Timeout -&gt; WaitBusSleep -&gt; EcuM/CanTrcv</td><td>不能把“5s 不睡”直接等同于 <code>CanNmWaitBusSleepTime</code>。</td></tr>
+<tr><td>BusOff</td><td class="key-cell">CanSM BOR -&gt; L1/L2/TxEnsured -&gt; DEM -&gt; CanIf/CanDrv -&gt; 物理层/ACK/BusLoad</td><td>BusOff 不是 NM 协议问题。</td></tr>
+<tr><td>PNC</td><td class="key-cell">ComM PNC -&gt; CanNm PN Info/PNI -&gt; CanIf/CanSM PN -&gt; Com EIRA/ERA -&gt; PduR/BswM/EcuM</td><td>只打开 CanNm 的 PN 不等于 PNC 生效。</td></tr>
+<tr><td>唤醒</td><td>物理唤醒源 -&gt; EcuM/CanTrcv/CanIf -&gt; ComM 逻辑请求 -&gt; CanSM STARTED -&gt; Nm/CanNm 网络保持</td><td>CarWakeUp、ActiveWakeup、SelectiveWake、PNC 不是同一个概念。</td></tr>
+</tbody></table></div>
+</main></div></body></html>

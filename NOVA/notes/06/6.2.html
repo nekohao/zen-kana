@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>6.2 · Can Driver 与 CanIf：Controller/PDU 模式和映射</title><style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1b2340;--accent:#4f88d8}
+body{color:#1a1c2e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+#wrap{margin:auto}#main{background:white;box-shadow:0 1px 6px #0000001a}
+#main h1{border-bottom:2px solid #1b2340;padding-bottom:10px;margin-bottom:14px;color:#0d1530}
+#main h2{color:#152060;border-bottom:1.5px solid #3a6ab8;padding-bottom:5px}
+#main h3{color:#1a346a;padding-left:9px;border-left:3px solid var(--accent)}
+#main h4{color:#253872}#main ul,#main ol{padding-left:22px}
+#main hr{border:0;border-top:1px solid #dde2ee;margin:10px 0}
+#main pre{background:#f2f4f8;border-left:3px solid #9aadd0;border-radius:0 4px 4px 0;margin:8px 0;overflow-wrap:anywhere}
+#main pre,#main code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+#main code{background:#e6ecf7;padding:0 3px;border-radius:2px;overflow-wrap:anywhere}
+#main pre code{background:none;padding:0;font-size:inherit}
+#main blockquote{border-left:3px solid #aab8d8;padding:8px 12px;background:#f5f7fc;color:#555}
+#main table{width:100%;border-collapse:collapse;table-layout:fixed}
+#main th,#main td{border:1px solid #d9e1f2;vertical-align:top;overflow-wrap:anywhere}
+#main th{background:#eaf0fb;color:#1a346a}#main tr:nth-child(even) td{background:#fbfcff}
+#main .key-cell{font-weight:700;color:#10235a}
+#main .keybox,#main .dense-note,#main .chapter-scan-note{border-left:3px solid #4f88d8;background:#f5f8ff;padding:10px 12px;margin:12px 0}
+#main .warnbox{border-left:3px solid #c7832f;background:#fff8ed;padding:10px 12px;margin:12px 0}
+#main .tag{display:inline-block;font-size:12px;font-weight:700;background:#405d95;color:white;border-radius:999px;padding:2px 6px;margin-right:5px}
+#main .muted{color:#65708a}
+#main .compact-grid,#main .param-grid,#main .flow-grid,#main .chapter-dense-grid,#main .chapter-dense-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:12px 0}
+#main .compact-card,#main .param-card,#main .flow-card{border:1px solid #d8e1f2;background:#fbfcff;border-radius:6px;padding:12px;min-width:0;break-inside:avoid}
+#main .param-title,#main .flow-title,#main .card-title{font-weight:800;color:#152060;background:#edf3fc;margin:-12px -12px 10px;border-bottom:1px solid #d8e1f2;overflow-wrap:anywhere}
+#main .wide{grid-column:1/-1}#main .param-card pre,#main .compact-card pre{border:0}
+
+
+/* inserted-dfxy-nm-state-machine: DF_XY 项目应用层 NM 状态机矢量图 */
+#main .nm-state-section { margin: 4pt 0 5pt; }
+
+#main .nm-state-section .keybox { margin: 3pt 0; }
+
+#main .nm-state-svg {
+  width: 100%; height: auto; display: block; margin: 3pt 0;
+  border: 1px solid #d8e1f2; border-radius: 4px; background: #fbfdff;
+}
+
+#main .nm-state-svg text { font-family: inherit; fill: #17213a; }
+
+#main .nm-state-svg .lane { fill: #f3f6fb; stroke: #d9e1f0; stroke-width: 1; }
+
+#main .nm-state-svg .node { fill: #fff; stroke: #2f5f9f; stroke-width: 1.4; }
+
+#main .nm-state-svg .node-app { fill: #f6fbff; stroke: #2369a5; }
+
+#main .nm-state-svg .node-sleep { fill: #fff8ed; stroke: #bf7a24; }
+
+#main .nm-state-svg .node-proto { fill: #f8fbf4; stroke: #4f7f35; }
+
+#main .nm-state-svg .title { font-size: 17px; font-weight: 800; fill: #12245a; }
+
+#main .nm-state-svg .label { font-size: 13px; font-weight: 800; }
+
+#main .nm-state-svg .small { font-size: 11.5px; }
+
+#main .nm-state-svg .edge { stroke: #1f4e87; stroke-width: 1.7; fill: none; marker-end: url(#nmArrow); }
+
+#main .nm-state-svg .edge-warn { stroke: #b06a00; stroke-width: 1.6; fill: none; marker-end: url(#nmArrowWarn); }
+
+#main .nm-state-svg .edge-soft { stroke: #60708c; stroke-width: 1.3; stroke-dasharray: 4 3; fill: none; marker-end: url(#nmArrowSoft); }
+
+#main .nm-state-svg .edge-label rect { fill: #fff; stroke: #bfd0e8; stroke-width: .8; opacity: .96; }
+
+#main .nm-state-svg .edge-label text { font-size: 10.8px; font-weight: 800; fill: #18233a; }
+
+#main .nm-clean-svg .band { fill: #f7f9fe; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-clean-svg .state-box { fill: #fff; stroke: #426da9; stroke-width: 1.35; }
+
+#main .nm-clean-svg .state-box-wake { fill: #f5fbff; stroke: #2369a5; }
+
+#main .nm-clean-svg .state-box-sleep { fill: #fff8ed; stroke: #b87222; }
+
+#main .nm-clean-svg .state-box-proto { fill: #f8fbf4; stroke: #4f7f35; }
+
+#main .nm-clean-svg .band-title { font-size: 16px; font-weight: 800; fill: #12245a; }
+
+#main .nm-clean-svg .box-title { font-size: 13px; font-weight: 800; fill: #17213a; }
+
+#main .nm-clean-svg .box-note { font-size: 10.6px; fill: #38445c; }
+
+#main .nm-clean-svg .lane-title { font-size: 11.5px; font-weight: 800; fill: #40506f; }
+
+#main .nm-clean-svg .arrow { stroke: #1f4e87; stroke-width: 1.7; fill: none; marker-end: url(#nmCleanArrow); }
+
+#main .nm-clean-svg .arrow-warn { stroke: #b06a00; stroke-width: 1.7; fill: none; marker-end: url(#nmCleanArrowWarn); }
+
+#main .nm-clean-svg .num { fill: #12245a; font-size: 10.2px; font-weight: 800; }
+
+#main .nm-clean-svg .num-dot { fill: #fff; stroke: #4f88d8; stroke-width: 1.2; }
+
+#main .nm-clean-svg .num-dot-warn { fill: #fff; stroke: #b06a00; stroke-width: 1.2; }
+
+#main .nm-clean-svg .observe-card { fill: #fff; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-wide-svg .wide-band { fill: #f7f9fe; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-wide-svg .wide-title { font-size: 16px; font-weight: 800; fill: #12245a; }
+
+#main .nm-wide-svg .lane-title { font-size: 12px; font-weight: 800; fill: #40506f; }
+
+#main .nm-wide-svg .wide-box { fill: #fff; stroke: #426da9; stroke-width: 1.35; }
+
+#main .nm-wide-svg .wide-box-wake { fill: #f5fbff; stroke: #2369a5; }
+
+#main .nm-wide-svg .wide-box-sleep { fill: #fff8ed; stroke: #b87222; }
+
+#main .nm-wide-svg .wide-box-proto { fill: #f8fbf4; stroke: #4f7f35; }
+
+#main .nm-wide-svg .wide-box-note { fill: #fff; stroke: #d8e1f2; stroke-width: 1; }
+
+#main .nm-wide-svg .box-title { font-size: 13px; font-weight: 800; fill: #17213a; }
+
+#main .nm-wide-svg .box-note { font-size: 10.8px; fill: #38445c; }
+
+#main .nm-wide-svg .flow-line { stroke: #1f4e87; stroke-width: 1.75; fill: none; marker-end: url(#nmWideArrow); }
+
+#main .nm-wide-svg .flow-line-warn { stroke: #b06a00; stroke-width: 1.75; fill: none; marker-end: url(#nmWideArrowWarn); }
+
+#main .nm-wide-svg .flow-line-soft { stroke: #60708c; stroke-width: 1.45; stroke-dasharray: 4 3; fill: none; marker-end: url(#nmWideArrowSoft); }
+
+#main .nm-wide-svg .line-label rect { fill: #fff; stroke: #b9cbe5; stroke-width: .9; opacity: .98; }
+
+#main .nm-wide-svg .line-label.warn rect { stroke: #d6a25a; }
+
+#main .nm-wide-svg .line-label text { font-size: 10.8px; font-weight: 800; fill: #17213a; }
+
+  #main .nm-wide-svg .wide-title { font-size: 15px; }
+
+  #main .nm-wide-svg .box-title { font-size: 12.4px; }
+
+  #main .nm-wide-svg .box-note, #main .nm-wide-svg .line-label text { font-size: 10px; }
+ #main .nm-clean-svg .box-title { font-size: 12.4px; }
+ #main .nm-clean-svg .box-note { font-size: 10px; }
+
+#main .nm-state-table { font-size: 7.85pt; line-height: 1.18; margin: 3pt 0; }
+
+#main .nm-state-table th, #main .nm-state-table td { padding: 2.2px 4px; }
+
+#main .nm-state-note { margin: 2pt 0; padding: 4px 7px; background: #f7f9fe; border-left: 3px solid #4f88d8; line-height: 1.28; }
+
+  #main .nm-state-svg { margin: 2pt 0; }
+
+  #main .nm-state-table { font-size: 7.15pt; line-height: 1.12; }
+
+  #main .nm-state-table th, #main .nm-state-table td { padding: 1.8px 3px; }
+
+  #main .nm-state-svg { margin: 1pt 0; }
+
+  #main .nm-state-table { font-size: 6.45pt; line-height: 1.04; margin: .8pt 0; }
+
+  #main .nm-state-table th, #main .nm-state-table td { padding: .8px 1.5px; }
+
+:root{--bar-h:0px}
+body{font-size:15px;line-height:1.6;background:#edf1f6}
+#wrap{max-width:960px;padding:18px 14px 32px}
+#main{padding:20px 18px;border-radius:12px;overflow-wrap:anywhere}
+#main h1{font-size:23px;line-height:1.35;text-align:left}
+#main h2{font-size:20px;line-height:1.4;margin:24px 0 12px}
+#main h3{font-size:17px;line-height:1.4;margin:18px 0 8px}
+#main h4{font-size:15px}
+#main p,#main li{font-size:15px;line-height:1.65;margin:7px 0}
+#main code{font-size:13px}
+#main pre,#main pre.dense-pre{font-size:13px;line-height:1.55;padding:10px;white-space:pre-wrap}
+#main .param-card pre,#main .flow-card pre,#main .compact-card pre{font-size:13px;line-height:1.55}
+#main table{font-size:13px;line-height:1.55;margin:12px 0}
+#main th,#main td{padding:8px 7px}
+#main .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+#main .table-scroll>table{min-width:620px}
+#main .param-title,#main .flow-title,#main .card-title{font-size:15px;line-height:1.5;padding:8px}
+#main .chapter-dense-grid .param-card table,#main .chapter-quickref table{font-size:13px;line-height:1.55}
+#main .chapter-dense-grid .param-card pre,#main .chapter-quickref pre{font-size:13px;line-height:1.55}
+#main .chapter-dense-grid .param-card h4{font-size:15px}
+#main .compact-grid,#main .param-grid,#main .flow-grid,#main .chapter-dense-grid,#main .chapter-dense-intro{gap:12px}
+#main .nm-state-svg{min-width:800px}
+#main .figure-scroll{overflow-x:auto}
+#main .lesson-toc{padding:12px 16px;background:#f3f6fc;border-radius:8px}
+#main .lesson-toc a{display:block;padding:6px 0;color:#27558a}
+#main .source-note{font-size:13px;color:#52627c;background:#f3f6fc;padding:12px;border-left:3px solid #4f88d8}
+@media(max-width:600px){
+ #main .compact-grid,#main .param-grid,#main .flow-grid,#main .chapter-dense-grid,#main .chapter-dense-intro{grid-template-columns:1fr}
+ #main{padding:18px 14px}#wrap{padding:12px 8px 24px}
+ #main .table-scroll:before{content:'左右滑动查看表格';display:block;font-size:12px;color:#65708a;margin-top:8px}
+ #main .figure-scroll:before{content:'左右滑动查看完整状态图';display:block;font-size:12px;color:#65708a;margin-top:8px}
+}
+@media print{
+ body{font-size:10pt;background:white}#wrap,#main{padding:0}
+ #main .lesson-toc{display:none}#main .table-scroll,#main .figure-scroll{overflow:visible}
+ #main .table-scroll>table,#main .nm-state-svg{min-width:0}
+ #main h2.major-break{break-before:auto!important;page-break-before:auto!important}
+ #main table,#main p,#main li{font-size:9pt}#main pre,#main code{font-size:8pt}
+}
+
+</style></head><body><div id="wrap"><main id="main">
+<h1>6.2 · Can Driver 与 CanIf：Controller/PDU 模式和映射</h1>
+<p class="source-note">整理自 NM 配置打印版笔记。DF_XY、ESC_M / ESC_S、参数数值及开关状态均为原笔记中的项目示例，请结合实际项目核对。本笔记覆盖本课相关内容，不代表完整课程教案。</p>
+<nav class="lesson-toc" aria-label="本课目录"><a href="#11-CanIf-配置项">11. CanIf 配置项</a></nav>
+<h2 id="11-CanIf-配置项">11. CanIf 配置项</h2>
+<p>CanIf 是 CAN Interface。它在 CanNm/CanTp/Com 等上层模块和 CAN Driver 之间，负责 PDU 到 CAN 硬件对象的映射。</p>
+<pre class="dense-pre"><code><strong>CanNm / CanTp / Com</strong>
+    -&gt; CanIf PDU
+        -&gt; HTH / HRH
+            -&gt; CAN Driver / Controller<br></code><strong style="background-color: initial; font-size: inherit;">CanNm 决定何时发 NM。<br></strong><strong style="background-color: initial; font-size: inherit;">CanIf 决定这帧 NM 用哪个 CAN ID、走哪个 HTH、从哪个 HRH 收、回调给谁</strong></pre>
+<p>如果收不到 NM：</p>
+<pre class="dense-pre"><code><strong>1. CAN ID 是否落在 CanIfRxPduCanIdRangeLowerCanId / CanIfRxPduCanIdRangeUpperCanId 区间内。</strong>
+<strong>2. CanIfRxPduTargetPduID 是否对到目标 Rx PDU。</strong>
+<strong>3. CanIfRxPduUpperLayerRef 是否指向 CanNm。</strong>
+<strong>4. DLC 是否符合预期。</strong>
+<strong>5. CanNmRxPduRef 是否引用这个 Rx PDU。</strong>
+<strong>6. 是否调用到 CanNm_RxIndication。</strong></code></pre>
+<p>如果发不出 NM：</p>
+<pre class="dense-pre"><code><strong>1. ComM 是否 FullCom。</strong>
+<strong>2. CanSM Controller 是否 STARTED。</strong>
+<strong>3. CanNm 是否到了发送状态。</strong>
+<strong>4. TxPduId / CanNmTxPduRef(EB) 是否引用正确 Tx PDU。</strong>
+<strong>5. CanIf Tx PDU 是否 ONLINE。</strong>
+<strong>6. HTH 是否绑定正确 Controller。</strong>
+<strong>7. Tx buffer 是否满。</strong>
+<strong>8. 是否有 TxConfirmation。</strong></code></pre>
+<h3 id="11-3-CanIfPublicRangeReceptionSupport-Range-Reception-Support-EB">11.3 CANIF_RANGE_RECEPTION / CanIfPublicRangeReceptionSupport(EB)</h3>
+<pre class="dense-pre"><code><strong>EB 区间接收对象：</strong>CanIfRxPduCanIdRange
+<strong>EB 实际字段：</strong>CanIfRxPduCanIdRangeLowerCanId / CanIfRxPduCanIdRangeUpperCanId / CanIfRxPduTargetPduID / CanIfRxPduUpperLayerRef</code></pre>
+<p>当前：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">true</strong></p>
+<p>含义：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">CanIf 支持范围接收。</strong></p>
+<p>影响：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">可以用一个范围匹配一组 CAN ID。</strong><strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">但范围、HRH、上层 PDU 引用必须准确。</strong></p>
+<p>风险：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">范围太宽:</strong><span style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">可能误收不该给 CanNm 的报文。</span><strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">范围太窄:</strong><span style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">对端 NM ID 可能收不到。</span></p>
+<h3 id="11-4-CanIfPublicTxBuffering-Tx-Buffering-EB">11.4 CANIF_PUBLIC_TX_BUFFERING / CanIfPublicTxBuffering(EB)</h3>
+<p>当前：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">true</strong></p>
+<p>含义：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">CanIf 支持 Tx buffering。</strong></p>
+<p>影响：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">短时间发送拥塞时，CanIf 可以缓存待发 PDU。</strong><strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">但 buffer 不足时仍可能发送失败或延迟。</strong></p>
+<p><strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">偶发 NM 发不出或 TxConfirmation 超时：</strong><span style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">查 Tx buffer 配置。</span><span style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">查 HTH 是否拥塞。</span><span style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">查总线负载。</span></p>
+<h3 id="11-5-CanIfPrivateDlcCheck-DLC-Check-EB">11.5 CANIF_DLC_CHECK_ENABLED / CanIfPrivateDlcCheck(EB)</h3>
+<p>当前：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">false</strong></p>
+<p>含义：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">CanIf 不做严格 DLC 检查。</strong></p>
+<p>影响：<strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">DLC 不匹配的问题可能不会在 CanIf 层被挡住。</strong><strong style="background-color: initial; font-family: &quot;Cascadia Mono&quot;, Consolas, &quot;JetBrains Mono&quot;, &quot;Courier New&quot;, monospace; font-size: inherit; white-space: pre-wrap;">错误可能到 CanNm/CanTp/上层才表现出来。</strong></p>
+<h3 id="11-6-CanIf-PN-Wakeup-开关">11.6 CanIf PN / Wakeup 开关</h3>
+<p>当前：</p>
+<pre class="dense-pre"><code><strong>CANIF_PUBLIC_PN_SUPPORT / CanIfPublicPnSupport(EB) = false</strong>
+<strong>PublicCtrlWakeupSupport / CanIfPublicCtrlWakeupSupport(EB) = false</strong>
+<strong>CANIF_CANTRCV_WAKEUP_SUPPORT / CanIfPublicTrcvWakeupSupport(EB) = false</strong>
+<strong>CANIF_WAKEUP_CHECK_VALID_BY_NM / CanIfPublicWakeupCheckValidByNM(EB) = true</strong></code></pre>
+<p>含义：</p>
+<pre class="dense-pre"><code><strong>当前 CanIf 不启用 PN 过滤支持。</strong> <strong>当前也不通过 CanIf 控制器/收发器唤醒路径。</strong>
+<strong>虽然 WakeupCheckValidByNM = true，但相关硬件唤醒和 CarWakeUp 链路没有完整打开。</strong></code></pre>
+<p>诊断帧物理唤醒：</p>
+<pre class="dense-pre"><code><strong>不要只看 CANIF_WAKEUP_CHECK_VALID_BY_NM / CanIfPublicWakeupCheckValidByNM(EB)。</strong>
+<strong>如果 Controller/Trcv wakeup support 关闭，且硬件按任意 CAN 活动唤醒，</strong>
+<strong>软件层未必能阻止第一次唤醒。</strong></code></pre>
+<h3 id="11-7-CanIf-常见故障定位">11.7 CanIf 常见故障定位</h3>
+<p>收不到 NM：</p>
+<pre class="dense-pre"><code><strong>1. 对端 CAN ID 是否落在 CanIfRxPduCanIdRangeLowerCanId / CanIfRxPduCanIdRangeUpperCanId 区间内。</strong>
+<strong>2. CanIfRxPduTargetPduID 是否对到目标 Rx PDU。</strong>
+<strong>3. CanIfRxPduUpperLayerRef 是否指向 CanNm。</strong>
+<strong>4. Driver filter / Controller 接收路径是否放行。</strong>
+<strong>5. CanNmRxPduRef 是否对上。</strong>
+<strong>6. 是否进入 CanNm_RxIndication。</strong></code></pre>
+<p>发不出 NM：</p>
+<pre class="dense-pre"><code><strong>1. TxPduId / CanNmTxPduRef(EB) 是否对上 CanIf Tx PDU。</strong>
+<strong>2. HTH 是否对应正确 Controller。</strong>
+<strong>3. CanSM 是否 STARTED。</strong>
+<strong>4. PDU mode 是否 ONLINE。</strong>
+<strong>5. Tx buffer 是否足够。</strong>
+<strong>6. CanNm_TxConfirmation 是否回来。</strong></code></pre>
+<p>诊断不通：</p>
+<pre class="dense-pre"><code><strong>1. 诊断 Rx/Tx PDU 是否配置在 CanIf。</strong>
+<strong>2. Upper Layer 是否 CanTp。</strong>
+<strong>3. CanTp/PduR/DCM 路由是否正确。</strong>
+<strong>4. Controller 是否 STARTED。</strong>
+<strong>5. PDU mode 是否 ONLINE。</strong></code></pre>
+<h3 id="11-8-CanIf-章节口诀">11.8 CanIf 章节口诀</h3>
+<pre class="dense-pre"><code><strong>CanIf 是 PDU 到 CAN 硬件对象的桥。</strong>
+<strong>CAN ID、DLC、HRH、HTH、Upper Layer 都在这里决定。</strong>
+<strong>RxPduId / CanNmRxPduRef(EB) / TxPduId / CanNmTxPduRef(EB) 必须和 CanIf PDU 对齐。</strong>
+<strong>收不到先查 Rx ID/HRH/UL/RxIndication。</strong>
+<strong>发不出先查 Tx PDU/HTH/PDU mode/TxConfirmation。</strong></code></pre>
+</main></div></body></html>
