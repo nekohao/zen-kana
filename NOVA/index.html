@@ -185,7 +185,7 @@ function lastCourse(){
   const first=[...courseById.values()].find(c=>!courseDone(c.id));return first?.id||[...courseById.keys()][0];
 }
 function recentCourses(){let a=[];try{a=JSON.parse(localStorage.getItem('autosar-recent-courses')||'[]')}catch(e){}return a.filter(x=>courseById.has(x)).slice(0,4)}
-function top(title,sub){return `<div class="top"><div><h1>${esc(title)}</h1><p>${esc(sub||'')}</p></div><button class="avatar" onclick="switchTab('me')" aria-label="我的">${user?'✓':'BSW'}</button></div>`}
+function renderHeader(title,sub){return `<div class="top"><div><h1>${esc(title)}</h1><p>${esc(sub||'')}</p></div><button class="avatar" onclick="switchTab('me')" aria-label="我的">${user?'✓':'BSW'}</button></div>`}
 function switchTab(tab){
   state.tab=tab;
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===tab));
@@ -196,7 +196,7 @@ function switchTab(tab){
 function renderTab(tab){({home:renderHome,courses:renderCourses,knowledge:renderKnowledge,me:renderMe}[tab]||renderHome)()}
 function renderHome(){
   const p=progress(),id=lastCourse(),c=courseById.get(id),recent=recentCourses().map(x=>courseById.get(x)).filter(Boolean);
-  $('#home').innerHTML=`${top('BSW Learning','AUTOSAR Classic · 跳槽学习系统')}
+  $('#home').innerHTML=`${renderHeader('BSW Learning','AUTOSAR Classic · 跳槽学习系统')}
   ${c?`<div class="card hero ${intensity(c.importance,c.depth)}"><div class="eyebrow">Continue Learning</div><div class="hero-id">${esc(c.id)}</div><div class="hero-title">${esc(c.title)}</div><div class="meta-row">${levelChip('重要性',c.importance)}${levelChip('学习深度',c.depth)}<span class="soft-pill">${esc(c.duration)}</span></div><div style="height:13px"></div><button class="primary" onclick="openLesson('${esc(c.id)}')">${courseDone(c.id)?'再次复习':'继续学习'} →</button></div>`:''}
   <div class="card progress-card"><div class="progress-head"><div><div class="eyebrow">课程进度</div><div class="progress-num">${p.courseDone}<small> / ${p.courseTotal}</small></div></div><div class="progress-pct">${p.coursePct}%</div></div><div class="track"><i style="width:${p.coursePct}%"></i></div></div>
   <div class="stats"><div class="card stat"><b>${p.kpDone}</b><span>已掌握知识点</span></div><div class="card stat"><b>${p.kpTotal-p.kpDone}</b><span>待补知识点</span></div></div>
@@ -221,7 +221,7 @@ function renderCourses(){
     }).join('');
     body=`<div class="chapter-list">${cards}</div>`;
   }
-  $('#courses').innerHTML=`${top('课程','107 节正式课程 · 19 章')}${search}${seg}${body}`;
+  $('#courses').innerHTML=`${renderHeader('课程','107 节正式课程 · 19 章')}${search}${seg}${body}`;
 }
 function renderKnowledge(){
   const q=state.kpQuery.trim().toLowerCase(),f=state.kpFilter;
@@ -232,11 +232,11 @@ function renderKnowledge(){
     groups+=`<div class="kp-group">第 ${ch.id} 章 · ${esc(ch.title)}</div><div class="kp-list">${arr.map(k=>`<label class="kp"><input type="checkbox" ${kpDone(k.id)?'checked':''} onchange="toggleKp('${esc(k.id)}',this.checked)"><span class="kp-content"><span class="kp-line"><span class="kp-code">${esc(k.id)}</span><span class="kp-title">${esc(k.title)}</span>${levelChip('重要性',k.importance)}</span><span class="kp-desc">${esc(k.desc)}</span></span></label>`).join('')}</div>`;
   }
   const p=progress();
-  $('#knowledge').innerHTML=`${top('知识库',`${p.kpDone} / ${p.kpTotal} 已掌握`)}<div class="search">${iconSearch()}<input value="${esc(state.kpQuery)}" placeholder="搜索 Z 编号、标题或描述" oninput="state.kpQuery=this.value;renderKnowledge()"></div><div class="caption">重要性</div><div class="segment">${['ALL','0','1','2'].map(x=>`<button class="${f===x?'active ':''}${x==='ALL'?'':('lv'+x)}" onclick="state.kpFilter='${x}';renderKnowledge()">${x==='ALL'?'全部':x}</button>`).join('')}</div>${groups||'<div class="empty">没有找到匹配知识点。</div>'}`;
+  $('#knowledge').innerHTML=`${renderHeader('知识库',`${p.kpDone} / ${p.kpTotal} 已掌握`)}<div class="search">${iconSearch()}<input value="${esc(state.kpQuery)}" placeholder="搜索 Z 编号、标题或描述" oninput="state.kpQuery=this.value;renderKnowledge()"></div><div class="caption">重要性</div><div class="segment">${['ALL','0','1','2'].map(x=>`<button class="${f===x?'active ':''}${x==='ALL'?'':('lv'+x)}" onclick="state.kpFilter='${x}';renderKnowledge()">${x==='ALL'?'全部':x}</button>`).join('')}</div>${groups||'<div class="empty">没有找到匹配知识点。</div>'}`;
 }
 function renderMe(){
   const p=progress(),cloud=user?(user.email||'已登录'):'未登录';
-  $('#me').innerHTML=`${top('我的','进度、云同步与学习设置')}
+  $('#me').innerHTML=`${renderHeader('我的','进度、云同步与学习设置')}
   <div class="card me-card"><div class="me-row"><div class="me-icon">☁</div><div class="me-main"><b>云同步</b><span>${esc(cloud)}</span></div><button onclick="openAuth()">${user?'管理':'登录'}</button></div></div>
   <div class="card me-card"><div class="me-row"><div class="me-icon">📊</div><div class="me-main"><b>学习统计</b><span>${p.courseDone}/${p.courseTotal} 课程 · ${p.kpDone}/${p.kpTotal} 知识点</span></div><button onclick="switchTab('home')">查看</button></div></div>
   <div class="card me-card"><div class="me-row"><div class="me-icon">🤖</div><div class="me-main"><b>教学协议</b><span>查看复制给 ChatGPT 的教学规则</span></div><button onclick="openProtocol()">查看</button></div></div>
