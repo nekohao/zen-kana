@@ -1977,49 +1977,10 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
 
 
-/* Home modules: score, wheel and private weight progress. */
+/* Two-module home switch: score + wheel only. */
 .metric-switch{width:min(94vw,360px)!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;}
 .metric-switch-thumb{width:calc((100% - 8px)/2)!important;}
 .metric-switch.wheel-active .metric-switch-thumb{transform:translate3d(100%,0,0)!important;}
-
-/* Fat-loss module shares the existing glass surfaces and fixed home slots. */
-.metric-switch{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-.metric-switch-thumb{width:calc((100% - 8px)/3)!important;}
-.metric-switch.fat-active .metric-switch-thumb{transform:translate3d(200%,0,0)!important;background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(211,241,228,.54))!important;box-shadow:0 6px 18px rgba(91,149,121,.12)!important;}
-.metric-switch.fat-active .metric-option.active{color:#527e69!important;}
-.home.fat-active .score{opacity:0!important;visibility:hidden!important;}
-.home.fat-active .score-lens{box-shadow:0 24px 58px rgba(91,149,121,.13),inset 0 2px 4px rgba(255,255,255,.90)!important;}
-.home.fat-active .score-lens::after{opacity:1!important;background:radial-gradient(circle at 34% 24%,rgba(255,255,255,.82),transparent 48%),rgba(230,247,238,.65)!important;}
-.home.fat-active .reward-line-primary{color:#527e69!important;}
-.home.fat-active .reward-line-secondary{color:rgba(82,126,105,.76)!important;}
-.fat-value{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility 0s linear .28s;}
-.home.fat-active .fat-value{opacity:1;visibility:visible;transition-delay:0s;}
-.fat-value-label{font-size:19px;font-weight:650;color:#527e69;}
-.fat-value-line{display:flex;align-items:baseline;justify-content:center;gap:6px;color:#527e69;}
-.fat-value-number{font-size:clamp(44px,15vw,64px);line-height:1.05;font-weight:730;letter-spacing:-.045em;font-variant-numeric:tabular-nums;}
-.fat-value-unit{font-size:19px;font-weight:650;}
-.fat-value.gained .fat-value-label,.fat-value.gained .fat-value-line{color:#b87968;}
-.metric-action-slot > .fat-record-button{grid-area:1 / 1;margin:0!important;}
-.fat-record-button{color:#527e69;background:linear-gradient(135deg,rgba(255,255,255,.66),rgba(221,244,233,.48));}
-.home.fat-active .score-redeem-button,.home.fat-active .admin-controls,.home:not(.fat-active) .fat-record-button,.home:not(.admin-mode) .fat-record-button{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
-.home.fat-active.admin-mode .fat-record-button{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s;}
-.home.fat-active.admin-mode .fat-record-button:disabled{opacity:.45;pointer-events:none;}
-.home.fat-active .overview-button{background:linear-gradient(135deg,rgba(255,255,255,.66),rgba(221,244,233,.34)),var(--home-control-bg);box-shadow:0 14px 34px rgba(91,149,121,.10);}
-.home.fat-active .overview-button::before{color:#729a83;}
-.overview.fat-mode .overview-header{background:linear-gradient(180deg,rgba(233,248,240,.42),transparent)!important;}
-#fatOverviewContent .overview-quick-card svg{color:#729a83;}
-#fatOverviewContent .segment.active,#fatOverviewContent .overview-content-choice.active{color:#527e69;}
-#fatOverviewContent .chart-wrap{height:202px;}
-#fatTrendCanvas{width:100%;height:100%;display:block;}
-.fat-month-summary{margin-bottom:12px;padding:11px 12px;border:1px solid var(--hairline);border-radius:16px;background:rgba(255,255,255,.20);color:var(--secondary);font-size:12px;line-height:1.5;text-align:center;}
-.fat-day-delta{font-size:9px;font-weight:720;white-space:nowrap;color:#729a83;font-variant-numeric:tabular-nums;}
-.fat-day-delta.gained{color:#b87968;}
-#fatCalendarGrid .day.today .day-number{background:#729a83;box-shadow:0 3px 10px rgba(114,154,131,.22);}
-#fatCalendarGrid .day.selected:not(.today) .day-number{color:#527e69;box-shadow:inset 0 0 0 1.4px rgba(114,154,131,.52);}
-#fatSettingsLayer .primary-action,#fatRecordLayer .primary-action{color:#527e69!important;background:linear-gradient(135deg,rgba(248,255,251,.92),rgba(211,239,224,.62))!important;}
-.fat-weight-field{margin-top:14px;display:flex;align-items:center;gap:8px;padding:0 13px;height:50px;border:1px solid rgba(255,255,255,.70);border-radius:16px;background:rgba(255,255,255,.28);color:#527e69;}
-.fat-weight-field input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font-size:20px;font-weight:650;}
-.fat-weight-field span{flex:0 0 auto;font-size:14px;font-weight:650;}
 </style>
 </head>
 <body>
@@ -2064,10 +2025,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 </svg>
 <span>大转盘</span>
 </button>
-<button aria-selected="false" class="metric-option" data-metric="fat" role="tab" type="button">
-<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 4c-8-1-14 3-13 9 1 5 8 6 11 1 2-3 2-7 2-10Z"/><path d="m5 20 9-11"/></svg>
-<span>减脂</span>
-</button>
 </div>
 <div aria-live="polite" class="eyebrow reward-message" hidden="" id="metricEyebrow"></div>
 <div aria-label="手动刷新最新数据" class="score-lens-wrap pressable" id="scoreRefreshBtn" role="button" tabindex="0">
@@ -2075,10 +2032,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 <div class="score-lens">
 <div aria-hidden="true" class="metric-ghost-value" id="metricGhostValue"></div>
 <div aria-live="polite" class="score loading" id="scoreValue">—</div>
-<div aria-hidden="true" aria-live="polite" class="fat-value" id="fatValue">
-<span class="fat-value-label" id="fatValueLabel">等待记录</span>
-<span class="fat-value-line"><strong class="fat-value-number" id="fatValueNumber">—</strong><span class="fat-value-unit" hidden id="fatValueUnit">斤</span></span>
-</div>
 <div aria-hidden="true" class="wheel-stage" id="wheelStage">
 <div aria-hidden="true" class="wheel-pointer">
 <span class="wheel-pointer-gem">♡</span>
@@ -2101,10 +2054,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 <button class="redeem-button score-redeem-button pressable" id="redeemRewardBtn" type="button">
 <svg aria-hidden="true" class="shop-home-button-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 9.5 6.2 4h11.6L20 9.5"></path><path d="M5 9.5V20h14V9.5"></path><path d="M9 20v-6h6v6"></path><path d="M3.5 9.5h17"></path></svg>
 <span>积分商城</span>
-</button>
-<button class="redeem-button fat-record-button pressable" id="fatRecordBtn" type="button" hidden>
-<svg aria-hidden="true" class="shop-home-button-icon" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="4"/><path d="M8 8h8M12 8l2-2M9 15h6"/></svg>
-<span>记录体重</span>
 </button>
 <div aria-hidden="true" class="admin-controls hidden" id="adminControls">
 <button aria-label="减少积分" class="score-button minus pressable" data-sign="-1" type="button">−</button>
@@ -2236,48 +2185,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 </div>
 </section>
 </div>
-<div hidden id="fatOverviewContent">
-<div class="overview-landing">
-<nav aria-label="减脂总览快捷入口" class="overview-quick-nav" id="fatQuickNav">
-<button class="overview-quick-card pressable" data-fat-section="trend" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 4v16h16M7 14l4-4 4 3 5-7"/></svg><span class="overview-quick-title">变化趋势</span><span class="overview-quick-copy">查看差异体重折线</span></button>
-<button class="overview-quick-card pressable" data-fat-section="calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 11h18"/></svg><span class="overview-quick-title">月度总览</span><span class="overview-quick-copy">查看每次体重变化</span></button>
-</nav>
-</div>
-<div aria-label="减脂总览内容切换" class="overview-content-switch" hidden id="fatContentSwitch" role="tablist">
-<button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
-<button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">月度</button>
-</div>
-<section class="section overview-section-anchor" hidden id="fatTrendSection">
-<h2 class="section-title">变化趋势</h2>
-<div class="card glass trend-card">
-<div aria-label="减脂趋势范围" class="segmented" id="fatTrendSegments">
-<button class="segment pressable active" data-fat-range="today" type="button">今天</button>
-<button class="segment pressable" data-fat-range="week" type="button">本周</button>
-<div class="trend-month-control">
-<button aria-expanded="false" aria-haspopup="menu" class="segment pressable" id="fatMonthBtn" type="button"><span id="fatMonthLabel">本月</span><span aria-hidden="true" class="trend-month-chevron">⌄</span></button>
-<div aria-label="选择减脂本月周次" class="trend-month-menu" hidden id="fatMonthMenu" role="menu">
-<button class="trend-month-option pressable" data-fat-month-week="1" role="menuitem" type="button"><span>本月第一周</span><small>1–7 日</small></button>
-<button class="trend-month-option pressable" data-fat-month-week="2" role="menuitem" type="button"><span>本月第二周</span><small>8–14 日</small></button>
-<button class="trend-month-option pressable" data-fat-month-week="3" role="menuitem" type="button"><span>本月第三周</span><small>15–21 日</small></button>
-<button class="trend-month-option pressable" data-fat-month-week="4" role="menuitem" type="button"><span>本月第四周</span><small>22 日–月底</small></button>
-</div>
-</div>
-</div>
-<div class="chart-wrap"><canvas aria-label="差异体重变化折线图" id="fatTrendCanvas"></canvas><div class="chart-empty" id="fatChartEmpty">暂无体重记录</div></div>
-<div class="chart-caption" id="fatChartCaption"></div>
-</div>
-</section>
-<section class="section overview-section-anchor" hidden id="fatCalendarSection">
-<h2 class="section-title">月度总览</h2>
-<div class="card glass calendar-card">
-<div class="calendar-head"><button aria-label="减脂上个月" class="small-icon pressable" id="fatPrevMonthBtn" type="button">‹</button><div class="calendar-month" id="fatCalendarMonth"></div><button aria-label="减脂下个月" class="small-icon pressable" id="fatNextMonthBtn" type="button">›</button></div>
-<div class="fat-month-summary" id="fatMonthSummary"></div>
-<div aria-hidden="true" class="weekdays"><div class="weekday">日</div><div class="weekday">一</div><div class="weekday">二</div><div class="weekday">三</div><div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div></div>
-<div class="calendar-grid" id="fatCalendarGrid"></div>
-<div class="day-detail hidden" id="fatDayDetail"><div class="detail-title" id="fatDayDetailTitle"></div><ul class="log-list" id="fatDayDetailList"></ul></div>
-</div>
-</section>
-</div>
 <div hidden="" id="wheelOverviewContent">
 <section class="section overview-section-anchor wheel-assets-section">
 <h2 class="section-title" id="wheelAssetsTitle">大转盘资产</h2>
@@ -2335,8 +2242,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 <span class="settings-value">恢复到 5 <span class="chevron">›</span></span>
 </button>
 </div>
-<div class="settings-label">减脂管理</div>
-<div class="settings-group"><button class="settings-row pressable" id="openFatSettingsBtn" type="button"><span>起始体重</span><span class="settings-value"><span id="fatSettingsStatus">未设置</span> <span class="chevron">›</span></span></button></div>
 <div class="settings-label">道具管理</div>
 <div class="settings-group">
 <button class="settings-row pressable" id="openAdminInventoryBtn" type="button">
@@ -3013,18 +2918,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 </div>
 </div>
 </div>
-<div aria-hidden="true" class="modal-layer alert-layer" id="fatSettingsLayer">
-<div aria-labelledby="fatSettingsTitle" aria-modal="true" class="alert" role="dialog">
-<div class="alert-content"><div aria-hidden="true" class="change-icon">🌿</div><div class="alert-title" id="fatSettingsTitle">设置起始体重</div><div class="alert-message">仅管理员可查看和设置。修改后，已有记录的差异体重会按新起点重新计算。</div><label class="fat-weight-field"><input aria-label="起始体重（斤）" autocomplete="off" id="fatStartingWeightInput" inputmode="decimal" min="0.01" max="9999.99" step="0.01" placeholder="输入起始体重" type="number"/><span>斤</span></label></div>
-<div class="alert-actions vertical"><button class="alert-button primary-action pressable" id="fatSettingsConfirmBtn" type="button">保存起始体重</button><button class="alert-button pressable" id="fatSettingsCancelBtn" type="button">取消</button></div>
-</div>
-</div>
-<div aria-hidden="true" class="modal-layer alert-layer" id="fatRecordLayer">
-<div aria-labelledby="fatRecordTitle" aria-modal="true" class="alert" role="dialog">
-<div class="alert-content"><div aria-hidden="true" class="change-icon">🌿</div><div class="alert-title" id="fatRecordTitle">记录体重</div><div class="alert-message">输入本次体重，保存后自动计算相对起始体重的变化。</div><label class="fat-weight-field"><input aria-label="本次体重（斤）" autocomplete="off" id="fatRecordWeightInput" inputmode="decimal" min="0.01" max="9999.99" step="0.01" placeholder="输入本次体重" type="number"/><span>斤</span></label></div>
-<div class="alert-actions vertical"><button class="alert-button primary-action pressable" id="fatRecordConfirmBtn" type="button">保存记录</button><button class="alert-button pressable" id="fatRecordCancelBtn" type="button">取消</button></div>
-</div>
-</div>
 <div aria-live="polite" class="toast glass" id="toast" role="status"></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -3293,58 +3186,10 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         dayDetailTitle: $("#dayDetailTitle"),
         dayDetailList: $("#dayDetailList"),
 
-        fatValue: $("#fatValue"),
-        fatValueLabel: $("#fatValueLabel"),
-        fatValueNumber: $("#fatValueNumber"),
-        fatValueUnit: $("#fatValueUnit"),
-        fatRecordBtn: $("#fatRecordBtn"),
-        fatOverviewContent: $("#fatOverviewContent"),
-        fatQuickNav: $("#fatQuickNav"),
-        fatContentSwitch: $("#fatContentSwitch"),
-        fatTrendSection: $("#fatTrendSection"),
-        fatTrendSegments: $("#fatTrendSegments"),
-        fatMonthBtn: $("#fatMonthBtn"),
-        fatMonthLabel: $("#fatMonthLabel"),
-        fatMonthMenu: $("#fatMonthMenu"),
-        fatTrendCanvas: $("#fatTrendCanvas"),
-        fatChartEmpty: $("#fatChartEmpty"),
-        fatChartCaption: $("#fatChartCaption"),
-        fatCalendarSection: $("#fatCalendarSection"),
-        fatCalendarMonth: $("#fatCalendarMonth"),
-        fatCalendarGrid: $("#fatCalendarGrid"),
-        fatMonthSummary: $("#fatMonthSummary"),
-        fatDayDetail: $("#fatDayDetail"),
-        fatDayDetailTitle: $("#fatDayDetailTitle"),
-        fatDayDetailList: $("#fatDayDetailList"),
-        fatPrevMonthBtn: $("#fatPrevMonthBtn"),
-        fatNextMonthBtn: $("#fatNextMonthBtn"),
-        openFatSettingsBtn: $("#openFatSettingsBtn"),
-        fatSettingsStatus: $("#fatSettingsStatus"),
-        fatSettingsLayer: $("#fatSettingsLayer"),
-        fatStartingWeightInput: $("#fatStartingWeightInput"),
-        fatSettingsConfirmBtn: $("#fatSettingsConfirmBtn"),
-        fatSettingsCancelBtn: $("#fatSettingsCancelBtn"),
-        fatRecordLayer: $("#fatRecordLayer"),
-        fatRecordWeightInput: $("#fatRecordWeightInput"),
-        fatRecordConfirmBtn: $("#fatRecordConfirmBtn"),
-        fatRecordCancelBtn: $("#fatRecordCancelBtn"),
         toast: $("#toast")
       };
 
       const state = {
-        fatAvailable: null,
-        fatConfigured: false,
-        fatDelta: null,
-        fatRecordedAt: null,
-        fatRecordCount: 0,
-        fatLogs: [],
-        fatOverviewLoadedAt: 0,
-        fatOverviewSection: null,
-        fatTrendRange: "today",
-        fatMonthWeek: Math.min(4, Math.floor((new Date().getDate() - 1) / 7) + 1),
-        fatCalendarDate: startOfMonth(new Date()),
-        fatSelectedDayKey: null,
-        fatRefreshPromise: null,
         score: null,
         wheelChances: 0,
         wheelCashBalance: 0,
@@ -3527,11 +3372,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
       function setLayer(layer, open) {
         if (!layer) return;
-        if (!open && layer === els.fatSettingsLayer) {
-          fatSettingsRequestToken += 1;
-          els.fatStartingWeightInput.value = "";
-        }
-        if (!open && layer === els.fatRecordLayer) els.fatRecordWeightInput.value = "";
         layer.classList.toggle("open", open);
         layer.setAttribute("aria-hidden", String(!open));
         if (open && layer === els.settingsLayer) queueSettingsFit();
@@ -3543,7 +3383,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           els.changeLayer, els.redeemLayer, els.shopItemLayer, els.shopRevealLayer, els.wheelToolLayer, els.wheelDecisionLayer, els.wheelPreviewLayer, els.wheelResultLayer,
           els.wheelWithdrawLayer, els.settleWithdrawalLayer,
           els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer,
-          els.resetLayer, els.fatSettingsLayer, els.fatRecordLayer
+          els.resetLayer
         ].filter(Boolean).forEach(layer => setLayer(layer, false));
       }
 
@@ -3563,7 +3403,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       function renderAdminState() {
-        if (!state.isAdmin) clearFatPrivateInputs();
         els.home?.classList.toggle("admin-mode", state.isAdmin);
         els.adminControls.classList.toggle("hidden", !state.isAdmin);
         els.adminControls.setAttribute("aria-hidden", String(!state.isAdmin));
@@ -3607,7 +3446,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         if (els.settingsLayer.classList.contains("open")) queueSettingsFit();
       }
 
-      if (!["score", "wheel", "fat"].includes(state.activeMetric)) state.activeMetric = "score";
+      if (!["score", "wheel"].includes(state.activeMetric)) state.activeMetric = "score";
 
       function activeMetricValue() {
         return state.activeMetric === "score" ? state.score : null;
@@ -3619,11 +3458,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         els.home?.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
         els.home?.classList.toggle("wheel-active", wheel);
-        const fat = state.activeMetric === "fat";
-        els.metricSwitch.classList.toggle("fat-active", fat);
-        els.home?.classList.toggle("fat-active", fat);
-        els.fatValue.setAttribute("aria-hidden", String(!fat));
-        els.score.setAttribute("aria-hidden", String(fat || wheel));
 
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === state.activeMetric;
@@ -3631,18 +3465,14 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           btn.setAttribute("aria-selected", String(active));
         });
 
-        els.scoreRefreshBtn.setAttribute("aria-label", fat ? "手动同步最新减脂数据" : wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据");
+        els.scoreRefreshBtn.setAttribute("aria-label", wheel ? "手动同步最新大转盘数据" : "手动刷新最新数据");
 
         const primary = document.createElement("span");
         const secondary = document.createElement("span");
         primary.className = "reward-line-primary";
         secondary.className = "reward-line-secondary";
 
-        if (fat) {
-          primary.textContent = "₊˚🌿 每一次记录，都在看见自己的变化 ♡";
-          secondary.textContent = state.fatAvailable === false ? "减脂数据暂时无法读取" : !state.fatConfigured ? (state.isAdmin ? "请先在设置中填写起始体重" : "等待管理员开启减脂记录") : state.fatRecordCount > 0 ? `已记录 ${state.fatRecordCount} 次 · 查看总览回顾变化 ✦` : "准备好啦，等待第一条体重记录 ✦";
-          els.wheelActions.setAttribute("aria-hidden", "true");
-        } else if (wheel) {
+        if (wheel) {
           const chances = Math.max(0, Number(state.wheelChances ?? 0));
           const cash = Math.max(0, Number(state.wheelCashBalance ?? 0));
           if (state.isAdmin) {
@@ -3676,8 +3506,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       function renderPrimaryMetric({ animate = false } = {}) {
         renderMetricSwitch();
         renderWheelItemNotice();
-        renderFatMetric();
-        if (state.activeMetric === "fat") return;
         if (state.activeMetric === "wheel") {
           els.score.classList.remove("loading");
           return;
@@ -3702,7 +3530,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         const wheel = nextMetric === "wheel";
         els.metricSwitch.classList.remove("gift-active");
         els.metricSwitch.classList.toggle("wheel-active", wheel);
-        els.metricSwitch.classList.toggle("fat-active", nextMetric === "fat");
         els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
           const active = btn.dataset.metric === nextMetric;
           btn.classList.toggle("active", active);
@@ -3711,7 +3538,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       function switchMetric(nextMetric) {
-        if (!["score", "wheel", "fat"].includes(nextMetric) || nextMetric === state.activeMetric) return;
+        if (!["score", "wheel"].includes(nextMetric) || nextMetric === state.activeMetric) return;
         if (state.wheelSpinning) {
           showToast("🎠 转盘还在转呀，等它停稳一下 ♡");
           return;
@@ -3754,23 +3581,11 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           btn.classList.toggle("active", active);
           btn.setAttribute("aria-selected", String(active));
         });
-        if (selected === "trend") requestAnimationFrame(() => drawActiveOverviewTrend());
+        if (selected === "trend") requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
         else if (selected === "calendar") renderCalendar();
       }
 
       function renderOverviewContentMode() {
-        const fat = state.activeMetric === "fat";
-        els.overview.classList.toggle("fat-mode", fat);
-        els.fatOverviewContent.hidden = !fat;
-        if (fat) {
-          els.overview.classList.remove("gift-mode", "wheel-mode");
-          els.scoreOverviewContent.hidden = true;
-          els.wheelOverviewContent.hidden = true;
-          els.overviewTitle.textContent = "减脂总览";
-          els.overviewSubtitle.textContent = "查看差异体重趋势与月度记录";
-          renderFatOverviewSectionMode();
-          return;
-        }
         const wheel = state.activeMetric === "wheel";
         els.overview.classList.remove("gift-mode");
         els.overview.classList.toggle("wheel-mode", wheel);
@@ -5576,7 +5391,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       async function loadOverviewData(force = false) {
-        if (state.activeMetric === "fat") return loadFatOverviewData(force);
         const now = Date.now();
         if (!force && state.overviewLoadedAt && now - state.overviewLoadedAt < 30 * 60 * 1000) {
           renderOverview();
@@ -5634,12 +5448,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       function renderOverview() {
-        if (state.activeMetric === "fat") {
-          renderFatTrend();
-          renderFatCalendar();
-          renderOverviewContentMode();
-          return;
-        }
         renderTrend();
         renderCalendar();
         renderWheelOverview();
@@ -5821,9 +5629,8 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           : `${rangeLabel}暂无变更`;
       }
 
-      function drawTrend(points, options = {}) {
-        const canvas = options.canvas || els.trendCanvas;
-        const empty = options.empty || els.chartEmpty;
+      function drawTrend(points) {
+        const canvas = els.trendCanvas;
         const rect = canvas.getBoundingClientRect();
         const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
 
@@ -5838,10 +5645,10 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           .filter(item => item.point.value !== null && Number.isFinite(Number(item.point.value)));
 
         if (!points.length || !valid.length) {
-          empty.hidden = false;
+          els.chartEmpty.hidden = false;
           return;
         }
-        empty.hidden = true;
+        els.chartEmpty.hidden = true;
 
         const values = valid.map(item => Number(item.point.value));
         let min = Math.min(...values);
@@ -5862,7 +5669,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         const styles = getComputedStyle(document.documentElement);
         const tertiary = styles.getPropertyValue("--tertiary").trim();
         const hairline = styles.getPropertyValue("--hairline").trim();
-        const blue = options.color || styles.getPropertyValue("--blue").trim();
+        const blue = styles.getPropertyValue("--blue").trim();
 
         ctx.lineWidth = 1;
         ctx.strokeStyle = hairline;
@@ -5881,8 +5688,8 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
         if (valid.length >= 2) {
           const gradient = ctx.createLinearGradient(0, pad.t, 0, pad.t + h);
-          gradient.addColorStop(0, options.fillColor || "rgba(10,132,255,.20)");
-          gradient.addColorStop(1, options.fillTransparent || "rgba(10,132,255,0)");
+          gradient.addColorStop(0, "rgba(10,132,255,.20)");
+          gradient.addColorStop(1, "rgba(10,132,255,0)");
 
           ctx.beginPath();
           valid.forEach(({point,index},i) => {
@@ -5932,7 +5739,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           const x = xFor(index);
           const y = yFor(Number(point.value));
           const stagger = dense && validIndex % 2 ? 10 : 0;
-          ctx.fillText(options.valueLabel ? options.valueLabel(point.value) : String(point.value), x, Math.max(12, y - 7 - stagger));
+          ctx.fillText(String(point.value), x, Math.max(12, y - 7 - stagger));
         });
 
         // X-axis labels: weekly / month-week views show every date.
@@ -6331,7 +6138,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       let overviewDrag = null;
 
       function scoreOverviewPeekHeight() {
-        const nav = state.activeMetric === "fat" ? els.fatQuickNav : els.overviewQuickNav;
+        const nav = els.overviewQuickNav;
         if (!nav) return SCORE_OVERVIEW_PEEK_FALLBACK;
         const bottom = nav.offsetTop + nav.offsetHeight + SCORE_OVERVIEW_PEEK_BOTTOM_GAP;
         return Number.isFinite(bottom) && bottom > 0 ? Math.ceil(bottom) : SCORE_OVERVIEW_PEEK_FALLBACK;
@@ -6371,13 +6178,12 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         }
 
         requestAnimationFrame(() => {
-          drawActiveOverviewTrend();
+          drawTrend(buildTrendPoints(state.trendRange));
         });
       }
 
       function openOverviewSheet() {
         state.overviewSection = null;
-        state.fatOverviewSection = null;
         renderOverviewContentMode();
         setOverviewMode("peek");
       }
@@ -6391,8 +6197,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       function closeOverviewSheet() {
         setOverviewMode("closed");
         state.overviewSection = null;
-        state.fatOverviewSection = null;
-        setFatMonthMenu(false);
       }
 
       function openOverviewSection(target) {
@@ -6403,7 +6207,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         expandOverviewSheet();
         requestAnimationFrame(() => {
           els.overviewShell.scrollTo({ top: 0, behavior: "smooth" });
-          if (target === "trend") drawActiveOverviewTrend();
+          if (target === "trend") drawTrend(buildTrendPoints(state.trendRange));
         });
       }
 
@@ -6414,8 +6218,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
       function beginOverviewDrag(e) {
         if (state.overviewMode === "closed") return;
-        // Preserve clicks on fat overview controls while the sheet is peeking.
-        if (state.activeMetric === "fat" && e.target.closest("button, input")) return;
 
         const startedOnHandle = !!e.target.closest("#overviewGrabberHitbox");
 
@@ -6519,10 +6321,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
             if (state.activeMetric === "score" && !state.overviewSection) {
               state.overviewSection = "trend";
               renderOverviewSectionMode();
-            }
-            if (state.activeMetric === "fat" && !state.fatOverviewSection) {
-              state.fatOverviewSection = "trend";
-              renderFatOverviewSectionMode();
             }
             expandOverviewSheet();
           } else {
@@ -6739,7 +6537,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         els.scoreRefreshBtn.classList.add("refreshing");
         try {
           await loadAppState({ silent: false });
-          await loadFatState({ silent: state.activeMetric !== "fat" });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
           showToast("已同步最新数据");
         } finally {
@@ -6759,7 +6556,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         const btn = e.target.closest("[data-metric]");
         if (!btn || btn.dataset.metric === state.activeMetric) return;
         vibrate(7); switchMetric(btn.dataset.metric);
-        if (btn.dataset.metric === "fat") void loadFatState({ silent: true });
       });
 
       if (typeof bindCompactSheetDrag === "function") bindCompactSheetDrag(els.redeemLayer);
@@ -6946,7 +6742,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
       els.overviewBtn.addEventListener("click", async () => {
         vibrate(); openOverviewSheet(); renderOverview();
-        requestAnimationFrame(() => drawActiveOverviewTrend());
+        requestAnimationFrame(() => drawTrend(buildTrendPoints(state.trendRange)));
         await loadOverviewData(false);
       });
       els.overviewQuickNav.addEventListener("click", (e) => {
@@ -6980,7 +6776,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       });
       document.addEventListener("click", (e) => {
         if (!els.changeAmountMenu.hidden && !e.target.closest(".change-amount-picker-wrap")) closeChangeAmountMenu();
-        if (!els.fatMonthMenu.hidden && !e.target.closest("#fatTrendSegments .trend-month-control")) setFatMonthMenu(false);
         if (els.trendMonthMenu.hidden || e.target.closest(".trend-month-control")) return;
         setTrendMonthMenu(false);
       });
@@ -6989,9 +6784,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
-        if (!els.fatMonthMenu.hidden) return setFatMonthMenu(false);
-        if (els.fatRecordLayer.classList.contains("open")) return setLayer(els.fatRecordLayer, false);
-        if (els.fatSettingsLayer.classList.contains("open")) return setLayer(els.fatSettingsLayer, false);
         if (!els.trendMonthMenu.hidden) return setTrendMonthMenu(false);
         if (els.wheelProbabilityHistoryLayer.classList.contains("open")) return setLayer(els.wheelProbabilityHistoryLayer, false);
         if (els.wheelProbabilityLayer.classList.contains("open")) return setLayer(els.wheelProbabilityLayer, false);
@@ -7020,326 +6812,17 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       });
 
       window.addEventListener("resize", () => {
-        if (els.overview.classList.contains("open")) drawActiveOverviewTrend();
+        if (els.overview.classList.contains("open")) drawTrend(buildTrendPoints(state.trendRange));
       });
       db.auth.onAuthStateChange((_event, session) => {
         state.session = session;
-        if (!session) { clearFatPrivateInputs(); renderFatMetric(); }
       });
-
-      // -------------------- Fat-loss progress (public differences only) --------------------
-      let fatSettingsRequestToken = 0;
-
-      function fatNumber(value) {
-        return String(Math.round((Number(value) + Number.EPSILON) * 100) / 100);
-      }
-
-      function fatDifferenceText(value) {
-        const n = Number(value);
-        return n < 0 ? `已减去 ${fatNumber(Math.abs(n))} 斤` : n > 0 ? `增加了 ${fatNumber(n)} 斤` : "体重未变化";
-      }
-
-      function renderFatMetric() {
-        const active = state.activeMetric === "fat";
-        els.fatRecordBtn.hidden = !active || !state.isAdmin || !state.session;
-        els.fatRecordBtn.disabled = !state.fatConfigured || state.fatAvailable !== true;
-        els.fatSettingsStatus.textContent = state.fatConfigured ? "已设置" : "未设置";
-        const known = state.fatConfigured && state.fatDelta !== null && Number.isFinite(state.fatDelta);
-        els.fatValue.classList.toggle("gained", known && state.fatDelta > 0);
-        els.fatValueUnit.hidden = !known;
-        els.fatValueLabel.textContent = !known ? (state.fatAvailable === false ? "暂未同步" : state.fatConfigured ? "等待记录" : "尚未开始") : state.fatDelta < 0 ? "已减去" : state.fatDelta > 0 ? "增加了" : "体重未变化";
-        els.fatValueNumber.textContent = known ? fatNumber(Math.abs(state.fatDelta)) : "—";
-      }
-
-      function clearFatPrivateInputs() {
-        setLayer(els.fatSettingsLayer, false);
-        setLayer(els.fatRecordLayer, false);
-        els.fatStartingWeightInput.value = "";
-        els.fatRecordWeightInput.value = "";
-      }
-
-      async function loadFatState({ silent = false } = {}) {
-        if (state.fatRefreshPromise) return state.fatRefreshPromise;
-        state.fatRefreshPromise = (async () => {
-          try {
-            const { data, error } = await db.rpc("points_fat_get_state");
-            if (error) throw error;
-            const row = Array.isArray(data) ? data[0] : data;
-            if (!row || typeof row.configured !== "boolean") throw new Error("Invalid fat state");
-            state.fatConfigured = row.configured;
-            state.fatDelta = row.delta_jin == null ? null : Number(row.delta_jin);
-            state.fatRecordedAt = row.recorded_at || null;
-            state.fatRecordCount = Math.max(0, Number(row.record_count || 0));
-            state.fatAvailable = true;
-            renderPrimaryMetric();
-            return true;
-          } catch (err) {
-            console.error("loadFatState:", err);
-            state.fatAvailable = false;
-            renderPrimaryMetric();
-            if (!silent) showToast("读取减脂数据失败，请稍后再试");
-            return false;
-          } finally { state.fatRefreshPromise = null; }
-        })();
-        return state.fatRefreshPromise;
-      }
-
-      function readFatWeight(input) {
-        const text = input.value.trim();
-        const value = Number(text);
-        if (!/^\d+(?:\.\d{1,2})?$/.test(text) || !Number.isFinite(value) || value <= 0 || value >= 10000) {
-          showToast("请输入有效体重，单位斤，最多两位小数");
-          return null;
-        }
-        return value;
-      }
-
-      async function openFatSettings() {
-        if (!state.isAdmin || !state.session) return showToast("需要管理员权限");
-        setLayer(els.settingsLayer, false);
-        els.fatStartingWeightInput.value = "";
-        els.fatStartingWeightInput.disabled = true;
-        setLayer(els.fatSettingsLayer, true);
-        setBusy(els.fatSettingsConfirmBtn, true);
-        const token = ++fatSettingsRequestToken;
-        const userId = state.session.user.id;
-        try {
-          const { data, error } = await db.rpc("points_fat_admin_get_settings");
-          if (error) throw error;
-          if (token !== fatSettingsRequestToken || !state.isAdmin || state.session?.user?.id !== userId) return;
-          const row = Array.isArray(data) ? data[0] : data;
-          els.fatStartingWeightInput.value = row?.starting_weight_jin == null ? "" : String(row.starting_weight_jin);
-          els.fatStartingWeightInput.disabled = false;
-        } catch (err) {
-          console.error("openFatSettings:", err);
-          if (token === fatSettingsRequestToken) {
-            setLayer(els.fatSettingsLayer, false);
-            showToast("读取起始体重失败，请检查管理员登录状态");
-          }
-        } finally {
-          if (token === fatSettingsRequestToken) setBusy(els.fatSettingsConfirmBtn, false);
-        }
-      }
-
-      async function saveFatStartingWeight() {
-        if (!state.isAdmin || !state.session || els.fatSettingsConfirmBtn.disabled) return;
-        const weight = readFatWeight(els.fatStartingWeightInput);
-        if (weight === null) return;
-        setBusy(els.fatSettingsConfirmBtn, true);
-        try {
-          const { error } = await db.rpc("points_fat_admin_set_starting_weight", { p_weight_jin: weight });
-          if (error) throw error;
-          setLayer(els.fatSettingsLayer, false);
-          state.fatOverviewLoadedAt = 0;
-          await loadFatState({ silent: true });
-          if (state.activeMetric === "fat" && state.overviewMode !== "closed") await loadFatOverviewData(true);
-          vibrate(14);
-          showToast("起始体重已保存");
-        } catch (err) {
-          console.error("saveFatStartingWeight:", err);
-          showToast("保存失败，请检查管理员权限后重试");
-        } finally { setBusy(els.fatSettingsConfirmBtn, false); }
-      }
-
-      function openFatRecord() {
-        if (!state.isAdmin || !state.session) return showToast("需要管理员权限");
-        if (!state.fatConfigured) return showToast("请先在设置中填写起始体重");
-        els.fatRecordWeightInput.value = "";
-        setLayer(els.fatRecordLayer, true);
-        vibrate(8);
-      }
-
-      async function saveFatRecord() {
-        if (!state.isAdmin || !state.session || els.fatRecordConfirmBtn.disabled) return;
-        const weight = readFatWeight(els.fatRecordWeightInput);
-        if (weight === null) return;
-        setBusy(els.fatRecordConfirmBtn, true);
-        try {
-          const { data, error } = await db.rpc("points_fat_admin_record_weight", { p_weight_jin: weight });
-          if (error) throw error;
-          const row = Array.isArray(data) ? data[0] : data;
-          if (row?.delta_jin != null) state.fatDelta = Number(row.delta_jin);
-          setLayer(els.fatRecordLayer, false);
-          state.fatOverviewLoadedAt = 0;
-          await loadFatState({ silent: true });
-          if (state.activeMetric === "fat" && state.overviewMode !== "closed") await loadFatOverviewData(true);
-          vibrate(14);
-          showToast("体重记录已保存");
-        } catch (err) {
-          console.error("saveFatRecord:", err);
-          showToast(/Starting weight required/i.test(String(err?.message || "")) ? "请先在设置中填写起始体重" : "记录失败，请检查管理员权限后重试");
-        } finally { setBusy(els.fatRecordConfirmBtn, false); }
-      }
-
-      function fatLogsAscending() {
-        return [...state.fatLogs].sort((a, b) => new Date(a.created_at) - new Date(b.created_at) || Number(a.id) - Number(b.id));
-      }
-
-      async function loadFatOverviewData(force = false) {
-        if (!force && state.fatOverviewLoadedAt && Date.now() - state.fatOverviewLoadedAt < 30 * 60 * 1000) {
-          if (state.activeMetric === "fat") renderOverview();
-          return;
-        }
-        try {
-          const { data, error } = await db.rpc("points_fat_get_logs", { p_from: null, p_to: null, p_limit: 10000 });
-          if (error) throw error;
-          // Keep only the public difference fields, even if an API later adds fields.
-          state.fatLogs = (Array.isArray(data) ? data : []).map(row => ({ id: row.id, delta_jin: row.delta_jin == null ? null : Number(row.delta_jin), created_at: row.created_at })).filter(row => row.delta_jin !== null && Number.isFinite(row.delta_jin) && Number.isFinite(new Date(row.created_at).getTime()));
-          state.fatOverviewLoadedAt = Date.now();
-          if (state.activeMetric === "fat") renderOverview();
-        } catch (err) {
-          console.error("loadFatOverviewData:", err);
-          if (state.activeMetric === "fat") showToast("读取减脂记录失败，请稍后再试");
-        }
-      }
-
-      function renderFatOverviewSectionMode() {
-        const selected = state.fatOverviewSection;
-        els.fatQuickNav.closest(".overview-landing").hidden = !!selected;
-        els.fatContentSwitch.hidden = !selected;
-        els.fatTrendSection.hidden = selected !== "trend";
-        els.fatCalendarSection.hidden = selected !== "calendar";
-        els.fatContentSwitch.querySelectorAll("[data-fat-section]").forEach(btn => {
-          const active = btn.dataset.fatSection === selected;
-          btn.classList.toggle("active", active);
-          btn.setAttribute("aria-selected", String(active));
-        });
-        if (selected === "trend") requestAnimationFrame(renderFatTrend);
-        if (selected === "calendar") renderFatCalendar();
-      }
-
-      function openFatOverviewSection(section) {
-        if (state.activeMetric !== "fat" || !["trend", "calendar"].includes(section)) return;
-        state.fatOverviewSection = section;
-        renderFatOverviewSectionMode();
-        expandOverviewSheet();
-        els.overviewShell.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      function setFatMonthMenu(open) {
-        els.fatMonthMenu.hidden = !open;
-        els.fatMonthBtn.setAttribute("aria-expanded", String(!!open));
-        els.fatMonthBtn.closest(".trend-month-control").classList.toggle("menu-open", !!open);
-      }
-
-      function buildFatTrendPoints() {
-        const now = new Date(), logs = fatLogsAscending();
-        if (state.fatTrendRange === "today") {
-          const start = startOfDay(now);
-          return logs.filter(row => new Date(row.created_at) >= start && new Date(row.created_at) <= now).map(row => ({ label: formatTime(row.created_at), value: row.delta_jin, date: new Date(row.created_at) }));
-        }
-        const week = state.fatTrendRange === "week";
-        const window = getMonthTrendWindow(now, state.fatMonthWeek);
-        const start = week ? startOfWeekMonday(now) : window.start;
-        const count = week ? 7 : Math.round((window.end - window.start) / 86400000);
-        const labels = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
-        let cursor = 0, last = null;
-        return Array.from({ length: count }, (_, i) => {
-          const day = addDays(start, i), end = addDays(day, 1);
-          while (cursor < logs.length && new Date(logs[cursor].created_at) < end && new Date(logs[cursor].created_at) <= now) last = logs[cursor++];
-          return { label: week ? labels[i] : `${day.getDate()}日`, value: day > now || !last ? null : last.delta_jin, date: day };
-        });
-      }
-
-      function renderFatTrend() {
-        const month = state.fatTrendRange === "month";
-        els.fatTrendSegments.querySelectorAll("[data-fat-range]").forEach(btn => btn.classList.toggle("active", btn.dataset.fatRange === state.fatTrendRange));
-        els.fatMonthBtn.classList.toggle("active", month);
-        els.fatMonthLabel.textContent = month ? trendMonthWeekName(state.fatMonthWeek) : "本月";
-        els.fatMonthMenu.querySelectorAll("[data-fat-month-week]").forEach(btn => btn.classList.toggle("active", Number(btn.dataset.fatMonthWeek) === state.fatMonthWeek));
-        drawTrend(buildFatTrendPoints(), { canvas: els.fatTrendCanvas, empty: els.fatChartEmpty, color: "#729a83", fillColor: "rgba(114,154,131,.20)", fillTransparent: "rgba(114,154,131,0)", valueLabel: n => `${n > 0 ? "+" : ""}${fatNumber(n)}斤` });
-        const now = new Date(), window = getMonthTrendWindow(now, state.fatMonthWeek);
-        const start = state.fatTrendRange === "today" ? startOfDay(now) : state.fatTrendRange === "week" ? startOfWeekMonday(now) : window.start;
-        const end = month ? window.end : addDays(start, state.fatTrendRange === "week" ? 7 : 1);
-        const count = state.fatLogs.filter(row => new Date(row.created_at) >= start && new Date(row.created_at) < end).length;
-        els.fatChartCaption.textContent = `${count} 次记录 · 负值表示减重，正值表示增加${state.fatTrendRange === "today" ? "" : " · 未记录日沿用最近记录"}`;
-      }
-
-      function drawActiveOverviewTrend() {
-        if (state.activeMetric === "fat") renderFatTrend();
-        else drawTrend(buildTrendPoints(state.trendRange));
-      }
-
-      function fatLogRowHTML(row) {
-        const lost = row.delta_jin < 0, gained = row.delta_jin > 0;
-        return `<li class="log-row"><div class="log-icon ${lost ? "positive" : gained ? "negative" : "neutral"}">${movementIconHTML(lost ? -1 : gained ? 1 : 0)}</div><div class="log-copy"><div class="log-reason">${escapeHTML(fatDifferenceText(row.delta_jin))}</div><span class="log-meta">${escapeHTML(formatTime(row.created_at))} · 相对起始体重</span></div><div class="log-delta ${lost ? "positive" : gained ? "negative" : "neutral"}">${row.delta_jin > 0 ? "+" : ""}${escapeHTML(fatNumber(row.delta_jin))} 斤</div></li>`;
-      }
-
-      function renderFatCalendar() {
-        const month = state.fatCalendarDate, first = startOfMonth(month), end = endOfMonthExclusive(month);
-        const monthLogs = fatLogsAscending().filter(row => new Date(row.created_at) >= first && new Date(row.created_at) < end);
-        els.fatCalendarMonth.textContent = formatMonth(month);
-        els.fatMonthSummary.textContent = monthLogs.length ? `本月记录 ${monthLogs.length} 次 · 月内最新 ${fatDifferenceText(monthLogs.at(-1).delta_jin)}` : "本月暂无记录，记录后即可回顾变化";
-        const byDay = new Map();
-        monthLogs.forEach(row => {
-          const key = dateKey(new Date(row.created_at));
-          if (!byDay.has(key)) byDay.set(key, []);
-          byDay.get(key).push(row);
-        });
-        const fragment = document.createDocumentFragment();
-        const appendBlank = () => { const blank = document.createElement("div"); blank.className = "day placeholder"; fragment.appendChild(blank); };
-        for (let i = 0; i < first.getDay(); i++) appendBlank();
-        const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
-        for (let day = 1; day <= days; day++) {
-          const date = new Date(month.getFullYear(), month.getMonth(), day), key = dateKey(date);
-          const rows = byDay.get(key) || [], last = rows.at(-1);
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "day pressable";
-          button.dataset.fatDate = key;
-          button.classList.toggle("today", sameDay(date, new Date()));
-          button.classList.toggle("selected", state.fatSelectedDayKey === key);
-          button.setAttribute("aria-label", `${month.getMonth() + 1}月${day}日，${rows.length} 次记录${last ? `，${fatDifferenceText(last.delta_jin)}` : ""}`);
-          const delta = last ? `${last.delta_jin < 0 ? "↓" : last.delta_jin > 0 ? "↑" : ""}${fatNumber(Math.abs(last.delta_jin))}斤` : "";
-          button.innerHTML = `<span class="day-number">${day}</span><span class="fat-day-delta${last?.delta_jin > 0 ? " gained" : ""}">${escapeHTML(delta)}</span>`;
-          fragment.appendChild(button);
-        }
-        const trailing = (7 - ((first.getDay() + days) % 7)) % 7;
-        for (let i = 0; i < trailing; i++) appendBlank();
-        els.fatCalendarGrid.replaceChildren(fragment);
-        els.fatDayDetail.classList.toggle("hidden", !state.fatSelectedDayKey);
-        if (state.fatSelectedDayKey) {
-          const [y, m, d] = state.fatSelectedDayKey.split("-").map(Number);
-          els.fatDayDetailTitle.textContent = formatDayTitle(new Date(y, m - 1, d));
-          const rows = byDay.get(state.fatSelectedDayKey) || [];
-          els.fatDayDetailList.innerHTML = rows.length ? rows.map(fatLogRowHTML).join("") : '<li class="empty-state">当天还没有体重记录</li>';
-        }
-      }
-
-      els.openFatSettingsBtn.addEventListener("click", () => void openFatSettings());
-      els.fatSettingsConfirmBtn.addEventListener("click", () => void saveFatStartingWeight());
-      els.fatSettingsCancelBtn.addEventListener("click", () => setLayer(els.fatSettingsLayer, false));
-      els.fatRecordBtn.addEventListener("click", openFatRecord);
-      els.fatRecordConfirmBtn.addEventListener("click", () => void saveFatRecord());
-      els.fatRecordCancelBtn.addEventListener("click", () => setLayer(els.fatRecordLayer, false));
-      [els.fatSettingsLayer, els.fatRecordLayer].forEach(layer => layer.addEventListener("click", e => { if (e.target === layer) setLayer(layer, false); }));
-      els.fatStartingWeightInput.addEventListener("keydown", e => { if (e.key === "Enter") void saveFatStartingWeight(); });
-      els.fatRecordWeightInput.addEventListener("keydown", e => { if (e.key === "Enter") void saveFatRecord(); });
-      [els.fatQuickNav, els.fatContentSwitch].forEach(nav => nav.addEventListener("click", e => {
-        const button = e.target.closest("[data-fat-section]");
-        if (button) { vibrate(6); openFatOverviewSection(button.dataset.fatSection); }
-      }));
-      els.fatTrendSegments.addEventListener("click", e => {
-        const week = e.target.closest("[data-fat-month-week]"), range = e.target.closest("[data-fat-range]");
-        if (week) { state.fatMonthWeek = Number(week.dataset.fatMonthWeek); state.fatTrendRange = "month"; setFatMonthMenu(false); renderFatTrend(); }
-        else if (e.target.closest("#fatMonthBtn")) setFatMonthMenu(els.fatMonthMenu.hidden);
-        else if (range) { state.fatTrendRange = range.dataset.fatRange; setFatMonthMenu(false); renderFatTrend(); }
-      });
-      els.fatCalendarGrid.addEventListener("click", e => {
-        const day = e.target.closest("[data-fat-date]");
-        if (!day) return;
-        state.fatSelectedDayKey = state.fatSelectedDayKey === day.dataset.fatDate ? null : day.dataset.fatDate;
-        renderFatCalendar();
-      });
-      els.fatPrevMonthBtn.addEventListener("click", () => { state.fatCalendarDate = addMonths(state.fatCalendarDate, -1); state.fatSelectedDayKey = null; renderFatCalendar(); });
-      els.fatNextMonthBtn.addEventListener("click", () => { state.fatCalendarDate = addMonths(state.fatCalendarDate, 1); state.fatSelectedDayKey = null; renderFatCalendar(); });
 
       // -------------------- Boot --------------------
 
       async function periodicDatabaseRefresh() {
         await loadAppState({ silent: true });
         await loadShopState({ silent: true });
-        await loadFatState({ silent: true });
         if (!state.isAdmin) await refreshGuestGrantNotice();
         if (els.overview.classList.contains("open")) {
           await loadOverviewData(true);
@@ -7350,8 +6833,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         await Promise.all([
           loadAppState(),
           refreshAuthState(),
-          loadShopState({ silent: true }),
-          loadFatState({ silent: true })
+          loadShopState({ silent: true })
         ]);
         renderPrimaryMetric();
         if (state.isAdmin) await loadAdminInventory({silent:true});
