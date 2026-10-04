@@ -1,0 +1,439 @@
+/* New module only: RPCs expose differences; absolute weights never enter public UI. */
+(() => {
+  "use strict";
+  window.PointsFatLoss = { attach };
+
+  function attach({ db, state, els, ui }) {
+    const icon = '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8 10a4 4 0 0 1 8 0M12 10l2-2"/></svg>';
+    els.metricSwitch.insertAdjacentHTML("beforeend", `<button class="metric-option" data-metric="fat" role="tab" aria-selected="false" type="button">${icon}<span>减脂</span></button>`);
+    els.home.querySelector(".hero").insertAdjacentHTML("beforeend", `
+      <div class="fat-home-content" hidden>
+        <div class="eyebrow reward-message" aria-live="polite">
+          <span class="reward-line-primary" id="fatHomeTitle">₊˚🌿 每一次记录，都是一点进步 ♡</span>
+          <span class="reward-line-secondary" id="fatHomeMeta">正在同步减脂记录</span>
+        </div>
+        <div class="score-lens-wrap pressable" id="fatRefreshBtn" role="button" tabindex="0" aria-label="刷新减脂数据">
+          <div class="score-lens fat-lens"><div class="fat-value-stack" aria-live="polite">
+            <span class="fat-value-label" id="fatValueLabel">体重变化</span>
+            <strong class="fat-value" id="fatValue">—</strong><span class="fat-value-unit" id="fatValueUnit">斤</span>
+          </div></div>
+        </div>
+        <div class="fat-home-actions"><button class="fat-record-button pressable" id="fatRecordBtn" hidden type="button">记录体重</button></div>
+      </div>`);
+    els.overviewShell.insertAdjacentHTML("beforeend", `
+      <div class="fat-overview" id="fatOverviewContent" hidden>
+        <div class="overview-landing" id="fatLanding"><nav class="overview-quick-nav" aria-label="减脂总览快捷入口">
+          <button class="overview-quick-card pressable" data-fat-section="trend" type="button">${icon}<span class="overview-quick-title">趋势统计</span><span class="overview-quick-copy">体重变化趋势</span></button>
+          <button class="overview-quick-card pressable" data-fat-section="calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="overview-quick-title">月度总览</span><span class="overview-quick-copy">查看每日记录</span></button>
+        </nav></div>
+        <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
+          <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
+          <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">月度总览</button>
+        </div>
+        <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
+        <section class="section overview-section-anchor" id="fatTrendSection" hidden>
+          <h2 class="section-title">趋势统计</h2><div class="card glass trend-card">
+            <div class="segmented" aria-label="减脂趋势范围" id="fatTrendRanges">
+              <button class="segment pressable active" data-fat-range="today" type="button">今天</button>
+              <button class="segment pressable" data-fat-range="week" type="button">本周</button>
+              <button class="segment pressable" data-fat-range="month" type="button">本月</button>
+            </div>
+            <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
+            <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help">显示每次记录相对起始体重的变化 · 单位：斤</p>
+          </div>
+        </section>
+        <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
+          <h2 class="section-title">月度总览</h2><div class="card glass calendar-card fat-calendar">
+            <div class="calendar-head"><button class="small-icon pressable" id="fatPrevMonth" aria-label="减脂上个月" type="button">‹</button><div class="calendar-month" id="fatCalendarMonth"></div><button class="small-icon pressable" id="fatNextMonth" aria-label="减脂下个月" type="button">›</button></div>
+            <div class="fat-month-summary"><div><span>本月记录</span><strong id="fatMonthCount">0 次</strong></div><div><span>本月净变化</span><strong id="fatMonthChange">—</strong></div></div>
+            <div class="weekdays" aria-hidden="true"><div class="weekday">日</div><div class="weekday">一</div><div class="weekday">二</div><div class="weekday">三</div><div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div></div>
+            <div class="calendar-grid" id="fatCalendarGrid"></div><p class="fat-chart-help">日期下方显示当天最后一次记录的差值</p>
+            <div class="day-detail hidden" id="fatDayDetail"><div class="detail-title" id="fatDayTitle"></div><ul class="log-list" id="fatDayList"></ul></div>
+          </div>
+        </section>
+      </div>`);
+    const settings = document.createElement("div");
+    settings.hidden = true;
+    settings.id = "fatAdminSettings";
+    settings.innerHTML = `<div class="settings-label">减脂管理</div><div class="settings-group"><button class="settings-row pressable" id="fatStartingWeightBtn" type="button"><span>起始体重</span><span class="settings-value"><span id="fatStartingWeightValue">点击查看</span><span class="chevron">›</span></span></button></div>`;
+    const accountLabel = [...els.adminSettings.querySelectorAll(".settings-label")].find(el => el.textContent.trim() === "账户");
+    els.adminSettings.insertBefore(settings, accountLabel || null);
+    document.querySelector("main.app").insertAdjacentHTML("beforeend", `
+      <div class="modal-layer alert-layer" id="fatWeightLayer" aria-hidden="true">
+        <div class="alert" role="dialog" aria-modal="true" aria-labelledby="fatWeightTitle">
+          <div class="alert-content"><div class="change-icon" aria-hidden="true">🌿</div><div class="alert-title" id="fatWeightTitle">记录体重</div><div class="alert-message" id="fatWeightMessage"></div>
+            <label class="fat-field-label" id="fatWeightLabel" for="fatWeightInput">本次体重</label><div class="fat-input-wrap"><input id="fatWeightInput" inputmode="decimal" type="text" maxlength="8" autocomplete="off" placeholder="输入体重"/><span>斤</span></div>
+            <div class="fat-form-error" id="fatWeightError" role="alert" hidden></div><div class="fat-form-note" id="fatWeightNote"></div>
+          </div><div class="alert-actions vertical"><button class="alert-button primary-action pressable" id="fatSaveWeight" type="button">保存记录</button><button class="alert-button pressable" id="fatCancelWeight" type="button">取消</button></div>
+        </div>
+      </div>`);
+    const q = id => document.getElementById(id);
+    const content = els.home.querySelector(".fat-home-content");
+    const overview = q("fatOverviewContent");
+    const dialog = q("fatWeightLayer");
+    let snapshot = null, logs = [], readError = false, logsError = false;
+    let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
+    let verifiedAdmin = false, verifiedUser = null, mode = null, saving = false;
+    let range = "today", month = monthStart(new Date()), selectedDay = null;
+    let refreshPromise = null, logsPromise = null, authTimer = 0;
+    let chartRaf = 0, initialized = false, overviewFresh = false;
+    const number = value => new Intl.NumberFormat("zh-CN", { maximumFractionDigits:2 }).format(Math.abs(value));
+    const deltaNumber = value => `${value > 0 ? "+" : value < 0 ? "−" : ""}${number(value)}`;
+    const difference = value => value < 0 ? `已减去 ${number(value)} 斤` : value > 0 ? `增加了 ${number(value)} 斤` : "与起始体重持平";
+    const stamp = value => new Intl.DateTimeFormat("zh-CN", { month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false }).format(new Date(value));
+    const active = () => state.activeMetric === "fat";
+    const row = data => Array.isArray(data) ? data[0] : data;
+    const hasDelta = value => value !== null && value !== undefined && Number.isFinite(Number(value));
+    function dayStart(value) { const d = new Date(value); d.setHours(0,0,0,0); return d; }
+    function monthStart(d) { return new Date(d.getFullYear(),d.getMonth(),1); }
+    function nextMonth(d, n=1) { return new Date(d.getFullYear(),d.getMonth()+n,1); }
+    function key(d) { return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+    function laterDraw() { cancelAnimationFrame(chartRaf); chartRaf = requestAnimationFrame(drawTrend); }
+    function fitSettings() { if (els.settingsLayer.classList.contains("open")) window.dispatchEvent(new Event("resize")); }
+    function clearSecrets() {
+      secretVersion++;
+      q("fatStartingWeightValue").textContent = "点击查看";
+      q("fatWeightInput").value = "";
+    }
+    function closeDialog() {
+      ui.setLayer(dialog,false); mode = null; clearSecrets();
+      q("fatWeightError").hidden = true;
+    }
+    function permissionChanged() {
+      settings.hidden = !verifiedAdmin;
+      q("fatRecordBtn").hidden = !verifiedAdmin;
+      if (!verifiedAdmin) { clearSecrets(); closeDialog(); }
+      renderHome(); fitSettings();
+    }
+    function scheduleAuth(session) {
+      const version = ++authVersion;
+      clearTimeout(authTimer);
+      verifiedAdmin = false; verifiedUser = null;
+      permissionChanged();
+      if (!session?.user?.id) return;
+      const userId = session.user.id;
+      authTimer = setTimeout(async () => {
+        try {
+          const { data, error } = await db.rpc("points_is_admin");
+          if (version !== authVersion || state.session?.user?.id !== userId) return;
+          verifiedAdmin = !error && data === true; verifiedUser = verifiedAdmin ? userId : null;
+          permissionChanged();
+          if (verifiedAdmin && els.settingsLayer.classList.contains("open")) void loadSettings(false);
+        } catch (_) { if (version === authVersion) { verifiedAdmin = false; permissionChanged(); } }
+      }, 0);
+    }
+    db.auth.onAuthStateChange((_event, session) => scheduleAuth(session));
+    function adminRendered() {
+      if (!state.session || !state.isAdmin) {
+        verifiedAdmin = false; verifiedUser = null; permissionChanged();
+      } else if (!verifiedAdmin || verifiedUser !== state.session.user.id) scheduleAuth(state.session);
+      else { renderHome(); fitSettings(); }
+    }
+    function errorText(error) {
+      const message = `${error?.code || ""} ${error?.message || ""}`;
+      if (/42501|permission|admin|JWT/i.test(message)) return "管理员权限已失效，请重新登录";
+      if (/Starting weight required/i.test(message)) return "请先在管理员设置中设置起始体重";
+      if (/settings not found/i.test(message)) return "数据库缺少减脂设置，请检查初始配置";
+      if (/PGRST202|Could not find|schema cache/i.test(message)) return "减脂接口暂不可用，请检查数据库部署";
+      return "保存失败，请检查网络后再试";
+    }
+    async function refresh({silent=true}={}) {
+      if (refreshPromise) return refreshPromise;
+      const version = readVersion;
+      refreshPromise = (async () => {
+        try {
+          const { data, error } = await db.rpc("points_fat_get_state");
+          if (error) throw error;
+          if (version !== readVersion) return false;
+          const result = row(data);
+          if (!result || typeof result.configured !== "boolean") throw new Error("Invalid state");
+          snapshot = { configured:result.configured, delta:hasDelta(result.delta_jin) ? Number(result.delta_jin) : null, recordedAt:result.recorded_at, count:Number(result.record_count || 0) };
+          readError = false; initialized = true;
+          return true;
+        } catch (_) {
+          if (version === readVersion) { readError = true; initialized = true; if (!silent && active()) ui.showToast("减脂数据同步失败，可点击重试"); }
+          return false;
+        } finally { renderHome(); refreshPromise = null; }
+      })();
+      return refreshPromise;
+    }
+    async function loadLogs(force=false) {
+      if (!force && overviewFresh) { renderOverview(); return true; }
+      if (logsPromise) return logsPromise;
+      const version = logsVersion;
+      q("fatOverviewStatus").textContent = "正在读取记录…";
+      q("fatOverviewStatus").hidden = false;
+      logsPromise = (async () => {
+        try {
+          const { data, error } = await db.rpc("points_fat_get_logs", { p_from:null, p_to:null, p_limit:10000 });
+          if (error) throw error;
+          if (version !== logsVersion) return false;
+          if (!Array.isArray(data)) throw new Error("Invalid logs");
+          logs = data.filter(r => hasDelta(r.delta_jin) && Number.isFinite(Date.parse(r.created_at))).map(r => ({ id:String(r.id), delta:Number(r.delta_jin), at:r.created_at })).sort((a,b) => Date.parse(a.at)-Date.parse(b.at) || a.id.length-b.id.length || a.id.localeCompare(b.id));
+          logsError = false; overviewFresh = true;
+          return true;
+        } catch (_) { if (version === logsVersion) logsError = true; return false; }
+        finally { logsPromise = null; renderOverview(); }
+      })();
+      return logsPromise;
+    }
+    function renderHome() {
+      const isActive = active();
+      els.home.classList.toggle("fat-active",isActive);
+      els.metricSwitch.classList.toggle("fat-switch-active",isActive);
+      content.hidden = !isActive;
+      q("fatRecordBtn").hidden = !verifiedAdmin;
+      q("fatRecordBtn").disabled = saving || !snapshot?.configured || readError;
+      if (!isActive) return;
+      const delta = snapshot?.delta;
+      q("fatValueLabel").textContent = hasDelta(delta) ? (delta < 0 ? "已减去" : delta > 0 ? "增加了" : "体重持平") : "体重变化";
+      q("fatValue").textContent = hasDelta(delta) ? number(delta) : "—";
+      q("fatValue").style.fontSize = q("fatValue").textContent.length > 5 ? "clamp(34px,10vw,44px)" : "";
+      q("fatValueUnit").textContent = "斤";
+      q("fatValue").parentElement.classList.toggle("gain",Number(delta)>0);
+      q("fatHomeMeta").textContent = !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `最近记录 ${stamp(snapshot.recordedAt)} · 共 ${snapshot.count} 次`;
+    }
+    function renderOverview() {
+      const isActive = active(); overview.hidden = !isActive;
+      if (!isActive) return;
+      els.scoreOverviewContent.hidden = true; els.wheelOverviewContent.hidden = true;
+      els.overviewTitle.textContent = "减脂总览";
+      els.overviewSubtitle.textContent = "查看体重变化趋势与月度记录";
+      const section = state.overviewSection;
+      q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
+      q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
+      q("fatContentSwitch").querySelectorAll("[data-fat-section]").forEach(btn => {
+        const selected = btn.dataset.fatSection === section;
+        btn.classList.toggle("active",selected); btn.setAttribute("aria-selected",String(selected));
+      });
+      const truncated = logs.length >= 10000 && snapshot?.count > logs.length;
+      q("fatOverviewStatus").hidden = !logsError && !truncated;
+      q("fatOverviewStatus").textContent = logsError ? "记录同步失败 · 关闭总览后重新打开可重试" : "当前显示最近 10000 条记录，较早的月份可能不完整";
+      if (section === "trend") laterDraw();
+      if (section === "calendar") renderCalendar();
+    }
+    function chooseSection(section, expand=true) {
+      if (!active() || !["trend","calendar"].includes(section)) return;
+      state.overviewSection = section; renderOverview();
+      if (expand) { ui.setOverviewMode("full"); els.overviewShell.scrollTop = 0; }
+    }
+    function activate() {
+      state.activeMetric = "fat"; ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
+      void refresh({silent:false});
+    }
+    function rangeLogs() {
+      const now = new Date(); let start = dayStart(now), end = now;
+      if (range === "week") { start.setDate(start.getDate() - (start.getDay()+6)%7); }
+      if (range === "month") start = monthStart(now);
+      return logs.filter(r => new Date(r.at) >= start && new Date(r.at) <= end);
+    }
+    function drawTrend() {
+      if (!active() || state.overviewMode === "closed" || state.overviewSection !== "trend") return;
+      const canvas = q("fatTrendCanvas"), rect = canvas.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+      const dpr = Math.min(window.devicePixelRatio || 1,3);
+      canvas.width = Math.round(rect.width*dpr); canvas.height = Math.round(rect.height*dpr);
+      const ctx = canvas.getContext("2d"); if (!ctx) return;
+      ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,rect.width,rect.height);
+      const points = rangeLogs();
+      q("fatChartEmpty").hidden = points.length > 0;
+      q("fatChartEmpty").textContent = logsError ? "记录读取失败" : "这个时段暂无记录";
+      q("fatChartCaption").textContent = `${({today:"今天",week:"本周",month:"本月"})[range]} ${points.length} 次记录`;
+      canvas.setAttribute("aria-label",points.length ? `体重差值趋势，共 ${points.length} 次记录，最新${difference(points.at(-1).delta)}` : "这个时段暂无记录");
+      q("fatTrendRanges").querySelectorAll("[data-fat-range]").forEach(btn => btn.classList.toggle("active",btn.dataset.fatRange===range));
+      if (!points.length) return;
+      let min = Math.min(...points.map(p => p.delta)), max = Math.max(...points.map(p => p.delta));
+      const padding = Math.max(.5,(max-min)*.2); min -= padding; max += padding;
+      const pad = {left:30,right:30,top:34,bottom:30};
+      const w = Math.max(1,rect.width-pad.left-pad.right), h = Math.max(1,rect.height-pad.top-pad.bottom);
+      const first = Date.parse(points[0].at), last = Date.parse(points.at(-1).at);
+      const x = (p,i) => pad.left + (last > first ? (Date.parse(p.at)-first)/(last-first)*w : points.length>1 ? i/(points.length-1)*w : w/2);
+      const y = p => pad.top + h - (p.delta-min)/(max-min)*h;
+      const styles = getComputedStyle(document.documentElement);
+      ctx.strokeStyle = styles.getPropertyValue("--hairline").trim(); ctx.lineWidth = 1;
+      for (let i=0;i<3;i++) { const py=pad.top+h*i/2; ctx.beginPath(); ctx.moveTo(pad.left,py); ctx.lineTo(rect.width-pad.right,py); ctx.stroke(); }
+      if (min <= 0 && max >= 0) {
+        const zeroY = pad.top+h-(0-min)/(max-min)*h;
+        ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(pad.left,zeroY); ctx.lineTo(rect.width-pad.right,zeroY); ctx.stroke(); ctx.setLineDash([]);
+      }
+      if (points.length > 1) {
+        ctx.beginPath(); points.forEach((p,i) => i ? ctx.lineTo(x(p,i),y(p)) : ctx.moveTo(x(p,i),y(p)));
+        ctx.strokeStyle="#719a82"; ctx.lineWidth=2.5; ctx.lineJoin="round"; ctx.lineCap="round"; ctx.stroke();
+        ctx.lineTo(x(points.at(-1),points.length-1),pad.top+h); ctx.lineTo(x(points[0],0),pad.top+h); ctx.closePath();
+        const fill=ctx.createLinearGradient(0,pad.top,0,pad.top+h); fill.addColorStop(0,"#719a8230"); fill.addColorStop(1,"#719a8200"); ctx.fillStyle=fill; ctx.fill();
+      }
+      const labelStep = Math.max(1,Math.ceil(points.length/6));
+      ctx.textAlign="center"; ctx.textBaseline="bottom"; ctx.font='600 11px -apple-system,BlinkMacSystemFont,sans-serif';
+      points.forEach((p,i) => {
+        ctx.fillStyle="#638171"; ctx.beginPath(); ctx.arc(x(p,i),y(p),i===points.length-1?4:2.8,0,Math.PI*2); ctx.fill();
+        if (i%labelStep===0 || i===points.length-1) ctx.fillText(deltaNumber(p.delta),x(p,i),Math.max(14,y(p)-8));
+      });
+      ctx.fillStyle=styles.getPropertyValue("--tertiary").trim(); ctx.textBaseline="top"; ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif';
+      const indexes=[...new Set([0,Math.floor((points.length-1)/2),points.length-1])];
+      indexes.forEach(i => {
+        const d=new Date(points[i].at);
+        const label=range==="today" ? new Intl.DateTimeFormat("zh-CN",{hour:"2-digit",minute:"2-digit",hour12:false}).format(d) : `${d.getMonth()+1}/${d.getDate()}`;
+        ctx.fillText(label,x(points[i],i),rect.height-18);
+      });
+    }
+    function renderCalendar() {
+      const next=nextMonth(month), current=logs.filter(r => new Date(r.at)>=month && new Date(r.at)<next);
+      q("fatCalendarMonth").textContent=new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long"}).format(month);
+      q("fatMonthCount").textContent=`${current.length} 次`;
+      const preceding=logs.filter(r => new Date(r.at)<month).at(-1);
+      const before=preceding || current[0];
+      const enough=current.length>1 || (current.length>0 && preceding);
+      const monthDelta=enough ? Math.round((current.at(-1).delta-before.delta)*100)/100 : null;
+      q("fatMonthChange").textContent=monthDelta===null ? (current.length?"尚需更多记录":"暂无记录") : monthDelta<0?`减少 ${number(monthDelta)} 斤`:monthDelta>0?`增加 ${number(monthDelta)} 斤`:"保持不变";
+      const byDay=new Map(); current.forEach(r => byDay.set(key(new Date(r.at)),r));
+      const grid=q("fatCalendarGrid"); grid.replaceChildren();
+      const blanks=month.getDay(), total=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
+      const cells=Math.ceil((blanks+total)/7)*7;
+      for (let i=0;i<cells;i++) {
+        const day=i-blanks+1;
+        if (day<1 || day>total) { const blank=document.createElement("div"); blank.className="day placeholder"; grid.append(blank); continue; }
+        const date=new Date(month.getFullYear(),month.getMonth(),day), dayKey=key(date), record=byDay.get(dayKey);
+        const button=document.createElement("button"); button.type="button"; button.className="day pressable";
+        if (dayKey===key(new Date())) button.classList.add("today");
+        if (dayKey===selectedDay) button.classList.add("selected");
+        button.setAttribute("aria-label",`${date.getMonth()+1}月${day}日，${record?difference(record.delta):"暂无记录"}`);
+        const label=document.createElement("span"); label.className="day-number"; label.textContent=day; button.append(label);
+        if (record) { const badge=document.createElement("span"); badge.className=`fat-day-delta${record.delta>0?" gain":record.delta===0?" flat":""}`; badge.textContent=deltaNumber(record.delta); button.append(badge); }
+        button.addEventListener("click",() => { selectedDay=selectedDay===dayKey?null:dayKey; renderCalendar(); });
+        grid.append(button);
+      }
+      const detail=q("fatDayDetail"); detail.classList.toggle("hidden",!selectedDay);
+      if (!selectedDay) return;
+      const [year,m,d]=selectedDay.split("-").map(Number);
+      q("fatDayTitle").textContent=`${m}月${d}日的体重变化`;
+      const list=q("fatDayList"); list.replaceChildren();
+      const records=current.filter(r => key(new Date(r.at))===selectedDay);
+      if (!records.length) { const empty=document.createElement("li"); empty.className="empty-state"; empty.textContent="当天暂无体重记录"; list.append(empty); }
+      records.forEach(r => {
+        const item=document.createElement("li"); item.className="log-row";
+        const mark=document.createElement("div"); mark.className="log-icon"; mark.textContent=r.delta<0?"↘":r.delta>0?"↗":"—";
+        const copy=document.createElement("div"); copy.className="log-copy";
+        const title=document.createElement("div"); title.className="log-reason"; title.textContent="体重记录";
+        const meta=document.createElement("span"); meta.className="log-meta"; meta.textContent=stamp(r.at);
+        copy.append(title,meta);
+        const delta=document.createElement("div"); delta.className=`fat-log-delta${r.delta>0?" gain":""}`; delta.textContent=difference(r.delta);
+        item.append(mark,copy,delta); list.append(item);
+      });
+    }
+    async function loadSettings(forDialog) {
+      if (!verifiedAdmin) return;
+      const version=++secretVersion, auth=authVersion, user=verifiedUser;
+      try {
+        const {data,error}=await db.rpc("points_fat_admin_get_settings");
+        if (version!==secretVersion || auth!==authVersion || !verifiedAdmin || user!==verifiedUser) return;
+        if (error) throw error;
+        const result=row(data); if (!result) throw new Error("Fat settings not found");
+        const value=result.starting_weight_jin;
+        if (forDialog && mode==="starting" && dialog.classList.contains("open")) {
+          q("fatWeightInput").value=hasDelta(value)?String(Number(value)):"";
+          q("fatSaveWeight").disabled=false; q("fatWeightInput").disabled=false;
+        } else if (!forDialog && els.settingsLayer.classList.contains("open")) {
+          q("fatStartingWeightValue").textContent=hasDelta(value)?`${number(Number(value))} 斤`:"未设置";
+          fitSettings();
+        }
+      } catch (error) {
+        if (version!==secretVersion || auth!==authVersion) return;
+        if (forDialog) { q("fatWeightError").textContent=errorText(error); q("fatWeightError").hidden=false; }
+        else q("fatStartingWeightValue").textContent="读取失败 · 点击重试";
+      }
+    }
+    function openDialog(nextMode) {
+      if (!verifiedAdmin || saving) return;
+      clearSecrets(); mode=nextMode;
+      const starting=mode==="starting";
+      q("fatWeightTitle").textContent=starting?"设置起始体重":"记录体重";
+      q("fatWeightLabel").textContent=starting?"起始体重":"本次体重";
+      q("fatWeightMessage").textContent=starting?"仅管理员设置中可查看起始体重":"记录后自动计算体重变化";
+      q("fatWeightNote").textContent=starting?"更改起始体重后，已有记录的差值会重新计算。":"最多保留两位小数，首页和总览只显示变化量。";
+      q("fatSaveWeight").textContent=starting?"保存起始体重":"保存记录";
+      q("fatSaveWeight").disabled=starting; q("fatWeightInput").disabled=starting;
+      q("fatWeightError").hidden=true;
+      if (starting) ui.setLayer(els.settingsLayer,false);
+      ui.setLayer(dialog,true);
+      if (starting) void loadSettings(true);
+    }
+    function inputWeight() {
+      const raw=q("fatWeightInput").value.trim();
+      if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) return null;
+      const value=Number(raw); return Number.isFinite(value) && value>0 && value<10000 ? value:null;
+    }
+    async function saveWeight() {
+      if (!verifiedAdmin || saving || !mode) return;
+      const value=inputWeight();
+      if (value===null) { q("fatWeightError").textContent="请输入大于 0、小于 10000 的体重，最多两位小数"; q("fatWeightError").hidden=false; return; }
+      const savingMode=mode, auth=authVersion;
+      saving=true; q("fatWeightError").hidden=true;
+      ui.setBusy(q("fatSaveWeight"),true); q("fatCancelWeight").disabled=true; q("fatWeightInput").disabled=true;
+      try {
+        const name=savingMode==="starting"?"points_fat_admin_set_starting_weight":"points_fat_admin_record_weight";
+        const {data,error}=await db.rpc(name,{p_weight_jin:value});
+        if (error) throw error;
+        readVersion++; logsVersion++; overviewFresh=false;
+        await Promise.all([refreshPromise,logsPromise].filter(Boolean));
+        if (auth!==authVersion || !verifiedAdmin) return;
+        if (savingMode==="record") {
+          const result=row(data);
+          if (result && hasDelta(result.delta_jin)) snapshot={configured:true,delta:Number(result.delta_jin),recordedAt:result.created_at,count:(snapshot?.count || 0)+1};
+        }
+        closeDialog();
+        if (savingMode==="starting") ui.setLayer(els.settingsLayer,true);
+        const synced=await refresh({silent:true});
+        if (state.overviewMode!=="closed" && active()) await loadLogs(true);
+        ui.showToast(synced?(savingMode==="starting"?"起始体重已保存":"体重记录已保存"):"已保存，数据同步暂未完成，请稍后刷新");
+        ui.vibrate(14);
+      } catch (error) {
+        if (auth!==authVersion) return;
+        const text=errorText(error);
+        if (/42501|permission|admin|JWT/i.test(`${error?.code || ""} ${error?.message || ""}`)) {
+          verifiedAdmin=false; permissionChanged(); ui.showToast(text);
+        } else { q("fatWeightError").textContent=text; q("fatWeightError").hidden=false; }
+      } finally {
+        saving=false; ui.setBusy(q("fatSaveWeight"),false); q("fatCancelWeight").disabled=false; q("fatWeightInput").disabled=false; renderHome();
+      }
+    }
+    const settingsObserver=new MutationObserver(() => {
+      if (els.settingsLayer.classList.contains("open")) {
+        if (verifiedAdmin) void loadSettings(false);
+      } else {
+        q("fatStartingWeightValue").textContent="点击查看";
+        if (mode!=="starting") secretVersion++;
+      }
+    });
+    settingsObserver.observe(els.settingsLayer,{attributes:true,attributeFilter:["class"]});
+    q("fatStartingWeightBtn").addEventListener("click",()=>openDialog("starting"));
+    q("fatRecordBtn").addEventListener("click",()=>openDialog("record"));
+    q("fatSaveWeight").addEventListener("click",()=>void saveWeight());
+    q("fatCancelWeight").addEventListener("click",()=>{ if (!saving) closeDialog(); });
+    q("fatWeightInput").addEventListener("keydown",event=>{ if (event.key==="Enter") { event.preventDefault(); void saveWeight(); } });
+    dialog.addEventListener("click",event=>{ if (event.target===dialog && !saving) closeDialog(); });
+    document.addEventListener("keydown",event=>{
+      if (event.key==="Escape" && dialog.classList.contains("open")) { event.stopImmediatePropagation(); event.preventDefault(); if (!saving) closeDialog(); }
+    },true);
+    async function manualRefresh() {
+      q("fatRefreshBtn").classList.add("refreshing");
+      const synced=await refresh({silent:false});
+      if (state.overviewMode!=="closed") await loadLogs(true);
+      q("fatRefreshBtn").classList.remove("refreshing");
+      if (synced) ui.showToast("已同步减脂记录");
+    }
+    q("fatRefreshBtn").addEventListener("click",()=>void manualRefresh());
+    q("fatRefreshBtn").addEventListener("keydown",event=>{ if (["Enter"," "].includes(event.key)) { event.preventDefault(); void manualRefresh(); } });
+    els.overviewBtn.addEventListener("click",event=>{
+      if (!active()) return;
+      event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); void loadLogs(true);
+    },true);
+    overview.addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-section]"); if (btn) { ui.vibrate(6); chooseSection(btn.dataset.fatSection); } });
+    q("fatTrendRanges").addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-range]"); if (btn) { range=btn.dataset.fatRange; laterDraw(); } });
+    q("fatPrevMonth").addEventListener("click",()=>{ month=nextMonth(month,-1); selectedDay=null; renderCalendar(); });
+    q("fatNextMonth").addEventListener("click",()=>{ month=nextMonth(month); selectedDay=null; renderCalendar(); });
+    window.addEventListener("resize",laterDraw,{passive:true});
+    window.visualViewport?.addEventListener("resize",laterDraw,{passive:true});
+    adminRendered(); renderHome();
+    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs };
+  }
+})();
