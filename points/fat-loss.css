@@ -25,6 +25,19 @@
 .fat-chart-wrap { height:202px; }
 .fat-chart-wrap canvas { width:100%; height:100%; display:block; }
 .fat-chart-help { margin:8px 0 0; color:var(--tertiary); font-size:11px; line-height:1.45; text-align:center; }
+.fat-week-card { padding:18px 14px; margin-bottom:12px; text-align:center; }
+.fat-week-title { color:var(--secondary); font-size:12px; font-weight:600; }
+.fat-week-result { display:flex; flex-wrap:wrap; justify-content:center; align-items:baseline; gap:7px; margin:12px 0; color:#638171; }
+.fat-week-result > span { font-size:13px; }
+.fat-week-result strong { font-size:32px; line-height:1.15; font-weight:730; font-variant-numeric:tabular-nums; }
+.fat-week-result strong.gain { color:#b67e62; }
+.fat-week-coverage { color:var(--secondary); font-size:12px; line-height:1.6; }
+.fat-week-dates { margin-top:3px; color:var(--tertiary); font-size:10px; line-height:1.5; }
+.fat-week-note,.fat-week-long { margin:10px 0 0; color:var(--secondary); font-size:11px; line-height:1.6; }
+.fat-week-long { padding-top:10px; border-top:1px solid var(--hairline); }
+.fat-chart-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:14px; color:var(--secondary); font-size:10px; margin:8px 0; }
+.fat-chart-legend span::before { content:""; display:inline-block; width:6px; height:6px; margin-right:5px; border-radius:50%; background:#9aa6a0; vertical-align:middle; }
+.fat-chart-legend span+span::before { width:14px; height:2px; border-radius:0; background:#638171; }
 .fat-month-summary { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 4px 13px; }
 .fat-month-summary > div { padding:10px 8px; border:1px solid var(--hairline); border-radius:16px; background:#ffffff26; text-align:center; }
 .fat-month-summary span { display:block; color:var(--secondary); font-size:10px; }

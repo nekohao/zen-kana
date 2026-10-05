@@ -1983,7 +1983,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 .metric-switch.wheel-active .metric-switch-thumb{transform:translate3d(100%,0,0)!important;}
 </style>
 <!-- Additive fat-loss module assets. -->
-<link rel="stylesheet" href="./fat-loss.css?v=20261005.2"/>
+<link rel="stylesheet" href="./fat-loss.css?v=20261005.3"/>
 </head>
 <body>
 <div aria-hidden="true" class="background">
@@ -2923,7 +2923,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 <div aria-live="polite" class="toast glass" id="toast" role="status"></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./fat-loss.js?v=20261005.2"></script>
+<script src="./fat-loss.js?v=20261005.3"></script>
 <script>
     (() => {
       "use strict";
@@ -6878,6 +6878,8 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         renderAdminState = (...args) => { originalAdminState(...args); fatModule.adminRendered(); };
         const originalOverviewContent = renderOverviewContentMode;
         renderOverviewContentMode = (...args) => { originalOverviewContent(...args); fatModule.renderOverview(); };
+        const originalOverviewPeekHeight = currentOverviewPeekHeight;
+        currentOverviewPeekHeight = () => state.activeMetric === "fat" ? fatModule.peekHeight() : originalOverviewPeekHeight();
         const originalOverviewMode = setOverviewMode;
         setOverviewMode = (...args) => { originalOverviewMode(...args); fatModule.draw(); };
         const originalExpandOverview = expandOverviewSheet;

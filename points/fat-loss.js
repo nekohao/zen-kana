@@ -3,6 +3,33 @@
   "use strict";
   window.PointsFatLoss = { attach };
 
+  function dayStart(value) { const d = new Date(value); d.setHours(0,0,0,0); return d; }
+  function shiftDay(value, n) { const d = dayStart(value); d.setDate(d.getDate()+n); return d; }
+  function key(d) { return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+  // Each measured day has equal weight. Missing days are never imputed.
+  // All inputs are public differences; the private starting weight is unnecessary.
+  function trendData(records, now = new Date()) {
+    const byDay = new Map(), today = dayStart(now), earliest = shiftDay(today,-95).getTime();
+    records.forEach(record => {
+      const time = Date.parse(record.at);
+      if (!Number.isFinite(time) || time < earliest || time > now.getTime() || !Number.isFinite(record.delta)) return;
+      const date = dayStart(time), dayKey = key(date), existing = byDay.get(dayKey);
+      if (!existing || time < Date.parse(existing.at)) byDay.set(dayKey,{...record,date});
+    });
+    const daily = [...byDay.values()].sort((a,b) => a.date-b.date);
+    const average = (start,end) => {
+      const values = daily.filter(record => record.date >= start && record.date < end);
+      return {start,end,count:values.length,mean:values.length ? values.reduce((sum,r) => sum+r.delta,0)/values.length : null};
+    };
+    const weeks = Array.from({length:4},(_,i) => average(shiftDay(today,-6-i*7),shiftDay(today,1-i*7)));
+    const change = weeks[0].count && weeks[1].count ? weeks[0].mean-weeks[1].mean : null;
+    const rolling = Array.from({length:90},(_,i) => {
+      const date = shiftDay(today,i-89), sample = average(shiftDay(date,-6),shiftDay(date,1));
+      return {date,count:sample.count,delta:sample.count >= 3 ? sample.mean : null};
+    });
+    return {today,daily,weeks,change,rolling};
+  }
+
   function attach({ db, state, els, ui }) {
     const unitPicker = () => '<div class="segmented fat-unit-switch" role="group" aria-label="体重单位"><button class="segment pressable" data-fat-unit="kg" type="button" aria-pressed="true">公斤</button><button class="segment pressable" data-fat-unit="jin" type="button" aria-pressed="false">斤</button></div>';
     const icon = '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8 10a4 4 0 0 1 8 0M12 10l2-2"/></svg>';
@@ -10,7 +37,7 @@
     els.home.querySelector(".hero").insertAdjacentHTML("beforeend", `
       <div class="fat-home-content" hidden>
         <div class="eyebrow reward-message" aria-live="polite">
-          <span class="reward-line-primary" id="fatHomeTitle">₊˚🌿 每一次记录，都是一点进步 ♡</span>
+          <span class="reward-line-primary" id="fatHomeTitle">最近一次记录 · 相对起始体重的变化</span>
           <span class="reward-line-secondary" id="fatHomeMeta">正在同步减脂记录</span>
         </div>
         <div class="score-lens-wrap pressable" id="fatRefreshBtn" role="button" tabindex="0" aria-label="刷新减脂数据">
@@ -33,14 +60,26 @@
         </div>
         <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
-          <h2 class="section-title">趋势统计</h2><div class="card glass trend-card">
+          <h2 class="section-title">趋势统计</h2>
+          <div class="card glass fat-week-card" aria-live="polite">
+            <div class="fat-week-title">近七天记录均值 · 比前七天</div>
+            <div class="fat-week-result"><span id="fatWeekDirection">暂无对比</span><strong id="fatWeekValue">—</strong><span id="fatWeekUnit">公斤</span></div>
+            <div class="fat-week-coverage" id="fatWeekCoverage"></div>
+            <div class="fat-week-dates" id="fatWeekDates"></div>
+            <p class="fat-week-note" id="fatWeekNote"></p>
+            <p class="fat-week-long" id="fatWeekLong"></p>
+          </div>
+          <div class="card glass trend-card">
             <div class="segmented" aria-label="减脂趋势范围" id="fatTrendRanges">
-              <button class="segment pressable active" data-fat-range="today" type="button">今天</button>
-              <button class="segment pressable" data-fat-range="week" type="button">本周</button>
-              <button class="segment pressable" data-fat-range="month" type="button">本月</button>
+              <button class="segment pressable" data-fat-range="14" type="button">近14天</button>
+              <button class="segment pressable active" data-fat-range="28" type="button">近28天</button>
+              <button class="segment pressable" data-fat-range="90" type="button">近90天</button>
             </div>
             <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
-            <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help" id="fatChartHelp">显示每次记录相对起始体重的变化 · 单位：公斤</p>
+            <div class="fat-chart-legend"><span>灰点：每日首笔</span><span>绿线：七日记录均值</span></div>
+            <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help" id="fatChartHelp"></p>
+            <p class="fat-chart-help">每天首笔参与统计，漏记不补值；绿线在七天内至少有三天记录时显示。尽量分散记录，每周五至七天更有参考价值。</p>
+            <p class="fat-chart-help">晨起如厕后、进食喝水前，用同一台秤、相近衣着称重。均值下降表示平均体重变轻，不等同于脂肪减少量。</p>
           </div>
         </section>
         <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
@@ -79,9 +118,9 @@
     let snapshot = null, logs = [], readError = false, logsError = false;
     let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
     let verifiedAdmin = false, verifiedUser = null, mode = null, saving = false;
-    let range = "today", month = monthStart(new Date()), selectedDay = null;
+    let range = "28", month = monthStart(new Date()), selectedDay = null;
     let refreshPromise = null, logsPromise = null, authTimer = 0;
-    let chartRaf = 0, initialized = false, overviewFresh = false;
+    let chartRaf = 0, initialized = false, overviewFresh = false, landingPeekHeight = 300;
     let unit = "kg", privateStartingWeight = null, deleteTarget = null;
     try { const savedUnit=window.localStorage.getItem("points_fat_unit"); if (["jin","kg"].includes(savedUnit)) unit=savedUnit; } catch (_) {}
     const unitName = () => unit === "kg" ? "公斤" : "斤";
@@ -94,10 +133,8 @@
     const active = () => state.activeMetric === "fat";
     const row = data => Array.isArray(data) ? data[0] : data;
     const hasDelta = value => value !== null && value !== undefined && Number.isFinite(Number(value));
-    function dayStart(value) { const d = new Date(value); d.setHours(0,0,0,0); return d; }
     function monthStart(d) { return new Date(d.getFullYear(),d.getMonth(),1); }
     function nextMonth(d, n=1) { return new Date(d.getFullYear(),d.getMonth()+n,1); }
-    function key(d) { return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
     function laterDraw() { cancelAnimationFrame(chartRaf); chartRaf = requestAnimationFrame(drawTrend); }
     function fitSettings() { if (els.settingsLayer.classList.contains("open")) window.dispatchEvent(new Event("resize")); }
     function syncUnits() {
@@ -108,7 +145,7 @@
         button.disabled = saving || loading;
       });
       q("fatInputUnit").textContent = unitName();
-      q("fatChartHelp").textContent = `显示每次记录相对起始体重的变化 · 单位：${unitName()}`;
+      q("fatChartHelp").textContent = `纵轴为相对起始体重的差值 · 单位：${unitName()} · 均值按实际记录天数计算`;
       if (mode && mode !== "delete") q("fatWeightNote").textContent = mode === "starting" ? "更改起始体重后，已有记录的差值会重新计算。" : unit === "kg" ? "支持 0.005 公斤精度，首页和总览只显示变化量。" : "最多保留两位小数，首页和总览只显示变化量。";
     }
     function changeUnit(next) {
@@ -243,8 +280,18 @@
       const truncated = logs.length >= 10000 && snapshot?.count > logs.length;
       q("fatOverviewStatus").hidden = !logsError && !truncated;
       q("fatOverviewStatus").textContent = logsError ? "记录同步失败 · 关闭总览后重新打开可重试" : "当前显示最近 10000 条记录，较早的月份可能不完整";
-      if (section === "trend") laterDraw();
+      if (section === "trend") { renderWeek(trendData(logs)); laterDraw(); }
       if (section === "calendar") renderCalendar();
+    }
+    function peekHeight() {
+      const nav = q("fatLanding").querySelector(".overview-quick-nav");
+      if (!q("fatLanding").hidden) {
+        const rect = nav.getBoundingClientRect(), shell = els.overviewShell.getBoundingClientRect();
+        const bottom = rect.bottom-shell.top+els.overviewShell.scrollTop+12;
+        if (rect.height > 0 && Number.isFinite(bottom) && bottom > 12) landingPeekHeight = Math.ceil(bottom);
+      }
+      const shell = els.overviewShell;
+      return Math.max(0,Math.min(landingPeekHeight,shell.scrollHeight || landingPeekHeight,shell.getBoundingClientRect().height || landingPeekHeight));
     }
     function chooseSection(section, expand=true) {
       if (!active() || !["trend","calendar"].includes(section)) return;
@@ -255,59 +302,87 @@
       state.activeMetric = "fat"; ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
       void refresh({silent:false});
     }
-    function rangeLogs() {
-      const now = new Date(); let start = dayStart(now), end = now;
-      if (range === "week") { start.setDate(start.getDate() - (start.getDay()+6)%7); }
-      if (range === "month") start = monthStart(now);
-      return logs.filter(r => new Date(r.at) >= start && new Date(r.at) <= end);
+    function renderWeek(data) {
+      const [recent,previous] = data.weeks, change = data.change;
+      const dateLabel = date => `${date.getMonth()+1}/${date.getDate()}`;
+      const periodLabel = week => `${dateLabel(week.start)}—${dateLabel(shiftDay(week.end,-1))}`;
+      const magnitude = change === null ? null : Math.abs(displayWeight(change));
+      const rounded = magnitude === null ? null : Math.round((magnitude+Number.EPSILON)*100)/100;
+      q("fatWeekDirection").textContent = change === null ? "暂无对比" : change !== 0 && rounded === 0 ? "变化小于" : rounded === 0 ? "基本持平" : change < 0 ? "记录均值下降" : "记录均值上升";
+      q("fatWeekValue").textContent = rounded === null ? "—" : change !== 0 && rounded === 0 ? "0.01" : new Intl.NumberFormat("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2}).format(rounded);
+      q("fatWeekUnit").textContent = unitName();
+      q("fatWeekValue").classList.toggle("gain",change > 0);
+      q("fatWeekCoverage").textContent = `近七天：${recent.count}/7 天记录 · 前七天：${previous.count}/7 天记录`;
+      q("fatWeekDates").textContent = `近七天 ${periodLabel(recent)}（含今天）· 前七天 ${periodLabel(previous)}`;
+      const coverage = Math.min(recent.count,previous.count);
+      q("fatWeekNote").textContent = !coverage ? "两段都至少有一天记录后才能比较；缺少记录的日期不补值。" : coverage < 3 ? "记录较少，仅供参考。建议两段各至少记录三个不同日期，并分散在一周内。" : coverage < 5 ? "初步参考，按已有记录天数计算。每段尽量记录五至七天。" : "按已有记录天数计算。连续观察几周，比一次涨跌更能看清趋势。";
+      let falling = 0;
+      for (let i=0;i<data.weeks.length-1;i++) {
+        const newer = data.weeks[i], older = data.weeks[i+1];
+        if (newer.count < 3 || older.count < 3 || newer.mean >= older.mean-1e-9) break;
+        falling++;
+      }
+      q("fatWeekLong").textContent = falling >= 2 ? `连续 ${falling} 次七日记录均值下降，体重趋势向下；仍需结合后续记录观察。` : "观察近四周的平均线，判断下降是否持续；单周变化也可能包含水分波动。";
     }
     function drawTrend() {
       if (!active() || state.overviewMode === "closed" || state.overviewSection !== "trend") return;
+      const data = trendData(logs); renderWeek(data);
+      const start = shiftDay(data.today,1-Number(range));
+      const points = data.daily.filter(p => p.date >= start);
+      const averages = data.rolling.filter(p => p.date >= start);
+      const values = [...points,...averages.filter(p => p.delta !== null)];
+      q("fatChartEmpty").hidden = points.length > 0;
+      q("fatChartEmpty").textContent = logsError ? "记录读取失败" : "这个时段暂无记录";
+      q("fatChartCaption").textContent = `近 ${range} 天 · ${points.length} 天有记录 · 绿线每点使用此前七天（含当天）的记录`;
+      q("fatTrendCanvas").setAttribute("aria-label",points.length ? `近${range}天体重差值趋势，${points.length}天有记录；灰点为每日首笔，绿线为七日记录均值。${q("fatWeekDirection").textContent} ${q("fatWeekValue").textContent} ${unitName()}` : "这个时段暂无记录");
+      q("fatTrendRanges").querySelectorAll("[data-fat-range]").forEach(btn => {
+        const selected = btn.dataset.fatRange === range;
+        btn.classList.toggle("active",selected); btn.setAttribute("aria-pressed",String(selected));
+      });
       const canvas = q("fatTrendCanvas"), rect = canvas.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) return;
       const dpr = Math.min(window.devicePixelRatio || 1,3);
       canvas.width = Math.round(rect.width*dpr); canvas.height = Math.round(rect.height*dpr);
       const ctx = canvas.getContext("2d"); if (!ctx) return;
       ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,rect.width,rect.height);
-      const points = rangeLogs();
-      q("fatChartEmpty").hidden = points.length > 0;
-      q("fatChartEmpty").textContent = logsError ? "记录读取失败" : "这个时段暂无记录";
-      q("fatChartCaption").textContent = `${({today:"今天",week:"本周",month:"本月"})[range]} ${points.length} 次记录`;
-      canvas.setAttribute("aria-label",points.length ? `体重差值趋势，共 ${points.length} 次记录，最新${difference(points.at(-1).delta)}` : "这个时段暂无记录");
-      q("fatTrendRanges").querySelectorAll("[data-fat-range]").forEach(btn => btn.classList.toggle("active",btn.dataset.fatRange===range));
       if (!points.length) return;
-      let min = Math.min(...points.map(p => p.delta)), max = Math.max(...points.map(p => p.delta));
+      let min = Math.min(...values.map(p => p.delta)), max = Math.max(...values.map(p => p.delta));
       const padding = Math.max(.5,(max-min)*.2); min -= padding; max += padding;
-      const pad = {left:30,right:30,top:34,bottom:30};
+      const pad = {left:44,right:12,top:20,bottom:30};
       const w = Math.max(1,rect.width-pad.left-pad.right), h = Math.max(1,rect.height-pad.top-pad.bottom);
-      const first = Date.parse(points[0].at), last = Date.parse(points.at(-1).at);
-      const x = (p,i) => pad.left + (last > first ? (Date.parse(p.at)-first)/(last-first)*w : points.length>1 ? i/(points.length-1)*w : w/2);
+      // Calendar spacing stays even across daylight saving changes.
+      const ordinal = d => Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000;
+      const x = p => pad.left+(ordinal(p.date)-ordinal(start))/(Number(range)-1)*w;
       const y = p => pad.top + h - (p.delta-min)/(max-min)*h;
       const styles = getComputedStyle(document.documentElement);
       ctx.strokeStyle = styles.getPropertyValue("--hairline").trim(); ctx.lineWidth = 1;
-      for (let i=0;i<3;i++) { const py=pad.top+h*i/2; ctx.beginPath(); ctx.moveTo(pad.left,py); ctx.lineTo(rect.width-pad.right,py); ctx.stroke(); }
+      ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif'; ctx.textAlign="right"; ctx.textBaseline="middle";
+      for (let i=0;i<3;i++) {
+        const py=pad.top+h*i/2, value=max-(max-min)*i/2;
+        ctx.beginPath(); ctx.moveTo(pad.left,py); ctx.lineTo(rect.width-pad.right,py); ctx.stroke();
+        ctx.fillStyle=styles.getPropertyValue("--tertiary").trim();
+        ctx.fillText(`${value < 0 ? "−" : value > 0 ? "+" : ""}${new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Math.abs(displayWeight(value)))}`,pad.left-5,py);
+      }
       if (min <= 0 && max >= 0) {
         const zeroY = pad.top+h-(0-min)/(max-min)*h;
         ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(pad.left,zeroY); ctx.lineTo(rect.width-pad.right,zeroY); ctx.stroke(); ctx.setLineDash([]);
       }
-      if (points.length > 1) {
-        ctx.beginPath(); points.forEach((p,i) => i ? ctx.lineTo(x(p,i),y(p)) : ctx.moveTo(x(p,i),y(p)));
-        ctx.strokeStyle="#719a82"; ctx.lineWidth=2.5; ctx.lineJoin="round"; ctx.lineCap="round"; ctx.stroke();
-        ctx.lineTo(x(points.at(-1),points.length-1),pad.top+h); ctx.lineTo(x(points[0],0),pad.top+h); ctx.closePath();
-        const fill=ctx.createLinearGradient(0,pad.top,0,pad.top+h); fill.addColorStop(0,"#719a8230"); fill.addColorStop(1,"#719a8200"); ctx.fillStyle=fill; ctx.fill();
-      }
-      const labelStep = Math.max(1,Math.ceil(points.length/6));
-      ctx.textAlign="center"; ctx.textBaseline="bottom"; ctx.font='600 11px -apple-system,BlinkMacSystemFont,sans-serif';
-      points.forEach((p,i) => {
-        ctx.fillStyle="#638171"; ctx.beginPath(); ctx.arc(x(p,i),y(p),i===points.length-1?4:2.8,0,Math.PI*2); ctx.fill();
-        if (i%labelStep===0 || i===points.length-1) ctx.fillText(deltaNumber(p.delta),x(p,i),Math.max(14,y(p)-8));
+      ctx.fillStyle="#9aa6a0";
+      points.forEach(p => { ctx.beginPath(); ctx.arc(x(p),y(p),2.8,0,Math.PI*2); ctx.fill(); });
+      ctx.beginPath(); let connected = false;
+      averages.forEach(p => {
+        if (p.delta === null) { connected = false; return; }
+        if (connected) ctx.lineTo(x(p),y(p)); else ctx.moveTo(x(p),y(p));
+        connected = true;
       });
+      ctx.strokeStyle="#638171"; ctx.lineWidth=2.5; ctx.lineJoin="round"; ctx.lineCap="round"; ctx.stroke();
+      ctx.fillStyle="#638171";
+      averages.filter(p => p.delta !== null).forEach(p => { ctx.beginPath(); ctx.arc(x(p),y(p),1.5,0,Math.PI*2); ctx.fill(); });
+      ctx.textAlign="center";
       ctx.fillStyle=styles.getPropertyValue("--tertiary").trim(); ctx.textBaseline="top"; ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif';
-      const indexes=[...new Set([0,Math.floor((points.length-1)/2),points.length-1])];
-      indexes.forEach(i => {
-        const d=new Date(points[i].at);
-        const label=range==="today" ? new Intl.DateTimeFormat("zh-CN",{hour:"2-digit",minute:"2-digit",hour12:false}).format(d) : `${d.getMonth()+1}/${d.getDate()}`;
-        ctx.fillText(label,x(points[i],i),rect.height-18);
+      [start,shiftDay(start,Math.floor((Number(range)-1)/2)),data.today].forEach((date,i) => {
+        ctx.textAlign=i===0?"left":i===2?"right":"center";
+        ctx.fillText(`${date.getMonth()+1}/${date.getDate()}`,x({date}),rect.height-18);
       });
     }
     function renderCalendar() {
@@ -525,12 +600,16 @@
       event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); void loadLogs(true);
     },true);
     overview.addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-section]"); if (btn) { ui.vibrate(6); chooseSection(btn.dataset.fatSection); } });
-    q("fatTrendRanges").addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-range]"); if (btn) { range=btn.dataset.fatRange; laterDraw(); } });
+    q("fatTrendRanges").addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-range]"); if (btn && ["14","28","90"].includes(btn.dataset.fatRange)) { range=btn.dataset.fatRange; laterDraw(); } });
     q("fatPrevMonth").addEventListener("click",()=>{ month=nextMonth(month,-1); selectedDay=null; renderCalendar(); });
     q("fatNextMonth").addEventListener("click",()=>{ month=nextMonth(month); selectedDay=null; renderCalendar(); });
-    window.addEventListener("resize",laterDraw,{passive:true});
-    window.visualViewport?.addEventListener("resize",laterDraw,{passive:true});
+    function resizeOverview() {
+      if (active() && state.overviewMode !== "closed") els.overviewShell.style.setProperty("--peek-height",`${peekHeight()}px`);
+      laterDraw();
+    }
+    window.addEventListener("resize",resizeOverview,{passive:true});
+    window.visualViewport?.addEventListener("resize",resizeOverview,{passive:true});
     syncUnits(); adminRendered(); renderHome();
-    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs };
+    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight };
   }
 })();
