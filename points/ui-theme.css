@@ -173,3 +173,158 @@ body.ui-window-open #pointsApp .home { filter:none!important; }
 @media (prefers-reduced-motion:reduce) {
   #pointsApp .modal-layer.ui-themed.ui-surface, #pointsApp .modal-layer.ui-themed.ui-surface .ui-panel, #pointsApp .overview-shell { transition:none!important; }
 }
+
+/* App presentation pass. Rollback baseline: codex/points-before-app-polish-20261005. */
+body:has(#pointsApp) .background { background:#f8f8fa; }
+body:has(#pointsApp) .background::after { opacity:.35; }
+body:has(#pointsApp) .ambient { opacity:.28; }
+body:has(#pointsApp) .cute-doodle { opacity:.28; }
+#pointsApp {
+  --ink:#303039; --secondary:#73717b; --tertiary:#92909a;
+  --ui-line:rgba(52,48,65,.065);
+  --ui-shadow:0 18px 48px rgba(34,32,47,.10),inset 0 1px 0 rgba(255,255,255,.65);
+}
+#pointsApp .home {
+  width:min(100%,440px); grid-template-rows:52px minmax(0,1fr) 52px;
+  row-gap:12px; padding:calc(var(--safe-top) + 16px) 24px calc(var(--safe-bottom) + 18px);
+}
+#pointsApp .home .topbar {
+  min-height:52px; padding:0; border:0; border-radius:0;
+  background:transparent; box-shadow:none;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+#pointsApp .app-brand { padding:0; gap:10px; }
+#pointsApp .app-brand-icon { width:32px; height:32px; border-radius:10px; box-shadow:0 2px 6px rgba(34,32,47,.08); }
+#pointsApp .app-brand-title { font-size:16px; font-weight:650; letter-spacing:-.02em; }
+#pointsApp .app-brand-title::after { content:none; }
+#pointsApp .topbar .icon-button {
+  width:44px; height:44px; border:0; border-radius:14px;
+  color:var(--secondary); background:rgba(255,255,255,.65); box-shadow:none;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+#pointsApp .topbar .icon-button svg { width:21px; height:21px; stroke-width:1.65; }
+#pointsApp .home .hero { width:100%; transform:translateY(-12px); }
+#pointsApp #metricSwitch {
+  width:100%!important; height:40px; flex-basis:40px; margin-bottom:16px;
+  padding:3px!important; border:1px solid rgba(52,48,65,.025); border-radius:13px;
+  background:rgba(52,48,65,.055); box-shadow:none;
+}
+#pointsApp #metricSwitch .metric-switch-thumb {
+  top:3px; left:3px; width:calc((100% - 6px)/3)!important; height:calc(100% - 6px);
+  border:0; border-radius:10px; background:#fff!important;
+  box-shadow:0 2px 5px rgba(34,32,47,.07);
+}
+#pointsApp #metricSwitch .metric-option {
+  height:32px!important; padding:0 6px!important; gap:6px!important;
+  color:var(--secondary); font-size:12px!important; font-weight:600; letter-spacing:0;
+}
+#pointsApp #metricSwitch .metric-option svg { width:15px!important; height:15px!important; animation:none!important; }
+#pointsApp .home .reward-message {
+  width:100%; height:68px; min-height:68px; margin:0 auto 16px; padding:0 4px;
+  border:0!important; border-radius:0; background:transparent!important; box-shadow:none!important;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+#pointsApp .home .reward-line-primary {
+  font-size:13px; line-height:1.6; font-weight:600; letter-spacing:0; white-space:normal;
+}
+#pointsApp .home .reward-line-secondary {
+  margin-top:5px; font-size:12px; line-height:1.6; font-weight:450; white-space:normal;
+}
+#pointsApp .home .score-lens-wrap { width:min(66vw,248px); }
+#pointsApp[data-ui-theme] .home .score-lens {
+  background:radial-gradient(circle at 35% 22%,#fff,transparent 62%),var(--ui-wash)!important;
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 16px 36px rgba(34,32,47,.065),inset 0 1px 2px #fff!important;
+}
+#pointsApp .home .score-lens::before { opacity:.35; }
+#pointsApp .home .score-lens::after { opacity:0!important; }
+#pointsApp .home .score {
+  font-size:clamp(68px,21vw,84px); font-weight:650; letter-spacing:-.055em;
+  background:none; -webkit-text-fill-color:var(--ui-accent)!important; text-shadow:none;
+}
+#pointsApp .home .fat-value { font-weight:650; letter-spacing:-.05em; font-variant-numeric:tabular-nums; }
+#pointsApp .home :is(.fat-value-label,.fat-value-unit) { font-size:13px; font-weight:500; color:var(--ui-muted); }
+#pointsApp .home .fat-value-stack { gap:11px; }
+#pointsApp .home .metric-action-slot { margin-top:16px; }
+#pointsApp .home :is(.admin-controls,.wheel-actions,.fat-home-actions) { width:100%!important; max-width:360px; }
+#pointsApp .home .admin-controls { gap:10px; }
+#pointsApp .home :is(.score-button,.wheel-side-button,.fat-record-button,.redeem-button) {
+  height:48px; min-height:48px; border:1px solid var(--ui-line)!important; border-radius:15px!important;
+  background:rgba(255,255,255,.88)!important; color:var(--ui-accent)!important;
+  box-shadow:0 2px 6px rgba(34,32,47,.025)!important;
+  -webkit-backdrop-filter:none!important; backdrop-filter:none!important;
+  font-size:14px; font-weight:600;
+}
+#pointsApp .home .score-button { width:auto; flex:1; max-width:175px; }
+#pointsApp .home :is(#fatRecordBtn,#spinWheelActionBtn,.score-redeem-button) {
+  background:var(--ui-accent)!important; border-color:transparent!important; color:#fff!important;
+  box-shadow:0 4px 10px rgba(34,32,47,.06)!important;
+}
+#pointsApp .home .redeem-button { width:100%; max-width:360px; }
+#pointsApp .home .wheel-side-copy strong { font-size:13px; font-weight:600; letter-spacing:0; }
+#pointsApp .home .wheel-side-copy small { font-size:11px; font-weight:450; opacity:.8; }
+#pointsApp .home .wheel-side-icon {
+  width:18px; height:18px; font-size:0; background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m8 5 11 7-11 7Z' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m8 5 11 7-11 7Z' fill='none' stroke='black' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+#pointsApp .home .wheel-adjust-action .wheel-side-icon {
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 8h14M5 16h14M9 5v6M15 13v6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 8h14M5 16h14M9 5v6M15 13v6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+#pointsApp .home .fat-diamond-summary { color:var(--ui-muted); font-size:12px; font-weight:500; }
+#pointsApp .home .wheel-disk { border-width:3px; box-shadow:0 6px 18px rgba(34,32,47,.08),inset 0 0 0 1px rgba(255,255,255,.4); }
+#pointsApp .home .bottom-zone { width:100%; align-items:center; }
+#pointsApp[data-ui-theme] .home .overview-button {
+  width:100%; min-height:48px; padding:12px 16px; justify-content:space-between; gap:8px;
+  border:1px solid var(--ui-line)!important; border-radius:16px!important;
+  background:rgba(255,255,255,.65)!important; box-shadow:none!important;
+  color:var(--secondary)!important; font-size:14px; font-weight:550; letter-spacing:0;
+}
+#pointsApp .home .overview-button::before { content:none; }
+#pointsApp .home .overview-button svg { width:14px; height:14px; stroke-width:1.8; opacity:.65; }
+#pointsApp .home .pressable:active { transform:scale(.98); opacity:.88; }
+#pointsApp .modal-layer.ui-themed.ui-surface :is(.settings-group,.fat-reward-card,.shop-inventory-row,.admin-inventory-row),
+#pointsApp .overview :is(.card,.overview-quick-card) {
+  background:rgba(255,255,255,.86)!important; border:1px solid var(--ui-line)!important;
+  box-shadow:none!important;
+}
+#pointsApp .modal-layer.ui-themed.ui-surface :is(.field,.change-reason-field,.fat-input-wrap,.wheel-withdraw-field-wrap) {
+  background:rgba(255,255,255,.86)!important; border-color:var(--ui-line)!important; box-shadow:none!important;
+}
+#pointsApp .modal-layer.ui-themed.ui-surface :is(.shop-balance-card,.shop-product-card) {
+  box-shadow:0 3px 12px rgba(34,32,47,.035)!important;
+}
+#pointsApp .modal-layer.ui-themed.ui-surface .shop-balance-card { background:rgba(255,255,255,.88)!important; border:1px solid var(--ui-line); }
+#pointsApp .modal-layer.ui-themed.ui-surface .shop-product-card { border-color:var(--ui-line); }
+#pointsApp .modal-layer.ui-themed.ui-surface .shop-featured-copy h3 { font-weight:650; letter-spacing:-.025em; }
+#pointsApp .modal-layer.ui-themed.ui-surface :is(.shop-featured-label,.shop-featured-copy p) { font-size:12px; font-weight:500; }
+#pointsApp .modal-layer.ui-themed.ui-surface .shop-section-kicker { font-size:11px; font-weight:600; letter-spacing:.02em; }
+#pointsApp .modal-layer.ui-themed.ui-surface :is(.sheet-title,.alert-title) { letter-spacing:-.015em; }
+#pointsApp .modal-layer.ui-themed.ui-surface :is(.sheet-button,.shop-inventory-action,.fat-reward-button) { font-weight:600; }
+#pointsApp .modal-layer.ui-themed.ui-surface .settings-label { color:var(--secondary)!important; font-size:12px!important; font-weight:600!important; }
+#pointsApp .modal-layer.ui-themed.ui-surface .settings-row { font-size:14px!important; font-weight:550; }
+#pointsApp .modal-layer.ui-themed.ui-surface .settings-value { font-size:12px; }
+#pointsApp .modal-layer.ui-themed.ui-surface .alert-message { font-weight:400; }
+#pointsApp .modal-layer.ui-themed.ui-surface .fat-reward-card p { font-size:12px; line-height:1.65; }
+#pointsApp .overview .overview-quick-copy { font-size:12px; color:var(--secondary); }
+#pointsApp .overview .section-title { font-size:15px; font-weight:650; }
+@media (max-width:350px) {
+  #pointsApp .home { padding-left:20px; padding-right:20px; }
+  #pointsApp .app-brand-title { font-size:14px; }
+  #pointsApp .app-brand-icon { width:30px; height:30px; }
+  #pointsApp #metricSwitch .metric-option { font-size:11px!important; gap:4px!important; }
+  #pointsApp .home .reward-line-primary { font-size:12px; }
+  #pointsApp .home .reward-line-secondary { font-size:11px; }
+}
+@media (max-height:700px) {
+  #pointsApp .home { grid-template-rows:44px minmax(0,1fr) 44px; row-gap:8px; padding-top:calc(var(--safe-top) + 8px); padding-bottom:calc(var(--safe-bottom) + 10px); }
+  #pointsApp .home .topbar { min-height:44px; }
+  #pointsApp .home .hero { transform:none; }
+  #pointsApp #metricSwitch { margin-bottom:10px; }
+  #pointsApp .home .reward-message { height:58px; min-height:58px; margin-bottom:12px; }
+  #pointsApp .home .score-lens-wrap { width:min(58vw,210px); }
+  #pointsApp .home .metric-action-slot { height:78px!important; min-height:78px!important; margin-top:12px; }
+  #pointsApp .home .fat-home-actions { height:78px; min-height:78px; margin-top:12px; }
+  #pointsApp .home .overview-button { min-height:44px; padding-top:10px; padding-bottom:10px; }
+}
