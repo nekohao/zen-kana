@@ -4,6 +4,7 @@
   window.PointsFatLoss = { attach };
 
   function attach({ db, state, els, ui }) {
+    const unitPicker = () => '<div class="segmented fat-unit-switch" role="group" aria-label="体重单位"><button class="segment pressable" data-fat-unit="kg" type="button" aria-pressed="true">公斤</button><button class="segment pressable" data-fat-unit="jin" type="button" aria-pressed="false">斤</button></div>';
     const icon = '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8 10a4 4 0 0 1 8 0M12 10l2-2"/></svg>';
     els.metricSwitch.insertAdjacentHTML("beforeend", `<button class="metric-option" data-metric="fat" role="tab" aria-selected="false" type="button">${icon}<span>减脂</span></button>`);
     els.home.querySelector(".hero").insertAdjacentHTML("beforeend", `
@@ -15,7 +16,7 @@
         <div class="score-lens-wrap pressable" id="fatRefreshBtn" role="button" tabindex="0" aria-label="刷新减脂数据">
           <div class="score-lens fat-lens"><div class="fat-value-stack" aria-live="polite">
             <span class="fat-value-label" id="fatValueLabel">体重变化</span>
-            <strong class="fat-value" id="fatValue">—</strong><span class="fat-value-unit" id="fatValueUnit">斤</span>
+            <strong class="fat-value" id="fatValue">—</strong><span class="fat-value-unit" id="fatValueUnit">公斤</span>
           </div></div>
         </div>
         <div class="fat-home-actions"><button class="fat-record-button pressable" id="fatRecordBtn" hidden type="button">记录体重</button></div>
@@ -39,7 +40,7 @@
               <button class="segment pressable" data-fat-range="month" type="button">本月</button>
             </div>
             <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
-            <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help">显示每次记录相对起始体重的变化 · 单位：斤</p>
+            <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help" id="fatChartHelp">显示每次记录相对起始体重的变化 · 单位：公斤</p>
           </div>
         </section>
         <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
@@ -58,11 +59,15 @@
     settings.innerHTML = `<div class="settings-label">减脂管理</div><div class="settings-group"><button class="settings-row pressable" id="fatStartingWeightBtn" type="button"><span>起始体重</span><span class="settings-value"><span id="fatStartingWeightValue">点击查看</span><span class="chevron">›</span></span></button></div>`;
     const accountLabel = [...els.adminSettings.querySelectorAll(".settings-label")].find(el => el.textContent.trim() === "账户");
     els.adminSettings.insertBefore(settings, accountLabel || null);
+    const unitSettings = document.createElement("div");
+    unitSettings.id = "fatUnitSettings";
+    unitSettings.innerHTML = `<div class="settings-label">减脂设置</div><div class="settings-group"><div class="settings-row static"><span>体重单位</span>${unitPicker()}</div></div>`;
+    els.guestAccountLabel.parentElement.insertBefore(unitSettings,els.guestAccountLabel);
     document.querySelector("main.app").insertAdjacentHTML("beforeend", `
       <div class="modal-layer alert-layer" id="fatWeightLayer" aria-hidden="true">
         <div class="alert" role="dialog" aria-modal="true" aria-labelledby="fatWeightTitle">
           <div class="alert-content"><div class="change-icon" aria-hidden="true">🌿</div><div class="alert-title" id="fatWeightTitle">记录体重</div><div class="alert-message" id="fatWeightMessage"></div>
-            <label class="fat-field-label" id="fatWeightLabel" for="fatWeightInput">本次体重</label><div class="fat-input-wrap"><input id="fatWeightInput" inputmode="decimal" type="text" maxlength="8" autocomplete="off" placeholder="输入体重"/><span>斤</span></div>
+            <div id="fatWeightFields"><label class="fat-field-label" id="fatWeightLabel" for="fatWeightInput">本次体重</label><div class="fat-input-wrap"><input id="fatWeightInput" inputmode="decimal" type="text" maxlength="8" autocomplete="off" placeholder="输入体重"/><span id="fatInputUnit">公斤</span></div></div>
             <div class="fat-form-error" id="fatWeightError" role="alert" hidden></div><div class="fat-form-note" id="fatWeightNote"></div>
           </div><div class="alert-actions vertical"><button class="alert-button primary-action pressable" id="fatSaveWeight" type="button">保存记录</button><button class="alert-button pressable" id="fatCancelWeight" type="button">取消</button></div>
         </div>
@@ -77,9 +82,14 @@
     let range = "today", month = monthStart(new Date()), selectedDay = null;
     let refreshPromise = null, logsPromise = null, authTimer = 0;
     let chartRaf = 0, initialized = false, overviewFresh = false;
-    const number = value => new Intl.NumberFormat("zh-CN", { maximumFractionDigits:2 }).format(Math.abs(value));
+    let unit = "kg", privateStartingWeight = null, deleteTarget = null;
+    try { const savedUnit=window.localStorage.getItem("points_fat_unit"); if (["jin","kg"].includes(savedUnit)) unit=savedUnit; } catch (_) {}
+    const unitName = () => unit === "kg" ? "公斤" : "斤";
+    const displayWeight = value => Number(value) / (unit === "kg" ? 2 : 1);
+    const number = value => new Intl.NumberFormat("zh-CN", { maximumFractionDigits:unit === "kg" ? 3 : 2 }).format(Math.abs(displayWeight(value)));
+    const inputNumber = value => String(Number(displayWeight(value).toFixed(unit === "kg" ? 3 : 2)));
     const deltaNumber = value => `${value > 0 ? "+" : value < 0 ? "−" : ""}${number(value)}`;
-    const difference = value => value < 0 ? `已减去 ${number(value)} 斤` : value > 0 ? `增加了 ${number(value)} 斤` : "与起始体重持平";
+    const difference = value => value < 0 ? `已减去 ${number(value)} ${unitName()}` : value > 0 ? `增加了 ${number(value)} ${unitName()}` : "与起始体重持平";
     const stamp = value => new Intl.DateTimeFormat("zh-CN", { month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false }).format(new Date(value));
     const active = () => state.activeMetric === "fat";
     const row = data => Array.isArray(data) ? data[0] : data;
@@ -90,20 +100,44 @@
     function key(d) { return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
     function laterDraw() { cancelAnimationFrame(chartRaf); chartRaf = requestAnimationFrame(drawTrend); }
     function fitSettings() { if (els.settingsLayer.classList.contains("open")) window.dispatchEvent(new Event("resize")); }
+    function syncUnits() {
+      const loading = dialog.classList.contains("open") && q("fatWeightInput").disabled && mode !== "delete";
+      document.querySelectorAll("[data-fat-unit]").forEach(button => {
+        const selected = button.dataset.fatUnit === unit;
+        button.classList.toggle("active",selected); button.setAttribute("aria-pressed",String(selected));
+        button.disabled = saving || loading;
+      });
+      q("fatInputUnit").textContent = unitName();
+      q("fatChartHelp").textContent = `显示每次记录相对起始体重的变化 · 单位：${unitName()}`;
+      if (mode && mode !== "delete") q("fatWeightNote").textContent = mode === "starting" ? "更改起始体重后，已有记录的差值会重新计算。" : unit === "kg" ? "支持 0.005 公斤精度，首页和总览只显示变化量。" : "最多保留两位小数，首页和总览只显示变化量。";
+    }
+    function changeUnit(next) {
+      if (!["jin","kg"].includes(next) || next === unit || saving) return;
+      const editing = dialog.classList.contains("open") && mode !== "delete";
+      if (editing && q("fatWeightInput").disabled) return;
+      const raw = q("fatWeightInput").value.trim(), value = editing && raw ? inputWeight() : null;
+      if (editing && raw && value === null) { q("fatWeightError").textContent = "请先输入有效体重，再切换单位"; q("fatWeightError").hidden = false; return; }
+      unit = next;
+      try { window.localStorage.setItem("points_fat_unit",unit); } catch (_) {}
+      if (editing && value !== null) q("fatWeightInput").value = inputNumber(value);
+      if (verifiedAdmin && els.settingsLayer.classList.contains("open") && hasDelta(privateStartingWeight)) q("fatStartingWeightValue").textContent = `${number(privateStartingWeight)} ${unitName()}`;
+      syncUnits(); renderHome(); renderOverview(); fitSettings();
+    }
     function clearSecrets() {
       secretVersion++;
+      privateStartingWeight = null;
       q("fatStartingWeightValue").textContent = "点击查看";
       q("fatWeightInput").value = "";
     }
     function closeDialog() {
-      ui.setLayer(dialog,false); mode = null; clearSecrets();
+      ui.setLayer(dialog,false); mode = null; deleteTarget = null; clearSecrets(); syncUnits();
       q("fatWeightError").hidden = true;
     }
     function permissionChanged() {
       settings.hidden = !verifiedAdmin;
       q("fatRecordBtn").hidden = !verifiedAdmin;
       if (!verifiedAdmin) { clearSecrets(); closeDialog(); }
-      renderHome(); fitSettings();
+      renderHome(); renderOverview(); fitSettings();
     }
     function scheduleAuth(session) {
       const version = ++authVersion;
@@ -129,13 +163,13 @@
       } else if (!verifiedAdmin || verifiedUser !== state.session.user.id) scheduleAuth(state.session);
       else { renderHome(); fitSettings(); }
     }
-    function errorText(error) {
+    function errorText(error, action="保存") {
       const message = `${error?.code || ""} ${error?.message || ""}`;
       if (/42501|permission|admin|JWT/i.test(message)) return "管理员权限已失效，请重新登录";
       if (/Starting weight required/i.test(message)) return "请先在管理员设置中设置起始体重";
       if (/settings not found/i.test(message)) return "数据库缺少减脂设置，请检查初始配置";
       if (/PGRST202|Could not find|schema cache/i.test(message)) return "减脂接口暂不可用，请检查数据库部署";
-      return "保存失败，请检查网络后再试";
+      return `${action}失败，请检查网络后再试`;
     }
     async function refresh({silent=true}={}) {
       if (refreshPromise) return refreshPromise;
@@ -189,7 +223,7 @@
       q("fatValueLabel").textContent = hasDelta(delta) ? (delta < 0 ? "已减去" : delta > 0 ? "增加了" : "体重持平") : "体重变化";
       q("fatValue").textContent = hasDelta(delta) ? number(delta) : "—";
       q("fatValue").style.fontSize = q("fatValue").textContent.length > 5 ? "clamp(34px,10vw,44px)" : "";
-      q("fatValueUnit").textContent = "斤";
+      q("fatValueUnit").textContent = unitName();
       q("fatValue").parentElement.classList.toggle("gain",Number(delta)>0);
       q("fatHomeMeta").textContent = !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `最近记录 ${stamp(snapshot.recordedAt)} · 共 ${snapshot.count} 次`;
     }
@@ -284,7 +318,7 @@
       const before=preceding || current[0];
       const enough=current.length>1 || (current.length>0 && preceding);
       const monthDelta=enough ? Math.round((current.at(-1).delta-before.delta)*100)/100 : null;
-      q("fatMonthChange").textContent=monthDelta===null ? (current.length?"尚需更多记录":"暂无记录") : monthDelta<0?`减少 ${number(monthDelta)} 斤`:monthDelta>0?`增加 ${number(monthDelta)} 斤`:"保持不变";
+      q("fatMonthChange").textContent=monthDelta===null ? (current.length?"尚需更多记录":"暂无记录") : monthDelta<0?`减少 ${number(monthDelta)} ${unitName()}`:monthDelta>0?`增加 ${number(monthDelta)} ${unitName()}`:"保持不变";
       const byDay=new Map(); current.forEach(r => byDay.set(key(new Date(r.at)),r));
       const grid=q("fatCalendarGrid"); grid.replaceChildren();
       const blanks=month.getDay(), total=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
@@ -303,10 +337,10 @@
         grid.append(button);
       }
       const detail=q("fatDayDetail"); detail.classList.toggle("hidden",!selectedDay);
+      const list=q("fatDayList"); list.replaceChildren();
       if (!selectedDay) return;
       const [year,m,d]=selectedDay.split("-").map(Number);
       q("fatDayTitle").textContent=`${m}月${d}日的体重变化`;
-      const list=q("fatDayList"); list.replaceChildren();
       const records=current.filter(r => key(new Date(r.at))===selectedDay);
       if (!records.length) { const empty=document.createElement("li"); empty.className="empty-state"; empty.textContent="当天暂无体重记录"; list.append(empty); }
       records.forEach(r => {
@@ -317,8 +351,60 @@
         const meta=document.createElement("span"); meta.className="log-meta"; meta.textContent=stamp(r.at);
         copy.append(title,meta);
         const delta=document.createElement("div"); delta.className=`fat-log-delta${r.delta>0?" gain":""}`; delta.textContent=difference(r.delta);
-        item.append(mark,copy,delta); list.append(item);
+        const actions=document.createElement("div"); actions.className="fat-log-actions"; actions.append(delta);
+        if (verifiedAdmin) {
+          const remove=document.createElement("button"); remove.type="button"; remove.className="fat-delete-button pressable";
+          remove.textContent="删除"; remove.disabled=saving;
+          remove.setAttribute("aria-label",`删除 ${stamp(r.at)} 的体重记录`);
+          remove.addEventListener("click",()=>openDeleteDialog(r)); actions.append(remove);
+        }
+        item.append(mark,copy,actions); list.append(item);
       });
+    }
+    function openDeleteDialog(record) {
+      if (!verifiedAdmin || saving || !record || !/^[1-9]\d*$/.test(record.id)) return;
+      clearSecrets(); mode="delete"; deleteTarget={...record};
+      q("fatWeightFields").hidden=true;
+      q("fatWeightTitle").textContent="删除体重记录";
+      q("fatWeightMessage").textContent=`${stamp(record.at)} · ${difference(record.delta)}。确定删除这条记录？`;
+      q("fatWeightNote").textContent="删除后，首页差值、趋势和月度总览会重新计算。这条记录无法恢复。";
+      q("fatWeightError").hidden=true;
+      q("fatSaveWeight").textContent="确认删除"; q("fatSaveWeight").disabled=false;
+      ui.setLayer(dialog,true); syncUnits();
+    }
+    async function deleteRecord() {
+      if (!verifiedAdmin || saving || mode!=="delete" || !deleteTarget) return;
+      const target={...deleteTarget}, auth=authVersion;
+      saving=true; q("fatWeightError").hidden=true;
+      ui.setBusy(q("fatSaveWeight"),true); q("fatCancelWeight").disabled=true;
+      syncUnits(); renderHome(); renderOverview();
+      try {
+        const {data,error}=await db.rpc("points_fat_admin_delete_record",{p_record_id:target.id});
+        if (error) throw error;
+        readVersion++; logsVersion++; overviewFresh=false;
+        await Promise.all([refreshPromise,logsPromise].filter(Boolean));
+        logs=logs.filter(record=>record.id!==target.id);
+        if (snapshot) {
+          const count=Math.max(0,snapshot.count-(data===false?0:1)), last=logs.at(-1);
+          snapshot={...snapshot,count,delta:last?.delta??null,recordedAt:last?.at??null};
+        }
+        if (auth!==authVersion || !verifiedAdmin) return;
+        closeDialog(); renderHome(); renderOverview();
+        const synced=await refresh({silent:true}), logsSynced=await loadLogs(true);
+        ui.showToast(synced && logsSynced ? (data===false?"这条记录已不存在，数据已同步":"体重记录已删除") : "已删除，数据同步暂未完成，请稍后刷新");
+        ui.vibrate(14);
+      } catch (error) {
+        if (auth!==authVersion) return;
+        if (/42501|permission|admin|JWT/i.test(`${error?.code || ""} ${error?.message || ""}`)) {
+          verifiedAdmin=false; permissionChanged(); ui.showToast(errorText(error,"删除"));
+        } else {
+          q("fatWeightError").textContent=/PGRST202|Could not find|schema cache/i.test(`${error?.code || ""} ${error?.message || ""}`)?"删除功能尚未配置，请先安装配套数据库更新":errorText(error,"删除");
+          q("fatWeightError").hidden=false;
+        }
+      } finally {
+        saving=false; ui.setBusy(q("fatSaveWeight"),false); q("fatCancelWeight").disabled=false; q("fatWeightInput").disabled=false;
+        syncUnits(); renderHome(); renderOverview();
+      }
     }
     async function loadSettings(forDialog) {
       if (!verifiedAdmin) return;
@@ -330,10 +416,12 @@
         const result=row(data); if (!result) throw new Error("Fat settings not found");
         const value=result.starting_weight_jin;
         if (forDialog && mode==="starting" && dialog.classList.contains("open")) {
-          q("fatWeightInput").value=hasDelta(value)?String(Number(value)):"";
+          q("fatWeightInput").value=hasDelta(value)?inputNumber(value):"";
           q("fatSaveWeight").disabled=false; q("fatWeightInput").disabled=false;
+          syncUnits();
         } else if (!forDialog && els.settingsLayer.classList.contains("open")) {
-          q("fatStartingWeightValue").textContent=hasDelta(value)?`${number(Number(value))} 斤`:"未设置";
+          privateStartingWeight=hasDelta(value)?Number(value):null;
+          q("fatStartingWeightValue").textContent=hasDelta(value)?`${number(value)} ${unitName()}`:"未设置";
           fitSettings();
         }
       } catch (error) {
@@ -345,6 +433,7 @@
     function openDialog(nextMode) {
       if (!verifiedAdmin || saving) return;
       clearSecrets(); mode=nextMode;
+      deleteTarget=null; q("fatWeightFields").hidden=false;
       const starting=mode==="starting";
       q("fatWeightTitle").textContent=starting?"设置起始体重":"记录体重";
       q("fatWeightLabel").textContent=starting?"起始体重":"本次体重";
@@ -355,20 +444,26 @@
       q("fatWeightError").hidden=true;
       if (starting) ui.setLayer(els.settingsLayer,false);
       ui.setLayer(dialog,true);
+      syncUnits();
       if (starting) void loadSettings(true);
     }
     function inputWeight() {
       const raw=q("fatWeightInput").value.trim();
-      if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) return null;
-      const value=Number(raw); return Number.isFinite(value) && value>0 && value<10000 ? value:null;
+      const pattern=unit==="kg"?/^\d+(?:\.\d{1,3})?$/:/^\d+(?:\.\d{1,2})?$/;
+      if (!pattern.test(raw)) return null;
+      const scaled=Math.round(Number(raw)*(unit==="kg"?1000:100));
+      const jinCents=unit==="kg"?scaled/5:scaled;
+      return Number.isInteger(jinCents) && jinCents>0 && jinCents<1000000 ? jinCents/100:null;
     }
     async function saveWeight() {
       if (!verifiedAdmin || saving || !mode) return;
+      if (mode==="delete") return deleteRecord();
       const value=inputWeight();
-      if (value===null) { q("fatWeightError").textContent="请输入大于 0、小于 10000 的体重，最多两位小数"; q("fatWeightError").hidden=false; return; }
+      if (value===null) { q("fatWeightError").textContent=unit==="kg"?"请输入大于 0、小于 5000 公斤的体重，精度为 0.005 公斤":"请输入大于 0、小于 10000 斤的体重，最多两位小数"; q("fatWeightError").hidden=false; return; }
       const savingMode=mode, auth=authVersion;
       saving=true; q("fatWeightError").hidden=true;
       ui.setBusy(q("fatSaveWeight"),true); q("fatCancelWeight").disabled=true; q("fatWeightInput").disabled=true;
+      syncUnits();
       try {
         const name=savingMode==="starting"?"points_fat_admin_set_starting_weight":"points_fat_admin_record_weight";
         const {data,error}=await db.rpc(name,{p_weight_jin:value});
@@ -393,19 +488,21 @@
           verifiedAdmin=false; permissionChanged(); ui.showToast(text);
         } else { q("fatWeightError").textContent=text; q("fatWeightError").hidden=false; }
       } finally {
-        saving=false; ui.setBusy(q("fatSaveWeight"),false); q("fatCancelWeight").disabled=false; q("fatWeightInput").disabled=false; renderHome();
+        saving=false; ui.setBusy(q("fatSaveWeight"),false); q("fatCancelWeight").disabled=false; q("fatWeightInput").disabled=false; syncUnits(); renderHome(); renderOverview();
       }
     }
     const settingsObserver=new MutationObserver(() => {
       if (els.settingsLayer.classList.contains("open")) {
         if (verifiedAdmin) void loadSettings(false);
       } else {
+        privateStartingWeight=null;
         q("fatStartingWeightValue").textContent="点击查看";
         if (mode!=="starting") secretVersion++;
       }
     });
     settingsObserver.observe(els.settingsLayer,{attributes:true,attributeFilter:["class"]});
     q("fatStartingWeightBtn").addEventListener("click",()=>openDialog("starting"));
+    document.querySelectorAll("[data-fat-unit]").forEach(button => button.addEventListener("click",()=>changeUnit(button.dataset.fatUnit)));
     q("fatRecordBtn").addEventListener("click",()=>openDialog("record"));
     q("fatSaveWeight").addEventListener("click",()=>void saveWeight());
     q("fatCancelWeight").addEventListener("click",()=>{ if (!saving) closeDialog(); });
@@ -433,7 +530,7 @@
     q("fatNextMonth").addEventListener("click",()=>{ month=nextMonth(month); selectedDay=null; renderCalendar(); });
     window.addEventListener("resize",laterDraw,{passive:true});
     window.visualViewport?.addEventListener("resize",laterDraw,{passive:true});
-    adminRendered(); renderHome();
+    syncUnits(); adminRendered(); renderHome();
     return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs };
   }
 })();
