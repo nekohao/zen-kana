@@ -122,6 +122,7 @@
     let refreshPromise = null, logsPromise = null, authTimer = 0;
     let chartRaf = 0, initialized = false, overviewFresh = false, landingPeekHeight = 300;
     let unit = "kg", privateStartingWeight = null, deleteTarget = null;
+    let rewards = null;
     try { const savedUnit=window.localStorage.getItem("points_fat_unit"); if (["jin","kg"].includes(savedUnit)) unit=savedUnit; } catch (_) {}
     const unitName = () => unit === "kg" ? "公斤" : "斤";
     const displayWeight = value => Number(value) / (unit === "kg" ? 2 : 1);
@@ -174,6 +175,7 @@
       settings.hidden = !verifiedAdmin;
       q("fatRecordBtn").hidden = !verifiedAdmin;
       if (!verifiedAdmin) { clearSecrets(); closeDialog(); }
+      rewards?.roleChanged();
       renderHome(); renderOverview(); fitSettings();
     }
     function scheduleAuth(session) {
@@ -224,7 +226,7 @@
         } catch (_) {
           if (version === readVersion) { readError = true; initialized = true; if (!silent && active()) ui.showToast("减脂数据同步失败，可点击重试"); }
           return false;
-        } finally { renderHome(); refreshPromise = null; }
+        } finally { renderHome(); refreshPromise = null; if (active()) void rewards?.refresh(); }
       })();
       return refreshPromise;
     }
@@ -255,6 +257,7 @@
       content.hidden = !isActive;
       q("fatRecordBtn").hidden = !verifiedAdmin;
       q("fatRecordBtn").disabled = saving || !snapshot?.configured || readError;
+      rewards?.render();
       if (!isActive) return;
       const delta = snapshot?.delta;
       q("fatValueLabel").textContent = hasDelta(delta) ? (delta < 0 ? "已减去" : delta > 0 ? "增加了" : "体重持平") : "体重变化";
@@ -300,6 +303,7 @@
     }
     function activate() {
       state.activeMetric = "fat"; ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
+      void rewards?.refresh(true);
       void refresh({silent:false});
     }
     function renderWeek(data) {
@@ -466,6 +470,7 @@
         if (auth!==authVersion || !verifiedAdmin) return;
         closeDialog(); renderHome(); renderOverview();
         const synced=await refresh({silent:true}), logsSynced=await loadLogs(true);
+        await rewards?.refresh(true);
         ui.showToast(synced && logsSynced ? (data===false?"这条记录已不存在，数据已同步":"体重记录已删除") : "已删除，数据同步暂未完成，请稍后刷新");
         ui.vibrate(14);
       } catch (error) {
@@ -553,6 +558,7 @@
         closeDialog();
         if (savingMode==="starting") ui.setLayer(els.settingsLayer,true);
         const synced=await refresh({silent:true});
+        await rewards?.refresh(true);
         if (state.overviewMode!=="closed" && active()) await loadLogs(true);
         ui.showToast(synced?(savingMode==="starting"?"起始体重已保存":"体重记录已保存"):"已保存，数据同步暂未完成，请稍后刷新");
         ui.vibrate(14);
@@ -589,6 +595,7 @@
     async function manualRefresh() {
       q("fatRefreshBtn").classList.add("refreshing");
       const synced=await refresh({silent:false});
+      await rewards?.refresh(true);
       if (state.overviewMode!=="closed") await loadLogs(true);
       q("fatRefreshBtn").classList.remove("refreshing");
       if (synced) ui.showToast("已同步减脂记录");
@@ -609,6 +616,7 @@
     }
     window.addEventListener("resize",resizeOverview,{passive:true});
     window.visualViewport?.addEventListener("resize",resizeOverview,{passive:true});
+    if (window.PointsFatRewards) rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin});
     syncUnits(); adminRendered(); renderHome();
     return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight };
   }

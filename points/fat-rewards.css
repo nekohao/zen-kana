@@ -1,0 +1,34 @@
+/* Scoped to fat loss; reuse the existing glass sheet, palette and press feedback. */
+.fat-home-actions { width:min(86vw,340px); grid-template-columns:1fr; align-content:center; gap:7px; }
+.home.fat-rewards-admin .fat-home-actions { grid-template-columns:1fr 1fr; }
+.home.fat-rewards-admin .fat-home-actions > .fat-record-button { width:100%; height:44px; }
+.fat-diamond-summary { grid-column:1/-1; grid-row:1; color:#638171; font-size:12px; font-weight:650; text-align:center; }
+.fat-service-notice { grid-column:1/-1; padding:3px 0; border:0; background:transparent; color:#638171; font-size:11px; line-height:1.4; text-decoration:underline; text-underline-offset:3px; }
+.fat-reward-layer { z-index:85; }
+.fat-reward-layer .fat-reward-sheet { width:min(100%,470px); max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 32px); padding:12px 18px 22px; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+.fat-reward-header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.fat-reward-header h2 { margin:0; font-size:21px; font-weight:730; color:var(--ink); }
+.fat-reward-close { width:32px; height:32px; border:1px solid var(--glass-border); border-radius:50%; background:#ffffff55; color:var(--secondary); font-size:23px; line-height:1; }
+.fat-reward-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+.fat-reward-toolbar p { margin:8px 0; color:#638171; font-size:12px; line-height:1.5; }
+.fat-reward-link { padding:6px 9px; border:0; background:transparent; color:#638171; font-size:12px; white-space:nowrap; }
+.fat-reward-card { margin:10px 0; padding:15px; border:1px solid var(--glass-border); border-radius:21px; background:linear-gradient(145deg,#ffffff6e,#e8f1ea30); box-shadow:inset 0 1px 0 #ffffff90; }
+.fat-reward-card h3 { margin:0 0 7px; color:var(--ink); font-size:15px; font-weight:700; }
+.fat-reward-card h3 small { color:var(--secondary); font-size:12px; font-weight:550; }
+.fat-reward-card p { margin:6px 0 0; color:var(--secondary); font-size:12px; line-height:1.65; overflow-wrap:anywhere; }
+.fat-reward-caption { margin:7px 0; color:var(--tertiary); font-size:11px; line-height:1.5; }
+.fat-reward-product { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.fat-reward-product h3 { font-size:24px; margin:6px 0 0; }
+.fat-reward-button { min-height:38px; padding:8px 14px; flex:0 0 auto; border:1px solid #ffffffb8; border-radius:13px; background:linear-gradient(135deg,#ffffffbd,#dcebdcb5); color:#587b68; font-size:12px; font-weight:700; }
+.fat-reward-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.fat-reward-actions:empty { display:none; }
+.fat-reward-tabs { display:flex; gap:8px; }
+.fat-reward-empty { margin:26px 0; text-align:center; color:var(--tertiary); font-size:13px; }
+.fat-reward-error { margin:8px 0; padding:10px 12px; border-radius:12px; color:#b36661; background:#b3666109; font-size:12px; line-height:1.5; }
+.fat-reward-card .fat-reward-status { color:#638171; font-weight:650; }
+.fat-reward-card summary { color:#638171; font-size:13px; font-weight:650; cursor:pointer; }
+.fat-reward-confirm p { font-size:14px; }
+.fat-reward-layer button:disabled { opacity:.45; cursor:default; }
+.fat-reward-layer button:focus-visible, .fat-service-notice:focus-visible { outline:2px solid #638171; outline-offset:3px; }
+@media (max-width:350px) { .fat-reward-layer .fat-reward-sheet { padding-left:12px; padding-right:12px; } .fat-reward-button { padding:8px 10px; } }
+@media (prefers-reduced-motion:reduce) { .fat-reward-layer, .fat-reward-layer .sheet { transition:none!important; } }
