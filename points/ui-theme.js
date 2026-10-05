@@ -10,7 +10,7 @@
       fat:["fatWeightLayer","fatRewardLayer"]
     };
     const themeById=new Map(Object.entries(fixedThemes).flatMap(([theme,ids])=>ids.map(id=>[id,theme])));
-    const layers=new Set(); let theme="score", queued=0;
+    const layers=new Set(); let theme="score", queued=0, blurBase=null;
     const sync=()=>{
       queued=0;
       const selected=switcher.querySelector('[data-metric][aria-selected="true"]')?.dataset.metric;
@@ -20,7 +20,16 @@
         const next=themeById.get(layer.id)||theme;
         if (layer.dataset.uiTheme!==next) layer.dataset.uiTheme=next;
       }
-      document.body.classList.toggle("ui-window-open", [...layers].some(layer=>layer.classList.contains("open")) || document.getElementById("overview")?.classList.contains("open"));
+      const overview=document.getElementById("overview");
+      const open=[...layers,overview].filter(layer=>layer?.classList.contains("open"));
+      // The lowest visible window owns the blur, including when a dialog covers a sheet.
+      const nextBase=open.reduce((base,layer)=>!base || Number(getComputedStyle(layer).zIndex)<Number(getComputedStyle(base).zIndex) ? layer : base,null);
+      if (nextBase && nextBase!==blurBase) {
+        blurBase?.classList.remove("ui-blur-base");
+        blurBase=nextBase; blurBase.classList.add("ui-blur-base");
+      }
+      // Retain the last blur during fade-out; the closed layer becomes hidden afterward.
+      document.body.classList.toggle("ui-window-open",open.length>0);
     };
     const schedule=()=>{ if (!queued) queued=requestAnimationFrame(sync); };
     const layerObserver=new MutationObserver(schedule);
