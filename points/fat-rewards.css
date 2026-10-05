@@ -4,31 +4,38 @@
 .home.fat-rewards-admin .fat-home-actions > .fat-record-button { width:100%; height:44px; }
 .fat-diamond-summary { grid-column:1/-1; grid-row:1; color:#638171; font-size:12px; font-weight:650; text-align:center; }
 .fat-service-notice { grid-column:1/-1; padding:3px 0; border:0; background:transparent; color:#638171; font-size:11px; line-height:1.4; text-decoration:underline; text-underline-offset:3px; }
-.fat-reward-layer { z-index:85; }
-.fat-reward-layer .fat-reward-sheet { width:min(100%,470px); max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 32px); padding:12px 18px 22px; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
-.fat-reward-header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.fat-reward-header h2 { margin:0; font-size:21px; font-weight:730; color:var(--ink); }
-.fat-reward-close { width:32px; height:32px; border:1px solid var(--glass-border); border-radius:50%; background:#ffffff55; color:var(--secondary); font-size:23px; line-height:1; }
-.fat-reward-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
-.fat-reward-toolbar p { margin:8px 0; color:#638171; font-size:12px; line-height:1.5; }
-.fat-reward-link { padding:6px 9px; border:0; background:transparent; color:#638171; font-size:12px; white-space:nowrap; }
-.fat-reward-card { margin:10px 0; padding:15px; border:1px solid var(--glass-border); border-radius:21px; background:linear-gradient(145deg,#ffffff6e,#e8f1ea30); box-shadow:inset 0 1px 0 #ffffff90; }
-.fat-reward-card h3 { margin:0 0 7px; color:var(--ink); font-size:15px; font-weight:700; }
-.fat-reward-card h3 small { color:var(--secondary); font-size:12px; font-weight:550; }
-.fat-reward-card p { margin:6px 0 0; color:var(--secondary); font-size:12px; line-height:1.65; overflow-wrap:anywhere; }
-.fat-reward-caption { margin:7px 0; color:var(--tertiary); font-size:11px; line-height:1.5; }
-.fat-reward-product { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.fat-reward-product h3 { font-size:24px; margin:6px 0 0; }
-.fat-reward-button { min-height:38px; padding:8px 14px; flex:0 0 auto; border:1px solid #ffffffb8; border-radius:13px; background:linear-gradient(135deg,#ffffffbd,#dcebdcb5); color:#587b68; font-size:12px; font-weight:700; }
+.fat-reward-layer { z-index:85; padding:0; align-items:flex-end; background:rgba(45,54,70,.075); }
+#fatRewardLayer .fat-reward-sheet { width:min(calc(100% - 8px),620px); height:min(91dvh,820px); max-height:calc(100% - max(calc(var(--safe-top) + 28px),40px)); margin:0 auto; padding:0 16px calc(var(--safe-bottom) + 14px); overflow-y:auto; overflow-x:hidden; scrollbar-width:none; border:1px solid var(--glass-border); border-bottom:0; border-radius:30px 30px 0 0; transform:translate3d(0,calc(100% + 28px),0); transition:transform .48s cubic-bezier(.18,.84,.24,1); overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+#fatRewardLayer .fat-reward-sheet::-webkit-scrollbar { display:none; }
+#fatRewardLayer.open .fat-reward-sheet { transform:translate3d(0,0,0); }
+#fatRewardLayer.dragging .fat-reward-sheet { transition:none!important; }
+.fat-reward-header { min-height:76px; margin-bottom:8px; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
+.fat-reward-header:active { cursor:grabbing; }
+.fat-reward-grabber { min-height:25px; margin:-8px -16px 2px; display:grid; place-items:center; outline-offset:-5px; }
+.fat-reward-grabber .grabber { margin:0 auto; }
+.fat-reward-grabber[aria-disabled="true"] { cursor:default; }
+.fat-reward-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 3px 9px; color:var(--tertiary); font-size:10px; }
+.fat-reward-link { padding:6px 9px; border:0; background:transparent; color:var(--secondary); font-size:11px; white-space:nowrap; }
+.fat-reward-balance { background:radial-gradient(circle at 82% 18%,rgba(193,227,210,.28),transparent 34%),linear-gradient(135deg,rgba(255,255,255,.62),rgba(230,244,236,.28)); box-shadow:0 12px 30px rgba(87,128,103,.08),inset 0 1px 0 rgba(255,255,255,.72); }
+.fat-reward-balance > div > span, .fat-reward-balance > strong { color:#638171; }
+.fat-reward-balance small, .fat-reward-balance > strong em { color:#829487; }
+.fat-reward-tabs { width:min(100%,340px); grid-template-columns:repeat(3,minmax(0,1fr)); }
+.fat-reward-tabs .shop-tab { font-size:11px; }
+.fat-reward-featured { color:#587b68; background:radial-gradient(circle at 78% 23%,rgba(255,255,255,.62),transparent 24%),radial-gradient(circle at 91% 75%,rgba(193,227,210,.34),transparent 33%),linear-gradient(135deg,rgba(230,244,236,.82),rgba(241,248,237,.70) 52%,rgba(255,249,231,.65)); box-shadow:0 16px 38px rgba(87,128,103,.12),inset 0 1px 0 rgba(255,255,255,.82); }
+.fat-reward-featured .shop-featured-label, .fat-reward-featured .shop-featured-copy p { color:#638171; }
+.fat-reward-card { margin:14px 0; padding:14px 15px; border:1px solid rgba(255,255,255,.74); border-radius:19px; background:rgba(255,255,255,.27); box-shadow:0 8px 20px rgba(43,55,78,.055),inset 0 1px 0 rgba(255,255,255,.60); }
+.fat-reward-card h3 { margin:0 0 7px; color:var(--ink); font-size:14px; font-weight:730; }
+.fat-reward-card p { margin:6px 0 0; color:var(--secondary); font-size:11px; line-height:1.55; overflow-wrap:anywhere; }
+.fat-reward-caption { margin:7px 0; color:var(--tertiary); font-size:10px; line-height:1.5; }
+.fat-reward-button { min-height:38px; height:auto; padding:8px 12px; flex:0 0 auto; color:#638171; font-size:11px; }
 .fat-reward-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
 .fat-reward-actions:empty { display:none; }
-.fat-reward-tabs { display:flex; gap:8px; }
 .fat-reward-empty { margin:26px 0; text-align:center; color:var(--tertiary); font-size:13px; }
 .fat-reward-error { margin:8px 0; padding:10px 12px; border-radius:12px; color:#b36661; background:#b3666109; font-size:12px; line-height:1.5; }
 .fat-reward-card .fat-reward-status { color:#638171; font-weight:650; }
 .fat-reward-card summary { color:#638171; font-size:13px; font-weight:650; cursor:pointer; }
 .fat-reward-confirm p { font-size:14px; }
 .fat-reward-layer button:disabled { opacity:.45; cursor:default; }
-.fat-reward-layer button:focus-visible, .fat-service-notice:focus-visible { outline:2px solid #638171; outline-offset:3px; }
-@media (max-width:350px) { .fat-reward-layer .fat-reward-sheet { padding-left:12px; padding-right:12px; } .fat-reward-button { padding:8px 10px; } }
-@media (prefers-reduced-motion:reduce) { .fat-reward-layer, .fat-reward-layer .sheet { transition:none!important; } }
+.fat-reward-layer button:focus-visible, .fat-reward-grabber:focus-visible, .fat-service-notice:focus-visible { outline:2px solid #638171; outline-offset:3px; }
+@media (max-width:350px) { .fat-reward-button { padding:8px 10px; } }
+@media (prefers-reduced-motion:reduce) { .fat-reward-layer, #fatRewardLayer .fat-reward-sheet { transition:none!important; } }
