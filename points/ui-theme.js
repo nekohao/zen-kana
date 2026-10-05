@@ -5,7 +5,7 @@
     const app=document.getElementById("pointsApp"), switcher=document.getElementById("metricSwitch");
     if (!app || !switcher) return;
     const fixedThemes={
-      score:["changeLayer","redeemLayer","shopItemLayer","shopWeeklyGiftLayer","shopMysteryOpenLayer","adminInventoryLayer","adminInventoryAdjustLayer","adminGrantNoticeLayer","shopRevealLayer","resetLayer"],
+      score:["changeLayer","redeemLayer","shopItemLayer","shopWeeklyGiftLayer","shopMysteryOpenLayer","adminInventoryLayer","adminInventoryAdjustLayer","adminGrantNoticeLayer","shopRevealLayer"],
       wheel:["wheelProbabilityLayer","wheelProbabilityHistoryLayer","wheelToolLayer","wheelPreviewLayer","wheelAdjustLayer","wheelDecisionLayer","wheelResultLayer","wheelWithdrawLayer","settleWithdrawalLayer"],
       fat:["fatWeightLayer","fatRewardLayer"]
     };

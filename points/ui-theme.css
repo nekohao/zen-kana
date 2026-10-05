@@ -248,6 +248,18 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
 #pointsApp .home .metric-action-slot { margin-top:16px; }
 #pointsApp .home :is(.admin-controls,.wheel-actions,.fat-home-actions) { width:100%!important; max-width:360px; }
 #pointsApp .home .admin-controls { gap:10px; }
+#pointsApp .home .wheel-actions.admin-wheel-actions { align-items:center!important; }
+#pointsApp .home .fat-home-actions {
+  position:relative; margin-top:16px; grid-template-rows:52px;
+  align-content:center; gap:10px;
+}
+#pointsApp .home .fat-home-actions > .fat-record-button { grid-row:1; }
+#pointsApp .home .fat-home-actions > .fat-diamond-summary {
+  position:absolute; grid-area:auto; left:0; right:0; bottom:calc(50% + 33px); margin:0;
+}
+#pointsApp .home.fat-rewards-admin .fat-home-actions > .fat-service-notice {
+  position:absolute; left:0; right:0; top:calc(50% + 30px); margin:0;
+}
 #pointsApp .home :is(.score-button,.wheel-side-button,.fat-record-button,.redeem-button) {
   height:48px; min-height:48px; border:1px solid var(--ui-line)!important; border-radius:15px!important;
   background:rgba(255,255,255,.88)!important; color:var(--ui-accent)!important;
