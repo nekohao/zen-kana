@@ -5,17 +5,20 @@
 .fat-diamond-summary { grid-column:1/-1; grid-row:1; color:#638171; font-size:12px; font-weight:650; text-align:center; }
 .fat-service-notice { grid-column:1/-1; padding:3px 0; border:0; background:transparent; color:#638171; font-size:11px; line-height:1.4; text-decoration:underline; text-underline-offset:3px; }
 .fat-reward-layer { z-index:85; padding:0; align-items:flex-end; background:rgba(45,54,70,.075); }
-#fatRewardLayer .fat-reward-sheet { width:min(calc(100% - 8px),620px); height:min(91dvh,820px); max-height:calc(100% - max(calc(var(--safe-top) + 28px),40px)); margin:0 auto; padding:0 16px calc(var(--safe-bottom) + 14px); overflow-y:auto; overflow-x:hidden; scrollbar-width:none; border:1px solid var(--glass-border); border-bottom:0; border-radius:30px 30px 0 0; transform:translate3d(0,calc(100% + 28px),0); transition:transform .48s cubic-bezier(.18,.84,.24,1); overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+/* Static glass colors avoid three nested live blur passes on every animation frame. */
+#fatRewardLayer { -webkit-backdrop-filter:none; backdrop-filter:none; transition:opacity .22s ease,visibility 0s linear .32s; }
+#fatRewardLayer.open { -webkit-backdrop-filter:none; backdrop-filter:none; transition-delay:0s; }
+#fatRewardLayer .fat-reward-sheet { background:linear-gradient(145deg,#f9fafc,#eef0f4 60%,#f5f6f9)!important; -webkit-backdrop-filter:none!important; backdrop-filter:none!important; }
+#fatRewardLayer .fat-reward-sheet { width:min(calc(100% - 8px),620px); height:min(91dvh,820px); max-height:calc(100% - max(calc(var(--safe-top) + 28px),40px)); margin:0 auto; padding:0 16px calc(var(--safe-bottom) + 14px); overflow-y:auto; overflow-x:hidden; scrollbar-width:none; border:1px solid var(--glass-border); border-bottom:0; border-radius:30px 30px 0 0; transform:translate3d(0,calc(100% + 28px),0); transition:transform .32s cubic-bezier(.18,.84,.24,1); overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
 #fatRewardLayer .fat-reward-sheet::-webkit-scrollbar { display:none; }
-#fatRewardLayer.open .fat-reward-sheet { transform:translate3d(0,0,0); }
+#fatRewardLayer.open .fat-reward-sheet { transform:translate3d(0,0,0); will-change:transform; }
 #fatRewardLayer.dragging .fat-reward-sheet { transition:none!important; }
-.fat-reward-header { min-height:76px; margin-bottom:8px; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
+.fat-reward-header { min-height:76px; margin-bottom:8px; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; background:linear-gradient(180deg,#f9fafc,#f5f6f9); -webkit-backdrop-filter:none; backdrop-filter:none; }
 .fat-reward-header:active { cursor:grabbing; }
 .fat-reward-grabber { min-height:25px; margin:-8px -16px 2px; display:grid; place-items:center; outline-offset:-5px; }
 .fat-reward-grabber .grabber { margin:0 auto; }
 .fat-reward-grabber[aria-disabled="true"] { cursor:default; }
-.fat-reward-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 3px 9px; color:var(--tertiary); font-size:10px; }
-.fat-reward-link { padding:6px 9px; border:0; background:transparent; color:var(--secondary); font-size:11px; white-space:nowrap; }
+.fat-reward-toolbar { margin:0 3px 9px; color:var(--tertiary); font-size:10px; }
 .fat-reward-balance { background:radial-gradient(circle at 82% 18%,rgba(193,227,210,.28),transparent 34%),linear-gradient(135deg,rgba(255,255,255,.62),rgba(230,244,236,.28)); box-shadow:0 12px 30px rgba(87,128,103,.08),inset 0 1px 0 rgba(255,255,255,.72); }
 .fat-reward-balance > div > span, .fat-reward-balance > strong { color:#638171; }
 .fat-reward-balance small, .fat-reward-balance > strong em { color:#829487; }

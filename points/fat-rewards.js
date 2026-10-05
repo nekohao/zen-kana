@@ -30,7 +30,7 @@
           <header class="unified-sheet-header shop-sheet-header fat-reward-header" id="fatRewardHeader">
             <div class="fat-reward-grabber" id="fatRewardGrabber" role="button" tabindex="0" aria-label="下拉关闭减脂奖励"><div class="grabber" aria-hidden="true"></div></div>
             <h2 class="sheet-title" id="fatRewardTitle">钻石商城</h2><div class="shop-sheet-subtitle" id="fatRewardSubtitle"></div>
-          </header><div class="unified-sheet-body shop-sheet-body"><div class="fat-reward-toolbar"><span>每一点进步，都值得奖励 ♡</span><button class="fat-reward-link pressable" id="fatRewardRefresh" type="button">刷新</button></div>
+          </header><div class="unified-sheet-body shop-sheet-body"><div class="fat-reward-toolbar">每一点进步，都值得奖励 ♡</div>
           <div class="fat-reward-error" id="fatRewardError" role="alert" hidden></div>
           <div id="fatRewardBody"></div>
           </div>
@@ -85,8 +85,8 @@
       if (/PGRST202|schema cache|Could not find/i.test(text)) return "钻石功能尚未部署，请先执行减脂奖励 SQL。";
       if (/42501|JWT|permission/i.test(text)) return "身份权限已变化，请重新登录或以游客身份打开。";
       if (/Insufficient diamonds/i.test(text)) return "钻石不足，需要 1 颗钻石。";
-      if (/Empty backpack/i.test(text)) return "背包没有可用次数，请刷新后查看。";
-      if (/awaiting confirmation|Request not found|Operation conflict/i.test(text)) return "这条请求状态已变化，请刷新后查看。";
+      if (/Empty backpack/i.test(text)) return "背包没有可用次数，请重新打开商城查看。";
+      if (/awaiting confirmation|Request not found|Operation conflict/i.test(text)) return "这条请求状态已变化，请重新打开服务详情查看。";
       return "网络异常，结果尚未确认；请重试原操作，系统会避免重复扣费。";
     }
     function accept(result, append=false) {
@@ -95,7 +95,10 @@
         const byId = new Map(services.map(r => [r.id, r]));
         result.services.forEach(r => byId.set(r.id, r)); services = [...byId.values()];
       } else services = result.services;
-      more = result.more; data = result; error = ""; lastRead = Date.now(); render();
+      // Reopening often receives identical state. Keep the existing DOM during the slide animation.
+      const changed = append || error || JSON.stringify(data) !== JSON.stringify(result);
+      more = result.more; data = result; error = ""; lastRead = Date.now();
+      if (changed) render();
     }
     async function refresh(force=false) {
       if (!active() || roleKey === "verifying" || busy) return false;
@@ -169,7 +172,6 @@
       q("fatRewardTitle").textContent = page === "shop" ? "钻石商城" : "服务详情";
       q("fatRewardSubtitle").textContent = page === "shop" ? "把每周的小进步，换成喜欢的奖励 ♡" : "哥哥的请求与本次服务进度";
       q("fatRewardGrabber").setAttribute("aria-disabled",String(busy));
-      q("fatRewardRefresh").disabled = busy || paging;
       q("fatRewardError").hidden = !error; q("fatRewardError").textContent = error;
       if (!data) { body.innerHTML = '<p class="fat-reward-empty">等待同步奖励数据</p>'; return; }
       const navigation = isAdministrator ? `<section class="shop-balance-card fat-reward-balance" aria-label="钻石余额"><div><span>我的钻石</span><small>背包 ${data.backpack} 次 · 每周日 12:00 结算</small></div><strong>${data.diamonds}<em>◇</em></strong></section><nav class="shop-tabs fat-reward-tabs" role="tablist" aria-label="减脂奖励页面">${[["products","商品"],["inventory","我的背包"],["services",`服务详情${pending ? ` · ${pending}` : ""}`]].map(([action,title]) => `<button class="shop-tab pressable${(action === "services" ? page === "services" : page === "shop" && shopView === action) ? " active" : ""}" data-fat-reward-action="${action}" role="tab" aria-selected="${action === "services" ? page === "services" : page === "shop" && shopView === action}" type="button"${busy ? " disabled" : ""}>${title}</button>`).join("")}</nav>` : "";
@@ -212,7 +214,6 @@
     q("fatDiamondShopBtn").addEventListener("click", () => void open("shop"));
     q("fatServicesBtn").addEventListener("click", () => void open("services"));
     q("fatServiceNotice").addEventListener("click", () => void open("services"));
-    q("fatRewardRefresh").addEventListener("click", () => void refresh(true));
     header.addEventListener("pointerdown", e => {
       if (busy || drag || !layer.classList.contains("open") || e.isPrimary === false || e.button !== 0) return;
       drag = {pointerId:e.pointerId, startY:e.clientY, startTime:performance.now(), pendingY:e.clientY, height:sheet.getBoundingClientRect().height, moving:false, raf:0};
@@ -222,8 +223,8 @@
       if (!drag || e.pointerId !== drag.pointerId) return;
       const dy = e.clientY - drag.startY;
       if (!drag.moving && dy < 7) return;
-      drag.moving = true; drag.pendingY = e.clientY;
-      layer.classList.add("dragging"); e.preventDefault();
+      if (!drag.moving) { drag.moving = true; layer.classList.add("dragging"); }
+      drag.pendingY = e.clientY; e.preventDefault();
       if (!drag.raf) drag.raf = requestAnimationFrame(() => {
         if (!drag) return;
         drag.raf = 0;
