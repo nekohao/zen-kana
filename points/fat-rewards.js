@@ -11,6 +11,9 @@
     const stamp = value => value ? new Intl.DateTimeFormat("zh-CN", {timeZone:"Asia/Shanghai", month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false}).format(new Date(value)) : "—";
     const change = value => value === null || value === undefined ? "暂无对比" : Number(value) === 0 ? "均重持平" : `均重${Number(value) < 0 ? "下降" : "上升"} ${Math.abs(Number(value)) < .01 ? "不足 0.01" : Math.abs(Number(value)).toFixed(2)} 斤`;
     const signed = value => `${Number(value) > 0 ? "+" : ""}${value}`;
+    const referenceLabel = week => week.comparison_basis === "starting_weight"
+      ? `首周 ${week.current_days} 天 / 对比起始体重`
+      : `本周 ${week.current_days} 天 / 上周 ${week.previous_days} 天`;
     const labels = {pending_service:"等待宝宝进行服务", pending_confirmation:"宝宝已经进行服务，等待哥哥确认", completed:"本次服务兑换完毕", returned:"哥哥未确认，已退回背包"};
     let data = null, error = "", lastRead = 0, generation = 0, inflight = null, busy = false;
     let roleKey = role(), page = "shop", shopView = "products", confirmation = null, previousFocus = null;
@@ -181,10 +184,14 @@
         body.innerHTML = `${navigation}<div class="fat-reward-card fat-reward-confirm"><p>${message}</p><div class="fat-reward-actions">${actionButton("submit", busy ? "正在处理…" : "确认", false, id)}${actionButton("cancel", "返回")}</div></div>`; return;
       }
       if (page === "shop") {
-        const p = data.preview, preview = p ? `${p.week} 这周 · ${change(p.change_jin)}<br>本周 ${p.current_days} 天 / 上周 ${p.previous_days} 天 · ${p.settled ? "本周已结算" : !p.eligible ? "两周均满 3 天才奖扣" : `暂预计 ${signed(p.calculated_delta)} 颗钻石`}` : "暂无周数据";
+        const p = data.preview;
+        const requirement = p?.comparison_basis === "starting_weight"
+          ? p.reference_available === false ? "请先设置起始体重" : "首周满 3 天才奖扣"
+          : "两周均满 3 天才奖扣";
+        const preview = p ? `${p.week} 这周 · ${change(p.change_jin)}<br>${referenceLabel(p)} · ${p.settled ? "本周已结算" : !p.eligible ? requirement : `暂预计 ${signed(p.calculated_delta)} 颗钻石`}` : "暂无周数据";
         body.innerHTML = `${navigation}${shopView === "inventory" ? `<div class="shop-section-head inventory-head"><div><strong>我的背包</strong><small>兑换后的奖励在这里，准备好时再使用 ♡</small></div></div><div class="shop-inventory-row"><div class="shop-inventory-icon shop-theme-potion">${diamond}</div><div class="shop-inventory-copy"><strong>口 × ${data.backpack}</strong><small>使用一次，请求宝宝进行服务</small></div>${actionButton("use", hasRetry("use") ? "重试使用" : "使用", !hasRetry("use") && data.backpack < 1)}</div>` : `<div class="shop-section-kicker">减脂专属奖励</div><button class="shop-featured-card fat-reward-featured pressable" data-fat-reward-action="buy" type="button"${busy || (!hasRetry("buy") && data.diamonds < 1) ? " disabled" : ""}><div class="shop-featured-copy"><span class="shop-featured-label">每周的小幸运</span><h3>口一次</h3><p>兑换后放入背包<br>准备好时，再向宝宝发起请求</p><span class="shop-featured-price">◇ 1 颗钻石 · ${hasRetry("buy") ? "重试兑换" : "兑换"}</span></div><div class="shop-featured-art">${diamond}</div></button>`}
           <div class="fat-reward-card"><h3>本周钻石进度</h3><p>${preview}</p><p>下次结算：${stamp(data.next_cutoff)}（北京时间）</p></div>
-          <details class="fat-reward-card"><summary>钻石规则与结算记录</summary><p>周一至周日，每周日 12:00 自动结算；只统计截止前的记录，每天取首笔，两周各至少 3 天。</p><p>均重下降每满 1 斤奖励 1 颗，不足 1 斤不奖励；上涨不足 1 斤扣 1 颗，达到 1 斤后按整斤扣；持平不奖扣。余额最低为 0。</p><p>本周均重与上周结算均重相比。结算结果固定，周日中午之后补录不参与该周奖扣。</p>${(data.weeks || []).map(w => `<p>${escape(w.week)} · ${change(w.change_jin)}<br>${w.eligible ? `实际 ${signed(w.applied_delta)} 颗${w.applied_delta !== w.calculated_delta ? `（原应 ${signed(w.calculated_delta)}，余额不足）` : ""}` : `不奖扣（本周 ${w.current_days} 天 / 上周 ${w.previous_days} 天）`}</p>`).join("") || '<p>启用后开始结算，暂时没有结算记录。</p>'}</details>`;
+          <details class="fat-reward-card"><summary>钻石规则与结算记录</summary><p>周一至周日，每周日 12:00 自动结算；只统计截止前的记录，每天取首笔。</p><p>首次记录所在周：至少记录 3 天，用本周均重对比起始体重。之后用本周均重对比上周结算均重，两周各至少 3 天；不足天数不奖扣。</p><p>均重下降每满 1 斤奖励 1 颗，不足 1 斤不奖励；上涨不足 1 斤扣 1 颗，达到 1 斤后按整斤扣；持平不奖扣。余额最低为 0。</p><p>结算结果固定，周日中午之后补录不参与该周奖扣。</p>${(data.weeks || []).map(w => `<p>${escape(w.week)} · ${change(w.change_jin)}<br>${referenceLabel(w)}<br>${w.eligible ? `实际 ${signed(w.applied_delta)} 颗${w.applied_delta !== w.calculated_delta ? `（原应 ${signed(w.calculated_delta)}，余额不足）` : ""}` : "不奖扣（记录不足或缺少比较基准）"}</p>`).join("") || '<p>启用后开始结算，暂时没有结算记录。</p>'}</details>`;
       } else {
         body.innerHTML = `${navigation}
           <p class="fat-reward-caption">待服务 ${data.pending_service} 次 · 待确认 ${data.pending_confirmation} 次</p>

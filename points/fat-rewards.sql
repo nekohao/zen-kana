@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS public.points_fat_reward_weeks (
   previous_days integer NOT NULL,
   current_mean_jin numeric,
   previous_mean_jin numeric,
+  comparison_basis text NOT NULL DEFAULT 'previous_week'
+    CHECK (comparison_basis IN ('previous_week','starting_weight')),
   change_jin numeric,
   eligible boolean NOT NULL,
   calculated_delta bigint NOT NULL,
@@ -32,6 +34,10 @@ CREATE TABLE IF NOT EXISTS public.points_fat_reward_weeks (
   balance_after bigint NOT NULL CHECK (balance_after >= 0),
   settled_at timestamptz NOT NULL DEFAULT clock_timestamp()
 );
+-- 老版本已结算记录保留原比较基准和奖扣；升级只影响尚未结算的周。
+ALTER TABLE public.points_fat_reward_weeks ADD COLUMN IF NOT EXISTS
+  comparison_basis text NOT NULL DEFAULT 'previous_week'
+  CHECK (comparison_basis IN ('previous_week','starting_weight'));
 CREATE TABLE IF NOT EXISTS public.points_fat_reward_requests (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   status text NOT NULL DEFAULT 'pending_service'
@@ -93,12 +99,38 @@ RETURNS bigint LANGUAGE sql IMMUTABLE SET search_path = '' AS $$
     ELSE 0 END;
 $$;
 
+-- 仅首次记录所在周使用起始体重；后续缺记录的周不能再次使用此例外。
+-- 已结算且有记录的周参与识别首周，删除原记录不会重新触发首周奖励。
+CREATE OR REPLACE FUNCTION public.points_fat_reward_reference(p_week date)
+RETURNS TABLE(days integer, mean_jin numeric, basis text)
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $$
+DECLARE v_first_week date;
+BEGIN
+  SELECT least(
+    (SELECT date_trunc('week', r.created_at AT TIME ZONE 'Asia/Shanghai')::date
+      FROM public.points_fat_records r ORDER BY r.created_at, r.id LIMIT 1),
+    (SELECT min(w.week_start) FROM public.points_fat_reward_weeks w WHERE w.current_days > 0)
+  ) INTO v_first_week;
+  IF p_week = v_first_week THEN
+    RETURN QUERY SELECT 0, s.starting_weight_jin, 'starting_weight'::text
+      FROM public.points_fat_settings s WHERE s.id = 1;
+    RETURN;
+  END IF;
+  RETURN QUERY SELECT w.current_days, w.current_mean_jin, 'previous_week'::text
+    FROM public.points_fat_reward_weeks w WHERE w.week_start = p_week - 7;
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT s.days, s.mean_jin, 'previous_week'::text
+      FROM public.points_fat_reward_sample(p_week - 7) s;
+  END IF;
+END;
+$$;
+
 -- 内部结算：调用者不能指定日期或体重。周唯一键 + 行锁保证只结算一次。
 CREATE OR REPLACE FUNCTION public.points_fat_reward_settle_due()
 RETURNS integer LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
 DECLARE
   s public.points_fat_reward_state%ROWTYPE;
-  c record; p record; v_change numeric; v_calculated bigint; v_applied bigint; v_count integer := 0;
+  c record; p record; v_change numeric; v_calculated bigint; v_applied bigint; v_eligible boolean; v_count integer := 0;
 BEGIN
   SELECT * INTO s FROM public.points_fat_reward_state WHERE id = 1;
   IF public.points_fat_reward_cutoff(s.next_week) > clock_timestamp() THEN RETURN 0; END IF;
@@ -108,17 +140,17 @@ BEGIN
   WHILE public.points_fat_reward_cutoff(s.next_week) <= clock_timestamp() LOOP
     IF NOT EXISTS (SELECT 1 FROM public.points_fat_reward_weeks WHERE week_start = s.next_week) THEN
       SELECT * INTO c FROM public.points_fat_reward_sample(s.next_week);
-      SELECT current_days AS days, current_mean_jin AS mean_jin INTO p
-        FROM public.points_fat_reward_weeks WHERE week_start = s.next_week - 7;
-      IF NOT FOUND THEN SELECT * INTO p FROM public.points_fat_reward_sample(s.next_week - 7); END IF;
+      SELECT * INTO p FROM public.points_fat_reward_reference(s.next_week);
       v_change := c.mean_jin - p.mean_jin;
-      v_calculated := public.points_fat_reward_delta(v_change, c.days, p.days);
+      v_eligible := v_change IS NOT NULL AND c.days >= 3 AND (p.basis = 'starting_weight' OR p.days >= 3);
+      v_calculated := public.points_fat_reward_delta(v_change, c.days,
+        CASE WHEN p.basis = 'starting_weight' THEN 3 ELSE p.days END);
       v_applied := greatest(-s.diamonds, v_calculated);
       s.diamonds := s.diamonds + v_applied;
       INSERT INTO public.points_fat_reward_weeks(week_start, cutoff_at, current_days, previous_days,
-        current_mean_jin, previous_mean_jin, change_jin, eligible, calculated_delta, applied_delta, balance_after)
+        current_mean_jin, previous_mean_jin, comparison_basis, change_jin, eligible, calculated_delta, applied_delta, balance_after)
       VALUES (s.next_week, public.points_fat_reward_cutoff(s.next_week), c.days, p.days,
-        c.mean_jin, p.mean_jin, v_change, c.days >= 3 AND p.days >= 3, v_calculated, v_applied, s.diamonds);
+        c.mean_jin, p.mean_jin, p.basis, v_change, v_eligible, v_calculated, v_applied, s.diamonds);
       v_count := v_count + 1;
     END IF;
     s.next_week := s.next_week + 7;
@@ -154,21 +186,24 @@ BEGIN
   SELECT current_days AS days, current_mean_jin AS mean_jin INTO c
     FROM public.points_fat_reward_weeks WHERE week_start = v_week;
   IF NOT FOUND THEN SELECT * INTO c FROM public.points_fat_reward_sample(v_week); END IF;
-  SELECT previous_days AS days, previous_mean_jin AS mean_jin INTO p
+  SELECT previous_days AS days, previous_mean_jin AS mean_jin, comparison_basis AS basis INTO p
     FROM public.points_fat_reward_weeks WHERE week_start = v_week;
   IF NOT FOUND THEN
-    SELECT current_days AS days, current_mean_jin AS mean_jin INTO p
-      FROM public.points_fat_reward_weeks WHERE week_start = v_week - 7;
-    IF NOT FOUND THEN SELECT * INTO p FROM public.points_fat_reward_sample(v_week - 7); END IF;
+    SELECT * INTO p FROM public.points_fat_reward_reference(v_week);
   END IF;
   RETURN v_result || jsonb_build_object('diamonds', s.diamonds, 'backpack', s.backpack,
     'next_cutoff', public.points_fat_reward_cutoff(s.next_week),
     'preview', jsonb_build_object('week', v_week, 'current_days', c.days, 'previous_days', p.days,
-      'change_jin', c.mean_jin - p.mean_jin, 'eligible', c.days >= 3 AND p.days >= 3,
-      'calculated_delta', public.points_fat_reward_delta(c.mean_jin - p.mean_jin, c.days, p.days),
+      'comparison_basis', p.basis, 'reference_available', p.mean_jin IS NOT NULL,
+      'change_jin', c.mean_jin - p.mean_jin,
+      'eligible', c.mean_jin IS NOT NULL AND p.mean_jin IS NOT NULL AND c.days >= 3
+        AND (p.basis = 'starting_weight' OR p.days >= 3),
+      'calculated_delta', public.points_fat_reward_delta(c.mean_jin - p.mean_jin, c.days,
+        CASE WHEN p.basis = 'starting_weight' THEN 3 ELSE p.days END),
       'settled', EXISTS(SELECT 1 FROM public.points_fat_reward_weeks WHERE week_start = v_week)),
     'weeks', (SELECT coalesce(jsonb_agg(jsonb_build_object('week', t.week_start, 'cutoff', t.cutoff_at,
-      'current_days', t.current_days, 'previous_days', t.previous_days, 'change_jin', t.change_jin,
+      'current_days', t.current_days, 'previous_days', t.previous_days,
+      'comparison_basis', t.comparison_basis, 'change_jin', t.change_jin,
       'eligible', t.eligible, 'calculated_delta', t.calculated_delta, 'applied_delta', t.applied_delta,
       'balance_after', t.balance_after) ORDER BY t.week_start DESC), '[]'::jsonb)
       FROM (SELECT * FROM public.points_fat_reward_weeks ORDER BY week_start DESC LIMIT 8) t));
@@ -267,6 +302,7 @@ $$;
 
 -- 内部函数和所有表禁止浏览器直接调用/读取。
 REVOKE ALL ON FUNCTION public.points_fat_reward_cutoff(date), public.points_fat_reward_sample(date),
+  public.points_fat_reward_reference(date),
   public.points_fat_reward_delta(numeric, integer, integer), public.points_fat_reward_settle_due(),
   public.points_fat_reward_snapshot(bigint), public.points_fat_reward_get_state(bigint),
   public.points_fat_reward_admin_exchange(text, uuid), public.points_fat_reward_guest_serviced(bigint),
