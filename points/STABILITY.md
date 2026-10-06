@@ -51,3 +51,21 @@
 - 需要真实环境的备份恢复验证和可去除私人数据的错误监测，才能进一步确认长期运行可靠性。
 
 参考：[Supabase 客户端初始化](https://supabase.com/docs/reference/javascript/initializing)、[身份变化回调](https://supabase.com/docs/reference/javascript/auth-onauthstatechange)。身份回调中的后续校验仍在回调结束后执行。
+
+## iPhone 主屏幕启动恢复补充（2026-10-06）
+
+用户反馈第一版仍持续显示加载未完成，需要关闭后台才恢复。第一版的 8 秒提示只暴露了问题：同站点脚本依旧同步阻塞初始化，重新导航仍可能沿用未完成的资源加载。
+
+第二版移除同步外部脚本/样式标签，通过同站点 fetch 下载，10 秒超时后中止请求。失败前尚未执行核心业务代码时，用户点击「重试启动」在原页面取消旧请求、对未成功的资源重新获取，成功下载的源码在当前页面内复用。启动失败后最多自动重试一次，避免无限循环。
+
+启动过程进入后台时取消未完成的加载；恢复前台或恢复网络后重新尝试。核心代码只允许执行一次；完成启动后的前后台切换继续沿用数据同步，不重复创建客户端、绑定事件或重放写入。
+
+核心业务脚本从 index.html 迁移至 app.js，比较确认仅清理文件末尾空白，业务代码一致；文件分 9 批、每批不超过 500 行写入。发布时须同步包含 app.js；仅发布新的 HTML 而遗漏该文件会显示启动失败。
+
+版本检查不再自动替换整个 WebView；读取到相同构建号时记录当前版本，不触发二次导航。不同构建号仅在界面启动完成后提示用户更新。后续发布应同步修改 HTML 的 points-build 与启动器 BUILD，确保资源缓存版本一致。
+
+当前共 35 项本地断言通过。新增验证了手动原地重试、后台中断后恢复、连续恢复不重复初始化、不重复提交、样式资源卡住不阻塞 HTML、错误 HTML 缓存响应可被替换，以及版本检查不会打断启动恢复。验证使用隔离的 Chrome 与合成生命周期事件，仍须在真实 iPhone 主屏幕 App 中确认实际系统行为。
+
+启动阶段可在本机调试时读取 PointsStartup.status()，只包含阶段、尝试次数和资源标签，不含账号、体重或令牌，也不上传。
+
+机制依据：[DOMContentLoaded 与脚本/样式等待](https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event)、[AbortController.abort](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort)、[pageshow 生命周期](https://developer.mozilla.org/en-US/docs/Web/API/Window/pageshow_event)。

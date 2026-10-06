@@ -58,6 +58,7 @@ const fixture = `(() => {
   addEventListener('DOMContentLoaded',()=>{const tag=document.createElement('span');tag.className='fat-preview-tag';tag.textContent='本地测试 · '+(isAdmin?'管理员':'游客');tag.style.cssText='position:fixed;top:2px;left:50%;transform:translateX(-50%);z-index:200;font:10px sans-serif;color:#638171;pointer-events:none';document.body.append(tag);});
 })();`;
 const hooks = `
+  window.__sdkInitializations=(window.__sdkInitializations||0)+1;
   window.__counts={}; window.__modes={};
   const db=window.supabase.createClient(), original=db.rpc;
   window.__session=new URLSearchParams(location.search).get('role')==='admin'
@@ -88,7 +89,7 @@ async function open(role="admin", config={}) {
   // Shorten only our explicit deadlines, not business/UI timers.
   await page.addInitScript(() => {
     const original=window.setTimeout;
-    window.setTimeout=(fn,ms,...args)=>original(fn,[15000,10000,8000].includes(ms)?200:ms,...args);
+    window.setTimeout=(fn,ms,...args)=>original(fn,ms===10000?1500:[15000,8000].includes(ms)?200:ms,...args);
   });
   await page.route("**/*", async route => {
     const url = new URL(route.request().url());
@@ -107,6 +108,8 @@ async function open(role="admin", config={}) {
     if (url.origin !== "http://127.0.0.1:8766") {outbound.push(url.hostname);return route.abort();}
     const file = url.pathname === "/" ? "index.html" : url.pathname.slice(1);
     if (config.blockSdk && file === "vendor/supabase-2.117.2.js") return new Promise(()=>{});
+    if (config.blockCss && file === "ui-theme.css") return new Promise(()=>{});
+    if (config.invalidSdk && file === "vendor/supabase-2.117.2.js") return route.fulfill({body:"<!DOCTYPE html><html>cached error</html>",contentType:"text/html"});
     if (file === "vendor/supabase-2.117.2.js" && !config.realSdk) {
       return route.fulfill({contentType:"application/javascript",body:fixture+hooks});
     }
@@ -114,6 +117,9 @@ async function open(role="admin", config={}) {
     let body;
     try {body = await fs.readFile(path.join(root,file));} catch (_) {return route.fulfill({status:404,body:"Not found"});}
     if (file === "index.html" && config.modify) body = config.modify(body.toString());
+    if (file === "index.html" && config.remoteBuild && url.searchParams.has('__html_fingerprint_check')) {
+      body = body.toString().replace('content="20261006.2" name="points-build"',`content="${config.remoteBuild}" name="points-build"`);
+    }
     return route.fulfill({body,contentType:file.endsWith(".js")?"application/javascript":file.endsWith(".css")?"text/css":file.endsWith(".html")?"text/html":"application/octet-stream"});
   });
   await page.goto(`http://127.0.0.1:8766/?role=${role}`,{waitUntil:config.blockSdk?"commit":"load"});
@@ -193,6 +199,7 @@ try {
   await guest.close();
 
   const missing = await open("guest",{missing:"fat-loss.js"});
+  await until(missing,()=>window.PointsStartup.status().ready);
   await missing.locator("#settingsBtn").click();
   check(await missing.locator("#settingsLayer").evaluate(e=>e.classList.contains("open")),true,"Missing module keeps base UI usable");
   check(await missing.locator("#appRecovery").innerText(),"减脂模块加载失败，请重新加载\n重新加载","Missing module has visible recovery");
@@ -205,9 +212,72 @@ try {
   await rewards.close();
 
   const stalled = await open("guest",{blockSdk:true});
-  await until(stalled,()=>document.querySelector("#appRecovery")?.textContent.includes("重新加载"));
+  await until(stalled,()=>document.querySelector("#appRecovery")?.textContent.includes("重试启动"));
   check(await stalled.locator("#appRecovery button").isEnabled(),true,"Stalled dependency exposes working recovery action");
   await stalled.close();
+
+  const manualConfig = {blockSdk:true};
+  const manual = await open("admin",manualConfig);
+  await until(manual,()=>PointsStartup.status().phase==="failed");
+  check(await manual.evaluate(()=>PointsStartup.status().lastFailure),"sdk","Stalled startup identifies SDK stage");
+  manualConfig.blockSdk=false;
+  await manual.locator('#appRecovery button').click();
+  await until(manual,()=>PointsStartup.status().ready);
+  await manual.locator('#settingsBtn').click();
+  check(await manual.locator('#settingsLayer').evaluate(e=>e.classList.contains('open')),true,'Retry startup restores buttons without restarting WebView');
+  check(await manual.evaluate(()=>__sdkInitializations),1,'Recovered startup executes SDK only once');
+  await manual.close();
+
+  const resumeConfig = {blockSdk:true};
+  const resumed = await open("admin",resumeConfig);
+  await until(resumed,()=>PointsStartup.status().phase==="loading");
+  await resumed.evaluate(()=>dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+  check(await resumed.evaluate(()=>PointsStartup.status().phase),"paused","Backgrounding cancels unfinished startup");
+  resumeConfig.blockSdk=false;
+  await resumed.evaluate(()=>dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true})));
+  await until(resumed,()=>PointsStartup.status().ready);
+  check(await resumed.locator('#metricSwitch [data-metric]').count(),3,'Foreground resume restores three modules');
+  await resumed.evaluate(()=>{for(let i=0;i<4;i++){dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));}});
+  check(await resumed.evaluate(()=>__sdkInitializations),1,'Ready app does not reinitialize on repeated foreground events');
+  await resumed.getByRole('button',{name:'增加积分',exact:true}).click();
+  await resumed.locator('#confirmChangeBtn').click();
+  await until(resumed,()=>!document.querySelector('#changeLayer').classList.contains('open'));
+  check(await resumed.evaluate(()=>__counts.points_change_score),1,'Repeated resume does not duplicate write handlers');
+  await resumed.close();
+
+  const cssConfig = {blockCss:true};
+  const css = await open("guest",cssConfig);
+  check(await css.evaluate(()=>document.readyState!=="loading"),true,'Hanging CSS does not block HTML parser');
+  await css.locator('#settingsBtn').click();
+  await until(css,()=>document.querySelector('#appRecovery')?.textContent.includes('重试启动'));
+  cssConfig.blockCss=false;
+  await css.locator('#appRecovery button').click();
+  await until(css,()=>PointsStartup.status().ready);
+  await css.locator('#settingsBtn').click();
+  check(await css.locator('#settingsLayer').evaluate(e=>e.classList.contains('open')),true,'Retry cancels stalled CSS load and restores controls');
+  await css.close();
+
+  const invalidConfig = {invalidSdk:true};
+  const invalid = await open("guest",invalidConfig);
+  await until(invalid,()=>PointsStartup.status().phase==="failed");
+  invalidConfig.invalidSdk=false;
+  await invalid.locator('#appRecovery button').click();
+  await until(invalid,()=>PointsStartup.status().ready);
+  check(await invalid.locator('#metricSwitch [data-metric]').count(),3,'Invalid cached response can be replaced without reload');
+  await invalid.close();
+
+  const updateConfig = {remoteBuild:"future",blockSdk:true};
+  const updating = await open("guest",updateConfig);
+  let replacedPages = 0;
+  updating.on('framenavigated',frame=>{if(frame===updating.mainFrame())replacedPages++;});
+  await until(updating,()=>PointsStartup.status().phase==="failed");
+  updateConfig.blockSdk=false;
+  await updating.locator('#appRecovery button').click();
+  await until(updating,()=>PointsStartup.status().ready);
+  await updating.evaluate(()=>window.__checkHtmlUpdate__());
+  check(replacedPages,0,'Version checks do not replace loading/resumed WebView');
+  check(await updating.locator('#appRecovery').innerText(),"新版本已准备好，请在操作完成后重新加载\n重新加载",'New build becomes an explicit update prompt');
+  await updating.close();
 
   const actualSdk = await open("guest",{realSdk:true});
   await until(actualSdk,()=>document.querySelector("#scoreValue").textContent==="100");
@@ -255,7 +325,7 @@ try {
 } catch (error) {
   console.error("Browser errors:", errors);
   for (const page of browser.contexts().flatMap(c=>c.pages())) {
-    console.error(await page.evaluate(()=>({tabs:[...document.querySelectorAll("[data-metric]")].map(b=>[b.dataset.metric,b.getAttribute("aria-selected")]),open:[...document.querySelectorAll(".open")].map(e=>e.id),notice:document.querySelector("#appRecovery")?.textContent})));
+    console.error(await page.evaluate(()=>({startup:window.PointsStartup?.status?.(),tabs:[...document.querySelectorAll("[data-metric]")].map(b=>[b.dataset.metric,b.getAttribute("aria-selected")]),open:[...document.querySelectorAll(".open")].map(e=>e.id),notice:document.querySelector("#appRecovery")?.textContent})));
   }
   throw error;
 } finally {await browser.close();}
