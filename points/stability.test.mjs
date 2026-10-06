@@ -60,6 +60,7 @@ const fixture = `(() => {
 const hooks = `
   window.__sdkInitializations=(window.__sdkInitializations||0)+1;
   window.__counts={}; window.__modes={};
+  window.__startingWeightJin=160;
   const db=window.supabase.createClient(), original=db.rpc;
   window.__session=new URLSearchParams(location.search).get('role')==='admin'
     ? {user:{id:'00000000-0000-0000-0000-000000000001',email:'local-preview@example.invalid'}} : null;
@@ -72,7 +73,13 @@ const hooks = `
     if(__modes[name]==='hang') return new Promise(()=>{});
     if(__modes[name]==='error') return {data:null,error:{code:'08006',message:'Synthetic network failure'}};
     if(__modes[name]==='slow') await new Promise(r=>setTimeout(r,80));
+    if(name==='points_fat_admin_get_settings' && __modes[name]==='deferred') {
+      const result=await new Promise(resolve=>{window.__resolveStartingRead=()=>resolve({data:[{starting_weight_jin:window.__startingWeightJin}],error:null});});
+      window.__deferredReadFinished=true;return result;
+    }
     if(name==='points_preview_wheel') return {data:[{prize_amount:30,roll:42}],error:null};
+    if(name==='points_fat_admin_get_settings') return {data:[{starting_weight_jin:window.__startingWeightJin}],error:null};
+    if(name==='points_fat_admin_set_starting_weight') {window.__startingWeightJin=args.p_weight_jin;return {data:[],error:null};}
     const result=await original(name,args);
     if(__modes[name]==='bad-date' && result.data?.[0]) result.data[0].recorded_at='invalid';
     return result;
@@ -118,7 +125,7 @@ async function open(role="admin", config={}) {
     try {body = await fs.readFile(path.join(root,file));} catch (_) {return route.fulfill({status:404,body:"Not found"});}
     if (file === "index.html" && config.modify) body = config.modify(body.toString());
     if (file === "index.html" && config.remoteBuild && url.searchParams.has('__html_fingerprint_check')) {
-      body = body.toString().replace('content="20261006.2" name="points-build"',`content="${config.remoteBuild}" name="points-build"`);
+      body = body.toString().replace(/content="[^"]+" name="points-build"/,`content="${config.remoteBuild}" name="points-build"`);
     }
     return route.fulfill({body,contentType:file.endsWith(".js")?"application/javascript":file.endsWith(".css")?"text/css":file.endsWith(".html")?"text/html":"application/octet-stream"});
   });
@@ -132,6 +139,47 @@ try {
   check(await p.locator("#metricSwitch [data-metric]").count(),3,"Three modules start without CDN");
   await p.locator("#settingsBtn").click();
   check(await p.locator("#settingsLayer").evaluate(e=>e.classList.contains("open")),true,"Settings responds");
+  check(await p.locator('#fatStartingWeightValue').innerText(),'点击查看','Admin settings never show starting weight');
+  check(await p.evaluate(()=>__counts.points_fat_admin_get_settings||0),0,'Opening settings does not fetch private weight');
+  await p.locator('[data-fat-unit="jin"]').click();
+  check(await p.locator('#fatStartingWeightValue').innerText(),'点击查看','Unit switch cannot reveal starting weight');
+  check(await p.evaluate(()=>__counts.points_fat_admin_get_settings||0),0,'Unit switch does not fetch private weight');
+  await p.locator('#fatStartingWeightBtn').click();
+  await until(p,()=>document.querySelector('#fatSaveWeight').textContent==='修改');
+  check(await p.locator('#fatWeightInput').inputValue(),'160','Clicked dialog displays previous weight in jin');
+  check(await p.locator('#fatWeightInput').evaluate(e=>e.readOnly),true,'Previous value is view-only before choosing modify');
+  await p.locator('#fatCancelWeight').click();
+  check(await p.locator('#fatWeightInput').inputValue(),'','Closing dialog clears private value from DOM');
+  check(await p.locator('#settingsLayer').evaluate(e=>e.classList.contains('open')),true,'Cancel returns to safe settings page');
+  check(await p.evaluate(()=>__counts.points_fat_admin_set_starting_weight||0),0,'View cancellation makes no write');
+  await p.locator('[data-fat-unit="kg"]').click();
+  await p.locator('#fatStartingWeightBtn').click();
+  await until(p,()=>document.querySelector('#fatSaveWeight').textContent==='修改');
+  check(await p.locator('#fatWeightInput').inputValue(),'80','Dialog converts previous weight to kilograms');
+  await p.locator('#fatSaveWeight').click();
+  check(await p.locator('#fatWeightInput').evaluate(e=>e.readOnly),false,'Modify enables editing');
+  check(await p.evaluate(()=>__counts.points_fat_admin_set_starting_weight||0),0,'Choosing modify does not immediately write');
+  await p.locator('#fatWeightInput').fill('79.5');await p.locator('#fatCancelWeight').click();
+  check(await p.evaluate(()=>__startingWeightJin),160,'Canceling an edit preserves stored weight');
+  await p.locator('#fatStartingWeightBtn').click();
+  await until(p,()=>document.querySelector('#fatSaveWeight').textContent==='修改');
+  check(await p.locator('#fatWeightInput').inputValue(),'80','Canceled edit is not reused on next view');
+  await p.locator('#fatSaveWeight').click();await p.locator('#fatWeightInput').fill('79.5');
+  await p.locator('#fatSaveWeight').click();
+  await until(p,()=>!document.querySelector('#fatWeightLayer').classList.contains('open'));
+  check(await p.evaluate(()=>__startingWeightJin),159,'Save preserves existing kilogram-to-jin API conversion');
+  check(await p.evaluate(()=>__counts.points_fat_admin_set_starting_weight),1,'Confirmed edit writes once');
+  check(await p.locator('#fatStartingWeightValue').innerText(),'点击查看','Saved weight remains hidden in settings');
+  check(await p.locator('#fatWeightInput').inputValue(),'','Save clears private input');
+  await p.evaluate(()=>{__modes.points_fat_admin_get_settings='deferred';});
+  await p.locator('#fatStartingWeightBtn').click();
+  await until(p,()=>typeof window.__resolveStartingRead==='function');
+  await p.locator('#fatCancelWeight').click();
+  await p.evaluate(()=>__resolveStartingRead());
+  await until(p,()=>window.__deferredReadFinished);
+  check(await p.locator('#fatWeightInput').inputValue(),'','Late read after cancel cannot repopulate private value');
+  check(await p.locator('#fatStartingWeightValue').innerText(),'点击查看','Late read cannot reveal weight on settings row');
+  await p.evaluate(()=>{delete __modes.points_fat_admin_get_settings;});
   await p.keyboard.press("Escape");
   for (const metric of ["fat","wheel","score","fat","score","wheel","fat"]) {
     await p.locator(`[data-metric="${metric}"]`).click();
@@ -165,7 +213,14 @@ try {
   await p.locator("#settingsBtn").click();await p.locator("#fatStartingWeightBtn").click();
   await until(p,()=>document.querySelector("#fatWeightError").hidden===false);
   check(await p.locator("#fatWeightInput").isEnabled(),true,"Starting weight read timeout unlocks input");
+  check(await p.locator('#fatWeightInput').evaluate(e=>e.readOnly),true,'Failed read cannot silently enter edit mode');
+  await p.evaluate(()=>{delete __modes.points_fat_admin_get_settings;});
+  await p.locator('#fatSaveWeight').click();
+  await until(p,()=>document.querySelector('#fatSaveWeight').textContent==='修改');
+  check(await p.locator('#fatWeightInput').inputValue(),'79.5','Retry retrieves current weight inside dialog only');
   await p.locator("#fatCancelWeight").click();
+  check(await p.locator('#fatWeightInput').inputValue(),'','Cancel after failed read also clears private input');
+  await p.keyboard.press('Escape');
   await p.evaluate(()=>{delete __modes.points_fat_admin_get_settings;__modes.points_change_score="slow";__counts.points_change_score=0;});
   await p.getByRole("button",{name:"增加积分",exact:true}).click();
   await p.locator("#confirmChangeBtn").evaluate(e=>{e.click();e.dispatchEvent(new MouseEvent("click",{bubbles:true}));e.dispatchEvent(new MouseEvent("click",{bubbles:true}));});
@@ -186,10 +241,13 @@ try {
   await p.evaluate(()=>{__signOut();});
   await until(p,()=>document.querySelector('#adminSettings').hidden && document.querySelector('#fatRecordBtn').hidden);
   check(await p.locator('#adminSettings').evaluate(e=>e.hidden),true,'Auth sign-out immediately removes administrator UI');
+  check(await p.locator('#fatWeightInput').inputValue(),'','Auth sign-out leaves no private starting-weight value');
   await p.close();
 
   const guest = await open("guest");
   await until(guest,()=>document.querySelector('[data-metric="fat"]'));
+  await guest.locator('#fatStartingWeightBtn').evaluate(e=>e.click());
+  check(await guest.evaluate(()=>__counts.points_fat_admin_get_settings||0),0,'Guest cannot trigger private-weight read');
   await guest.evaluate(()=>{__modes.points_shop_get_state_v2="hang";});
   await guest.locator("#redeemRewardBtn").click();
   check(await guest.locator("#redeemLayer").evaluate(e=>e.classList.contains("open")),true,"Shop opens before stalled request resolves");

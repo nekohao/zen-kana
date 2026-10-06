@@ -69,3 +69,11 @@
 启动阶段可在本机调试时读取 PointsStartup.status()，只包含阶段、尝试次数和资源标签，不含账号、体重或令牌，也不上传。
 
 机制依据：[DOMContentLoaded 与脚本/样式等待](https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event)、[AbortController.abort](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort)、[pageshow 生命周期](https://developer.mozilla.org/en-US/docs/Web/API/Window/pageshow_event)。
+
+## 起始体重按点击查看（2026-10-06）
+
+管理员设置页固定显示「点击查看」，打开设置、身份校验及切换单位不读取或显示起始体重。只有点击该项才调用原有管理员读取接口，在弹窗内以当前单位显示已保存的数值。
+
+弹窗先提供「修改」和「取消」；选择修改后才允许编辑，再选择保存修改才写入原有接口。取消返回设置，不写入；取消、保存或身份失效均清空私人体重输入。迟到的读取响应不能重新填入已关闭的窗口。读取失败时只能重试读取或取消。
+
+构建号更新至 20261006.3。当前 60 项本地检查通过，包含上述查看、取消、编辑保存、单位换算、失败重试、迟到响应和游客权限检查；测试使用模拟数据，未修改线上数据库。

@@ -121,7 +121,7 @@
     let range = "28", month = monthStart(new Date()), selectedDay = null;
     let refreshPromise = null, logsPromise = null, authTimer = 0;
     let chartRaf = 0, initialized = false, overviewFresh = false, landingPeekHeight = 300;
-    let unit = "kg", privateStartingWeight = null, deleteTarget = null;
+    let unit = "kg", deleteTarget = null, startingLoaded = false, startingEditing = false;
     let rewards = null;
     try { const savedUnit=window.localStorage.getItem("points_fat_unit"); if (["jin","kg"].includes(savedUnit)) unit=savedUnit; } catch (_) {}
     const unitName = () => unit === "kg" ? "公斤" : "斤";
@@ -147,7 +147,7 @@
       });
       q("fatInputUnit").textContent = unitName();
       q("fatChartHelp").textContent = `纵轴为相对起始体重的差值 · 单位：${unitName()} · 均值按实际记录天数计算`;
-      if (mode && mode !== "delete") q("fatWeightNote").textContent = mode === "starting" ? "更改起始体重后，已有记录的差值会重新计算。" : unit === "kg" ? "支持 0.005 公斤精度，首页和总览只显示变化量。" : "最多保留两位小数，首页和总览只显示变化量。";
+      if (mode && mode !== "delete") q("fatWeightNote").textContent = mode === "starting" ? (startingEditing ? "更改起始体重后，已有记录的差值会重新计算。" : "选择修改后可编辑；取消不会改变已设置的体重。") : unit === "kg" ? "支持 0.005 公斤精度，首页和总览只显示变化量。" : "最多保留两位小数，首页和总览只显示变化量。";
     }
     function changeUnit(next) {
       if (!["jin","kg"].includes(next) || next === unit || saving) return;
@@ -158,18 +158,22 @@
       unit = next;
       try { window.localStorage.setItem("points_fat_unit",unit); } catch (_) {}
       if (editing && value !== null) q("fatWeightInput").value = inputNumber(value);
-      if (verifiedAdmin && els.settingsLayer.classList.contains("open") && hasDelta(privateStartingWeight)) q("fatStartingWeightValue").textContent = `${number(privateStartingWeight)} ${unitName()}`;
       syncUnits(); renderHome(); renderOverview(); fitSettings();
     }
     function clearSecrets() {
       secretVersion++;
-      privateStartingWeight = null;
+      startingLoaded = false; startingEditing = false;
       q("fatStartingWeightValue").textContent = "点击查看";
       q("fatWeightInput").value = "";
+      q("fatWeightInput").readOnly = false;
+      q("fatWeightInput").blur();
     }
     function closeDialog() {
+      const returnToSettings = mode === "starting" && verifiedAdmin;
+      if (mode === "starting") window.PointsRuntime?.clear("points_fat_admin_get_settings");
       ui.setLayer(dialog,false); mode = null; deleteTarget = null; clearSecrets(); syncUnits();
       q("fatWeightError").hidden = true;
+      if (returnToSettings) {ui.setLayer(els.settingsLayer,true); q("fatStartingWeightBtn").focus({preventScroll:true});}
     }
     function permissionChanged() {
       settings.hidden = !verifiedAdmin;
@@ -191,7 +195,6 @@
           if (version !== authVersion || state.session?.user?.id !== userId) return;
           verifiedAdmin = !error && data === true; verifiedUser = verifiedAdmin ? userId : null;
           permissionChanged();
-          if (verifiedAdmin && els.settingsLayer.classList.contains("open")) void loadSettings(false);
         } catch (_) { if (version === authVersion) { verifiedAdmin = false; permissionChanged(); } }
       }, 0);
     }
@@ -487,30 +490,33 @@
         syncUnits(); renderHome(); renderOverview();
       }
     }
-    async function loadSettings(forDialog) {
-      if (!verifiedAdmin) return;
+    async function loadStartingWeight() {
+      if (!verifiedAdmin || mode!=="starting" || !dialog.classList.contains("open")) return;
       const version=++secretVersion, auth=authVersion, user=verifiedUser;
+      startingLoaded=false; startingEditing=false;
+      q("fatWeightInput").value=""; q("fatWeightInput").readOnly=true;
+      q("fatWeightInput").disabled=true; q("fatSaveWeight").disabled=true;
+      q("fatSaveWeight").textContent="正在读取…"; q("fatWeightError").hidden=true;
+      syncUnits();
       try {
         const {data,error}=await db.rpc("points_fat_admin_get_settings");
-        if (version!==secretVersion || auth!==authVersion || !verifiedAdmin || user!==verifiedUser) return;
+        if (version!==secretVersion || auth!==authVersion || !verifiedAdmin || user!==verifiedUser || mode!=="starting" || !dialog.classList.contains("open")) return;
         if (error) throw error;
         const result=row(data); if (!result) throw new Error("Fat settings not found");
         const value=result.starting_weight_jin;
-        if (forDialog && mode==="starting" && dialog.classList.contains("open")) {
-          q("fatWeightInput").value=hasDelta(value)?inputNumber(value):"";
-          q("fatSaveWeight").disabled=false; q("fatWeightInput").disabled=false;
-          syncUnits();
-        } else if (!forDialog && els.settingsLayer.classList.contains("open")) {
-          privateStartingWeight=hasDelta(value)?Number(value):null;
-          q("fatStartingWeightValue").textContent=hasDelta(value)?`${number(value)} ${unitName()}`:"未设置";
-          fitSettings();
-        }
+        if (value!==null && value!==undefined && (!hasDelta(value) || Number(value)<=0)) throw new Error("Invalid starting weight");
+        startingLoaded=true;
+        q("fatWeightInput").value=hasDelta(value)?inputNumber(value):"";
+        q("fatWeightMessage").textContent=hasDelta(value)?"当前已设置的起始体重":"尚未设置起始体重";
+        q("fatSaveWeight").textContent=hasDelta(value)?"修改":"设置";
+        syncUnits();
       } catch (error) {
-        if (version!==secretVersion || auth!==authVersion) return;
-        if (forDialog) { q("fatWeightError").textContent=errorText(error); q("fatWeightError").hidden=false; }
-        else q("fatStartingWeightValue").textContent="读取失败 · 点击重试";
+        if (version!==secretVersion || auth!==authVersion || mode!=="starting" || !dialog.classList.contains("open")) return;
+        q("fatWeightError").textContent=/42501|permission|admin|JWT/i.test(`${error?.code || ""} ${error?.message || ""}`)?"管理员权限已失效，请重新登录":"读取起始体重失败，请重试";
+        q("fatWeightError").hidden=false; q("fatSaveWeight").textContent="重试读取";
       } finally {
-        if (forDialog && version===secretVersion && auth===authVersion && mode==="starting") {
+        if (mode!=="starting" || !dialog.classList.contains("open")) window.PointsRuntime?.clear("points_fat_admin_get_settings");
+        if (version===secretVersion && auth===authVersion && mode==="starting" && dialog.classList.contains("open")) {
           q("fatWeightInput").disabled=false; q("fatSaveWeight").disabled=false; syncUnits();
         }
       }
@@ -520,17 +526,18 @@
       clearSecrets(); mode=nextMode;
       deleteTarget=null; q("fatWeightFields").hidden=false;
       const starting=mode==="starting";
-      q("fatWeightTitle").textContent=starting?"设置起始体重":"记录体重";
+      q("fatWeightTitle").textContent=starting?"起始体重":"记录体重";
       q("fatWeightLabel").textContent=starting?"起始体重":"本次体重";
-      q("fatWeightMessage").textContent=starting?"仅管理员设置中可查看起始体重":"记录后自动计算体重变化";
+      q("fatWeightMessage").textContent=starting?"正在读取已设置的体重…":"记录后自动计算体重变化";
       q("fatWeightNote").textContent=starting?"更改起始体重后，已有记录的差值会重新计算。":"最多保留两位小数，首页和总览只显示变化量。";
-      q("fatSaveWeight").textContent=starting?"保存起始体重":"保存记录";
+      q("fatSaveWeight").textContent=starting?"修改":"保存记录";
       q("fatSaveWeight").disabled=starting; q("fatWeightInput").disabled=starting;
+      q("fatWeightInput").readOnly=starting;
       q("fatWeightError").hidden=true;
       if (starting) ui.setLayer(els.settingsLayer,false);
       ui.setLayer(dialog,true);
       syncUnits();
-      if (starting) void loadSettings(true);
+      if (starting) void loadStartingWeight();
     }
     function inputWeight() {
       const raw=q("fatWeightInput").value.trim();
@@ -543,6 +550,15 @@
     async function saveWeight() {
       if (!verifiedAdmin || saving || !mode) return;
       if (mode==="delete") return deleteRecord();
+      if (q("fatSaveWeight").disabled) return;
+      if (mode==="starting" && !startingLoaded) return loadStartingWeight();
+      if (mode==="starting" && !startingEditing) {
+        const previouslySet=q("fatWeightInput").value!=="";
+        startingEditing=true; q("fatWeightInput").readOnly=false;
+        q("fatWeightTitle").textContent=previouslySet?"修改起始体重":"设置起始体重";
+        q("fatSaveWeight").textContent=previouslySet?"保存修改":"保存起始体重";
+        syncUnits(); q("fatWeightInput").focus(); q("fatWeightInput").select(); return;
+      }
       const value=inputWeight();
       if (value===null) { q("fatWeightError").textContent=unit==="kg"?"请输入大于 0、小于 5000 公斤的体重，精度为 0.005 公斤":"请输入大于 0、小于 10000 斤的体重，最多两位小数"; q("fatWeightError").hidden=false; return; }
       const savingMode=mode, auth=authVersion;
@@ -561,7 +577,6 @@
           if (result && hasDelta(result.delta_jin)) snapshot={configured:true,delta:Number(result.delta_jin),recordedAt:result.created_at,count:(snapshot?.count || 0)+1};
         }
         closeDialog();
-        if (savingMode==="starting") ui.setLayer(els.settingsLayer,true);
         const synced=await refresh({silent:true});
         await rewards?.refresh(true);
         if (state.overviewMode!=="closed" && active()) await loadLogs(true);
@@ -577,16 +592,6 @@
         saving=false; ui.setBusy(q("fatSaveWeight"),false); q("fatCancelWeight").disabled=false; q("fatWeightInput").disabled=false; syncUnits(); renderHome(); renderOverview();
       }
     }
-    const settingsObserver=new MutationObserver(() => {
-      if (els.settingsLayer.classList.contains("open")) {
-        if (verifiedAdmin) void loadSettings(false);
-      } else {
-        privateStartingWeight=null;
-        q("fatStartingWeightValue").textContent="点击查看";
-        if (mode!=="starting") secretVersion++;
-      }
-    });
-    settingsObserver.observe(els.settingsLayer,{attributes:true,attributeFilter:["class"]});
     q("fatStartingWeightBtn").addEventListener("click",()=>openDialog("starting"));
     document.querySelectorAll("[data-fat-unit]").forEach(button => button.addEventListener("click",()=>changeUnit(button.dataset.fatUnit)));
     q("fatRecordBtn").addEventListener("click",()=>openDialog("record"));
