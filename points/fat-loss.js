@@ -130,7 +130,7 @@
     const inputNumber = value => String(Number(displayWeight(value).toFixed(unit === "kg" ? 3 : 2)));
     const deltaNumber = value => `${value > 0 ? "+" : value < 0 ? "−" : ""}${number(value)}`;
     const difference = value => value < 0 ? `已减去 ${number(value)} ${unitName()}` : value > 0 ? `增加了 ${number(value)} ${unitName()}` : "与起始体重持平";
-    const stamp = value => new Intl.DateTimeFormat("zh-CN", { month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false }).format(new Date(value));
+    const stamp = value => Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat("zh-CN", { month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false }).format(new Date(value)) : "时间待同步";
     const active = () => state.activeMetric === "fat";
     const row = data => Array.isArray(data) ? data[0] : data;
     const hasDelta = value => value !== null && value !== undefined && Number.isFinite(Number(value));
@@ -203,6 +203,7 @@
       else { renderHome(); fitSettings(); }
     }
     function errorText(error, action="保存") {
+      if (window.PointsRuntime?.unknownWrite(error)) return window.PointsRuntime.uncertainMessage;
       const message = `${error?.code || ""} ${error?.message || ""}`;
       if (/42501|permission|admin|JWT/i.test(message)) return "管理员权限已失效，请重新登录";
       if (/Starting weight required/i.test(message)) return "请先在管理员设置中设置起始体重";
@@ -508,6 +509,10 @@
         if (version!==secretVersion || auth!==authVersion) return;
         if (forDialog) { q("fatWeightError").textContent=errorText(error); q("fatWeightError").hidden=false; }
         else q("fatStartingWeightValue").textContent="读取失败 · 点击重试";
+      } finally {
+        if (forDialog && version===secretVersion && auth===authVersion && mode==="starting") {
+          q("fatWeightInput").disabled=false; q("fatSaveWeight").disabled=false; syncUnits();
+        }
       }
     }
     function openDialog(nextMode) {
@@ -593,12 +598,14 @@
       if (event.key==="Escape" && dialog.classList.contains("open")) { event.stopImmediatePropagation(); event.preventDefault(); if (!saving) closeDialog(); }
     },true);
     async function manualRefresh() {
+      if (q("fatRefreshBtn").classList.contains("refreshing")) return;
       q("fatRefreshBtn").classList.add("refreshing");
+      try {
       const synced=await refresh({silent:false});
       await rewards?.refresh(true);
       if (state.overviewMode!=="closed") await loadLogs(true);
-      q("fatRefreshBtn").classList.remove("refreshing");
       if (synced) ui.showToast("已同步减脂记录");
+      } finally { q("fatRefreshBtn").classList.remove("refreshing"); }
     }
     q("fatRefreshBtn").addEventListener("click",()=>void manualRefresh());
     q("fatRefreshBtn").addEventListener("keydown",event=>{ if (["Enter"," "].includes(event.key)) { event.preventDefault(); void manualRefresh(); } });
@@ -616,7 +623,10 @@
     }
     window.addEventListener("resize",resizeOverview,{passive:true});
     window.visualViewport?.addEventListener("resize",resizeOverview,{passive:true});
-    if (window.PointsFatRewards) rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin});
+    try {
+      if (!window.PointsFatRewards) throw new Error("Rewards module missing");
+      rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin});
+    } catch (_) { window.PointsRuntime?.report("rewards"); }
     syncUnits(); adminRendered(); renderHome();
     return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight };
   }

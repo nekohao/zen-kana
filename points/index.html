@@ -6,6 +6,33 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
+<meta content="20261006.1" name="points-build"/>
+<script>
+  // Runs before dependencies: even a failed script has a visible recovery path.
+  (() => {
+    let ready = false, retry = null, reload = true, banner = null;
+    const show = (message, needsReload = false) => {
+      if (!banner) {
+        banner = document.createElement("div"); banner.id = "appRecovery";
+        banner.setAttribute("role", "status"); banner.setAttribute("aria-live", "polite");
+        banner.style.cssText = "position:fixed;z-index:9999;bottom:calc(env(safe-area-inset-bottom,0px) + 74px);left:16px;right:16px;max-width:550px;margin:auto;padding:10px 12px;border:1px solid #e8e5ec;border-radius:14px;background:#fff;color:#55515f;box-shadow:0 4px 18px #22222212;font:13px/1.5 system-ui;display:flex;align-items:center;justify-content:space-between;gap:12px";
+        const text = document.createElement("span"), button = document.createElement("button");
+        button.type = "button"; button.style.cssText = "flex-shrink:0;border:0;border-radius:9px;background:#f2eff5;color:#62596d;padding:7px 10px;font:inherit";
+        button.addEventListener("click", () => {
+          if (reload || !ready) { const url = new URL(location.href); url.searchParams.set("__app_refresh", Date.now()); location.replace(url.href); }
+          else void retry?.();
+        });
+        banner.append(text, button); (document.body || document.documentElement).append(banner);
+      }
+      banner.hidden = !message; banner.style.display = message ? "flex" : "none";
+      banner.firstChild.textContent = message; reload = needsReload;
+      banner.lastChild.textContent = reload || !ready ? "重新加载" : "重试同步";
+    };
+    const timer = setTimeout(() => { if (!ready) show("应用加载未完成，请重新加载", true); }, 8000);
+    window.PointsStartup = {show, ready(fn) {ready = true; retry = fn; clearTimeout(timer); show("");}};
+    window.addEventListener("error", event => { if (!ready && (event.error || event.target?.tagName === "SCRIPT")) show("应用加载失败，请重新加载", true); }, true);
+  })();
+</script>
 <script>
   (() => {
     const FINGERPRINT_KEY = "appRemoteHtmlFingerprintV1";
@@ -75,6 +102,11 @@
     }
 
     function reloadLatest(fingerprint) {
+      // A version check must not interrupt an edit or an unconfirmed write.
+      if (document.querySelector(".busy, .modal-layer.open")) {
+        window.PointsRuntime?.report("update");
+        return false;
+      }
       const guard = getReloadGuard();
       if (guard && guard.fingerprint === fingerprint && Date.now() - Number(guard.at || 0) < RELOAD_GUARD_MS) {
         return false;
@@ -88,15 +120,20 @@
     }
 
     async function fetchRemoteFingerprint() {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      try {
       const response = await fetch(pageUrl({ forCheck: true }).href, {
         cache: "no-store",
+        signal: controller.signal,
         credentials: "same-origin",
         headers: { "Cache-Control": "no-cache" }
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const html = await response.text();
-      if (!html || !/<html[\s>]/i.test(html)) throw new Error("Latest HTML response is invalid");
+      if (!html || !/<html[\s>]/i.test(html) || !/id=["']pointsApp["']/.test(html)) throw new Error("Latest HTML response is invalid");
       return sha256Hex(html);
+      } finally { clearTimeout(timer); }
     }
 
     async function checkForHtmlUpdate({ force = false } = {}) {
@@ -2899,9 +2936,10 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 </div>
 <div aria-live="polite" class="toast glass" id="toast" role="status"></div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./fat-rewards.js?v=20261005.5"></script>
-<script src="./fat-loss.js?v=20261005.5"></script>
+<script src="./app-runtime.js?v=20261006.1"></script>
+<script src="./vendor/supabase-2.117.2.js"></script>
+<script src="./fat-rewards.js?v=20261006.1"></script>
+<script src="./fat-loss.js?v=20261006.1"></script>
 <script>
     (() => {
       "use strict";
@@ -2914,17 +2952,20 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       const SUPABASE_URL = "https://zrzplqwauuruyssgcwqt.supabase.co";
       const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_YENvfSv64ZLopoXrXNNbqw_se6XJYs3";
 
-      const db = window.supabase.createClient(
+      const runtime = window.PointsRuntime;
+      const db = runtime.protectClient(window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_PUBLISHABLE_KEY,
         {
           auth: {
             persistSession: true,
             autoRefreshToken: true,
-            detectSessionInUrl: true
-          }
+            detectSessionInUrl: true,
+            lockAcquireTimeout: 10000
+          },
+          global: {fetch: runtime.fetchWithDeadline}
         }
-      );
+      ));
 
       const $ = (selector) => document.querySelector(selector);
       const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -3275,6 +3316,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       function formatTime(iso) {
+        if (!Number.isFinite(Date.parse(iso))) return "时间待同步";
         return new Intl.DateTimeFormat("zh-CN", {
           hour: "2-digit",
           minute: "2-digit",
@@ -3283,6 +3325,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       function formatDateShort(iso) {
+        if (!Number.isFinite(Date.parse(iso))) return "日期待同步";
         return new Intl.DateTimeFormat("zh-CN", {
           month: "numeric",
           day: "numeric"
@@ -3511,8 +3554,9 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       function switchMetric(nextMetric) {
-        if (!["score", "wheel"].includes(nextMetric) || nextMetric === state.activeMetric) return;
-        if (state.wheelSpinning) {
+        if (!["score", "wheel"].includes(nextMetric)) return;
+        if (nextMetric === state.activeMetric && !els.home?.classList.contains("metric-fading-out")) return;
+        if (state.wheelSpinning || state.wheelRequestInFlight) {
           showToast("🎠 转盘还在转呀，等它停稳一下 ♡");
           return;
         }
@@ -3584,46 +3628,59 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       // -------------------- Supabase read/auth --------------------
+      let appReadPromise = null;
       async function loadAppState({ silent = false } = {}) {
-        if (state.refreshInFlight) return;
+        if (appReadPromise) return appReadPromise;
         state.refreshInFlight = true;
+        appReadPromise = (async () => {
         try {
           const [scoreRes, wheelRes] = await Promise.all([
             db.rpc("points_get_state"),
             db.rpc("points_get_wheel_state")
           ]);
-          if (scoreRes.error) throw scoreRes.error;
-          if (wheelRes.error) throw wheelRes.error;
-
           const row = Array.isArray(scoreRes.data) ? scoreRes.data[0] : scoreRes.data;
           const wheelRow = Array.isArray(wheelRes.data) ? wheelRes.data[0] : wheelRes.data;
-          if (!row || typeof row.score !== "number") throw new Error("未读取到积分数据");
-
+          if (!scoreRes.error && row && Number.isFinite(row.score)) {
           state.score = Number(row.score);
           state.updatedAt = row.updated_at ?? null;
+          }
+          if (!wheelRes.error && wheelRow) {
           state.wheelChances = Number(wheelRow?.spin_chances ?? 0);
           state.wheelCashBalance = Number(wheelRow?.cash_balance ?? 0);
           state.wheelUpdatedAt = wheelRow?.updated_at ?? null;
+          }
           if (els.adjustWheelChancesMeta) els.adjustWheelChancesMeta.textContent = `当前 ${Math.max(0, state.wheelChances)} 次`;
           renderPrimaryMetric();
+          if (scoreRes.error) throw scoreRes.error;
+          if (wheelRes.error) throw wheelRes.error;
+          if (!row || !Number.isFinite(row.score)) throw new Error("未读取到积分数据");
           markRefreshed();
+          return true;
         } catch (err) {
           console.error("loadAppState:", err);
           if (!silent) showToast("读取数据失败");
+          return false;
         } finally {
           state.refreshInFlight = false;
+          appReadPromise = null;
         }
+        })();
+        return appReadPromise;
       }
 
+      let authReadVersion = 0;
       async function refreshAuthState() {
+        const version = ++authReadVersion;
         try {
           const { data, error } = await db.auth.getSession();
+          if (version !== authReadVersion) return;
           if (error) throw error;
           state.session = data.session;
           state.isAdmin = false;
 
           if (state.session) {
             const { data: adminData, error: adminError } = await db.rpc("points_is_admin");
+            if (version !== authReadVersion) return;
             if (adminError) console.error("points_is_admin:", adminError);
             else state.isAdmin = adminData === true;
           }
@@ -3631,6 +3688,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           renderAdminState();
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
+          if (version !== authReadVersion) return;
           console.error("refreshAuthState:", err);
           state.session = null;
           state.isAdmin = false;
@@ -3753,6 +3811,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           showToast(delta > 0 ? "🎟️ 已增加 1 次正式机会" : "🎟️ 已减少 1 次正式机会");
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("confirmWheelAdjust:", err);
           const message = String(err?.message || "");
           if (/negative/i.test(message)) showToast("正式机会最低为 0 次");
@@ -3805,6 +3864,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           showToast(delta > 0 ? `已增加 ${delta} 分` : `已减少 ${Math.abs(delta)} 分`);
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("confirmChange:", err);
           const message = String(err?.message || "");
           if (/permission|admin/i.test(message)) {
@@ -3904,7 +3964,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       function shopMissingError(err) {
-        return /PGRST202|schema cache|Could not find|points_shop_.*_v2|points_shop_/i.test(`${err?.code || ""} ${err?.message || ""} ${err?.details || ""}`);
+        return /^(PGRST202|42883)$/.test(err?.code || "") || /schema cache|Could not find|function .*does not exist/i.test(`${err?.message || ""} ${err?.details || ""}`);
       }
 
       function shopInventoryCount() {
@@ -4066,7 +4126,9 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       async function openShop(view="products") {
         if (state.isAdmin) return showToast("管理员模式不参与游客积分商城兑换");
         state.shopView = view === "inventory" ? "inventory" : "products";
-        await loadAppState({silent:true}); await loadShopState({silent:true}); renderShop(); setLayer(els.redeemLayer,true);
+        renderShop(); setLayer(els.redeemLayer,true);
+        await Promise.all([loadAppState({silent:true}), loadShopState({silent:true})]);
+        if (!state.isAdmin && els.redeemLayer.classList.contains("open")) renderShop();
       }
 
       function openShopItemDetail(code) {
@@ -4106,6 +4168,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           const grant=String(result?.granted_item_code||"");
           if(grant) openMysteryReveal(grant); else showToast("本周免费盲盒已领取 ✦");
         } catch(err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("claimWeeklyMysteryGift:",err);
           const msg=String(err?.message||"");
           if(/already claimed/i.test(msg)) { await loadShopState({silent:true}); renderShop(); showToast("本周免费盲盒已经领取啦 ♡"); }
@@ -4142,6 +4205,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           const grant=String(result?.granted_item_code||"");
           if(grant) openMysteryReveal(grant);
         } catch(err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("openBackpackMysteryBox:",err);
           if(shopMissingError(err)) showToast("请先运行最新商城数据库更新 SQL");
           else showToast(/No .*mystery box/i.test(String(err?.message||""))?"背包里已经没有这个盲盒啦":"盲盒开启失败，请稍后再试");
@@ -4218,6 +4282,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           setLayer(els.adminInventoryAdjustLayer,false); renderAdminInventory(); vibrate(14);
           showToast(delta>0?`已发放 ${item.name} ×${delta}`:`已回收 ${item.name} ×${Math.abs(delta)}`);
         } catch(err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("saveAdminInventoryAdjust:",err);
           showToast(shopMissingError(err)?"请先运行最新商城数据库更新 SQL":"道具调整失败");
         } finally { setBusy(els.adminInventoryAdjustConfirmBtn,false); }
@@ -4264,6 +4329,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           else { vibrate(18); showToast(item.immediate?`兑换成功 · ${item.name}已到账 ✦`:`兑换成功 · ${item.name}已加入我的道具 ✦`); }
           if(state.overviewMode!=="closed") await loadOverviewData(true);
         } catch(err){
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("purchaseShopItem:",err); const msg=String(err?.message||"");
           if(/SHOP_V2_SQL_REQUIRED|points_shop_/i.test(msg)) showToast("请先运行积分商城 v3 数据库迁移 SQL");
           else if(/Insufficient score/i.test(msg)){await loadAppState({silent:true});renderShop();showToast("积分不够啦，再攒一点点 ♡");}
@@ -4360,6 +4426,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           await prepareSpinSelection({oneShot,wishTarget:state.wheelToolWishTarget,usePotion,useChallenge});
           setLayer(els.wheelToolLayer,false); await loadShopState({silent:true}); await performFormalWheelSpin();
         } catch(err){
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("confirmWheelToolChoice:",err); const msg=String(err?.message||"");
           if(/No10 cannot stack/i.test(msg)) showToast("十元退散和百元幸运药水不能同时使用");
           else showToast(shopMissingError(err)?"商城 v2 数据库尚未启用":"道具暂时没有准备好，请再试一次");
@@ -4604,9 +4671,13 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
       async function openWheelProbabilitySettings() {
         if (!state.isAdmin) return showToast("这个入口只有管理员可以使用");
-        setLayer(els.settingsLayer, false);
+        setBusy(els.openWheelProbabilityBtn, true);
+        try {
         const ok = await loadAdminWheelProbability();
-        if (ok) setLayer(els.wheelProbabilityLayer, true);
+        if (ok && state.isAdmin && els.settingsLayer.classList.contains("open")) {
+          setLayer(els.settingsLayer, false); setLayer(els.wheelProbabilityLayer, true);
+        }
+        } finally { setBusy(els.openWheelProbabilityBtn, false); }
       }
 
       function buildWheelProbabilityBasisPoints(values) {
@@ -4899,7 +4970,8 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         const actualDuration = reduced ? 0 : duration;
         if (!actualDuration) { renderWheelVisualFrame(targetP); return; }
         els.wheelDisk?.classList.add("probability-morphing");
-        await new Promise(resolve => {
+        let frameId = 0;
+        try { await runtime.bounded(() => new Promise(resolve => {
           const started = performance.now();
           const frame = now => {
             const raw = Math.min(1, (now - started) / actualDuration);
@@ -4909,11 +4981,12 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
               current[amount] = startP[amount] + (targetP[amount] - startP[amount]) * t;
             });
             renderWheelVisualFrame(current);
-            if (raw < 1) requestAnimationFrame(frame);
+            if (raw < 1) frameId = requestAnimationFrame(frame);
             else resolve();
           };
-          requestAnimationFrame(frame);
-        });
+          frameId = requestAnimationFrame(frame);
+        }), actualDuration + 1500); }
+        catch (_) { cancelAnimationFrame(frameId); }
         els.wheelDisk?.classList.remove("probability-morphing");
         renderWheelVisualFrame(targetP);
       }
@@ -4980,7 +5053,8 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
             easing: "cubic-bezier(.12,.66,.12,1)",
             fill: "forwards"
           });
-          await animation.finished.catch(() => {});
+          try { await runtime.bounded(() => animation.finished, duration + 2000); }
+          catch (_) { /* Finish at the server's confirmed result after an interrupted animation. */ }
           els.wheelDisk.style.transform = `rotate(${target}deg)`;
           animation.cancel();
           state.wheelRotation = target;
@@ -5129,6 +5203,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("resolvePendingWheelDecision:", err);
           showToast(shopMissingError(err) ? "请先运行积分商城 v2 数据库迁移 SQL" : "这次决定没有保存成功，请再试一次");
           await loadShopState({ silent: true });
@@ -5190,6 +5265,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           if (state.wheelVisualRestorePending) restoreWheelVisualProfile();
           console.error("performFormalWheelSpin:", err); const message = String(err?.message || "");
           if (/Pending spin/i.test(message)) { await loadShopState({ silent: true }); if (state.shopPendingSpin) openPendingDecision(state.shopPendingSpin); }
@@ -5215,6 +5291,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           await silentSyncAfterWheelSpin();
           showWheelResult({ prize, preview: true });
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("performPreviewWheelSpin:", err);
           showToast(/PGRST202|schema cache|Could not find/i.test(String(err?.message || ""))
             ? "请先运行 v2.0 数据库迁移 SQL"
@@ -5256,6 +5333,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           showToast(`💰 已提交 ¥${amount} 提现申请，等待管理员兑现`);
           await loadOverviewData(true);
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("performWheelWithdraw:", err);
           const message = String(err?.message || "");
           if (/exceeds cash balance/i.test(message)) {
@@ -5297,6 +5375,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           showToast("✅ 已确认兑现，游客会在历史中看到到账提醒");
           await loadOverviewData(true);
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("settleWithdrawal:", err);
           const message = String(err?.message || "");
           if (/already settled/i.test(message)) showToast("这笔提现已经兑现");
@@ -5559,12 +5638,14 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       function drawTrend(points) {
         const canvas = els.trendCanvas;
         const rect = canvas.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return;
         const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
 
         canvas.width = Math.round(rect.width * dpr);
         canvas.height = Math.round(rect.height * dpr);
 
         const ctx = canvas.getContext("2d");
+        if (!ctx) return;
         ctx.setTransform(dpr,0,0,dpr,0,0);
         ctx.clearRect(0,0,rect.width,rect.height);
 
@@ -6039,6 +6120,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
             ? `↩️ 已取消 ¥${amount} 提现，金额已退回可提现余额`
             : "记录已删除");
         } catch (err) {
+          if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
           console.error("manageWheelHistoryRecord:", err);
           const diagnostic = `${err?.code || ""} ${err?.message || ""} ${err?.details || ""}`;
           if (/PGRST202|schema cache|Could not find|points_admin_manage_wheel_record/i.test(diagnostic)) {
@@ -6399,6 +6481,42 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       // -------------------- Events --------------------
+      const runningActions = new Set();
+      let wheelRequests = 0;
+      function guardAction(action, key, wheel = false) {
+        return async (...args) => {
+          if (runningActions.has(key)) return;
+          runningActions.add(key);
+          if (wheel) { wheelRequests++; state.wheelRequestInFlight = true; setBusy(els.spinWheelActionBtn, true); }
+          try { return await action(...args); }
+          catch (error) {
+            console.error("actionFailed:", key, error?.code || error?.name || "Error");
+            showToast("操作未完成，请检查网络后重试");
+          } finally {
+            runningActions.delete(key);
+            if (wheel) { wheelRequests--; state.wheelRequestInFlight = wheelRequests > 0; setBusy(els.spinWheelActionBtn, state.wheelRequestInFlight); }
+          }
+        };
+      }
+      login = guardAction(login, "login");
+      logout = guardAction(logout, "logout");
+      confirmChange = guardAction(confirmChange, "score-change");
+      confirmWheelAdjust = guardAction(confirmWheelAdjust, "wheel-adjust");
+      purchaseShopItem = guardAction(purchaseShopItem, "shop-purchase");
+      claimWeeklyMysteryGift = guardAction(claimWeeklyMysteryGift, "weekly-gift");
+      openBackpackMysteryBox = guardAction(openBackpackMysteryBox, "mystery-open");
+      saveAdminInventoryAdjust = guardAction(saveAdminInventoryAdjust, "inventory-adjust");
+      resolvePendingWheelDecision = guardAction(resolvePendingWheelDecision, "wheel-decision", true);
+      performFormalWheelSpin = guardAction(performFormalWheelSpin, "wheel-spin", true);
+      performPreviewWheelSpin = guardAction(performPreviewWheelSpin, "wheel-spin", true);
+      spinWithoutNewTool = guardAction(spinWithoutNewTool, "wheel-preparation", true);
+      confirmWheelToolChoice = guardAction(confirmWheelToolChoice, "wheel-preparation", true);
+      triggerWheelFromActionButton = guardAction(triggerWheelFromActionButton, "wheel-trigger", true);
+      performWheelWithdraw = guardAction(performWheelWithdraw, "withdrawal");
+      settleWithdrawal = guardAction(settleWithdrawal, "settlement");
+      manageWheelHistoryRecord = guardAction(manageWheelHistoryRecord, "history-manage");
+      saveWheelProbability = guardAction(saveWheelProbability, "probability-save");
+      openWheelProbabilitySettings = guardAction(openWheelProbabilitySettings, "probability-open");
       els.settingsBtn.addEventListener("click", () => {
         vibrate();
         setLayer(els.settingsLayer, true);
@@ -6463,9 +6581,9 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         vibrate(10);
         els.scoreRefreshBtn.classList.add("refreshing");
         try {
-          await loadAppState({ silent: false });
+          const synced = await loadAppState({ silent: false });
           if (state.overviewMode !== "closed") await loadOverviewData(true);
-          showToast("已同步最新数据");
+          if (synced) showToast("已同步最新数据");
         } finally {
           setTimeout(() => els.scoreRefreshBtn.classList.remove("refreshing"), 650);
         }
@@ -6481,7 +6599,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 
       els.metricSwitch.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-metric]");
-        if (!btn || btn.dataset.metric === state.activeMetric) return;
+        if (!btn) return;
         vibrate(7); switchMetric(btn.dataset.metric);
       });
 
@@ -6736,14 +6854,21 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         if (els.overview.classList.contains("open")) drawTrend(buildTrendPoints(state.trendRange));
       });
       db.auth.onAuthStateChange((_event, session) => {
+        const previous = state.session?.user?.id || null;
         state.session = session;
+        if (_event !== "INITIAL_SESSION" && previous !== (session?.user?.id || null)) {
+          authReadVersion++;
+          state.isAdmin = false;
+          renderAdminState();
+          // Auth callbacks run under the SDK lock; verify only after the callback returns.
+          setTimeout(() => void refreshAuthState(), 0);
+        }
       });
 
       // -------------------- Boot --------------------
 
       async function periodicDatabaseRefresh() {
-        await loadAppState({ silent: true });
-        await loadShopState({ silent: true });
+        await Promise.all([loadAppState({silent:true}), loadShopState({silent:true}), refreshAuthState()]);
         if (!state.isAdmin) await refreshGuestGrantNotice();
         if (els.overview.classList.contains("open")) {
           await loadOverviewData(true);
@@ -6751,7 +6876,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
       }
 
       async function boot() {
-        await Promise.all([
+        await Promise.allSettled([
           loadAppState(),
           refreshAuthState(),
           loadShopState({ silent: true })
@@ -6760,21 +6885,29 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         if (state.isAdmin) await loadAdminInventory({silent:true});
         else await refreshGuestGrantNotice();
 
-        setInterval(periodicDatabaseRefresh, 30 * 60 * 1000);
+      }
+
+        let resumePromise = null;
+        function resumeDatabaseRefresh() {
+          if (document.hidden || resumePromise) return resumePromise;
+          resumePromise = periodicDatabaseRefresh().catch(() => runtime.report("recovery")).finally(() => {resumePromise = null;});
+          return resumePromise;
+        }
+        setInterval(resumeDatabaseRefresh, 30 * 60 * 1000);
 
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState !== "visible") return;
           const last = state.lastRefreshAt instanceof Date ? state.lastRefreshAt.getTime() : 0;
           const elapsed = Date.now() - last;
-          if (!last || elapsed >= 30 * 60 * 1000) periodicDatabaseRefresh();
+          if (!last || elapsed >= 60 * 1000) void resumeDatabaseRefresh();
         });
 
-        window.addEventListener("pageshow", () => {
+        window.addEventListener("pageshow", event => {
           const last = state.lastRefreshAt instanceof Date ? state.lastRefreshAt.getTime() : 0;
           const elapsed = Date.now() - last;
-          if (!last || elapsed >= 30 * 60 * 1000) periodicDatabaseRefresh();
+          if (event.persisted || !last || elapsed >= 60 * 1000) void resumeDatabaseRefresh();
         });
-      }
+        window.addEventListener("online", () => void resumeDatabaseRefresh());
 
 
       // Additive adapter: preserve the original implementations and extend their results.
@@ -6808,18 +6941,20 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
         const originalSwitchMetric = switchMetric;
         switchMetric = nextMetric => {
           if (nextMetric !== "fat") return originalSwitchMetric(nextMetric);
-          if (state.wheelSpinning) return showToast("转盘还在转，请等它停稳再切换");
+          if (state.wheelSpinning || state.wheelRequestInFlight) return showToast("转盘正在处理，请稍后再切换");
           ++metricSwitchToken; clearTimeout(metricSwitchTimer); clearTimeout(metricSwitchInTimer);
           els.home?.classList.remove("metric-fading-out","metric-fading-in");
           fatModule.activate();
         };
         const originalLoadAppState = loadAppState;
         loadAppState = async options => {
-          await originalLoadAppState(options);
-          await fatModule.refresh({silent:options?.silent ?? true});
-          if (state.activeMetric === "fat" && state.overviewMode !== "closed") await fatModule.loadLogs(true);
+          void fatModule.refresh({silent:options?.silent ?? true});
+          if (state.activeMetric === "fat" && state.overviewMode !== "closed") void fatModule.loadLogs(true);
+          return originalLoadAppState(options);
         };
-        } catch (_) {
+        } catch (error) {
+          console.error("fatModuleInitialization:", error?.name || "Error");
+          runtime.report("fat");
           // Keep the original modules usable if this optional module cannot initialize.
           document.querySelector('[data-metric="fat"]')?.remove();
           document.querySelector('.fat-home-content')?.remove();
@@ -6830,9 +6965,10 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
           els.home?.classList.remove("fat-active");
           els.metricSwitch?.classList.remove("fat-switch-active");
         }
-      }
+      } else runtime.report("fat");
 
-      boot();
+      runtime.ready(() => resumeDatabaseRefresh());
+      void boot().catch(() => runtime.report("startup"));
     })();
   </script>
 </body>

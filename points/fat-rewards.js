@@ -8,7 +8,7 @@
     const active = () => state.activeMetric === "fat";
     const role = () => isAdmin() ? `admin:${state.session?.user?.id}` : state.session ? "verifying" : "guest";
     const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    const stamp = value => value ? new Intl.DateTimeFormat("zh-CN", {timeZone:"Asia/Shanghai", month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false}).format(new Date(value)) : "—";
+    const stamp = value => Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat("zh-CN", {timeZone:"Asia/Shanghai", month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false}).format(new Date(value)) : "—";
     const change = value => value === null || value === undefined ? "暂无对比" : Number(value) === 0 ? "均重持平" : `均重${Number(value) < 0 ? "下降" : "上升"} ${Math.abs(Number(value)) < .01 ? "不足 0.01" : Math.abs(Number(value)).toFixed(2)} 斤`;
     const signed = value => `${Number(value) > 0 ? "+" : ""}${value}`;
     const referenceLabel = week => week.comparison_basis === "starting_weight"
@@ -150,7 +150,7 @@
         ui.vibrate(12);
       } catch (e) {
         // Definitive business errors did not commit. Ambiguous network errors retain the UUID, even across reloads.
-        if (op && e?.code && !/^(08|PGRST00)/.test(e.code)) clearOperation(op);
+        if (op && e?.code && !/^(08|PGRST00|APP_)/.test(e.code)) clearOperation(op);
         if (mutationVersion === generation) { error = describeError(e); confirmation = null; }
       } finally {
         busy = false; render();

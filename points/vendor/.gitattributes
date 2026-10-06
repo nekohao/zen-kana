@@ -1,0 +1,3 @@
+# Preserve the verified upstream bytes across Windows/Linux checkouts.
+supabase-*.js -text -whitespace
+SUPABASE-LICENSE -text
