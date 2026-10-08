@@ -5,7 +5,7 @@
   function attach({state,els,switchMetric}) {
     const card=els.overviewBtn, app=document.getElementById('pointsApp');
     const metrics=['score','wheel','fat'];
-    let drag=null, suppressUntil=0, frame=0;
+    let drag=null, suppressUntil=0;
     card.insertAdjacentHTML('beforeend','<span class="overview-swipe-hint" aria-hidden="true">左右滑动切换</span>');
     card.querySelector('svg')?.before(card.querySelector('.overview-swipe-hint'));
     card.setAttribute('aria-description','点击查看总览；在此处左右滑动可切换分数、大转盘和减脂。');
@@ -63,15 +63,6 @@
       if(card.contains(e.target) && e.detail!==0 && performance.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation();}
     },true);
     document.addEventListener('visibilitychange',()=>{if(document.hidden)reset();});
-    function fitViewport() {
-      cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{
-        if(document.activeElement?.matches('input,textarea,select'))return;
-        const height=window.visualViewport?.height || window.innerHeight;
-        if(height>0)app.style.setProperty('--app-height',`${Math.round(height)}px`);
-      });
-    }
-    window.addEventListener('resize',fitViewport);window.addEventListener('pageshow',fitViewport);
-    window.visualViewport?.addEventListener('resize',fitViewport);
-    document.addEventListener('focusout',fitViewport);fitViewport();
+
   }
 })();
