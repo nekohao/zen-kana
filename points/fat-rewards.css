@@ -43,3 +43,55 @@
 .fat-reward-layer button:focus-visible, .fat-reward-grabber:focus-visible, .fat-service-notice:focus-visible { outline:2px solid #638171; outline-offset:3px; }
 @media (max-width:350px) { .fat-reward-button { padding:8px 10px; } }
 @media (prefers-reduced-motion:reduce) { .fat-reward-layer, #fatRewardLayer .fat-reward-sheet { transition:none!important; } }
+
+/* Compact diamond shop: show secondary information on request. */
+#pointsApp #fatRewardLayer .fat-reward-header { min-height:58px; margin-bottom:0; padding-bottom:12px; }
+#pointsApp #fatRewardLayer .fat-reward-wallet { display:flex; flex-direction:column; align-items:center; gap:7px; padding:20px 0 22px; }
+#pointsApp #fatRewardLayer .fat-reward-wallet > strong { display:flex; align-items:center; gap:10px; max-width:100%; overflow-wrap:anywhere; color:var(--ui-accent,#567c67); font-size:42px; font-weight:650; line-height:1.1; font-variant-numeric:tabular-nums; }
+#pointsApp #fatRewardLayer .fat-reward-wallet > strong > span { display:flex; flex-shrink:0; }
+#pointsApp #fatRewardLayer .fat-reward-wallet svg { width:27px; height:27px; }
+#pointsApp #fatRewardLayer .fat-reward-wallet > span { color:var(--ui-muted,#75887b); font-size:12px; }
+#pointsApp #fatRewardLayer .fat-reward-tabs { width:100%; height:38px; margin:0 0 20px; }
+#pointsApp #fatRewardLayer .shop-tab { display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; }
+#pointsApp #fatRewardLayer .fat-reward-tab-count { min-width:18px; padding:2px 5px; border-radius:6px; background:#567c6710; color:var(--ui-accent,#567c67); font-size:10px; line-height:1.2; }
+#pointsApp #fatRewardLayer .fat-reward-product { padding:22px; border:1px solid var(--ui-line,#567c6718); border-radius:22px; background:linear-gradient(145deg,#fff,#f1f7f2); }
+#pointsApp #fatRewardLayer .fat-reward-product-top { display:flex; align-items:center; gap:16px; }
+#pointsApp #fatRewardLayer .fat-reward-product-art { width:64px; height:64px; flex-shrink:0; display:grid; place-items:center; border-radius:20px; background:linear-gradient(135deg,#e4f0e7,#f4f8ef); color:var(--ui-accent,#567c67); }
+#pointsApp #fatRewardLayer .fat-reward-product-art svg { width:33px; height:33px; }
+#pointsApp #fatRewardLayer .fat-reward-product-copy { min-width:0; }
+#pointsApp #fatRewardLayer .fat-reward-product h3 { margin:0; color:var(--ink); font-size:21px; font-weight:650; line-height:1.3; }
+#pointsApp #fatRewardLayer .fat-reward-product p { margin:7px 0 0; color:var(--secondary); font-size:12px; line-height:1.5; }
+#pointsApp #fatRewardLayer .fat-reward-product-bottom { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:23px; }
+#pointsApp #fatRewardLayer .fat-reward-product-bottom > strong { color:var(--ui-accent,#567c67); font-size:20px; font-weight:650; white-space:nowrap; }
+#pointsApp #fatRewardLayer .fat-reward-product-bottom > strong > span { margin-left:3px; color:var(--ui-muted,#75887b); font-size:11px; font-weight:450; }
+#pointsApp #fatRewardLayer .fat-reward-product .fat-reward-button { min-width:94px; min-height:42px; padding:10px 14px; border:0; background:var(--ui-accent,#567c67)!important; color:white!important; border-radius:13px; font-size:14px; font-weight:600; }
+#pointsApp #fatRewardLayer .fat-reward-progress-link { width:100%; min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; padding:12px 4px 6px; border:0; background:transparent; text-align:left; color:var(--secondary); font-size:12px; line-height:1.5; }
+#pointsApp #fatRewardLayer .fat-reward-progress-link > span:last-child { flex-shrink:0; color:var(--ui-accent,#567c67); }
+#pointsApp #fatRewardLayer .fat-reward-progress-link > span:last-child span { margin-left:4px; font-size:19px; }
+#pointsApp #fatRewardLayer .fat-reward-back { padding:6px 0; border:0; background:none; color:var(--ui-accent,#567c67); font-size:13px; }
+#pointsApp #fatRewardLayer .fat-reward-detail-title { margin:13px 0 18px; font-size:19px; font-weight:650; }
+#pointsApp #fatRewardLayer .fat-reward-stat-list { margin:17px 0 0; font-size:12px; }
+#pointsApp #fatRewardLayer .fat-reward-stat-list > div { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp #fatRewardLayer .fat-reward-stat-list dt { color:var(--secondary); flex-shrink:0; }
+#pointsApp #fatRewardLayer .fat-reward-stat-list dd { margin:0; color:var(--ink); text-align:right; }
+#pointsApp #fatRewardLayer .fat-reward-detail-links { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:18px 0 4px; }
+#pointsApp #fatRewardLayer .fat-reward-detail-links button { min-height:44px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 13px; border:1px solid var(--ui-line,#567c6718); border-radius:13px; background:#ffffff80; color:var(--ui-accent,#567c67); font-size:12px; }
+#pointsApp #fatRewardLayer .fat-reward-history { margin:10px 0; }
+#pointsApp #fatRewardLayer .fat-reward-history > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; }
+#pointsApp #fatRewardLayer .fat-reward-history > summary small { display:block; margin-top:4px; color:var(--tertiary); font-size:10px; font-weight:450; }
+#pointsApp #fatRewardLayer .fat-reward-history > summary strong { color:var(--ui-accent,#567c67); font-size:16px; white-space:nowrap; }
+#pointsApp #fatRewardLayer .fat-reward-history-detail { margin-top:12px; padding-top:8px; border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp #fatRewardLayer .fat-reward-inventory { margin:4px 0 16px; }
+#pointsApp #fatRewardLayer .fat-reward-service-head { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+#pointsApp #fatRewardLayer .fat-reward-service-head h3 { margin:0; }
+#pointsApp #fatRewardLayer .fat-reward-service-head .fat-reward-status { padding:4px 8px; border-radius:7px; background:var(--ui-wash,#edf5ef); font-size:11px; }
+#pointsApp #fatRewardLayer .fat-reward-service-times { margin-top:14px; padding-top:10px; border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp #fatRewardLayer .fat-reward-service-times > summary { color:var(--tertiary); font-size:11px; font-weight:450; cursor:pointer; }
+#pointsApp #fatRewardLayer .fat-reward-service-history { margin:20px 0 8px; }
+#pointsApp #fatRewardLayer .fat-reward-service-history > summary { padding:6px 0; color:var(--secondary); font-size:12px; cursor:pointer; }
+@media (max-width:350px) {
+  #pointsApp #fatRewardLayer .fat-reward-product { padding:17px; }
+  #pointsApp #fatRewardLayer .fat-reward-product-top { gap:12px; }
+  #pointsApp #fatRewardLayer .fat-reward-product-art { width:54px; height:54px; }
+  #pointsApp #fatRewardLayer .fat-reward-product .fat-reward-button { min-width:82px; }
+}
