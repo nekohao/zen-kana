@@ -4037,6 +4037,7 @@
           refreshAuthState=async (...args)=>{await previousAuthRead(...args);kitchen.roleChanged(true);};
         } catch(error) {console.error('kitchenInitialization:',error?.name);runtime.report('kitchen');}
       } else runtime.report('kitchen');
+      window.PointsHomeGestures?.attach({state,els,switchMetric:next=>switchMetric(next)});
       runtime.ready(() => resumeDatabaseRefresh());
       void boot().catch(() => runtime.report("startup"));
     })();

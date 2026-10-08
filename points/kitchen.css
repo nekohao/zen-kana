@@ -159,3 +159,26 @@ button.kitchen-card { display:block; width:100%; color:inherit; }
   #pointsApp > .home .metric-switch { margin-bottom:8px; }
   #pointsApp > .home .metric-action-slot { margin-top:10px; }
 }
+/* The navigation owns the safe area exactly once, and is part of the app grid. */
+#pointsApp:has(> .app-nav) { position:fixed; inset:0; width:100%; height:var(--app-height,100dvh)!important; display:grid; grid-template-rows:minmax(0,1fr) auto; }
+#pointsApp > .home { grid-area:1 / 1; height:100%!important; padding-bottom:14px!important; }
+#pointsApp > #kitchenPage { position:relative; inset:auto; grid-area:1 / 1; width:min(100%,620px); height:100%; min-height:0; padding-bottom:20px; }
+#pointsApp > .app-nav { position:relative; inset:auto; grid-area:2 / 1; height:calc(52px + env(safe-area-inset-bottom,0px)); padding:3px max(20px,calc((100vw - 620px)/2)) env(safe-area-inset-bottom,0px); background:#f8f7f9; border-top:1px solid #e9e7eb; backdrop-filter:none; -webkit-backdrop-filter:none; }
+.app-nav button { gap:3px; font-size:10px; }
+.app-nav svg { width:24px; height:24px; }
+#pointsApp .overview-button { position:relative; touch-action:pan-y; overflow:hidden; transition:background .18s ease; }
+#pointsApp .home .overview-button:active { transform:none!important; }
+#pointsApp .overview-button > span:first-child { flex-shrink:0; transform:none; }
+.overview-swipe-hint { transform:translateX(var(--swipe-x,0px)); transition:transform .16s ease; margin-left:auto; margin-right:12px; font-size:10px; font-weight:450; color:#aaa4ae; }
+#pointsApp .overview-button.swipe-dragging .overview-swipe-hint { transition:none; }
+#pointsApp .overview-button.swipe-ready { background:var(--ui-wash)!important; }
+#pointsApp .overview-button.swipe-ready .overview-swipe-hint { color:var(--ui-accent); }
+.kitchen-meal-fields { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 18px; }
+.kitchen-meal-fields label { display:grid; gap:7px; font-size:12px; color:var(--kitchen-muted); }
+.kitchen-meal-fields input,.kitchen-meal-fields select,.kitchen-custom-row input { width:100%; min-width:0; min-height:44px; padding:10px; border:1px solid #e8e1d8; border-radius:11px; background:#fff; color:#524b44; font:13px system-ui; }
+.kitchen-custom-row { display:flex; gap:8px; margin:15px 0; }
+.kitchen-custom-row .kitchen-button { flex-shrink:0; }
+.kitchen-origin { display:inline-block; padding:3px 7px; border-radius:6px; font-size:10px; background:#eef4ec; color:#738568; margin:0 0 8px; }
+.kitchen-dish-fallback { display:grid; place-items:center; width:100%; aspect-ratio:3/2; background:linear-gradient(140deg,#f2e8db,#faf7ef); color:#ae9476; font-size:26px; }
+.kitchen-order-dish .kitchen-dish-fallback,.kitchen-selected-head .kitchen-dish-fallback { width:58px; height:48px; aspect-ratio:auto; flex-shrink:0; border-radius:10px; font-size:20px; }
+@media(prefers-reduced-motion:reduce) { #pointsApp .overview-swipe-hint { transition:none; } }
