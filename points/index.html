@@ -6,15 +6,16 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261008.1" name="points-build"/>
+<meta content="20261008.2" name="points-build"/>
 <script>
   // No parser-blocking dependencies. Failed startup can be retried in this WebView.
   (() => {
-    const BUILD = "20261008.1", TIMEOUT = 10000;
+    const BUILD = "20261008.2", TIMEOUT = 10000;
     const assets = [
       ["runtime","app-runtime.js",true], ["sdk","vendor/supabase-2.117.2.js",true],
       ["fat-style","fat-loss.css",false], ["reward-style","fat-rewards.css",false],
-      ["theme-style","ui-theme.css",false], ["fat","fat-loss.js",false],
+      ["theme-style","ui-theme.css",false], ["kitchen-style","kitchen.css",false],
+      ["kitchen-catalog","kitchen-recipes.js",false], ["kitchen","kitchen.js",false], ["fat","fat-loss.js",false],
       ["rewards","fat-rewards.js",false], ["theme","ui-theme.js",false], ["app","app.js",true]
     ];
     const sources = new Map(), executed = new Set();
@@ -107,7 +108,8 @@
         const missing = assets.filter((asset, i) => results[i].status === "rejected");
         const required = missing.find(asset => asset[2]);
         if (required) {lastFailure = required[0]; throw new Error("Required startup asset unavailable");}
-        for (const id of ["runtime","sdk","fat-style","reward-style","theme-style","fat","rewards"]) {
+        for (const id of ["runtime","sdk","fat-style","reward-style","theme-style","kitchen-style","kitchen-catalog","kitchen","fat","rewards"]) {
+          if (id === "kitchen" && !sources.has("kitchen-style")) continue;
           if (id === "fat" && !sources.has("fat-style")) continue;
           lastFailure = id;
           if (sources.has(id)) inject(id, sources.get(id));

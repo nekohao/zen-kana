@@ -4024,6 +4024,19 @@
         }
       } else runtime.report("fat");
 
+      if (window.PointsKitchen) {
+        try {
+          const kitchen = window.PointsKitchen.attach({db,state,els,ui:{
+            setLayer,showToast,closeAllLayers,closeOverviewSheet,
+            renderScore:()=>renderPrimaryMetric(),
+            refreshScore:async()=>{if(appReadPromise)await appReadPromise;return loadAppState({silent:true});}
+          }});
+          const previousAdminRender=renderAdminState;
+          renderAdminState=(...args)=>{previousAdminRender(...args);kitchen.roleChanged();};
+          const previousAuthRead=refreshAuthState;
+          refreshAuthState=async (...args)=>{await previousAuthRead(...args);kitchen.roleChanged(true);};
+        } catch(error) {console.error('kitchenInitialization:',error?.name);runtime.report('kitchen');}
+      } else runtime.report('kitchen');
       runtime.ready(() => resumeDatabaseRefresh());
       void boot().catch(() => runtime.report("startup"));
     })();

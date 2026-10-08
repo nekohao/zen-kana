@@ -9,10 +9,11 @@
     const message = issues.has("startup") ? "应用加载失败，请重新加载"
       : issues.has("fat") ? "减脂模块加载失败，请重新加载"
       : issues.has("rewards") ? "钻石商城加载失败，请重新加载"
+      : issues.has("kitchen") ? "厨房模块加载失败，请重新加载"
       : issues.has("update") ? "新版本已准备好，请在操作完成后重新加载"
       : [...issues.values()].includes("uncertain") ? "操作结果待确认，请先核对历史记录"
       : issues.size ? "网络不稳定，部分数据尚未同步" : "";
-    notice?.show(message, issues.has("startup") || issues.has("fat") || issues.has("rewards") || issues.has("update"));
+    notice?.show(message, issues.has("startup") || issues.has("fat") || issues.has("rewards") || issues.has("kitchen") || issues.has("update"));
   }
   function report(key, uncertain = false) { issues.set(key, uncertain ? "uncertain" : true); updateNotice(); }
   function clear(key) { issues.delete(key); updateNotice(); }
@@ -51,7 +52,7 @@
       identity = next; identityKnown = true;
     });
     db.rpc = (name, args = {}) => {
-      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_)/.test(name) || name === "points_is_admin";
+      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_)/.test(name) || name === "points_is_admin";
       const epoch = clientEpoch, revision = readEpoch;
       const key = `${epoch}:${revision}:${name}:${JSON.stringify(args)}`;
       if (read && pendingReads.has(key)) return pendingReads.get(key);
@@ -70,7 +71,7 @@
             return {data:null, error:{code:"APP_STALE_READ", message:"Superseded request"}};
           }
           if (!result?.error) clear(name);
-          else if (!/^(22|23|42|P000|PGRST20)/.test(result.error.code || "")) report(name, !read && unknownWrite(result.error));
+          else if (!/^(22|23|42|40001|P000|PGRST20)/.test(result.error.code || "")) report(name, !read && unknownWrite(result.error));
           return result;
         } catch (error) {
           report(name, !read); return {data:null, error};

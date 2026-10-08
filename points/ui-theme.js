@@ -7,14 +7,15 @@
     const fixedThemes={
       score:["changeLayer","redeemLayer","shopItemLayer","shopWeeklyGiftLayer","shopMysteryOpenLayer","adminInventoryLayer","adminInventoryAdjustLayer","adminGrantNoticeLayer","shopRevealLayer"],
       wheel:["wheelProbabilityLayer","wheelProbabilityHistoryLayer","wheelToolLayer","wheelPreviewLayer","wheelAdjustLayer","wheelDecisionLayer","wheelResultLayer","wheelWithdrawLayer","settleWithdrawalLayer"],
-      fat:["fatWeightLayer","fatRewardLayer"]
+      fat:["fatWeightLayer","fatRewardLayer"], kitchen:["kitchenLayer"]
     };
     const themeById=new Map(Object.entries(fixedThemes).flatMap(([theme,ids])=>ids.map(id=>[id,theme])));
     const layers=new Set(); let theme="score", queued=0, blurBase=null;
     const sync=()=>{
       queued=0;
       const selected=switcher.querySelector('[data-metric][aria-selected="true"]')?.dataset.metric;
-      if (["score","wheel","fat"].includes(selected)) theme=selected;
+      if (app.dataset.page === "kitchen") theme="kitchen";
+      else if (["score","wheel","fat"].includes(selected)) theme=selected;
       if (app.dataset.uiTheme!==theme) app.dataset.uiTheme=theme;
       for (const layer of layers) {
         const next=themeById.get(layer.id)||theme;
@@ -83,6 +84,7 @@
     const scan=()=>{ app.querySelectorAll(".modal-layer").forEach(decorate); schedule(); };
     new MutationObserver(scan).observe(app,{childList:true});
     new MutationObserver(schedule).observe(switcher,{attributes:true,subtree:true,attributeFilter:["aria-selected"]});
+    new MutationObserver(schedule).observe(app,{attributes:true,attributeFilter:["data-page"]});
     const overview=document.getElementById("overview"); if (overview) layerObserver.observe(overview,{attributes:true,attributeFilter:["class"]});
     scan(); sync();
   }

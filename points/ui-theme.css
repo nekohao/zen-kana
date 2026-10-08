@@ -17,6 +17,11 @@
   --ui-soft:#eddbb9; --ui-surface:#fffcf5; --ui-surface-end:#f6f0e5;
   --ui-glass:rgba(255,252,245,.84); --ui-glass-end:rgba(246,240,229,.80);
 }
+#pointsApp[data-ui-theme="kitchen"], #pointsApp [data-ui-theme="kitchen"] {
+  --ui-accent:#94714f; --ui-muted:#8e8276; --ui-wash:#f5efe7;
+  --ui-soft:#e6d7c5; --ui-surface:#fdfbf8; --ui-surface-end:#f3efea;
+  --ui-glass:rgba(253,251,248,.92); --ui-glass-end:rgba(243,239,234,.88);
+}
 #pointsApp[data-ui-theme="fat"], #pointsApp [data-ui-theme="fat"] {
   --ui-accent:#567c67; --ui-muted:#75887b; --ui-wash:#edf5ef;
   --ui-soft:#cfe2d5; --ui-surface:#f9fdf9; --ui-surface-end:#eef4ef;
