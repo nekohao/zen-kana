@@ -6,11 +6,11 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261008.2" name="points-build"/>
+<meta content="20261008.3" name="points-build"/>
 <script>
   // No parser-blocking dependencies. Failed startup can be retried in this WebView.
   (() => {
-    const BUILD = "20261008.2", TIMEOUT = 10000;
+    const BUILD = "20261008.3", TIMEOUT = 10000;
     const assets = [
       ["runtime","app-runtime.js",true], ["sdk","vendor/supabase-2.117.2.js",true],
       ["fat-style","fat-loss.css",false], ["reward-style","fat-rewards.css",false],
@@ -164,7 +164,6 @@
 
     let lastCheckAt = 0;
     let checkPromise = null;
-    let pendingUpdate = false;
 
     function pageUrl({ forCheck = false } = {}) {
       const url = new URL(window.location.href);
@@ -212,12 +211,18 @@
     }
 
     function notifyUpdate() {
-      // Version checks never replace a loading or resumed WebView automatically.
-      pendingUpdate = true;
-      if (window.PointsStartup?.status().ready) window.PointsRuntime?.report("update");
+      // Remember the target before replacing, so a stale CDN cannot cause a loop.
+      const target=window.__pointsRemoteBuild || 'fingerprint';
+      let previous=null;
+      try {previous=JSON.parse(sessionStorage.getItem(RELOAD_GUARD_KEY) || 'null');} catch (_) {}
+      if(previous?.target===target && Date.now()-previous.at<60000)return false;
+      try {sessionStorage.setItem(RELOAD_GUARD_KEY,JSON.stringify({target,at:Date.now()}));} catch (_) {}
+      window.dispatchEvent(new Event('points:before-update'));
+      window.stop();
+      const url=pageUrl();url.searchParams.set(UPDATE_PARAM,String(Date.now()));
+      window.location.replace(url.href);
       return false;
     }
-    window.addEventListener("points:ready", () => {if (pendingUpdate) window.PointsRuntime?.report("update");});
 
     async function fetchRemoteFingerprint() {
       const controller = new AbortController();
@@ -253,7 +258,7 @@
             localStorage.setItem(FINGERPRINT_KEY, remoteFingerprint);
             clearReloadGuard(); cleanUpdateParams(); return;
           }
-          if (remote.build) {notifyUpdate(); return;}
+          if (remote.build) {window.__pointsRemoteBuild=remote.build;notifyUpdate(); return;}
 
           // A cache-busted update navigation has just completed. Treat the HTML
           // currently served by GitHub as the new baseline and remove temp params.
@@ -302,7 +307,9 @@
     });
     window.addEventListener("focus", () => checkForHtmlUpdate());
 
-    // Console diagnostics only; no release version number is involved.
+    window.addEventListener('online',()=>checkForHtmlUpdate({force:true}));
+    setInterval(()=>{if(!document.hidden)void checkForHtmlUpdate();},60000);
+    // Console diagnostics.
     window.__checkHtmlUpdate__ = () => checkForHtmlUpdate({ force: true });
   })();
 </script>
