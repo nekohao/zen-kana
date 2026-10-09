@@ -73,8 +73,8 @@
 .fat-overview .fat-status-switch { margin:0; }
 
 /* One compact measurement filter, visually quieter than the module navigation. */
-#pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }
-#pointsApp :is(.fat-status-switch,.fat-record-status) .segment { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:6px 12px; border:0; border-radius:20px; background:transparent; color:#8a938e; font-size:12px; font-weight:500; box-shadow:none; transition:color .16s ease,background .16s ease; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; align-items:center; height:auto; min-height:44px; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment { display:inline-flex; align-items:center; justify-content:center; gap:6px; flex:1 0 auto; height:36px; min-height:36px; line-height:1; white-space:nowrap; padding:6px 12px; border:0; border-radius:20px; background:transparent; color:#8a938e; font-size:12px; font-weight:500; box-shadow:none; transition:color .16s ease,background .16s ease; }
 #pointsApp :is(.fat-status-switch,.fat-record-status) .segment::before { content:""; width:5px; height:5px; border-radius:50%; background:#c1cbc5; }
 #pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active { color:#52715f!important; background:#edf4ef!important; font-weight:650; box-shadow:none!important; }
 #pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active::before { background:#648875; }
@@ -104,3 +104,8 @@
 @media(max-width:360px) { #pointsApp :is(.fat-status-switch,.fat-record-status) .segment { padding-left:9px; padding-right:9px; } #pointsApp .fat-overview-toolbar .overview-content-choice { padding-left:10px; padding-right:10px; } }
 
 #pointsApp .fat-record-status { width:fit-content; margin:14px auto 18px; }
+
+/* Keep the measurement picker consistent inside the themed record dialog. */
+#pointsApp #fatRecordStatus { height:auto; min-height:44px; border-radius:24px; background:#ffffffb8!important; }
+#pointsApp #fatRecordStatus .segment { height:36px; min-height:36px; border-radius:20px; }
+#pointsApp #fatRecordStatus .segment.active { background:#edf4ef!important; color:#52715f!important; box-shadow:none!important; }

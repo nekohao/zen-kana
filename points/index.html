@@ -7,8 +7,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261009.3" name="points-build"/>
-<meta content="2026/10/09 13:42" name="points-updated-at"/>
+<meta content="20261009.4" name="points-build"/>
+<meta content="2026/10/09 14:05" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -1897,8 +1897,8 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 .fat-overview .fat-status-switch { margin:0; }
 
 /* One compact measurement filter, visually quieter than the module navigation. */
-#pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }
-#pointsApp :is(.fat-status-switch,.fat-record-status) .segment { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:6px 12px; border:0; border-radius:20px; background:transparent; color:#8a938e; font-size:12px; font-weight:500; box-shadow:none; transition:color .16s ease,background .16s ease; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; align-items:center; height:auto; min-height:44px; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment { display:inline-flex; align-items:center; justify-content:center; gap:6px; flex:1 0 auto; height:36px; min-height:36px; line-height:1; white-space:nowrap; padding:6px 12px; border:0; border-radius:20px; background:transparent; color:#8a938e; font-size:12px; font-weight:500; box-shadow:none; transition:color .16s ease,background .16s ease; }
 #pointsApp :is(.fat-status-switch,.fat-record-status) .segment::before { content:""; width:5px; height:5px; border-radius:50%; background:#c1cbc5; }
 #pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active { color:#52715f!important; background:#edf4ef!important; font-weight:650; box-shadow:none!important; }
 #pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active::before { background:#648875; }
@@ -1928,6 +1928,11 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 @media(max-width:360px) { #pointsApp :is(.fat-status-switch,.fat-record-status) .segment { padding-left:9px; padding-right:9px; } #pointsApp .fat-overview-toolbar .overview-content-choice { padding-left:10px; padding-right:10px; } }
 
 #pointsApp .fat-record-status { width:fit-content; margin:14px auto 18px; }
+
+/* Keep the measurement picker consistent inside the themed record dialog. */
+#pointsApp #fatRecordStatus { height:auto; min-height:44px; border-radius:24px; background:#ffffffb8!important; }
+#pointsApp #fatRecordStatus .segment { height:36px; min-height:36px; border-radius:20px; }
+#pointsApp #fatRecordStatus .segment.active { background:#edf4ef!important; color:#52715f!important; box-shadow:none!important; }
 
 /* Scoped to fat loss; reuse the existing glass sheet, palette and press feedback. */
 .fat-home-actions { width:min(86vw,340px); grid-template-columns:1fr; align-content:center; gap:7px; }
@@ -2856,7 +2861,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261009.3</span>
+<span class="settings-value">20261009.4</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -2871,8 +2876,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.3</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 13:42</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.4</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 14:05</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -2905,8 +2910,13 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261009.3</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/09 13:42</div>
+<div class="release-head"><strong>20261009.4</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/09 14:05</div>
+<ul class="release-list"><li>修正减脂状态胶囊上下留白不一致，统一首页、总览和记录弹窗的对齐与圆角。</li></ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>20261009.3</strong><span>上一版本</span></div>
+<div class="release-date">2026/10/09</div>
 <ul class="release-list">
 <li>减脂状态选择改为轻量胶囊控件，统一首页与记录弹窗的样式。</li>
 <li>总览直接进入趋势，周变化、记录天数和图表优先展示，详细口径收进统计说明。</li>
