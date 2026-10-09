@@ -345,3 +345,23 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
   #pointsApp .home .fat-home-actions { height:78px; min-height:78px; margin-top:12px; }
   #pointsApp .home .overview-button { min-height:44px; padding-top:10px; padding-bottom:10px; }
 }
+
+/* The three home modules share the same message, lens and action slots. */
+#pointsApp .home .fat-home-content { gap:0; }
+#pointsApp .home #fatHomeTitle { display:none; }
+#pointsApp .home .fat-home-content .reward-message { overflow:visible; }
+#pointsApp .home .fat-home-content .fat-status-switch { margin:0; height:36px; min-height:36px; flex:0 0 36px; }
+#pointsApp .home .fat-home-content .fat-status-switch .segment { height:28px; min-height:28px; padding:3px 12px; }
+#pointsApp .home #fatHomeMeta { margin-top:5px; font-size:11px; line-height:18px; }
+#pointsApp .home .fat-home-actions { height:104px; min-height:104px; margin-top:16px; }
+#pointsApp .home .fat-home-actions > .fat-record-button { width:100%; }
+#pointsApp .home .fat-value { font-size:clamp(68px,21vw,84px); }
+@media(max-height:700px) {
+  #pointsApp .home .fat-home-actions { height:78px; min-height:78px; margin-top:10px; }
+  #pointsApp .home .fat-home-content .fat-status-switch { height:32px; min-height:32px; flex-basis:32px; }
+  #pointsApp .home .fat-home-content .fat-status-switch .segment { height:24px; min-height:24px; }
+  #pointsApp .home #fatHomeMeta { margin-top:2px; font-size:10px; line-height:16px; }
+  #pointsApp .home .fat-value { font-size:clamp(52px,17vw,72px); }
+}
+
+#pointsApp .home .score-lens-wrap { animation:none!important; }

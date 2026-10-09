@@ -7,8 +7,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261009.4" name="points-build"/>
-<meta content="2026/10/09 14:05" name="points-updated-at"/>
+<meta content="20261009.5" name="points-build"/>
+<meta content="2026/10/09 14:13" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -2380,6 +2380,26 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
   #pointsApp .home .overview-button { min-height:44px; padding-top:10px; padding-bottom:10px; }
 }
 
+/* The three home modules share the same message, lens and action slots. */
+#pointsApp .home .fat-home-content { gap:0; }
+#pointsApp .home #fatHomeTitle { display:none; }
+#pointsApp .home .fat-home-content .reward-message { overflow:visible; }
+#pointsApp .home .fat-home-content .fat-status-switch { margin:0; height:36px; min-height:36px; flex:0 0 36px; }
+#pointsApp .home .fat-home-content .fat-status-switch .segment { height:28px; min-height:28px; padding:3px 12px; }
+#pointsApp .home #fatHomeMeta { margin-top:5px; font-size:11px; line-height:18px; }
+#pointsApp .home .fat-home-actions { height:104px; min-height:104px; margin-top:16px; }
+#pointsApp .home .fat-home-actions > .fat-record-button { width:100%; }
+#pointsApp .home .fat-value { font-size:clamp(68px,21vw,84px); }
+@media(max-height:700px) {
+  #pointsApp .home .fat-home-actions { height:78px; min-height:78px; margin-top:10px; }
+  #pointsApp .home .fat-home-content .fat-status-switch { height:32px; min-height:32px; flex-basis:32px; }
+  #pointsApp .home .fat-home-content .fat-status-switch .segment { height:24px; min-height:24px; }
+  #pointsApp .home #fatHomeMeta { margin-top:2px; font-size:10px; line-height:16px; }
+  #pointsApp .home .fat-value { font-size:clamp(52px,17vw,72px); }
+}
+
+#pointsApp .home .score-lens-wrap { animation:none!important; }
+
 /* Independent kitchen pages; shared type, materials and safe-area rhythm. */
 :root { --kitchen-accent:#94714f; --kitchen-muted:#8e8276; --kitchen-line:#e8e4df; --kitchen-nav:50px; }
 #pointsApp[data-page="kitchen"] > .home { display:none!important; }
@@ -2861,7 +2881,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261009.4</span>
+<span class="settings-value">20261009.5</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -2876,8 +2896,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.4</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 14:05</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.5</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 14:13</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -2910,8 +2930,13 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261009.4</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/09 14:05</div>
+<div class="release-head"><strong>20261009.5</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/09 14:13</div>
+<ul class="release-list"><li>减脂与分数、大转盘共享相同的信息区、圆盘和操作区尺寸，切换模块时保持布局位置稳定。</li><li>排便状态整合到信息区，统一按钮宽度并取消圆盘漂浮位移。</li></ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>20261009.4</strong><span>上一版本</span></div>
+<div class="release-date">2026/10/09</div>
 <ul class="release-list"><li>修正减脂状态胶囊上下留白不一致，统一首页、总览和记录弹窗的对齐与圆角。</li></ul>
 </div>
 <div class="release-block previous">
@@ -4226,6 +4251,7 @@ window.PointsKitchenRecipes = [
       </div>`);
     const q = id => document.getElementById(id);
     const content = els.home.querySelector(".fat-home-content");
+    content.querySelector(".reward-message").insertBefore(content.querySelector(".fat-status-switch"),q("fatHomeMeta"));
     const overview = q("fatOverviewContent");
     const toolbar=document.createElement("div");toolbar.className="fat-overview-toolbar";
     toolbar.append(overview.querySelector(".fat-status-switch"),q("fatContentSwitch"));overview.prepend(toolbar);

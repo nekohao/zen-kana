@@ -118,6 +118,7 @@
       </div>`);
     const q = id => document.getElementById(id);
     const content = els.home.querySelector(".fat-home-content");
+    content.querySelector(".reward-message").insertBefore(content.querySelector(".fat-status-switch"),q("fatHomeMeta"));
     const overview = q("fatOverviewContent");
     const toolbar=document.createElement("div");toolbar.className="fat-overview-toolbar";
     toolbar.append(overview.querySelector(".fat-status-switch"),q("fatContentSwitch"));overview.prepend(toolbar);
