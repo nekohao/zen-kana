@@ -52,7 +52,7 @@
       identity = next; identityKnown = true;
     });
     db.rpc = (name, args = {}) => {
-      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_)/.test(name) || name === "points_is_admin";
+      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_)/.test(name) || name === "points_is_admin";
       const epoch = clientEpoch, revision = readEpoch;
       const key = `${epoch}:${revision}:${name}:${JSON.stringify(args)}`;
       if (read && pendingReads.has(key)) return pendingReads.get(key);

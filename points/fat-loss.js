@@ -39,7 +39,9 @@
         <div class="eyebrow reward-message" aria-live="polite">
           <span class="reward-line-primary" id="fatHomeTitle">最近一次记录 · 相对起始体重的变化</span>
           <span class="reward-line-secondary" id="fatHomeMeta">正在同步减脂记录</span>
+
         </div>
+          <div class="segmented fat-status-switch" role="group" aria-label="体重记录状态"><button class="segment pressable" data-fat-status="before" type="button">未排便</button><button class="segment pressable" data-fat-status="after" type="button">已排便</button><button class="segment pressable" data-fat-status="unmarked" type="button" hidden>未标注历史</button></div>
         <div class="score-lens-wrap pressable" id="fatRefreshBtn" role="button" tabindex="0" aria-label="刷新减脂数据">
           <div class="score-lens fat-lens"><div class="fat-value-stack" aria-live="polite">
             <span class="fat-value-label" id="fatValueLabel">体重变化</span>
@@ -50,6 +52,7 @@
       </div>`);
     els.overviewShell.insertAdjacentHTML("beforeend", `
       <div class="fat-overview" id="fatOverviewContent" hidden>
+          <div class="segmented fat-status-switch" role="group" aria-label="体重记录状态"><button class="segment pressable" data-fat-status="before" type="button">未排便</button><button class="segment pressable" data-fat-status="after" type="button">已排便</button><button class="segment pressable" data-fat-status="unmarked" type="button" hidden>未标注历史</button></div>
         <div class="overview-landing" id="fatLanding"><nav class="overview-quick-nav" aria-label="减脂总览快捷入口">
           <button class="overview-quick-card pressable" data-fat-section="trend" type="button">${icon}<span class="overview-quick-title">趋势统计</span><span class="overview-quick-copy">体重变化趋势</span></button>
           <button class="overview-quick-card pressable" data-fat-section="calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="overview-quick-title">月度总览</span><span class="overview-quick-copy">查看每日记录</span></button>
@@ -79,7 +82,7 @@
             <div class="fat-chart-legend"><span>灰点：每日首笔</span><span>绿线：七日记录均值</span></div>
             <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help" id="fatChartHelp"></p>
             <p class="fat-chart-help">每天首笔参与统计，漏记不补值；绿线在七天内至少有三天记录时显示。尽量分散记录，每周五至七天更有参考价值。</p>
-            <p class="fat-chart-help">晨起如厕后、进食喝水前，用同一台秤、相近衣着称重。均值下降表示平均体重变轻，不等同于脂肪减少量。</p>
+            <p class="fat-chart-help">尽量固定称重时段、同一台秤和相近衣着；比较时保持相同排便状态。均值下降表示平均体重变轻，不等同于脂肪减少量。</p>
           </div>
         </section>
         <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
@@ -106,7 +109,7 @@
       <div class="modal-layer alert-layer" id="fatWeightLayer" aria-hidden="true">
         <div class="alert" role="dialog" aria-modal="true" aria-labelledby="fatWeightTitle">
           <div class="alert-content"><div class="change-icon" aria-hidden="true">🌿</div><div class="alert-title" id="fatWeightTitle">记录体重</div><div class="alert-message" id="fatWeightMessage"></div>
-            <div id="fatWeightFields"><label class="fat-field-label" id="fatWeightLabel" for="fatWeightInput">本次体重</label><div class="fat-input-wrap"><input id="fatWeightInput" inputmode="decimal" type="text" maxlength="8" autocomplete="off" placeholder="输入体重"/><span id="fatInputUnit">公斤</span></div></div>
+            <div id="fatWeightFields"><div class="segmented fat-record-status" id="fatRecordStatus" role="group" aria-label="本次排便状态"><button class="segment pressable" data-fat-record-status="before" type="button">未排便</button><button class="segment pressable" data-fat-record-status="after" type="button">已排便</button></div><label class="fat-field-label" id="fatWeightLabel" for="fatWeightInput">本次体重</label><div class="fat-input-wrap"><input id="fatWeightInput" inputmode="decimal" type="text" maxlength="8" autocomplete="off" placeholder="输入体重"/><span id="fatInputUnit">公斤</span></div></div>
             <div class="fat-form-error" id="fatWeightError" role="alert" hidden></div><div class="fat-form-note" id="fatWeightNote"></div>
           </div><div class="alert-actions vertical"><button class="alert-button primary-action pressable" id="fatSaveWeight" type="button">保存记录</button><button class="alert-button pressable" id="fatCancelWeight" type="button">取消</button></div>
         </div>
@@ -122,7 +125,40 @@
     let refreshPromise = null, logsPromise = null, authTimer = 0;
     let chartRaf = 0, initialized = false, overviewFresh = false, landingPeekHeight = 300;
     let unit = "kg", deleteTarget = null, startingLoaded = false, startingEditing = false;
-    let rewards = null;
+    let rewards = null, bowelStatus="after", recordStatus="after", statusSupported=null;
+    const statusLabel=value=>value==="before"?"未排便":value==="after"?"已排便":"未标注历史";
+    const statusOf=record=>["before","after"].includes(record.status)?record.status:"unmarked";
+    const visibleLogs=()=>logs.filter(record=>statusOf(record)===bowelStatus);
+    function syncStatuses() {
+      document.querySelectorAll("[data-fat-status]").forEach(button=>{
+        const selected=button.dataset.fatStatus===bowelStatus;
+        button.classList.toggle("active",selected);button.setAttribute("aria-pressed",String(selected));
+        button.disabled=statusSupported===false && button.dataset.fatStatus!=="unmarked";
+        if(button.dataset.fatStatus==="unmarked")button.hidden=statusSupported!==false && bowelStatus!=="unmarked" && !logs.some(record=>statusOf(record)==="unmarked");
+      });
+      q("fatRecordStatus").hidden=mode!=="record";
+      document.querySelectorAll("[data-fat-record-status]").forEach(button=>{
+        const selected=button.dataset.fatRecordStatus===recordStatus;
+        button.classList.toggle("active",selected);button.setAttribute("aria-pressed",String(selected));button.disabled=saving;
+      });
+    }
+    async function readFat(name,args={}) {
+      const result=await db.rpc(name,args);
+      if(!result.error){statusSupported=true;return result;}
+      if(!/PGRST202|42883|schema cache|Could not find/i.test(`${result.error?.code || ""} ${result.error?.message || ""}`))return result;
+      statusSupported=false;bowelStatus="unmarked";
+      window.PointsRuntime?.clear(name);
+      const legacy=name==="points_fat_v2_get_state"?"points_fat_get_state":"points_fat_get_logs";
+      const {p_bowel_status,...legacyArgs}=args;
+      return db.rpc(legacy,legacyArgs);
+    }
+    async function changeStatus(next) {
+      if(!["before","after","unmarked"].includes(next) || next===bowelStatus || statusSupported===false && next!=="unmarked")return;
+      bowelStatus=next;readVersion++;snapshot=null;initialized=false;
+      syncStatuses();renderHome();renderOverview();
+      if(refreshPromise)await refreshPromise;
+      await refresh({silent:true});
+    }
     try { const savedUnit=window.localStorage.getItem("points_fat_unit"); if (["jin","kg"].includes(savedUnit)) unit=savedUnit; } catch (_) {}
     const unitName = () => unit === "kg" ? "公斤" : "斤";
     const displayWeight = value => Number(value) / (unit === "kg" ? 2 : 1);
@@ -145,6 +181,7 @@
         button.classList.toggle("active",selected); button.setAttribute("aria-pressed",String(selected));
         button.disabled = saving || loading;
       });
+      syncStatuses();
       q("fatInputUnit").textContent = unitName();
       q("fatChartHelp").textContent = `纵轴为相对起始体重的差值 · 单位：${unitName()} · 均值按实际记录天数计算`;
       if (mode && mode !== "delete") q("fatWeightNote").textContent = mode === "starting" ? (startingEditing ? "更改起始体重后，已有记录的差值会重新计算。" : "选择修改后可编辑；取消不会改变已设置的体重。") : unit === "kg" ? "支持 0.005 公斤精度，首页和总览只显示变化量。" : "最多保留两位小数，首页和总览只显示变化量。";
@@ -216,15 +253,16 @@
     }
     async function refresh({silent=true}={}) {
       if (refreshPromise) return refreshPromise;
-      const version = readVersion;
+      const version = readVersion, requestedStatus=bowelStatus;
       refreshPromise = (async () => {
         try {
-          const { data, error } = await db.rpc("points_fat_get_state");
+          const { data, error } = await readFat("points_fat_v2_get_state",{p_bowel_status:requestedStatus});
           if (error) throw error;
           if (version !== readVersion) return false;
           const result = row(data);
           if (!result || typeof result.configured !== "boolean") throw new Error("Invalid state");
-          snapshot = { configured:result.configured, delta:hasDelta(result.delta_jin) ? Number(result.delta_jin) : null, recordedAt:result.recorded_at, count:Number(result.record_count || 0) };
+          if(statusSupported!==false)statusSupported=true;
+          snapshot = { status:result.bowel_status || "unmarked", configured:result.configured, delta:hasDelta(result.delta_jin) ? Number(result.delta_jin) : null, recordedAt:result.recorded_at, count:Number(result.record_count || 0) };
           readError = false; initialized = true;
           return true;
         } catch (_) {
@@ -242,11 +280,11 @@
       q("fatOverviewStatus").hidden = false;
       logsPromise = (async () => {
         try {
-          const { data, error } = await db.rpc("points_fat_get_logs", { p_from:null, p_to:null, p_limit:10000 });
+          const { data, error } = await readFat("points_fat_v2_get_logs", { p_from:null, p_to:null, p_limit:10000 });
           if (error) throw error;
           if (version !== logsVersion) return false;
           if (!Array.isArray(data)) throw new Error("Invalid logs");
-          logs = data.filter(r => hasDelta(r.delta_jin) && Number.isFinite(Date.parse(r.created_at))).map(r => ({ id:String(r.id), delta:Number(r.delta_jin), at:r.created_at })).sort((a,b) => Date.parse(a.at)-Date.parse(b.at) || a.id.length-b.id.length || a.id.localeCompare(b.id));
+          logs = data.filter(r => hasDelta(r.delta_jin) && Number.isFinite(Date.parse(r.created_at))).map(r => ({ id:String(r.id), delta:Number(r.delta_jin), at:r.created_at, status:r.bowel_status || "unmarked" })).sort((a,b) => Date.parse(a.at)-Date.parse(b.at) || a.id.length-b.id.length || a.id.localeCompare(b.id));
           logsError = false; overviewFresh = true;
           return true;
         } catch (_) { if (version === logsVersion) logsError = true; return false; }
@@ -256,11 +294,12 @@
     }
     function renderHome() {
       const isActive = active();
+      syncStatuses();
       els.home.classList.toggle("fat-active",isActive);
       els.metricSwitch.classList.toggle("fat-switch-active",isActive);
       content.hidden = !isActive;
       q("fatRecordBtn").hidden = !verifiedAdmin;
-      q("fatRecordBtn").disabled = saving || !snapshot?.configured || readError;
+      q("fatRecordBtn").disabled = saving || !snapshot?.configured || readError || statusSupported!==true || bowelStatus==="unmarked";
       rewards?.render();
       if (!isActive) return;
       const delta = snapshot?.delta;
@@ -269,14 +308,16 @@
       q("fatValue").style.fontSize = q("fatValue").textContent.length > 5 ? "clamp(34px,10vw,44px)" : "";
       q("fatValueUnit").textContent = unitName();
       q("fatValue").parentElement.classList.toggle("gain",Number(delta)>0);
-      q("fatHomeMeta").textContent = !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `最近记录 ${stamp(snapshot.recordedAt)} · 共 ${snapshot.count} 次`;
+      q("fatHomeTitle").textContent=`${statusLabel(bowelStatus)} · 相对设置里的初始体重`;
+      q("fatHomeMeta").textContent = statusSupported===false?"分类功能尚未启用，暂时只读查看原记录": !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `最近记录 ${stamp(snapshot.recordedAt)} · 共 ${snapshot.count} 次`;
     }
     function renderOverview() {
+      syncStatuses();
       const isActive = active(); overview.hidden = !isActive;
       if (!isActive) return;
       els.scoreOverviewContent.hidden = true; els.wheelOverviewContent.hidden = true;
       els.overviewTitle.textContent = "减脂总览";
-      els.overviewSubtitle.textContent = "查看体重变化趋势与月度记录";
+      els.overviewSubtitle.textContent = `${statusLabel(bowelStatus)} · 查看体重变化趋势与月度记录`;
       const section = state.overviewSection;
       q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
       q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
@@ -287,7 +328,7 @@
       const truncated = logs.length >= 10000 && snapshot?.count > logs.length;
       q("fatOverviewStatus").hidden = !logsError && !truncated;
       q("fatOverviewStatus").textContent = logsError ? "记录同步失败 · 关闭总览后重新打开可重试" : "当前显示最近 10000 条记录，较早的月份可能不完整";
-      if (section === "trend") { renderWeek(trendData(logs)); laterDraw(); }
+      if (section === "trend") { renderWeek(trendData(visibleLogs())); laterDraw(); }
       if (section === "calendar") renderCalendar();
     }
     function peekHeight() {
@@ -334,7 +375,7 @@
     }
     function drawTrend() {
       if (!active() || state.overviewMode === "closed" || state.overviewSection !== "trend") return;
-      const data = trendData(logs); renderWeek(data);
+      const data = trendData(visibleLogs()); renderWeek(data);
       const start = shiftDay(data.today,1-Number(range));
       const points = data.daily.filter(p => p.date >= start);
       const averages = data.rolling.filter(p => p.date >= start);
@@ -394,10 +435,10 @@
       });
     }
     function renderCalendar() {
-      const next=nextMonth(month), current=logs.filter(r => new Date(r.at)>=month && new Date(r.at)<next);
+      const filtered=visibleLogs(), next=nextMonth(month), current=filtered.filter(r => new Date(r.at)>=month && new Date(r.at)<next);
       q("fatCalendarMonth").textContent=new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long"}).format(month);
       q("fatMonthCount").textContent=`${current.length} 次`;
-      const preceding=logs.filter(r => new Date(r.at)<month).at(-1);
+      const preceding=filtered.filter(r => new Date(r.at)<month).at(-1);
       const before=preceding || current[0];
       const enough=current.length>1 || (current.length>0 && preceding);
       const monthDelta=enough ? Math.round((current.at(-1).delta-before.delta)*100)/100 : null;
@@ -430,7 +471,7 @@
         const item=document.createElement("li"); item.className="log-row";
         const mark=document.createElement("div"); mark.className="log-icon"; mark.textContent=r.delta<0?"↘":r.delta>0?"↗":"—";
         const copy=document.createElement("div"); copy.className="log-copy";
-        const title=document.createElement("div"); title.className="log-reason"; title.textContent="体重记录";
+        const title=document.createElement("div"); title.className="log-reason"; title.textContent=`${statusLabel(r.status)}体重记录`;
         const meta=document.createElement("span"); meta.className="log-meta"; meta.textContent=stamp(r.at);
         copy.append(title,meta);
         const delta=document.createElement("div"); delta.className=`fat-log-delta${r.delta>0?" gain":""}`; delta.textContent=difference(r.delta);
@@ -468,7 +509,7 @@
         await Promise.all([refreshPromise,logsPromise].filter(Boolean));
         logs=logs.filter(record=>record.id!==target.id);
         if (snapshot) {
-          const count=Math.max(0,snapshot.count-(data===false?0:1)), last=logs.at(-1);
+          const count=Math.max(0,snapshot.count-(data===false?0:1)), last=visibleLogs().at(-1);
           snapshot={...snapshot,count,delta:last?.delta??null,recordedAt:last?.at??null};
         }
         if (auth!==authVersion || !verifiedAdmin) return;
@@ -523,7 +564,8 @@
     }
     function openDialog(nextMode) {
       if (!verifiedAdmin || saving) return;
-      clearSecrets(); mode=nextMode;
+      clearSecrets(); mode=nextMode;recordStatus=["before","after"].includes(bowelStatus)?bowelStatus:"after";
+      syncStatuses();
       deleteTarget=null; q("fatWeightFields").hidden=false;
       const starting=mode==="starting";
       q("fatWeightTitle").textContent=starting?"起始体重":"记录体重";
@@ -566,15 +608,15 @@
       ui.setBusy(q("fatSaveWeight"),true); q("fatCancelWeight").disabled=true; q("fatWeightInput").disabled=true;
       syncUnits();
       try {
-        const name=savingMode==="starting"?"points_fat_admin_set_starting_weight":"points_fat_admin_record_weight";
-        const {data,error}=await db.rpc(name,{p_weight_jin:value});
+        const name=savingMode==="starting"?"points_fat_admin_set_starting_weight":"points_fat_v2_admin_record_weight";
+        const args=savingMode==="starting"?{p_weight_jin:value}:{p_weight_jin:value,p_bowel_status:recordStatus};
+        const {data,error}=await db.rpc(name,args);
         if (error) throw error;
         readVersion++; logsVersion++; overviewFresh=false;
         await Promise.all([refreshPromise,logsPromise].filter(Boolean));
         if (auth!==authVersion || !verifiedAdmin) return;
         if (savingMode==="record") {
-          const result=row(data);
-          if (result && hasDelta(result.delta_jin)) snapshot={configured:true,delta:Number(result.delta_jin),recordedAt:result.created_at,count:(snapshot?.count || 0)+1};
+          bowelStatus=recordStatus;snapshot=null;initialized=false;
         }
         closeDialog();
         const synced=await refresh({silent:true});
@@ -594,6 +636,8 @@
     }
     q("fatStartingWeightBtn").addEventListener("click",()=>openDialog("starting"));
     document.querySelectorAll("[data-fat-unit]").forEach(button => button.addEventListener("click",()=>changeUnit(button.dataset.fatUnit)));
+    document.querySelectorAll("[data-fat-status]").forEach(button=>button.addEventListener("click",()=>void changeStatus(button.dataset.fatStatus)));
+    document.querySelectorAll("[data-fat-record-status]").forEach(button=>button.addEventListener("click",()=>{if(!saving){recordStatus=button.dataset.fatRecordStatus;syncStatuses();}}));
     q("fatRecordBtn").addEventListener("click",()=>openDialog("record"));
     q("fatSaveWeight").addEventListener("click",()=>void saveWeight());
     q("fatCancelWeight").addEventListener("click",()=>{ if (!saving) closeDialog(); });

@@ -1,4 +1,7 @@
 /* Additive fat-loss module. Existing score and wheel styles remain intact. */
+.fat-status-switch { margin-top:8px; width:min(100%,300px); flex-shrink:0; }
+.fat-status-switch .segment { min-height:30px; padding:5px 9px; font-size:12px; }
+.fat-record-status { margin:12px 0 15px; }
 #metricSwitch { grid-template-columns: repeat(3,minmax(0,1fr))!important; }
 #metricSwitch .metric-switch-thumb { width:calc((100% - 8px)/3)!important; }
 #metricSwitch.fat-switch-active .metric-switch-thumb { transform:translate3d(200%,0,0)!important; background:linear-gradient(145deg,#ffffffcf,#dcefe6a3)!important; }
@@ -67,3 +70,5 @@
 .fat-delete-button:disabled { opacity:.45; pointer-events:none; }
 @media (max-height:700px) { .fat-home-actions { height:78px; min-height:78px; } }
 @media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
+
+.fat-overview .fat-status-switch { margin:0 auto 14px; }

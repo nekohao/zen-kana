@@ -3286,6 +3286,9 @@
         if (state.overviewMode === "closed") return;
 
         const startedOnHandle = !!e.target.closest("#overviewGrabberHitbox");
+        // Capturing a pointer on a button retargets its release click to the sheet.
+        // Let interactive controls handle taps; blank areas and the grabber still drag.
+        if (!startedOnHandle && e.target.closest("button,input,select,textarea,a,[role='button']")) return;
 
         // When fully open, the body is a normal scroll view.
         // Only the grabber may move/close the entire sheet.

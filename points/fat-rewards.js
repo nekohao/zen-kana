@@ -11,6 +11,7 @@
     const stamp = value => Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat("zh-CN", {timeZone:"Asia/Shanghai", month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit", hour12:false}).format(new Date(value)) : "—";
     const change = value => value === null || value === undefined ? "暂无对比" : Number(value) === 0 ? "均重持平" : `均重${Number(value) < 0 ? "下降" : "上升"} ${Math.abs(Number(value)) < .01 ? "不足 0.01" : Math.abs(Number(value)).toFixed(2)} 斤`;
     const signed = value => `${Number(value) > 0 ? "+" : ""}${value}`;
+    const bowelLabel=value=>value==="before"?"未排便":value==="after"?"已排便":"历史未标注";
     const referenceLabel = week => week.comparison_basis === "starting_weight"
       ? `首周 ${week.current_days} 天 / 对比起始体重`
       : `本周 ${week.current_days} 天 / 上周 ${week.previous_days} 天`;
@@ -174,15 +175,15 @@
       let content = "";
       if (detailView === "progress") {
         const reference = p?.comparison_basis === "starting_weight";
-        content = `<section class="fat-reward-card"><h3>${escape(progressSummary())}</h3>${p ? `<p>${escape(change(p.change_jin))}</p><dl class="fat-reward-stat-list"><div><dt>结算周</dt><dd>${escape(p.week)}</dd></div><div><dt>本周记录</dt><dd>${escape(p.current_days)} 天</dd></div><div><dt>比较基准</dt><dd>${reference ? "起始体重" : `上周 · ${escape(p.previous_days)} 天记录`}</dd></div><div><dt>下次结算</dt><dd>${escape(stamp(data.next_cutoff))}</dd></div></dl><p>北京时间 · 每周日 12:00</p><p>${p.settled ? "本周结果已固定，可在结算记录中查看实际到账。" : !p.eligible ? reference && p.reference_available === false ? "请先在管理员设置中设置起始体重。" : reference ? "首周至少记录 3 个不同日期后才参与奖扣。" : "本周和上周各至少记录 3 个不同日期后才参与奖扣。" : "暂估尚未到账，实际奖扣以结算时的记录为准；余额不足时只扣剩余钻石。"}</p>` : '<p>暂无本周数据，请重新打开商城同步。</p>'}</section>`;
+        content = `<section class="fat-reward-card"><h3>${escape(progressSummary())}</h3>${p ? `<p>${escape(change(p.change_jin))}</p>${data.status_rules===2?`<p>${p.rule_version===1 && p.settled?"本周已按旧版规则结算":p.bowel_status?`本周结算采用：${escape(bowelLabel(p.bowel_status))}`:"本周暂未有达标类别"}</p>`:""}<dl class="fat-reward-stat-list"><div><dt>结算周</dt><dd>${escape(p.week)}</dd></div><div><dt>本周记录</dt><dd>${escape(p.current_days)} 天</dd></div><div><dt>比较基准</dt><dd>${reference ? "起始体重" : `上周 · ${escape(p.previous_days)} 天记录`}</dd></div><div><dt>下次结算</dt><dd>${escape(stamp(data.next_cutoff))}</dd></div></dl><p>北京时间 · 每周日 12:00</p><p>${p.settled ? "本周结果已固定，可在结算记录中查看实际到账。" : !p.eligible ? reference && p.reference_available === false ? "请先在管理员设置中设置起始体重。" : reference ? "首周至少记录 3 个不同日期后才参与奖扣。" : "本周和上周各至少记录 3 个不同日期后才参与奖扣。" : "暂估尚未到账，实际奖扣以结算时的记录为准；余额不足时只扣剩余钻石。"}</p>${(p.series || []).map(series=>`<section class="fat-reward-card"><h3>${escape(bowelLabel(series.bowel_status))}</h3><p>本周 ${escape(series.current_days)} 天 · ${series.comparison_basis==="starting_weight"?"对比设置里的初始体重":`上周 ${escape(series.previous_days)} 天`}</p><p>${escape(change(series.change_jin))} · ${series.eligible?"满足比较条件":"尚未满足条件"}</p></section>`).join("")}` : '<p>暂无本周数据，请重新打开商城同步。</p>'}</section>`;
       } else if (detailView === "rules") {
-        content = `<div class="fat-reward-rules">
-          <section class="fat-reward-card"><h3>什么时候结算</h3><p>北京时间每周日 12:00，结算本周一至截止前的记录。同一天取最早一笔，漏记不补值。</p></section>
+        content = `<div class="fat-reward-rules">${data.status_rules!==2?'<p class="fat-reward-empty">分类功能尚未启用，目前仍执行旧版结算规则。</p>':''}
+          <section class="fat-reward-card"><h3>什么时候结算</h3><p>北京时间每周日 12:00，结算本周一至截止前的记录。每个类别在同一天各取最早一笔，漏记不补值。</p></section>
           <section class="fat-reward-card"><h3>怎样获得钻石</h3><p>均重每下降满 1 斤，奖励 1 颗钻石；不足 1 斤不奖励。</p><p>均重上升不足 1 斤扣 1 颗；达到 1 斤后按整斤扣。持平不奖扣，余额最低为 0。</p></section>
-          <section class="fat-reward-card"><h3>需要多少天记录</h3><p>首次记录所在周：至少记录 3 天，并设置起始体重，用本周均重与起始体重比较。</p><p>之后：本周和上周各至少记录 3 天，比较两周均重；不足天数不奖扣。</p></section>
-          <section class="fat-reward-card"><h3>结算后还会变化吗</h3><p>结算结果固定。之后补录、删除记录或修改起始体重，都不会改变已结算奖扣；下周沿用上周结算时的均重。</p><p>周日 12:00 及之后的记录不参与本周钻石结算，也不移到下周。</p></section></div>`;
+          <section class="fat-reward-card"><h3>需要多少天记录</h3><p>“未排便”和“已排便”分别统计；每类的首次记录所在周至少记录 3 天，与设置里同一个初始体重比较。</p><p>之后只比较同一类别的两周均重，本周和上周各至少记录 3 天；两类记录不会混在一起。</p></section>
+          <section class="fat-reward-card"><h3>两类都达标时</h3><p>每周只结算一次。在满足比较条件的类别中，优先使用本周有效日期更多的一类；数量相同优先“已排便”。不按哪类奖励更多来选择。</p></section><section class="fat-reward-card"><h3>结算后还会变化吗</h3><p>结算结果固定。之后补录、删除记录或修改起始体重，都不会改变已结算奖扣；下周沿用上周结算时的均重。</p><p>周日 12:00 及之后的记录不参与本周钻石结算，也不移到下周。</p></section></div>`;
       } else {
-        content = (data.weeks || []).map(w => `<details class="fat-reward-card fat-reward-history"><summary><span>${escape(w.week)}<small>结算周</small></span><strong>${w.eligible ? `${escape(signed(w.applied_delta))} ◇` : "未奖扣"}</strong></summary><div class="fat-reward-history-detail"><p>${escape(change(w.change_jin))}</p><p>${escape(referenceLabel(w))}</p><p>${w.eligible ? `实际 ${escape(signed(w.applied_delta))} 颗${w.applied_delta !== w.calculated_delta ? `（原应 ${escape(signed(w.calculated_delta))}，余额不足）` : ""}` : "记录不足或缺少比较基准，不奖扣。"}</p></div></details>`).join("") || '<p class="fat-reward-empty">暂无结算记录</p>';
+        content = (data.weeks || []).map(w => `<details class="fat-reward-card fat-reward-history"><summary><span>${escape(w.week)}<small>结算周</small></span><strong>${w.eligible ? `${escape(signed(w.applied_delta))} ◇` : "未奖扣"}</strong></summary><div class="fat-reward-history-detail"><p>${escape(change(w.change_jin))}</p><p>${w.rule_version===2?(w.bowel_status?escape(bowelLabel(w.bowel_status)):"本周无达标类别"):"旧版结算"} · ${escape(referenceLabel(w))}</p><p>${w.eligible ? `实际 ${escape(signed(w.applied_delta))} 颗${w.applied_delta !== w.calculated_delta ? `（原应 ${escape(signed(w.calculated_delta))}，余额不足）` : ""}` : "记录不足或缺少比较基准，不奖扣。"}</p></div></details>`).join("") || '<p class="fat-reward-empty">暂无结算记录</p>';
       }
       return `${back}<h3 class="fat-reward-detail-title">${titles[detailView]}</h3>${content}${links}`;
     }
