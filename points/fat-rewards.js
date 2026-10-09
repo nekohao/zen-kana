@@ -302,6 +302,6 @@
       lastResume = Date.now(); void refresh(true);
     };
     document.addEventListener("visibilitychange", resume); window.addEventListener("focus", resume); window.addEventListener("pageshow", resume);
-    render(); return {refresh, render, roleChanged};
+    render(); return {refresh, render, roleChanged,openServices:()=>open('services')};
   }
 })();

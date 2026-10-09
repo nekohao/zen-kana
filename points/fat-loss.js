@@ -683,6 +683,6 @@
       rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin});
     } catch (_) { window.PointsRuntime?.report("rewards"); }
     syncUnits(); adminRendered(); renderHome();
-    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight };
+    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:()=>rewards?.openServices() };
   }
 })();

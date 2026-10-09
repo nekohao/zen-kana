@@ -453,7 +453,7 @@
 
       function closeAllLayers() {
         [
-          els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer,
+          document.getElementById('pointsMessagesLayer'), els.settingsLayer, els.versionInfoLayer, els.releaseNotesLayer, els.loginLayer,
           els.changeLayer, els.redeemLayer, els.shopItemLayer, els.shopRevealLayer, els.wheelToolLayer, els.wheelDecisionLayer, els.wheelPreviewLayer, els.wheelResultLayer,
           els.wheelWithdrawLayer, els.settleWithdrawalLayer,
           els.wheelProbabilityLayer, els.wheelProbabilityHistoryLayer
@@ -1346,6 +1346,7 @@
       }
 
       async function refreshGuestGrantNotice() {
+        if(window.PointsNotifications) return;
         if(state.isAdmin) return;
         try {
           const {data,error}=await db.rpc("points_shop_get_unseen_admin_grants");
@@ -3971,6 +3972,7 @@
 
 
       // Additive adapter: preserve the original implementations and extend their results.
+      let notificationFat=null;
       if (window.PointsFatLoss) {
         try {
         const fatModule = window.PointsFatLoss.attach({
@@ -3983,6 +3985,7 @@
             setOverviewMode: mode => setOverviewMode(mode)
           }
         });
+        notificationFat=fatModule;
         const originalPrimaryMetric = renderPrimaryMetric;
         renderPrimaryMetric = (...args) => { originalPrimaryMetric(...args); fatModule.renderHome(); };
         const originalAdminState = renderAdminState;
@@ -4043,10 +4046,26 @@
       if (window.PointsWebPush) {
         try {
           const push=window.PointsWebPush.attach({db,state,els,ui:{closeAllLayers},
-            backendUrl:SUPABASE_URL+'/functions/v1/points-web-push'});
+            backendUrl:SUPABASE_URL+'/functions/v1/points-web-push',apiKey:SUPABASE_PUBLISHABLE_KEY});
           const previousAuthRead=refreshAuthState;
           refreshAuthState=async (...args)=>{await previousAuthRead(...args);push.roleChanged();};
         } catch(error) {console.error('pushInitialization:',error?.name);}
+      }
+      if(window.PointsNotifications) {
+        try {
+        const notices=window.PointsNotifications.attach({db,state,els,ui:{setLayer,closeAllLayers,closeOverviewSheet},navigate:route=>{
+          closeAllLayers();closeOverviewSheet();
+          document.querySelector('.app-nav [data-value="'+(route==='kitchen'?'kitchen':'world')+'"]')?.click();
+          if(route==='kitchen')return;
+          if(route==='devices'){els.settingsBtn.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
+          if(route==='services'){switchMetric('fat');void notificationFat?.openServices();return;}
+          if(route==='assets'){void openShop('inventory');return;}
+          switchMetric(route==='fat'?'fat':['wheel','withdrawals'].includes(route)?'wheel':'score');
+          setTimeout(()=>openOverviewSheet(),220);
+        }});
+        const previousNoticeAuth=refreshAuthState;
+        refreshAuthState=async(...args)=>{await previousNoticeAuth(...args);notices.roleChanged();};
+        }catch(error){console.error('notificationsInitialization:',error?.name);runtime.report('notifications');}
       }
       const access=window.PointsDeviceAccess.attach({db,state,els,ui:{setLayer,closeAllLayers},
         apiOrigin:SUPABASE_URL,readAuth:()=>refreshAuthState(),onUnlocked:()=>void boot().catch(()=>runtime.report('startup'))});

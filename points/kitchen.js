@@ -96,6 +96,7 @@
       return `<div class="kitchen-section-head"><h2>${esc(selectedDay.slice(5).replace('-','月'))}日的订单</h2><span>${rows.length} 笔</span></div>${rows.map(o=>`<article class="kitchen-card"><div class="kitchen-order-head"><button class="kitchen-link" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${stamp(o.created_at)} · #${esc(o.id)}</button>${status(o)}</div>${o.items.map(d=>{const r=o.reviews?.find(r=>r.slug===d.slug);return `<div class="kitchen-day-dish"><div><strong>${esc(d.name)}</strong><span class="kitchen-rating">${r?`★ ${r.stars}`:o.status==='completed'?'待评价':'—'}</span></div>${r?.comment?`<p>${esc(r.comment.slice(0,70))}</p>${r.comment.length>70?`<details><summary>查看完整评价</summary><p>${esc(r.comment)}</p></details>`:''}`:''}</div>`;}).join('')}${o.status==='settled'?`<p class="kitchen-meta">本单积分 ${signed(o.score_delta)}</p>`:''}</article>`).join('') || empty('这一天没有订单')}`;
     }
     function showCritical() {
+      if(window.PointsNotifications){hideCritical();return;}
       if(window.PointsDeviceAccess && !window.PointsDeviceAccess.verified){hideCritical();return;}
       if(!notifications.length || ['waiting','verifying'].includes(role)) {hideCritical();return;}
       if(admin() && (modal || document.querySelector('.modal-layer.open') || state.wheelSpinning || state.wheelRequestInFlight))return;
@@ -128,6 +129,7 @@
       if(!deployed)return;const token=++modalToken, identity=epoch;openModal({type:'loading',title:'订单详情'});
       try {if(admin())await draftQueue;if(token!==modalToken || identity!==epoch)return;const o=await rpc('points_kitchen_v2_get_order',{p_order_id:id});if(token!==modalToken || identity!==epoch)return;
         modal={type:'order',order:o};const target=modal;renderDialog();if(role==='guest' && o.status==='pending'){await rpc('points_kitchen_v2_guest_seen',{p_order_id:o.id,p_version:o.version});if(modal===target && identity===epoch){o.seen_version=o.version;renderDialog();}}
+        if(window.PointsNotifications&&modal===target&&identity===epoch){await rpc(admin()?'points_kitchen_v2_admin_ack':'points_kitchen_v2_guest_ack',{p_versions:[{id:o.id,version:o.version}]});if(identity===epoch)await refresh();}
       }catch(e){if(token===modalToken && identity===epoch){modal={type:'error',message:failure(e)};renderDialog();}}
     }
     // Dialog renderers and mutations follow; kept separate from the page rendering.

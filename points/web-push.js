@@ -2,18 +2,19 @@
 (() => {
   'use strict';
   window.PointsWebPush={attach};
-  function attach({db,state,els,ui,backendUrl}) {
+  function attach({db,state,els,ui,backendUrl,apiKey}) {
     const q=id=>document.getElementById(id),storageKey='points-push-device-v1';
     const account=q('openVersionInfoBtn').closest('.settings-group');
     const section=document.createElement('section');section.id='pointsPushSettings';
     section.innerHTML=`<div class="settings-label">通知</div><div class="settings-group">
-      <div class="settings-row static"><span>厨房推送</span><span class="settings-value" id="pointsPushStatus">尚未开启</span></div>
-      <button class="settings-row pressable" id="pointsPushEnable" type="button" disabled><span>开启厨房提醒</span><span class="chevron">›</span></button>
+      <div class="settings-row static"><span>消息推送</span><span class="settings-value" id="pointsPushStatus">尚未开启</span></div>
+      <button class="settings-row pressable" id="pointsPushInitialize" type="button" hidden><span>初始化推送服务</span><span class="chevron">›</span></button>
+      <button class="settings-row pressable" id="pointsPushEnable" type="button" disabled><span>开启消息提醒</span><span class="chevron">›</span></button>
       <button class="settings-row pressable" id="pointsPushDisable" type="button" hidden><span>关闭本机提醒</span><span class="chevron">›</span></button>
       <button class="settings-row pressable" id="pointsPushTest" type="button" hidden><span>发送测试通知</span><span class="chevron">›</span></button>
     </div><p class="points-push-help" id="pointsPushHelp">厨房有更新时提醒，点开后查看具体内容。</p><p class="points-push-message" id="pointsPushMessage" role="status" aria-live="polite"></p>`;
     account.parentElement.insertBefore(section,account.previousElementSibling);
-    let device=null,config=null,registration=null,busy=false,loading=false,permission='default',subscribed=false,epoch=0;
+    let device=null,config=null,backendState=null,registration=null,busy=false,loading=false,permission='default',subscribed=false,epoch=0;
     let currentRole=role();
     function role(){return state.isAdmin?'admin:'+state.session?.user?.id:state.session?'unavailable':'guest';}
     function readDevice(){try{return JSON.parse(localStorage.getItem(storageKey)||'null');}catch(_){return null;}}
@@ -24,11 +25,12 @@
     function message(text){q('pointsPushMessage').textContent=text;}
     function render(){
       const available=supported() && (!appleBrowser() || standalone());
-      q('pointsPushStatus').textContent=!available?'此处暂不支持':subscribed?'已开启':permission==='denied'?'系统已关闭':loading?'检查连接中':config?'尚未开启':'后端尚未连接';
+      q('pointsPushStatus').textContent=loading?'检查连接中':!backendState?'发送函数未连接':!backendState.sqlReady?'请先执行整合 SQL':!config?'等待管理员初始化':!available?'此处暂不支持':subscribed?'已开启':permission==='denied'?'系统已关闭':'尚未开启';
+      q('pointsPushInitialize').hidden=!state.isAdmin || !backendState?.sqlReady || !!config;q('pointsPushInitialize').disabled=busy||loading;
       q('pointsPushEnable').hidden=subscribed;q('pointsPushEnable').disabled=busy || !available || !config || permission==='denied' || currentRole==='unavailable';
       q('pointsPushDisable').hidden=!subscribed && !device?.binding;q('pointsPushDisable').disabled=busy;
       q('pointsPushTest').hidden=!subscribed;q('pointsPushTest').disabled=busy;
-      q('pointsPushHelp').textContent=appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房有更新时提醒，点开后查看具体内容。约一分钟内发送，实际送达由系统决定。';
+      q('pointsPushHelp').textContent=!config?(state.isAdmin?'首次接入：执行整合 SQL → 部署一个发送函数 → 点击初始化。密钥由服务端生成保存。':'等待哥哥配置推送服务。消息中心仍可使用。'):appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房、积分和待办有更新时提醒。连续变动会合并，夜间默认静默，锁屏隐藏具体内容。';
     }
     async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
     function deviceToken(){
@@ -47,8 +49,9 @@
         subscribed=!!local && permission==='granted' && device?.binding===currentRole;
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
         try {
-          const response=await fetch(backendUrl,{cache:'no-store',credentials:'omit',signal:controller.signal});
-          if(!response.ok)throw Error('Backend unavailable');const data=await response.json();
+          const response=await fetch(backendUrl,{headers:apiKey?{apikey:apiKey}:{},cache:'no-store',credentials:'omit',signal:controller.signal});
+          const data=await response.json();if(version===epoch)backendState=data.deployed?data:null;
+          if(!response.ok || !data.configured){if(version===epoch)config=null;return;}
           const app=new URL(data.appUrl),scope=new URL('./',document.baseURI);
           if(!/^[A-Za-z0-9_-]{87}$/.test(data.publicKey || '') || app.origin!==scope.origin || new URL('./',app).pathname!==scope.pathname)throw Error('Wrong app configuration');
           if(version===epoch){
@@ -59,7 +62,7 @@
             }
           }
         }finally{clearTimeout(timer);}
-      }catch(_){if(version===epoch)config=null;}
+      }catch(_){if(version===epoch){config=null;backendState=null;}}
       finally{loading=false;render();}
     }
     async function enable(){
@@ -80,7 +83,7 @@
         if(!subscription){subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expected});created=subscription;}
         await rpc('points_push_register',{p_device_token:token,p_subscription:subscription.toJSON(),p_public_key:config.publicKey,p_pairing_code:null});
         if(version!==epoch){await subscription.unsubscribe();await rpc('points_push_remove',{p_device_token:token});throw Error('Identity changed');}
-        saveDevice({token,binding:expectedRole});subscribed=true;message('本机厨房提醒已开启。可以发送一条测试通知。');
+        saveDevice({token,binding:expectedRole});subscribed=true;message('本机消息提醒已开启。可以发送一条测试通知。');
       }catch(error){if(created)await created.unsubscribe().catch(()=>{});message(error.code==='42501'?'设备验证已失效，请重新完成接入验证。':'暂时无法开启。请检查网络和后端配置后重试。');}
       finally{busy=false;render();}
     }
@@ -92,11 +95,19 @@
         subscribed=false;
         if(device?.token)await rpc('points_push_remove',{p_device_token:device.token});
         if(device)saveDevice({token:device.token,binding:null});
-        if(!silent)message('本机厨房提醒已关闭。');
+        if(!silent)message('本机消息提醒已关闭。');
       }catch(_){message('本机订阅关闭结果暂未确认，请联网后再次关闭。');}
       finally{busy=false;render();}
     }
     q('pointsPushEnable').addEventListener('click',()=>void enable());
+    q('pointsPushInitialize').addEventListener('click',async()=>{
+      if(busy||!state.isAdmin)return;busy=true;message('正在初始化…');render();
+      try{const session=await db.auth.getSession();const jwt=session.data?.session?.access_token;if(!jwt)throw Error('Admin session required');
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
+        try{const response=await fetch(backendUrl+'?action=initialize',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+jwt,...(apiKey?{apikey:apiKey}:{})},body:JSON.stringify({appUrl:new URL('./',document.baseURI).href}),signal:controller.signal});const data=await response.json();if(!response.ok)throw Error(data.error||'初始化失败');message('初始化完成。现在可以在每台设备上开启消息提醒。');await inspect();}finally{clearTimeout(timer);}
+      }catch(error){message(error.message==='Admin session required'?'请重新登录管理员后初始化。':error.name==='AbortError'?'初始化结果尚未确认，请重试；重复初始化不会更换密钥。':error.message||'初始化失败，请检查部署。');}
+      finally{busy=false;render();}
+    });
     q('pointsPushDisable').addEventListener('click',()=>void disable());
     q('pointsPushTest').addEventListener('click',async()=>{if(busy || !device?.token)return;busy=true;render();try{await rpc('points_push_test',{p_device_token:device.token});message('测试通知已排队，约一分钟内发送。锁屏也可接收。');}catch(_){message('测试未发送，请稍后重试；每分钟最多测试一次。');}finally{busy=false;render();}});
     els.settingsBtn.addEventListener('click',()=>void inspect());
@@ -106,13 +117,6 @@
       device=readDevice();
       if(device?.binding && device.binding!==next)void (async()=>{registration=await navigator.serviceWorker?.getRegistration();await disable(true);})();
       render();
-    }
-    function openKitchen(){ui.closeAllLayers();document.querySelector('.app-nav [data-value="kitchen"]')?.click();}
-    navigator.serviceWorker?.addEventListener('message',event=>{if(event.data?.type==='points:open-kitchen')openKitchen();});
-    const initialUrl=new URL(location.href);
-    if(initialUrl.searchParams.get('open')==='kitchen'){
-      const open=()=>{openKitchen();initialUrl.searchParams.delete('open');history.replaceState(history.state,'',initialUrl.href);};
-      if(window.PointsStartup.status().ready)open();else window.addEventListener('points:ready',open,{once:true});
     }
     device=readDevice();render();return {roleChanged};
   }
