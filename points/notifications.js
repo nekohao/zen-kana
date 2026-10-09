@@ -59,7 +59,9 @@
       const signature=JSON.stringify(shown.map(i=>[i.id,i.title,i.body]));
       if(host.dataset.signature!==signature){
         host.dataset.signature=signature;
-        host.innerHTML=`<p class="points-updates-heading">最近动态</p>${shown.map(i=>`<article class="points-context-update" data-update-id="${escape(i.id)}" data-update-epoch="${epoch}"><div><strong>${escape(i.title)}</strong><time>${escape(new Date(i.at).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}</time></div><p>${escape(i.body)}</p></article>`).join('')}`;
+        const rowsHtml=shown.map(i=>`<article class="points-context-update" data-update-id="${escape(i.id)}" data-update-epoch="${epoch}"><div><strong>${escape(i.title)}</strong><time>${escape(new Date(i.at).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}</time></div><p>${escape(i.body)}</p></article>`).join('');
+        const wasOpen=host.querySelector('details')?.open;
+        host.innerHTML=key==='kitchen'?`<details class="kitchen-updates"${wasOpen?' open':''}><summary><span>最近动态 · ${shown.length} 条</span><strong>${escape(shown[0].title)}</strong><span aria-hidden="true">⌄</span></summary><div class="kitchen-updates-list">${rowsHtml}</div></details>`:`<p class="points-updates-heading">最近动态</p>${rowsHtml}`;
         host.querySelectorAll('[data-update-id]').forEach(row=>observer.observe(row));
       }
     }
@@ -68,7 +70,9 @@
       mount('score',q('scoreOverviewContent'),['score']);
       mount('wheel',q('wheelOverviewContent'),['wheel','withdrawals']);
       mount('assets',q('shopInventoryPanel'),['assets']);
-      mount('kitchen',q('kitchenContent'),['kitchen'],document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.getAttribute('aria-selected')==='true');
+      const kitchen=q('kitchenUpdatesSlot')||q('kitchenContent');
+      if(kitchen?.id==='kitchenUpdatesSlot')kitchen.dataset.pointsSynced=q('kitchenContent')?.dataset.pointsSynced;
+      mount('kitchen',kitchen,['kitchen'],document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.getAttribute('aria-selected')==='true');
       const reward=q('fatRewardBody');
       mount('rewards',reward,[reward?.dataset.updatesView],!!reward?.dataset.updatesView);
       mount('devices',q('pointsAccessDeviceList'),['devices']);badges();

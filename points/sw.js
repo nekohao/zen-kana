@@ -1,5 +1,5 @@
 /* Scope is /points/. Supabase, auth, writes and version checks never enter caches. */
-const BUILD='20261009.13';
+const BUILD='20261010.2';
 const PREFIX='points-shell-'+encodeURIComponent(new URL(self.registration.scope).pathname)+'-';
 const CACHE=PREFIX+BUILD;
 const SHELL=new URL('index.html',self.registration.scope).href;
@@ -16,7 +16,7 @@ self.addEventListener('install',event=>{
     const response=await fetch(SHELL,{cache:'reload'});
     const html=await response.clone().text();
     // During a CDN rollout, refuse to cache an HTML version different from this worker.
-    if(!response.ok || !html.includes('content="20261009.13" name="points-build"'))throw Error('Incomplete release');
+    if(!response.ok || !html.includes('content="20261010.2" name="points-build"'))throw Error('Incomplete release');
     await (await caches.open(CACHE)).put(SHELL,response);
     await self.skipWaiting();
   })());
