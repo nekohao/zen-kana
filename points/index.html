@@ -7,8 +7,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261009.5" name="points-build"/>
-<meta content="2026/10/09 14:13" name="points-updated-at"/>
+<meta content="20261009.6" name="points-build"/>
+<meta content="2026/10/09 14:41" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -2596,6 +2596,14 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
     #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!important; }
   }
 }
+
+.points-push-pairing { padding:12px 16px; border-top:1px solid var(--hairline); }
+.points-push-pairing label { display:block; margin-bottom:8px; font-size:11px; color:var(--secondary); }
+.points-push-pairing input { width:100%; min-height:42px; padding:9px 11px; border:1px solid var(--hairline); border-radius:10px; background:#fff; font-size:12px; color:var(--ink); }
+.points-push-pairing button { margin-top:8px; min-height:36px; padding:6px 12px; border:0; border-radius:10px; background:var(--ui-wash,#edf0f4); color:var(--ui-accent,#67556f); font-size:12px; }
+.points-push-help,.points-push-message { margin:9px 16px 15px; color:var(--secondary); font-size:11px; line-height:1.65; }
+.points-push-message:empty { display:none; }
+#pointsPushSettings .settings-row:disabled { opacity:.5; cursor:default; }
 </style>
 <script>if(navigator.standalone===true && /iPhone|iPad|iPod/.test(navigator.userAgent))document.documentElement.classList.add("ios-pwa");</script>
 </head>
@@ -2881,7 +2889,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261009.5</span>
+<span class="settings-value">20261009.6</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -2896,8 +2904,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.5</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 14:13</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.6</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 14:41</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -2930,8 +2938,13 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261009.5</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/09 14:13</div>
+<div class="release-head"><strong>20261009.6</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/09 14:41</div>
+<ul class="release-list"><li>新增厨房 Web Push 设置：本机授权、接收码绑定、关闭与测试通知。</li><li>支持通知点击进入厨房，需部署配套 Supabase 推送后端后启用。</li></ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>20261009.5</strong><span>上一版本</span></div>
+<div class="release-date">2026/10/09</div>
 <ul class="release-list"><li>减脂与分数、大转盘共享相同的信息区、圆盘和操作区尺寸，切换模块时保持布局位置稳定。</li><li>排便状态整合到信息区，统一按钮宽度并取消圆盘漂浮位移。</li></ul>
 </div>
 <div class="release-block previous">
@@ -5131,6 +5144,130 @@ window.PointsKitchenRecipes = [
 })();
 
 }catch(error){window.PointsStartup.fail("rewards",error,false);}}</script>
+<script data-points-asset="push">if(window.PointsStartup.canStart()){try{
+/* Optional kitchen notifications. Nothing on the critical startup path. */
+(() => {
+  'use strict';
+  window.PointsWebPush={attach};
+  function attach({db,state,els,ui,backendUrl}) {
+    const q=id=>document.getElementById(id),storageKey='points-push-device-v1';
+    const account=q('openVersionInfoBtn').closest('.settings-group');
+    const section=document.createElement('section');section.id='pointsPushSettings';
+    section.innerHTML=`<div class="settings-label">通知</div><div class="settings-group">
+      <div class="settings-row static"><span>厨房推送</span><span class="settings-value" id="pointsPushStatus">尚未开启</span></div>
+      <button class="settings-row pressable" id="pointsPushEnable" type="button" disabled><span>开启厨房提醒</span><span class="chevron">›</span></button>
+      <button class="settings-row pressable" id="pointsPushDisable" type="button" hidden><span>关闭本机提醒</span><span class="chevron">›</span></button>
+      <button class="settings-row pressable" id="pointsPushTest" type="button" hidden><span>发送测试通知</span><span class="chevron">›</span></button>
+      <div class="points-push-pairing" id="pointsPushGuestPairing" hidden><label for="pointsPushPairingInput">哥哥的接收码</label><input id="pointsPushPairingInput" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="粘贴接收码，再开启提醒"/></div>
+      <button class="settings-row pressable" id="pointsPushPairing" type="button" hidden><span>生成宝宝接收码</span><span class="chevron">›</span></button>
+      <div class="points-push-pairing" id="pointsPushPairingResult" hidden><label for="pointsPushPairingCode">接收码 · 单次有效，15 分钟内使用</label><input id="pointsPushPairingCode" type="text" readonly aria-label="宝宝接收码"/><button id="pointsPushCopy" type="button">复制接收码</button></div>
+    </div><p class="points-push-help" id="pointsPushHelp">厨房有更新时提醒，点开后查看具体内容。</p><p class="points-push-message" id="pointsPushMessage" role="status" aria-live="polite"></p>`;
+    account.parentElement.insertBefore(section,account.previousElementSibling);
+    let device=null,config=null,registration=null,busy=false,loading=false,permission='default',subscribed=false,epoch=0;
+    let currentRole=role();
+    function role(){return state.isAdmin?'admin:'+state.session?.user?.id:state.session?'unavailable':'guest';}
+    function readDevice(){try{return JSON.parse(localStorage.getItem(storageKey)||'null');}catch(_){return null;}}
+    function saveDevice(value){localStorage.setItem(storageKey,JSON.stringify(value));device=value;}
+    function supported(){return isSecureContext && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;}
+    function appleBrowser(){return /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.platform==='MacIntel' && navigator.maxTouchPoints>1;}
+    function standalone(){return navigator.standalone===true || matchMedia('(display-mode: standalone)').matches;}
+    function message(text){q('pointsPushMessage').textContent=text;}
+    function render(){
+      const available=supported() && (!appleBrowser() || standalone());
+      q('pointsPushStatus').textContent=!available?'此处暂不支持':subscribed?'已开启':permission==='denied'?'系统已关闭':loading?'检查连接中':config?'尚未开启':'后端尚未连接';
+      q('pointsPushEnable').hidden=subscribed;q('pointsPushEnable').disabled=busy || !available || !config || permission==='denied' || currentRole==='unavailable';
+      q('pointsPushDisable').hidden=!subscribed && !device?.binding;q('pointsPushDisable').disabled=busy;
+      q('pointsPushTest').hidden=!subscribed;q('pointsPushTest').disabled=busy;
+      q('pointsPushPairing').hidden=!currentRole.startsWith('admin:');q('pointsPushPairing').disabled=busy || !config;
+      q('pointsPushGuestPairing').hidden=currentRole!=='guest' || subscribed;
+      q('pointsPushHelp').textContent=appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房有更新时提醒，点开后查看具体内容。约一分钟内发送，实际送达由系统决定。';
+    }
+    async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
+    function deviceToken(){
+      if(device?.token && /^[a-f0-9]{64}$/.test(device.token))return device.token;
+      const token=[...crypto.getRandomValues(new Uint8Array(32))].map(v=>v.toString(16).padStart(2,'0')).join('');
+      saveDevice({token,binding:null});return token;
+    }
+    const keyBytes=key=>Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-key.length%4)%4)),c=>c.charCodeAt(0));
+    async function inspect(){
+      if(loading)return;loading=true;render();const version=epoch;
+      try {
+        device=readDevice();permission=supported()?Notification.permission:'default';
+        registration=supported()?await navigator.serviceWorker.getRegistration(new URL('./',document.baseURI).href):null;
+        const local=await registration?.pushManager.getSubscription();
+        if(version!==epoch)return;
+        subscribed=!!local && permission==='granted' && device?.binding===currentRole;
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+        try {
+          const response=await fetch(backendUrl,{cache:'no-store',credentials:'omit',signal:controller.signal});
+          if(!response.ok)throw Error('Backend unavailable');const data=await response.json();
+          const app=new URL(data.appUrl),scope=new URL('./',document.baseURI);
+          if(!/^[A-Za-z0-9_-]{87}$/.test(data.publicKey || '') || app.origin!==scope.origin || new URL('./',app).pathname!==scope.pathname)throw Error('Wrong app configuration');
+          if(version===epoch)config=data;
+        }finally{clearTimeout(timer);}
+      }catch(_){if(version===epoch)config=null;}
+      finally{loading=false;render();}
+    }
+    async function enable(){
+      if(busy || !config || !supported())return;
+      const pairing=q('pointsPushPairingInput').value.trim().toUpperCase();
+      if(currentRole==='guest' && !device?.binding && !/^[A-F0-9]{32}$/.test(pairing))return message('请先粘贴哥哥生成的接收码。');
+      busy=true;message('');render();const version=epoch,expectedRole=currentRole;let created=null;
+      try {
+        const token=deviceToken();
+        // Call permission synchronously from the user's click, before network waits.
+        const allowed=Notification.permission==='granted'?'granted':await Notification.requestPermission();permission=allowed;
+        if(allowed!=='granted'){message('没有开启通知，可以稍后再试。');return;}
+        if(version!==epoch)throw Error('Identity changed');
+        registration=registration || await navigator.serviceWorker.register('sw.js',{scope:'./',updateViaCache:'none'});
+        if(!registration.active)await navigator.serviceWorker.ready;
+        let subscription=await registration.pushManager.getSubscription();
+        const expected=keyBytes(config.publicKey),old=subscription?.options?.applicationServerKey;
+        if(subscription && (!device?.binding || !old || [...new Uint8Array(old)].join(',')!==[...expected].join(','))){await subscription.unsubscribe();subscription=null;}
+        if(!subscription){subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expected});created=subscription;}
+        await rpc('points_push_register',{p_device_token:token,p_subscription:subscription.toJSON(),p_public_key:config.publicKey,p_pairing_code:pairing || null});
+        if(version!==epoch){await subscription.unsubscribe();await rpc('points_push_remove',{p_device_token:token});throw Error('Identity changed');}
+        saveDevice({token,binding:expectedRole});subscribed=true;q('pointsPushPairingInput').value='';message('本机厨房提醒已开启。可以发送一条测试通知。');
+      }catch(error){if(created)await created.unsubscribe().catch(()=>{});message(error.code==='42501'?'接收码无效或已过期，请让哥哥重新生成。':'暂时无法开启。请检查网络、接收码和后端配置后重试。');}
+      finally{busy=false;render();}
+    }
+    async function disable(silent=false){
+      if(busy)return;busy=true;render();
+      try {
+        const local=await registration?.pushManager.getSubscription();
+        if(local && !await local.unsubscribe())throw Error('Unsubscribe failed');
+        subscribed=false;
+        if(device?.token)await rpc('points_push_remove',{p_device_token:device.token});
+        if(device)saveDevice({token:device.token,binding:null});
+        if(!silent)message('本机厨房提醒已关闭。');
+      }catch(_){message('本机订阅关闭结果暂未确认，请联网后再次关闭。');}
+      finally{busy=false;render();}
+    }
+    q('pointsPushEnable').addEventListener('click',()=>void enable());
+    q('pointsPushDisable').addEventListener('click',()=>void disable());
+    q('pointsPushTest').addEventListener('click',async()=>{if(busy || !device?.token)return;busy=true;render();try{await rpc('points_push_test',{p_device_token:device.token});message('测试通知已排队，约一分钟内发送。锁屏也可接收。');}catch(_){message('测试未发送，请稍后重试；每分钟最多测试一次。');}finally{busy=false;render();}});
+    q('pointsPushPairing').addEventListener('click',async()=>{if(busy)return;busy=true;render();try{const data=await rpc('points_push_admin_pairing',{});q('pointsPushPairingCode').value=data.code;q('pointsPushPairingResult').hidden=false;message('把接收码给宝宝，在她的手机上开启提醒。');}catch(_){message('生成失败，请确认管理员已登录并部署了增量 SQL。');}finally{busy=false;render();}});
+    q('pointsPushCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(q('pointsPushPairingCode').value);message('接收码已复制。');}catch(_){q('pointsPushPairingCode').select();message('请长按接收码复制。');}});
+    els.settingsBtn.addEventListener('click',()=>void inspect());
+    window.addEventListener('online',()=>{if(device?.binding && device.binding!==currentRole)void disable(true);});
+    function roleChanged(){
+      const next=role();if(next!==currentRole){epoch++;currentRole=next;subscribed=false;}
+      q('pointsPushPairingResult').hidden=true;q('pointsPushPairingCode').value='';q('pointsPushPairingInput').value='';device=readDevice();
+      if(device?.binding && device.binding!==next)void (async()=>{registration=await navigator.serviceWorker?.getRegistration();await disable(true);})();
+      render();
+    }
+    function openKitchen(){ui.closeAllLayers();document.querySelector('.app-nav [data-value="kitchen"]')?.click();}
+    navigator.serviceWorker?.addEventListener('message',event=>{if(event.data?.type==='points:open-kitchen')openKitchen();});
+    const initialUrl=new URL(location.href);
+    if(initialUrl.searchParams.get('open')==='kitchen'){
+      const open=()=>{openKitchen();initialUrl.searchParams.delete('open');history.replaceState(history.state,'',initialUrl.href);};
+      if(window.PointsStartup.status().ready)open();else window.addEventListener('points:ready',open,{once:true});
+    }
+    device=readDevice();render();return {roleChanged};
+  }
+})();
+
+}catch(error){window.PointsStartup.fail("push",error,false);}}</script>
 <script data-points-asset="app">if(window.PointsStartup.canStart()){try{
 (() => {
       "use strict";
@@ -9174,6 +9311,14 @@ window.PointsKitchenRecipes = [
           refreshAuthState=async (...args)=>{await previousAuthRead(...args);kitchen.roleChanged(true);};
         } catch(error) {console.error('kitchenInitialization:',error?.name);runtime.report('kitchen');}
       } else runtime.report('kitchen');
+      if (window.PointsWebPush) {
+        try {
+          const push=window.PointsWebPush.attach({db,state,els,ui:{closeAllLayers},
+            backendUrl:SUPABASE_URL+'/functions/v1/points-web-push'});
+          const previousAuthRead=refreshAuthState;
+          refreshAuthState=async (...args)=>{await previousAuthRead(...args);push.roleChanged();};
+        } catch(error) {console.error('pushInitialization:',error?.name);}
+      }
       window.PointsHomeGestures?.attach({state,els,switchMetric:next=>switchMetric(next)});
       runtime.ready(() => resumeDatabaseRefresh());
       void boot().catch(() => runtime.report("startup"));

@@ -4040,6 +4040,14 @@
           refreshAuthState=async (...args)=>{await previousAuthRead(...args);kitchen.roleChanged(true);};
         } catch(error) {console.error('kitchenInitialization:',error?.name);runtime.report('kitchen');}
       } else runtime.report('kitchen');
+      if (window.PointsWebPush) {
+        try {
+          const push=window.PointsWebPush.attach({db,state,els,ui:{closeAllLayers},
+            backendUrl:SUPABASE_URL+'/functions/v1/points-web-push'});
+          const previousAuthRead=refreshAuthState;
+          refreshAuthState=async (...args)=>{await previousAuthRead(...args);push.roleChanged();};
+        } catch(error) {console.error('pushInitialization:',error?.name);}
+      }
       window.PointsHomeGestures?.attach({state,els,switchMetric:next=>switchMetric(next)});
       runtime.ready(() => resumeDatabaseRefresh());
       void boot().catch(() => runtime.report("startup"));
