@@ -183,3 +183,14 @@ button.kitchen-card { display:block; width:100%; color:inherit; }
 .kitchen-dish-fallback { display:grid; place-items:center; width:100%; aspect-ratio:3/2; background:linear-gradient(140deg,#f2e8db,#faf7ef); color:#ae9476; font-size:26px; }
 .kitchen-order-dish .kitchen-dish-fallback,.kitchen-selected-head .kitchen-dish-fallback { width:58px; height:48px; aspect-ratio:auto; flex-shrink:0; border-radius:10px; font-size:20px; }
 @media(prefers-reduced-motion:reduce) { #pointsApp .overview-swipe-hint { transition:none; } }
+
+/* WebKit standalone viewport units differ from Safari. Use the full vh canvas,
+   with a normal status bar (not black-translucent) and one bottom safe inset. */
+html.ios-pwa,html.ios-pwa body { height:100vh; min-height:100vh; overflow:hidden; }
+html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!important; }
+@supports (-webkit-touch-callout:none) {
+  @media (display-mode:standalone) {
+    html,body { height:100vh; min-height:100vh; overflow:hidden; }
+    #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!important; }
+  }
+}
