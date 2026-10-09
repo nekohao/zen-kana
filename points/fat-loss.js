@@ -59,18 +59,16 @@
         </nav></div>
         <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
           <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
-          <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">月度总览</button>
+          <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">记录</button>
         </div>
         <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
           <h2 class="section-title">趋势统计</h2>
           <div class="card glass fat-week-card" aria-live="polite">
-            <div class="fat-week-title">近七天记录均值 · 比前七天</div>
+            <div class="fat-week-title">近 7 天 · 与前 7 天均重比较</div>
             <div class="fat-week-result"><span id="fatWeekDirection">暂无对比</span><strong id="fatWeekValue">—</strong><span id="fatWeekUnit">公斤</span></div>
             <div class="fat-week-coverage" id="fatWeekCoverage"></div>
-            <div class="fat-week-dates" id="fatWeekDates"></div>
-            <p class="fat-week-note" id="fatWeekNote"></p>
-            <p class="fat-week-long" id="fatWeekLong"></p>
+
           </div>
           <div class="card glass trend-card">
             <div class="segmented" aria-label="减脂趋势范围" id="fatTrendRanges">
@@ -79,10 +77,14 @@
               <button class="segment pressable" data-fat-range="90" type="button">近90天</button>
             </div>
             <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
-            <div class="fat-chart-legend"><span>灰点：每日首笔</span><span>绿线：七日记录均值</span></div>
-            <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help" id="fatChartHelp"></p>
+            <div class="fat-chart-legend"><span>每日记录</span><span>7 日均值</span></div>
+            <div class="chart-caption" id="fatChartCaption"></div>
+            <details class="fat-stat-details"><summary>统计说明</summary><div class="fat-stat-details-body">
+            <div class="fat-week-dates" id="fatWeekDates"></div><p class="fat-week-note" id="fatWeekNote"></p><p class="fat-week-long" id="fatWeekLong"></p>
+            <p class="fat-chart-help" id="fatChartHelp"></p>
             <p class="fat-chart-help">每天首笔参与统计，漏记不补值；绿线在七天内至少有三天记录时显示。尽量分散记录，每周五至七天更有参考价值。</p>
             <p class="fat-chart-help">尽量固定称重时段、同一台秤和相近衣着；比较时保持相同排便状态。均值下降表示平均体重变轻，不等同于脂肪减少量。</p>
+            </div></details>
           </div>
         </section>
         <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
@@ -90,7 +92,7 @@
             <div class="calendar-head"><button class="small-icon pressable" id="fatPrevMonth" aria-label="减脂上个月" type="button">‹</button><div class="calendar-month" id="fatCalendarMonth"></div><button class="small-icon pressable" id="fatNextMonth" aria-label="减脂下个月" type="button">›</button></div>
             <div class="fat-month-summary"><div><span>本月记录</span><strong id="fatMonthCount">0 次</strong></div><div><span>本月净变化</span><strong id="fatMonthChange">—</strong></div></div>
             <div class="weekdays" aria-hidden="true"><div class="weekday">日</div><div class="weekday">一</div><div class="weekday">二</div><div class="weekday">三</div><div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div></div>
-            <div class="calendar-grid" id="fatCalendarGrid"></div><p class="fat-chart-help">日期下方显示当天最后一次记录的差值</p>
+            <div class="calendar-grid" id="fatCalendarGrid"></div><p class="fat-chart-help">点击日期查看记录 · 数值为当天最后一次变化</p>
             <div class="day-detail hidden" id="fatDayDetail"><div class="detail-title" id="fatDayTitle"></div><ul class="log-list" id="fatDayList"></ul></div>
           </div>
         </section>
@@ -117,6 +119,8 @@
     const q = id => document.getElementById(id);
     const content = els.home.querySelector(".fat-home-content");
     const overview = q("fatOverviewContent");
+    const toolbar=document.createElement("div");toolbar.className="fat-overview-toolbar";
+    toolbar.append(overview.querySelector(".fat-status-switch"),q("fatContentSwitch"));overview.prepend(toolbar);
     const dialog = q("fatWeightLayer");
     let snapshot = null, logs = [], readError = false, logsError = false;
     let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
@@ -308,8 +312,8 @@
       q("fatValue").style.fontSize = q("fatValue").textContent.length > 5 ? "clamp(34px,10vw,44px)" : "";
       q("fatValueUnit").textContent = unitName();
       q("fatValue").parentElement.classList.toggle("gain",Number(delta)>0);
-      q("fatHomeTitle").textContent=`${statusLabel(bowelStatus)} · 相对设置里的初始体重`;
-      q("fatHomeMeta").textContent = statusSupported===false?"分类功能尚未启用，暂时只读查看原记录": !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `最近记录 ${stamp(snapshot.recordedAt)} · 共 ${snapshot.count} 次`;
+      q("fatHomeTitle").textContent="与初始体重相比";
+      q("fatHomeMeta").textContent = statusSupported===false?"分类功能尚未启用，暂时只读查看原记录": !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `${stamp(snapshot.recordedAt)} · ${snapshot.count} 次记录`;
     }
     function renderOverview() {
       syncStatuses();
@@ -317,7 +321,7 @@
       if (!isActive) return;
       els.scoreOverviewContent.hidden = true; els.wheelOverviewContent.hidden = true;
       els.overviewTitle.textContent = "减脂总览";
-      els.overviewSubtitle.textContent = `${statusLabel(bowelStatus)} · 查看体重变化趋势与月度记录`;
+      els.overviewSubtitle.textContent = "按同类记录统计";
       const section = state.overviewSection;
       q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
       q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
@@ -357,11 +361,12 @@
       const periodLabel = week => `${dateLabel(week.start)}—${dateLabel(shiftDay(week.end,-1))}`;
       const magnitude = change === null ? null : Math.abs(displayWeight(change));
       const rounded = magnitude === null ? null : Math.round((magnitude+Number.EPSILON)*100)/100;
-      q("fatWeekDirection").textContent = change === null ? "暂无对比" : change !== 0 && rounded === 0 ? "变化小于" : rounded === 0 ? "基本持平" : change < 0 ? "记录均值下降" : "记录均值上升";
+      q("fatWeekValue").hidden=change===null;q("fatWeekUnit").hidden=change===null;
+      q("fatWeekDirection").textContent = change === null ? "等待跨周对比" : change !== 0 && rounded === 0 ? "变化小于" : rounded === 0 ? "基本持平" : change < 0 ? "记录均值下降" : "记录均值上升";
       q("fatWeekValue").textContent = rounded === null ? "—" : change !== 0 && rounded === 0 ? "0.01" : new Intl.NumberFormat("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2}).format(rounded);
       q("fatWeekUnit").textContent = unitName();
       q("fatWeekValue").classList.toggle("gain",change > 0);
-      q("fatWeekCoverage").textContent = `近七天：${recent.count}/7 天记录 · 前七天：${previous.count}/7 天记录`;
+      q("fatWeekCoverage").textContent = `近 7 天记录 ${recent.count} 天 · 前 7 天 ${previous.count} 天`;
       q("fatWeekDates").textContent = `近七天 ${periodLabel(recent)}（含今天）· 前七天 ${periodLabel(previous)}`;
       const coverage = Math.min(recent.count,previous.count);
       q("fatWeekNote").textContent = !coverage ? "两段都至少有一天记录后才能比较；缺少记录的日期不补值。" : coverage < 3 ? "记录较少，仅供参考。建议两段各至少记录三个不同日期，并分散在一周内。" : coverage < 5 ? "初步参考，按已有记录天数计算。每段尽量记录五至七天。" : "按已有记录天数计算。连续观察几周，比一次涨跌更能看清趋势。";
@@ -382,8 +387,8 @@
       const values = [...points,...averages.filter(p => p.delta !== null)];
       q("fatChartEmpty").hidden = points.length > 0;
       q("fatChartEmpty").textContent = logsError ? "记录读取失败" : "这个时段暂无记录";
-      q("fatChartCaption").textContent = `近 ${range} 天 · ${points.length} 天有记录 · 绿线每点使用此前七天（含当天）的记录`;
-      q("fatTrendCanvas").setAttribute("aria-label",points.length ? `近${range}天体重差值趋势，${points.length}天有记录；灰点为每日首笔，绿线为七日记录均值。${q("fatWeekDirection").textContent} ${q("fatWeekValue").textContent} ${unitName()}` : "这个时段暂无记录");
+      q("fatChartCaption").textContent = `近 ${range} 天 · ${points.length} 天有记录`;
+      q("fatTrendCanvas").setAttribute("aria-label",points.length ? `近${range}天体重差值趋势，${points.length}天有记录；灰点为每日首笔，绿线为七日记录均值。${q("fatWeekDirection").textContent}${q("fatWeekValue").hidden ? "" : ` ${q("fatWeekValue").textContent} ${unitName()}`}` : "这个时段暂无记录");
       q("fatTrendRanges").querySelectorAll("[data-fat-range]").forEach(btn => {
         const selected = btn.dataset.fatRange === range;
         btn.classList.toggle("active",selected); btn.setAttribute("aria-pressed",String(selected));
@@ -660,7 +665,7 @@
     q("fatRefreshBtn").addEventListener("keydown",event=>{ if (["Enter"," "].includes(event.key)) { event.preventDefault(); void manualRefresh(); } });
     els.overviewBtn.addEventListener("click",event=>{
       if (!active()) return;
-      event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); void loadLogs(true);
+      event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); chooseSection("trend"); void loadLogs(true);
     },true);
     overview.addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-section]"); if (btn) { ui.vibrate(6); chooseSection(btn.dataset.fatSection); } });
     q("fatTrendRanges").addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-range]"); if (btn && ["14","28","90"].includes(btn.dataset.fatRange)) { range=btn.dataset.fatRange; laterDraw(); } });

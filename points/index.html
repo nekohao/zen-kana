@@ -7,8 +7,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261009.2" name="points-build"/>
-<meta content="2026/10/09 09:08" name="points-updated-at"/>
+<meta content="20261009.3" name="points-build"/>
+<meta content="2026/10/09 13:42" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -1823,8 +1823,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 </style>
 <!-- Additive fat-loss module assets. -->
 <style data-points-bundle="styles">/* Additive fat-loss module. Existing score and wheel styles remain intact. */
-.fat-status-switch { margin-top:8px; width:min(100%,300px); flex-shrink:0; }
-.fat-status-switch .segment { min-height:30px; padding:5px 9px; font-size:12px; }
+.fat-status-switch { margin-top:4px; width:fit-content; max-width:100%; flex-shrink:0; }
 .fat-record-status { margin:12px 0 15px; }
 #metricSwitch { grid-template-columns: repeat(3,minmax(0,1fr))!important; }
 #metricSwitch .metric-switch-thumb { width:calc((100% - 8px)/3)!important; }
@@ -1895,7 +1894,40 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 @media (max-height:700px) { .fat-home-actions { height:78px; min-height:78px; } }
 @media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
 
-.fat-overview .fat-status-switch { margin:0 auto 14px; }
+.fat-overview .fat-status-switch { margin:0; }
+
+/* One compact measurement filter, visually quieter than the module navigation. */
+#pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:6px 12px; border:0; border-radius:20px; background:transparent; color:#8a938e; font-size:12px; font-weight:500; box-shadow:none; transition:color .16s ease,background .16s ease; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment::before { content:""; width:5px; height:5px; border-radius:50%; background:#c1cbc5; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active { color:#52715f!important; background:#edf4ef!important; font-weight:650; box-shadow:none!important; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active::before { background:#648875; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment:disabled { opacity:.45; }
+.fat-overview-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin:2px 0 18px; }
+#pointsApp .fat-overview-toolbar .overview-content-switch { width:auto; margin:0; padding:3px; gap:2px; border-radius:12px; background:#edf0ed; }
+#pointsApp .fat-overview-toolbar .overview-content-choice { min-height:32px; padding:6px 13px; font-size:12px; border-radius:9px; }
+#pointsApp .fat-overview-toolbar .overview-content-choice.active { background:#fff!important; color:#52715f!important; box-shadow:0 1px 4px #293a2f0b; }
+#fatTrendSection > .section-title,#fatCalendarSection > .section-title { display:none; }
+.fat-week-card { padding:16px 15px; text-align:left; border-radius:18px; }
+.fat-week-title { font-size:11px; color:#919991; font-weight:500; }
+.fat-week-result { justify-content:flex-start; margin:10px 0 9px; gap:6px; }
+.fat-week-result strong { font-size:30px; letter-spacing:-.04em; }
+.fat-week-coverage { font-size:11px; color:#8a938d; }
+.fat-stat-details { border-top:1px solid #e5ebe7; margin-top:14px; padding-top:11px; }
+.fat-stat-details summary { cursor:pointer; color:#809085; font-size:11px; list-style:none; display:flex; align-items:center; justify-content:space-between; min-height:30px; }
+.fat-stat-details summary::-webkit-details-marker { display:none; }
+.fat-stat-details summary::after { content:"＋"; color:#9aa99f; font-size:14px; }
+.fat-stat-details[open] summary::after { content:"−"; }
+.fat-stat-details-body { padding:3px 0 6px; }
+.fat-stat-details-body :is(p,.fat-week-dates) { text-align:left; line-height:1.7; font-size:11px; color:#87918a; }
+.fat-stat-details-body .fat-week-long { border:0; padding:0; }
+.fat-chart-legend { gap:16px; margin-top:12px; }
+#fatChartCaption { font-size:10px; color:#9aa29c; }
+#fatTrendRanges .segment { padding:7px 10px; font-size:11px; }
+.fat-month-summary > div { background:#f4f7f4; border-color:transparent; border-radius:12px; }
+@media(max-width:360px) { #pointsApp :is(.fat-status-switch,.fat-record-status) .segment { padding-left:9px; padding-right:9px; } #pointsApp .fat-overview-toolbar .overview-content-choice { padding-left:10px; padding-right:10px; } }
+
+#pointsApp .fat-record-status { width:fit-content; margin:14px auto 18px; }
 
 /* Scoped to fat loss; reuse the existing glass sheet, palette and press feedback. */
 .fat-home-actions { width:min(86vw,340px); grid-template-columns:1fr; align-content:center; gap:7px; }
@@ -2824,7 +2856,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261009.2</span>
+<span class="settings-value">20261009.3</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -2839,8 +2871,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.2</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 09:08</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.3</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 13:42</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -2873,7 +2905,16 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261009.2</strong><span>当前版本</span></div>
+<div class="release-head"><strong>20261009.3</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/09 13:42</div>
+<ul class="release-list">
+<li>减脂状态选择改为轻量胶囊控件，统一首页与记录弹窗的样式。</li>
+<li>总览直接进入趋势，周变化、记录天数和图表优先展示，详细口径收进统计说明。</li>
+<li>趋势与记录快捷切换，减少重复标题和解释文字。</li>
+</ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>20261009.2</strong><span>上一版本</span></div>
 <div class="release-date">2026/10/09 09:08</div>
 <ul class="release-list">
 <li>体重记录区分未排便和已排便，首页、趋势和月度统计只比较同类记录。</li>
@@ -4116,18 +4157,16 @@ window.PointsKitchenRecipes = [
         </nav></div>
         <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
           <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
-          <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">月度总览</button>
+          <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">记录</button>
         </div>
         <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
           <h2 class="section-title">趋势统计</h2>
           <div class="card glass fat-week-card" aria-live="polite">
-            <div class="fat-week-title">近七天记录均值 · 比前七天</div>
+            <div class="fat-week-title">近 7 天 · 与前 7 天均重比较</div>
             <div class="fat-week-result"><span id="fatWeekDirection">暂无对比</span><strong id="fatWeekValue">—</strong><span id="fatWeekUnit">公斤</span></div>
             <div class="fat-week-coverage" id="fatWeekCoverage"></div>
-            <div class="fat-week-dates" id="fatWeekDates"></div>
-            <p class="fat-week-note" id="fatWeekNote"></p>
-            <p class="fat-week-long" id="fatWeekLong"></p>
+
           </div>
           <div class="card glass trend-card">
             <div class="segmented" aria-label="减脂趋势范围" id="fatTrendRanges">
@@ -4136,10 +4175,14 @@ window.PointsKitchenRecipes = [
               <button class="segment pressable" data-fat-range="90" type="button">近90天</button>
             </div>
             <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
-            <div class="fat-chart-legend"><span>灰点：每日首笔</span><span>绿线：七日记录均值</span></div>
-            <div class="chart-caption" id="fatChartCaption"></div><p class="fat-chart-help" id="fatChartHelp"></p>
+            <div class="fat-chart-legend"><span>每日记录</span><span>7 日均值</span></div>
+            <div class="chart-caption" id="fatChartCaption"></div>
+            <details class="fat-stat-details"><summary>统计说明</summary><div class="fat-stat-details-body">
+            <div class="fat-week-dates" id="fatWeekDates"></div><p class="fat-week-note" id="fatWeekNote"></p><p class="fat-week-long" id="fatWeekLong"></p>
+            <p class="fat-chart-help" id="fatChartHelp"></p>
             <p class="fat-chart-help">每天首笔参与统计，漏记不补值；绿线在七天内至少有三天记录时显示。尽量分散记录，每周五至七天更有参考价值。</p>
             <p class="fat-chart-help">尽量固定称重时段、同一台秤和相近衣着；比较时保持相同排便状态。均值下降表示平均体重变轻，不等同于脂肪减少量。</p>
+            </div></details>
           </div>
         </section>
         <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
@@ -4147,7 +4190,7 @@ window.PointsKitchenRecipes = [
             <div class="calendar-head"><button class="small-icon pressable" id="fatPrevMonth" aria-label="减脂上个月" type="button">‹</button><div class="calendar-month" id="fatCalendarMonth"></div><button class="small-icon pressable" id="fatNextMonth" aria-label="减脂下个月" type="button">›</button></div>
             <div class="fat-month-summary"><div><span>本月记录</span><strong id="fatMonthCount">0 次</strong></div><div><span>本月净变化</span><strong id="fatMonthChange">—</strong></div></div>
             <div class="weekdays" aria-hidden="true"><div class="weekday">日</div><div class="weekday">一</div><div class="weekday">二</div><div class="weekday">三</div><div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div></div>
-            <div class="calendar-grid" id="fatCalendarGrid"></div><p class="fat-chart-help">日期下方显示当天最后一次记录的差值</p>
+            <div class="calendar-grid" id="fatCalendarGrid"></div><p class="fat-chart-help">点击日期查看记录 · 数值为当天最后一次变化</p>
             <div class="day-detail hidden" id="fatDayDetail"><div class="detail-title" id="fatDayTitle"></div><ul class="log-list" id="fatDayList"></ul></div>
           </div>
         </section>
@@ -4174,6 +4217,8 @@ window.PointsKitchenRecipes = [
     const q = id => document.getElementById(id);
     const content = els.home.querySelector(".fat-home-content");
     const overview = q("fatOverviewContent");
+    const toolbar=document.createElement("div");toolbar.className="fat-overview-toolbar";
+    toolbar.append(overview.querySelector(".fat-status-switch"),q("fatContentSwitch"));overview.prepend(toolbar);
     const dialog = q("fatWeightLayer");
     let snapshot = null, logs = [], readError = false, logsError = false;
     let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
@@ -4365,8 +4410,8 @@ window.PointsKitchenRecipes = [
       q("fatValue").style.fontSize = q("fatValue").textContent.length > 5 ? "clamp(34px,10vw,44px)" : "";
       q("fatValueUnit").textContent = unitName();
       q("fatValue").parentElement.classList.toggle("gain",Number(delta)>0);
-      q("fatHomeTitle").textContent=`${statusLabel(bowelStatus)} · 相对设置里的初始体重`;
-      q("fatHomeMeta").textContent = statusSupported===false?"分类功能尚未启用，暂时只读查看原记录": !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `最近记录 ${stamp(snapshot.recordedAt)} · 共 ${snapshot.count} 次`;
+      q("fatHomeTitle").textContent="与初始体重相比";
+      q("fatHomeMeta").textContent = statusSupported===false?"分类功能尚未启用，暂时只读查看原记录": !initialized ? "正在同步减脂记录" : readError ? "同步失败 · 点击圆盘重试" : !snapshot?.configured ? (verifiedAdmin ? "请先在管理员设置中设置起始体重" : "等待管理员开始记录") : !hasDelta(delta) ? (verifiedAdmin ? "点击下方按钮，记录第一次体重" : "等待管理员记录体重") : `${stamp(snapshot.recordedAt)} · ${snapshot.count} 次记录`;
     }
     function renderOverview() {
       syncStatuses();
@@ -4374,7 +4419,7 @@ window.PointsKitchenRecipes = [
       if (!isActive) return;
       els.scoreOverviewContent.hidden = true; els.wheelOverviewContent.hidden = true;
       els.overviewTitle.textContent = "减脂总览";
-      els.overviewSubtitle.textContent = `${statusLabel(bowelStatus)} · 查看体重变化趋势与月度记录`;
+      els.overviewSubtitle.textContent = "按同类记录统计";
       const section = state.overviewSection;
       q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
       q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
@@ -4414,11 +4459,12 @@ window.PointsKitchenRecipes = [
       const periodLabel = week => `${dateLabel(week.start)}—${dateLabel(shiftDay(week.end,-1))}`;
       const magnitude = change === null ? null : Math.abs(displayWeight(change));
       const rounded = magnitude === null ? null : Math.round((magnitude+Number.EPSILON)*100)/100;
-      q("fatWeekDirection").textContent = change === null ? "暂无对比" : change !== 0 && rounded === 0 ? "变化小于" : rounded === 0 ? "基本持平" : change < 0 ? "记录均值下降" : "记录均值上升";
+      q("fatWeekValue").hidden=change===null;q("fatWeekUnit").hidden=change===null;
+      q("fatWeekDirection").textContent = change === null ? "等待跨周对比" : change !== 0 && rounded === 0 ? "变化小于" : rounded === 0 ? "基本持平" : change < 0 ? "记录均值下降" : "记录均值上升";
       q("fatWeekValue").textContent = rounded === null ? "—" : change !== 0 && rounded === 0 ? "0.01" : new Intl.NumberFormat("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2}).format(rounded);
       q("fatWeekUnit").textContent = unitName();
       q("fatWeekValue").classList.toggle("gain",change > 0);
-      q("fatWeekCoverage").textContent = `近七天：${recent.count}/7 天记录 · 前七天：${previous.count}/7 天记录`;
+      q("fatWeekCoverage").textContent = `近 7 天记录 ${recent.count} 天 · 前 7 天 ${previous.count} 天`;
       q("fatWeekDates").textContent = `近七天 ${periodLabel(recent)}（含今天）· 前七天 ${periodLabel(previous)}`;
       const coverage = Math.min(recent.count,previous.count);
       q("fatWeekNote").textContent = !coverage ? "两段都至少有一天记录后才能比较；缺少记录的日期不补值。" : coverage < 3 ? "记录较少，仅供参考。建议两段各至少记录三个不同日期，并分散在一周内。" : coverage < 5 ? "初步参考，按已有记录天数计算。每段尽量记录五至七天。" : "按已有记录天数计算。连续观察几周，比一次涨跌更能看清趋势。";
@@ -4439,8 +4485,8 @@ window.PointsKitchenRecipes = [
       const values = [...points,...averages.filter(p => p.delta !== null)];
       q("fatChartEmpty").hidden = points.length > 0;
       q("fatChartEmpty").textContent = logsError ? "记录读取失败" : "这个时段暂无记录";
-      q("fatChartCaption").textContent = `近 ${range} 天 · ${points.length} 天有记录 · 绿线每点使用此前七天（含当天）的记录`;
-      q("fatTrendCanvas").setAttribute("aria-label",points.length ? `近${range}天体重差值趋势，${points.length}天有记录；灰点为每日首笔，绿线为七日记录均值。${q("fatWeekDirection").textContent} ${q("fatWeekValue").textContent} ${unitName()}` : "这个时段暂无记录");
+      q("fatChartCaption").textContent = `近 ${range} 天 · ${points.length} 天有记录`;
+      q("fatTrendCanvas").setAttribute("aria-label",points.length ? `近${range}天体重差值趋势，${points.length}天有记录；灰点为每日首笔，绿线为七日记录均值。${q("fatWeekDirection").textContent}${q("fatWeekValue").hidden ? "" : ` ${q("fatWeekValue").textContent} ${unitName()}`}` : "这个时段暂无记录");
       q("fatTrendRanges").querySelectorAll("[data-fat-range]").forEach(btn => {
         const selected = btn.dataset.fatRange === range;
         btn.classList.toggle("active",selected); btn.setAttribute("aria-pressed",String(selected));
@@ -4717,7 +4763,7 @@ window.PointsKitchenRecipes = [
     q("fatRefreshBtn").addEventListener("keydown",event=>{ if (["Enter"," "].includes(event.key)) { event.preventDefault(); void manualRefresh(); } });
     els.overviewBtn.addEventListener("click",event=>{
       if (!active()) return;
-      event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); void loadLogs(true);
+      event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); chooseSection("trend"); void loadLogs(true);
     },true);
     overview.addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-section]"); if (btn) { ui.vibrate(6); chooseSection(btn.dataset.fatSection); } });
     q("fatTrendRanges").addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-range]"); if (btn && ["14","28","90"].includes(btn.dataset.fatRange)) { range=btn.dataset.fatRange; laterDraw(); } });
