@@ -262,6 +262,7 @@
       };
 
       const state = {
+        authResolved: false,
         score: null,
         wheelChances: 0,
         wheelCashBalance: 0,
@@ -741,8 +742,10 @@
           }
           state.session = data.session;
           state.isAdmin = nextAdmin;
+          state.authResolved = true;
           runtime.clear("auth:restore");
           renderAdminState();
+          window.dispatchEvent(new Event('points:auth-resolved'));
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           if (version !== authReadVersion) return;
@@ -753,6 +756,7 @@
           }
           state.session = null;
           state.isAdmin = false;
+          state.authResolved = false;
           renderAdminState();
         }
       }
@@ -773,15 +777,18 @@
             throw new Error("此账号不是管理员");
           }
           state.isAdmin = true;
+          state.authResolved = true;
           els.passwordInput.value = "";
           setLayer(els.loginLayer, false);
           renderAdminState();
+          window.dispatchEvent(new Event('points:auth-resolved'));
           vibrate(12);
           showToast("管理员已登录");
         } catch (err) {
           console.error("login:", err);
           state.session = null;
           state.isAdmin = false;
+          state.authResolved = false;
           renderAdminState();
           showToast(err?.message === "此账号不是管理员" ? err.message : "登录失败，请检查账号密码");
         } finally {
@@ -795,8 +802,10 @@
           if (error) throw error;
           state.session = null;
           state.isAdmin = false;
+          state.authResolved = true;
           setLayer(els.settingsLayer, false);
           renderAdminState();
+          window.dispatchEvent(new Event('points:auth-resolved'));
           if (state.overviewMode !== "closed") await loadOverviewData(true);
           showToast("已退出管理员");
         } catch (err) {
@@ -3929,6 +3938,7 @@
         state.session = session;
         if (_event !== "INITIAL_SESSION" && previous !== (session?.user?.id || null)) {
           authReadVersion++;
+          state.authResolved = false;
           state.isAdmin = false;
           renderAdminState();
           // Auth callbacks run under the SDK lock; verify only after the callback returns.
