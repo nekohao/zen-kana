@@ -11,9 +11,6 @@
       <button class="settings-row pressable" id="pointsPushEnable" type="button" disabled><span>开启厨房提醒</span><span class="chevron">›</span></button>
       <button class="settings-row pressable" id="pointsPushDisable" type="button" hidden><span>关闭本机提醒</span><span class="chevron">›</span></button>
       <button class="settings-row pressable" id="pointsPushTest" type="button" hidden><span>发送测试通知</span><span class="chevron">›</span></button>
-      <div class="points-push-pairing" id="pointsPushGuestPairing" hidden><label for="pointsPushPairingInput">哥哥的接收码</label><input id="pointsPushPairingInput" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="粘贴接收码，再开启提醒"/></div>
-      <button class="settings-row pressable" id="pointsPushPairing" type="button" hidden><span>生成宝宝接收码</span><span class="chevron">›</span></button>
-      <div class="points-push-pairing" id="pointsPushPairingResult" hidden><label for="pointsPushPairingCode">接收码 · 单次有效，15 分钟内使用</label><input id="pointsPushPairingCode" type="text" readonly aria-label="宝宝接收码"/><button id="pointsPushCopy" type="button">复制接收码</button></div>
     </div><p class="points-push-help" id="pointsPushHelp">厨房有更新时提醒，点开后查看具体内容。</p><p class="points-push-message" id="pointsPushMessage" role="status" aria-live="polite"></p>`;
     account.parentElement.insertBefore(section,account.previousElementSibling);
     let device=null,config=null,registration=null,busy=false,loading=false,permission='default',subscribed=false,epoch=0;
@@ -31,8 +28,6 @@
       q('pointsPushEnable').hidden=subscribed;q('pointsPushEnable').disabled=busy || !available || !config || permission==='denied' || currentRole==='unavailable';
       q('pointsPushDisable').hidden=!subscribed && !device?.binding;q('pointsPushDisable').disabled=busy;
       q('pointsPushTest').hidden=!subscribed;q('pointsPushTest').disabled=busy;
-      q('pointsPushPairing').hidden=!currentRole.startsWith('admin:');q('pointsPushPairing').disabled=busy || !config;
-      q('pointsPushGuestPairing').hidden=currentRole!=='guest' || subscribed;
       q('pointsPushHelp').textContent=appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房有更新时提醒，点开后查看具体内容。约一分钟内发送，实际送达由系统决定。';
     }
     async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
@@ -56,15 +51,20 @@
           if(!response.ok)throw Error('Backend unavailable');const data=await response.json();
           const app=new URL(data.appUrl),scope=new URL('./',document.baseURI);
           if(!/^[A-Za-z0-9_-]{87}$/.test(data.publicKey || '') || app.origin!==scope.origin || new URL('./',app).pathname!==scope.pathname)throw Error('Wrong app configuration');
-          if(version===epoch)config=data;
+          if(version===epoch){
+            config=data;
+            if(subscribed && device?.token){
+              const receipt=await db.rpc('points_push_get_subscription',{p_device_token:device.token});
+              if(version===epoch)subscribed=!receipt.error && receipt.data?.enabled===true;
+            }
+          }
         }finally{clearTimeout(timer);}
       }catch(_){if(version===epoch)config=null;}
       finally{loading=false;render();}
     }
     async function enable(){
       if(busy || !config || !supported())return;
-      const pairing=q('pointsPushPairingInput').value.trim().toUpperCase();
-      if(currentRole==='guest' && !device?.binding && !/^[A-F0-9]{32}$/.test(pairing))return message('请先粘贴哥哥生成的接收码。');
+      if(currentRole==='guest' && !window.PointsDeviceAccess?.verified)return message('请先完成游客设备验证。');
       busy=true;message('');render();const version=epoch,expectedRole=currentRole;let created=null;
       try {
         const token=deviceToken();
@@ -78,10 +78,10 @@
         const expected=keyBytes(config.publicKey),old=subscription?.options?.applicationServerKey;
         if(subscription && (!device?.binding || !old || [...new Uint8Array(old)].join(',')!==[...expected].join(','))){await subscription.unsubscribe();subscription=null;}
         if(!subscription){subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expected});created=subscription;}
-        await rpc('points_push_register',{p_device_token:token,p_subscription:subscription.toJSON(),p_public_key:config.publicKey,p_pairing_code:pairing || null});
+        await rpc('points_push_register',{p_device_token:token,p_subscription:subscription.toJSON(),p_public_key:config.publicKey,p_pairing_code:null});
         if(version!==epoch){await subscription.unsubscribe();await rpc('points_push_remove',{p_device_token:token});throw Error('Identity changed');}
-        saveDevice({token,binding:expectedRole});subscribed=true;q('pointsPushPairingInput').value='';message('本机厨房提醒已开启。可以发送一条测试通知。');
-      }catch(error){if(created)await created.unsubscribe().catch(()=>{});message(error.code==='42501'?'接收码无效或已过期，请让哥哥重新生成。':'暂时无法开启。请检查网络、接收码和后端配置后重试。');}
+        saveDevice({token,binding:expectedRole});subscribed=true;message('本机厨房提醒已开启。可以发送一条测试通知。');
+      }catch(error){if(created)await created.unsubscribe().catch(()=>{});message(error.code==='42501'?'设备验证已失效，请重新完成接入验证。':'暂时无法开启。请检查网络和后端配置后重试。');}
       finally{busy=false;render();}
     }
     async function disable(silent=false){
@@ -99,13 +99,11 @@
     q('pointsPushEnable').addEventListener('click',()=>void enable());
     q('pointsPushDisable').addEventListener('click',()=>void disable());
     q('pointsPushTest').addEventListener('click',async()=>{if(busy || !device?.token)return;busy=true;render();try{await rpc('points_push_test',{p_device_token:device.token});message('测试通知已排队，约一分钟内发送。锁屏也可接收。');}catch(_){message('测试未发送，请稍后重试；每分钟最多测试一次。');}finally{busy=false;render();}});
-    q('pointsPushPairing').addEventListener('click',async()=>{if(busy)return;busy=true;render();try{const data=await rpc('points_push_admin_pairing',{});q('pointsPushPairingCode').value=data.code;q('pointsPushPairingResult').hidden=false;message('把接收码给宝宝，在她的手机上开启提醒。');}catch(_){message('生成失败，请确认管理员已登录并部署了增量 SQL。');}finally{busy=false;render();}});
-    q('pointsPushCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(q('pointsPushPairingCode').value);message('接收码已复制。');}catch(_){q('pointsPushPairingCode').select();message('请长按接收码复制。');}});
     els.settingsBtn.addEventListener('click',()=>void inspect());
     window.addEventListener('online',()=>{if(device?.binding && device.binding!==currentRole)void disable(true);});
     function roleChanged(){
       const next=role();if(next!==currentRole){epoch++;currentRole=next;subscribed=false;}
-      q('pointsPushPairingResult').hidden=true;q('pointsPushPairingCode').value='';q('pointsPushPairingInput').value='';device=readDevice();
+      device=readDevice();
       if(device?.binding && device.binding!==next)void (async()=>{registration=await navigator.serviceWorker?.getRegistration();await disable(true);})();
       render();
     }

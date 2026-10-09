@@ -7,8 +7,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261009.6" name="points-build"/>
-<meta content="2026/10/09 14:41" name="points-updated-at"/>
+<meta content="20261009.7" name="points-build"/>
+<meta content="2026/10/09 15:20" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -2597,13 +2597,36 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
   }
 }
 
-.points-push-pairing { padding:12px 16px; border-top:1px solid var(--hairline); }
-.points-push-pairing label { display:block; margin-bottom:8px; font-size:11px; color:var(--secondary); }
-.points-push-pairing input { width:100%; min-height:42px; padding:9px 11px; border:1px solid var(--hairline); border-radius:10px; background:#fff; font-size:12px; color:var(--ink); }
-.points-push-pairing button { margin-top:8px; min-height:36px; padding:6px 12px; border:0; border-radius:10px; background:var(--ui-wash,#edf0f4); color:var(--ui-accent,#67556f); font-size:12px; }
 .points-push-help,.points-push-message { margin:9px 16px 15px; color:var(--secondary); font-size:11px; line-height:1.65; }
 .points-push-message:empty { display:none; }
 #pointsPushSettings .settings-row:disabled { opacity:.5; cursor:default; }
+
+.points-access-locked > .home,.points-access-locked > #kitchenPage,.points-access-locked > .app-nav { display:none!important; }
+#pointsAccessGate { position:fixed; inset:0; z-index:18000; display:grid; place-items:center; padding:24px; overflow:auto; background:linear-gradient(155deg,#fbf8fc,#f4f5f9); }
+#pointsAccessGate[hidden] { display:none!important; }
+.points-access-card { width:min(100%,340px); padding:28px 24px; border:1px solid #fff; border-radius:28px; background:#ffffffd9; box-shadow:0 16px 60px #3529430c; }
+.points-access-card > img { display:block; width:50px; height:50px; border-radius:15px; margin:0 auto 18px; }
+.points-access-card h1 { font-size:20px; font-weight:650; text-align:center; margin:0 0 12px; }
+.points-access-intro,.points-access-note { font-size:12px; line-height:1.7; color:#8c8493; text-align:center; margin:0 0 22px; }
+.points-access-card button { width:100%; min-height:44px; border:0; border-radius:13px; font-size:14px; cursor:pointer; }
+.points-access-card .points-access-primary { background:#9f6286; color:#fff; font-weight:600; }
+.points-access-card button:disabled { opacity:.5; }
+.points-access-divider { display:flex; align-items:center; gap:12px; margin:24px 0 18px; font-size:11px; color:#a49aa9; }
+.points-access-divider::before,.points-access-divider::after { content:""; height:1px; flex:1; background:#eee9f0; }
+.points-access-card label { display:block; font-size:12px; color:#7d7383; margin:0 0 8px; }
+.points-access-card input { width:100%; height:48px; border:1px solid #e5dfe9; background:#faf8fb; border-radius:12px; padding:0 14px; margin-bottom:12px; font-size:17px; letter-spacing:.14em; color:#5f5168; }
+.points-access-card input::placeholder { font-size:13px; letter-spacing:0; }
+.points-access-message { min-height:20px; font-size:12px; line-height:1.6; color:#9f6286; margin:14px 0; }
+.points-access-note { font-size:10px; margin:0; }
+#pointsAccessGate:has(~ #pointsApp) { isolation:isolate; }
+.points-access-locked #loginLayer { z-index:19000!important; }
+.points-access-locked #toast { z-index:20001!important; }
+.points-access-code-result { padding:16px; text-align:center; border-top:1px solid var(--hairline); }
+.points-access-code-result strong { font-size:28px; font-variant-numeric:tabular-nums; letter-spacing:.18em; color:var(--ui-accent,#9f6286); }
+.points-access-code-result p,.points-access-settings-message { font-size:11px; color:var(--secondary); line-height:1.6; }
+.points-access-code-result button,.points-access-device button { min-height:36px; border:0; border-radius:10px; background:var(--ui-wash,#f3edf1); color:var(--ui-accent,#9f6286); padding:6px 13px; }
+.points-access-device { padding:12px 16px; display:flex; gap:10px; align-items:center; justify-content:space-between; font-size:12px; border-top:1px solid var(--hairline); }
+#pointsAccessDeviceList { padding-bottom:10px; font-size:12px; }
 </style>
 <script>if(navigator.standalone===true && /iPhone|iPad|iPod/.test(navigator.userAgent))document.documentElement.classList.add("ios-pwa");</script>
 </head>
@@ -2889,7 +2912,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261009.6</span>
+<span class="settings-value">20261009.7</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -2904,8 +2927,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.6</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 14:41</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.7</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 15:20</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -2938,8 +2961,13 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261009.6</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/09 14:41</div>
+<div class="release-head"><strong>20261009.7</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/09 15:20</div>
+<ul class="release-list"><li>游客设备首次接入需要管理员生成的单次验证码，刷新与正常更新保留设备凭据。</li><li>管理员可撤销游客设备；通知订阅复用设备验证，取消单独的推送接收码。</li></ul>
+</div>
+<div class="release-block previous">
+<div class="release-head"><strong>20261009.6</strong><span>上一版本</span></div>
+<div class="release-date">2026/10/09</div>
 <ul class="release-list"><li>新增厨房 Web Push 设置：本机授权、接收码绑定、关闭与测试通知。</li><li>支持通知点击进入厨房，需部署配套 Supabase 推送后端后启用。</li></ul>
 </div>
 <div class="release-block previous">
@@ -3644,6 +3672,15 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
   }
   // Keep the browser's auth locking; cap acquisition instead of bypassing it.
   async function fetchWithDeadline(input, init = {}) {
+    const target=new URL(typeof input==='string'?input:input.url || String(input),document.baseURI);
+    const credential=window.PointsDeviceAccess?.credential();
+    if(credential && target.origin===window.PointsDeviceAccess.apiOrigin && target.pathname.startsWith('/rest/v1/')) {
+      const headers=new Headers(input instanceof Request?input.headers:undefined);
+      new Headers(init.headers || {}).forEach((value,name)=>headers.set(name,value));
+      // Reuse Supabase's supported header; avoid adding a CORS preflight header.
+      const client=(headers.get('x-client-info') || 'points-web').replace(/;points-device=[^;]*/g,'');
+      headers.set('x-client-info',client+';points-device='+credential);init={...init,headers};
+    }
     const controller = new AbortController(), upstream = init.signal;
     const abort = () => controller.abort(upstream.reason);
     if (upstream?.aborted) abort(); else upstream?.addEventListener("abort", abort, {once:true});
@@ -3659,7 +3696,9 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
       identity = next; identityKnown = true;
     });
     db.rpc = (name, args = {}) => {
-      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_)/.test(name) || name === "points_is_admin";
+      if(window.PointsDeviceAccess && !window.PointsDeviceAccess.allowsRpc(name))
+        return Promise.resolve({data:null,error:{code:'42501',message:'POINTS_DEVICE_REQUIRED'}});
+      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
       const epoch = clientEpoch, revision = readEpoch;
       const key = `${epoch}:${revision}:${name}:${JSON.stringify(args)}`;
       if (read && pendingReads.has(key)) return pendingReads.get(key);
@@ -3677,6 +3716,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
           if (epoch !== clientEpoch || (read && revision !== readEpoch)) {
             return {data:null, error:{code:"APP_STALE_READ", message:"Superseded request"}};
           }
+          if(result?.error?.message?.includes('POINTS_DEVICE_REQUIRED'))window.PointsDeviceAccess?.lock();
           if (!result?.error) clear(name);
           else if (!/^(22|23|42|40001|P000|PGRST20)/.test(result.error.code || "")) report(name, !read && unknownWrite(result.error));
           return result;
@@ -3948,6 +3988,7 @@ window.PointsKitchenRecipes = [
       return `<div class="kitchen-section-head"><h2>${esc(selectedDay.slice(5).replace('-','月'))}日的订单</h2><span>${rows.length} 笔</span></div>${rows.map(o=>`<article class="kitchen-card"><div class="kitchen-order-head"><button class="kitchen-link" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${stamp(o.created_at)} · #${esc(o.id)}</button>${status(o)}</div>${o.items.map(d=>{const r=o.reviews?.find(r=>r.slug===d.slug);return `<div class="kitchen-day-dish"><div><strong>${esc(d.name)}</strong><span class="kitchen-rating">${r?`★ ${r.stars}`:o.status==='completed'?'待评价':'—'}</span></div>${r?.comment?`<p>${esc(r.comment.slice(0,70))}</p>${r.comment.length>70?`<details><summary>查看完整评价</summary><p>${esc(r.comment)}</p></details>`:''}`:''}</div>`;}).join('')}${o.status==='settled'?`<p class="kitchen-meta">本单积分 ${signed(o.score_delta)}</p>`:''}</article>`).join('') || empty('这一天没有订单')}`;
     }
     function showCritical() {
+      if(window.PointsDeviceAccess && !window.PointsDeviceAccess.verified){hideCritical();return;}
       if(!notifications.length || ['waiting','verifying'].includes(role)) {hideCritical();return;}
       if(admin() && (modal || document.querySelector('.modal-layer.open') || state.wheelSpinning || state.wheelRequestInFlight))return;
       presented=structuredClone(notifications);
@@ -4137,6 +4178,7 @@ window.PointsKitchenRecipes = [
       if(next===role)return;role=next;epoch++;pending=null;response=null;deployed=false;orders=[];notifications=[];error='';dishes=window.PointsKitchenRecipes || [];
       clearTimeout(draftTimer);draftSerial++;busy=false;hideCritical();closeDialog();render();if(!['waiting','verifying'].includes(role))void refresh();
     }
+    window.addEventListener('points:access-ready',()=>{if(!['waiting','verifying'].includes(role))void refresh();});
     render(); return {refresh,roleChanged};
   }
   window.PointsKitchen={attach};
@@ -5144,6 +5186,138 @@ window.PointsKitchenRecipes = [
 })();
 
 }catch(error){window.PointsStartup.fail("rewards",error,false);}}</script>
+<script data-points-asset="access">if(window.PointsStartup.canStart()){try{
+/* Permanent per-install credential in IndexedDB; only its hash lives on the server. */
+(() => {
+  'use strict';
+  let token=null,allowed=false,controller=null;
+  const permitted=new Set(['points_is_admin','points_access_redeem','points_access_get_device','points_push_remove']);
+  window.PointsDeviceAccess={attach,credential:()=>token,allowsRpc:name=>allowed || permitted.has(name),
+    lock:()=>controller?.lock(),get verified(){return allowed;},apiOrigin:null};
+  function database(){return new Promise((resolve,reject)=>{const r=indexedDB.open('points-device-access-v1',1);r.onupgradeneeded=()=>r.result.createObjectStore('credential');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+  async function storage(write){
+    const db=await database();try{return await new Promise((resolve,reject)=>{
+      const tx=db.transaction('credential',write?'readwrite':'readonly'),store=tx.objectStore('credential');
+      const request=write?store.put(write,'installation'):store.get('installation');let result;
+      request.onsuccess=()=>{result=request.result;};tx.oncomplete=()=>resolve(write || result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+    });}finally{db.close();}
+  }
+  function attach({db,state,els,ui,readAuth,onUnlocked,apiOrigin}){
+    const q=id=>document.getElementById(id),app=document.getElementById('pointsApp');
+    window.PointsDeviceAccess.apiOrigin=apiOrigin;
+    const gate=document.createElement('section');gate.id='pointsAccessGate';gate.setAttribute('aria-label','小世界接入验证');
+    gate.innerHTML=`<div class="points-access-card"><img src="ICON/icon-192.png" alt=""/><h1>进入我们的小世界</h1><p class="points-access-intro">管理员登录，或使用哥哥给的一次性验证码。</p>
+      <button id="pointsAccessLogin" type="button" class="points-access-primary">管理员登录</button>
+      <div class="points-access-divider">游客设备验证</div><label for="pointsAccessCode">一次性验证码</label><input id="pointsAccessCode" inputmode="numeric" maxlength="8" autocomplete="one-time-code" placeholder="输入 8 位验证码"/>
+      <button id="pointsAccessVerify" type="button" class="points-access-primary">验证并进入</button>
+      <button id="pointsAccessRetry" type="button" hidden>重新检查设备</button><p class="points-access-message" id="pointsAccessMessage" role="status" aria-live="polite">正在确认设备…</p>
+      <p class="points-access-note">验证完成后，本机刷新和版本更新无需再次输入。</p></div>`;
+    app.append(gate);
+    const settings=document.createElement('section');settings.id='pointsAccessSettings';
+    settings.innerHTML=`<div class="settings-label">游客设备接入</div><div class="settings-group"><button class="settings-row pressable" id="pointsAccessCreateCode" type="button"><span>生成一次性验证码</span><span class="chevron">›</span></button>
+      <div class="points-access-code-result" id="pointsAccessCodeResult" hidden><strong id="pointsAccessGeneratedCode"></strong><p id="pointsAccessExpires"></p><button id="pointsAccessCopyCode" type="button">复制验证码</button></div>
+      <button class="settings-row pressable" id="pointsAccessDevices" type="button"><span>查看已验证设备</span><span class="chevron">›</span></button><div id="pointsAccessDeviceList" hidden></div></div><p class="points-access-settings-message" id="pointsAccessSettingsMessage" role="status"></p>`;
+    els.adminSettings.append(settings);
+    let device=null,busy=false,checking=null,identity=null,codeTimer=0;
+    function key(){return state.isAdmin?'admin:'+state.session?.user?.id:state.session?'unavailable':device?.id?'guest:'+device.id:'locked';}
+    function say(text){q('pointsAccessMessage').textContent=text;}
+    function render(){
+      gate.hidden=allowed;app.classList.toggle('points-access-locked',!allowed);
+      q('pointsAccessVerify').disabled=busy;q('pointsAccessLogin').disabled=busy;
+      if(allowed){q('pointsAccessCode').value='';q('pointsAccessRetry').hidden=true;}
+    }
+    function lock(message='请验证设备后再进入。'){
+      const wasAllowed=allowed;allowed=false;identity=null;render();say(message);
+      // Keep a stored credential for retry; revocation is checked server-side.
+      if(wasAllowed)ui.closeAllLayers();
+      app.inert=false;const critical=q('kitchenCritical');if(critical)critical.hidden=true;
+    }
+    function unlock(){
+      const next=key(),changed=!allowed || identity!==next;allowed=true;identity=next;render();
+      if(changed){onUnlocked();window.dispatchEvent(new Event('points:access-ready'));}
+    }
+    async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
+    async function check(){
+      if(checking)return checking;
+      checking=(async()=>{
+        if(state.isAdmin){unlock();return;}
+        if(state.session){lock('此账号没有管理员权限，请使用管理员账号登录。');return;}
+        say('正在确认设备…');
+        try{
+          device=await storage();token=/^[a-f0-9]{64}$/.test(device?.token || '')?device.token:null;
+          if(state.isAdmin){unlock();return;}
+          if(!token){lock();return;}
+          const receipt=await rpc('points_access_get_device');
+          if(state.isAdmin){unlock();return;}
+          if(state.session){lock('请使用管理员账号登录。');return;}
+          if(receipt.ok && receipt.deviceId===device.id){unlock();void navigator.storage?.persist?.().catch(()=>{});}
+          else lock();
+        }catch(error){
+          if(state.isAdmin){unlock();return;}
+          if(error.code==='APP_STALE_READ' || allowed && error.code!=='42501')return;
+          lock(error.code==='42501'?'此设备尚未验证或已被撤销，请输入新的验证码。':/PGRST202|42883/.test(error.code || '')?'接入功能尚未配置，管理员可以登录。':'暂时无法确认设备，请检查网络后重试。');
+          q('pointsAccessRetry').hidden=!token;
+        }
+      })().finally(()=>{checking=null;});return checking;
+    }
+    async function verify(){
+      if(busy)return;const code=q('pointsAccessCode').value.trim();
+      if(!/^[0-9]{8}$/.test(code)){say('请输入完整的 8 位验证码。');return;}
+      busy=true;render();say('正在验证…');
+      try{
+        if(state.session && !state.isAdmin){await db.auth.signOut();state.session=null;}
+        device=device || await storage();
+        if(!/^[a-f0-9]{64}$/.test(device?.token || ''))device={id:crypto.randomUUID(),token:[...crypto.getRandomValues(new Uint8Array(32))].map(v=>v.toString(16).padStart(2,'0')).join('')};
+        // Save before the request so a lost response cannot orphan a consumed code.
+        await storage(device);token=device.token;
+        const receipt=await rpc('points_access_redeem',{p_code:code,p_device_id:device.id,p_device_token:device.token,p_label:/iPhone|iPad/.test(navigator.userAgent)?'宝宝的 iPhone / iPad':'游客设备'});
+        if(state.isAdmin){unlock();return;}
+        if(state.session)throw Error('Identity changed');
+        if(!receipt.ok){say(receipt.reason==='rate_limit'?'尝试较多，请一分钟后重试。':'验证码无效、已使用或已过期，请让哥哥重新生成。');return;}
+        if(receipt.deviceId!==device.id)throw Error('Invalid receipt');
+        unlock();void navigator.storage?.persist?.().catch(()=>{});
+      }catch(error){say(/PGRST202|42883/.test(error.code || '')?'请先部署设备接入增量 SQL。':'验证结果暂未确认，请联网后重试；不要清除本机数据。');q('pointsAccessRetry').hidden=!token;}
+      finally{busy=false;render();}
+    }
+    q('pointsAccessVerify').addEventListener('click',()=>void verify());q('pointsAccessCode').addEventListener('keydown',event=>{if(event.key==='Enter')void verify();});
+    q('pointsAccessRetry').addEventListener('click',()=>void check());
+    q('pointsAccessLogin').addEventListener('click',()=>{ui.setLayer(els.loginLayer,true);els.emailInput.focus();});
+    q('pointsAccessCreateCode').addEventListener('click',async()=>{
+      const button=q('pointsAccessCreateCode');if(button.disabled)return;button.disabled=true;
+      try{
+        const value=await rpc('points_access_admin_code');q('pointsAccessGeneratedCode').textContent=value.code;q('pointsAccessCodeResult').hidden=false;
+        clearInterval(codeTimer);const tick=()=>{const seconds=Math.max(0,Math.ceil((Date.parse(value.expiresAt)-Date.now())/1000));q('pointsAccessExpires').textContent=seconds?`单次有效 · 剩余 ${Math.ceil(seconds/60)} 分钟`:'已过期，请重新生成';};tick();codeTimer=setInterval(tick,1000);
+        q('pointsAccessSettingsMessage').textContent='给宝宝输入此验证码。新码会使你之前未使用的码失效。';
+      }catch(_){q('pointsAccessSettingsMessage').textContent='生成失败，请确认管理员登录及设备接入 SQL 已部署。';}
+      finally{button.disabled=false;}
+    });
+    q('pointsAccessCopyCode').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(q('pointsAccessGeneratedCode').textContent);q('pointsAccessSettingsMessage').textContent='验证码已复制。';}catch(_){q('pointsAccessSettingsMessage').textContent='请长按上面的验证码复制。';}});
+    async function listDevices(){
+      const list=q('pointsAccessDeviceList');
+      try{
+        const rows=await rpc('points_access_admin_devices');list.replaceChildren();list.hidden=false;
+        if(!rows.length)list.textContent='还没有已验证的游客设备。';
+        for(const row of rows){
+          const card=document.createElement('div');card.className='points-access-device';
+          const label=document.createElement('span');label.textContent=`${row.label} · ${row.revoked?'已撤销':new Date(row.verifiedAt).toLocaleDateString('zh-CN')+'验证'}`;card.append(label);
+          if(!row.revoked){const button=document.createElement('button');button.type='button';button.textContent='撤销';button.addEventListener('click',async()=>{button.disabled=true;try{await rpc('points_access_admin_revoke',{p_device_id:row.id});await listDevices();}catch(_){button.disabled=false;q('pointsAccessSettingsMessage').textContent='撤销未确认，请刷新设备列表后核对。';}});card.append(button);}
+          list.append(card);
+        }
+      }catch(_){q('pointsAccessSettingsMessage').textContent='读取失败，请检查网络或增量 SQL。';}
+    }
+    q('pointsAccessDevices').addEventListener('click',()=>void listDevices());
+    function authChanged(){
+      if(state.isAdmin){unlock();return;}
+      if(allowed && (identity?.startsWith('admin:') || state.session)){q('pointsAccessCodeResult').hidden=true;clearInterval(codeTimer);lock();void check();}
+      else if(!allowed && !state.session && token)void check();
+    }
+    window.addEventListener('online',()=>{if(!allowed)void check();});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden && allowed && !state.isAdmin)void check();});
+    controller={lock,authChanged,check,start:async()=>{await readAuth();await check();}};render();return controller;
+  }
+})();
+
+}catch(error){window.PointsStartup.fail("access",error,true);}}</script>
 <script data-points-asset="push">if(window.PointsStartup.canStart()){try{
 /* Optional kitchen notifications. Nothing on the critical startup path. */
 (() => {
@@ -5158,9 +5332,6 @@ window.PointsKitchenRecipes = [
       <button class="settings-row pressable" id="pointsPushEnable" type="button" disabled><span>开启厨房提醒</span><span class="chevron">›</span></button>
       <button class="settings-row pressable" id="pointsPushDisable" type="button" hidden><span>关闭本机提醒</span><span class="chevron">›</span></button>
       <button class="settings-row pressable" id="pointsPushTest" type="button" hidden><span>发送测试通知</span><span class="chevron">›</span></button>
-      <div class="points-push-pairing" id="pointsPushGuestPairing" hidden><label for="pointsPushPairingInput">哥哥的接收码</label><input id="pointsPushPairingInput" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="粘贴接收码，再开启提醒"/></div>
-      <button class="settings-row pressable" id="pointsPushPairing" type="button" hidden><span>生成宝宝接收码</span><span class="chevron">›</span></button>
-      <div class="points-push-pairing" id="pointsPushPairingResult" hidden><label for="pointsPushPairingCode">接收码 · 单次有效，15 分钟内使用</label><input id="pointsPushPairingCode" type="text" readonly aria-label="宝宝接收码"/><button id="pointsPushCopy" type="button">复制接收码</button></div>
     </div><p class="points-push-help" id="pointsPushHelp">厨房有更新时提醒，点开后查看具体内容。</p><p class="points-push-message" id="pointsPushMessage" role="status" aria-live="polite"></p>`;
     account.parentElement.insertBefore(section,account.previousElementSibling);
     let device=null,config=null,registration=null,busy=false,loading=false,permission='default',subscribed=false,epoch=0;
@@ -5178,8 +5349,6 @@ window.PointsKitchenRecipes = [
       q('pointsPushEnable').hidden=subscribed;q('pointsPushEnable').disabled=busy || !available || !config || permission==='denied' || currentRole==='unavailable';
       q('pointsPushDisable').hidden=!subscribed && !device?.binding;q('pointsPushDisable').disabled=busy;
       q('pointsPushTest').hidden=!subscribed;q('pointsPushTest').disabled=busy;
-      q('pointsPushPairing').hidden=!currentRole.startsWith('admin:');q('pointsPushPairing').disabled=busy || !config;
-      q('pointsPushGuestPairing').hidden=currentRole!=='guest' || subscribed;
       q('pointsPushHelp').textContent=appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房有更新时提醒，点开后查看具体内容。约一分钟内发送，实际送达由系统决定。';
     }
     async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
@@ -5203,15 +5372,20 @@ window.PointsKitchenRecipes = [
           if(!response.ok)throw Error('Backend unavailable');const data=await response.json();
           const app=new URL(data.appUrl),scope=new URL('./',document.baseURI);
           if(!/^[A-Za-z0-9_-]{87}$/.test(data.publicKey || '') || app.origin!==scope.origin || new URL('./',app).pathname!==scope.pathname)throw Error('Wrong app configuration');
-          if(version===epoch)config=data;
+          if(version===epoch){
+            config=data;
+            if(subscribed && device?.token){
+              const receipt=await db.rpc('points_push_get_subscription',{p_device_token:device.token});
+              if(version===epoch)subscribed=!receipt.error && receipt.data?.enabled===true;
+            }
+          }
         }finally{clearTimeout(timer);}
       }catch(_){if(version===epoch)config=null;}
       finally{loading=false;render();}
     }
     async function enable(){
       if(busy || !config || !supported())return;
-      const pairing=q('pointsPushPairingInput').value.trim().toUpperCase();
-      if(currentRole==='guest' && !device?.binding && !/^[A-F0-9]{32}$/.test(pairing))return message('请先粘贴哥哥生成的接收码。');
+      if(currentRole==='guest' && !window.PointsDeviceAccess?.verified)return message('请先完成游客设备验证。');
       busy=true;message('');render();const version=epoch,expectedRole=currentRole;let created=null;
       try {
         const token=deviceToken();
@@ -5225,10 +5399,10 @@ window.PointsKitchenRecipes = [
         const expected=keyBytes(config.publicKey),old=subscription?.options?.applicationServerKey;
         if(subscription && (!device?.binding || !old || [...new Uint8Array(old)].join(',')!==[...expected].join(','))){await subscription.unsubscribe();subscription=null;}
         if(!subscription){subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expected});created=subscription;}
-        await rpc('points_push_register',{p_device_token:token,p_subscription:subscription.toJSON(),p_public_key:config.publicKey,p_pairing_code:pairing || null});
+        await rpc('points_push_register',{p_device_token:token,p_subscription:subscription.toJSON(),p_public_key:config.publicKey,p_pairing_code:null});
         if(version!==epoch){await subscription.unsubscribe();await rpc('points_push_remove',{p_device_token:token});throw Error('Identity changed');}
-        saveDevice({token,binding:expectedRole});subscribed=true;q('pointsPushPairingInput').value='';message('本机厨房提醒已开启。可以发送一条测试通知。');
-      }catch(error){if(created)await created.unsubscribe().catch(()=>{});message(error.code==='42501'?'接收码无效或已过期，请让哥哥重新生成。':'暂时无法开启。请检查网络、接收码和后端配置后重试。');}
+        saveDevice({token,binding:expectedRole});subscribed=true;message('本机厨房提醒已开启。可以发送一条测试通知。');
+      }catch(error){if(created)await created.unsubscribe().catch(()=>{});message(error.code==='42501'?'设备验证已失效，请重新完成接入验证。':'暂时无法开启。请检查网络和后端配置后重试。');}
       finally{busy=false;render();}
     }
     async function disable(silent=false){
@@ -5246,13 +5420,11 @@ window.PointsKitchenRecipes = [
     q('pointsPushEnable').addEventListener('click',()=>void enable());
     q('pointsPushDisable').addEventListener('click',()=>void disable());
     q('pointsPushTest').addEventListener('click',async()=>{if(busy || !device?.token)return;busy=true;render();try{await rpc('points_push_test',{p_device_token:device.token});message('测试通知已排队，约一分钟内发送。锁屏也可接收。');}catch(_){message('测试未发送，请稍后重试；每分钟最多测试一次。');}finally{busy=false;render();}});
-    q('pointsPushPairing').addEventListener('click',async()=>{if(busy)return;busy=true;render();try{const data=await rpc('points_push_admin_pairing',{});q('pointsPushPairingCode').value=data.code;q('pointsPushPairingResult').hidden=false;message('把接收码给宝宝，在她的手机上开启提醒。');}catch(_){message('生成失败，请确认管理员已登录并部署了增量 SQL。');}finally{busy=false;render();}});
-    q('pointsPushCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(q('pointsPushPairingCode').value);message('接收码已复制。');}catch(_){q('pointsPushPairingCode').select();message('请长按接收码复制。');}});
     els.settingsBtn.addEventListener('click',()=>void inspect());
     window.addEventListener('online',()=>{if(device?.binding && device.binding!==currentRole)void disable(true);});
     function roleChanged(){
       const next=role();if(next!==currentRole){epoch++;currentRole=next;subscribed=false;}
-      q('pointsPushPairingResult').hidden=true;q('pointsPushPairingCode').value='';q('pointsPushPairingInput').value='';device=readDevice();
+      device=readDevice();
       if(device?.binding && device.binding!==next)void (async()=>{registration=await navigator.serviceWorker?.getRegistration();await disable(true);})();
       render();
     }
@@ -9319,9 +9491,13 @@ window.PointsKitchenRecipes = [
           refreshAuthState=async (...args)=>{await previousAuthRead(...args);push.roleChanged();};
         } catch(error) {console.error('pushInitialization:',error?.name);}
       }
+      const access=window.PointsDeviceAccess.attach({db,state,els,ui:{setLayer,closeAllLayers},
+        apiOrigin:SUPABASE_URL,readAuth:()=>refreshAuthState(),onUnlocked:()=>void boot().catch(()=>runtime.report('startup'))});
+      const previousAccessRender=renderAdminState;
+      renderAdminState=(...args)=>{previousAccessRender(...args);access.authChanged();};
       window.PointsHomeGestures?.attach({state,els,switchMetric:next=>switchMetric(next)});
       runtime.ready(() => resumeDatabaseRefresh());
-      void boot().catch(() => runtime.report("startup"));
+      void access.start().catch(() => access.lock('暂时无法确认权限，请检查网络后重试。'));
     })();
 
 }catch(error){window.PointsStartup.fail("app",error,true);}}</script>

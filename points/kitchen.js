@@ -96,6 +96,7 @@
       return `<div class="kitchen-section-head"><h2>${esc(selectedDay.slice(5).replace('-','月'))}日的订单</h2><span>${rows.length} 笔</span></div>${rows.map(o=>`<article class="kitchen-card"><div class="kitchen-order-head"><button class="kitchen-link" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${stamp(o.created_at)} · #${esc(o.id)}</button>${status(o)}</div>${o.items.map(d=>{const r=o.reviews?.find(r=>r.slug===d.slug);return `<div class="kitchen-day-dish"><div><strong>${esc(d.name)}</strong><span class="kitchen-rating">${r?`★ ${r.stars}`:o.status==='completed'?'待评价':'—'}</span></div>${r?.comment?`<p>${esc(r.comment.slice(0,70))}</p>${r.comment.length>70?`<details><summary>查看完整评价</summary><p>${esc(r.comment)}</p></details>`:''}`:''}</div>`;}).join('')}${o.status==='settled'?`<p class="kitchen-meta">本单积分 ${signed(o.score_delta)}</p>`:''}</article>`).join('') || empty('这一天没有订单')}`;
     }
     function showCritical() {
+      if(window.PointsDeviceAccess && !window.PointsDeviceAccess.verified){hideCritical();return;}
       if(!notifications.length || ['waiting','verifying'].includes(role)) {hideCritical();return;}
       if(admin() && (modal || document.querySelector('.modal-layer.open') || state.wheelSpinning || state.wheelRequestInFlight))return;
       presented=structuredClone(notifications);
@@ -285,6 +286,7 @@
       if(next===role)return;role=next;epoch++;pending=null;response=null;deployed=false;orders=[];notifications=[];error='';dishes=window.PointsKitchenRecipes || [];
       clearTimeout(draftTimer);draftSerial++;busy=false;hideCritical();closeDialog();render();if(!['waiting','verifying'].includes(role))void refresh();
     }
+    window.addEventListener('points:access-ready',()=>{if(!['waiting','verifying'].includes(role))void refresh();});
     render(); return {refresh,roleChanged};
   }
   window.PointsKitchen={attach};

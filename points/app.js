@@ -4048,7 +4048,11 @@
           refreshAuthState=async (...args)=>{await previousAuthRead(...args);push.roleChanged();};
         } catch(error) {console.error('pushInitialization:',error?.name);}
       }
+      const access=window.PointsDeviceAccess.attach({db,state,els,ui:{setLayer,closeAllLayers},
+        apiOrigin:SUPABASE_URL,readAuth:()=>refreshAuthState(),onUnlocked:()=>void boot().catch(()=>runtime.report('startup'))});
+      const previousAccessRender=renderAdminState;
+      renderAdminState=(...args)=>{previousAccessRender(...args);access.authChanged();};
       window.PointsHomeGestures?.attach({state,els,switchMetric:next=>switchMetric(next)});
       runtime.ready(() => resumeDatabaseRefresh());
-      void boot().catch(() => runtime.report("startup"));
+      void access.start().catch(() => access.lock('暂时无法确认权限，请检查网络后重试。'));
     })();

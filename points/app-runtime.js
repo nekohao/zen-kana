@@ -37,6 +37,15 @@
   }
   // Keep the browser's auth locking; cap acquisition instead of bypassing it.
   async function fetchWithDeadline(input, init = {}) {
+    const target=new URL(typeof input==='string'?input:input.url || String(input),document.baseURI);
+    const credential=window.PointsDeviceAccess?.credential();
+    if(credential && target.origin===window.PointsDeviceAccess.apiOrigin && target.pathname.startsWith('/rest/v1/')) {
+      const headers=new Headers(input instanceof Request?input.headers:undefined);
+      new Headers(init.headers || {}).forEach((value,name)=>headers.set(name,value));
+      // Reuse Supabase's supported header; avoid adding a CORS preflight header.
+      const client=(headers.get('x-client-info') || 'points-web').replace(/;points-device=[^;]*/g,'');
+      headers.set('x-client-info',client+';points-device='+credential);init={...init,headers};
+    }
     const controller = new AbortController(), upstream = init.signal;
     const abort = () => controller.abort(upstream.reason);
     if (upstream?.aborted) abort(); else upstream?.addEventListener("abort", abort, {once:true});
@@ -52,7 +61,9 @@
       identity = next; identityKnown = true;
     });
     db.rpc = (name, args = {}) => {
-      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_)/.test(name) || name === "points_is_admin";
+      if(window.PointsDeviceAccess && !window.PointsDeviceAccess.allowsRpc(name))
+        return Promise.resolve({data:null,error:{code:'42501',message:'POINTS_DEVICE_REQUIRED'}});
+      const read = /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
       const epoch = clientEpoch, revision = readEpoch;
       const key = `${epoch}:${revision}:${name}:${JSON.stringify(args)}`;
       if (read && pendingReads.has(key)) return pendingReads.get(key);
@@ -70,6 +81,7 @@
           if (epoch !== clientEpoch || (read && revision !== readEpoch)) {
             return {data:null, error:{code:"APP_STALE_READ", message:"Superseded request"}};
           }
+          if(result?.error?.message?.includes('POINTS_DEVICE_REQUIRED'))window.PointsDeviceAccess?.lock();
           if (!result?.error) clear(name);
           else if (!/^(22|23|42|40001|P000|PGRST20)/.test(result.error.code || "")) report(name, !read && unknownWrite(result.error));
           return result;
