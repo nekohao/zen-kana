@@ -2,9 +2,10 @@
 (() => {
   'use strict';
   let token=null,allowed=false,controller=null;
+  const adminKey='points-access-admin-v1';
   const permitted=new Set(['points_is_admin','points_access_redeem','points_access_get_device','points_push_remove']);
   window.PointsDeviceAccess={attach,credential:()=>token,allowsRpc:name=>allowed || permitted.has(name),
-    lock:()=>controller?.lock(),get verified(){return allowed;},apiOrigin:null};
+    lock:()=>controller?.lock('此设备的授权已失效，请使用新的验证码重新授权。',true),get verified(){return allowed;},apiOrigin:null};
   function database(){return new Promise((resolve,reject)=>{const r=indexedDB.open('points-device-access-v1',1);r.onupgradeneeded=()=>r.result.createObjectStore('credential');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
   async function storage(write){
     const db=await database();try{return await new Promise((resolve,reject)=>{
@@ -29,44 +30,52 @@
       <div class="points-access-code-result" id="pointsAccessCodeResult" hidden><strong id="pointsAccessGeneratedCode"></strong><p id="pointsAccessExpires"></p><button id="pointsAccessCopyCode" type="button">复制验证码</button></div>
       <button class="settings-row pressable" id="pointsAccessDevices" type="button"><span>查看已验证设备</span><span class="chevron">›</span></button><div id="pointsAccessDeviceList" hidden></div></div><p class="points-access-settings-message" id="pointsAccessSettingsMessage" role="status"></p>`;
     els.adminSettings.append(settings);
-    let device=null,busy=false,checking=null,identity=null,codeTimer=0;
+    let device=null,busy=false,checking=null,identity=null,codeTimer=0,restoring=true,revision=0;
     function key(){return state.isAdmin?'admin:'+state.session?.user?.id:state.session?'unavailable':device?.id?'guest:'+device.id:'locked';}
     function say(text){q('pointsAccessMessage').textContent=text;}
     function render(){
-      gate.hidden=allowed;app.classList.toggle('points-access-locked',!allowed);
+      gate.hidden=allowed||restoring;app.classList.toggle('points-access-locked',!allowed&&!restoring);
+      app.classList.toggle('points-access-restoring',restoring&&!allowed);
       q('pointsAccessVerify').disabled=busy;q('pointsAccessLogin').disabled=busy;
       if(allowed){q('pointsAccessCode').value='';q('pointsAccessRetry').hidden=true;}
     }
-    function lock(message='请验证设备后再进入。'){
-      const wasAllowed=allowed;allowed=false;identity=null;render();say(message);
+    function lock(message='请验证设备后再进入。',invalidate=false){
+      const wasAllowed=allowed;revision++;allowed=false;restoring=false;identity=null;
+      if(invalidate&&device){device={...device,authorized:false};void storage(device).catch(()=>{});}
+      render();say(message);
       // Keep a stored credential for retry; revocation is checked server-side.
       if(wasAllowed)ui.closeAllLayers();
       app.inert=false;const critical=q('kitchenCritical');if(critical)critical.hidden=true;
+      window.dispatchEvent(new Event('points:access-locked'));
     }
     function unlock(){
-      const next=key(),changed=!allowed || identity!==next;allowed=true;identity=next;render();
+      const next=key(),changed=!allowed || identity!==next;allowed=true;restoring=false;identity=next;render();
       if(changed){onUnlocked();window.dispatchEvent(new Event('points:access-ready'));}
     }
     async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
     async function check(){
       if(checking)return checking;
+      const version=revision;
       checking=(async()=>{
         if(state.isAdmin){unlock();return;}
         if(state.session){lock('此账号没有管理员权限，请使用管理员账号登录。');return;}
         say('正在确认设备…');
         try{
-          device=await storage();token=/^[a-f0-9]{64}$/.test(device?.token || '')?device.token:null;
+          device=await storage();if(version!==revision)return;
+          token=/^[a-f0-9]{64}$/.test(device?.token || '')?device.token:null;
           if(state.isAdmin){unlock();return;}
           if(!token){lock();return;}
           const receipt=await rpc('points_access_get_device');
+          if(version!==revision)return;
           if(state.isAdmin){unlock();return;}
           if(state.session){lock('请使用管理员账号登录。');return;}
-          if(receipt.ok && receipt.deviceId===device.id){unlock();void navigator.storage?.persist?.().catch(()=>{});}
-          else lock();
+          if(receipt.ok && receipt.deviceId===device.id){device={...device,authorized:true};await storage(device);if(version!==revision)return;unlock();void navigator.storage?.persist?.().catch(()=>{});}
+          else lock('此设备的授权已失效，请使用新的验证码重新授权。',true);
         }catch(error){
+          if(version!==revision)return;
           if(state.isAdmin){unlock();return;}
           if(error.code==='APP_STALE_READ' || allowed && error.code!=='42501')return;
-          lock(error.code==='42501'?'此设备尚未验证或已被撤销，请输入新的验证码。':/PGRST202|42883/.test(error.code || '')?'接入功能尚未配置，管理员可以登录。':'暂时无法确认设备，请检查网络后重试。');
+          lock(error.code==='42501'?'此设备尚未验证或已被撤销，请输入新的验证码。':/PGRST202|42883/.test(error.code || '')?'接入功能尚未配置，管理员可以登录。':'暂时无法确认设备，请检查网络后重试。',error.code==='42501');
           q('pointsAccessRetry').hidden=!token;
         }
       })().finally(()=>{checking=null;});return checking;
@@ -86,6 +95,7 @@
         if(state.session)throw Error('Identity changed');
         if(!receipt.ok){say(receipt.reason==='rate_limit'?'尝试较多，请一分钟后重试。':'验证码无效、已使用或已过期，请让哥哥重新生成。');return;}
         if(receipt.deviceId!==device.id)throw Error('Invalid receipt');
+        device={...device,authorized:true};await storage(device);
         unlock();void navigator.storage?.persist?.().catch(()=>{});
       }catch(error){say(/PGRST202|42883/.test(error.code || '')?'请先部署设备接入增量 SQL。':'验证结果暂未确认，请联网后重试；不要清除本机数据。');q('pointsAccessRetry').hidden=!token;}
       finally{busy=false;render();}
@@ -105,6 +115,7 @@
     q('pointsAccessCopyCode').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(q('pointsAccessGeneratedCode').textContent);q('pointsAccessSettingsMessage').textContent='验证码已复制。';}catch(_){q('pointsAccessSettingsMessage').textContent='请长按上面的验证码复制。';}});
     async function listDevices(){
       const list=q('pointsAccessDeviceList');
+      list.dataset.pointsSynced='false';
       try{
         const rows=await rpc('points_access_admin_devices');list.replaceChildren();list.hidden=false;
         if(!rows.length)list.textContent='还没有已验证的游客设备。';
@@ -114,16 +125,27 @@
           if(!row.revoked){const button=document.createElement('button');button.type='button';button.textContent='撤销';button.addEventListener('click',async()=>{button.disabled=true;try{await rpc('points_access_admin_revoke',{p_device_id:row.id});await listDevices();}catch(_){button.disabled=false;q('pointsAccessSettingsMessage').textContent='撤销未确认，请刷新设备列表后核对。';}});card.append(button);}
           list.append(card);
         }
+        list.dataset.pointsSynced='true';
       }catch(_){q('pointsAccessSettingsMessage').textContent='读取失败，请检查网络或增量 SQL。';}
     }
     q('pointsAccessDevices').addEventListener('click',()=>void listDevices());
     function authChanged(){
-      if(state.isAdmin){unlock();return;}
+      if(state.isAdmin){try{localStorage.setItem(adminKey,state.session.user.id);}catch(_){}unlock();return;}
+      if(state.session || identity?.startsWith('admin:')){try{localStorage.removeItem(adminKey);}catch(_){} }
       if(allowed && (identity?.startsWith('admin:') || state.session)){q('pointsAccessCodeResult').hidden=true;clearInterval(codeTimer);lock();void check();}
       else if(!allowed && !state.session && token)void check();
     }
-    window.addEventListener('online',()=>{if(!allowed)void check();});
+    window.addEventListener('online',()=>void check());
     document.addEventListener('visibilitychange',()=>{if(!document.hidden && allowed && !state.isAdmin)void check();});
-    controller={lock,authChanged,check,start:async()=>{await readAuth();await check();}};render();return controller;
+    controller={lock,authChanged,check,start:async()=>{
+      // Read local credentials first. A credential saved before a failed enrollment is not authorization.
+      const [stored,sessionResult]=await Promise.allSettled([storage(),db.auth.getSession()]);
+      if(stored.status==='fulfilled'){device=stored.value;token=/^[a-f0-9]{64}$/.test(device?.token||'')?device.token:null;}
+      const session=sessionResult.status==='fulfilled'?sessionResult.value.data?.session:null;
+      let previousAdmin=null;try{previousAdmin=localStorage.getItem(adminKey);}catch(_){}
+      if(session?.user?.id&&previousAdmin===session.user.id){state.session=session;state.isAdmin=true;ui.renderAdminState?.();unlock();}
+      else if(!session&&token&&device?.authorized===true){unlock();}
+      await readAuth();await check();
+    }};render();return controller;
   }
 })();

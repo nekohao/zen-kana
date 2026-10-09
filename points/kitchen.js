@@ -39,13 +39,14 @@
     async function refresh({before=null,append=false}={}) {
       if(!ready || ['verifying','waiting'].includes(role) || busy) return false;
       if(pending) return pending; const token=epoch;
+      content.dataset.pointsSynced='false';
       const task=(async()=>{try {
         const data=await rpc('points_kitchen_v2_get_state',{p_before:before,p_month:month});
         if(token!==epoch) return false;
         if(!data || data.admin!==admin() || !Array.isArray(data.orders) || !Array.isArray(data.dishes)) throw new Error('Invalid kitchen state');
         response=data; deployed=!kitchenApi.legacy; error=kitchenApi.legacy?'厨房升级 SQL 尚未执行，目前可以查看菜谱和已有订单。':''; dishes=data.dishes.filter(d=>window.PointsKitchenRecipes?.some(x=>x.slug===d.slug)).map(d=>({...d,image:window.PointsKitchenRecipes.find(x=>x.slug===d.slug)?.image})).sort((a,b)=>window.PointsKitchenRecipes.findIndex(x=>x.slug===a.slug)-window.PointsKitchenRecipes.findIndex(x=>x.slug===b.slug));
         orders=append?[...new Map([...orders,...data.orders].map(o=>[o.id,o])).values()]:data.orders;
-        notifications=kitchenApi.legacy?[]:data.notifications || []; render(); showCritical(); restoreUpdateDraft(); return true;
+        notifications=kitchenApi.legacy?[]:data.notifications || []; content.dataset.pointsSynced='true';render(); showCritical(); restoreUpdateDraft(); return true;
       } catch(e) { if(token===epoch && e.code!=='APP_STALE_READ') {error=failure(e);renderError();} return false; }
       finally {if(pending===task) pending=null;} })(); pending=task; return task;
     }
@@ -58,8 +59,8 @@
     }
     function render() {
       renderError(); q('kitchenGreeting').textContent=admin()?'哥哥的点菜与评价':'宝宝的制作与复盘';
-      const todo=orders.filter(o=>o.status===(admin()?'completed':'pending')).length;
-      q('kitchenBadge').hidden=todo===0; q('kitchenBadge').textContent=todo>99?'99+':todo;
+      // Unread dots belong to notifications; pending work remains on the order cards.
+      q('kitchenBadge').hidden=true;
       page.querySelectorAll('[data-kitchen-action="tab"]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.value===tab)));
       if(tab==='catalog') renderCatalog(); else if(tab==='overview') renderOverview(); else renderOrders();
     }
@@ -95,23 +96,7 @@
     function dayRows(rows) {
       return `<div class="kitchen-section-head"><h2>${esc(selectedDay.slice(5).replace('-','月'))}日的订单</h2><span>${rows.length} 笔</span></div>${rows.map(o=>`<article class="kitchen-card"><div class="kitchen-order-head"><button class="kitchen-link" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${stamp(o.created_at)} · #${esc(o.id)}</button>${status(o)}</div>${o.items.map(d=>{const r=o.reviews?.find(r=>r.slug===d.slug);return `<div class="kitchen-day-dish"><div><strong>${esc(d.name)}</strong><span class="kitchen-rating">${r?`★ ${r.stars}`:o.status==='completed'?'待评价':'—'}</span></div>${r?.comment?`<p>${esc(r.comment.slice(0,70))}</p>${r.comment.length>70?`<details><summary>查看完整评价</summary><p>${esc(r.comment)}</p></details>`:''}`:''}</div>`;}).join('')}${o.status==='settled'?`<p class="kitchen-meta">本单积分 ${signed(o.score_delta)}</p>`:''}</article>`).join('') || empty('这一天没有订单')}`;
     }
-    function showCritical() {
-      if(window.PointsNotifications){hideCritical();return;}
-      if(window.PointsDeviceAccess && !window.PointsDeviceAccess.verified){hideCritical();return;}
-      if(!notifications.length || ['waiting','verifying'].includes(role)) {hideCritical();return;}
-      if(admin() && (modal || document.querySelector('.modal-layer.open') || state.wheelSpinning || state.wheelRequestInFlight))return;
-      presented=structuredClone(notifications);
-      q('kitchenCriticalTitle').textContent=admin()?(notifications.length>1?`宝宝做好了 ${notifications.length} 餐饭`:`宝宝做好${notifications[0].meal || '饭'}啦`):notifications.length>1?`厨房有 ${notifications.length} 笔订单更新`:notifications[0].status==='cancelled'?'哥哥取消了这笔订单':notifications[0].version>1?'哥哥修改了点菜订单':'哥哥发来了点菜请求';
-      q('kitchenCriticalCopy').textContent=admin()?'看看宝宝做了哪些菜，吃完后给这餐留个评价。':'请查看最新变化。取消的订单无需继续制作。';
-      critical.querySelector('[data-kitchen-action=ack]').textContent=admin()?'稍后':'知道了';
-      q('kitchenCriticalList').innerHTML=presented.map(n=>{
-        const old=n.previous?.items || [], added=n.items.filter(d=>!old.some(x=>x.slug===d.slug)), removed=old.filter(d=>!n.items.some(x=>x.slug===d.slug));
-        const changed=n.items.filter(d=>old.some(x=>x.slug===d.slug && (x.request_note || '')!==(d.request_note || '')));
-        return `<li><strong>${esc(mealLabel(n))} · ${labels[n.status]}</strong><br>${n.status==='cancelled'?'无需继续制作':n.items.map(d=>esc(d.name)).join('、')}${n.previous && n.status!=='cancelled'?`${added.length?`<br>新增：${added.map(d=>esc(d.name)).join('、')}`:''}${removed.length?`<br>移除：${removed.map(d=>esc(d.name)).join('、')}`:''}${n.note!==n.previous.note?`<br>整单备注：${esc(n.note) || '已清空'}`:''}${changed.map(d=>`<br>${esc(d.name)}要求：${esc(d.request_note) || '已清空'}`).join('')}`:''}</li>`;
-      }).join('');
-      const first=critical.hidden; if(first)noticeFocus=document.activeElement; critical.hidden=false; app.inert=true; document.body.style.overflow='hidden';
-      if(first) critical.querySelector('button').focus();
-    }
+    function showCritical() { hideCritical(); }
     function hideCritical() {const visible=!critical.hidden;critical.hidden=true;app.inert=false;document.body.style.overflow='';q('kitchenCriticalError').hidden=true;if(visible)(noticeFocus?.isConnected && noticeFocus.getClientRects().length?noticeFocus:app.querySelector('.app-nav [aria-current="page"]'))?.focus({preventScroll:true});noticeFocus=null;}
     async function acknowledge(view) {
       if(busy) return; busy=true; const shown=structuredClone(presented), token=epoch;

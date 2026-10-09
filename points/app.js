@@ -732,21 +732,25 @@
           const { data, error } = await db.auth.getSession();
           if (version !== authReadVersion) return;
           if (error) throw error;
-          state.session = data.session;
-          state.isAdmin = false;
-
-          if (state.session) {
+          let nextAdmin = false;
+          if (data.session) {
             const { data: adminData, error: adminError } = await db.rpc("points_is_admin");
             if (version !== authReadVersion) return;
-            if (adminError) console.error("points_is_admin:", adminError);
-            else state.isAdmin = adminData === true;
+            if (adminError) throw adminError;
+            nextAdmin = adminData === true;
           }
-
+          state.session = data.session;
+          state.isAdmin = nextAdmin;
+          runtime.clear("auth:restore");
           renderAdminState();
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           if (version !== authReadVersion) return;
           console.error("refreshAuthState:", err);
+          if (runtime.unknownWrite(err) || /^5/.test(String(err?.status || ""))) {
+            runtime.report("auth:restore");
+            return;
+          }
           state.session = null;
           state.isAdmin = false;
           renderAdminState();
@@ -1059,11 +1063,13 @@
       }
 
       async function loadShopState({ silent = false } = {}) {
+        els.shopInventoryPanel.dataset.pointsSynced = "false";
         try {
           const { data, error } = await db.rpc("points_shop_get_state_v2");
           if (error) throw error;
           normalizeShopState(data);
           state.shopAvailable = true;
+          els.shopInventoryPanel.dataset.pointsSynced = "true";
           renderWheelItemNotice();
           renderWheelChallengeProgress();
           return true;
@@ -2460,6 +2466,8 @@
           renderOverview();
           return;
         }
+        els.scoreOverviewContent.dataset.pointsSynced = "false";
+        els.wheelOverviewContent.dataset.pointsSynced = "false";
         try {
           const [scoreRes, wheelRes, withdrawalRes] = await Promise.all([
             db.rpc("points_get_logs", { p_from: null, p_to: null, p_limit: 10000 }),
@@ -2487,6 +2495,8 @@
             state.wheelTotals = null;
           }
           state.overviewLoadedAt = Date.now();
+          els.scoreOverviewContent.dataset.pointsSynced = "true";
+          els.wheelOverviewContent.dataset.pointsSynced = "true";
           markRefreshed();
           renderOverview();
         } catch (err) {
@@ -4056,18 +4066,19 @@
         const notices=window.PointsNotifications.attach({db,state,els,ui:{setLayer,closeAllLayers,closeOverviewSheet},navigate:route=>{
           closeAllLayers();closeOverviewSheet();
           document.querySelector('.app-nav [data-value="'+(route==='kitchen'?'kitchen':'world')+'"]')?.click();
-          if(route==='kitchen')return;
-          if(route==='devices'){els.settingsBtn.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
+          if(route==='kitchen'){document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.click();return;}
+          if(route==='devices'){els.settingsBtn.click();document.getElementById('pointsAccessDevices')?.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
           if(route==='services'){switchMetric('fat');void notificationFat?.openServices();return;}
+          if(route==='fat'){switchMetric('fat');void notificationFat?.openSettlement();return;}
           if(route==='assets'){void openShop('inventory');return;}
-          switchMetric(route==='fat'?'fat':['wheel','withdrawals'].includes(route)?'wheel':'score');
-          setTimeout(()=>openOverviewSheet(),220);
+          switchMetric(['wheel','withdrawals'].includes(route)?'wheel':'score');
+          setTimeout(()=>{openOverviewSheet();void loadOverviewData(true);},220);
         }});
         const previousNoticeAuth=refreshAuthState;
         refreshAuthState=async(...args)=>{await previousNoticeAuth(...args);notices.roleChanged();};
         }catch(error){console.error('notificationsInitialization:',error?.name);runtime.report('notifications');}
       }
-      const access=window.PointsDeviceAccess.attach({db,state,els,ui:{setLayer,closeAllLayers},
+      const access=window.PointsDeviceAccess.attach({db,state,els,ui:{setLayer,closeAllLayers,renderAdminState:()=>renderAdminState()},
         apiOrigin:SUPABASE_URL,readAuth:()=>refreshAuthState(),onUnlocked:()=>void boot().catch(()=>runtime.report('startup'))});
       const previousAccessRender=renderAdminState;
       renderAdminState=(...args)=>{previousAccessRender(...args);access.authChanged();};

@@ -1,4 +1,6 @@
 .points-access-locked > .home,.points-access-locked > #kitchenPage,.points-access-locked > .app-nav { display:none!important; }
+.points-access-restoring > .home,.points-access-restoring > #kitchenPage,.points-access-restoring > .app-nav { visibility:hidden!important; }
+.points-access-restoring:after { content:'正在打开小世界…'; position:fixed; inset:0; display:grid; place-items:center; background:linear-gradient(155deg,#fbf8fc,#f4f5f9); color:#92858e; font:13px system-ui; z-index:18000; }
 #pointsAccessGate { position:fixed; inset:0; z-index:18000; display:grid; place-items:center; padding:24px; overflow:auto; background:linear-gradient(155deg,#fbf8fc,#f4f5f9); }
 #pointsAccessGate[hidden] { display:none!important; }
 .points-access-card { width:min(100%,340px); padding:28px 24px; border:1px solid #fff; border-radius:28px; background:#ffffffd9; box-shadow:0 16px 60px #3529430c; }

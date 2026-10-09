@@ -30,7 +30,7 @@
       q('pointsPushEnable').hidden=subscribed;q('pointsPushEnable').disabled=busy || !available || !config || permission==='denied' || currentRole==='unavailable';
       q('pointsPushDisable').hidden=!subscribed && !device?.binding;q('pointsPushDisable').disabled=busy;
       q('pointsPushTest').hidden=!subscribed;q('pointsPushTest').disabled=busy;
-      q('pointsPushHelp').textContent=!config?(state.isAdmin?'首次接入：执行整合 SQL → 部署一个发送函数 → 点击初始化。密钥由服务端生成保存。':'等待哥哥配置推送服务。消息中心仍可使用。'):appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房、积分和待办有更新时提醒。连续变动会合并，夜间默认静默，锁屏隐藏具体内容。';
+      q('pointsPushHelp').textContent=!config?(state.isAdmin?'首次接入：执行整合 SQL → 部署一个发送函数 → 点击初始化。密钥由服务端生成保存。':'等待哥哥配置推送服务。模块红点仍可使用。'):appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房、积分和待办有更新时提醒。连续变动会合并，夜间默认静默，锁屏隐藏具体内容。';
     }
     async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
     function deviceToken(){

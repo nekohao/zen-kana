@@ -13,6 +13,8 @@
       button.type='button';button.style.cssText='flex-shrink:0;border:0;border-radius:9px;background:#f2eff5;color:#62596d;padding:7px 10px;font:inherit';
       button.addEventListener('click',()=>{
         if(reload || !ready) {
+          if(ready && window.PointsUpdates?.available){void window.PointsUpdates.install();return;}
+          window.dispatchEvent(new Event('points:before-update'));
           const url=new URL(location.href);url.searchParams.set('__app_refresh',Date.now());
           location.replace(url.href);
         } else void retry?.();

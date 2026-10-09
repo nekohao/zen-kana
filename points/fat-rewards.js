@@ -102,6 +102,7 @@
       // Reopening often receives identical state. Keep the existing DOM during the slide animation.
       const changed = append || error || JSON.stringify(data) !== JSON.stringify(result);
       more = result.more; data = result; error = ""; lastRead = Date.now();
+      body.dataset.pointsSynced = 'true';
       if (changed) render();
     }
     async function refresh(force=false) {
@@ -109,6 +110,7 @@
       if (inflight) return inflight;
       if (!force && data && Date.now() - lastRead < 15000) return true;
       const version = generation;
+      body.dataset.pointsSynced = 'false';
       const request = (async () => {
         try {
           const {data:result, error:e} = await db.rpc("points_fat_reward_get_state");
@@ -192,6 +194,7 @@
       return `<article class="fat-reward-card fat-reward-service-card"><div class="fat-reward-service-head"><h3>口一次</h3><span class="fat-reward-status" title="${escape(labels[request.status] || "状态待同步")}">${statuses[request.status] || "待同步"}</span></div><p>${escape(stamp(request.requested_at))} · #${escape(request.id)}</p><div class="fat-reward-actions">${request.status === "pending_service" && !admin() ? actionButton("serviced", "已进行服务", false, request.id) : request.status === "pending_confirmation" && admin() ? `${actionButton("confirm", "确认完成", false, request.id)}${actionButton("return", "退回背包", false, request.id)}` : ""}</div><details class="fat-reward-service-times"><summary>时间详情</summary><p>请求：${escape(stamp(request.requested_at))}</p>${request.serviced_at ? `<p>已服务：${escape(stamp(request.serviced_at))}</p>` : ""}${request.resolved_at ? `<p>处理：${escape(stamp(request.resolved_at))}</p>` : ""}</details></article>`;
     }
     function render() {
+      body.dataset.updatesView = '';
       const isActive = active(), isAdministrator = admin();
       els.home.classList.toggle("fat-rewards-admin", isActive && isAdministrator);
       q("fatDiamondShopBtn").hidden = !isAdministrator;
@@ -217,14 +220,16 @@
         body.innerHTML = `${navigation}<div class="fat-reward-card fat-reward-confirm"><h3>${{buy:"确认兑换",use:"使用奖励",serviced:"确认已服务",confirm:"确认完成",return:"退回背包"}[action]}</h3><p>${message}</p><div class="fat-reward-actions">${actionButton("submit", busy ? "正在处理…" : "确认", false, id)}${actionButton("cancel", "返回")}</div></div>`; return;
       }
       if (page === "shop") {
-        if (detailView) { body.innerHTML = `${navigation}${renderRewardDetails()}`; return; }
+        if (detailView) { body.dataset.updatesView='fat';body.innerHTML = `${navigation}${renderRewardDetails()}`; return; }
         if (shopView === "inventory") {
           body.innerHTML = `${navigation}<div class="shop-inventory-row fat-reward-inventory"><div class="shop-inventory-icon shop-theme-potion">${diamond}</div><div class="shop-inventory-copy"><strong>口 × ${escape(data.backpack)}</strong><small>使用后发起服务请求</small></div>${actionButton("use", hasRetry("use") ? "重试使用" : "使用", !hasRetry("use") && data.backpack < 1)}</div>${data.backpack < 1 && !hasRetry("use") ? '<p class="fat-reward-empty">兑换的奖励会保存在这里</p>' : ""}`;
           return;
         }
         const canBuy = hasRetry("buy") || data.diamonds >= 1;
+        body.dataset.updatesView = 'fat';
         body.innerHTML = `${navigation}<section class="fat-reward-product"><div class="fat-reward-product-top"><div class="fat-reward-product-art">${diamond}</div><div class="fat-reward-product-copy"><h3>口一次</h3><p>兑换后存入背包</p></div></div><div class="fat-reward-product-bottom"><strong>◇ 1 <span>颗钻石</span></strong>${actionButton("buy", hasRetry("buy") ? "重试兑换" : canBuy ? "兑换" : "钻石不足", !canBuy)}</div></section><button class="fat-reward-progress-link pressable" data-fat-reward-action="progress" type="button"><span>${escape(progressSummary())}</span><span>详情 <span aria-hidden="true">›</span></span></button>`;
       } else {
+        body.dataset.updatesView = 'services';
         const pendingRows = services.filter(r => ["pending_service","pending_confirmation"].includes(r.status));
         const historyRows = services.filter(r => !["pending_service","pending_confirmation"].includes(r.status));
         body.innerHTML = `${navigation}<p class="fat-reward-caption">待服务 ${escape(data.pending_service)} 次 · 待确认 ${escape(data.pending_confirmation)} 次</p>${pendingRows.map(serviceCard).join("") || '<p class="fat-reward-empty">暂无待处理请求</p>'}${historyRows.length ? `<details class="fat-reward-service-history"><summary>历史记录 · ${historyRows.length}</summary>${historyRows.map(serviceCard).join("")}</details>` : ""}${more ? actionButton("more", paging ? "正在加载…" : "查看更早请求", paging) : ""}`;
@@ -302,6 +307,6 @@
       lastResume = Date.now(); void refresh(true);
     };
     document.addEventListener("visibilitychange", resume); window.addEventListener("focus", resume); window.addEventListener("pageshow", resume);
-    render(); return {refresh, render, roleChanged,openServices:()=>open('services')};
+    render(); return {refresh, render, roleChanged,openServices:()=>open('services'),openSettlement:async()=>{await open('shop');if(admin()&&layer.classList.contains('open')){detailView='history';render();}}};
   }
 })();

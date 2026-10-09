@@ -7,8 +7,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261009.8" name="points-build"/>
-<meta content="2026/10/09 16:30" name="points-updated-at"/>
+<meta content="20261009.12" name="points-build"/>
+<meta content="2026/10/09 19:41" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -2602,6 +2602,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 #pointsPushSettings .settings-row:disabled { opacity:.5; cursor:default; }
 
 .points-access-locked > .home,.points-access-locked > #kitchenPage,.points-access-locked > .app-nav { display:none!important; }
+.points-access-restoring > .home,.points-access-restoring > #kitchenPage,.points-access-restoring > .app-nav { visibility:hidden!important; }
+.points-access-restoring:after { content:'正在打开小世界…'; position:fixed; inset:0; display:grid; place-items:center; background:linear-gradient(155deg,#fbf8fc,#f4f5f9); color:#92858e; font:13px system-ui; z-index:18000; }
 #pointsAccessGate { position:fixed; inset:0; z-index:18000; display:grid; place-items:center; padding:24px; overflow:auto; background:linear-gradient(155deg,#fbf8fc,#f4f5f9); }
 #pointsAccessGate[hidden] { display:none!important; }
 .points-access-card { width:min(100%,340px); padding:28px 24px; border:1px solid #fff; border-radius:28px; background:#ffffffd9; box-shadow:0 16px 60px #3529430c; }
@@ -2628,17 +2630,26 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 .points-access-device { padding:12px 16px; display:flex; gap:10px; align-items:center; justify-content:space-between; font-size:12px; border-top:1px solid var(--hairline); }
 #pointsAccessDeviceList { padding-bottom:10px; font-size:12px; }
 
-.topbar .brand{min-width:0;flex:1}.topbar .brand h1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.points-message-bell{position:relative;flex:0 0 38px!important;width:38px!important;height:38px!important;padding:9px;border:0;color:var(--text-secondary,#777);border-radius:13px;background:rgba(255,255,255,.6)}
-.points-message-bell svg{width:21px;height:21px}.points-message-bell span{position:absolute;top:0;right:-3px;min-width:15px;padding:2px 4px;background:#a65d83;color:white;border-radius:20px;font-size:9px;line-height:11px}
-.kitchen-header>div{flex:1;min-width:0}.kitchen-header{gap:8px}
-.points-messages-layer{z-index:160;align-items:flex-end!important}.points-messages-panel{width:min(100%,560px);max-height:85dvh;overflow:auto;background:var(--sheet-bg,#faf8fb);color:var(--text,#34323a);padding:20px 18px max(20px,env(safe-area-inset-bottom));border-radius:26px 26px 0 0;box-shadow:0 -10px 60px #2c16331a}
-.points-messages-panel>header{display:flex;align-items:center;justify-content:space-between}.points-messages-panel>header p{font-size:11px;color:#9a8291;margin:0 0 4px}.points-messages-panel h2{font-size:24px;margin:0}.points-messages-panel>header button{border:0;border-radius:50%;width:32px;height:32px;background:#eee8ed;color:#827781;font-size:24px}
-.points-messages-toolbar{display:flex;justify-content:space-between;align-items:center;margin:20px 0 14px;gap:10px}.points-messages-toolbar [role=tablist]{padding:3px;background:#ece7ed;border-radius:12px;display:flex}.points-messages-toolbar button{border:0;background:none;font:inherit;font-size:12px;color:#847985;padding:8px 12px;border-radius:10px}.points-messages-toolbar [aria-selected=true]{background:#fff;color:#995d80;box-shadow:0 2px 8px #513b4a0c}.points-messages-toolbar button:disabled{opacity:.4}
-.points-message-row{display:block;width:100%;border:1px solid #ece6ed;border-radius:18px;text-align:left;background:#fff;padding:15px;margin:0 0 10px;color:inherit;font:inherit;position:relative}.points-message-row.unread{border-color:#e9cfdf}.points-message-row.unread:after{content:'';position:absolute;right:12px;top:45px;width:6px;height:6px;border-radius:50%;background:#a65d83}.points-message-category{font-size:10px;color:#9b6685;background:#f6edf3;padding:4px 7px;border-radius:7px}.points-message-category[data-category=kitchen]{color:#9b7853;background:#fbf4e8}.points-message-category[data-category=security]{color:#627d91;background:#eef3f8}.points-message-row time{float:right;font-size:10px;color:#a79ea8}.points-message-row strong{display:block;font-size:14px;line-height:1.5;margin-top:11px;padding-right:8px}.points-message-row em{font-style:normal;font-size:9px;font-weight:500;color:#9e6888;margin-left:8px}.points-message-row p{font-size:12px;line-height:1.7;color:#8b808d;margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}.points-message-row small{font-size:10px;color:#aaa;display:block;margin-top:7px}
-.points-messages-empty{text-align:center;padding:50px 8px;color:#877985;font-size:14px}.points-messages-empty p{font-size:12px;line-height:1.8;color:#aaa}.points-messages-more{display:block;border:0;background:none;font-size:12px;color:#9b6486;margin:15px auto;padding:10px}#pointsMessagesStatus{font-size:12px;color:#a46d86}
-.points-message-banner{position:fixed;z-index:220;top:calc(env(safe-area-inset-top,0px) + 12px);left:50%;transform:translateX(-50%);width:min(calc(100% - 28px),480px);display:flex;gap:10px;align-items:center;padding:13px 12px;border:1px solid #ffffffb3;border-radius:19px;background:rgba(255,252,255,.96);box-shadow:0 12px 40px #4d314828;backdrop-filter:blur(24px)}.points-message-banner[hidden]{display:none}.points-message-banner button{background:none;border:0;color:#887581}.points-message-banner button:first-child{display:flex;align-items:center;gap:11px;flex:1;text-align:left;min-width:0}.points-message-banner-icon{padding:9px;background:#f3e8ef;border-radius:13px;color:#a5698b}.points-message-banner svg{width:20px;height:20px;display:block}.points-message-banner strong{display:block;font-size:13px;line-height:1.5}.points-message-banner small{display:block;font-size:11px;line-height:1.5;margin-top:3px;color:#9b8a97}.points-message-banner button:last-child{font-size:21px}
-#pointsNoticeSettings input{appearance:none;width:36px;height:22px;flex:0 0 auto;border-radius:20px;background:#ded7df;position:relative;margin:0;transition:background .18s}#pointsNoticeSettings input:before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:white;box-shadow:0 1px 3px #58465b26;transition:transform .18s}#pointsNoticeSettings input:checked{background:#ad6e94}#pointsNoticeSettings input:checked:before{transform:translateX(14px)}#pointsNoticeSettings input:focus-visible{outline:2px solid #a65d83;outline-offset:3px}#pointsNoticeSettings input:disabled{opacity:.5}#pointsNoticeSettings .settings-row{gap:10px}
+.points-dot-anchor{position:relative}
+.points-update-target{position:relative;overflow:visible}
+.points-update-dot{position:absolute!important;top:-1px;right:-8px;width:5px!important;height:5px!important;min-width:0!important;padding:0!important;margin:0!important;border-radius:50%;background:#d65d6b;pointer-events:none;transform:none;box-shadow:none}
+.points-update-dot[hidden]{display:none!important}
+.points-update-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;line-height:0}
+.points-update-icon>.points-update-dot{top:-1px;right:-2px;width:6px!important;height:6px!important;box-shadow:0 0 0 1.5px #f8f7f9}
+.metric-option>.points-update-target,.shop-tab>.points-update-target,.kitchen-tabs button>.points-update-target{display:inline-block;line-height:1.4}
+.points-dot-anchor.points-update-target>.points-update-dot{top:10px;right:10px}
+.settings-row.points-update-target>.points-update-dot{top:50%;right:34px;transform:translateY(-50%)}
+.points-module-updates{margin:0 0 18px;padding:12px 14px;border:1px solid var(--hairline,#ece6ed);border-radius:16px;background:rgba(255,255,255,.55)}
+.points-updates-heading{margin:0 0 9px;font-size:11px;color:var(--secondary,#92858e)}
+.points-context-update{padding:9px 0;border-top:1px solid var(--hairline,#ece6ed)}
+.points-context-update>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.points-context-update strong{font-size:12px;font-weight:600;color:var(--text,#514651)}
+.points-context-update time{flex-shrink:0;font-size:10px;color:var(--secondary,#92858e)}
+.points-context-update p{margin:5px 0 0;font-size:12px;line-height:1.65;color:var(--secondary,#92858e);white-space:pre-wrap;overflow-wrap:anywhere}
+#pointsNoticeSettings input{appearance:none;width:36px;height:22px;flex:0 0 auto;border-radius:20px;background:#ded7df;position:relative;margin:0;transition:background .18s}
+#pointsNoticeSettings input:before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:white;box-shadow:0 1px 3px #58465b26;transition:transform .18s}
+#pointsNoticeSettings input:checked{background:#ad6e94}#pointsNoticeSettings input:checked:before{transform:translateX(14px)}
+#pointsNoticeSettings input:focus-visible{outline:2px solid #a65d83;outline-offset:3px}#pointsNoticeSettings input:disabled{opacity:.5}#pointsNoticeSettings .settings-row{gap:10px}
 </style>
 <script>if(navigator.standalone===true && /iPhone|iPad|iPod/.test(navigator.userAgent))document.documentElement.classList.add("ios-pwa");</script>
 </head>
@@ -2924,7 +2935,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261009.8</span>
+<span class="settings-value">20261009.12</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -2939,13 +2950,13 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.8</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 16:30</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261009.12</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/09 19:41</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
 <span>更新机制</span>
-<span class="settings-value">后台检查 · 提示更新</span>
+<span class="settings-value">自动检查 · 自动更新</span>
 </div>
 <div class="settings-row static">
 <span>数据刷新</span>
@@ -2973,8 +2984,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261009.8</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/09 16:30</div>
+<div class="release-head"><strong>20261009.12</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/09 19:41</div>
 <ul class="release-list"><li>新增统一消息中心，厨房、积分、提现、道具、减脂结算、服务和设备安全消息集中查看。</li><li>连续变动合并提醒，支持通知分类与夜间静默；应用内使用轻量横幅。</li><li>管理员可在设置里初始化推送服务；游客订阅沿用一次性设备验证。</li></ul>
 </div>
 <div class="release-block previous">
@@ -3616,6 +3627,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
       button.type='button';button.style.cssText='flex-shrink:0;border:0;border-radius:9px;background:#f2eff5;color:#62596d;padding:7px 10px;font:inherit';
       button.addEventListener('click',()=>{
         if(reload || !ready) {
+          if(ready && window.PointsUpdates?.available){void window.PointsUpdates.install();return;}
+          window.dispatchEvent(new Event('points:before-update'));
           const url=new URL(location.href);url.searchParams.set('__app_refresh',Date.now());
           location.replace(url.href);
         } else void retry?.();
@@ -3945,13 +3958,14 @@ window.PointsKitchenRecipes = [
     async function refresh({before=null,append=false}={}) {
       if(!ready || ['verifying','waiting'].includes(role) || busy) return false;
       if(pending) return pending; const token=epoch;
+      content.dataset.pointsSynced='false';
       const task=(async()=>{try {
         const data=await rpc('points_kitchen_v2_get_state',{p_before:before,p_month:month});
         if(token!==epoch) return false;
         if(!data || data.admin!==admin() || !Array.isArray(data.orders) || !Array.isArray(data.dishes)) throw new Error('Invalid kitchen state');
         response=data; deployed=!kitchenApi.legacy; error=kitchenApi.legacy?'厨房升级 SQL 尚未执行，目前可以查看菜谱和已有订单。':''; dishes=data.dishes.filter(d=>window.PointsKitchenRecipes?.some(x=>x.slug===d.slug)).map(d=>({...d,image:window.PointsKitchenRecipes.find(x=>x.slug===d.slug)?.image})).sort((a,b)=>window.PointsKitchenRecipes.findIndex(x=>x.slug===a.slug)-window.PointsKitchenRecipes.findIndex(x=>x.slug===b.slug));
         orders=append?[...new Map([...orders,...data.orders].map(o=>[o.id,o])).values()]:data.orders;
-        notifications=kitchenApi.legacy?[]:data.notifications || []; render(); showCritical(); restoreUpdateDraft(); return true;
+        notifications=kitchenApi.legacy?[]:data.notifications || []; content.dataset.pointsSynced='true';render(); showCritical(); restoreUpdateDraft(); return true;
       } catch(e) { if(token===epoch && e.code!=='APP_STALE_READ') {error=failure(e);renderError();} return false; }
       finally {if(pending===task) pending=null;} })(); pending=task; return task;
     }
@@ -3964,8 +3978,8 @@ window.PointsKitchenRecipes = [
     }
     function render() {
       renderError(); q('kitchenGreeting').textContent=admin()?'哥哥的点菜与评价':'宝宝的制作与复盘';
-      const todo=orders.filter(o=>o.status===(admin()?'completed':'pending')).length;
-      q('kitchenBadge').hidden=todo===0; q('kitchenBadge').textContent=todo>99?'99+':todo;
+      // Unread dots belong to notifications; pending work remains on the order cards.
+      q('kitchenBadge').hidden=true;
       page.querySelectorAll('[data-kitchen-action="tab"]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.value===tab)));
       if(tab==='catalog') renderCatalog(); else if(tab==='overview') renderOverview(); else renderOrders();
     }
@@ -4001,23 +4015,7 @@ window.PointsKitchenRecipes = [
     function dayRows(rows) {
       return `<div class="kitchen-section-head"><h2>${esc(selectedDay.slice(5).replace('-','月'))}日的订单</h2><span>${rows.length} 笔</span></div>${rows.map(o=>`<article class="kitchen-card"><div class="kitchen-order-head"><button class="kitchen-link" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${stamp(o.created_at)} · #${esc(o.id)}</button>${status(o)}</div>${o.items.map(d=>{const r=o.reviews?.find(r=>r.slug===d.slug);return `<div class="kitchen-day-dish"><div><strong>${esc(d.name)}</strong><span class="kitchen-rating">${r?`★ ${r.stars}`:o.status==='completed'?'待评价':'—'}</span></div>${r?.comment?`<p>${esc(r.comment.slice(0,70))}</p>${r.comment.length>70?`<details><summary>查看完整评价</summary><p>${esc(r.comment)}</p></details>`:''}`:''}</div>`;}).join('')}${o.status==='settled'?`<p class="kitchen-meta">本单积分 ${signed(o.score_delta)}</p>`:''}</article>`).join('') || empty('这一天没有订单')}`;
     }
-    function showCritical() {
-      if(window.PointsNotifications){hideCritical();return;}
-      if(window.PointsDeviceAccess && !window.PointsDeviceAccess.verified){hideCritical();return;}
-      if(!notifications.length || ['waiting','verifying'].includes(role)) {hideCritical();return;}
-      if(admin() && (modal || document.querySelector('.modal-layer.open') || state.wheelSpinning || state.wheelRequestInFlight))return;
-      presented=structuredClone(notifications);
-      q('kitchenCriticalTitle').textContent=admin()?(notifications.length>1?`宝宝做好了 ${notifications.length} 餐饭`:`宝宝做好${notifications[0].meal || '饭'}啦`):notifications.length>1?`厨房有 ${notifications.length} 笔订单更新`:notifications[0].status==='cancelled'?'哥哥取消了这笔订单':notifications[0].version>1?'哥哥修改了点菜订单':'哥哥发来了点菜请求';
-      q('kitchenCriticalCopy').textContent=admin()?'看看宝宝做了哪些菜，吃完后给这餐留个评价。':'请查看最新变化。取消的订单无需继续制作。';
-      critical.querySelector('[data-kitchen-action=ack]').textContent=admin()?'稍后':'知道了';
-      q('kitchenCriticalList').innerHTML=presented.map(n=>{
-        const old=n.previous?.items || [], added=n.items.filter(d=>!old.some(x=>x.slug===d.slug)), removed=old.filter(d=>!n.items.some(x=>x.slug===d.slug));
-        const changed=n.items.filter(d=>old.some(x=>x.slug===d.slug && (x.request_note || '')!==(d.request_note || '')));
-        return `<li><strong>${esc(mealLabel(n))} · ${labels[n.status]}</strong><br>${n.status==='cancelled'?'无需继续制作':n.items.map(d=>esc(d.name)).join('、')}${n.previous && n.status!=='cancelled'?`${added.length?`<br>新增：${added.map(d=>esc(d.name)).join('、')}`:''}${removed.length?`<br>移除：${removed.map(d=>esc(d.name)).join('、')}`:''}${n.note!==n.previous.note?`<br>整单备注：${esc(n.note) || '已清空'}`:''}${changed.map(d=>`<br>${esc(d.name)}要求：${esc(d.request_note) || '已清空'}`).join('')}`:''}</li>`;
-      }).join('');
-      const first=critical.hidden; if(first)noticeFocus=document.activeElement; critical.hidden=false; app.inert=true; document.body.style.overflow='hidden';
-      if(first) critical.querySelector('button').focus();
-    }
+    function showCritical() { hideCritical(); }
     function hideCritical() {const visible=!critical.hidden;critical.hidden=true;app.inert=false;document.body.style.overflow='';q('kitchenCriticalError').hidden=true;if(visible)(noticeFocus?.isConnected && noticeFocus.getClientRects().length?noticeFocus:app.querySelector('.app-nav [aria-current="page"]'))?.focus({preventScroll:true});noticeFocus=null;}
     async function acknowledge(view) {
       if(busy) return; busy=true; const shown=structuredClone(presented), token=epoch;
@@ -4887,7 +4885,7 @@ window.PointsKitchenRecipes = [
       rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin});
     } catch (_) { window.PointsRuntime?.report("rewards"); }
     syncUnits(); adminRendered(); renderHome();
-    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:()=>rewards?.openServices() };
+    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:()=>rewards?.openServices(),openSettlement:()=>rewards?.openSettlement() };
   }
 })();
 
@@ -4997,6 +4995,7 @@ window.PointsKitchenRecipes = [
       // Reopening often receives identical state. Keep the existing DOM during the slide animation.
       const changed = append || error || JSON.stringify(data) !== JSON.stringify(result);
       more = result.more; data = result; error = ""; lastRead = Date.now();
+      body.dataset.pointsSynced = 'true';
       if (changed) render();
     }
     async function refresh(force=false) {
@@ -5004,6 +5003,7 @@ window.PointsKitchenRecipes = [
       if (inflight) return inflight;
       if (!force && data && Date.now() - lastRead < 15000) return true;
       const version = generation;
+      body.dataset.pointsSynced = 'false';
       const request = (async () => {
         try {
           const {data:result, error:e} = await db.rpc("points_fat_reward_get_state");
@@ -5087,6 +5087,7 @@ window.PointsKitchenRecipes = [
       return `<article class="fat-reward-card fat-reward-service-card"><div class="fat-reward-service-head"><h3>口一次</h3><span class="fat-reward-status" title="${escape(labels[request.status] || "状态待同步")}">${statuses[request.status] || "待同步"}</span></div><p>${escape(stamp(request.requested_at))} · #${escape(request.id)}</p><div class="fat-reward-actions">${request.status === "pending_service" && !admin() ? actionButton("serviced", "已进行服务", false, request.id) : request.status === "pending_confirmation" && admin() ? `${actionButton("confirm", "确认完成", false, request.id)}${actionButton("return", "退回背包", false, request.id)}` : ""}</div><details class="fat-reward-service-times"><summary>时间详情</summary><p>请求：${escape(stamp(request.requested_at))}</p>${request.serviced_at ? `<p>已服务：${escape(stamp(request.serviced_at))}</p>` : ""}${request.resolved_at ? `<p>处理：${escape(stamp(request.resolved_at))}</p>` : ""}</details></article>`;
     }
     function render() {
+      body.dataset.updatesView = '';
       const isActive = active(), isAdministrator = admin();
       els.home.classList.toggle("fat-rewards-admin", isActive && isAdministrator);
       q("fatDiamondShopBtn").hidden = !isAdministrator;
@@ -5112,14 +5113,16 @@ window.PointsKitchenRecipes = [
         body.innerHTML = `${navigation}<div class="fat-reward-card fat-reward-confirm"><h3>${{buy:"确认兑换",use:"使用奖励",serviced:"确认已服务",confirm:"确认完成",return:"退回背包"}[action]}</h3><p>${message}</p><div class="fat-reward-actions">${actionButton("submit", busy ? "正在处理…" : "确认", false, id)}${actionButton("cancel", "返回")}</div></div>`; return;
       }
       if (page === "shop") {
-        if (detailView) { body.innerHTML = `${navigation}${renderRewardDetails()}`; return; }
+        if (detailView) { body.dataset.updatesView='fat';body.innerHTML = `${navigation}${renderRewardDetails()}`; return; }
         if (shopView === "inventory") {
           body.innerHTML = `${navigation}<div class="shop-inventory-row fat-reward-inventory"><div class="shop-inventory-icon shop-theme-potion">${diamond}</div><div class="shop-inventory-copy"><strong>口 × ${escape(data.backpack)}</strong><small>使用后发起服务请求</small></div>${actionButton("use", hasRetry("use") ? "重试使用" : "使用", !hasRetry("use") && data.backpack < 1)}</div>${data.backpack < 1 && !hasRetry("use") ? '<p class="fat-reward-empty">兑换的奖励会保存在这里</p>' : ""}`;
           return;
         }
         const canBuy = hasRetry("buy") || data.diamonds >= 1;
+        body.dataset.updatesView = 'fat';
         body.innerHTML = `${navigation}<section class="fat-reward-product"><div class="fat-reward-product-top"><div class="fat-reward-product-art">${diamond}</div><div class="fat-reward-product-copy"><h3>口一次</h3><p>兑换后存入背包</p></div></div><div class="fat-reward-product-bottom"><strong>◇ 1 <span>颗钻石</span></strong>${actionButton("buy", hasRetry("buy") ? "重试兑换" : canBuy ? "兑换" : "钻石不足", !canBuy)}</div></section><button class="fat-reward-progress-link pressable" data-fat-reward-action="progress" type="button"><span>${escape(progressSummary())}</span><span>详情 <span aria-hidden="true">›</span></span></button>`;
       } else {
+        body.dataset.updatesView = 'services';
         const pendingRows = services.filter(r => ["pending_service","pending_confirmation"].includes(r.status));
         const historyRows = services.filter(r => !["pending_service","pending_confirmation"].includes(r.status));
         body.innerHTML = `${navigation}<p class="fat-reward-caption">待服务 ${escape(data.pending_service)} 次 · 待确认 ${escape(data.pending_confirmation)} 次</p>${pendingRows.map(serviceCard).join("") || '<p class="fat-reward-empty">暂无待处理请求</p>'}${historyRows.length ? `<details class="fat-reward-service-history"><summary>历史记录 · ${historyRows.length}</summary>${historyRows.map(serviceCard).join("")}</details>` : ""}${more ? actionButton("more", paging ? "正在加载…" : "查看更早请求", paging) : ""}`;
@@ -5197,7 +5200,7 @@ window.PointsKitchenRecipes = [
       lastResume = Date.now(); void refresh(true);
     };
     document.addEventListener("visibilitychange", resume); window.addEventListener("focus", resume); window.addEventListener("pageshow", resume);
-    render(); return {refresh, render, roleChanged,openServices:()=>open('services')};
+    render(); return {refresh, render, roleChanged,openServices:()=>open('services'),openSettlement:async()=>{await open('shop');if(admin()&&layer.classList.contains('open')){detailView='history';render();}}};
   }
 })();
 
@@ -5207,9 +5210,10 @@ window.PointsKitchenRecipes = [
 (() => {
   'use strict';
   let token=null,allowed=false,controller=null;
+  const adminKey='points-access-admin-v1';
   const permitted=new Set(['points_is_admin','points_access_redeem','points_access_get_device','points_push_remove']);
   window.PointsDeviceAccess={attach,credential:()=>token,allowsRpc:name=>allowed || permitted.has(name),
-    lock:()=>controller?.lock(),get verified(){return allowed;},apiOrigin:null};
+    lock:()=>controller?.lock('此设备的授权已失效，请使用新的验证码重新授权。',true),get verified(){return allowed;},apiOrigin:null};
   function database(){return new Promise((resolve,reject)=>{const r=indexedDB.open('points-device-access-v1',1);r.onupgradeneeded=()=>r.result.createObjectStore('credential');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
   async function storage(write){
     const db=await database();try{return await new Promise((resolve,reject)=>{
@@ -5234,44 +5238,52 @@ window.PointsKitchenRecipes = [
       <div class="points-access-code-result" id="pointsAccessCodeResult" hidden><strong id="pointsAccessGeneratedCode"></strong><p id="pointsAccessExpires"></p><button id="pointsAccessCopyCode" type="button">复制验证码</button></div>
       <button class="settings-row pressable" id="pointsAccessDevices" type="button"><span>查看已验证设备</span><span class="chevron">›</span></button><div id="pointsAccessDeviceList" hidden></div></div><p class="points-access-settings-message" id="pointsAccessSettingsMessage" role="status"></p>`;
     els.adminSettings.append(settings);
-    let device=null,busy=false,checking=null,identity=null,codeTimer=0;
+    let device=null,busy=false,checking=null,identity=null,codeTimer=0,restoring=true,revision=0;
     function key(){return state.isAdmin?'admin:'+state.session?.user?.id:state.session?'unavailable':device?.id?'guest:'+device.id:'locked';}
     function say(text){q('pointsAccessMessage').textContent=text;}
     function render(){
-      gate.hidden=allowed;app.classList.toggle('points-access-locked',!allowed);
+      gate.hidden=allowed||restoring;app.classList.toggle('points-access-locked',!allowed&&!restoring);
+      app.classList.toggle('points-access-restoring',restoring&&!allowed);
       q('pointsAccessVerify').disabled=busy;q('pointsAccessLogin').disabled=busy;
       if(allowed){q('pointsAccessCode').value='';q('pointsAccessRetry').hidden=true;}
     }
-    function lock(message='请验证设备后再进入。'){
-      const wasAllowed=allowed;allowed=false;identity=null;render();say(message);
+    function lock(message='请验证设备后再进入。',invalidate=false){
+      const wasAllowed=allowed;revision++;allowed=false;restoring=false;identity=null;
+      if(invalidate&&device){device={...device,authorized:false};void storage(device).catch(()=>{});}
+      render();say(message);
       // Keep a stored credential for retry; revocation is checked server-side.
       if(wasAllowed)ui.closeAllLayers();
       app.inert=false;const critical=q('kitchenCritical');if(critical)critical.hidden=true;
+      window.dispatchEvent(new Event('points:access-locked'));
     }
     function unlock(){
-      const next=key(),changed=!allowed || identity!==next;allowed=true;identity=next;render();
+      const next=key(),changed=!allowed || identity!==next;allowed=true;restoring=false;identity=next;render();
       if(changed){onUnlocked();window.dispatchEvent(new Event('points:access-ready'));}
     }
     async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
     async function check(){
       if(checking)return checking;
+      const version=revision;
       checking=(async()=>{
         if(state.isAdmin){unlock();return;}
         if(state.session){lock('此账号没有管理员权限，请使用管理员账号登录。');return;}
         say('正在确认设备…');
         try{
-          device=await storage();token=/^[a-f0-9]{64}$/.test(device?.token || '')?device.token:null;
+          device=await storage();if(version!==revision)return;
+          token=/^[a-f0-9]{64}$/.test(device?.token || '')?device.token:null;
           if(state.isAdmin){unlock();return;}
           if(!token){lock();return;}
           const receipt=await rpc('points_access_get_device');
+          if(version!==revision)return;
           if(state.isAdmin){unlock();return;}
           if(state.session){lock('请使用管理员账号登录。');return;}
-          if(receipt.ok && receipt.deviceId===device.id){unlock();void navigator.storage?.persist?.().catch(()=>{});}
-          else lock();
+          if(receipt.ok && receipt.deviceId===device.id){device={...device,authorized:true};await storage(device);if(version!==revision)return;unlock();void navigator.storage?.persist?.().catch(()=>{});}
+          else lock('此设备的授权已失效，请使用新的验证码重新授权。',true);
         }catch(error){
+          if(version!==revision)return;
           if(state.isAdmin){unlock();return;}
           if(error.code==='APP_STALE_READ' || allowed && error.code!=='42501')return;
-          lock(error.code==='42501'?'此设备尚未验证或已被撤销，请输入新的验证码。':/PGRST202|42883/.test(error.code || '')?'接入功能尚未配置，管理员可以登录。':'暂时无法确认设备，请检查网络后重试。');
+          lock(error.code==='42501'?'此设备尚未验证或已被撤销，请输入新的验证码。':/PGRST202|42883/.test(error.code || '')?'接入功能尚未配置，管理员可以登录。':'暂时无法确认设备，请检查网络后重试。',error.code==='42501');
           q('pointsAccessRetry').hidden=!token;
         }
       })().finally(()=>{checking=null;});return checking;
@@ -5291,6 +5303,7 @@ window.PointsKitchenRecipes = [
         if(state.session)throw Error('Identity changed');
         if(!receipt.ok){say(receipt.reason==='rate_limit'?'尝试较多，请一分钟后重试。':'验证码无效、已使用或已过期，请让哥哥重新生成。');return;}
         if(receipt.deviceId!==device.id)throw Error('Invalid receipt');
+        device={...device,authorized:true};await storage(device);
         unlock();void navigator.storage?.persist?.().catch(()=>{});
       }catch(error){say(/PGRST202|42883/.test(error.code || '')?'请先部署设备接入增量 SQL。':'验证结果暂未确认，请联网后重试；不要清除本机数据。');q('pointsAccessRetry').hidden=!token;}
       finally{busy=false;render();}
@@ -5310,6 +5323,7 @@ window.PointsKitchenRecipes = [
     q('pointsAccessCopyCode').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(q('pointsAccessGeneratedCode').textContent);q('pointsAccessSettingsMessage').textContent='验证码已复制。';}catch(_){q('pointsAccessSettingsMessage').textContent='请长按上面的验证码复制。';}});
     async function listDevices(){
       const list=q('pointsAccessDeviceList');
+      list.dataset.pointsSynced='false';
       try{
         const rows=await rpc('points_access_admin_devices');list.replaceChildren();list.hidden=false;
         if(!rows.length)list.textContent='还没有已验证的游客设备。';
@@ -5319,17 +5333,28 @@ window.PointsKitchenRecipes = [
           if(!row.revoked){const button=document.createElement('button');button.type='button';button.textContent='撤销';button.addEventListener('click',async()=>{button.disabled=true;try{await rpc('points_access_admin_revoke',{p_device_id:row.id});await listDevices();}catch(_){button.disabled=false;q('pointsAccessSettingsMessage').textContent='撤销未确认，请刷新设备列表后核对。';}});card.append(button);}
           list.append(card);
         }
+        list.dataset.pointsSynced='true';
       }catch(_){q('pointsAccessSettingsMessage').textContent='读取失败，请检查网络或增量 SQL。';}
     }
     q('pointsAccessDevices').addEventListener('click',()=>void listDevices());
     function authChanged(){
-      if(state.isAdmin){unlock();return;}
+      if(state.isAdmin){try{localStorage.setItem(adminKey,state.session.user.id);}catch(_){}unlock();return;}
+      if(state.session || identity?.startsWith('admin:')){try{localStorage.removeItem(adminKey);}catch(_){} }
       if(allowed && (identity?.startsWith('admin:') || state.session)){q('pointsAccessCodeResult').hidden=true;clearInterval(codeTimer);lock();void check();}
       else if(!allowed && !state.session && token)void check();
     }
-    window.addEventListener('online',()=>{if(!allowed)void check();});
+    window.addEventListener('online',()=>void check());
     document.addEventListener('visibilitychange',()=>{if(!document.hidden && allowed && !state.isAdmin)void check();});
-    controller={lock,authChanged,check,start:async()=>{await readAuth();await check();}};render();return controller;
+    controller={lock,authChanged,check,start:async()=>{
+      // Read local credentials first. A credential saved before a failed enrollment is not authorization.
+      const [stored,sessionResult]=await Promise.allSettled([storage(),db.auth.getSession()]);
+      if(stored.status==='fulfilled'){device=stored.value;token=/^[a-f0-9]{64}$/.test(device?.token||'')?device.token:null;}
+      const session=sessionResult.status==='fulfilled'?sessionResult.value.data?.session:null;
+      let previousAdmin=null;try{previousAdmin=localStorage.getItem(adminKey);}catch(_){}
+      if(session?.user?.id&&previousAdmin===session.user.id){state.session=session;state.isAdmin=true;ui.renderAdminState?.();unlock();}
+      else if(!session&&token&&device?.authorized===true){unlock();}
+      await readAuth();await check();
+    }};render();return controller;
   }
 })();
 
@@ -5367,7 +5392,7 @@ window.PointsKitchenRecipes = [
       q('pointsPushEnable').hidden=subscribed;q('pointsPushEnable').disabled=busy || !available || !config || permission==='denied' || currentRole==='unavailable';
       q('pointsPushDisable').hidden=!subscribed && !device?.binding;q('pointsPushDisable').disabled=busy;
       q('pointsPushTest').hidden=!subscribed;q('pointsPushTest').disabled=busy;
-      q('pointsPushHelp').textContent=!config?(state.isAdmin?'首次接入：执行整合 SQL → 部署一个发送函数 → 点击初始化。密钥由服务端生成保存。':'等待哥哥配置推送服务。消息中心仍可使用。'):appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房、积分和待办有更新时提醒。连续变动会合并，夜间默认静默，锁屏隐藏具体内容。';
+      q('pointsPushHelp').textContent=!config?(state.isAdmin?'首次接入：执行整合 SQL → 部署一个发送函数 → 点击初始化。密钥由服务端生成保存。':'等待哥哥配置推送服务。模块红点仍可使用。'):appleBrowser() && !standalone()?'请先添加到主屏幕，再从图标打开小世界。iPhone 需 iOS 16.4 或以上。':!supported()?'当前浏览器不支持 Web Push，可在支持的浏览器中开启。':permission==='denied'?'请在系统设置中允许小世界的通知，再回来开启。':'厨房、积分和待办有更新时提醒。连续变动会合并，夜间默认静默，锁屏隐藏具体内容。';
     }
     async function rpc(name,args){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
     function deviceToken(){
@@ -5461,82 +5486,136 @@ window.PointsKitchenRecipes = [
 
 }catch(error){window.PointsStartup.fail("push",error,false);}}</script>
 <script data-points-asset="notifications">if(window.PointsStartup.canStart()){try{
-/* Durable inbox; optional, and never a startup dependency. */
+/* Updates belong to their business pages, without an inbox or interrupting banner. */
 (() => {
   'use strict';
   window.PointsNotifications={attach};
-  function attach({db,state,els,ui,navigate}) {
-    const q=id=>document.getElementById(id),escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function attach({db,state,els,navigate}) {
+    const q=id=>document.getElementById(id);
+    const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const labels={score:'积分变动',kitchen:'厨房消息',withdrawal:'提现进展',assets:'道具与机会',fat:'减脂结算',service:'服务进展',security:'设备安全'};
-    const bell='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z"/><path d="M10 21h4"/></svg>';
-    for(const parent of [els.settingsBtn?.parentElement,document.querySelector('.kitchen-header')].filter(Boolean)) {
-      const button=document.createElement('button');button.type='button';button.className='icon-button pressable points-message-bell';button.setAttribute('aria-label','消息');button.innerHTML=bell+'<span hidden></span>';
-      parent.insertBefore(button,parent.lastElementChild);button.addEventListener('click',()=>void open());
-    }
-    document.body.insertAdjacentHTML('beforeend',`<div class="modal-layer points-messages-layer" id="pointsMessagesLayer" aria-hidden="true"><section class="points-messages-panel" role="dialog" aria-modal="true" aria-labelledby="pointsMessagesTitle" tabindex="-1"><header><div><p>小世界</p><h2 id="pointsMessagesTitle">消息</h2></div><button type="button" aria-label="关闭消息" data-notice="close">×</button></header><div class="points-messages-toolbar"><div role="tablist" aria-label="消息筛选"><button type="button" role="tab" aria-selected="true" data-notice="all">全部</button><button type="button" role="tab" aria-selected="false" data-notice="pending">待处理</button></div><button type="button" data-notice="read">全部已读</button></div><p id="pointsMessagesStatus" role="status"></p><div id="pointsMessagesList"></div><button class="points-messages-more" type="button" data-notice="more" hidden>查看更早消息</button></section></div><aside class="points-message-banner" id="pointsMessageBanner" hidden role="status" aria-live="polite"><button type="button" data-banner="open"><span class="points-message-banner-icon">${bell}</span><span><strong></strong><small></small></span></button><button type="button" data-banner="dismiss" aria-label="收起提醒">×</button></aside>`);
-    const prefs=document.createElement('section');prefs.id='pointsNoticeSettings';prefs.innerHTML=`<div class="settings-label">消息偏好</div><div class="settings-group"><button class="settings-row pressable" type="button" id="pointsMessagesOpen"><span>消息中心</span><span class="chevron">›</span></button>${Object.entries(labels).map(([k,v])=>`<label class="settings-row static"><span>${v}</span><input type="checkbox" data-notice-category="${k}" checked aria-label="${v}推送"></label>`).join('')}<label class="settings-row static"><span>夜间静默 · 22:30–08:00</span><input type="checkbox" id="pointsNoticeQuiet" checked></label><label class="settings-row static"><span>夜间允许重要待办</span><input type="checkbox" id="pointsNoticeNight"></label></div><p class="points-push-help">关闭某类提醒后，消息仍保留在消息中心。锁屏只显示简要提示；夜间时间按北京时间。</p><p id="pointsNoticePrefsStatus" class="points-push-message" role="status"></p>`;
+    const routes=['score','wheel','withdrawals','assets','fat','services','devices','kitchen'];
+    const prefs=document.createElement('section');prefs.id='pointsNoticeSettings';
+    prefs.innerHTML=`<div class="settings-label">提醒偏好</div><div class="settings-group">${Object.entries(labels).map(([k,v])=>`<label class="settings-row static"><span>${v}</span><input type="checkbox" data-notice-category="${k}" checked aria-label="${v}推送"></label>`).join('')}<label class="settings-row static"><span>夜间静默 · 22:30–08:00</span><input type="checkbox" id="pointsNoticeQuiet" checked></label><label class="settings-row static"><span>夜间允许重要待办</span><input type="checkbox" id="pointsNoticeNight"></label></div><p class="points-push-help">新动态会在对应模块显示红点。关闭某类推送不会关闭红点；夜间静默按北京时间。</p><p id="pointsNoticePrefsStatus" class="points-push-message" role="status"></p>`;
     q('pointsPushSettings')?.after(prefs);
-    const layer=q('pointsMessagesLayer'),banner=q('pointsMessageBanner');
-    let items=[],unread=0,filter='all',loading=false,more=false,available=false,identity='',epoch=0,prefsLoaded=false,prefsBusy=false,preference=null,bannerItems=[],bannerTimer,lastBanner=0,focusBefore=null,pendingRoute=null;
+    let items=[],identity='',epoch=0,loading=null,prefsLoaded=false,prefsBusy=false,preference=null,pendingRoute=null;
+    const pendingAcks=new Set(),hosts=new Map();
     const allowed=()=>window.PointsDeviceAccess?.verified===true;
     const currentIdentity=()=>state.isAdmin?'admin:'+state.session?.user?.id:window.PointsDeviceAccess?.credential() || 'guest';
-    const opened=()=>layer.classList.contains('open');
-    async function rpc(name,args={}){const result=await db.rpc(name,args);if(result.error)throw result.error;return result.data;}
-    function badges(){document.querySelectorAll('.points-message-bell').forEach(b=>{const n=b.querySelector('span');n.hidden=!unread;n.textContent=unread>99?'99+':unread;b.setAttribute('aria-label',unread?`消息，${unread} 条未读`:'消息');});}
-    function date(at){const d=new Date(at);return Number.isFinite(d.getTime())?d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
-    function render(){
-      badges();const rows=items.filter(i=>filter!=='pending'||i.pending);
-      q('pointsMessagesList').innerHTML=rows.length?rows.map(i=>`<button class="points-message-row ${i.unread?'unread':''}" type="button" data-message-id="${escape(i.id)}"><span class="points-message-category" data-category="${escape(i.category)}">${escape(labels[i.category]||'消息')}</span><time>${escape(date(i.at))}</time><strong>${escape(i.title)}${i.pending?'<em>待处理</em>':''}</strong><p>${escape(i.body)}</p>${!i.active?'<small>状态已有更新</small>':''}</button>`).join(''):`<div class="points-messages-empty">${loading?'正在读取消息…':available?filter==='pending'?'暂时没有待处理事项':'消息会安静地留在这里':'消息服务尚未连接'}<p>${available?'厨房、积分和其他进展，都可以在这里查看。':'请先完成整合 SQL 部署，再重试。'}</p></div>`;
-      layer.querySelector('[data-notice="more"]').hidden=!more;layer.querySelector('[data-notice="more"]').disabled=loading;
-      layer.querySelector('[data-notice="read"]').disabled=!unread||loading;
-      layer.querySelectorAll('[role="tab"]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.notice===filter)));
+    const routeOf=item=>routes.includes(item.route)?item.route:null;
+    const visible=el=>el?.isConnected && !document.hidden && !el.closest('[hidden],[inert],[aria-hidden="true"]') && el.getClientRects().length>0;
+    const observer=new IntersectionObserver(entries=>{
+      for(const entry of entries)if(entry.isIntersecting && entry.intersectionRatio>=.75)void acknowledge(entry.target);
+    },{threshold:[.75]});
+    async function rpc(name,args={}) {const result=await db.rpc(name,args);if(result.error)throw result.error;return result.data;}
+    function reset() {
+      epoch++;identity='';items=[];loading=null;prefsLoaded=false;preference=null;pendingAcks.clear();observer.disconnect();
+      for(const host of hosts.values())host.remove();hosts.clear();badges();
     }
-    async function ack(rows,read=false){if(!allowed()||!rows.length)return;const version=epoch;for(let i=0;i<rows.length;i+=50)await rpc('points_notifications_ack',{p_ids:rows.slice(i,i+50).map(r=>r.id),p_read:read});if(version!==epoch)return;rows.forEach(r=>{r.presented=true;if(read&&r.unread){r.unread=false;unread=Math.max(0,unread-1);}});render();}
-    function quietNow(){const n=new Date(),minutes=(n.getUTCHours()*60+n.getUTCMinutes()+480)%1440;return preference?.quiet&&(minutes>=1350||minutes<480);}
-    function dismiss(){banner.hidden=true;clearTimeout(bannerTimer);bannerItems=[];}
-    function maybeBanner(){
-      if(!available||opened()||!document.visibilityState.includes('visible')||document.querySelector('.modal-layer.open')||els.home?.inert||state.wheelSpinning||!allowed())return;
-      const fresh=items.filter(i=>i.active&&i.alert&&!i.presented&&Date.now()-Date.parse(i.at)<120000&&preference?.categories.includes(i.category)&&(!quietNow()||i.priority===1&&preference?.nightImportant));
-      if(!fresh.length || Date.now()-lastBanner<120000&&!fresh.some(i=>i.priority===1))return;
-      if(!banner.hidden)return;
-      bannerItems=fresh;banner.querySelector('strong').textContent=fresh.length>1?`小世界有 ${fresh.length} 项更新`:fresh[0].title;
-      banner.querySelector('small').textContent=fresh.length>1?'点开消息中心查看详情':labels[fresh[0].category]+' · 点开查看';banner.hidden=false;lastBanner=Date.now();
-      void ack(fresh).catch(()=>{});bannerTimer=setTimeout(dismiss,6500);
+    function badges() {
+      const has=(...args)=>items.some(i=>i.active&&i.unread&&args.includes(routeOf(i)));
+      const specs=[
+        ['[data-metric="score"]',has('score','assets')],['[data-metric="wheel"]',has('wheel','withdrawals')],
+        ['[data-metric="fat"]',has('fat','services')],['#redeemRewardBtn,[data-shop-view="inventory"]',has('assets')],
+        ['.app-nav [data-value="world"]',has('score','wheel','withdrawals','assets','fat','services','devices')],
+        ['.app-nav [data-value="kitchen"],[data-kitchen-action="tab"][data-value="orders"]',has('kitchen')],
+        ['#fatDiamondShopBtn',has('fat','services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
+        ['#pointsAccessDevices',has('devices')],['#settingsBtn,[data-kitchen-action="settings"]',has('devices')],
+        ['#overviewBtn',has(state.activeMetric==='wheel'?'wheel':state.activeMetric==='fat'?'fat':'score',state.activeMetric==='wheel'?'withdrawals':'')]
+      ];
+      for(const [selector,on] of specs)document.querySelectorAll(selector).forEach(el=>{
+        if(!el.classList.contains('points-dot-anchor'))el.classList.add('points-dot-anchor');
+        if(el.classList.contains('points-has-update')!==on)el.classList.toggle('points-has-update',on);
+        let target=el.classList.contains('points-update-target')?el:el.querySelector('.points-update-target');
+        if(!target){
+          const icon=el.querySelector(':scope > svg');
+          if(icon){target=document.createElement('span');target.className='points-update-target points-update-icon';el.insertBefore(target,icon);target.append(icon);}
+          else {target=el.querySelector(':scope > span')||el;target.classList.add('points-update-target');}
+        }
+        let dot=target.querySelector(':scope > .points-update-dot');
+        if(!dot){dot=document.createElement('span');dot.className='points-update-dot';dot.setAttribute('role','img');dot.setAttribute('aria-label','有新动态');target.append(dot);}
+        if(dot.hidden===on)dot.hidden=!on;
+      });
     }
-    async function load(older=false){
-      if(loading||!allowed()||document.hidden)return;
-      const next=currentIdentity();if(next!==identity){identity=next;epoch++;items=[];unread=0;prefsLoaded=false;preference=null;dismiss();}
-      const version=epoch;loading=true;render();
-      try{const data=await rpc('points_notifications_get',older?{p_before:items.at(-1)?.id}:{});if(version!==epoch||!allowed())return;
-        items=older?[...items,...data.items.filter(i=>!items.some(j=>j.id===i.id))]:[...data.items,...items.filter(i=>!data.items.some(j=>j.id===i.id)&&BigInt(i.id)<BigInt(data.items.at(-1)?.id||'0'))];
-        unread=Number(data.unread)||0;more=data.items.length===50;available=true;q('pointsMessagesStatus').textContent='';
-        if(!prefsLoaded){preference=await rpc('points_notifications_preferences');if(version!==epoch)return;setPreferences(preference);prefsLoaded=true;}
-        render();if(opened())await acknowledgeVisible();else maybeBanner();
-      }catch(_){if(version===epoch){q('pointsMessagesStatus').textContent='消息暂时未更新，请稍后重试。';}}
-      finally{loading=false;render();}
+    function mount(key,parent,routeList,enabled=true) {
+      if(!parent || !enabled || parent.dataset.pointsSynced!=='true'){hosts.get(key)?.remove();hosts.delete(key);return;}
+      const rows=items.filter(i=>i.active&&routeList.includes(routeOf(i)));
+      const shown=[...rows.filter(i=>i.unread),...rows.filter(i=>!i.unread).slice(0,3)].slice(0,50);
+      let host=hosts.get(key);
+      if(!shown.length){host?.remove();hosts.delete(key);return;}
+      if(!host?.isConnected){host=document.createElement('section');host.className='points-module-updates';host.dataset.updatesHost=key;parent.prepend(host);hosts.set(key,host);}
+      const signature=JSON.stringify(shown.map(i=>[i.id,i.title,i.body]));
+      if(host.dataset.signature!==signature){
+        host.dataset.signature=signature;
+        host.innerHTML=`<p class="points-updates-heading">最近动态</p>${shown.map(i=>`<article class="points-context-update" data-update-id="${escape(i.id)}" data-update-epoch="${epoch}"><div><strong>${escape(i.title)}</strong><time>${escape(new Date(i.at).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}</time></div><p>${escape(i.body)}</p></article>`).join('')}`;
+        host.querySelectorAll('[data-update-id]').forEach(row=>observer.observe(row));
+      }
     }
-    function setPreferences(p){prefs.querySelectorAll('[data-notice-category]').forEach(c=>c.checked=p.categories.includes(c.dataset.noticeCategory));q('pointsNoticeQuiet').checked=p.quiet;q('pointsNoticeNight').checked=p.nightImportant;}
-    async function acknowledgeVisible(){if(!opened()||document.hidden)return;const box=layer.querySelector('section').getBoundingClientRect(),ids=[...q('pointsMessagesList').querySelectorAll('[data-message-id]')].filter(row=>{const r=row.getBoundingClientRect();return r.bottom>box.top&&r.top<box.bottom;}).map(row=>row.dataset.messageId);await ack(items.filter(i=>!i.presented&&ids.includes(i.id)));}
-    async function savePreferences(){if(prefsBusy||!allowed())return;prefsBusy=true;const version=epoch;prefs.querySelectorAll('input').forEach(c=>c.disabled=true);try{const p=await rpc('points_notifications_preferences',{p_categories:[...prefs.querySelectorAll('[data-notice-category]:checked')].map(c=>c.dataset.noticeCategory),p_quiet:q('pointsNoticeQuiet').checked,p_night_important:q('pointsNoticeNight').checked});if(version===epoch){preference=p;q('pointsNoticePrefsStatus').textContent='已保存';}}catch(_){if(preference)setPreferences(preference);q('pointsNoticePrefsStatus').textContent='未能保存，请重试。';}finally{prefsBusy=false;prefs.querySelectorAll('input').forEach(c=>c.disabled=false);}}
-    async function open(){if(!allowed())return;focusBefore=document.activeElement;ui.closeAllLayers();ui.closeOverviewSheet();dismiss();ui.setLayer(layer,true);layer.querySelector('[data-notice="close"]').focus();render();await load();}
-    function close(){ui.setLayer(layer,false);focusBefore?.isConnected&&focusBefore.focus({preventScroll:true});}
-    async function route(value){const routes=['messages','kitchen','score','wheel','withdrawals','assets','fat','services','devices'];if(!routes.includes(value))return;if(!allowed()){pendingRoute=value;return;}if(value==='messages')await open();else{close();dismiss();navigate(value);}}
-    layer.addEventListener('click',event=>{const b=event.target.closest('button');if(!b){if(event.target===layer)close();return;}const a=b.dataset.notice;
-      if(a==='close')close();if(a==='all'||a==='pending'){filter=a;render();void acknowledgeVisible().catch(()=>{});}if(a==='more')void load(true);
-      if(a==='read')void (async()=>{b.disabled=true;try{let page={items};for(;;){await ack(page.items,true);if(page.items.length<50)break;page=await rpc('points_notifications_get',{p_before:page.items.at(-1).id});}await load();}catch(_){q('pointsMessagesStatus').textContent='未能标记已读，请重试。';b.disabled=false;}})();
-      const item=items.find(i=>i.id===b.dataset.messageId);if(item)void ack([item],true).then(()=>route(item.route)).catch(()=>q('pointsMessagesStatus').textContent='操作未完成，请重试。');
-    });
-    banner.querySelector('[data-banner="dismiss"]').addEventListener('click',dismiss);
-    banner.querySelector('[data-banner="open"]').addEventListener('click',()=>{const rows=bannerItems.slice();dismiss();void ack(rows,true).then(()=>rows.length===1?route(rows[0].route):open()).catch(()=>void open());});
-    layer.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const buttons=[...layer.querySelectorAll('button:not(:disabled)')].filter(b=>b.getClientRects().length);if(e.shiftKey&&document.activeElement===buttons[0]){e.preventDefault();buttons.at(-1)?.focus();}else if(!e.shiftKey&&document.activeElement===buttons.at(-1)){e.preventDefault();buttons[0]?.focus();}}});
-    q('pointsMessagesOpen').addEventListener('click',()=>void open());prefs.addEventListener('change',()=>void savePreferences());els.settingsBtn.addEventListener('click',()=>void load());
-    let scrollTimer;layer.querySelector('section').addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>void acknowledgeVisible().catch(()=>{}),150);},{passive:true});
-    function wake(){if(!allowed()){epoch++;identity='';items=[];unread=0;available=false;dismiss();close();render();return;}void load();if(pendingRoute){const r=pendingRoute;pendingRoute=null;void route(r);}}
-    window.addEventListener('points:access-ready',wake);window.addEventListener('online',wake);document.addEventListener('visibilitychange',()=>{if(document.hidden)dismiss();else wake();});
-    const timer=setInterval(()=>void load(),10000);window.addEventListener('pagehide',()=>{dismiss();},{passive:true});
-    navigator.serviceWorker?.addEventListener('message',e=>{if(e.data?.type==='points:open-notification'){try{const url=new URL(e.data.url,location.href);if(url.origin===location.origin)void route(url.searchParams.get('open'));}catch(_){}}else if(e.data?.type==='points:open-kitchen')void route('kitchen');});
+    function render() {
+      if(!allowed()){badges();return;}
+      mount('score',q('scoreOverviewContent'),['score']);
+      mount('wheel',q('wheelOverviewContent'),['wheel','withdrawals']);
+      mount('assets',q('shopInventoryPanel'),['assets']);
+      mount('kitchen',q('kitchenContent'),['kitchen'],document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.getAttribute('aria-selected')==='true');
+      const reward=q('fatRewardBody');
+      mount('rewards',reward,[reward?.dataset.updatesView],!!reward?.dataset.updatesView);
+      mount('devices',q('pointsAccessDeviceList'),['devices']);badges();
+    }
+    async function acknowledge(row) {
+      if(!allowed()||!visible(row)||Number(row.dataset.updateEpoch)!==epoch)return;
+      const item=items.find(i=>i.id===row.dataset.updateId && i.active && i.unread);
+      if(!item || pendingAcks.has(item.id))return;
+      const version=epoch;pendingAcks.add(item.id);
+      try {
+        await rpc('points_notifications_ack',{p_ids:[item.id],p_read:true});
+        if(version!==epoch||!allowed())return;
+        item.unread=false;item.presented=true;badges();
+      }catch(_){}finally{if(version===epoch)pendingAcks.delete(item.id);}
+    }
+    function setPreferences(p) {
+      prefs.querySelectorAll('[data-notice-category]').forEach(c=>c.checked=p.categories.includes(c.dataset.noticeCategory));
+      q('pointsNoticeQuiet').checked=p.quiet;q('pointsNoticeNight').checked=p.nightImportant;
+    }
+    async function load() {
+      if(!allowed()||document.hidden)return;
+      const next=currentIdentity();if(next!==identity){reset();identity=next;}
+      if(loading)return loading;const version=epoch;
+      const task=(async()=>{
+        try {
+          const data=await rpc('points_notifications_get');if(version!==epoch||!allowed())return;
+          items=Array.isArray(data.items)?data.items.slice(0,50):[];render();
+          if(!prefsLoaded){const p=await rpc('points_notifications_preferences');if(version!==epoch||!allowed())return;preference=p;setPreferences(p);prefsLoaded=true;}
+        }catch(_){}finally{if(loading===task)loading=null;}
+      })();loading=task;return task;
+    }
+    async function savePreferences() {
+      if(prefsBusy||!allowed())return;prefsBusy=true;const version=epoch;prefs.querySelectorAll('input').forEach(c=>c.disabled=true);
+      try {
+        const p=await rpc('points_notifications_preferences',{p_categories:[...prefs.querySelectorAll('[data-notice-category]:checked')].map(c=>c.dataset.noticeCategory),p_quiet:q('pointsNoticeQuiet').checked,p_night_important:q('pointsNoticeNight').checked});
+        if(version===epoch){preference=p;q('pointsNoticePrefsStatus').textContent='已保存';}
+      }catch(_){if(version===epoch){if(preference)setPreferences(preference);q('pointsNoticePrefsStatus').textContent='未能保存，请重试。';}}
+      finally{prefsBusy=false;prefs.querySelectorAll('input').forEach(c=>c.disabled=false);}
+    }
+    function route(value) {
+      if(value==='messages')value=routeOf(items.find(i=>i.active&&i.unread)||{}) || 'score';
+      if(!routes.includes(value))return;
+      if(!allowed()||state.wheelSpinning||state.wheelRequestInFlight){pendingRoute=value;return;}
+      navigate(value);
+    }
+    function wake() {
+      if(!allowed()){reset();return;}
+      void load().then(()=>{if(pendingRoute){const r=pendingRoute;pendingRoute=null;route(r);}});
+    }
+    prefs.addEventListener('change',()=>void savePreferences());els.settingsBtn.addEventListener('click',()=>void load());
+    window.addEventListener('points:access-ready',wake);window.addEventListener('points:access-locked',wake);
+    window.addEventListener('online',wake);document.addEventListener('visibilitychange',()=>{if(!document.hidden)wake();});
+    let frame=0;
+    const mutation=new MutationObserver(()=>{if(!frame)frame=requestAnimationFrame(()=>{frame=0;render();if(pendingRoute&&allowed()&&!state.wheelSpinning&&!state.wheelRequestInFlight){const r=pendingRoute;pendingRoute=null;route(r);}});});
+    mutation.observe(q('pointsApp'),{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','aria-selected','data-points-synced','data-updates-view']});
+    const timer=setInterval(()=>{void load();for(const host of hosts.values())host.querySelectorAll('[data-update-id]').forEach(row=>{observer.unobserve(row);observer.observe(row);});},15000);
+    navigator.serviceWorker?.addEventListener('message',e=>{if(e.data?.type==='points:open-notification'){try{const u=new URL(e.data.url,location.href);if(u.origin===location.origin&&u.pathname.startsWith(new URL('./',document.baseURI).pathname))route(u.searchParams.get('open'));}catch(_){}}else if(e.data?.type==='points:open-kitchen')route('kitchen');});
     const initial=new URL(location.href),requested=initial.searchParams.get('open');if(requested){pendingRoute=requested;initial.searchParams.delete('open');history.replaceState(history.state,'',initial.href);}
-    render();return {roleChanged:wake,refresh:load,open,stop:()=>clearInterval(timer)};
+    return {roleChanged:wake,refresh:load,stop(){clearInterval(timer);observer.disconnect();mutation.disconnect();}};
   }
 })();
 
@@ -6276,21 +6355,25 @@ window.PointsKitchenRecipes = [
           const { data, error } = await db.auth.getSession();
           if (version !== authReadVersion) return;
           if (error) throw error;
-          state.session = data.session;
-          state.isAdmin = false;
-
-          if (state.session) {
+          let nextAdmin = false;
+          if (data.session) {
             const { data: adminData, error: adminError } = await db.rpc("points_is_admin");
             if (version !== authReadVersion) return;
-            if (adminError) console.error("points_is_admin:", adminError);
-            else state.isAdmin = adminData === true;
+            if (adminError) throw adminError;
+            nextAdmin = adminData === true;
           }
-
+          state.session = data.session;
+          state.isAdmin = nextAdmin;
+          runtime.clear("auth:restore");
           renderAdminState();
           if (state.overviewMode !== "closed") await loadOverviewData(true);
         } catch (err) {
           if (version !== authReadVersion) return;
           console.error("refreshAuthState:", err);
+          if (runtime.unknownWrite(err) || /^5/.test(String(err?.status || ""))) {
+            runtime.report("auth:restore");
+            return;
+          }
           state.session = null;
           state.isAdmin = false;
           renderAdminState();
@@ -6603,11 +6686,13 @@ window.PointsKitchenRecipes = [
       }
 
       async function loadShopState({ silent = false } = {}) {
+        els.shopInventoryPanel.dataset.pointsSynced = "false";
         try {
           const { data, error } = await db.rpc("points_shop_get_state_v2");
           if (error) throw error;
           normalizeShopState(data);
           state.shopAvailable = true;
+          els.shopInventoryPanel.dataset.pointsSynced = "true";
           renderWheelItemNotice();
           renderWheelChallengeProgress();
           return true;
@@ -8004,6 +8089,8 @@ window.PointsKitchenRecipes = [
           renderOverview();
           return;
         }
+        els.scoreOverviewContent.dataset.pointsSynced = "false";
+        els.wheelOverviewContent.dataset.pointsSynced = "false";
         try {
           const [scoreRes, wheelRes, withdrawalRes] = await Promise.all([
             db.rpc("points_get_logs", { p_from: null, p_to: null, p_limit: 10000 }),
@@ -8031,6 +8118,8 @@ window.PointsKitchenRecipes = [
             state.wheelTotals = null;
           }
           state.overviewLoadedAt = Date.now();
+          els.scoreOverviewContent.dataset.pointsSynced = "true";
+          els.wheelOverviewContent.dataset.pointsSynced = "true";
           markRefreshed();
           renderOverview();
         } catch (err) {
@@ -9600,18 +9689,19 @@ window.PointsKitchenRecipes = [
         const notices=window.PointsNotifications.attach({db,state,els,ui:{setLayer,closeAllLayers,closeOverviewSheet},navigate:route=>{
           closeAllLayers();closeOverviewSheet();
           document.querySelector('.app-nav [data-value="'+(route==='kitchen'?'kitchen':'world')+'"]')?.click();
-          if(route==='kitchen')return;
-          if(route==='devices'){els.settingsBtn.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
+          if(route==='kitchen'){document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.click();return;}
+          if(route==='devices'){els.settingsBtn.click();document.getElementById('pointsAccessDevices')?.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
           if(route==='services'){switchMetric('fat');void notificationFat?.openServices();return;}
+          if(route==='fat'){switchMetric('fat');void notificationFat?.openSettlement();return;}
           if(route==='assets'){void openShop('inventory');return;}
-          switchMetric(route==='fat'?'fat':['wheel','withdrawals'].includes(route)?'wheel':'score');
-          setTimeout(()=>openOverviewSheet(),220);
+          switchMetric(['wheel','withdrawals'].includes(route)?'wheel':'score');
+          setTimeout(()=>{openOverviewSheet();void loadOverviewData(true);},220);
         }});
         const previousNoticeAuth=refreshAuthState;
         refreshAuthState=async(...args)=>{await previousNoticeAuth(...args);notices.roleChanged();};
         }catch(error){console.error('notificationsInitialization:',error?.name);runtime.report('notifications');}
       }
-      const access=window.PointsDeviceAccess.attach({db,state,els,ui:{setLayer,closeAllLayers},
+      const access=window.PointsDeviceAccess.attach({db,state,els,ui:{setLayer,closeAllLayers,renderAdminState:()=>renderAdminState()},
         apiOrigin:SUPABASE_URL,readAuth:()=>refreshAuthState(),onUnlocked:()=>void boot().catch(()=>runtime.report('startup'))});
       const previousAccessRender=renderAdminState;
       renderAdminState=(...args)=>{previousAccessRender(...args);access.authChanged();};
@@ -9727,10 +9817,30 @@ window.PointsKitchenRecipes = [
       url.searchParams.delete('__app_refresh');history.replaceState(history.state,'',url.href);
     }
   } catch (_) {}
-  let pending=null,lastCheck=0;
+  let pending=null,lastCheck=0,available=null,installing=false,refreshStarted=false,retryTimer=null;
   const info=document.getElementById('pointsUpdateStatus');
   function text(value){if(info)info.textContent=value;}
+  function retryUpdate(){if(retryTimer===null)retryTimer=setTimeout(()=>{retryTimer=null;void check(true);},15000);}
+  async function install() {
+    if(installing||refreshStarted||!available)return;
+    installing=true;text(`正在更新至 ${available}…`);
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+    try {
+      // Check the actual release HTML before navigating; a manifest alone can lead a CDN rollout.
+      const asset=new URL('index.html',document.baseURI);asset.searchParams.set('__app_refresh',Date.now());
+      const response=await fetch(asset,{cache:'no-store',signal:controller.signal,credentials:'same-origin'});
+      if(!response.ok)throw Error('Release unavailable');
+      const html=await response.text(),build=html.match(/content="(\d{8}\.\d+)" name="points-build"/)?.[1];
+      if(build!==available || !html.includes('id="pointsApp"')){text('新版本正在分发，将自动重试');retryUpdate();return;}
+      window.dispatchEvent(new Event('points:before-update'));
+      const url=new URL(location.href);url.searchParams.set('__app_refresh',Date.now());
+      refreshStarted=true;clearTimeout(retryTimer);retryTimer=null;
+      location.replace(url.href);
+    }catch(_){text(navigator.onLine===false?'网络未连接，联网后自动更新':'暂时无法下载新版本，将自动重试');retryUpdate();}
+    finally{clearTimeout(timer);installing=false;}
+  }
   async function check(manual=false) {
+    if(refreshStarted)return;
     if(pending)return pending;
     if(!manual && Date.now()-lastCheck<60000)return;
     lastCheck=Date.now();
@@ -9747,17 +9857,20 @@ window.PointsKitchenRecipes = [
         // Ignore a temporarily older CDN response; never downgrade the running app.
         const parts=v=>v.split('.').map(Number),a=parts(release.build),b=parts(current);
         if(a[0]>b[0] || a[0]===b[0] && a[1]>b[1]) {
-          text(`新版本 ${release.build} 已发布`);
-          window.PointsRuntime?.report('update');
+          available=release.build;
+          window.PointsRuntime?.clear('update');
           void navigator.serviceWorker?.getRegistration().then(r=>r?.update()).catch(()=>{});
-        } else {text('当前已是最新版本');window.PointsRuntime?.clear('update');}
-      } catch (_) {if(manual)text('暂时无法检查更新，请稍后重试');}
+          await install();
+        } else if(available){await install();
+        } else if(!available){text('当前已是最新版本');window.PointsRuntime?.clear('update');}
+      } catch (_) {if(manual)text('暂时无法检查更新，请稍后重试');if(available)retryUpdate();}
       finally {clearTimeout(timer);pending=null;}
     })();
     return pending;
   }
   document.getElementById('pointsCheckUpdateBtn')?.addEventListener('click',()=>void check(true));
   document.getElementById('openVersionInfoBtn')?.addEventListener('click',()=>void check(true));
+  window.PointsUpdates={install,get available(){return available;}};
   // Defer maintenance requests until after the interface has initialized.
   const maintain=()=>{
     void check();
