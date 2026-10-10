@@ -139,6 +139,7 @@
 .kitchen-selection-images{display:flex;padding-right:3px}
 .kitchen-selection-images .kitchen-dish-image,.kitchen-selection-images .kitchen-dish-fallback{width:32px;height:32px;aspect-ratio:auto;object-fit:cover;border:2px solid #f9f9fb;border-radius:9px;margin-right:-4px}
 #pointsApp .kitchen-layer .kitchen-meal-fields{gap:12px;margin-bottom:22px}
+#pointsApp .kitchen-layer[data-dialog="meal"] .kitchen-meal-fields{grid-template-columns:1fr}
 #pointsApp .kitchen-layer .kitchen-meal-fields label{font-size:12px;color:#77777e}
 #pointsApp .kitchen-layer .kitchen-meal-fields :is(input,select),#pointsApp .kitchen-layer .kitchen-custom-row input{font-size:16px;background:#fff;border:1px solid #e5e5eb;border-radius:11px;color:#35353b;min-height:46px;padding:10px;min-width:0}
 #pointsApp .kitchen-layer .kitchen-recipe-image{width:100%;aspect-ratio:1.5;object-fit:cover;border-radius:20px;margin:0 0 22px}

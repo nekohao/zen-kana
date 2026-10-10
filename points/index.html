@@ -7,8 +7,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261010.3" name="points-build"/>
-<meta content="2026/10/10 10:01" name="points-updated-at"/>
+<meta content="20261010.4" name="points-build"/>
+<meta content="2026/10/10 12:52" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -2792,6 +2792,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 .kitchen-selection-images{display:flex;padding-right:3px}
 .kitchen-selection-images .kitchen-dish-image,.kitchen-selection-images .kitchen-dish-fallback{width:32px;height:32px;aspect-ratio:auto;object-fit:cover;border:2px solid #f9f9fb;border-radius:9px;margin-right:-4px}
 #pointsApp .kitchen-layer .kitchen-meal-fields{gap:12px;margin-bottom:22px}
+#pointsApp .kitchen-layer[data-dialog="meal"] .kitchen-meal-fields{grid-template-columns:1fr}
 #pointsApp .kitchen-layer .kitchen-meal-fields label{font-size:12px;color:#77777e}
 #pointsApp .kitchen-layer .kitchen-meal-fields :is(input,select),#pointsApp .kitchen-layer .kitchen-custom-row input{font-size:16px;background:#fff;border:1px solid #e5e5eb;border-radius:11px;color:#35353b;min-height:46px;padding:10px;min-width:0}
 #pointsApp .kitchen-layer .kitchen-recipe-image{width:100%;aspect-ratio:1.5;object-fit:cover;border-radius:20px;margin:0 0 22px}
@@ -3148,7 +3149,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261010.3</span>
+<span class="settings-value">20261010.4</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -3163,8 +3164,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261010.3</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/10 10:01</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261010.4</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/10 12:52</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -3197,8 +3198,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261010.3</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/10 10:01</div>
+<div class="release-head"><strong>20261010.4</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/10 12:52</div>
 <ul class="release-list"><li>新增统一消息中心，厨房、积分、提现、道具、减脂结算、服务和设备安全消息集中查看。</li><li>连续变动合并提醒，支持通知分类与夜间静默；应用内使用轻量横幅。</li><li>管理员可在设置里初始化推送服务；游客订阅沿用一次性设备验证。</li></ul>
 </div>
 <div class="release-block previous">
@@ -3938,7 +3939,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
         return Promise.resolve({data:null,error:{code:'42501',message:'POINTS_DEVICE_REQUIRED'}});
       // Inbox receipts/preferences do not change business state or invalidate auth reads.
       const auxiliary=/^points_notifications_(get|ack|preferences)$/.test(name);
-      const read = auxiliary || /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
+      const read = auxiliary || /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v[23]_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
       const epoch = clientEpoch, revision = readEpoch;
       const key = `${epoch}:${revision}:${name}:${JSON.stringify(args)}`;
       if (read && pendingReads.has(key)) return pendingReads.get(key);
@@ -4115,6 +4116,12 @@ window.PointsKitchenRecipes = [
   const readNames=new Set(['get_state','get_order','get_reviews']);
   window.PointsKitchenApi={create(db){
     const api={legacy:false,async rpc(name,args={}){
+      if(/^points_kitchen_v3_get_(state|order)$/.test(name)){
+        const next=await db.rpc(name,args);
+        const missing=next.error && /PGRST202|42883|Could not find.*function|schema cache/i.test(`${next.error.code} ${next.error.message}`);
+        if(!next.error && name==='points_kitchen_v3_get_state')api.legacy=false;
+        return missing?api.rpc(name.replace('_v3_','_v2_'),args):next;
+      }
       let result=await db.rpc(name,args);
       const suffix=name.replace(/^points_kitchen_v2_/,'');
       const missing=result.error && /PGRST202|42883|Could not find.*function|schema cache/i.test(`${result.error.code} ${result.error.message}`);
@@ -4144,7 +4151,7 @@ window.PointsKitchenRecipes = [
   function attach({db,state,els,ui}) {
     const app=document.getElementById('pointsApp'); if(app.querySelector('#kitchenPage')) throw new Error('Kitchen already attached');
     app.dataset.page='world';
-    app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" hidden aria-label="我们的厨房"><header class="kitchen-header"><div><h1>我们的厨房</h1><p id="kitchenGreeting">把每一餐，记在这里</p></div><button class="kitchen-icon-button" data-kitchen-action="settings" aria-label="厨房设置" type="button">${icon('settings')}</button></header><nav class="kitchen-tabs" aria-label="厨房内容" role="tablist">${[['orders','订单'],['catalog','菜谱'],['overview','总览']].map(([a,t])=>`<button data-kitchen-action="tab" data-value="${a}" aria-selected="${a==='orders'}" role="tab" type="button">${t}</button>`).join('')}</nav><div id="kitchenError" role="status" hidden></div><div id="kitchenContent"></div></section><nav class="app-nav" aria-label="主导航"><button data-kitchen-action="page" data-value="world" aria-current="page" type="button">${icon('world')}<span>小世界</span></button><button data-kitchen-action="page" data-value="kitchen" type="button">${icon('kitchen')}<span>我们的厨房</span><span class="kitchen-nav-badge" id="kitchenBadge" hidden></span></button></nav><div class="modal-layer kitchen-layer" id="kitchenLayer" aria-hidden="true"><section class="kitchen-panel" role="dialog" aria-modal="true" aria-labelledby="kitchenDialogTitle" tabindex="-1"><header class="kitchen-panel-head"><h2 id="kitchenDialogTitle"></h2><button data-kitchen-action="close" aria-label="关闭厨房窗口" type="button">×</button></header><div class="kitchen-panel-body" id="kitchenDialogBody"></div><footer class="kitchen-panel-foot" id="kitchenDialogFoot" hidden></footer></section></div>`);
+    app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" hidden aria-label="我们的厨房"><header class="kitchen-header"><div><h1>我们的厨房</h1><p id="kitchenGreeting">把每一餐，记在这里</p></div><button class="kitchen-icon-button" data-kitchen-action="settings" aria-label="厨房设置" type="button">${icon('settings')}</button></header><nav class="kitchen-tabs" aria-label="厨房内容" role="tablist">${[['orders','餐次'],['catalog','菜谱'],['overview','总览']].map(([a,t])=>`<button data-kitchen-action="tab" data-value="${a}" aria-selected="${a==='orders'}" role="tab" type="button">${t}</button>`).join('')}</nav><div id="kitchenError" role="status" hidden></div><div id="kitchenContent"></div></section><nav class="app-nav" aria-label="主导航"><button data-kitchen-action="page" data-value="world" aria-current="page" type="button">${icon('world')}<span>小世界</span></button><button data-kitchen-action="page" data-value="kitchen" type="button">${icon('kitchen')}<span>我们的厨房</span><span class="kitchen-nav-badge" id="kitchenBadge" hidden></span></button></nav><div class="modal-layer kitchen-layer" id="kitchenLayer" aria-hidden="true"><section class="kitchen-panel" role="dialog" aria-modal="true" aria-labelledby="kitchenDialogTitle" tabindex="-1"><header class="kitchen-panel-head"><h2 id="kitchenDialogTitle"></h2><button data-kitchen-action="close" aria-label="关闭厨房窗口" type="button">×</button></header><div class="kitchen-panel-body" id="kitchenDialogBody"></div><footer class="kitchen-panel-foot" id="kitchenDialogFoot" hidden></footer></section></div>`);
     document.body.insertAdjacentHTML('beforeend',`<div class="kitchen-critical-layer" id="kitchenCritical" hidden><section class="kitchen-critical" role="alertdialog" aria-modal="true" aria-labelledby="kitchenCriticalTitle" aria-describedby="kitchenCriticalCopy" tabindex="-1"><div class="kitchen-critical-icon">${icon('kitchen')}</div><h2 id="kitchenCriticalTitle">哥哥发来了点菜请求</h2><p id="kitchenCriticalCopy">查看最新菜品后，可以制作或拒绝。</p><ul id="kitchenCriticalList"></ul><div id="kitchenCriticalError" class="kitchen-error" hidden></div><div class="kitchen-actions"><button class="kitchen-button primary" data-kitchen-action="ack-view" type="button">去查看</button><button class="kitchen-button" data-kitchen-action="ack" type="button">知道了</button></div></section></div>`);
     const q=id=>document.getElementById(id), page=q('kitchenPage'), content=q('kitchenContent'), layer=q('kitchenLayer'), body=q('kitchenDialogBody'), foot=q('kitchenDialogFoot'), critical=q('kitchenCritical');
     let ready=false, role='waiting', epoch=0, response=null, deployed=false, error='', pending=null, busy=false;
@@ -4153,17 +4160,17 @@ window.PointsKitchenRecipes = [
     let draftTimer=0,draftQueue=Promise.resolve(),draftSerial=0,modalToken=0;
     const kitchenApi=window.PointsKitchenApi.create(db);
     const admin=()=>role.startsWith('admin:');
-    const sqlRequired=new Set(['create','guest-create','edit','cancel-order','complete','reject','rate','guest-edit','guest-cancel','save-order','confirm','retry']);
-    const btn=(action,text,value='',kind='',disabled=false)=>`<button class="kitchen-button ${kind}" data-kitchen-action="${action}"${value!==''?` data-value="${esc(value)}"`:''} type="button"${disabled || busy || kitchenApi.legacy && sqlRequired.has(action)?' disabled':''}>${text}</button>`;
+    const sqlRequired=new Set(['meal-next','guest-add','create','guest-create','edit','cancel-order','complete','reject','rate','guest-edit','guest-cancel','save-order','confirm','retry']);
+    const btn=(action,text,value='',kind='',disabled=false)=>`<button class="kitchen-button ${kind}" data-kitchen-action="${action}"${value!==''?` data-value="${esc(value)}"`:''} type="button"${disabled || busy || !deployed && sqlRequired.has(action)?' disabled':''}>${text}</button>`;
     const empty=(title,copy='')=>`<div class="kitchen-empty"><span class="kitchen-empty-mark" aria-hidden="true">${icon('kitchen')}</span><strong>${esc(title)}</strong><p>${esc(copy)}</p></div>`;
     const status=o=>`<span class="kitchen-status ${esc(o.status)}">${labels[o.status] || '待同步'}</span>`;
     const find=id=>orders.find(o=>o.id===id) || response?.month_orders?.find(o=>o.id===id);
     function failure(e) {
       if(e?.code==='KITCHEN_PENDING_OPERATION')return '上次提交的结果待确认，请先重试原操作，再提交新的内容。';
       if(/PGRST202|42883|schema cache|Could not find/i.test(`${e?.code} ${e?.message}`)) return '厨房尚未部署。请先执行厨房 SQL，菜谱做法仍可查看。';
-      if(e?.code==='40001') return '订单已被修改，请查看最新菜品后再操作。';
+      if(e?.code==='40001') return '这餐菜单已被修改，请查看最新菜品后再操作。';
       if(e?.code==='42501') return '身份已变化，请重新登录或使用游客模式。';
-      if(/closed for editing|already processed|not awaiting review/i.test(e?.message || '')) return '订单状态已经变化，请同步后查看。';
+      if(/closed for editing|already processed|not awaiting review/i.test(e?.message || '')) return '这餐状态已经变化，请同步后查看。';
       if(/Score object changed/i.test(e?.message || '')) return '积分对象已变化，请先核对管理员配置。';
       return window.PointsRuntime?.unknownWrite(e)?'结果尚未确认，请重试上次提交，避免重复操作。':'同步或操作失败，请检查网络后重试。';
     }
@@ -4174,10 +4181,10 @@ window.PointsKitchenRecipes = [
       if(pending) return pending; const token=epoch;
       content.dataset.pointsSynced='false';
       const task=(async()=>{try {
-        const data=await rpc('points_kitchen_v2_get_state',{p_before:before,p_month:month});
+        const data=await rpc('points_kitchen_v3_get_state',{p_before:before,p_month:month});
         if(token!==epoch) return false;
         if(!data || data.admin!==admin() || !Array.isArray(data.orders) || !Array.isArray(data.dishes)) throw new Error('Invalid kitchen state');
-        response=data; deployed=!kitchenApi.legacy; error=kitchenApi.legacy?'厨房升级 SQL 尚未执行，目前可以查看菜谱和已有订单。':''; dishes=data.dishes.filter(d=>window.PointsKitchenRecipes?.some(x=>x.slug===d.slug)).map(d=>({...d,image:window.PointsKitchenRecipes.find(x=>x.slug===d.slug)?.image})).sort((a,b)=>window.PointsKitchenRecipes.findIndex(x=>x.slug===a.slug)-window.PointsKitchenRecipes.findIndex(x=>x.slug===b.slug));
+        response=data; deployed=data.meal_supported===true && !kitchenApi.legacy; error=!deployed?'餐次预约 SQL 尚未执行，目前可以查看菜谱和历史餐次。':''; dishes=data.dishes.filter(d=>window.PointsKitchenRecipes?.some(x=>x.slug===d.slug)).map(d=>({...d,image:window.PointsKitchenRecipes.find(x=>x.slug===d.slug)?.image})).sort((a,b)=>window.PointsKitchenRecipes.findIndex(x=>x.slug===a.slug)-window.PointsKitchenRecipes.findIndex(x=>x.slug===b.slug));
         orders=append?[...new Map([...orders,...data.orders].map(o=>[o.id,o])).values()]:data.orders;
         notifications=kitchenApi.legacy?[]:data.notifications || []; content.dataset.pointsSynced='true';render(); showCritical(); restoreUpdateDraft(); return true;
       } catch(e) { if(token===epoch && e.code!=='APP_STALE_READ') {error=failure(e);renderError();} return false; }
@@ -4198,19 +4205,20 @@ window.PointsKitchenRecipes = [
       page.querySelectorAll('[data-kitchen-action="tab"]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.value===tab)));
       if(tab==='catalog') renderCatalog(); else if(tab==='overview') renderOverview(); else renderOrders();
     }
-    function mealLabel(o) {return o.origin==='guest'?`${o.meal_date || dateKey(o.created_at)} · ${o.meal || '晚饭'} · 宝宝主动记录`:`订单 #${o.id}`;}
+    function mealLabel(o) {return `${o.meal_date || dateKey(o.created_at)} · ${o.meal || '历史餐次'}`;}
     function orderDay(o) {return o.meal_date || dateKey(o.created_at);}
     function orderCard(o,featured=false) {
-      const title=o.origin==='guest'?(o.meal||'晚饭'):'哥哥的点菜';
+      const title=o.meal || '历史餐次';
       const day=orderDay(o)===dateKey(new Date())?'今天':orderDay(o).slice(5).replace('-','月')+'日';
       return featured?`<button class="kitchen-featured" data-kitchen-action="order" data-value="${esc(o.id)}" type="button"><div class="kitchen-meal-top"><span>${esc(day)} · ${o.items.length} 道菜</span>${status(o)}</div><h3>${esc(title)}</h3><p class="kitchen-feature-sub">${o.origin==='guest'?'宝宝做好的这一餐':admin()?'等宝宝来制作':'哥哥点的这一餐'}</p><div class="kitchen-feature-dishes">${o.items.slice(0,3).map(d=>`<div>${dishImage(d)}<span>${esc(d.name)}</span></div>`).join('')}${o.items.length>3?`<p>另有 ${o.items.length-3} 道菜</p>`:''}</div>${o.note?`<p class="kitchen-feature-note">${esc(o.note)}</p>`:''}<div class="kitchen-feature-action"><span>${o.status==='completed'&&admin()?'查看这餐与评价':'查看这餐与要求'}</span><span aria-hidden="true">↗</span></div></button>`:`<button class="kitchen-meal-row" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${dishImage(o.items[0]||{name:'餐'})}<span class="kitchen-row-copy"><span class="kitchen-row-title">${esc(title)}${status(o)}</span><span class="kitchen-row-names">${o.items.map(d=>esc(d.name)).join('、')}</span><small>${esc(day)} · ${o.items.length} 道菜${o.status==='settled'?` · ${signed(o.score_delta)} 分`:admin()&&o.status==='pending'?` · ${o.seen_version>=o.version?'已查看':'尚未查看'}`:''}</small></span><span class="kitchen-chevron" aria-hidden="true">›</span></button>`;
     }
     function renderOrders() {
       if(role==='waiting' || role==='verifying') {content.innerHTML=empty('正在确认身份','稍候即可查看厨房');return;}
       const active=orders.filter(o=>['pending','completed'].includes(o.status)), done=orders.filter(o=>!['pending','completed'].includes(o.status));
-      active.sort((a,b)=>(a.status===(admin()?'completed':'pending')?-1:1)-(b.status===(admin()?'completed':'pending')?-1:1) || Number(b.id)-Number(a.id));
+      const mealIndex=o=>['早饭','午饭','晚饭'].indexOf(o.meal);
+      active.sort((a,b)=>orderDay(a).localeCompare(orderDay(b)) || mealIndex(a)-mealIndex(b) || Number(a.id)-Number(b.id));
       const first=active[0],needs=active.filter(o=>o.status===(admin()?'completed':'pending')).length;
-      content.innerHTML=`${history?`<div class="kitchen-section-head"><h2>餐桌上的回忆</h2><button class="kitchen-link" data-kitchen-action="history" type="button">返回待办</button></div><div class="kitchen-row-group">${done.map(o=>orderCard(o)).join('')||empty('还没有历史记录')}</div>`:first?`<div class="kitchen-section-head kitchen-lead-label"><h2>${needs?'需要你处理':'等待这一餐'}</h2><span>${active.length} 餐进行中</span></div>${orderCard(first,true)}${active.length>1?`<div class="kitchen-section-head"><h2>其他进行中</h2></div><div class="kitchen-row-group">${active.slice(1).map(o=>orderCard(o)).join('')}</div>`:''}`:empty('今天的厨房很安静',admin()?'挑几道想吃的菜，发给宝宝。':'记下一餐，等哥哥来评价。')}<div class="kitchen-order-tools">${admin()?btn('create','<span aria-hidden="true">＋</span> 发起点菜','','kitchen-create',!deployed):btn('guest-create','<span aria-hidden="true">＋</span> 我做好饭啦','','kitchen-create',!deployed)}${history?'':btn('history','历史记录','','kitchen-link')}</div>${history && response?.more?btn('more-orders','查看更早订单','','kitchen-full'):''}<div id="kitchenUpdatesSlot"></div><div class="kitchen-sync-row">${btn('refresh','同步厨房','','kitchen-link')}</div>${pendingOperations()}`;
+      content.innerHTML=`${history?`<div class="kitchen-section-head"><h2>餐桌上的回忆</h2><button class="kitchen-link" data-kitchen-action="history" type="button">返回待办</button></div><div class="kitchen-row-group">${done.map(o=>orderCard(o)).join('')||empty('还没有历史记录')}</div>`:first?`<div class="kitchen-section-head kitchen-lead-label"><h2>${needs?'需要你处理':'等待这一餐'}</h2><span>${active.length} 餐进行中</span></div>${orderCard(first,true)}${active.length>1?`<div class="kitchen-section-head"><h2>其他进行中</h2></div><div class="kitchen-row-group">${active.slice(1).map(o=>orderCard(o)).join('')}</div>`:''}`:empty('今天的厨房很安静',admin()?'挑几道想吃的菜，发给宝宝。':'记下一餐，等哥哥来评价。')}<div class="kitchen-order-tools">${admin()?btn('create','<span aria-hidden="true">＋</span> 预约点菜','','kitchen-create',!deployed):btn('guest-create','<span aria-hidden="true">＋</span> 我做好饭啦','','kitchen-create',!deployed)}${history?'':btn('history','历史记录','','kitchen-link')}</div>${history && response?.more?btn('more-orders','查看更早餐次','','kitchen-full'):''}<div id="kitchenUpdatesSlot"></div><div class="kitchen-sync-row">${btn('refresh','同步厨房','','kitchen-link')}</div>${pendingOperations()}`;
     }
     function pendingOperations() {
       try {const keys=Object.keys(localStorage).filter(k=>k.startsWith(`points_kitchen_v2_operation:${role}:`));return keys.map(k=>`<div class="kitchen-error">有一次提交的结果待确认。${btn('retry','重试上次提交',k)}</div>`).join('');}catch(_){return '';}
@@ -4228,10 +4236,10 @@ window.PointsKitchenRecipes = [
       const rows=response?.month===month?response.month_orders:[], all=rows.flatMap(o=>o.reviews || []);
       const made=rows.filter(o=>['completed','settled'].includes(o.status)).reduce((n,o)=>n+o.items.length,0), avg=all.length?(all.reduce((n,r)=>n+r.stars,0)/all.length).toFixed(1):'—';
       const sum=rows.reduce((n,o)=>n+Number(o.score_delta || 0),0), [y,m]=month.split('-').map(Number), first=new Date(y,m-1,1).getDay(), days=new Date(y,m,0).getDate();
-      content.innerHTML=`<div class="kitchen-month-head"><button data-kitchen-action="month" data-value="-1" aria-label="上个月" type="button">‹</button><strong>${y} 年 ${m} 月</strong><button data-kitchen-action="month" data-value="1" aria-label="下个月" type="button">›</button></div><div class="kitchen-month-summary"><div><strong>${made}</strong><span>完成菜品</span></div><div><strong>${avg}</strong><span>平均星级</span></div><div><strong>${signed(sum)}</strong><span>订单结算积分</span></div></div><div class="kitchen-calendar-surface"><div class="kitchen-calendar">${['日','一','二','三','四','五','六'].map(d=>`<div class="weekday">${d}</div>`).join('')}${'<span></span>'.repeat(first)}${Array.from({length:days},(_,i)=>{const key=`${y}-${String(m).padStart(2,'0')}-${String(i+1).padStart(2,'0')}`;return `<button class="${selectedDay===key?'selected ':''}${dateKey(new Date())===key?'today':''}" data-kitchen-action="day" data-value="${key}" aria-label="${m}月${i+1}日" aria-pressed="${selectedDay===key}" type="button">${i+1}${rows.some(o=>orderDay(o)===key)?'<small></small>':'<span style="height:4px"></span>'}</button>`;}).join('')}</div></div><p class="kitchen-caption">主动记录按用餐日期归档，点菜按发起日期归档</p><div id="kitchenDay">${selectedDay?dayRows(rows.filter(o=>orderDay(o)===selectedDay)):empty('选择一个日期','看看那天点了哪些菜，收到了什么评价。')}</div>`;
+      content.innerHTML=`<div class="kitchen-month-head"><button data-kitchen-action="month" data-value="-1" aria-label="上个月" type="button">‹</button><strong>${y} 年 ${m} 月</strong><button data-kitchen-action="month" data-value="1" aria-label="下个月" type="button">›</button></div><div class="kitchen-month-summary"><div><strong>${made}</strong><span>完成菜品</span></div><div><strong>${avg}</strong><span>平均星级</span></div><div><strong>${signed(sum)}</strong><span>餐次结算积分</span></div></div><div class="kitchen-calendar-surface"><div class="kitchen-calendar">${['日','一','二','三','四','五','六'].map(d=>`<div class="weekday">${d}</div>`).join('')}${'<span></span>'.repeat(first)}${Array.from({length:days},(_,i)=>{const key=`${y}-${String(m).padStart(2,'0')}-${String(i+1).padStart(2,'0')}`;return `<button class="${selectedDay===key?'selected ':''}${dateKey(new Date())===key?'today':''}" data-kitchen-action="day" data-value="${key}" aria-label="${m}月${i+1}日" aria-pressed="${selectedDay===key}" type="button">${i+1}${rows.some(o=>orderDay(o)===key)?'<small></small>':'<span style="height:4px"></span>'}</button>`;}).join('')}</div></div><p class="kitchen-caption">按用餐日期归档；同一天的早饭、午饭和晚饭分别记录</p><div id="kitchenDay">${selectedDay?dayRows(rows.filter(o=>orderDay(o)===selectedDay)):empty('选择一个日期','看看那天点了哪些菜，收到了什么评价。')}</div>`;
     }
     function dayRows(rows) {
-      return `<div class="kitchen-section-head"><h2>${esc(selectedDay.slice(5).replace('-','月'))}日的订单</h2><span>${rows.length} 餐</span></div>${rows.map(o=>`<article class="kitchen-card"><div class="kitchen-order-head"><button class="kitchen-link" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${esc(o.origin==='guest'?(o.meal||'晚饭'):'哥哥的点菜')} · ${o.items.length} 道菜</button>${status(o)}</div>${o.items.map(d=>{const r=o.reviews?.find(r=>r.slug===d.slug);return `<div class="kitchen-day-dish"><div class="kitchen-day-line">${dishImage(d)}<div><strong>${esc(d.name)}</strong><span class="kitchen-rating">${r?`★ ${r.stars}`:o.status==='completed'?'待评价':'—'}</span></div></div>${r?.comment?`<p>${esc(r.comment.slice(0,70))}</p>${r.comment.length>70?`<details><summary>查看完整评价</summary><p>${esc(r.comment)}</p></details>`:''}`:''}</div>`;}).join('')}${o.status==='settled'?`<p class="kitchen-meta">本单积分 ${signed(o.score_delta)}</p>`:''}</article>`).join('') || empty('这一天没有订单')}`;
+      return `<div class="kitchen-section-head"><h2>${esc(selectedDay.slice(5).replace('-','月'))}日的餐次</h2><span>${rows.length} 餐</span></div>${rows.map(o=>`<article class="kitchen-card"><div class="kitchen-order-head"><button class="kitchen-link" data-kitchen-action="order" data-value="${esc(o.id)}" type="button">${esc(o.meal || '历史餐次')} · ${o.items.length} 道菜</button>${status(o)}</div>${o.items.map(d=>{const r=o.reviews?.find(r=>r.slug===d.slug);return `<div class="kitchen-day-dish"><div class="kitchen-day-line">${dishImage(d)}<div><strong>${esc(d.name)}</strong><span class="kitchen-rating">${r?`★ ${r.stars}`:o.status==='completed'?'待评价':'—'}</span></div></div>${r?.comment?`<p>${esc(r.comment.slice(0,70))}</p>${r.comment.length>70?`<details><summary>查看完整评价</summary><p>${esc(r.comment)}</p></details>`:''}`:''}</div>`;}).join('')}${o.status==='settled'?`<p class="kitchen-meta">这餐积分 ${signed(o.score_delta)}</p>`:''}</article>`).join('') || empty('这一天没有餐次')}`;
     }
     function showCritical() { hideCritical(); }
     function hideCritical() {const visible=!critical.hidden;critical.hidden=true;app.inert=false;document.body.style.overflow='';q('kitchenCriticalError').hidden=true;if(visible)(noticeFocus?.isConnected && noticeFocus.getClientRects().length?noticeFocus:app.querySelector('.app-nav [aria-current="page"]'))?.focus({preventScroll:true});noticeFocus=null;}
@@ -4248,8 +4256,8 @@ window.PointsKitchenRecipes = [
     function openModal(next,push=false) {if(modal)modal.scrollTop=body.scrollTop;if(push && modal)stack.push(modal);else stack=[];if(!modal)previousFocus=document.activeElement;modal=next;ui.setLayer(layer,true);renderDialog();body.scrollTop=0;layer.querySelector('[role="dialog"]').focus({preventScroll:true});}
     function closeDialog() {if(busy)return;if(modal?.type==='rating')void saveDraft();modalToken++;modal=null;stack=[];ui.setLayer(layer,false);if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});}
     async function openOrder(id) {
-      if(!deployed)return;const token=++modalToken, identity=epoch;openModal({type:'loading',title:'订单详情'});
-      try {if(admin())await draftQueue;if(token!==modalToken || identity!==epoch)return;const o=await rpc('points_kitchen_v2_get_order',{p_order_id:id});if(token!==modalToken || identity!==epoch)return;
+      const token=++modalToken, identity=epoch;openModal({type:'loading',title:'这一餐'});
+      try {if(admin())await draftQueue;if(token!==modalToken || identity!==epoch)return;const o=await rpc('points_kitchen_v3_get_order',{p_order_id:id});if(token!==modalToken || identity!==epoch)return;
         modal={type:'order',order:o};const target=modal;renderDialog();if(role==='guest' && o.status==='pending'){await rpc('points_kitchen_v2_guest_seen',{p_order_id:o.id,p_version:o.version});if(modal===target && identity===epoch){o.seen_version=o.version;renderDialog();}}
         if(window.PointsNotifications&&modal===target&&identity===epoch){await rpc(admin()?'points_kitchen_v2_admin_ack':'points_kitchen_v2_guest_ack',{p_versions:[{id:o.id,version:o.version}]});if(identity===epoch)await refresh();}
       }catch(e){if(token===modalToken && identity===epoch){modal={type:'error',message:failure(e)};renderDialog();}}
@@ -4258,7 +4266,7 @@ window.PointsKitchenRecipes = [
     function renderDialog() {
       layer.dataset.dialog=modal?.type||'';
       if(modal?.type!=='rating')delete body.dataset.ratingKey;
-      if(!modal)return;foot.hidden=true;foot.innerHTML='';q('kitchenDialogTitle').textContent=modal.title || ({order:'订单详情',editor:modal.guestMade?(modal.order?'编辑这餐饭':'我做好饭啦'):modal.order?'编辑订单':'发起点菜',recipe:'菜谱详情',rating:'评价这次制作',confirm:'确认操作',error:'暂未完成'}[modal.type] || '厨房');
+      if(!modal)return;foot.hidden=true;foot.innerHTML='';q('kitchenDialogTitle').textContent=modal.title || ({order:'这一餐',editor:modal.guestMade?'记录做好的菜':modal.order?'补菜与调整菜单':'预约点菜',recipe:'菜谱详情',rating:'评价这一餐',confirm:'确认操作',error:'暂未完成'}[modal.type] || '厨房');
       if(modal.type==='loading')body.innerHTML='<div class="kitchen-skeleton">正在读取…</div>';
       else if(modal.type==='error')body.innerHTML=empty('暂未完成',modal.message);
       else if(modal.type==='order')renderOrderDialog();
@@ -4266,25 +4274,57 @@ window.PointsKitchenRecipes = [
       else if(modal.type==='recipe')renderRecipe();
       else if(modal.type==='rating')renderRating();
       else if(modal.type==='confirm')renderConfirm();
+      else if(modal.type==='meal')renderMealPicker();
       layer.querySelector('[data-kitchen-action="close"]').disabled=busy;
     }
     function renderOrderDialog() {
       const o=modal.order;
-      body.innerHTML='<div class="kitchen-detail-title"><p>'+esc(orderDay(o))+' · '+(o.origin==='guest'?'宝宝主动记录':'点菜菜单')+'</p><h3>'+esc(o.origin==='guest'?(o.meal||'晚饭'):'哥哥的点菜')+'</h3>'+status(o)+'</div>'+(admin()&&o.origin!=='guest'&&o.status==='pending'?'<p class="kitchen-caption">'+(o.seen_version>=o.version?'宝宝已查看菜单':'宝宝尚未查看最新菜单')+'</p>':'')+(o.note?'<div class="kitchen-note"><span class="kitchen-note-label">这一餐的备注</span><p>'+esc(o.note)+'</p></div>':'')+'<div class="kitchen-list">'+o.items.map(d=>{const r=o.reviews.find(r=>r.slug===d.slug);return '<article class="kitchen-order-dish"><button class="kitchen-dish-row" data-kitchen-action="order-recipe" data-value="'+esc(d.slug)+'" type="button">'+dishImage(d)+'<span class="kitchen-dish-copy"><strong>'+esc(d.name)+'</strong><small>'+(d.no_recipe?'查看菜品与评价':'查看制作方法')+'</small></span><span class="kitchen-chevron">›</span></button>'+dishRequest(d)+(r?'<div class="kitchen-dish-review"><div><span class="kitchen-inline-rating">'+starIcon()+' '+r.stars+'</span><span>'+signed(delta(r.stars))+' 分</span></div>'+(r.comment?'<p>'+esc(r.comment)+'</p>':'')+'</div>':'')+'</article>';}).join('')+'</div>'+(o.status==='settled'?'<div class="kitchen-settled-total"><span>这餐已评价</span><strong>'+signed(o.score_delta)+' 分</strong></div>':'')+(o.resolution_note?'<p class="kitchen-note">'+esc(o.resolution_note)+'</p>':'')+'<details class="kitchen-version"><summary>时间与修改记录</summary><p>订单 #'+esc(o.id)+' · 菜单版本 '+o.version+'<br>发起：'+stamp(o.created_at)+'<br>制作完成：'+stamp(o.completed_at)+'<br>处理／结算：'+stamp(o.resolved_at)+'</p>'+(o.versions||[]).map(v=>'<p>版本 '+v.version+' · '+stamp(v.changed_at)+'<br>'+v.items.map(d=>esc(d.name)+(d.request_note?'：'+esc(d.request_note):'')).join('、')+(v.note?'<br>备注：'+esc(v.note):'')+(v.status==='cancelled'?'<br>订单已取消':'')+'</p>').join('')+'</details>';
-      const actions=o.status==='pending'?(admin()?btn('edit','编辑订单',o.id,'primary')+btn('cancel-order','取消订单',o.id,'destructive'):btn('complete','制作完成',o.id,'primary',o.seen_version<o.version)+btn('reject','拒绝订单',o.id,'destructive',o.seen_version<o.version)):o.status==='completed'?(admin()?btn('rate','评价并结算',o.id,'primary'):o.origin==='guest'?btn('guest-edit','编辑这餐饭',o.id,'primary')+btn('guest-cancel','撤回记录',o.id,'destructive'):''):'';
+      body.innerHTML='<div class="kitchen-detail-title"><p>'+esc(orderDay(o))+' · '+esc(o.meal || '历史餐次')+'</p><h3>'+esc(o.meal || '历史餐次')+'</h3>'+status(o)+'</div>'+(admin()&&o.origin!=='guest'&&o.status==='pending'?'<p class="kitchen-caption">'+(o.seen_version>=o.version?'宝宝已查看菜单':'宝宝尚未查看最新菜单')+'</p>':'')+(o.note?'<div class="kitchen-note"><span class="kitchen-note-label">这一餐的备注</span><p>'+esc(o.note)+'</p></div>':'')+'<div class="kitchen-list">'+o.items.map(d=>{const r=o.reviews.find(r=>r.slug===d.slug);return '<article class="kitchen-order-dish"><button class="kitchen-dish-row" data-kitchen-action="order-recipe" data-value="'+esc(d.slug)+'" type="button">'+dishImage(d)+'<span class="kitchen-dish-copy"><strong>'+esc(d.name)+'</strong><small>'+(o.meal_mode?(d.made?'已做好 · ':'待制作 · '):'')+(d.no_recipe?'查看菜品与评价':'查看制作方法')+'</small></span><span class="kitchen-chevron">›</span></button>'+dishRequest(d)+(r?'<div class="kitchen-dish-review"><div><span class="kitchen-inline-rating">'+starIcon()+' '+r.stars+'</span><span>'+signed(delta(r.stars))+' 分</span></div>'+(r.comment?'<p>'+esc(r.comment)+'</p>':'')+'</div>':'')+'</article>';}).join('')+'</div>'+(o.status==='settled'?'<div class="kitchen-settled-total"><span>这餐已评价</span><strong>'+signed(o.score_delta)+' 分</strong></div>':'')+(o.resolution_note?'<p class="kitchen-note">'+esc(o.resolution_note)+'</p>':'')+'<details class="kitchen-version"><summary>时间与修改记录</summary><p>菜单版本 '+o.version+'<br>发起：'+stamp(o.created_at)+'<br>制作完成：'+stamp(o.completed_at)+'<br>处理／结算：'+stamp(o.resolved_at)+'</p>'+(o.versions||[]).map(v=>'<p>版本 '+v.version+' · '+stamp(v.changed_at)+'<br>'+v.items.map(d=>esc(d.name)+(d.request_note?'：'+esc(d.request_note):'')).join('、')+(v.note?'<br>备注：'+esc(v.note):'')+(v.status==='cancelled'?'<br>预约已取消':'')+'</p>').join('')+'</details>';
+      const legacyActions=o.status==='pending'?(admin()?btn('edit','调整菜单',o.id,'primary')+btn('cancel-order','取消这餐',o.id,'destructive'):btn('complete','制作完成',o.id,'primary',o.seen_version<o.version)+btn('reject','不做这餐',o.id,'destructive',o.seen_version<o.version)):o.status==='completed'?(admin()?btn('rate','评价并结算',o.id,'primary'):o.origin==='guest'?btn('guest-edit','编辑这餐饭',o.id,'primary')+btn('guest-cancel','撤回记录',o.id,'destructive'):''):'';
+      const open=['pending','completed'].includes(o.status),made=o.items.some(d=>d.made===true),future=orderDay(o)>dateKey(new Date());
+      const mealActions=!open?'':admin()?btn('edit','补菜与调整菜单',o.id,'primary')+(o.status==='completed'?btn('rate','评价整顿饭',o.id,'primary'):!made?btn('cancel-order','取消预约',o.id,'destructive'):''):
+        (o.status==='pending'?btn('complete','剩余菜品做好了',o.id,'primary',o.seen_version<o.version || future)+(!made?btn('reject','不做这餐',o.id,'destructive',o.seen_version<o.version):''):'')+(!future?btn('guest-add','补记做好的菜',o.id):'');
+      const actions=deployed?(o.meal_mode?mealActions:legacyActions):'';
       foot.hidden=!actions;foot.innerHTML=`<div class="kitchen-actions">${actions}</div>`;
+    }
+    function beginMeal(guestMade=false,o=null) {
+      if(o){openMealEditor(guestMade,o,o.meal_date || orderDay(o),o.meal || '历史餐次',true);modal.legacy=!o.meal_mode;return;}
+      openModal({type:'meal',guestMade,mealDate:dateKey(new Date()),meal:new Date().getHours()<11?'早饭':new Date().getHours()<15?'午饭':'晚饭'});
+    }
+    function renderMealPicker() {
+      q('kitchenDialogTitle').textContent=modal.guestMade?'记录哪一餐？':'想预约哪一餐？';
+      body.innerHTML=`<p class="kitchen-caption">${modal.guestMade?'同一餐的菜会放在一起，最后一起评价。':'先选日期和餐次，再挑想吃的菜。同一餐可以继续补菜。'}</p><div class="kitchen-meal-fields"><label>用餐日期<input id="kitchenMealDate" aria-label="用餐日期" type="date" value="${esc(modal.mealDate)}" ${modal.guestMade?'max':'min'}="${dateKey(new Date())}"/></label></div><div class="kitchen-categories" role="group" aria-label="选择餐次">${['早饭','午饭','晚饭'].map(meal=>`<button data-kitchen-action="meal-choice" data-value="${meal}" aria-pressed="${modal.meal===meal}" class="${modal.meal===meal?'active':''}" type="button">${meal}</button>`).join('')}</div>`;
+      foot.hidden=false;foot.innerHTML=btn('meal-next',modal.guestMade?'选择做好的菜':'开始点菜','','primary kitchen-full');
+    }
+    function openMealEditor(guestMade,o,mealDate,meal,push=false) {
+      openModal({type:'editor',guestMade,order:o || null,selected:o?.items.map(d=>d.slug)||[],note:o?.note||'',
+        itemNotes:Object.fromEntries((o?.items||[]).map(d=>[d.slug,d.request_note||''])),custom:(o?.items||[]).filter(d=>d.custom),mealDate,meal},push);
+    }
+    async function chooseMeal() {
+      const target=modal,token=epoch;
+      if(target?.type!=='meal')return;
+      const today=dateKey(new Date());
+      if(!target.mealDate || target.guestMade && target.mealDate>today || !target.guestMade && target.mealDate<today)return ui.showToast(target.guestMade?'请选择今天或之前的日期':'请选择今天或未来的日期');
+      busy=true;renderDialog();
+      try{
+        const o=await rpc('points_kitchen_v3_get_meal',{p_meal_date:target.mealDate,p_meal:target.meal});
+        if(modal!==target || token!==epoch)return;
+        if(o?.status==='settled')return ui.showToast('这一餐已经评价结算，不能再补菜');
+        openMealEditor(target.guestMade,o,target.mealDate,target.meal,true);
+      }catch(e){if(token===epoch)ui.showToast(failure(e));}
+      finally{if(token===epoch){busy=false;renderDialog();}}
     }
     function renderEditor() {
       modal.itemNotes ||= {};modal.pickCategory ||= '家常菜';modal.pickQuery ||= '';modal.pickView ||= 'choose';
       const available=[...dishes.filter(d=>d.active!==false || modal.selected.includes(d.slug)),...(modal.custom || [])];
-      body.innerHTML=`${modal.guestMade?`<div class="kitchen-meal-fields"><label>用餐日期<input id="kitchenMealDate" type="date" value="${esc(modal.mealDate)}" max="${dateKey(new Date())}"/></label><label>餐次<select id="kitchenMeal"><option value="午饭" ${modal.meal==='午饭'?'selected':''}>午饭</option><option value="晚饭" ${modal.meal==='晚饭'?'selected':''}>晚饭</option></select></label></div>`:''}<div class="kitchen-tabs kitchen-editor-tabs" role="tablist" aria-label="${modal.guestMade?'菜品选择':'点菜步骤'}"><button data-kitchen-action="pick-view" data-value="choose" role="tab" aria-selected="${modal.pickView==='choose'}" type="button">${modal.guestMade?'添加菜品':'挑菜'}</button><button data-kitchen-action="pick-view" data-value="selected" role="tab" aria-selected="${modal.pickView==='selected'}" type="button">${modal.guestMade?'已选菜品':'已选与备注'} · ${modal.selected.length}</button></div>${modal.pickView==='choose'?`<input class="kitchen-search" id="kitchenPickSearch" aria-label="搜索要点的菜" placeholder="输入菜名，快速找到" value="${esc(modal.pickQuery)}"/><div class="kitchen-categories">${['全部',...new Set(available.map(d=>d.category))].map(c=>`<button class="${c===modal.pickCategory?'active':''}" data-kitchen-action="pick-category" data-value="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>${modal.guestMade?'<div class="kitchen-custom-row"><input id="kitchenCustomName" aria-label="自定义菜名" maxlength="40" placeholder="没有找到？填写自己做的菜"/><button class="kitchen-button" data-kitchen-action="custom-add" type="button">添加</button></div>':''}<div class="kitchen-dish-grid" id="kitchenPickRows">${editorRows(available)}</div>`:`<p class="kitchen-caption">${modal.guestMade?'确认这一餐做好的菜品':'每道菜的要求会单独展示给宝宝'}</p>${modal.selected.map(s=>{const d=available.find(d=>d.slug===s) || modal.order?.items.find(d=>d.slug===s);return `<article class="kitchen-selected-dish"><div class="kitchen-selected-head">${dishImage(d)}<strong>${esc(d.name)}</strong>${btn('pick','移除',s,'kitchen-link')}</div>${modal.guestMade?'':`<label class="kitchen-caption" for="dish-note-${esc(s)}">哥哥的要求（可选）</label><textarea id="dish-note-${esc(s)}" class="kitchen-textarea kitchen-item-input" data-dish-note="${esc(s)}" maxlength="200" placeholder="例如：少盐、不放葱，鸡翅软一些">${esc(modal.itemNotes[s] || '')}</textarea>`}</article>`;}).join('') || empty('还没有选菜','回到挑菜页，选几道想吃的菜。')}${modal.guestMade?'':`<label class="kitchen-caption" for="kitchenNote">整单备注（可选）</label><textarea class="kitchen-textarea" id="kitchenNote" maxlength="500" placeholder="例如：今晚七点吃饭">${esc(modal.note)}</textarea>`}`}`;
+      body.innerHTML=`<p class="kitchen-caption">${esc(modal.mealDate)} · ${esc(modal.meal)}${modal.order?' · 在原菜单上继续添加':''}</p><div class="kitchen-tabs kitchen-editor-tabs" role="tablist" aria-label="${modal.guestMade?'菜品选择':'点菜步骤'}"><button data-kitchen-action="pick-view" data-value="choose" role="tab" aria-selected="${modal.pickView==='choose'}" type="button">${modal.guestMade?'添加菜品':'挑菜'}</button><button data-kitchen-action="pick-view" data-value="selected" role="tab" aria-selected="${modal.pickView==='selected'}" type="button">${modal.guestMade?'已选菜品':'已选与备注'} · ${modal.selected.length}</button></div>${modal.pickView==='choose'?`<input class="kitchen-search" id="kitchenPickSearch" aria-label="搜索要点的菜" placeholder="输入菜名，快速找到" value="${esc(modal.pickQuery)}"/><div class="kitchen-categories">${['全部',...new Set(available.map(d=>d.category))].map(c=>`<button class="${c===modal.pickCategory?'active':''}" data-kitchen-action="pick-category" data-value="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>${modal.guestMade?'<div class="kitchen-custom-row"><input id="kitchenCustomName" aria-label="自定义菜名" maxlength="40" placeholder="没有找到？填写自己做的菜"/><button class="kitchen-button" data-kitchen-action="custom-add" type="button">添加</button></div>':''}<div class="kitchen-dish-grid" id="kitchenPickRows">${editorRows(available)}</div>`:`<p class="kitchen-caption">${modal.guestMade?'确认这一餐做好的菜品':'每道菜的要求会单独展示给宝宝'}</p>${modal.selected.map(s=>{const d=available.find(d=>d.slug===s) || modal.order?.items.find(d=>d.slug===s);return `<article class="kitchen-selected-dish"><div class="kitchen-selected-head">${dishImage(d)}<strong>${esc(d.name)}</strong>${d.made===true || modal.guestMade && modal.order?.meal_mode && modal.order.items.some(x=>x.slug===s)?'<span class="kitchen-caption">已保留</span>':btn('pick','移除',s,'kitchen-link')}</div>${modal.guestMade || d.made===true?'':`<label class="kitchen-caption" for="dish-note-${esc(s)}">哥哥的要求（可选）</label><textarea id="dish-note-${esc(s)}" class="kitchen-textarea kitchen-item-input" data-dish-note="${esc(s)}" maxlength="200" placeholder="例如：少盐、不放葱，鸡翅软一些">${esc(modal.itemNotes[s] || '')}</textarea>`}</article>`;}).join('') || empty('还没有选菜','回到挑菜页，选几道想吃的菜。')}${modal.guestMade?'':`<label class="kitchen-caption" for="kitchenNote">这一餐的备注（可选）</label><textarea class="kitchen-textarea" id="kitchenNote" maxlength="500" placeholder="例如：今晚七点吃饭">${esc(modal.note)}</textarea>`}`}`;
       editorFooter();
 
     }
     function editorFooter() {
       const available=[...dishes,...(modal.custom||[])],count=modal.selected.length;
       const preview='<div class="kitchen-selection-summary"><div class="kitchen-selection-images" aria-hidden="true">'+modal.selected.slice(0,3).map(slug=>dishImage(available.find(d=>d.slug===slug)||{name:'菜'})).join('')+'</div><span>'+ (count?'已选 '+count+' 道菜':'选几道想吃的菜')+'</span></div>';
-      foot.hidden=false;foot.innerHTML=preview+(modal.guestMade?btn('save-order',(modal.order?'保存修改':'告诉哥哥，饭做好啦'),'','primary kitchen-full',!count||count>24):modal.pickView==='choose'?btn('pick-view','填写要求 ›','selected','primary kitchen-full',!count):btn('save-order',modal.order?'保存修改':'发送点菜请求','','primary kitchen-full',!count||count>24));
+      foot.hidden=false;foot.innerHTML=preview+(modal.guestMade?btn('save-order',(modal.order?'保存修改':'告诉哥哥，饭做好啦'),'','primary kitchen-full',!count||count>24):modal.pickView==='choose'?btn('pick-view','填写要求 ›','selected','primary kitchen-full',!count):btn('save-order',modal.order?'保存这餐菜单':'发送预约菜单','','primary kitchen-full',!count||count>24));
     }
     function updateEditorSelection() {
       if(modal.pickView!=='choose'){const scroll=body.scrollTop;renderEditor();body.scrollTop=scroll;return;}
@@ -4296,7 +4336,7 @@ window.PointsKitchenRecipes = [
     function dishRequest(d) {return d.request_note?`<div class="kitchen-dish-request"><span>${modal?.guestMade || modal?.order?.origin==='guest'?'宝宝的备注':'哥哥的要求'}</span><p>${esc(d.request_note)}</p></div>`:'';}
     function renderRecipe() {
       const d=modal.recipe, current=dishes.find(x=>x.slug===d.slug) || d, reviewMode=modal.view==='reviews';
-      const reviews=(modal.reviews || []).map(r=>`<article class="kitchen-review-row"><div class="kitchen-order-head"><span class="kitchen-rating">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span><span class="kitchen-caption">${stamp(r.reviewed_at)}</span></div>${r.comment?`<p class="kitchen-note">${esc(r.comment)}</p>`:''}<button class="kitchen-link" data-kitchen-action="order" data-value="${esc(r.order_id)}" type="button">订单 #${esc(r.order_id)} · 查看当时菜品 ›</button></article>`).join('') || empty(modal.loading?'正在读取评价':'还没有评价','制作后的评分和文字评价会保存在这里。');
+      const reviews=(modal.reviews || []).map(r=>`<article class="kitchen-review-row"><div class="kitchen-order-head"><span class="kitchen-rating">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span><span class="kitchen-caption">${stamp(r.reviewed_at)}</span></div>${r.comment?`<p class="kitchen-note">${esc(r.comment)}</p>`:''}<button class="kitchen-link" data-kitchen-action="order" data-value="${esc(r.order_id)}" type="button">查看这一餐 · 查看当时菜品 ›</button></article>`).join('') || empty(modal.loading?'正在读取评价':'还没有评价','制作后的评分和文字评价会保存在这里。');
       const method=d.custom?'<p class="kitchen-caption">这道菜只保存在本餐记录中，不设制作教程。</p>':d.no_recipe?'<p class="kitchen-caption">这道菜不设固定教程，按自己的口味和搭配准备。</p>':`<p class="kitchen-caption">${esc(d.description || '')}</p><div class="kitchen-card"><h4>食材与调料</h4><dl class="kitchen-ingredients">${(d.ingredients || []).map(([name,amount])=>`<div><dt>${esc(name)}</dt><dd>${esc(amount)}</dd></div>`).join('')}</dl></div><h4>制作步骤</h4><ol class="kitchen-steps">${(d.steps || []).map(s=>`<li>${esc(s)}</li>`).join('')}</ol>${d.tips?.length?`<section class="kitchen-tips"><h4>好吃的关键</h4><ul>${d.tips.map(t=>{const [label,...parts]=t.split('｜');return `<li>${parts.length?`<span>${esc(label)}</span><p>${esc(parts.join('｜'))}</p>`:`<p>${esc(t)}</p>`}</li>`;}).join('')}</ul></section>`:''}`;
       body.innerHTML=`${stack.length?btn('back','‹ 返回','','kitchen-link'):''}${dishImage(d,true)}<h3 class="kitchen-recipe-title">${esc(d.name)}</h3>${dishRequest(d)}${current.rating_count?`<div class="kitchen-recipe-summary"><span>★ ${Number(current.rating_average).toFixed(1)} · ${current.rating_count} 次评价</span></div>`:''}<div class="kitchen-tabs" role="tablist" aria-label="菜品详情"><button data-kitchen-action="recipe-tab" data-value="method" role="tab" aria-selected="${!reviewMode}" type="button">${d.no_recipe?'菜品说明':'制作方法'}</button><button data-kitchen-action="recipe-tab" data-value="reviews" role="tab" aria-selected="${reviewMode}" type="button">历史评价</button></div>${reviewMode?reviews:method}${modal.error?`<div class="kitchen-error">${esc(modal.error)}</div>`:''}${reviewMode && modal.more?btn('more-reviews','查看更早评价','','kitchen-full'):''}`;
     }
@@ -4347,7 +4387,7 @@ window.PointsKitchenRecipes = [
         renderDialog();const o=await rpc(op.name,{...op.args,p_operation_id:op.uuid});
         if(token!==epoch)return;try{localStorage.removeItem(storageKey);}catch(_){}
         stack=[];modal={type:'order',order:o};orders=[o,...orders.filter(x=>x.id!==o.id)];error='';busy=false;renderDialog();
-        if(o.status==='settled'){state.overviewLoadedAt=0;state.score=o.score_after;state.updatedAt=o.resolved_at;ui.renderScore();await ui.refreshScore();}ui.showToast(o.status==='settled'?`评价已结算 · ${signed(o.score_delta)} 分`:o.status==='cancelled'?'订单已取消':o.status==='rejected'?'订单已拒绝':o.status==='completed'?'制作完成，等待哥哥评价':'订单已保存');await refresh();
+        if(o.status==='settled'){state.overviewLoadedAt=0;state.score=o.score_after;state.updatedAt=o.resolved_at;ui.renderScore();await ui.refreshScore();}ui.showToast(o.status==='settled'?`评价已结算 · ${signed(o.score_delta)} 分`:o.status==='cancelled'?'这餐预约已取消':o.status==='rejected'?'这餐预约已拒绝':o.status==='completed'?'制作完成，等待哥哥评价':'这餐菜单已保存');await refresh();
       }catch(e){if(token===epoch){if(e.code && e.code!=='KITCHEN_PENDING_OPERATION' && !/^(08|PGRST00|APP_)/.test(e.code)){try{localStorage.removeItem(storageKey);}catch(_){}}
         error=failure(e);ui.showToast(error);busy=false;if(e.code==='40001' && args.p_order_id)await openOrder(args.p_order_id);await refresh();}}
       finally {if(token===epoch){busy=false;render();renderDialog();}}
@@ -4358,7 +4398,7 @@ window.PointsKitchenRecipes = [
       if(a==='ack' || a==='ack-view')return acknowledge(a==='ack-view');
       if(!critical.hidden)return;
       if(a==='page')return navigate(v);
-      if(kitchenApi.legacy && sqlRequired.has(a))return ui.showToast('请先执行厨房增量 SQL，再同步厨房');
+      if(!deployed && sqlRequired.has(a))return ui.showToast('请先执行厨房增量 SQL，再同步厨房');
       if(a==='settings')return els.settingsBtn.click();
       if(a==='close')return closeDialog();
       if(a==='back'){modal=stack.pop() || null;if(!modal)return closeDialog();renderDialog();body.scrollTop=modal.scrollTop||0;return;}
@@ -4373,24 +4413,38 @@ window.PointsKitchenRecipes = [
       if(a==='recipe' || a==='order-recipe'){const d=a==='order-recipe'?modal.order.items.find(d=>d.slug===v):dishes.find(d=>d.slug===v) || modal?.custom?.find(d=>d.slug===v);if(d)openModal({type:'recipe',recipe:d,view:'method',guestMade:modal?.guestMade || modal?.order?.origin==='guest'},!!modal);return;}
       if(a==='recipe-tab'){modal.view=v;renderDialog();if(v==='reviews')await loadReviews();return;}
       if(a==='more-reviews')return loadReviews(true);
-      if(a==='guest-create' && role==='guest'){openModal({type:'editor',guestMade:true,selected:[],note:'',itemNotes:{},custom:[],mealDate:dateKey(new Date()),meal:new Date().getHours()<15?'午饭':'晚饭'});return;}
-      if(a==='guest-edit' && role==='guest'){const o=modal.order;openModal({type:'editor',guestMade:true,order:o,selected:o.items.map(d=>d.slug),note:o.note,itemNotes:Object.fromEntries(o.items.map(d=>[d.slug,d.request_note || ''])),custom:o.items.filter(d=>d.custom),mealDate:o.meal_date,meal:o.meal},true);return;}
+      if(a==='guest-create' && role==='guest')return beginMeal(true);
+      if(a==='guest-edit' && role==='guest'){const o=modal.order;openMealEditor(true,o,o.meal_date,o.meal,true);modal.legacy=true;return;}
       if(a==='guest-cancel' && role==='guest'){const o=modal.order;confirm('撤回这餐记录，不评价、不结算积分。','points_kitchen_v2_guest_save',{p_items:[],p_note:o.note,p_meal_date:o.meal_date,p_meal:o.meal,p_order_id:o.id,p_version:o.version,p_cancel:true},`guest-save:${o.id}`);return;}
       if(a==='custom-add' && modal?.guestMade){const name=q('kitchenCustomName').value.trim();if(!name)return ui.showToast('请填写菜名');if(modal.selected.length>=24)return ui.showToast('一餐最多添加 24 道菜');const old=[...dishes,...modal.custom].find(d=>d.name===name);const d=old || {slug:`custom-${crypto.randomUUID()}`,name,category:'自定义',no_recipe:true,custom:true};if(!old)modal.custom.push(d);if(!modal.selected.includes(d.slug))modal.selected.push(d.slug);modal.pickView='choose';modal.pickCategory=old?.category || '自定义';modal.pickQuery='';renderDialog();return;}
-      if(a==='create' && admin()){openModal({type:'editor',selected:[],note:'',itemNotes:{}});return;}
-      if(a==='edit' && admin()){const o=modal.order;openModal({type:'editor',order:o,selected:o.items.map(d=>d.slug),note:o.note,itemNotes:Object.fromEntries(o.items.map(d=>[d.slug,d.request_note || '']))},true);return;}
+      if(a==='create' && admin())return beginMeal(false);
+      if(a==='meal-choice' && modal?.type==='meal'){modal.meal=v;renderDialog();return;}
+      if(a==='meal-next')return chooseMeal();
+      if(a==='edit' && admin())return beginMeal(false,modal.order);
+      if(a==='guest-add' && role==='guest')return beginMeal(true,modal.order);
       if(a==='pick-view'){modal[modal.pickView+'Scroll']=body.scrollTop;modal.pickView=v;renderDialog();body.scrollTop=modal[v+'Scroll']||0;return;}
       if(a==='pick-category'){modal.pickCategory=v;modal.pickQuery='';renderDialog();return;}
-      if(a==='pick'){if(!modal.selected.includes(v)&&modal.selected.length>=24)return ui.showToast('一餐最多添加 24 道菜');modal.selected=modal.selected.includes(v)?modal.selected.filter(s=>s!==v):[...modal.selected,v];updateEditorSelection();return;}
-      if(a==='save-order'){const m=modal,items=m.selected.map(slug=>({slug,note:m.itemNotes[slug] || ''}));if(m.guestMade){if(!m.mealDate || m.mealDate>dateKey(new Date()))return ui.showToast('请选择今天或之前的用餐日期');const list=items.map(d=>({...d,...(m.custom.find(c=>c.slug===d.slug)?{name:m.custom.find(c=>c.slug===d.slug).name,custom:true}:{})}));const duplicate=orders.find(o=>o.origin!=='guest' && o.status==='pending');confirm(`${m.mealDate} ${m.meal}，共 ${items.length} 道菜。${duplicate?'你还有待制作订单；若是同一餐，请返回并完成已有订单。':''}提交后哥哥会收到提醒，并可以逐菜评价。`,'points_kitchen_v2_guest_save',{p_items:list,p_note:m.note,p_meal_date:m.mealDate,p_meal:m.meal,p_order_id:m.order?.id || null,p_version:m.order?.version || null,p_cancel:false},`guest-save:${m.order?.id || 'new'}`);return;}confirm(`${m.order?'保存菜单修改':'发送点菜请求'}：${m.selected.map(s=>dishes.find(d=>d.slug===s)?.name).join('、')}${m.note?`。整单备注：${m.note}`:''}${items.filter(d=>d.note).map(d=>`\n${dishes.find(x=>x.slug===d.slug)?.name}：${d.note}`).join('')}`, 'points_kitchen_v2_admin_save',{p_items:items,p_note:m.note,p_order_id:m.order?.id || null,p_version:m.order?.version || null,p_cancel:false},`save:${m.order?.id || 'new'}`);return;}
-      if(a==='cancel-order'){const o=modal.order;confirm('取消后宝宝无需继续制作，订单将永久保留在历史中，不影响积分。','points_kitchen_v2_admin_save',{p_items:o.items.map(d=>d.slug),p_note:o.note,p_order_id:o.id,p_version:o.version,p_cancel:true},`save:${o.id}`);return;}
-      if(a==='complete' || a==='reject'){const o=modal.order;confirm(a==='reject'?'拒绝整笔订单，不评分、不变动积分。':'确认这笔订单的全部菜品已经制作完成，之后菜单将固定并等待哥哥评价。','points_kitchen_v2_guest_resolve',{p_order_id:o.id,p_version:o.version,p_reject:a==='reject',p_reason:''},`resolve:${o.id}`,a==='reject');return;}
+      if(a==='pick'){const fixed=modal.order?.items.find(d=>d.slug===v);if(fixed && (fixed.made===true || modal.guestMade && !modal.legacy))return ui.showToast('已有菜品保留在这餐中，请继续添加新菜');if(!modal.selected.includes(v)&&modal.selected.length>=24)return ui.showToast('一餐最多添加 24 道菜');modal.selected=modal.selected.includes(v)?modal.selected.filter(s=>s!==v):[...modal.selected,v];updateEditorSelection();return;}
+      if(a==='save-order'){
+        const m=modal,items=m.selected.map(slug=>({slug,note:m.itemNotes[slug] || '',...(m.custom?.find(c=>c.slug===slug)?{name:m.custom.find(c=>c.slug===slug).name,custom:true}:{})}));
+        const name=m.legacy?(m.guestMade?'points_kitchen_v2_guest_save':'points_kitchen_v2_admin_save'):m.guestMade?'points_kitchen_v3_guest_save':'points_kitchen_v3_admin_save';
+        const mealArgs=m.legacy && !m.guestMade?{}:{p_meal_date:m.mealDate,p_meal:m.meal};
+        confirm(m.mealDate+' '+m.meal+'，共 '+items.length+' 道菜。'+(m.guestMade?'新记录的菜会标为做好，已有待制作菜保持原状态。':'已经做好的菜保持完成，新增菜等待制作。'),name,
+          {p_items:items,p_note:m.note,...mealArgs,p_order_id:m.order?.id || null,p_version:m.order?.version || null,p_cancel:false},'meal-save:'+(m.legacy?m.order.id:m.mealDate+':'+m.meal));
+        return;
+      }
+      if(a==='cancel-order'){
+        const o=modal.order;confirm('取消这餐预约，不影响积分。',o.meal_mode?'points_kitchen_v3_admin_save':'points_kitchen_v2_admin_save',{p_items:[],p_note:o.note,...(o.meal_mode?{p_meal_date:o.meal_date,p_meal:o.meal}:{}),p_order_id:o.id,p_version:o.version,p_cancel:true},'meal-cancel:'+o.id);return;
+      }
+      if(a==='complete' || a==='reject'){
+        const o=modal.order;confirm(a==='reject'?'拒绝这餐预约，不评分、不变动积分。':'确认这餐剩余的菜已经做好；评价前仍可继续补菜。','points_kitchen_v3_guest_resolve',{p_order_id:o.id,p_version:o.version,p_reject:a==='reject',p_reason:''},'meal-resolve:'+o.id,a==='reject');return;
+      }
       if(a==='rate' && admin()){const o=modal.order;openModal({type:'rating',order:o,index:0,ratings:o.items.map(d=>({slug:d.slug,stars:o.draft?.find(r=>r.slug===d.slug)?.stars || null,comment:o.draft?.find(r=>r.slug===d.slug)?.comment || ''}))},true);return;}
       if(a==='rating-tab'){void saveDraft();modal.index=Number(v);modal.menu=false;renderDialog();body.scrollTop=0;return;}
       if(a==='rating-menu'){modal.menu=!modal.menu;renderDialog();return;}
       if(a==='star'){modal.ratings[modal.index].stars=Number(v);void saveDraft();renderDialog();return;}
       if(a==='next-rating'){const index=modal.ratings.findIndex(r=>!r.stars);modal.index=index<0?0:index;void saveDraft();renderDialog();body.scrollTop=0;return;}
-      if(a==='submit-review'){await saveDraft();const m=modal;if(m?.type!=='rating' || m.ratings.some(r=>!r.stars))return;confirm(`提交 ${m.ratings.length} 道菜的评价，合计 ${signed(m.ratings.reduce((n,r)=>n+delta(r.stars),0))} 分。确认后自动结算。`,'points_kitchen_v2_admin_review',{p_order_id:m.order.id,p_version:m.order.version,p_ratings:structuredClone(m.ratings)},`review:${m.order.id}`);return;}
+      if(a==='submit-review'){await saveDraft();const m=modal;if(m?.type!=='rating' || m.ratings.some(r=>!r.stars))return;confirm(`提交 ${m.ratings.length} 道菜的评价，合计 ${signed(m.ratings.reduce((n,r)=>n+delta(r.stars),0))} 分。确认后自动结算。`,'points_kitchen_v3_admin_review',{p_order_id:m.order.id,p_version:m.order.version,p_ratings:structuredClone(m.ratings)},`review:${m.order.id}`);return;}
       if(a==='confirm'){const m=modal;if(m.reject)m.args.p_reason=q('kitchenReason').value;return mutate(m.name,m.args,m.key);}
       if(a==='retry'){try{const op=JSON.parse(localStorage.getItem(v));if(op)return mutate(op.name,op.args,'',{key:v,op});}catch(_){ui.showToast('无法读取待确认操作');}}
     }
@@ -4403,7 +4457,7 @@ window.PointsKitchenRecipes = [
       if(event.target.id==='kitchenSearch'){query=event.target.value;q('kitchenRecipeRows').innerHTML=recipeRows(filterDishes()) || empty('没有找到这道菜');}
       if(event.target.id==='kitchenPickSearch' && modal?.type==='editor'){modal.pickQuery=event.target.value;if(modal.pickQuery.trim()){modal.pickCategory='全部';body.querySelectorAll('.kitchen-categories button').forEach(b=>b.classList.toggle('active',b.dataset.value==='全部'));}q('kitchenPickRows').innerHTML=editorRows();}
       if(event.target.dataset.dishNote && modal?.type==='editor')modal.itemNotes[event.target.dataset.dishNote]=event.target.value;
-      if(event.target.id==='kitchenMealDate' && modal?.guestMade)modal.mealDate=event.target.value;
+      if(event.target.id==='kitchenMealDate' && modal?.type==='meal')modal.mealDate=event.target.value;
       if(event.target.id==='kitchenMeal' && modal?.guestMade)modal.meal=event.target.value;
       if(event.target.id==='kitchenNote' && modal?.type==='editor')modal.note=event.target.value;
       if(event.target.id==='kitchenComment' && modal?.type==='rating'){modal.ratings[modal.index].comment=event.target.value;draftSerial++;q('kitchenDraftStatus').textContent='等待同步…';clearTimeout(draftTimer);const target=modal;draftTimer=setTimeout(()=>void saveDraft(target),650);}
@@ -4420,13 +4474,14 @@ window.PointsKitchenRecipes = [
       if(scope===critical)e.stopImmediatePropagation();
     },true);
     const resume=()=>{if(!document.hidden)void refresh();};
-    window.addEventListener('points:before-update',()=>{try{const draft=['editor','rating'].includes(modal?.type)?modal:[...stack].reverse().find(m=>['editor','rating'].includes(m.type));if(draft && (admin() || role==='guest'))sessionStorage.setItem('points_kitchen_v2_update_draft',JSON.stringify({role,modal:draft}));}catch(_){} });
+    window.addEventListener('points:before-update',()=>{try{const draft=['meal','editor','rating'].includes(modal?.type)?modal:[...stack].reverse().find(m=>['meal','editor','rating'].includes(m.type));if(draft && (admin() || role==='guest'))sessionStorage.setItem('points_kitchen_v2_update_draft',JSON.stringify({role,modal:draft}));}catch(_){} });
     function restoreUpdateDraft() {
       if(modal || ['waiting','verifying'].includes(role))return;let saved;
       try{saved=JSON.parse(sessionStorage.getItem('points_kitchen_v2_update_draft') || 'null');}catch(_){}
       if(!saved || saved.role!==role)return;
       sessionStorage.removeItem('points_kitchen_v2_update_draft');const m=saved.modal,o=m?.order && find(m.order.id);
-      if(m?.type==='editor' && (!m.order || ['pending','completed'].includes(o?.status) && o.version===m.order.version) || m?.type==='rating' && o?.status==='completed') {navigate('kitchen');if(o)m.order=o;openModal(m);ui.showToast('已更新到新版本，填写内容已恢复');}
+      if(m?.type==='editor' && !m.mealDate && !m.order){ui.showToast('已更新，请先选择用餐日期和餐次');return;}
+      if((m?.type==='meal' || m?.type==='editor') && (!m.order || ['pending','completed'].includes(o?.status) && o.version===m.order.version) || m?.type==='rating' && o?.status==='completed' && o.version===m.order.version) {navigate('kitchen');if(o){m.order=o;m.legacy=!o.meal_mode;m.mealDate ||= orderDay(o);m.meal ||= o.meal || '历史餐次';}openModal(m);ui.showToast('已更新到新版本，填写内容已恢复');}
     }
     document.addEventListener('visibilitychange',resume);window.addEventListener('pageshow',resume);window.addEventListener('online',resume);
     let noticeFrame=0;

@@ -65,7 +65,7 @@
         return Promise.resolve({data:null,error:{code:'42501',message:'POINTS_DEVICE_REQUIRED'}});
       // Inbox receipts/preferences do not change business state or invalidate auth reads.
       const auxiliary=/^points_notifications_(get|ack|preferences)$/.test(name);
-      const read = auxiliary || /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v2_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
+      const read = auxiliary || /^(points_get_|points_admin_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v[23]_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
       const epoch = clientEpoch, revision = readEpoch;
       const key = `${epoch}:${revision}:${name}:${JSON.stringify(args)}`;
       if (read && pendingReads.has(key)) return pendingReads.get(key);
