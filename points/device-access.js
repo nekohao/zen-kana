@@ -3,6 +3,7 @@
   'use strict';
   let token=null,allowed=false,controller=null;
   const adminKey='points-access-admin-v1';
+  const launchKey='points-access-launch-v1';
   const permitted=new Set(['points_is_admin','points_access_redeem','points_access_get_device','points_push_remove']);
   window.PointsDeviceAccess={attach,credential:()=>token,allowsRpc:name=>allowed || permitted.has(name),
     lock:()=>controller?.lock('此设备的授权已失效，请使用新的验证码重新授权。',true),get verified(){return allowed;},apiOrigin:null};
@@ -16,8 +17,11 @@
   }
   function attach({db,state,els,ui,readAuth,onUnlocked,apiOrigin}){
     const q=id=>document.getElementById(id),app=document.getElementById('pointsApp');
+    // This synchronous hint controls the first frame only, never RPC authorization.
+    let knownLaunch=false;
+    try{knownLaunch=localStorage.getItem(launchKey)==='guest' || !!localStorage.getItem(adminKey);}catch(_){}
     window.PointsDeviceAccess.apiOrigin=apiOrigin;
-    const gate=document.createElement('section');gate.id='pointsAccessGate';gate.setAttribute('aria-label','小世界接入验证');
+    const gate=document.createElement('section');gate.id='pointsAccessGate';gate.hidden=true;gate.setAttribute('aria-label','小世界接入验证');
     gate.innerHTML=`<div class="points-access-card"><img src="ICON/icon-192.png" alt=""/><h1>进入我们的小世界</h1><p class="points-access-intro">管理员登录，或使用哥哥给的一次性验证码。</p>
       <button id="pointsAccessLogin" type="button" class="points-access-primary">管理员登录</button>
       <div class="points-access-divider">游客设备验证</div><label for="pointsAccessCode">一次性验证码</label><input id="pointsAccessCode" inputmode="numeric" maxlength="8" autocomplete="one-time-code" placeholder="输入 8 位验证码"/>
@@ -35,12 +39,13 @@
     function say(text){q('pointsAccessMessage').textContent=text;}
     function render(){
       gate.hidden=allowed||restoring;app.classList.toggle('points-access-locked',!allowed&&!restoring);
-      app.classList.toggle('points-access-restoring',restoring&&!allowed);
+      app.classList.toggle('points-access-restoring',restoring&&!allowed&&!knownLaunch);
       q('pointsAccessVerify').disabled=busy;q('pointsAccessLogin').disabled=busy;
       if(allowed){q('pointsAccessCode').value='';q('pointsAccessRetry').hidden=true;}
     }
     function lock(message='请验证设备后再进入。',invalidate=false){
       const wasAllowed=allowed;revision++;allowed=false;restoring=false;identity=null;
+      knownLaunch=false;try{localStorage.removeItem(launchKey);}catch(_){}
       if(invalidate&&device){device={...device,authorized:false};void storage(device).catch(()=>{});}
       render();say(message);
       // Keep a stored credential for retry; revocation is checked server-side.
@@ -50,6 +55,7 @@
     }
     function unlock(){
       const next=key(),changed=!allowed || identity!==next;allowed=true;restoring=false;identity=next;render();
+      if(!state.session && device?.authorized===true){knownLaunch=true;try{localStorage.setItem(launchKey,'guest');}catch(_){} }
       if(changed){onUnlocked();window.dispatchEvent(new Event('points:access-ready'));}
     }
     async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
@@ -58,7 +64,10 @@
       const version=revision;
       checking=(async()=>{
         if(state.isAdmin){unlock();return;}
+        if(state.authResolved===false && state.session)return;
         if(state.session){lock('此账号没有管理员权限，请使用管理员账号登录。');return;}
+        // Successful enrollments stay open. Business RPCs detect server-side revocation.
+        if(token && device?.authorized===true){unlock();return;}
         say('正在确认设备…');
         try{
           device=await storage();if(version!==revision)return;
@@ -130,22 +139,24 @@
     }
     q('pointsAccessDevices').addEventListener('click',()=>void listDevices());
     function authChanged(){
+      if(state.authResolved===false)return;
       if(state.isAdmin){try{localStorage.setItem(adminKey,state.session.user.id);}catch(_){}unlock();return;}
       if(state.session || identity?.startsWith('admin:')){try{localStorage.removeItem(adminKey);}catch(_){} }
       if(allowed && (identity?.startsWith('admin:') || state.session)){q('pointsAccessCodeResult').hidden=true;clearInterval(codeTimer);lock();void check();}
-      else if(!allowed && !state.session && token)void check();
+      else if(!allowed && !state.session && token && device?.authorized!==false)void check();
     }
-    window.addEventListener('online',()=>void check());
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden && allowed && !state.isAdmin)void check();});
+    window.addEventListener('online',()=>{if(!allowed)void check();});
     controller={lock,authChanged,check,start:async()=>{
+      const version=revision;
       // Read local credentials first. A credential saved before a failed enrollment is not authorization.
       const [stored,sessionResult]=await Promise.allSettled([storage(),db.auth.getSession()]);
+      if(version!==revision)return;
       if(stored.status==='fulfilled'){device=stored.value;token=/^[a-f0-9]{64}$/.test(device?.token||'')?device.token:null;}
       const session=sessionResult.status==='fulfilled'?sessionResult.value.data?.session:null;
       let previousAdmin=null;try{previousAdmin=localStorage.getItem(adminKey);}catch(_){}
       if(session?.user?.id&&previousAdmin===session.user.id){state.session=session;state.isAdmin=true;ui.renderAdminState?.();unlock();}
       else if(!session&&token&&device?.authorized===true){unlock();}
-      await readAuth();await check();
+      await readAuth();if(version===revision)await check();
     }};render();return controller;
   }
 })();
