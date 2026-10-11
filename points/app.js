@@ -4002,6 +4002,7 @@
             renderPrimaryMetric: (...args) => renderPrimaryMetric(...args),
             renderOverviewContentMode: () => renderOverviewContentMode(),
             openOverviewSheet: () => openOverviewSheet(),
+            closeOverviewSheet: () => closeOverviewSheet(),
             setOverviewMode: mode => setOverviewMode(mode)
           }
         });
