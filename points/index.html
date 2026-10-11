@@ -8,8 +8,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261011.2" name="points-build"/>
-<meta content="2026/10/11 16:57" name="points-updated-at"/>
+<meta content="20261011.3" name="points-build"/>
+<meta content="2026/10/11 18:31" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -1896,7 +1896,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 @media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
 
 .fat-overview .fat-status-switch { margin:0; }
-#pointsApp #fatContentSwitch { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); width:100%; gap:4px; }
+#pointsApp #fatContentSwitch { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; gap:4px; }
 #pointsApp #fatContentSwitch .overview-content-choice { width:100%; min-width:0; text-align:center; }
 #pointsApp .fat-overview-toolbar > .fat-status-switch { margin-top:4px; }
 #pointsApp #fatSettlementSection .fat-reward-card { background:rgba(255,255,255,.7); border-color:var(--ui-line,#567c6718); box-shadow:none; }
@@ -1942,6 +1942,41 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 #pointsApp #fatRecordStatus { height:auto; min-height:44px; border-radius:24px; background:#ffffffb8!important; }
 #pointsApp #fatRecordStatus .segment { height:36px; min-height:36px; border-radius:20px; }
 #pointsApp #fatRecordStatus .segment.active { background:#edf4ef!important; color:#52715f!important; box-shadow:none!important; }
+
+/* Overview: two clear tasks, with secondary controls kept quiet. */
+#pointsApp .fat-change-label { color:var(--secondary); font-size:12px; }
+#pointsApp .fat-change-value { display:flex; align-items:baseline; gap:8px; margin:10px 0 20px; color:var(--ui-accent,#567c67); }
+#pointsApp .fat-change-value strong { font-size:44px; line-height:1.1; letter-spacing:-1.5px; font-weight:650; }
+#pointsApp .fat-change-value span { font-size:13px; }
+#pointsApp .fat-week-card .fat-week-title { display:inline; font-size:11px; }
+#pointsApp .fat-week-card .fat-week-result { display:inline-flex; margin:0 0 0 8px; gap:4px; font-size:12px; }
+#pointsApp .fat-week-card .fat-week-result strong { font-size:15px; }
+#pointsApp #fatWeekCoverage { display:none; }
+#pointsApp .fat-change-value .gain { color:#a16e62; }
+#pointsApp .fat-chart-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; color:var(--ink); font-size:13px; font-weight:600; }
+#pointsApp #fatTrendRanges { border:0; background:transparent; color:var(--secondary); font-size:11px; padding:8px 2px; }
+#pointsApp .fat-record-disclosure { border-top:1px solid var(--ui-line,#567c6718); margin-top:18px; }
+#pointsApp .fat-record-disclosure > summary,#pointsApp .fat-settlement-help > summary { display:flex; justify-content:space-between; align-items:center; min-height:48px; list-style:none; cursor:pointer; color:var(--secondary); font-size:12px; }
+#pointsApp .fat-record-disclosure > summary::-webkit-details-marker,#pointsApp .fat-settlement-help > summary::-webkit-details-marker { display:none; }
+#pointsApp .fat-record-disclosure[open] > summary span,#pointsApp .fat-settlement-help[open] > summary span { transform:rotate(90deg); }
+#pointsApp #fatSettlementSection .fat-ledger-head,#pointsApp #fatSettlementSection .fat-settlement-row > summary { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 72px; align-items:center; gap:8px; }
+#pointsApp .fat-ledger-head { padding:10px 0; font-size:10px; color:var(--secondary); }
+#pointsApp .fat-ledger-head span:last-child { text-align:right; }
+#pointsApp .fat-settlement-row { border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp .fat-settlement-row > summary { min-height:72px; padding:12px 0; list-style:none; cursor:pointer; font-size:12px; color:var(--ink); }
+#pointsApp .fat-settlement-row > summary::-webkit-details-marker { display:none; }
+#pointsApp .fat-settlement-row small { display:block; margin-top:5px; color:var(--secondary); font-size:10px; }
+#pointsApp .fat-settlement-row strong { text-align:right; font-size:18px; white-space:nowrap; font-weight:650; }
+#pointsApp .fat-settlement-row .reward { color:var(--ui-accent,#567c67); }
+#pointsApp .fat-settlement-row .deduction { color:#a16e62; }
+#pointsApp .fat-row-change { font-size:11px; color:var(--secondary); line-height:1.5; }
+#pointsApp .fat-settlement-next { margin:0 0 15px; font-size:11px; color:var(--secondary); line-height:1.6; }
+#pointsApp .fat-settlement-help { border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp .fat-settlement-forecast { padding:16px; margin-bottom:16px; border-radius:16px; background:var(--ui-wash,#edf5ef); }
+#pointsApp .fat-settlement-forecast > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; list-style:none; cursor:pointer; font-size:12px; }
+#pointsApp .fat-settlement-forecast small { display:block; margin-top:5px; font-size:11px; color:var(--secondary); }
+#pointsApp .fat-settlement-forecast strong { color:var(--ui-accent,#567c67); font-size:21px; white-space:nowrap; }
+#pointsApp .fat-settlement-forecast p { font-size:11px; color:var(--secondary); line-height:1.6; }
 
 /* Scoped to fat loss; reuse the existing glass sheet, palette and press feedback. */
 .fat-home-actions { width:min(86vw,340px); grid-template-columns:1fr; align-content:center; gap:7px; }
@@ -3175,7 +3210,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261011.2</span>
+<span class="settings-value">20261011.3</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -3190,8 +3225,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261011.2</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/11 16:57</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261011.3</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/11 18:31</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -3224,9 +3259,9 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261011.2</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/11 16:57</div>
-<ul class="release-list"><li>减脂首页统一为记录与商城两个等宽按钮，结算归入总览。</li><li>总览通过趋势、记录、结算切换，计算依据、历史与规则按需展开。</li><li>钻石商城专注兑换、背包与服务，移除重复结算入口。</li></ul>
+<div class="release-head"><strong>20261011.3</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/11 18:31</div>
+<ul class="release-list"><li>减脂总览只保留体重变化和结算记录，打开即可看到变化数值与趋势。</li><li>每周结算直接显示均重变化与实际钻石，预计奖励单独标明。</li><li>每日记录、计算依据和结算说明按需展开。</li></ul>
 </div>
 <div class="release-block previous">
 <div class="release-head"><strong>20261009.7</strong><span>上一版本</span></div>
@@ -4585,26 +4620,21 @@ window.PointsKitchenRecipes = [
           <button class="overview-quick-card pressable" data-fat-section="calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="overview-quick-title">月度总览</span><span class="overview-quick-copy">每日记录</span></button>
         </nav></div>
         <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
-          <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
-          <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">记录</button>
-          <button class="overview-content-choice pressable" data-fat-section="settlement" role="tab" type="button">结算</button>
+          <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">体重变化</button>
+          <button class="overview-content-choice pressable" data-fat-section="settlement" role="tab" type="button">结算记录</button>
         </div>
         <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
         <section id="fatSettlementSection" hidden><div id="fatSettlementContent"></div></section>
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
           <h2 class="section-title">趋势统计</h2>
           <div class="card glass fat-week-card" aria-live="polite">
-            <div class="fat-week-title">近 7 天均重变化</div>
+            <div class="fat-change-label" id="fatOverviewChangeLabel">较起始体重</div><div class="fat-change-value"><strong id="fatOverviewChangeValue">—</strong><span id="fatOverviewChangeUnit">公斤</span></div><div class="fat-week-title">近 7 天均重</div>
             <div class="fat-week-result"><span id="fatWeekDirection">暂无对比</span><strong id="fatWeekValue">—</strong><span id="fatWeekUnit">公斤</span></div>
             <div class="fat-week-coverage" id="fatWeekCoverage"></div>
 
           </div>
           <div class="card glass trend-card">
-            <div class="segmented" aria-label="减脂趋势范围" id="fatTrendRanges">
-              <button class="segment pressable" data-fat-range="14" type="button">近14天</button>
-              <button class="segment pressable active" data-fat-range="28" type="button">近28天</button>
-              <button class="segment pressable" data-fat-range="90" type="button">近90天</button>
-            </div>
+            <div class="fat-chart-heading"><span>变化趋势</span><select id="fatTrendRanges" aria-label="趋势时间范围"><option value="14">近 14 天</option><option value="28" selected>近 28 天</option><option value="90">近 90 天</option></select></div>
             <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
             <div class="fat-chart-legend"><span>每日记录</span><span>7 日均值</span></div>
             <div class="chart-caption" id="fatChartCaption"></div>
@@ -4616,7 +4646,7 @@ window.PointsKitchenRecipes = [
             </div></details>
           </div>
         </section>
-        <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
+        <details class="fat-record-disclosure" id="fatCalendarSection" hidden><summary>查看每日记录<span aria-hidden="true">›</span></summary>
           <h2 class="section-title">月度总览</h2><div class="card glass calendar-card fat-calendar">
             <div class="calendar-head"><button class="small-icon pressable" id="fatPrevMonth" aria-label="减脂上个月" type="button">‹</button><div class="calendar-month" id="fatCalendarMonth"></div><button class="small-icon pressable" id="fatNextMonth" aria-label="减脂下个月" type="button">›</button></div>
             <div class="fat-month-summary"><div><span>本月记录</span><strong id="fatMonthCount">0 次</strong></div><div><span>本月净变化</span><strong id="fatMonthChange">—</strong></div></div>
@@ -4624,7 +4654,7 @@ window.PointsKitchenRecipes = [
             <div class="calendar-grid" id="fatCalendarGrid"></div><p class="fat-chart-help">点击日期查看记录 · 数值为当天最后一次变化</p>
             <div class="day-detail hidden" id="fatDayDetail"><div class="detail-title" id="fatDayTitle"></div><ul class="log-list" id="fatDayList"></ul></div>
           </div>
-        </section>
+        </details>
       </div>`);
     const settings = document.createElement("div");
     settings.hidden = true;
@@ -4854,7 +4884,7 @@ window.PointsKitchenRecipes = [
       els.overviewSubtitle.textContent = "";
       const section = state.overviewSection;
       q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
-      q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
+      q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "trend";
       q("fatSettlementSection").hidden = section !== "settlement";
       overview.querySelector(".fat-status-switch").hidden = section === "settlement";
       rewards?.render();
@@ -4865,8 +4895,7 @@ window.PointsKitchenRecipes = [
       const truncated = logs.length >= 10000 && snapshot?.count > logs.length;
       q("fatOverviewStatus").hidden = !logsError && !truncated;
       q("fatOverviewStatus").textContent = logsError ? "记录同步失败 · 关闭总览后重新打开可重试" : "当前显示最近 10000 条记录，较早的月份可能不完整";
-      if (section === "trend") { renderWeek(trendData(visibleLogs())); laterDraw(); }
-      if (section === "calendar") renderCalendar();
+      if (section === "trend") { renderWeek(trendData(visibleLogs())); renderCalendar(); laterDraw(); }
     }
     function peekHeight() {
       const nav = q("fatLanding").querySelector(".overview-quick-nav");
@@ -4890,6 +4919,11 @@ window.PointsKitchenRecipes = [
       void refresh({silent:false});
     }
     function renderWeek(data) {
+      const delta = snapshot?.delta;
+      q("fatOverviewChangeLabel").textContent = hasDelta(delta) ? delta<0 ? "较起始体重已减去" : delta>0 ? "较起始体重增加了" : "与起始体重持平" : "等待体重记录";
+      q("fatOverviewChangeValue").textContent = hasDelta(delta) ? number(delta) : "—";
+      q("fatOverviewChangeValue").classList.toggle("gain",Number(delta)>0);
+      q("fatOverviewChangeUnit").textContent = unitName();
       const [recent,previous] = data.weeks, change = data.change;
       const dateLabel = date => `${date.getMonth()+1}/${date.getDate()}`;
       const periodLabel = week => `${dateLabel(week.start)}—${dateLabel(shiftDay(week.end,-1))}`;
@@ -5202,7 +5236,7 @@ window.PointsKitchenRecipes = [
       event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); chooseSection("trend"); void loadLogs(true);
     },true);
     overview.addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-section]"); if (btn) { ui.vibrate(6); chooseSection(btn.dataset.fatSection); } });
-    q("fatTrendRanges").addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-range]"); if (btn && ["14","28","90"].includes(btn.dataset.fatRange)) { range=btn.dataset.fatRange; laterDraw(); } });
+    q("fatTrendRanges").addEventListener("change",event=>{if(["14","28","90"].includes(event.target.value)){range=event.target.value;laterDraw();}});
     q("fatPrevMonth").addEventListener("click",()=>{ month=nextMonth(month,-1); selectedDay=null; renderCalendar(); });
     q("fatNextMonth").addEventListener("click",()=>{ month=nextMonth(month); selectedDay=null; renderCalendar(); });
     function resizeOverview() {
@@ -5405,17 +5439,7 @@ window.PointsKitchenRecipes = [
     function renderRewardDetails(view = "progress") {
       const p = data.preview;
       if (!p) return `<div class="fat-reward-card"><h3>结算暂不可用</h3><p>请稍后重试；若持续不可用，请管理员检查配置。</p>${actionButton("refresh","重新同步")}</div>`;
-      if (view === "progress") {
-        const settled = p.settled === true;
-        const actual = p.applied_delta ?? data.weeks?.find(w=>w.week===p.week)?.applied_delta;
-        const result = settled ? actual : p.eligible ? p.calculated_delta : null;
-        const selected = p.bowel_status ? bowelLabel(p.bowel_status) : "";
-        const reason = settled ? Number(result)>0 ? "已到账" : Number(result)<0 ? "已扣除" : "本周未奖扣" : condition(p);
-        const cutoff = settled ? data.weeks?.find(w=>w.week===p.week)?.cutoff : data.next_cutoff;
-        const next = data.next_cutoff;
-        return `<section class="fat-reward-card fat-settlement-result"><p class="fat-settlement-period">${escape(weekLabel(p.week))}</p><span class="fat-settlement-label">${settled?"本周实际结算":"本周预计"}</span><strong class="fat-settlement-value${Number(result)<0?" deduction":""}">${result===null?"—":escape(signed(result))}<small>◇</small></strong><p class="fat-settlement-condition">${escape(reason)}</p><div class="fat-settlement-meta">${selected?`<span>${escape(selected)} · ${escape(p.current_days)} 天记录</span>`:""}<span>${settled?`下次结算 ${escape(stamp(next))}`:`${escape(stamp(cutoff))} 结算 · 北京时间`}</span></div>${!settled&&p.eligible?'<p class="fat-settlement-footnote">预计尚未到账，以结算时的记录为准</p>':""}${settled&&actual!==undefined&&Number(actual)!==Number(p.calculated_delta)?`<p class="fat-settlement-footnote">原应 ${escape(signed(p.calculated_delta))} ◇，余额不足，仅扣剩余钻石</p>`:""}</section><details class="fat-reward-card fat-settlement-evidence" data-settlement-fold="evidence"><summary>计算依据<span aria-hidden="true">＋</span></summary>${evidence(p)}${!p.bowel_status?`<p>${escape(condition(p))}</p>`:""}${(p.series||[]).filter(x=>x.bowel_status!==p.bowel_status).map(x=>`<details class="fat-settlement-other"><summary>${escape(bowelLabel(x.bowel_status))}${p.bowel_status?" · 未采用":""}</summary><p>${escape(condition(x))}</p>${evidence(x)}</details>`).join("")}<p class="fat-settlement-footnote">每周只结算一类；达标类别按有效记录日数选择，相同优先已排便。</p></details>`;
-      }
-      if (view === "history") return (data.weeks||[]).map(w=>`<details class="fat-reward-card fat-reward-history"><summary><span>${escape(weekLabel(w.week))}<small>${w.eligible?"已结算":"未奖扣"}</small></span><strong>${escape(signed(w.applied_delta))} ◇</strong></summary><div class="fat-reward-history-detail"><p>${w.rule_version===2?(w.bowel_status?escape(bowelLabel(w.bowel_status)):"无达标类别"):"旧版结算"}</p>${evidence(w)}${w.applied_delta!==w.calculated_delta?`<p>原应 ${escape(signed(w.calculated_delta))} ◇，余额不足</p>`:""}<p class="fat-settlement-footnote">${escape(stamp(w.cutoff))} · 结算后余额 ${escape(w.balance_after)} ◇</p></div></details>`).join("")||'<p class="fat-reward-empty">还没有结算记录</p>';
+      if (view === "history") return (data.weeks||[]).map(w=>`<details class="fat-settlement-row" data-settlement-fold="week-${escape(w.week)}"><summary><span>${escape(weekLabel(w.week))}<small>${escape(String(w.week).slice(0,4))} · ${w.bowel_status?escape(bowelLabel(w.bowel_status)):"未分类"}</small></span><span class="fat-row-change">${w.eligible?escape(change(w.change_jin).replace("均重","")):"记录不足"}</span><strong class="${Number(w.applied_delta)<0?"deduction":"reward"}">${escape(signed(w.applied_delta))} ◇</strong></summary><div class="fat-reward-history-detail">${evidence(w)}${w.applied_delta!==w.calculated_delta?`<p>原应 ${escape(signed(w.calculated_delta))} ◇，余额不足</p>`:""}<p class="fat-settlement-footnote">${escape(stamp(w.cutoff))} · 结算后 ${escape(w.balance_after)} ◇</p></div></details>`).join("")||'<p class="fat-reward-empty">还没有结算记录</p>';
       return `<div class="fat-reward-rules"><section class="fat-reward-card"><h3>每周日 12:00 结算</h3><p>北京时间。每周结算一次，钻石余额最低为 0。</p></section><section class="fat-reward-card"><h3>下降奖，上升扣</h3><p>均重下降满 1 斤（0.5 公斤）奖励 1 ◇，不足不奖励。</p><p>上升不足 1 斤扣 1 ◇；达到 1 斤按整斤扣。持平不奖扣。</p></section><details class="fat-reward-card fat-settlement-evidence"><summary>记录与比较方式<span aria-hidden="true">＋</span></summary><p>未排便、已排便分别统计，同类每天取最早一笔，漏记不补值。</p><p>每类首周记录至少 3 天，对比同一个起始体重；以后本周和上周各至少 3 天。</p><p>两类都达标时，采用本周有效记录日更多的一类，相同优先已排便，不按奖励多少选择。</p></details><details class="fat-reward-card fat-settlement-evidence"><summary>截止时间与历史结果<span aria-hidden="true">＋</span></summary><p>统计本周一至周日 12:00 前的记录；截止后的记录不计入本周，也不移到下周。</p><p>结算后补录、删除记录或修改起始体重不改变已结算奖扣。下周沿用上周结算时的均重。</p></details>${data.status_rules!==2?'<p class="fat-reward-empty">当前仍使用旧版规则，请管理员确认分类升级。</p>':""}</div>`;
     }
     function serviceCard(request) {
@@ -5425,7 +5449,9 @@ window.PointsKitchenRecipes = [
     function renderSettlement() {
       const target = q("fatSettlementContent");
       target.dataset.pointsSynced = body.dataset.pointsSynced || "false";
-      const html = !data ? `<p class="fat-reward-empty">${error ? escape(error) : "正在同步结算"}</p>${actionButton("refresh","重新同步")}` : `${error ? `<p class="fat-reward-error">${escape(error)}</p>` : ""}${renderRewardDetails()}${data.preview ? `<details class="fat-reward-card fat-settlement-evidence" data-settlement-fold="history"><summary>结算历史<span aria-hidden="true">＋</span></summary>${renderRewardDetails("history")}</details><details class="fat-reward-card fat-settlement-evidence" data-settlement-fold="rules"><summary>奖励规则<span aria-hidden="true">＋</span></summary>${renderRewardDetails("rules")}</details>` : ""}<div id="fatSettlementUpdatesSlot" data-points-synced="${target.dataset.pointsSynced}"></div>`;
+      const p = data?.preview;
+      const forecast = p && !p.settled ? `<details class="fat-settlement-forecast" data-settlement-fold="forecast"><summary><span>本周预计<small>${escape(condition(p))}</small></span><strong>${p.eligible?escape(signed(p.calculated_delta))+" ◇":"待达标"}</strong></summary>${evidence(p)}${(p.series||[]).filter(x=>x.bowel_status!==p.bowel_status).map(x=>`<p>${escape(bowelLabel(x.bowel_status))} · ${escape(condition(x))}</p>`).join("")}<p class="fat-settlement-footnote">预计尚未到账，以结算时的记录为准。</p></details>` : "";
+      const html = !data ? `<p class="fat-reward-empty">${error ? escape(error) : "正在同步结算"}</p>${actionButton("refresh","重新同步")}` : `${error ? `<p class="fat-reward-error">${escape(error)}</p>` : ""}${!p ? renderRewardDetails() : `${forecast}<p class="fat-settlement-next">下次结算 ${escape(stamp(data.next_cutoff))} · 北京时间</p><div class="fat-ledger-head"><span>周期</span><span>均重变化</span><span>实际钻石</span></div><div class="fat-settlement-ledger">${renderRewardDetails("history")}</div><details class="fat-settlement-help" data-settlement-fold="rules"><summary>结算说明<span aria-hidden="true">›</span></summary>${renderRewardDetails("rules")}</details>`}<div id="fatSettlementUpdatesSlot" data-points-synced="${target.dataset.pointsSynced}"></div>`;
       if (target.dataset.rendered === html) return;
       const opened = new Set([...target.querySelectorAll("details[open]")].map(el=>el.dataset.settlementFold).filter(Boolean));
       target.innerHTML = html; target.dataset.rendered = html;

@@ -58,26 +58,21 @@
           <button class="overview-quick-card pressable" data-fat-section="calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="overview-quick-title">月度总览</span><span class="overview-quick-copy">每日记录</span></button>
         </nav></div>
         <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
-          <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
-          <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">记录</button>
-          <button class="overview-content-choice pressable" data-fat-section="settlement" role="tab" type="button">结算</button>
+          <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">体重变化</button>
+          <button class="overview-content-choice pressable" data-fat-section="settlement" role="tab" type="button">结算记录</button>
         </div>
         <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
         <section id="fatSettlementSection" hidden><div id="fatSettlementContent"></div></section>
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
           <h2 class="section-title">趋势统计</h2>
           <div class="card glass fat-week-card" aria-live="polite">
-            <div class="fat-week-title">近 7 天均重变化</div>
+            <div class="fat-change-label" id="fatOverviewChangeLabel">较起始体重</div><div class="fat-change-value"><strong id="fatOverviewChangeValue">—</strong><span id="fatOverviewChangeUnit">公斤</span></div><div class="fat-week-title">近 7 天均重</div>
             <div class="fat-week-result"><span id="fatWeekDirection">暂无对比</span><strong id="fatWeekValue">—</strong><span id="fatWeekUnit">公斤</span></div>
             <div class="fat-week-coverage" id="fatWeekCoverage"></div>
 
           </div>
           <div class="card glass trend-card">
-            <div class="segmented" aria-label="减脂趋势范围" id="fatTrendRanges">
-              <button class="segment pressable" data-fat-range="14" type="button">近14天</button>
-              <button class="segment pressable active" data-fat-range="28" type="button">近28天</button>
-              <button class="segment pressable" data-fat-range="90" type="button">近90天</button>
-            </div>
+            <div class="fat-chart-heading"><span>变化趋势</span><select id="fatTrendRanges" aria-label="趋势时间范围"><option value="14">近 14 天</option><option value="28" selected>近 28 天</option><option value="90">近 90 天</option></select></div>
             <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
             <div class="fat-chart-legend"><span>每日记录</span><span>7 日均值</span></div>
             <div class="chart-caption" id="fatChartCaption"></div>
@@ -89,7 +84,7 @@
             </div></details>
           </div>
         </section>
-        <section class="section overview-section-anchor" id="fatCalendarSection" hidden>
+        <details class="fat-record-disclosure" id="fatCalendarSection" hidden><summary>查看每日记录<span aria-hidden="true">›</span></summary>
           <h2 class="section-title">月度总览</h2><div class="card glass calendar-card fat-calendar">
             <div class="calendar-head"><button class="small-icon pressable" id="fatPrevMonth" aria-label="减脂上个月" type="button">‹</button><div class="calendar-month" id="fatCalendarMonth"></div><button class="small-icon pressable" id="fatNextMonth" aria-label="减脂下个月" type="button">›</button></div>
             <div class="fat-month-summary"><div><span>本月记录</span><strong id="fatMonthCount">0 次</strong></div><div><span>本月净变化</span><strong id="fatMonthChange">—</strong></div></div>
@@ -97,7 +92,7 @@
             <div class="calendar-grid" id="fatCalendarGrid"></div><p class="fat-chart-help">点击日期查看记录 · 数值为当天最后一次变化</p>
             <div class="day-detail hidden" id="fatDayDetail"><div class="detail-title" id="fatDayTitle"></div><ul class="log-list" id="fatDayList"></ul></div>
           </div>
-        </section>
+        </details>
       </div>`);
     const settings = document.createElement("div");
     settings.hidden = true;
@@ -327,7 +322,7 @@
       els.overviewSubtitle.textContent = "";
       const section = state.overviewSection;
       q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
-      q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
+      q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "trend";
       q("fatSettlementSection").hidden = section !== "settlement";
       overview.querySelector(".fat-status-switch").hidden = section === "settlement";
       rewards?.render();
@@ -338,8 +333,7 @@
       const truncated = logs.length >= 10000 && snapshot?.count > logs.length;
       q("fatOverviewStatus").hidden = !logsError && !truncated;
       q("fatOverviewStatus").textContent = logsError ? "记录同步失败 · 关闭总览后重新打开可重试" : "当前显示最近 10000 条记录，较早的月份可能不完整";
-      if (section === "trend") { renderWeek(trendData(visibleLogs())); laterDraw(); }
-      if (section === "calendar") renderCalendar();
+      if (section === "trend") { renderWeek(trendData(visibleLogs())); renderCalendar(); laterDraw(); }
     }
     function peekHeight() {
       const nav = q("fatLanding").querySelector(".overview-quick-nav");
@@ -363,6 +357,11 @@
       void refresh({silent:false});
     }
     function renderWeek(data) {
+      const delta = snapshot?.delta;
+      q("fatOverviewChangeLabel").textContent = hasDelta(delta) ? delta<0 ? "较起始体重已减去" : delta>0 ? "较起始体重增加了" : "与起始体重持平" : "等待体重记录";
+      q("fatOverviewChangeValue").textContent = hasDelta(delta) ? number(delta) : "—";
+      q("fatOverviewChangeValue").classList.toggle("gain",Number(delta)>0);
+      q("fatOverviewChangeUnit").textContent = unitName();
       const [recent,previous] = data.weeks, change = data.change;
       const dateLabel = date => `${date.getMonth()+1}/${date.getDate()}`;
       const periodLabel = week => `${dateLabel(week.start)}—${dateLabel(shiftDay(week.end,-1))}`;
@@ -675,7 +674,7 @@
       event.stopImmediatePropagation(); ui.vibrate(8); ui.openOverviewSheet(); chooseSection("trend"); void loadLogs(true);
     },true);
     overview.addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-section]"); if (btn) { ui.vibrate(6); chooseSection(btn.dataset.fatSection); } });
-    q("fatTrendRanges").addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-range]"); if (btn && ["14","28","90"].includes(btn.dataset.fatRange)) { range=btn.dataset.fatRange; laterDraw(); } });
+    q("fatTrendRanges").addEventListener("change",event=>{if(["14","28","90"].includes(event.target.value)){range=event.target.value;laterDraw();}});
     q("fatPrevMonth").addEventListener("click",()=>{ month=nextMonth(month,-1); selectedDay=null; renderCalendar(); });
     q("fatNextMonth").addEventListener("click",()=>{ month=nextMonth(month); selectedDay=null; renderCalendar(); });
     function resizeOverview() {
