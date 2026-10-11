@@ -8,8 +8,8 @@
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" name="viewport"/>
 <meta content="#f4f5f9" id="themeColorMeta" name="theme-color"/>
 <meta content="light" name="color-scheme"/>
-<meta content="20261011.1" name="points-build"/>
-<meta content="2026/10/11 14:51" name="points-updated-at"/>
+<meta content="20261011.2" name="points-build"/>
+<meta content="2026/10/11 16:57" name="points-updated-at"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="宝宝和哥哥的小世界" name="apple-mobile-web-app-title"/>
@@ -1896,6 +1896,14 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 @media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
 
 .fat-overview .fat-status-switch { margin:0; }
+#pointsApp #fatContentSwitch { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); width:100%; gap:4px; }
+#pointsApp #fatContentSwitch .overview-content-choice { width:100%; min-width:0; text-align:center; }
+#pointsApp .fat-overview-toolbar > .fat-status-switch { margin-top:4px; }
+#pointsApp #fatSettlementSection .fat-reward-card { background:rgba(255,255,255,.7); border-color:var(--ui-line,#567c6718); box-shadow:none; }
+#pointsApp #fatSettlementSection .fat-settlement-result { margin-top:0; }
+#pointsApp #fatSettlementSection .fat-reward-card p { font-size:12px; line-height:1.6; }
+#pointsApp #fatSettlementSection .fat-reward-card > summary { list-style:none; }
+#pointsApp #fatSettlementSection .fat-reward-card > summary::-webkit-details-marker { display:none; }
 
 /* One compact measurement filter, visually quieter than the module navigation. */
 #pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; align-items:center; height:auto; min-height:44px; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }
@@ -2002,22 +2010,19 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 #pointsApp #fatRewardLayer .fat-reward-product-bottom > strong { color:var(--ui-accent,#567c67); font-size:20px; font-weight:650; white-space:nowrap; }
 #pointsApp #fatRewardLayer .fat-reward-product-bottom > strong > span { margin-left:3px; color:var(--ui-muted,#75887b); font-size:11px; font-weight:450; }
 #pointsApp #fatRewardLayer .fat-reward-product .fat-reward-button { min-width:94px; min-height:42px; padding:10px 14px; border:0; background:var(--ui-accent,#567c67)!important; color:white!important; border-radius:13px; font-size:14px; font-weight:600; }
-#pointsApp #fatRewardLayer .fat-reward-progress-link { width:100%; min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; padding:12px 4px 6px; border:0; background:transparent; text-align:left; color:var(--secondary); font-size:12px; line-height:1.5; }
-#pointsApp #fatRewardLayer .fat-reward-progress-link > span:last-child { flex-shrink:0; color:var(--ui-accent,#567c67); }
-#pointsApp #fatRewardLayer .fat-reward-progress-link > span:last-child span { margin-left:4px; font-size:19px; }
 #pointsApp #fatRewardLayer .fat-reward-back { padding:6px 0; border:0; background:none; color:var(--ui-accent,#567c67); font-size:13px; }
 #pointsApp #fatRewardLayer .fat-reward-detail-title { margin:13px 0 18px; font-size:19px; font-weight:650; }
-#pointsApp #fatRewardLayer .fat-reward-stat-list { margin:17px 0 0; font-size:12px; }
-#pointsApp #fatRewardLayer .fat-reward-stat-list > div { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid var(--ui-line,#567c6718); }
-#pointsApp #fatRewardLayer .fat-reward-stat-list dt { color:var(--secondary); flex-shrink:0; }
-#pointsApp #fatRewardLayer .fat-reward-stat-list dd { margin:0; color:var(--ink); text-align:right; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-stat-list { margin:17px 0 0; font-size:12px; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-stat-list > div { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-stat-list dt { color:var(--secondary); flex-shrink:0; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-stat-list dd { margin:0; color:var(--ink); text-align:right; }
 #pointsApp #fatRewardLayer .fat-reward-detail-links { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:18px 0 4px; }
 #pointsApp #fatRewardLayer .fat-reward-detail-links button { min-height:44px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 13px; border:1px solid var(--ui-line,#567c6718); border-radius:13px; background:#ffffff80; color:var(--ui-accent,#567c67); font-size:12px; }
-#pointsApp #fatRewardLayer .fat-reward-history { margin:10px 0; }
-#pointsApp #fatRewardLayer .fat-reward-history > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; }
-#pointsApp #fatRewardLayer .fat-reward-history > summary small { display:block; margin-top:4px; color:var(--tertiary); font-size:10px; font-weight:450; }
-#pointsApp #fatRewardLayer .fat-reward-history > summary strong { color:var(--ui-accent,#567c67); font-size:16px; white-space:nowrap; }
-#pointsApp #fatRewardLayer .fat-reward-history-detail { margin-top:12px; padding-top:8px; border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-history { margin:10px 0; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-history > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-history > summary small { display:block; margin-top:4px; color:var(--tertiary); font-size:10px; font-weight:450; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-history > summary strong { color:var(--ui-accent,#567c67); font-size:16px; white-space:nowrap; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-reward-history-detail { margin-top:12px; padding-top:8px; border-top:1px solid var(--ui-line,#567c6718); }
 #pointsApp #fatRewardLayer .fat-reward-inventory { margin:4px 0 16px; }
 #pointsApp #fatRewardLayer .fat-reward-service-head { display:flex; justify-content:space-between; align-items:center; gap:10px; }
 #pointsApp #fatRewardLayer .fat-reward-service-head h3 { margin:0; }
@@ -2034,23 +2039,21 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 }
 
 /* Settlement has its own reading flow, separate from the reward shop. */
-#pointsApp #fatRewardLayer .fat-settlement-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); width:100%; margin:0 0 20px; }
-#pointsApp #fatRewardLayer .fat-settlement-result { padding:25px 22px; text-align:center; background:linear-gradient(150deg,#f2f8f3,#fff); }
-#pointsApp #fatRewardLayer .fat-settlement-period { margin:0 0 18px; font-size:12px; color:var(--secondary); }
-#pointsApp #fatRewardLayer .fat-settlement-label { display:block; font-size:12px; color:var(--secondary); }
-#pointsApp #fatRewardLayer .fat-settlement-value { display:block; margin:12px 0 9px; color:var(--ui-accent,#567c67); font-size:48px; font-weight:650; letter-spacing:-2px; line-height:1.1; }
-#pointsApp #fatRewardLayer .fat-settlement-value small { margin-left:8px; font-size:23px; font-weight:450; }
-#pointsApp #fatRewardLayer .fat-settlement-value.deduction { color:#a16e62; }
-#pointsApp #fatRewardLayer .fat-settlement-condition { margin:14px 0; font-size:14px; color:var(--ink); }
-#pointsApp #fatRewardLayer .fat-settlement-meta { display:grid; gap:7px; color:var(--secondary); font-size:12px; line-height:1.5; }
-#pointsApp #fatRewardLayer .fat-settlement-footnote { margin:15px 0 0; color:var(--secondary); font-size:11px; line-height:1.6; }
-#pointsApp #fatRewardLayer .fat-settlement-evidence { margin:12px 0; }
-#pointsApp #fatRewardLayer .fat-settlement-evidence > summary { display:flex; align-items:center; justify-content:space-between; min-height:24px; gap:12px; font-size:14px; cursor:pointer; list-style:none; }
-#pointsApp #fatRewardLayer .fat-settlement-evidence > summary::-webkit-details-marker { display:none; }
-#pointsApp #fatRewardLayer .fat-settlement-evidence[open] > summary span { transform:rotate(45deg); }
-#pointsApp #fatRewardLayer .fat-settlement-other { margin-top:15px; padding-top:12px; border-top:1px solid var(--ui-line,#567c6718); font-size:12px; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-result { padding:25px 22px; text-align:center; background:linear-gradient(150deg,#f2f8f3,#fff); }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-period { margin:0 0 18px; font-size:12px; color:var(--secondary); }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-label { display:block; font-size:12px; color:var(--secondary); }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-value { display:block; margin:12px 0 9px; color:var(--ui-accent,#567c67); font-size:48px; font-weight:650; letter-spacing:-2px; line-height:1.1; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-value small { margin-left:8px; font-size:23px; font-weight:450; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-value.deduction { color:#a16e62; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-condition { margin:14px 0; font-size:14px; color:var(--ink); }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-meta { display:grid; gap:7px; color:var(--secondary); font-size:12px; line-height:1.5; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-footnote { margin:15px 0 0; color:var(--secondary); font-size:11px; line-height:1.6; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-evidence { margin:12px 0; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-evidence > summary { display:flex; align-items:center; justify-content:space-between; min-height:24px; gap:12px; font-size:14px; cursor:pointer; list-style:none; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-evidence > summary::-webkit-details-marker { display:none; }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-evidence[open] > summary span { transform:rotate(45deg); }
+#pointsApp :is(#fatRewardLayer,#fatSettlementSection) .fat-settlement-other { margin-top:15px; padding-top:12px; border-top:1px solid var(--ui-line,#567c6718); font-size:12px; }
 #pointsApp .fat-home-actions { flex-wrap:wrap; }
-#pointsApp .fat-home-actions .fat-settlement-button { background:var(--ui-wash,#edf5ef); }
 #pointsApp #fatSettlementUpdatesSlot .points-module-updates { margin-top:12px; }
 #pointsApp #fatSettlementUpdatesSlot summary { padding:12px 0; color:var(--secondary); font-size:12px; cursor:pointer; }
 
@@ -2311,9 +2314,10 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
 #pointsApp .home .admin-controls { gap:10px; }
 #pointsApp .home .wheel-actions.admin-wheel-actions { align-items:center!important; }
 #pointsApp .home .fat-home-actions {
-  position:relative; margin-top:16px; grid-template-rows:52px;
-  align-content:center; gap:10px;
+  position:relative; margin-top:16px; grid-template-columns:minmax(0,1fr); grid-template-rows:48px;
+  align-content:center; justify-items:stretch; gap:10px;
 }
+#pointsApp .home.fat-rewards-admin .fat-home-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
 #pointsApp .home .fat-home-actions > .fat-record-button { grid-row:1; }
 #pointsApp .home .fat-home-actions > .fat-diamond-summary {
   position:absolute; grid-area:auto; left:0; right:0; bottom:calc(50% + 33px); margin:0;
@@ -3171,7 +3175,7 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="settings-group">
 <button class="settings-row pressable" id="openVersionInfoBtn" type="button">
 <span>版本信息</span>
-<span class="settings-value">20261011.1</span>
+<span class="settings-value">20261011.2</span>
 <span class="chevron">›</span>
 </button>
 </div>
@@ -3186,8 +3190,8 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 </header>
 <div class="unified-sheet-body">
 <div class="settings-group">
-<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261011.1</span></div>
-<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/11 14:51</span></div>
+<div class="settings-row static"><span>当前版本</span><span class="settings-value" id="pointsCurrentVersion">20261011.2</span></div>
+<div class="settings-row static"><span>更新时间</span><span class="settings-value" id="pointsUpdatedAt">2026/10/11 16:57</span></div>
 <div class="settings-row static"><span>更新状态</span><span class="settings-value" id="pointsUpdateStatus">尚未检查</span></div>
 <button class="settings-row pressable" id="pointsCheckUpdateBtn" type="button"><span>检查更新</span><span class="chevron">›</span></button>
 <div class="settings-row static">
@@ -3220,9 +3224,9 @@ html.ios-pwa #pointsApp:has(> .app-nav) { top:0; bottom:auto; height:100vh!impor
 <div class="unified-sheet-body">
 <div class="sheet-subtitle" style="text-align:center">保持功能克制，只记录真正影响体验的更新。</div>
 <div class="release-block">
-<div class="release-head"><strong>20261011.1</strong><span>当前版本</span></div>
-<div class="release-date">2026/10/11 14:51</div>
-<ul class="release-list"><li>双方都可直接查看钻石结算，本周结果、历史与规则分开呈现。</li><li>计算依据默认折叠，历史显示实际奖扣；体重变化跟随公斤或斤设置。</li><li>精简减脂趋势提示，商城保留兑换、背包与服务。</li></ul>
+<div class="release-head"><strong>20261011.2</strong><span>当前版本</span></div>
+<div class="release-date">2026/10/11 16:57</div>
+<ul class="release-list"><li>减脂首页统一为记录与商城两个等宽按钮，结算归入总览。</li><li>总览通过趋势、记录、结算切换，计算依据、历史与规则按需展开。</li><li>钻石商城专注兑换、背包与服务，移除重复结算入口。</li></ul>
 </div>
 <div class="release-block previous">
 <div class="release-head"><strong>20261009.7</strong><span>上一版本</span></div>
@@ -4583,8 +4587,10 @@ window.PointsKitchenRecipes = [
         <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
           <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
           <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">记录</button>
+          <button class="overview-content-choice pressable" data-fat-section="settlement" role="tab" type="button">结算</button>
         </div>
         <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
+        <section id="fatSettlementSection" hidden><div id="fatSettlementContent"></div></section>
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
           <h2 class="section-title">趋势统计</h2>
           <div class="card glass fat-week-card" aria-live="polite">
@@ -4644,7 +4650,7 @@ window.PointsKitchenRecipes = [
     content.querySelector(".reward-message").insertBefore(content.querySelector(".fat-status-switch"),q("fatHomeMeta"));
     const overview = q("fatOverviewContent");
     const toolbar=document.createElement("div");toolbar.className="fat-overview-toolbar";
-    toolbar.append(overview.querySelector(".fat-status-switch"),q("fatContentSwitch"));overview.prepend(toolbar);
+    toolbar.append(q("fatContentSwitch"),overview.querySelector(".fat-status-switch"));overview.prepend(toolbar);
     const dialog = q("fatWeightLayer");
     let snapshot = null, logs = [], readError = false, logsError = false;
     let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
@@ -4845,10 +4851,13 @@ window.PointsKitchenRecipes = [
       if (!isActive) return;
       els.scoreOverviewContent.hidden = true; els.wheelOverviewContent.hidden = true;
       els.overviewTitle.textContent = "减脂总览";
-      els.overviewSubtitle.textContent = "按同类记录统计";
+      els.overviewSubtitle.textContent = "";
       const section = state.overviewSection;
       q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
       q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
+      q("fatSettlementSection").hidden = section !== "settlement";
+      overview.querySelector(".fat-status-switch").hidden = section === "settlement";
+      rewards?.render();
       q("fatContentSwitch").querySelectorAll("[data-fat-section]").forEach(btn => {
         const selected = btn.dataset.fatSection === section;
         btn.classList.toggle("active",selected); btn.setAttribute("aria-selected",String(selected));
@@ -4870,9 +4879,10 @@ window.PointsKitchenRecipes = [
       return Math.max(0,Math.min(landingPeekHeight,shell.scrollHeight || landingPeekHeight,shell.getBoundingClientRect().height || landingPeekHeight));
     }
     function chooseSection(section, expand=true) {
-      if (!active() || !["trend","calendar"].includes(section)) return;
+      if (!active() || !["trend","calendar","settlement"].includes(section)) return;
       state.overviewSection = section; renderOverview();
       if (expand) { ui.setOverviewMode("full"); els.overviewShell.scrollTop = 0; }
+      if (section === "settlement") void rewards?.refresh();
     }
     function activate() {
       state.activeMetric = "fat"; ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
@@ -5203,7 +5213,7 @@ window.PointsKitchenRecipes = [
     window.visualViewport?.addEventListener("resize",resizeOverview,{passive:true});
     try {
       if (!window.PointsFatRewards) throw new Error("Rewards module missing");
-      rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin,formatChange:value=>value===null || value===undefined?"暂无对比":Number(value)===0?"均重持平":`均重${Number(value)<0?"下降":"上升"} ${number(value)} ${unitName()}`});
+      rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin,openSettlement:()=>{ui.openOverviewSheet();chooseSection("settlement");},formatChange:value=>value===null || value===undefined?"暂无对比":Number(value)===0?"均重持平":`均重${Number(value)<0?"下降":"上升"} ${number(value)} ${unitName()}`});
     } catch (_) { window.PointsRuntime?.report("rewards"); }
     syncUnits(); adminRendered(); renderHome();
     return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:()=>rewards?.openServices(),openSettlement:()=>rewards?.openSettlement() };
@@ -5217,7 +5227,7 @@ window.PointsKitchenRecipes = [
   "use strict";
   window.PointsFatRewards = { attach };
 
-  function attach({db, state, els, ui, isAdmin, formatChange}) {
+  function attach({db, state, els, ui, isAdmin, formatChange, openSettlement}) {
     const q = id => document.getElementById(id);
     const active = () => state.activeMetric === "fat";
     const role = () => isAdmin() ? `admin:${state.session?.user?.id}` : state.session ? "verifying" : "guest";
@@ -5229,16 +5239,14 @@ window.PointsKitchenRecipes = [
     const labels = {pending_service:"等待宝宝进行服务", pending_confirmation:"宝宝已经进行服务，等待哥哥确认", completed:"本次服务兑换完毕", returned:"哥哥未确认，已退回背包"};
     let data = null, error = "", lastRead = 0, generation = 0, inflight = null, busy = false;
     let roleKey = role(), page = "shop", shopView = "products", confirmation = null, previousFocus = null;
-    let services = [], more = false, paging = false, detailView = null;
+    let services = [], more = false, paging = false;
     let drag = null, suppressClickUntil = 0;
     const operations = new Map();
     const diamond = '<svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M11 9h26l8 12-21 24L3 21 11 9Z"/><path d="m11 9 7 12 6-12 6 12 7-12M3 21h42M18 21l6 24 6-24"/></svg>';
 
     els.home.querySelector(".fat-home-actions").insertAdjacentHTML("beforeend", `
       <button class="fat-record-button pressable" id="fatDiamondShopBtn" type="button" hidden>钻石商城</button>
-      <button class="fat-record-button pressable fat-settlement-button" id="fatSettlementBtn" type="button">钻石结算</button>
       <button class="fat-record-button pressable" id="fatServicesBtn" type="button">服务详情</button>
-      <div class="fat-diamond-summary" id="fatDiamondSummary" aria-live="polite" hidden></div>
       <button class="fat-service-notice pressable" id="fatServiceNotice" type="button" hidden></button>`);
     document.querySelector("main.app").insertAdjacentHTML("beforeend", `
       <div class="modal-layer fat-reward-layer" id="fatRewardLayer" aria-hidden="true">
@@ -5286,12 +5294,12 @@ window.PointsKitchenRecipes = [
     function close() {
       if (busy) return;
       resetDrag();
-      ui.setLayer(layer, false); confirmation = null; detailView = null;
+      ui.setLayer(layer, false); confirmation = null;
       if (previousFocus?.isConnected && active()) previousFocus.focus();
     }
     async function open(next) {
       if (!active() || roleKey === "verifying" || (next === "shop" && !admin())) return;
-      previousFocus = document.activeElement; page = next; shopView = "products"; confirmation = null; detailView = next === "settlement" ? "progress" : null;
+      previousFocus = document.activeElement; page = next; shopView = "products"; confirmation = null;
       resetDrag(); sheet.scrollTop = 0;
       ui.setLayer(layer, true); render(); focusPanel();
       await refresh(true);
@@ -5316,6 +5324,7 @@ window.PointsKitchenRecipes = [
       more = result.more; data = result; error = ""; lastRead = Date.now();
       body.dataset.pointsSynced = 'true';
       if (changed) render();
+      else renderSettlement();
     }
     async function refresh(force=false) {
       if (!active() || roleKey === "verifying" || busy) return false;
@@ -5323,6 +5332,7 @@ window.PointsKitchenRecipes = [
       if (!force && data && Date.now() - lastRead < 15000) return true;
       const version = generation;
       body.dataset.pointsSynced = 'false';
+      renderSettlement();
       const request = (async () => {
         try {
           const {data:result, error:e} = await db.rpc("points_fat_reward_get_state");
@@ -5380,13 +5390,7 @@ window.PointsKitchenRecipes = [
       if (!Number(p.current_days) && !Number(p.previous_days) && p.reference_available === false) return "还没有可比较的记录";
       if (p.comparison_basis !== "starting_weight" && Number(p.previous_days) < 3) return "上周记录不足，本周暂不奖扣";
       const missing = Math.max(0, 3 - Number(p.current_days || 0));
-      return missing ? `本周还差 ${missing} 个有效记录日` : "缺少比较基准，本周暂不奖扣";
-    }
-    function progressSummary() {
-      const p = data?.preview;
-      if (!p) return "结算数据待同步";
-      if (p.settled) return `本周已结算 ${signed(p.applied_delta ?? data.weeks?.find(w=>w.week===p.week)?.applied_delta ?? 0)} ◇`;
-      return p.eligible ? `本周预计 ${signed(p.calculated_delta)} ◇` : condition(p);
+      return missing ? `本周还差 ${missing} 天记录` : "缺少比较基准，本周暂不奖扣";
     }
     function weekLabel(week) {
       const d = new Date(week + "T00:00:00+08:00");
@@ -5398,27 +5402,38 @@ window.PointsKitchenRecipes = [
     function evidence(p) {
       return `<dl class="fat-reward-stat-list"><div><dt>有效记录</dt><dd>本周 ${escape(p.current_days)} 天${p.comparison_basis==="starting_weight"?"":` · 上周 ${escape(p.previous_days)} 天`}</dd></div><div><dt>比较基准</dt><dd>${p.comparison_basis==="starting_weight"?"首周对比起始体重":"同类记录的两周均重"}</dd></div><div><dt>均重变化</dt><dd>${escape(change(p.change_jin))}</dd></div></dl>`;
     }
-    function renderRewardDetails() {
+    function renderRewardDetails(view = "progress") {
       const p = data.preview;
-      const tabs = `<nav class="shop-tabs fat-settlement-tabs" role="tablist" aria-label="钻石结算内容">${[["progress","本周"],["history","历史"],["rules","规则"]].map(([view,title])=>`<button class="shop-tab pressable${view===detailView?" active":""}" data-fat-reward-action="${view}" role="tab" aria-selected="${view===detailView}" type="button">${title}</button>`).join("")}</nav>`;
-      if (!p) return `${tabs}<div class="fat-reward-card"><h3>结算详情暂未开放</h3><p>请管理员执行本次结算增量 SQL，再同步查看。</p>${actionButton("refresh","重新同步")}</div>`;
-      if (detailView === "progress") {
+      if (!p) return `<div class="fat-reward-card"><h3>结算暂不可用</h3><p>请稍后重试；若持续不可用，请管理员检查配置。</p>${actionButton("refresh","重新同步")}</div>`;
+      if (view === "progress") {
         const settled = p.settled === true;
         const actual = p.applied_delta ?? data.weeks?.find(w=>w.week===p.week)?.applied_delta;
         const result = settled ? actual : p.eligible ? p.calculated_delta : null;
         const selected = p.bowel_status ? bowelLabel(p.bowel_status) : "";
-        const reason = settled ? p.eligible ? "本周结果已固定" : "本周未奖扣" : condition(p);
+        const reason = settled ? Number(result)>0 ? "已到账" : Number(result)<0 ? "已扣除" : "本周未奖扣" : condition(p);
         const cutoff = settled ? data.weeks?.find(w=>w.week===p.week)?.cutoff : data.next_cutoff;
         const next = data.next_cutoff;
-        return `${tabs}<section class="fat-reward-card fat-settlement-result"><p class="fat-settlement-period">${escape(weekLabel(p.week))}</p><span class="fat-settlement-label">${settled?"本周实际结算":"本周预计"}</span><strong class="fat-settlement-value${Number(result)<0?" deduction":""}">${result===null?"—":escape(signed(result))}<small>◇</small></strong><p class="fat-settlement-condition">${escape(reason)}</p><div class="fat-settlement-meta">${selected?`<span>${escape(selected)} · ${escape(p.current_days)} 个有效记录日</span>`:""}<span>${settled?`下次结算 ${escape(stamp(next))}`:`${escape(stamp(cutoff))} 结算 · 北京时间`}</span></div>${!settled&&p.eligible?'<p class="fat-settlement-footnote">预计尚未到账，以结算时的记录为准</p>':""}${settled&&actual!==undefined&&Number(actual)!==Number(p.calculated_delta)?`<p class="fat-settlement-footnote">原应 ${escape(signed(p.calculated_delta))} ◇，余额不足，仅扣剩余钻石</p>`:""}</section><details class="fat-reward-card fat-settlement-evidence"><summary>计算依据<span aria-hidden="true">＋</span></summary>${evidence(p)}${!p.bowel_status?`<p>${escape(condition(p))}</p>`:""}${(p.series||[]).filter(x=>x.bowel_status!==p.bowel_status).map(x=>`<details class="fat-settlement-other"><summary>${escape(bowelLabel(x.bowel_status))}${p.bowel_status?" · 未采用":""}</summary><p>${escape(condition(x))}</p>${evidence(x)}</details>`).join("")}<p class="fat-settlement-footnote">每周只结算一类；达标类别按有效记录日数选择，相同优先已排便。</p></details>`;
+        return `<section class="fat-reward-card fat-settlement-result"><p class="fat-settlement-period">${escape(weekLabel(p.week))}</p><span class="fat-settlement-label">${settled?"本周实际结算":"本周预计"}</span><strong class="fat-settlement-value${Number(result)<0?" deduction":""}">${result===null?"—":escape(signed(result))}<small>◇</small></strong><p class="fat-settlement-condition">${escape(reason)}</p><div class="fat-settlement-meta">${selected?`<span>${escape(selected)} · ${escape(p.current_days)} 天记录</span>`:""}<span>${settled?`下次结算 ${escape(stamp(next))}`:`${escape(stamp(cutoff))} 结算 · 北京时间`}</span></div>${!settled&&p.eligible?'<p class="fat-settlement-footnote">预计尚未到账，以结算时的记录为准</p>':""}${settled&&actual!==undefined&&Number(actual)!==Number(p.calculated_delta)?`<p class="fat-settlement-footnote">原应 ${escape(signed(p.calculated_delta))} ◇，余额不足，仅扣剩余钻石</p>`:""}</section><details class="fat-reward-card fat-settlement-evidence" data-settlement-fold="evidence"><summary>计算依据<span aria-hidden="true">＋</span></summary>${evidence(p)}${!p.bowel_status?`<p>${escape(condition(p))}</p>`:""}${(p.series||[]).filter(x=>x.bowel_status!==p.bowel_status).map(x=>`<details class="fat-settlement-other"><summary>${escape(bowelLabel(x.bowel_status))}${p.bowel_status?" · 未采用":""}</summary><p>${escape(condition(x))}</p>${evidence(x)}</details>`).join("")}<p class="fat-settlement-footnote">每周只结算一类；达标类别按有效记录日数选择，相同优先已排便。</p></details>`;
       }
-      if (detailView === "history") return `${tabs}${(data.weeks||[]).map(w=>`<details class="fat-reward-card fat-reward-history"><summary><span>${escape(weekLabel(w.week))}<small>${w.eligible?"已结算":"未奖扣"}</small></span><strong>${escape(signed(w.applied_delta))} ◇</strong></summary><div class="fat-reward-history-detail"><p>${w.rule_version===2?(w.bowel_status?escape(bowelLabel(w.bowel_status)):"无达标类别"):"旧版结算"}</p>${evidence(w)}${w.applied_delta!==w.calculated_delta?`<p>原应 ${escape(signed(w.calculated_delta))} ◇，余额不足</p>`:""}<p class="fat-settlement-footnote">${escape(stamp(w.cutoff))} · 结算后余额 ${escape(w.balance_after)} ◇</p></div></details>`).join("")||'<p class="fat-reward-empty">还没有结算记录</p>'}`;
-      return `${tabs}<div class="fat-reward-rules"><section class="fat-reward-card"><h3>每周日 12:00 结算</h3><p>北京时间。每周结算一次，钻石余额最低为 0。</p></section><section class="fat-reward-card"><h3>下降奖，上升扣</h3><p>均重下降满 1 斤（0.5 公斤）奖励 1 ◇，不足不奖励。</p><p>上升不足 1 斤扣 1 ◇；达到 1 斤按整斤扣。持平不奖扣。</p></section><details class="fat-reward-card fat-settlement-evidence"><summary>记录与比较方式<span aria-hidden="true">＋</span></summary><p>未排便、已排便分别统计，同类每天取最早一笔，漏记不补值。</p><p>每类首周记录至少 3 天，对比同一个起始体重；以后本周和上周各至少 3 天。</p><p>两类都达标时，采用本周有效记录日更多的一类，相同优先已排便，不按奖励多少选择。</p></details><details class="fat-reward-card fat-settlement-evidence"><summary>截止时间与历史结果<span aria-hidden="true">＋</span></summary><p>统计本周一至周日 12:00 前的记录；截止后的记录不计入本周，也不移到下周。</p><p>结算后补录、删除记录或修改起始体重不改变已结算奖扣。下周沿用上周结算时的均重。</p></details>${data.status_rules!==2?'<p class="fat-reward-empty">当前仍使用旧版规则，请管理员确认分类升级。</p>':""}</div>`;
+      if (view === "history") return (data.weeks||[]).map(w=>`<details class="fat-reward-card fat-reward-history"><summary><span>${escape(weekLabel(w.week))}<small>${w.eligible?"已结算":"未奖扣"}</small></span><strong>${escape(signed(w.applied_delta))} ◇</strong></summary><div class="fat-reward-history-detail"><p>${w.rule_version===2?(w.bowel_status?escape(bowelLabel(w.bowel_status)):"无达标类别"):"旧版结算"}</p>${evidence(w)}${w.applied_delta!==w.calculated_delta?`<p>原应 ${escape(signed(w.calculated_delta))} ◇，余额不足</p>`:""}<p class="fat-settlement-footnote">${escape(stamp(w.cutoff))} · 结算后余额 ${escape(w.balance_after)} ◇</p></div></details>`).join("")||'<p class="fat-reward-empty">还没有结算记录</p>';
+      return `<div class="fat-reward-rules"><section class="fat-reward-card"><h3>每周日 12:00 结算</h3><p>北京时间。每周结算一次，钻石余额最低为 0。</p></section><section class="fat-reward-card"><h3>下降奖，上升扣</h3><p>均重下降满 1 斤（0.5 公斤）奖励 1 ◇，不足不奖励。</p><p>上升不足 1 斤扣 1 ◇；达到 1 斤按整斤扣。持平不奖扣。</p></section><details class="fat-reward-card fat-settlement-evidence"><summary>记录与比较方式<span aria-hidden="true">＋</span></summary><p>未排便、已排便分别统计，同类每天取最早一笔，漏记不补值。</p><p>每类首周记录至少 3 天，对比同一个起始体重；以后本周和上周各至少 3 天。</p><p>两类都达标时，采用本周有效记录日更多的一类，相同优先已排便，不按奖励多少选择。</p></details><details class="fat-reward-card fat-settlement-evidence"><summary>截止时间与历史结果<span aria-hidden="true">＋</span></summary><p>统计本周一至周日 12:00 前的记录；截止后的记录不计入本周，也不移到下周。</p><p>结算后补录、删除记录或修改起始体重不改变已结算奖扣。下周沿用上周结算时的均重。</p></details>${data.status_rules!==2?'<p class="fat-reward-empty">当前仍使用旧版规则，请管理员确认分类升级。</p>':""}</div>`;
     }
     function serviceCard(request) {
       const statuses = {pending_service:"待服务", pending_confirmation:"待确认", completed:"已完成", returned:"已退回"};
       return `<article class="fat-reward-card fat-reward-service-card"><div class="fat-reward-service-head"><h3>口一次</h3><span class="fat-reward-status" title="${escape(labels[request.status] || "状态待同步")}">${statuses[request.status] || "待同步"}</span></div><p>${escape(stamp(request.requested_at))} · #${escape(request.id)}</p><div class="fat-reward-actions">${request.status === "pending_service" && !admin() ? actionButton("serviced", "已进行服务", false, request.id) : request.status === "pending_confirmation" && admin() ? `${actionButton("confirm", "确认完成", false, request.id)}${actionButton("return", "退回背包", false, request.id)}` : ""}</div><details class="fat-reward-service-times"><summary>时间详情</summary><p>请求：${escape(stamp(request.requested_at))}</p>${request.serviced_at ? `<p>已服务：${escape(stamp(request.serviced_at))}</p>` : ""}${request.resolved_at ? `<p>处理：${escape(stamp(request.resolved_at))}</p>` : ""}</details></article>`;
     }
+    function renderSettlement() {
+      const target = q("fatSettlementContent");
+      target.dataset.pointsSynced = body.dataset.pointsSynced || "false";
+      const html = !data ? `<p class="fat-reward-empty">${error ? escape(error) : "正在同步结算"}</p>${actionButton("refresh","重新同步")}` : `${error ? `<p class="fat-reward-error">${escape(error)}</p>` : ""}${renderRewardDetails()}${data.preview ? `<details class="fat-reward-card fat-settlement-evidence" data-settlement-fold="history"><summary>结算历史<span aria-hidden="true">＋</span></summary>${renderRewardDetails("history")}</details><details class="fat-reward-card fat-settlement-evidence" data-settlement-fold="rules"><summary>奖励规则<span aria-hidden="true">＋</span></summary>${renderRewardDetails("rules")}</details>` : ""}<div id="fatSettlementUpdatesSlot" data-points-synced="${target.dataset.pointsSynced}"></div>`;
+      if (target.dataset.rendered === html) return;
+      const opened = new Set([...target.querySelectorAll("details[open]")].map(el=>el.dataset.settlementFold).filter(Boolean));
+      target.innerHTML = html; target.dataset.rendered = html;
+      target.querySelectorAll("[data-settlement-fold]").forEach(el=>el.open=opened.has(el.dataset.settlementFold));
+    }
+    q("fatSettlementContent").addEventListener("click", event=>{
+      if (event.target.closest('[data-fat-reward-action="refresh"]')) void refresh(true);
+    });
     function render() {
       body.dataset.updatesView = '';
       const isActive = active(), isAdministrator = admin();
@@ -5427,35 +5442,31 @@ window.PointsKitchenRecipes = [
       q("fatServicesBtn").hidden = isAdministrator;
       q("fatDiamondShopBtn").disabled = busy;
       q("fatServicesBtn").disabled = busy || roleKey === "verifying";
-      q("fatDiamondSummary").hidden = !isAdministrator;
-      q("fatSettlementBtn").disabled = busy || roleKey === "verifying";
-      q("fatDiamondSummary").textContent = data ? `◇ ${data.diamonds} 颗钻石 · 背包 ${data.backpack} 次` : error ? "钻石待同步 · 打开商城重试" : "正在同步钻石";
       const pending = Number(data?.pending_confirmation || 0);
       q("fatServiceNotice").hidden = !isAdministrator || !pending;
-      q("fatServiceNotice").textContent = `宝宝已经进行服务，是否确认？（${pending} 次）`;
+      q("fatServiceNotice").textContent = `${pending} 个服务待确认 ›`;
+      q("fatServicesBtn").textContent = `服务${Number(data?.pending_service)>0?` · ${data.pending_service} 待处理`:""}`;
+      renderSettlement();
       if (!isActive && layer.classList.contains("open") && !busy) close();
       if (!layer.classList.contains("open")) return;
-      q("fatRewardTitle").textContent = page === "settlement" ? "钻石结算" : page === "services" ? "服务详情" : "钻石商城";
+      q("fatRewardTitle").textContent = page === "services" ? "服务" : "钻石商城";
       q("fatRewardGrabber").setAttribute("aria-disabled",String(busy));
       q("fatRewardError").hidden = !error; q("fatRewardError").textContent = error;
       if (!data) { body.innerHTML = '<p class="fat-reward-empty">等待同步奖励数据</p>'; return; }
       const tabs = [["products","商品",0],["inventory","背包",data.backpack],["services","服务",pending]];
-      const navigation = isAdministrator && page !== "settlement" ? `<section class="fat-reward-wallet" aria-label="钻石余额"><strong><span aria-hidden="true">${diamond}</span>${escape(data.diamonds)}</strong><span>我的钻石</span></section><nav class="shop-tabs fat-reward-tabs" role="tablist" aria-label="减脂奖励页面">${tabs.map(([action,title,count]) => `<button class="shop-tab pressable${(action === "services" ? page === "services" : page === "shop" && shopView === action) ? " active" : ""}" data-fat-reward-action="${action}" role="tab" aria-selected="${action === "services" ? page === "services" : page === "shop" && shopView === action}" type="button"${busy ? " disabled" : ""}>${title}${Number(count) > 0 ? `<span class="fat-reward-tab-count">${escape(count)}</span>` : ""}</button>`).join("")}</nav>` : "";
-      if (page === "settlement") { body.dataset.updatesView='fat'; body.innerHTML=renderRewardDetails()+`<div id="fatSettlementUpdatesSlot" data-points-synced="${body.dataset.pointsSynced}"></div>`; return; }
+      const navigation = isAdministrator ? `<section class="fat-reward-wallet" aria-label="钻石余额"><strong><span aria-hidden="true">${diamond}</span>${escape(data.diamonds)}</strong><span>我的钻石</span></section><nav class="shop-tabs fat-reward-tabs" role="tablist" aria-label="减脂奖励页面">${tabs.map(([action,title,count]) => `<button class="shop-tab pressable${(action === "services" ? page === "services" : page === "shop" && shopView === action) ? " active" : ""}" data-fat-reward-action="${action}" role="tab" aria-selected="${action === "services" ? page === "services" : page === "shop" && shopView === action}" type="button"${busy ? " disabled" : ""}>${title}${Number(count) > 0 ? `<span class="fat-reward-tab-count">${escape(count)}</span>` : ""}</button>`).join("")}</nav>` : "";
       if (confirmation) {
         const {action,id} = confirmation;
         const message = {buy:hasRetry("buy") ? "确认上次兑换的结果，不会重复扣钻石。" : "花费 1 颗钻石兑换口一次，放入背包。", use:hasRetry("use") ? "确认上次使用的结果，不会重复发起服务。" : "使用背包中的口一次，向宝宝发起服务请求。", serviced:"确认已经进行本次服务，并交给哥哥确认？", confirm:"确认宝宝已经进行服务，完成本次兑换？", return:"选择否：将口一次退回背包，之后可以重新发起请求。"}[action];
         body.innerHTML = `${navigation}<div class="fat-reward-card fat-reward-confirm"><h3>${{buy:"确认兑换",use:"使用奖励",serviced:"确认已服务",confirm:"确认完成",return:"退回背包"}[action]}</h3><p>${message}</p><div class="fat-reward-actions">${actionButton("submit", busy ? "正在处理…" : "确认", false, id)}${actionButton("cancel", "返回")}</div></div>`; return;
       }
       if (page === "shop") {
-        if (detailView) { body.dataset.updatesView='fat';body.innerHTML = renderRewardDetails(); return; }
         if (shopView === "inventory") {
           body.innerHTML = `${navigation}<div class="shop-inventory-row fat-reward-inventory"><div class="shop-inventory-icon shop-theme-potion">${diamond}</div><div class="shop-inventory-copy"><strong>口 × ${escape(data.backpack)}</strong><small>使用后发起服务请求</small></div>${actionButton("use", hasRetry("use") ? "重试使用" : "使用", !hasRetry("use") && data.backpack < 1)}</div>${data.backpack < 1 && !hasRetry("use") ? '<p class="fat-reward-empty">兑换的奖励会保存在这里</p>' : ""}`;
           return;
         }
         const canBuy = hasRetry("buy") || data.diamonds >= 1;
-        body.dataset.updatesView = 'fat';
-        body.innerHTML = `${navigation}<section class="fat-reward-product"><div class="fat-reward-product-top"><div class="fat-reward-product-art">${diamond}</div><div class="fat-reward-product-copy"><h3>口一次</h3><p>兑换后存入背包</p></div></div><div class="fat-reward-product-bottom"><strong>◇ 1 <span>颗钻石</span></strong>${actionButton("buy", hasRetry("buy") ? "重试兑换" : canBuy ? "兑换" : "钻石不足", !canBuy)}</div></section><button class="fat-reward-progress-link pressable" data-fat-reward-action="progress" type="button"><span>${escape(progressSummary())}</span><span>详情 <span aria-hidden="true">›</span></span></button>`;
+        body.innerHTML = `${navigation}<section class="fat-reward-product"><div class="fat-reward-product-top"><div class="fat-reward-product-art">${diamond}</div><div class="fat-reward-product-copy"><h3>口一次</h3><p>兑换后存入背包</p></div></div><div class="fat-reward-product-bottom"><strong>◇ 1 <span>颗钻石</span></strong>${actionButton("buy", hasRetry("buy") ? "重试兑换" : canBuy ? "兑换" : "钻石不足", !canBuy)}</div></section>`;
       } else {
         body.dataset.updatesView = 'services';
         const pendingRows = services.filter(r => ["pending_service","pending_confirmation"].includes(r.status));
@@ -5466,7 +5477,7 @@ window.PointsKitchenRecipes = [
     function roleChanged() {
       const next = role();
       if (next !== roleKey) {
-        roleKey = next; generation++; data = null; services = []; more = false; error = ""; lastRead = 0; inflight = null; confirmation = null; detailView = null;
+        roleKey = next; generation++; data = null; services = []; more = false; error = ""; lastRead = 0; inflight = null; confirmation = null;
         resetDrag(); ui.setLayer(layer, false); body.replaceChildren(); operations.clear();
       }
       render(); if (active()) void refresh();
@@ -5477,15 +5488,13 @@ window.PointsKitchenRecipes = [
       const action = button.dataset.fatRewardAction, id = button.dataset.requestId;
       if (action === "refresh") { void refresh(true); return; }
       if (["products","inventory"].includes(action) && !admin()) return;
-      if (["products","inventory","services"].includes(action)) { page = action === "services" ? "services" : "shop"; if (page === "shop") shopView = action; confirmation = null; detailView = null; sheet.scrollTop = 0; render(); }
-      else if (["progress","rules","history"].includes(action)) { detailView = action; page = "settlement"; shopView = "products"; sheet.scrollTop = 0; render(); }
+      if (["products","inventory","services"].includes(action)) { page = action === "services" ? "services" : "shop"; if (page === "shop") shopView = action; confirmation = null; sheet.scrollTop = 0; render(); }
       else if (action === "more") void loadMore();
       else if (action === "cancel") { confirmation = null; render(); }
       else if (action === "submit" && confirmation) void mutate(confirmation.action, confirmation.id);
       else if (["buy","use","serviced","confirm","return"].includes(action)) { confirmation = {action,id}; render(); }
       focusPanel();
     });
-    q("fatSettlementBtn").addEventListener("click", () => void open("settlement"));
     q("fatDiamondShopBtn").addEventListener("click", () => void open("shop"));
     q("fatServicesBtn").addEventListener("click", () => void open("services"));
     q("fatServiceNotice").addEventListener("click", () => void open("services"));
@@ -5538,7 +5547,7 @@ window.PointsKitchenRecipes = [
       lastResume = Date.now(); void refresh(true);
     };
     document.addEventListener("visibilitychange", resume); window.addEventListener("focus", resume); window.addEventListener("pageshow", resume);
-    render(); return {refresh, render, roleChanged,openServices:()=>open('services'),openSettlement:async()=>{await open('settlement');if(layer.classList.contains('open')){detailView='history';render();}}};
+    render(); return {refresh, render, roleChanged,openServices:()=>open('services'),openSettlement:()=>openSettlement?.()};
   }
 })();
 
@@ -5966,7 +5975,7 @@ window.PointsKitchenRecipes = [
         ['[data-metric="fat"]',has('fat','services')],['#redeemRewardBtn,[data-shop-view="inventory"]',has('assets')],
         ['.app-nav [data-value="world"]',has('score','wheel','withdrawals','assets','fat','services','devices')],
         ['.app-nav [data-value="kitchen"],[data-kitchen-action="tab"][data-value="orders"]',has('kitchen')],
-        ['#fatSettlementBtn',has('fat')],['#fatDiamondShopBtn',has('services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
+        ['[data-fat-section="settlement"]',has('fat')],['#fatDiamondShopBtn',has('services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
         ['#pointsAccessDevices',has('devices')],['#settingsBtn,[data-kitchen-action="settings"]',has('devices')],
         ['#overviewBtn',has(state.activeMetric==='wheel'?'wheel':state.activeMetric==='fat'?'fat':'score',state.activeMetric==='wheel'?'withdrawals':'')]
       ];
@@ -6010,8 +6019,8 @@ window.PointsKitchenRecipes = [
       mount('kitchen',kitchen,['kitchen'],document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.getAttribute('aria-selected')==='true');
       const reward=q('fatRewardBody');
       const settlement=q('fatSettlementUpdatesSlot');
-      if(settlement && settlement.dataset.pointsSynced!==reward?.dataset.pointsSynced)settlement.dataset.pointsSynced=reward?.dataset.pointsSynced;
-      mount('rewards',settlement||reward,[reward?.dataset.updatesView],!!reward?.dataset.updatesView);
+      mount('fat-settlement',settlement,['fat']);
+      mount('rewards',reward,['services'],reward?.dataset.updatesView==='services');
       mount('devices',q('pointsAccessDeviceList'),['devices']);badges();
     }
     async function acknowledge(row) {

@@ -31,7 +31,7 @@
         ['[data-metric="fat"]',has('fat','services')],['#redeemRewardBtn,[data-shop-view="inventory"]',has('assets')],
         ['.app-nav [data-value="world"]',has('score','wheel','withdrawals','assets','fat','services','devices')],
         ['.app-nav [data-value="kitchen"],[data-kitchen-action="tab"][data-value="orders"]',has('kitchen')],
-        ['#fatSettlementBtn',has('fat')],['#fatDiamondShopBtn',has('services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
+        ['[data-fat-section="settlement"]',has('fat')],['#fatDiamondShopBtn',has('services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
         ['#pointsAccessDevices',has('devices')],['#settingsBtn,[data-kitchen-action="settings"]',has('devices')],
         ['#overviewBtn',has(state.activeMetric==='wheel'?'wheel':state.activeMetric==='fat'?'fat':'score',state.activeMetric==='wheel'?'withdrawals':'')]
       ];
@@ -75,8 +75,8 @@
       mount('kitchen',kitchen,['kitchen'],document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.getAttribute('aria-selected')==='true');
       const reward=q('fatRewardBody');
       const settlement=q('fatSettlementUpdatesSlot');
-      if(settlement && settlement.dataset.pointsSynced!==reward?.dataset.pointsSynced)settlement.dataset.pointsSynced=reward?.dataset.pointsSynced;
-      mount('rewards',settlement||reward,[reward?.dataset.updatesView],!!reward?.dataset.updatesView);
+      mount('fat-settlement',settlement,['fat']);
+      mount('rewards',reward,['services'],reward?.dataset.updatesView==='services');
       mount('devices',q('pointsAccessDeviceList'),['devices']);badges();
     }
     async function acknowledge(row) {

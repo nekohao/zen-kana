@@ -60,8 +60,10 @@
         <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
           <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
           <button class="overview-content-choice pressable" data-fat-section="calendar" role="tab" type="button">记录</button>
+          <button class="overview-content-choice pressable" data-fat-section="settlement" role="tab" type="button">结算</button>
         </div>
         <div class="fat-overview-status" id="fatOverviewStatus" hidden></div>
+        <section id="fatSettlementSection" hidden><div id="fatSettlementContent"></div></section>
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
           <h2 class="section-title">趋势统计</h2>
           <div class="card glass fat-week-card" aria-live="polite">
@@ -121,7 +123,7 @@
     content.querySelector(".reward-message").insertBefore(content.querySelector(".fat-status-switch"),q("fatHomeMeta"));
     const overview = q("fatOverviewContent");
     const toolbar=document.createElement("div");toolbar.className="fat-overview-toolbar";
-    toolbar.append(overview.querySelector(".fat-status-switch"),q("fatContentSwitch"));overview.prepend(toolbar);
+    toolbar.append(q("fatContentSwitch"),overview.querySelector(".fat-status-switch"));overview.prepend(toolbar);
     const dialog = q("fatWeightLayer");
     let snapshot = null, logs = [], readError = false, logsError = false;
     let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
@@ -322,10 +324,13 @@
       if (!isActive) return;
       els.scoreOverviewContent.hidden = true; els.wheelOverviewContent.hidden = true;
       els.overviewTitle.textContent = "减脂总览";
-      els.overviewSubtitle.textContent = "按同类记录统计";
+      els.overviewSubtitle.textContent = "";
       const section = state.overviewSection;
       q("fatLanding").hidden = !!section; q("fatContentSwitch").hidden = !section;
       q("fatTrendSection").hidden = section !== "trend"; q("fatCalendarSection").hidden = section !== "calendar";
+      q("fatSettlementSection").hidden = section !== "settlement";
+      overview.querySelector(".fat-status-switch").hidden = section === "settlement";
+      rewards?.render();
       q("fatContentSwitch").querySelectorAll("[data-fat-section]").forEach(btn => {
         const selected = btn.dataset.fatSection === section;
         btn.classList.toggle("active",selected); btn.setAttribute("aria-selected",String(selected));
@@ -347,9 +352,10 @@
       return Math.max(0,Math.min(landingPeekHeight,shell.scrollHeight || landingPeekHeight,shell.getBoundingClientRect().height || landingPeekHeight));
     }
     function chooseSection(section, expand=true) {
-      if (!active() || !["trend","calendar"].includes(section)) return;
+      if (!active() || !["trend","calendar","settlement"].includes(section)) return;
       state.overviewSection = section; renderOverview();
       if (expand) { ui.setOverviewMode("full"); els.overviewShell.scrollTop = 0; }
+      if (section === "settlement") void rewards?.refresh();
     }
     function activate() {
       state.activeMetric = "fat"; ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
@@ -680,7 +686,7 @@
     window.visualViewport?.addEventListener("resize",resizeOverview,{passive:true});
     try {
       if (!window.PointsFatRewards) throw new Error("Rewards module missing");
-      rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin,formatChange:value=>value===null || value===undefined?"暂无对比":Number(value)===0?"均重持平":`均重${Number(value)<0?"下降":"上升"} ${number(value)} ${unitName()}`});
+      rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin,openSettlement:()=>{ui.openOverviewSheet();chooseSection("settlement");},formatChange:value=>value===null || value===undefined?"暂无对比":Number(value)===0?"均重持平":`均重${Number(value)<0?"下降":"上升"} ${number(value)} ${unitName()}`});
     } catch (_) { window.PointsRuntime?.report("rewards"); }
     syncUnits(); adminRendered(); renderHome();
     return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:()=>rewards?.openServices(),openSettlement:()=>rewards?.openSettlement() };

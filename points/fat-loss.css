@@ -71,6 +71,14 @@
 @media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
 
 .fat-overview .fat-status-switch { margin:0; }
+#pointsApp #fatContentSwitch { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); width:100%; gap:4px; }
+#pointsApp #fatContentSwitch .overview-content-choice { width:100%; min-width:0; text-align:center; }
+#pointsApp .fat-overview-toolbar > .fat-status-switch { margin-top:4px; }
+#pointsApp #fatSettlementSection .fat-reward-card { background:rgba(255,255,255,.7); border-color:var(--ui-line,#567c6718); box-shadow:none; }
+#pointsApp #fatSettlementSection .fat-settlement-result { margin-top:0; }
+#pointsApp #fatSettlementSection .fat-reward-card p { font-size:12px; line-height:1.6; }
+#pointsApp #fatSettlementSection .fat-reward-card > summary { list-style:none; }
+#pointsApp #fatSettlementSection .fat-reward-card > summary::-webkit-details-marker { display:none; }
 
 /* One compact measurement filter, visually quieter than the module navigation. */
 #pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; align-items:center; height:auto; min-height:44px; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }

@@ -255,9 +255,10 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
 #pointsApp .home .admin-controls { gap:10px; }
 #pointsApp .home .wheel-actions.admin-wheel-actions { align-items:center!important; }
 #pointsApp .home .fat-home-actions {
-  position:relative; margin-top:16px; grid-template-rows:52px;
-  align-content:center; gap:10px;
+  position:relative; margin-top:16px; grid-template-columns:minmax(0,1fr); grid-template-rows:48px;
+  align-content:center; justify-items:stretch; gap:10px;
 }
+#pointsApp .home.fat-rewards-admin .fat-home-actions { grid-template-columns:repeat(2,minmax(0,1fr)); }
 #pointsApp .home .fat-home-actions > .fat-record-button { grid-row:1; }
 #pointsApp .home .fat-home-actions > .fat-diamond-summary {
   position:absolute; grid-area:auto; left:0; right:0; bottom:calc(50% + 33px); margin:0;
