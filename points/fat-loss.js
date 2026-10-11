@@ -54,8 +54,8 @@
       <div class="fat-overview" id="fatOverviewContent" hidden>
           <div class="segmented fat-status-switch" role="group" aria-label="体重记录状态"><button class="segment pressable" data-fat-status="before" type="button">未排便</button><button class="segment pressable" data-fat-status="after" type="button">已排便</button><button class="segment pressable" data-fat-status="unmarked" type="button" hidden>未标注历史</button></div>
         <div class="overview-landing" id="fatLanding"><nav class="overview-quick-nav" aria-label="减脂总览快捷入口">
-          <button class="overview-quick-card pressable" data-fat-section="trend" type="button">${icon}<span class="overview-quick-title">趋势统计</span><span class="overview-quick-copy">体重变化趋势</span></button>
-          <button class="overview-quick-card pressable" data-fat-section="calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="overview-quick-title">月度总览</span><span class="overview-quick-copy">查看每日记录</span></button>
+          <button class="overview-quick-card pressable" data-fat-section="trend" type="button">${icon}<span class="overview-quick-title">趋势统计</span><span class="overview-quick-copy">近 7 天与长期趋势</span></button>
+          <button class="overview-quick-card pressable" data-fat-section="calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="overview-quick-title">月度总览</span><span class="overview-quick-copy">每日记录</span></button>
         </nav></div>
         <div class="overview-content-switch" id="fatContentSwitch" role="tablist" aria-label="减脂总览内容" hidden>
           <button class="overview-content-choice pressable" data-fat-section="trend" role="tab" type="button">趋势</button>
@@ -65,7 +65,7 @@
         <section class="section overview-section-anchor" id="fatTrendSection" hidden>
           <h2 class="section-title">趋势统计</h2>
           <div class="card glass fat-week-card" aria-live="polite">
-            <div class="fat-week-title">近 7 天 · 与前 7 天均重比较</div>
+            <div class="fat-week-title">近 7 天均重变化</div>
             <div class="fat-week-result"><span id="fatWeekDirection">暂无对比</span><strong id="fatWeekValue">—</strong><span id="fatWeekUnit">公斤</span></div>
             <div class="fat-week-coverage" id="fatWeekCoverage"></div>
 
@@ -200,7 +200,7 @@
       unit = next;
       try { window.localStorage.setItem("points_fat_unit",unit); } catch (_) {}
       if (editing && value !== null) q("fatWeightInput").value = inputNumber(value);
-      syncUnits(); renderHome(); renderOverview(); fitSettings();
+      syncUnits(); renderHome(); renderOverview(); rewards?.render(); fitSettings();
     }
     function clearSecrets() {
       secretVersion++;
@@ -363,11 +363,11 @@
       const magnitude = change === null ? null : Math.abs(displayWeight(change));
       const rounded = magnitude === null ? null : Math.round((magnitude+Number.EPSILON)*100)/100;
       q("fatWeekValue").hidden=change===null;q("fatWeekUnit").hidden=change===null;
-      q("fatWeekDirection").textContent = change === null ? "等待跨周对比" : change !== 0 && rounded === 0 ? "变化小于" : rounded === 0 ? "基本持平" : change < 0 ? "记录均值下降" : "记录均值上升";
+      q("fatWeekDirection").textContent = change === null ? "等待跨周对比" : change !== 0 && rounded === 0 ? "变化小于" : rounded === 0 ? "基本持平" : change < 0 ? "均重下降" : "均重上升";
       q("fatWeekValue").textContent = rounded === null ? "—" : change !== 0 && rounded === 0 ? "0.01" : new Intl.NumberFormat("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2}).format(rounded);
       q("fatWeekUnit").textContent = unitName();
       q("fatWeekValue").classList.toggle("gain",change > 0);
-      q("fatWeekCoverage").textContent = `近 7 天记录 ${recent.count} 天 · 前 7 天 ${previous.count} 天`;
+      q("fatWeekCoverage").textContent = `有效记录 ${recent.count} 天 · 前 7 天 ${previous.count} 天`;
       q("fatWeekDates").textContent = `近七天 ${periodLabel(recent)}（含今天）· 前七天 ${periodLabel(previous)}`;
       const coverage = Math.min(recent.count,previous.count);
       q("fatWeekNote").textContent = !coverage ? "两段都至少有一天记录后才能比较；缺少记录的日期不补值。" : coverage < 3 ? "记录较少，仅供参考。建议两段各至少记录三个不同日期，并分散在一周内。" : coverage < 5 ? "初步参考，按已有记录天数计算。每段尽量记录五至七天。" : "按已有记录天数计算。连续观察几周，比一次涨跌更能看清趋势。";
@@ -377,7 +377,7 @@
         if (newer.count < 3 || older.count < 3 || newer.mean >= older.mean-1e-9) break;
         falling++;
       }
-      q("fatWeekLong").textContent = falling >= 2 ? `连续 ${falling} 次七日记录均值下降，体重趋势向下；仍需结合后续记录观察。` : "观察近四周的平均线，判断下降是否持续；单周变化也可能包含水分波动。";
+      q("fatWeekLong").textContent = falling >= 2 ? `连续 ${falling} 次七日均重下降，体重趋势向下；仍需结合后续记录观察。` : "观察近四周的平均线，判断下降是否持续；单周变化也可能包含水分波动。";
     }
     function drawTrend() {
       if (!active() || state.overviewMode === "closed" || state.overviewSection !== "trend") return;
@@ -680,7 +680,7 @@
     window.visualViewport?.addEventListener("resize",resizeOverview,{passive:true});
     try {
       if (!window.PointsFatRewards) throw new Error("Rewards module missing");
-      rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin});
+      rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin,formatChange:value=>value===null || value===undefined?"暂无对比":Number(value)===0?"均重持平":`均重${Number(value)<0?"下降":"上升"} ${number(value)} ${unitName()}`});
     } catch (_) { window.PointsRuntime?.report("rewards"); }
     syncUnits(); adminRendered(); renderHome();
     return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:()=>rewards?.openServices(),openSettlement:()=>rewards?.openSettlement() };

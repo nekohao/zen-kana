@@ -31,7 +31,7 @@
         ['[data-metric="fat"]',has('fat','services')],['#redeemRewardBtn,[data-shop-view="inventory"]',has('assets')],
         ['.app-nav [data-value="world"]',has('score','wheel','withdrawals','assets','fat','services','devices')],
         ['.app-nav [data-value="kitchen"],[data-kitchen-action="tab"][data-value="orders"]',has('kitchen')],
-        ['#fatDiamondShopBtn',has('fat','services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
+        ['#fatSettlementBtn',has('fat')],['#fatDiamondShopBtn',has('services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
         ['#pointsAccessDevices',has('devices')],['#settingsBtn,[data-kitchen-action="settings"]',has('devices')],
         ['#overviewBtn',has(state.activeMetric==='wheel'?'wheel':state.activeMetric==='fat'?'fat':'score',state.activeMetric==='wheel'?'withdrawals':'')]
       ];
@@ -61,7 +61,7 @@
         host.dataset.signature=signature;
         const rowsHtml=shown.map(i=>`<article class="points-context-update" data-update-id="${escape(i.id)}" data-update-epoch="${epoch}"><div><strong>${escape(i.title)}</strong><time>${escape(new Date(i.at).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}</time></div><p>${escape(i.body)}</p></article>`).join('');
         const wasOpen=host.querySelector('details')?.open;
-        host.innerHTML=key==='kitchen'?`<details class="kitchen-updates"${wasOpen?' open':''}><summary><span>最近动态 · ${shown.length} 条</span><strong>${escape(shown[0].title)}</strong><span aria-hidden="true">⌄</span></summary><div class="kitchen-updates-list">${rowsHtml}</div></details>`:`<p class="points-updates-heading">最近动态</p>${rowsHtml}`;
+        host.innerHTML=key==='kitchen'?`<details class="kitchen-updates"${wasOpen?' open':''}><summary><span>最近动态 · ${shown.length} 条</span><strong>${escape(shown[0].title)}</strong><span aria-hidden="true">⌄</span></summary><div class="kitchen-updates-list">${rowsHtml}</div></details>`:parent.id==='fatSettlementUpdatesSlot'?`<details class="fat-context-updates"${wasOpen?' open':''}><summary>最近动态 · ${shown.length} 条</summary>${rowsHtml}</details>`:`<p class="points-updates-heading">最近动态</p>${rowsHtml}`;
         host.querySelectorAll('[data-update-id]').forEach(row=>observer.observe(row));
       }
     }
@@ -74,7 +74,9 @@
       if(kitchen?.id==='kitchenUpdatesSlot')kitchen.dataset.pointsSynced=q('kitchenContent')?.dataset.pointsSynced;
       mount('kitchen',kitchen,['kitchen'],document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.getAttribute('aria-selected')==='true');
       const reward=q('fatRewardBody');
-      mount('rewards',reward,[reward?.dataset.updatesView],!!reward?.dataset.updatesView);
+      const settlement=q('fatSettlementUpdatesSlot');
+      if(settlement && settlement.dataset.pointsSynced!==reward?.dataset.pointsSynced)settlement.dataset.pointsSynced=reward?.dataset.pointsSynced;
+      mount('rewards',settlement||reward,[reward?.dataset.updatesView],!!reward?.dataset.updatesView);
       mount('devices',q('pointsAccessDeviceList'),['devices']);badges();
     }
     async function acknowledge(row) {
