@@ -72,14 +72,15 @@
 
           </div>
           <div class="card glass trend-card">
-            <div class="fat-chart-heading"><span>变化趋势</span><select id="fatTrendRanges" aria-label="趋势时间范围"><option value="14">近 14 天</option><option value="28" selected>近 28 天</option><option value="90">近 90 天</option></select></div>
+            <div class="fat-chart-heading"><span>最近体重变化</span><select id="fatTrendRanges" aria-label="趋势时间范围"><option value="14">近 14 天</option><option value="28" selected>近 28 天</option><option value="90">近 90 天</option></select></div>
+            <p class="fat-chart-takeaway" id="fatChartTakeaway"></p><div class="fat-chart-endpoints" id="fatChartEndpoints"></div>
             <div class="chart-wrap fat-chart-wrap"><canvas id="fatTrendCanvas" role="img" aria-label="体重差值趋势折线图"></canvas><div class="chart-empty" id="fatChartEmpty">暂无记录</div></div>
-            <div class="fat-chart-legend"><span>每日记录</span><span>7 日均值</span></div>
+            <p class="fat-chart-reading" id="fatChartReading"></p>
             <div class="chart-caption" id="fatChartCaption"></div>
             <details class="fat-stat-details"><summary>统计说明</summary><div class="fat-stat-details-body">
             <div class="fat-week-dates" id="fatWeekDates"></div><p class="fat-week-note" id="fatWeekNote"></p><p class="fat-week-long" id="fatWeekLong"></p>
             <p class="fat-chart-help" id="fatChartHelp"></p>
-            <p class="fat-chart-help">每天首笔参与统计，漏记不补值；绿线在七天内至少有三天记录时显示。尽量分散记录，每周五至七天更有参考价值。</p>
+            <p class="fat-chart-help">折线展示同类记录每天最后一次的变化，与首页最新记录一致；虚线表示中间漏记。近七天均重和钻石结算仍按每天首笔计算。</p>
             <p class="fat-chart-help">尽量固定称重时段、同一台秤和相近衣着；比较时保持相同排便状态。均值下降表示平均体重变轻，不等同于脂肪减少量。</p>
             </div></details>
           </div>
@@ -388,61 +389,59 @@
       if (!active() || state.overviewMode === "closed" || state.overviewSection !== "trend") return;
       const data = trendData(visibleLogs()); renderWeek(data);
       const start = shiftDay(data.today,1-Number(range));
-      const points = data.daily.filter(p => p.date >= start);
-      const averages = data.rolling.filter(p => p.date >= start);
-      const values = [...points,...averages.filter(p => p.delta !== null)];
+      const byDay = new Map();
+      visibleLogs().forEach(r=>{const date=new Date(r.at);date.setHours(0,0,0,0);if(date>=start)byDay.set(key(date),{date,delta:r.delta});});
+      const points = [...byDay.values()];
+      const first = points[0], last = points.at(-1);
+      const dateLabel = d => `${d.getMonth()+1}/${d.getDate()}`;
+      const ordinal = d => Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000;
+      const relative = value => value<0 ? `轻 ${number(value)} ${unitName()}` : value>0 ? `重 ${number(value)} ${unitName()}` : "与起始体重相同";
+      const interval = first && last ? Math.round((last.delta-first.delta)*100)/100 : null;
+      const gaps = points.some((p,i)=>i>0&&ordinal(p.date)-ordinal(points[i-1].date)>1);
       q("fatChartEmpty").hidden = points.length > 0;
       q("fatChartEmpty").textContent = logsError ? "记录读取失败" : "这个时段暂无记录";
-      q("fatChartCaption").textContent = `近 ${range} 天 · ${points.length} 天有记录`;
-      q("fatTrendCanvas").setAttribute("aria-label",points.length ? `近${range}天体重差值趋势，${points.length}天有记录；灰点为每日首笔，绿线为七日记录均值。${q("fatWeekDirection").textContent}${q("fatWeekValue").hidden ? "" : ` ${q("fatWeekValue").textContent} ${unitName()}`}` : "这个时段暂无记录");
-      q("fatTrendRanges").querySelectorAll("[data-fat-range]").forEach(btn => {
-        const selected = btn.dataset.fatRange === range;
-        btn.classList.toggle("active",selected); btn.setAttribute("aria-pressed",String(selected));
-      });
-      const canvas = q("fatTrendCanvas"), rect = canvas.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-      const dpr = Math.min(window.devicePixelRatio || 1,3);
-      canvas.width = Math.round(rect.width*dpr); canvas.height = Math.round(rect.height*dpr);
-      const ctx = canvas.getContext("2d"); if (!ctx) return;
-      ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,rect.width,rect.height);
-      if (!points.length) return;
-      let min = Math.min(...values.map(p => p.delta)), max = Math.max(...values.map(p => p.delta));
-      const padding = Math.max(.5,(max-min)*.2); min -= padding; max += padding;
-      const pad = {left:44,right:12,top:20,bottom:30};
-      const w = Math.max(1,rect.width-pad.left-pad.right), h = Math.max(1,rect.height-pad.top-pad.bottom);
-      // Calendar spacing stays even across daylight saving changes.
-      const ordinal = d => Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000;
-      const x = p => pad.left+(ordinal(p.date)-ordinal(start))/(Number(range)-1)*w;
-      const y = p => pad.top + h - (p.delta-min)/(max-min)*h;
-      const styles = getComputedStyle(document.documentElement);
-      ctx.strokeStyle = styles.getPropertyValue("--hairline").trim(); ctx.lineWidth = 1;
-      ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif'; ctx.textAlign="right"; ctx.textBaseline="middle";
-      for (let i=0;i<3;i++) {
-        const py=pad.top+h*i/2, value=max-(max-min)*i/2;
-        ctx.beginPath(); ctx.moveTo(pad.left,py); ctx.lineTo(rect.width-pad.right,py); ctx.stroke();
-        ctx.fillStyle=styles.getPropertyValue("--tertiary").trim();
-        ctx.fillText(`${value < 0 ? "−" : value > 0 ? "+" : ""}${new Intl.NumberFormat("zh-CN",{maximumFractionDigits:2}).format(Math.abs(displayWeight(value)))}`,pad.left-5,py);
+      q("fatChartTakeaway").textContent = points.length<2 ? points.length ? "只有一天记录，暂不能判断变化" : "记录后，就能看到体重怎么变化" : interval<0 ? `这段时间减去 ${number(interval)} ${unitName()}` : interval>0 ? `这段时间增加 ${number(interval)} ${unitName()}` : "这段时间体重持平";
+      q("fatChartTakeaway").classList.toggle("gain",Number(interval)>0);
+      const endpoints = q("fatChartEndpoints"); endpoints.replaceChildren(); endpoints.hidden=!points.length;
+      if (first && last) for (const [point,label] of [[first,"第一天"],[last,"最近一天"]]) {
+        const box=document.createElement("div"), heading=document.createElement("span"), value=document.createElement("strong");
+        heading.textContent=`${dateLabel(point.date)} · ${label}`;value.textContent=relative(point.delta);box.append(heading,value);endpoints.append(box);
       }
-      if (min <= 0 && max >= 0) {
-        const zeroY = pad.top+h-(0-min)/(max-min)*h;
-        ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(pad.left,zeroY); ctx.lineTo(rect.width-pad.right,zeroY); ctx.stroke(); ctx.setLineDash([]);
+      q("fatChartReading").textContent=points.length ? `向下 = 变轻，向上 = 变重${gaps?" · 虚线处未记录":""}` : "";
+      q("fatChartCaption").textContent = `近 ${range} 天 · ${points.length} 天有记录${first ? ` · ${dateLabel(first.date)}–${dateLabel(last.date)}` : ""}`;
+      q("fatTrendCanvas").setAttribute("aria-label",points.length ? `${q("fatChartTakeaway").textContent}。${dateLabel(first.date)}比起始体重${relative(first.delta)}；${dateLabel(last.date)}比起始体重${relative(last.delta)}。折线向下表示变轻，向上表示变重，虚线表示漏记。` : "这个时段暂无记录");
+      const canvas=q("fatTrendCanvas"),rect=canvas.getBoundingClientRect();
+      if(rect.width<=0||rect.height<=0)return;
+      const dpr=Math.min(window.devicePixelRatio||1,3);canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);
+      const ctx=canvas.getContext("2d");if(!ctx)return;
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,rect.width,rect.height);
+      if(!points.length)return;
+      // One series, clear baseline, round ticks; no hidden smoothing or imputed records.
+      const values=points.map(p=>displayWeight(p.delta)),low=Math.min(0,...values),high=Math.max(0,...values);
+      const span=Math.max(unit==="kg"?.5:1,high-low);
+      const rawStep=span/3,power=10**Math.floor(Math.log10(rawStep));
+      const step=([1,2,5,10].find(n=>n*power>=rawStep)||10)*power;
+      let min=Math.floor(low/step)*step,max=Math.ceil(high/step)*step;
+      if(min===max){min-=step;max+=step;}
+      const pad={left:52,right:16,top:14,bottom:27},w=Math.max(1,rect.width-pad.left-pad.right),h=Math.max(1,rect.height-pad.top-pad.bottom);
+      const days=Math.max(1,ordinal(last.date)-ordinal(first.date));
+      const x=p=>points.length===1?pad.left+w/2:pad.left+(ordinal(p.date)-ordinal(first.date))/days*w;
+      const y=value=>pad.top+h-(value-min)/(max-min)*h;
+      ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign="right";ctx.textBaseline="middle";
+      for(let value=min;value<=max+step*.001;value+=step){
+        const normalized=Math.abs(value)<step*.001?0:value,py=y(normalized);
+        ctx.strokeStyle=normalized===0?"#bccbc1":"#e9edea";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.left,py);ctx.lineTo(rect.width-pad.right,py);ctx.stroke();
+        ctx.fillStyle="#809087";ctx.fillText(normalized===0?"起始体重":`${normalized<0?"轻":"重"} ${new Intl.NumberFormat("zh-CN",{maximumFractionDigits:3}).format(Math.abs(normalized))}`,pad.left-7,py);
       }
-      ctx.fillStyle="#9aa6a0";
-      points.forEach(p => { ctx.beginPath(); ctx.arc(x(p),y(p),2.8,0,Math.PI*2); ctx.fill(); });
-      ctx.beginPath(); let connected = false;
-      averages.forEach(p => {
-        if (p.delta === null) { connected = false; return; }
-        if (connected) ctx.lineTo(x(p),y(p)); else ctx.moveTo(x(p),y(p));
-        connected = true;
-      });
-      ctx.strokeStyle="#638171"; ctx.lineWidth=2.5; ctx.lineJoin="round"; ctx.lineCap="round"; ctx.stroke();
-      ctx.fillStyle="#638171";
-      averages.filter(p => p.delta !== null).forEach(p => { ctx.beginPath(); ctx.arc(x(p),y(p),1.5,0,Math.PI*2); ctx.fill(); });
-      ctx.textAlign="center";
-      ctx.fillStyle=styles.getPropertyValue("--tertiary").trim(); ctx.textBaseline="top"; ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif';
-      [start,shiftDay(start,Math.floor((Number(range)-1)/2)),data.today].forEach((date,i) => {
-        ctx.textAlign=i===0?"left":i===2?"right":"center";
-        ctx.fillText(`${date.getMonth()+1}/${date.getDate()}`,x({date}),rect.height-18);
+      for(let i=1;i<points.length;i++){
+        const a=points[i-1],b=points[i];ctx.setLineDash(ordinal(b.date)-ordinal(a.date)>1?[4,5]:[]);
+        ctx.beginPath();ctx.moveTo(x(a),y(displayWeight(a.delta)));ctx.lineTo(x(b),y(displayWeight(b.delta)));ctx.strokeStyle="#567c67";ctx.lineWidth=2.5;ctx.lineCap="round";ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      points.forEach((p,i)=>{ctx.beginPath();ctx.arc(x(p),y(displayWeight(p.delta)),i===points.length-1?5:3.5,0,Math.PI*2);ctx.fillStyle=i===points.length-1?"#567c67":"#fff";ctx.fill();ctx.strokeStyle="#567c67";ctx.lineWidth=1.7;ctx.stroke();});
+      ctx.fillStyle="#809087";ctx.textBaseline="top";
+      [first,...(points.length>2?[points[Math.floor((points.length-1)/2)]]:[]),...(points.length>1?[last]:[])].forEach((p,i,all)=>{
+        ctx.textAlign=i===0?"left":i===all.length-1?"right":"center";ctx.fillText(dateLabel(p.date),x(p),rect.height-16);
       });
     }
     function renderCalendar() {
