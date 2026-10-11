@@ -3875,6 +3875,15 @@
         vibrate(6); openOverviewSection(btn.dataset.overviewSection);
       });
       els.overviewBackdrop.addEventListener("click", () => { if (performance.now() >= suppressOverviewClickUntil) closeOverviewSheet(); });
+      function addSurfaceClose(header, label, close) {
+        const button=document.createElement("button");button.type="button";button.className="surface-close pressable";
+        button.textContent="关闭";button.setAttribute("aria-label",label);
+        button.addEventListener("pointerdown",event=>event.stopPropagation());
+        button.addEventListener("click",event=>{event.stopPropagation();close();});header.append(button);
+      }
+      addSurfaceClose(els.settingsSheet.querySelector(".settings-sheet-header"),"关闭设置",()=>setLayer(els.settingsLayer,false));
+      addSurfaceClose(els.redeemLayer.querySelector(".unified-sheet-header"),"关闭积分商城",()=>setLayer(els.redeemLayer,false));
+      addSurfaceClose(els.overviewTitle.parentElement,"关闭总览",()=>{closeOverviewSheet();els.overviewBtn.focus({preventScroll:true});});
       els.overviewShell.addEventListener("pointerdown", beginOverviewDrag);
       els.overviewShell.addEventListener("pointermove", moveOverviewDrag, { passive: false });
       els.overviewShell.addEventListener("pointerup", endOverviewDrag);

@@ -29,7 +29,7 @@
         <section class="unified-sheet shop-sheet fat-reward-sheet" id="fatRewardSheet" role="dialog" aria-modal="true" aria-labelledby="fatRewardTitle" tabindex="-1">
           <header class="unified-sheet-header shop-sheet-header fat-reward-header" id="fatRewardHeader">
             <div class="fat-reward-grabber" id="fatRewardGrabber" role="button" tabindex="0" aria-label="下拉关闭减脂奖励"><div class="grabber" aria-hidden="true"></div></div>
-            <h2 class="sheet-title" id="fatRewardTitle">钻石商城</h2>
+            <h2 class="sheet-title" id="fatRewardTitle">钻石商城</h2><button id="fatRewardCloseBtn" class="fat-reward-close pressable" aria-label="关闭钻石窗口" type="button">关闭</button>
           </header><div class="unified-sheet-body shop-sheet-body">
           <div class="fat-reward-error" id="fatRewardError" role="alert" hidden></div>
           <div id="fatRewardBody"></div>
@@ -219,14 +219,18 @@
       if (!layer.classList.contains("open")) return;
       q("fatRewardTitle").textContent = page === "services" ? "服务" : "钻石商城";
       q("fatRewardGrabber").setAttribute("aria-disabled",String(busy));
+      q("fatRewardCloseBtn").disabled = busy;
       q("fatRewardError").hidden = !error; q("fatRewardError").textContent = error;
       if (!data) { body.innerHTML = '<p class="fat-reward-empty">等待同步奖励数据</p>'; return; }
       const tabs = [["products","商品",0],["inventory","背包",data.backpack],["services","服务",pending]];
       const navigation = isAdministrator ? `<section class="fat-reward-wallet" aria-label="钻石余额"><strong><span aria-hidden="true">${diamond}</span>${escape(data.diamonds)}</strong><span>我的钻石</span></section><nav class="shop-tabs fat-reward-tabs" role="tablist" aria-label="减脂奖励页面">${tabs.map(([action,title,count]) => `<button class="shop-tab pressable${(action === "services" ? page === "services" : page === "shop" && shopView === action) ? " active" : ""}" data-fat-reward-action="${action}" role="tab" aria-selected="${action === "services" ? page === "services" : page === "shop" && shopView === action}" type="button"${busy ? " disabled" : ""}>${title}${Number(count) > 0 ? `<span class="fat-reward-tab-count">${escape(count)}</span>` : ""}</button>`).join("")}</nav>` : "";
       if (confirmation) {
         const {action,id} = confirmation;
-        const message = {buy:hasRetry("buy") ? "确认上次兑换的结果，不会重复扣钻石。" : "花费 1 颗钻石兑换口一次，放入背包。", use:hasRetry("use") ? "确认上次使用的结果，不会重复发起服务。" : "使用背包中的口一次，向宝宝发起服务请求。", serviced:"确认已经进行本次服务，并交给哥哥确认？", confirm:"确认宝宝已经进行服务，完成本次兑换？", return:"选择否：将口一次退回背包，之后可以重新发起请求。"}[action];
-        body.innerHTML = `${navigation}<div class="fat-reward-card fat-reward-confirm"><h3>${{buy:"确认兑换",use:"使用奖励",serviced:"确认已服务",confirm:"确认完成",return:"退回背包"}[action]}</h3><p>${message}</p><div class="fat-reward-actions">${actionButton("submit", busy ? "正在处理…" : "确认", false, id)}${actionButton("cancel", "返回")}</div></div>`; return;
+        const message = {buy:hasRetry("buy") ? "确认上次兑换的结果，不会重复扣钻石。" : "花费 1 颗钻石兑换口一次，放入背包。", use:hasRetry("use") ? "确认上次使用的结果，不会重复发起服务。" : "使用背包中的口一次，向宝宝发起服务请求。", serviced:"确认已经进行本次服务，并交给哥哥确认？", confirm:"确认宝宝已经进行服务，完成本次兑换？", return:"将本次奖励退回背包，之后可以重新发起请求。"}[action];
+        const title={buy:"确认兑换",use:"使用奖励",serviced:"确认已服务",confirm:"确认完成",return:"退回背包"}[action];
+        const submitLabel={buy:"兑换",use:"发起服务",serviced:"确认已服务",confirm:"确认完成",return:"退回背包"}[action];
+        q("fatRewardTitle").textContent=title;
+        body.innerHTML = `<div class="fat-reward-card fat-reward-confirm"><p>${message}</p><div class="fat-reward-actions">${actionButton("cancel", "暂不处理")}${actionButton("submit", busy ? "正在处理…" : submitLabel, false, id)}</div></div>`; return;
       }
       if (page === "shop") {
         if (shopView === "inventory") {
@@ -263,6 +267,8 @@
       else if (["buy","use","serviced","confirm","return"].includes(action)) { confirmation = {action,id}; render(); }
       focusPanel();
     });
+    q("fatRewardCloseBtn").addEventListener("pointerdown",event=>event.stopPropagation());
+    q("fatRewardCloseBtn").addEventListener("click",close);
     q("fatDiamondShopBtn").addEventListener("click", () => void open("shop"));
     q("fatServicesBtn").addEventListener("click", () => void open("services"));
     q("fatServiceNotice").addEventListener("click", () => void open("services"));

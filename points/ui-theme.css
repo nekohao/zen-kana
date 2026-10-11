@@ -366,3 +366,8 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
 }
 
 #pointsApp .home .score-lens-wrap { animation:none!important; }
+
+/* Explicit close controls only on the audited sheets. */
+#pointsApp :is(#settingsSheet,#redeemLayer,#overview) .surface-close { position:absolute; top:12px; right:16px; z-index:15; min-width:44px; min-height:44px; padding:8px; border:0; border-radius:12px; background:transparent; color:var(--ui-accent,#806b52); font-size:13px; font-weight:600; }
+#pointsApp #overview:has(#fatOverviewCloseBtn:not([hidden])) .surface-close { display:none; }
+#pointsApp :is(#settingsSheet,#redeemLayer,#overview) .surface-close:focus-visible { outline:2px solid var(--ui-accent); }

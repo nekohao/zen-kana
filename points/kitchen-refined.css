@@ -211,3 +211,14 @@
 #pointsApp .kitchen-layer .kitchen-panel-head h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #pointsApp :is(#kitchenPage,.kitchen-layer) .kitchen-dish-fallback svg{width:24px;height:24px}
 #pointsApp .kitchen-layer .kitchen-rating-stage>.kitchen-dish-fallback{width:136px;height:108px;aspect-ratio:auto;border-radius:23px;margin:0 auto 14px}
+
+/* Only short dialogs and their navigation/actions; preserve long editors. */
+#pointsApp .modal-layer.kitchen-layer.ui-themed.ui-surface:is([data-dialog="order"],[data-dialog="confirm"],[data-dialog="error"],[data-dialog="loading"],[data-dialog="meal"]) .kitchen-panel.ui-panel { height:auto; min-height:0; max-height:min(80dvh,calc(var(--kitchen-viewport-height,100dvh) - env(safe-area-inset-top,0px) - 20px))!important; }
+#pointsApp .modal-layer.kitchen-layer.ui-themed.ui-surface:is([data-dialog="confirm"],[data-dialog="error"],[data-dialog="loading"],[data-dialog="meal"]) .kitchen-panel-body { flex:0 1 auto; }
+#pointsApp .kitchen-layer[data-dialog="confirm"] .kitchen-note { margin:0; background:transparent; padding:0; color:#626269; }
+#pointsApp .kitchen-layer .kitchen-confirm-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+#pointsApp .kitchen-layer .kitchen-confirm-actions .kitchen-button { width:100%; min-width:0; min-height:48px; margin:0; padding:12px 8px; }
+#pointsApp #kitchenLayer .kitchen-confirm-actions .kitchen-button:not(.primary) { background:#eaeaec; border-color:transparent; color:#626269; }
+#pointsApp .kitchen-layer[data-dialog="recipe"] .kitchen-panel-head:has(.kitchen-header-back:not([hidden])) { display:grid; grid-template-columns:44px minmax(0,1fr) 44px; gap:8px; }
+#pointsApp .kitchen-layer[data-dialog="recipe"] .kitchen-panel-head:has(.kitchen-header-back:not([hidden])) h2 { text-align:center; }
+#pointsApp .kitchen-layer .kitchen-header-back svg { width:20px; height:20px; }
