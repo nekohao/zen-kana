@@ -1,6 +1,6 @@
 // Local preview with the actual kitchen migration in an in-memory PostgreSQL.
 import http from 'node:http';
-import fs from 'node:fs/promises';
+import fs from './database-source.mjs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createFamilyDatabase} from './family-db.mjs';

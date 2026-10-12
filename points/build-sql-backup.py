@@ -1,5 +1,4 @@
 """Render the exported application schema and reviewed function overlays; no DB access."""
-import csv
 import json
 import re
 import sys
@@ -160,7 +159,18 @@ def render(data):
 def main():
     # The maintained current schema is authoritative. Never revert it to an old online export.
     data = json.loads((BACKUP / 'current-schema.json').read_text(encoding='utf-8'))
-    write_batches(ROOT / 'schema-full.sql', render(data))
+    expected = render(data)
+    sql_files = {str(p.relative_to(ROOT)).replace('\\', '/') for p in ROOT.rglob('*.sql')}
+    if sql_files != {'schema-full.sql', 'schema-increment.sql'}:
+        raise ValueError('Only schema-full.sql and schema-increment.sql may remain: ' + ', '.join(sorted(sql_files)))
+    if sys.argv[1:] == ['--check']:
+        if (ROOT / 'schema-full.sql').read_text(encoding='utf-8') != expected:
+            raise ValueError('Full SQL is stale; update maintained metadata and regenerate.')
+        print('Two SQL entry points and full-schema synchronization verified.')
+        return
+    if sys.argv[1:]:
+        raise ValueError('Usage: python points/build-sql-backup.py [--check]')
+    write_batches(ROOT / 'schema-full.sql', expected)
     print(f'Latest full SQL: {len(data["relations"])} relations, {len(data["functions"])} functions.')
 
 if __name__ == '__main__':

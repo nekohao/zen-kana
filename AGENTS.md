@@ -15,7 +15,7 @@
 - `family.js`：小家庭统一任务；`kitchen*.js`：菜谱及旧订单接口；`fat*.js`：减脂模块；各模块 CSS 和 `ui-theme.css`：展示样式。
 - `app-runtime.js`、`startup.js`：请求保护与启动；`updates.js`、`sw.source.js`：版本更新与缓存。
 - `build.mjs`：生成 `index.html`、`sw.js`、`version.json` 和 `assets/` 哈希资源；改源码后构建，不手工改产物。
-- `schema-full.sql`、`sql-backup/`：始终随代码同步的最新数据库基线；升级用独立增量 SQL。
+- `schema-full.sql`：最新全量结构；`schema-increment.sql`：当前升级增量；`sql-backup/`：生成基线的结构数据。项目只保留这两个 SQL 文件，数据库变更同步更新。
 - `tests/`：本地验证与演示预览；演示数据不代表线上数据。
 
 开始修改前核对当前源码、版本与已有工作区改动。以用户当次需求决定范围，不预设产品或审美要求。
