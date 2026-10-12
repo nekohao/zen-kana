@@ -5,7 +5,7 @@
   function attach({db,state,els,navigate}) {
     const q=id=>document.getElementById(id);
     const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const labels={score:'积分变动',kitchen:'厨房消息',withdrawal:'提现进展',assets:'道具与机会',fat:'减脂结算',service:'服务进展',security:'设备安全'};
+    const labels={score:'积分变动',kitchen:'家庭消息',withdrawal:'提现进展',assets:'道具与机会',fat:'减脂结算',service:'服务进展',security:'设备安全'};
     const routes=['score','wheel','withdrawals','assets','fat','services','devices','kitchen'];
     const prefs=document.createElement('section');prefs.id='pointsNoticeSettings';
     prefs.innerHTML=`<div class="settings-label">提醒偏好</div><div class="settings-group">${Object.entries(labels).map(([k,v])=>`<label class="settings-row static"><span>${v}</span><input type="checkbox" data-notice-category="${k}" checked aria-label="${v}推送"></label>`).join('')}<label class="settings-row static"><span>夜间静默 · 22:30–08:00</span><input type="checkbox" id="pointsNoticeQuiet" checked></label><label class="settings-row static"><span>夜间允许重要待办</span><input type="checkbox" id="pointsNoticeNight"></label></div><p class="points-push-help">新动态会在对应模块显示红点。关闭某类推送不会关闭红点；夜间静默按北京时间。</p><p id="pointsNoticePrefsStatus" class="points-push-message" role="status"></p>`;

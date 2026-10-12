@@ -1,6 +1,0 @@
-{
-  "online_confirmed_at": "2026-10-11T06:33:35.096125+00:00",
-  "applied_migrations": [],
-  "pending_migrations": ["fat-settlement-increment-20261011.sql"],
-  "status": "Local target includes pending migration; online deployment has not been confirmed."
-}

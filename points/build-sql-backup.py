@@ -51,15 +51,13 @@ def acl_sql(kind, target, acl, owner, column=None):
                 result.append('GRANT ' + ', '.join(values) + f' ON {object_kind} {target} TO ' + ('PUBLIC' if role == 'PUBLIC' else q(role)) + (' WITH GRANT OPTION' if option else '') + ';')
     return result
 
-def render(data, state):
+def render(data):
     out = ['-- COMPLETE EXPORTED APPLICATION SCHEMA; structure and logic only, no business/config rows.',
            '-- Reference baseline, NOT the incremental upgrade script. Requires Supabase platform schemas/roles/extensions.',
            '-- Includes every object in the supplied export, including unrelated public application objects.',
            '-- Platform auth helper definitions are retained below; review before restoring into a fresh project.',
            '-- Sequence current values, extension setup, platform schemas and cron jobs were not exported.',
-           '-- Online confirmed at: ' + state['online_confirmed_at'],
-           '-- Confirmed applied migrations: ' + (', '.join(state.get('applied_migrations', [])) or '(none)'),
-           '-- Pending online migrations: ' + (', '.join(state['pending_migrations']) or '(none)'),
+           '-- Maintained latest application schema, independent of deployment status.',
            '-- Source PostgreSQL: ' + data['postgres_version'],
            'SET check_function_bodies = false;', '']
     for schema in data['schemas']:
@@ -155,41 +153,15 @@ def render(data, state):
         statements = acl_sql(default['object_type'], '__DEFAULT__', default['acl'], default['owner'])
         plural = {'r':'TABLES','S':'SEQUENCES','f':'FUNCTIONS'}[default['object_type']]
         out += [prefix + s.replace('ON ' + {'r':'TABLE','S':'SEQUENCE','f':'FUNCTION'}[default['object_type']] + ' __DEFAULT__', 'ON ' + plural) for s in statements]
+    out += data.get('initialization_sql', [])
     out += ['SET check_function_bodies = true;', '']
     return '\n\n'.join(out).rstrip() + '\n'
 
 def main():
-    BACKUP.mkdir(exist_ok=True)
-    if len(sys.argv) > 1:
-        csv.field_size_limit(10000000)
-        with Path(sys.argv[1]).open(encoding='utf-8-sig', newline='') as stream:
-            data = json.loads(next(csv.DictReader(stream))['schema_export'])
-        write_batches(BACKUP / 'online-confirmed.json', json.dumps(data, ensure_ascii=False, indent=2) + '\n')
-    data = json.loads((BACKUP / 'online-confirmed.json').read_text(encoding='utf-8'))
-    state = json.loads((BACKUP / 'state.json').read_text(encoding='utf-8'))
-    # Each reviewed overlay contains complete CREATE OR REPLACE FUNCTION definitions.
-    for file in state.get('applied_migrations', []) + state['pending_migrations']:
-        sql = (ROOT / file).read_text(encoding='utf-8')
-        definitions = re.findall(r'CREATE OR REPLACE FUNCTION\s+public\.(\w+)\([^;]*?AS\s+\$function\$(.*?)\$function\$;', sql, re.S)
-        if not definitions:
-            raise ValueError('Migration requires an explicit structural overlay: ' + file)
-        remaining = sql
-        for name, body in definitions:
-            matches = [f for f in data['functions'] if f['schema'] == 'public' and f['name'] == name]
-            if len(matches) != 1:
-                raise ValueError('Ambiguous function overlay: ' + name)
-            start = sql.index('CREATE OR REPLACE FUNCTION public.' + name + '(')
-            end = sql.index('$function$;', sql.index('AS $function$', start)) + len('$function$;')
-            matches[0]['definition'] = sql[start:end]
-            remaining = remaining.replace(sql[start:end], '', 1)
-        remaining = re.sub(r'--[^\n]*', '', remaining)
-        allowed = {'BEGIN', 'COMMIT', "NOTIFY pgrst,'reload schema'",
-                   'REVOKE ALL ON FUNCTION public.points_fat_reward_snapshot(bigint) FROM PUBLIC,anon,authenticated'}
-        if any(statement.strip() not in allowed for statement in remaining.split(';') if statement.strip()):
-            raise ValueError('Migration changes more than function bodies; extend the structural/ACL renderer: ' + file)
-    write_batches(BACKUP / 'current-schema.json', json.dumps(data, ensure_ascii=False, indent=2) + '\n')
-    write_batches(ROOT / 'schema-full.sql', render(data, state))
-    print(f'Full SQL: {len(data["relations"])} relations, {len(data["functions"])} functions; pending {len(state["pending_migrations"])} migration(s).')
+    # The maintained current schema is authoritative. Never revert it to an old online export.
+    data = json.loads((BACKUP / 'current-schema.json').read_text(encoding='utf-8'))
+    write_batches(ROOT / 'schema-full.sql', render(data))
+    print(f'Latest full SQL: {len(data["relations"])} relations, {len(data["functions"])} functions.')
 
 if __name__ == '__main__':
     main()

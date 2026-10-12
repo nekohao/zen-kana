@@ -98,12 +98,12 @@
 .fat-week-result strong { font-size:30px; letter-spacing:-.04em; }
 .fat-week-coverage { font-size:11px; color:#8a938d; }
 .fat-stat-details { border-top:1px solid #e5ebe7; margin-top:14px; padding-top:11px; }
-.fat-stat-details summary { cursor:pointer; color:#809085; font-size:11px; list-style:none; display:flex; align-items:center; justify-content:space-between; min-height:30px; }
+.fat-stat-details summary { cursor:pointer; color:#687a6d; font-size:12px; list-style:none; display:flex; align-items:center; justify-content:space-between; min-height:30px; }
 .fat-stat-details summary::-webkit-details-marker { display:none; }
 .fat-stat-details summary::after { content:"＋"; color:#9aa99f; font-size:14px; }
 .fat-stat-details[open] summary::after { content:"−"; }
 .fat-stat-details-body { padding:3px 0 6px; }
-.fat-stat-details-body :is(p,.fat-week-dates) { text-align:left; line-height:1.7; font-size:11px; color:#87918a; }
+.fat-stat-details-body :is(p,.fat-week-dates) { text-align:left; line-height:1.7; font-size:12px; color:#6f7b72; }
 .fat-stat-details-body .fat-week-long { border:0; padding:0; }
 .fat-chart-legend { gap:16px; margin-top:12px; }
 #fatChartCaption { font-size:10px; color:#9aa29c; }
@@ -135,17 +135,17 @@
 #pointsApp .fat-record-disclosure > summary::-webkit-details-marker,#pointsApp .fat-settlement-help > summary::-webkit-details-marker { display:none; }
 #pointsApp .fat-record-disclosure[open] > summary span,#pointsApp .fat-settlement-help[open] > summary span { transform:rotate(90deg); }
 #pointsApp #fatSettlementSection .fat-ledger-head,#pointsApp #fatSettlementSection .fat-settlement-row > summary { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 72px; align-items:center; gap:8px; }
-#pointsApp .fat-ledger-head { padding:10px 0; font-size:10px; color:var(--secondary); }
+#pointsApp .fat-ledger-head { padding:10px 0; font-size:12px; color:var(--secondary); }
 #pointsApp .fat-ledger-head span:last-child { text-align:right; }
 #pointsApp .fat-settlement-row { border-top:1px solid var(--ui-line,#567c6718); }
 #pointsApp .fat-settlement-row > summary { min-height:72px; padding:12px 0; list-style:none; cursor:pointer; font-size:12px; color:var(--ink); }
 #pointsApp .fat-settlement-row > summary::-webkit-details-marker { display:none; }
-#pointsApp .fat-settlement-row small { display:block; margin-top:5px; color:var(--secondary); font-size:10px; }
+#pointsApp .fat-settlement-row small { display:block; margin-top:5px; color:var(--secondary); font-size:12px; }
 #pointsApp .fat-settlement-row strong { text-align:right; font-size:18px; white-space:nowrap; font-weight:650; }
 #pointsApp .fat-settlement-row .reward { color:var(--ui-accent,#567c67); }
 #pointsApp .fat-settlement-row .deduction { color:#a16e62; }
-#pointsApp .fat-row-change { font-size:11px; color:var(--secondary); line-height:1.5; }
-#pointsApp .fat-settlement-next { margin:0 0 15px; font-size:11px; color:var(--secondary); line-height:1.6; }
+#pointsApp .fat-row-change { font-size:12px; color:var(--secondary); line-height:1.5; }
+#pointsApp .fat-settlement-next { margin:0 0 15px; font-size:12px; color:var(--secondary); line-height:1.6; }
 #pointsApp .fat-settlement-help { border-top:1px solid var(--ui-line,#567c6718); }
 #pointsApp .fat-settlement-forecast { padding:16px; margin-bottom:16px; border-radius:16px; background:var(--ui-wash,#edf5ef); }
 #pointsApp .fat-settlement-forecast > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; list-style:none; cursor:pointer; font-size:12px; }
@@ -172,7 +172,7 @@
 #pointsApp #fatTrendSection .trend-card { padding:14px 15px; }
 #pointsApp .fat-chart-takeaway { margin-bottom:10px; font-size:16px; }
 #pointsApp .fat-chart-wrap { height:150px; }
-#pointsApp .fat-chart-reading { margin-top:6px; font-size:10px; }
+#pointsApp .fat-chart-reading { margin-top:6px; font-size:12px; }
 #pointsApp #fatChartCaption { margin-top:6px; }
 #pointsApp .fat-stat-details { margin-top:10px; padding-top:4px; }
 #pointsApp .fat-record-disclosure { margin-top:8px; }
