@@ -1,0 +1,186 @@
+/* Additive fat-loss module. Existing score and wheel styles remain intact. */
+.fat-status-switch { margin-top:4px; width:fit-content; max-width:100%; flex-shrink:0; }
+.fat-record-status { margin:12px 0 15px; }
+#metricSwitch { grid-template-columns: repeat(3,minmax(0,1fr))!important; }
+#metricSwitch .metric-switch-thumb { width:calc((100% - 8px)/3)!important; }
+#metricSwitch.fat-switch-active .metric-switch-thumb { transform:translate3d(200%,0,0)!important; background:linear-gradient(145deg,#ffffffcf,#dcefe6a3)!important; }
+#metricSwitch.fat-switch-active .metric-option.active { color:#567c69!important; }
+.fat-home-content { display:none; flex-direction:column; align-items:center; width:100%; }
+.home.fat-active .hero > :not(.metric-switch):not(.fat-home-content) { display:none!important; }
+.home.fat-active .fat-home-content { display:flex; }
+.home.fat-active .fat-lens { background:radial-gradient(circle at 34% 24%,#ffffffc7,transparent 48%),#eaf4ec99!important; box-shadow:0 24px 58px #73978321,inset 0 2px 4px #ffffffe6!important; }
+.home.fat-active .fat-lens::after { display:none!important; }
+.fat-value-stack { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.fat-value-label { font-size:15px; color:#638171; font-weight:650; }
+.fat-value { font-size:clamp(50px,17vw,76px); line-height:1; font-weight:730; letter-spacing:-2px; color:#557a65; font-variant-numeric:tabular-nums; }
+.fat-value-unit { font-size:14px; font-weight:600; color:#7b9284; }
+.fat-value-stack.gain .fat-value { color:#b67e62; }
+.fat-home-content .reward-line-primary { color:#597967!important; }
+.fat-home-content .reward-line-secondary { color:#829487!important; }
+.fat-home-actions { height:104px; min-height:104px; margin-top:14px; display:grid; place-items:center; }
+.fat-record-button { width:min(78vw,258px); height:50px; border:1px solid #ffffffd6; border-radius:17px; color:#5e7f6d; background:linear-gradient(135deg,#ffffffa3,#dfefdfa0); box-shadow:0 10px 26px #73978317,inset 0 1px #ffffffb8; font-size:14px; font-weight:710; }
+.fat-record-button:disabled { opacity:.45; pointer-events:none; }
+.fat-home-sync { margin-top:7px; border:0; background:transparent; color:var(--tertiary); font-size:11px; }
+.fat-overview .overview-quick-nav { margin-bottom:14px; }
+.fat-overview .overview-section-anchor { margin-bottom:0; }
+.fat-overview .overview-content-switch { width:min(70%,245px); }
+.fat-chart-wrap { height:202px; }
+.fat-chart-wrap canvas { width:100%; height:100%; display:block; }
+.fat-chart-help { margin:8px 0 0; color:var(--tertiary); font-size:11px; line-height:1.45; text-align:center; }
+.fat-week-card { padding:18px 14px; margin-bottom:12px; text-align:center; }
+.fat-week-title { color:var(--secondary); font-size:12px; font-weight:600; }
+.fat-week-result { display:flex; flex-wrap:wrap; justify-content:center; align-items:baseline; gap:7px; margin:12px 0; color:#638171; }
+.fat-week-result > span { font-size:13px; }
+.fat-week-result strong { font-size:32px; line-height:1.15; font-weight:730; font-variant-numeric:tabular-nums; }
+.fat-week-result strong.gain { color:#b67e62; }
+.fat-week-coverage { color:var(--secondary); font-size:12px; line-height:1.6; }
+.fat-week-dates { margin-top:3px; color:var(--tertiary); font-size:10px; line-height:1.5; }
+.fat-week-note,.fat-week-long { margin:10px 0 0; color:var(--secondary); font-size:11px; line-height:1.6; }
+.fat-week-long { padding-top:10px; border-top:1px solid var(--hairline); }
+.fat-chart-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:14px; color:var(--secondary); font-size:10px; margin:8px 0; }
+.fat-chart-legend span::before { content:""; display:inline-block; width:6px; height:6px; margin-right:5px; border-radius:50%; background:#9aa6a0; vertical-align:middle; }
+.fat-chart-legend span+span::before { width:14px; height:2px; border-radius:0; background:#638171; }
+.fat-month-summary { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 4px 13px; }
+.fat-month-summary > div { padding:10px 8px; border:1px solid var(--hairline); border-radius:16px; background:#ffffff26; text-align:center; }
+.fat-month-summary span { display:block; color:var(--secondary); font-size:10px; }
+.fat-month-summary strong { display:block; margin-top:5px; font-size:14px; font-weight:730; }
+.fat-calendar .calendar-grid { grid-auto-rows:55px; }
+.fat-calendar .day { min-height:55px; }
+.fat-day-delta { font-size:9px; line-height:1; font-weight:700; color:#638171; white-space:nowrap; }
+.fat-day-delta.gain { color:#b67e62; }
+.fat-day-delta.flat { color:var(--tertiary); }
+.fat-log-delta { color:#638171; font-size:13px; white-space:nowrap; }
+.fat-log-delta.gain { color:#b67e62; }
+.fat-field-label { display:block; margin:15px 0 6px; text-align:left; color:var(--secondary); font-size:12px; font-weight:650; }
+.fat-input-wrap { display:flex; align-items:center; gap:8px; padding:0 13px; height:50px; border:1px solid var(--glass-border); border-radius:15px; background:#ffffff40; }
+.fat-input-wrap input { width:100%; min-width:0; border:0; outline:0; background:transparent; font-size:20px; font-weight:650; color:var(--ink); }
+.fat-input-wrap span { flex:0 0 auto; color:var(--secondary); font-size:13px; }
+.fat-form-error { margin-top:9px; color:#b36661; font-size:12px; line-height:1.4; }
+.fat-form-note { margin-top:10px; color:var(--tertiary); font-size:11px; line-height:1.45; }
+#fatWeightLayer .alert { max-height:calc(100dvh - 40px); overflow-y:auto!important; }
+#fatWeightLayer .alert-button.primary-action { color:#587b68!important; background:#e0ede647!important; }
+.fat-overview-status { padding:10px 6px; text-align:center; color:var(--secondary); font-size:12px; }
+.fat-unit-switch { grid-template-columns:repeat(2,minmax(0,1fr)); width:120px; height:32px; flex-shrink:0; padding:3px; gap:2px; margin:0; border:1px solid #ffffff99; background:#ffffff38; }
+.fat-unit-switch .segment { min-height:0; height:100%; padding:0 6px; font-size:12px; line-height:1; color:var(--ui-muted,#6a8577); }
+.fat-unit-switch .segment.active { background:#ffffffa3; color:var(--ui-accent,#557a65); box-shadow:0 2px 6px #63817112; }
+.fat-unit-switch .segment:disabled { opacity:.55; }
+.fat-log-actions { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.fat-delete-button { padding:4px 10px; border:1px solid #b3666126; border-radius:9px; background:#b366610a; color:#b36661; font-size:11px; }
+.fat-delete-button:disabled { opacity:.45; pointer-events:none; }
+@media (max-height:700px) { .fat-home-actions { height:78px; min-height:78px; } }
+@media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
+
+.fat-overview .fat-status-switch { margin:0; }
+#pointsApp #fatContentSwitch { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; gap:4px; }
+#pointsApp #fatContentSwitch .overview-content-choice { width:100%; min-width:0; text-align:center; }
+#pointsApp .fat-overview-toolbar > .fat-status-switch { margin-top:4px; }
+#pointsApp #fatSettlementSection .fat-reward-card { background:rgba(255,255,255,.7); border-color:var(--ui-line,#567c6718); box-shadow:none; }
+#pointsApp #fatSettlementSection .fat-settlement-result { margin-top:0; }
+#pointsApp #fatSettlementSection .fat-reward-card p { font-size:12px; line-height:1.6; }
+#pointsApp #fatSettlementSection .fat-reward-card > summary { list-style:none; }
+#pointsApp #fatSettlementSection .fat-reward-card > summary::-webkit-details-marker { display:none; }
+
+/* One compact measurement filter, visually quieter than the module navigation. */
+#pointsApp :is(.fat-status-switch,.fat-record-status) { display:inline-flex; align-items:center; height:auto; min-height:44px; gap:3px; padding:3px; border:1px solid #dce6df; border-radius:24px; background:#ffffffb8; box-shadow:none; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment { display:inline-flex; align-items:center; justify-content:center; gap:6px; flex:1 0 auto; height:36px; min-height:36px; line-height:1; white-space:nowrap; padding:6px 12px; border:0; border-radius:20px; background:transparent; color:#8a938e; font-size:12px; font-weight:500; box-shadow:none; transition:color .16s ease,background .16s ease; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment::before { content:""; width:5px; height:5px; border-radius:50%; background:#c1cbc5; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active { color:#52715f!important; background:#edf4ef!important; font-weight:650; box-shadow:none!important; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment.active::before { background:#648875; }
+#pointsApp :is(.fat-status-switch,.fat-record-status) .segment:disabled { opacity:.45; }
+.fat-overview-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin:2px 0 18px; }
+#pointsApp .fat-overview-toolbar .overview-content-switch { width:auto; margin:0; padding:3px; gap:2px; border-radius:12px; background:#edf0ed; }
+#pointsApp .fat-overview-toolbar .overview-content-choice { min-height:32px; padding:6px 13px; font-size:12px; border-radius:9px; }
+#pointsApp .fat-overview-toolbar .overview-content-choice.active { background:#fff!important; color:#52715f!important; box-shadow:0 1px 4px #293a2f0b; }
+#fatTrendSection > .section-title,#fatCalendarSection > .section-title { display:none; }
+.fat-week-card { padding:16px 15px; text-align:left; border-radius:18px; }
+.fat-week-title { font-size:11px; color:#919991; font-weight:500; }
+.fat-week-result { justify-content:flex-start; margin:10px 0 9px; gap:6px; }
+.fat-week-result strong { font-size:30px; letter-spacing:-.04em; }
+.fat-week-coverage { font-size:11px; color:#8a938d; }
+.fat-stat-details { border-top:1px solid #e5ebe7; margin-top:14px; padding-top:11px; }
+.fat-stat-details summary { cursor:pointer; color:#809085; font-size:11px; list-style:none; display:flex; align-items:center; justify-content:space-between; min-height:30px; }
+.fat-stat-details summary::-webkit-details-marker { display:none; }
+.fat-stat-details summary::after { content:"＋"; color:#9aa99f; font-size:14px; }
+.fat-stat-details[open] summary::after { content:"−"; }
+.fat-stat-details-body { padding:3px 0 6px; }
+.fat-stat-details-body :is(p,.fat-week-dates) { text-align:left; line-height:1.7; font-size:11px; color:#87918a; }
+.fat-stat-details-body .fat-week-long { border:0; padding:0; }
+.fat-chart-legend { gap:16px; margin-top:12px; }
+#fatChartCaption { font-size:10px; color:#9aa29c; }
+#fatTrendRanges .segment { padding:7px 10px; font-size:11px; }
+.fat-month-summary > div { background:#f4f7f4; border-color:transparent; border-radius:12px; }
+@media(max-width:360px) { #pointsApp :is(.fat-status-switch,.fat-record-status) .segment { padding-left:9px; padding-right:9px; } #pointsApp .fat-overview-toolbar .overview-content-choice { padding-left:10px; padding-right:10px; } }
+
+#pointsApp .fat-record-status { width:fit-content; margin:14px auto 18px; }
+
+/* Keep the measurement picker consistent inside the themed record dialog. */
+#pointsApp #fatRecordStatus { height:auto; min-height:44px; border-radius:24px; background:#ffffffb8!important; }
+#pointsApp #fatRecordStatus .segment { height:36px; min-height:36px; border-radius:20px; }
+#pointsApp #fatRecordStatus .segment.active { background:#edf4ef!important; color:#52715f!important; box-shadow:none!important; }
+
+/* Overview: two clear tasks, with secondary controls kept quiet. */
+#pointsApp .fat-change-label { color:var(--secondary); font-size:12px; }
+#pointsApp .fat-change-value { display:flex; align-items:baseline; gap:8px; margin:10px 0 20px; color:var(--ui-accent,#567c67); }
+#pointsApp .fat-change-value strong { font-size:44px; line-height:1.1; letter-spacing:-1.5px; font-weight:650; }
+#pointsApp .fat-change-value span { font-size:13px; }
+#pointsApp .fat-week-card .fat-week-title { display:inline; font-size:11px; }
+#pointsApp .fat-week-card .fat-week-result { display:inline-flex; margin:0 0 0 8px; gap:4px; font-size:12px; }
+#pointsApp .fat-week-card .fat-week-result strong { font-size:15px; }
+#pointsApp #fatWeekCoverage { display:none; }
+#pointsApp .fat-change-value .gain { color:#a16e62; }
+#pointsApp .fat-chart-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; color:var(--ink); font-size:13px; font-weight:600; }
+#pointsApp #fatTrendRanges { border:0; background:transparent; color:var(--secondary); font-size:11px; padding:8px 2px; }
+#pointsApp .fat-record-disclosure { border-top:1px solid var(--ui-line,#567c6718); margin-top:18px; }
+#pointsApp .fat-record-disclosure > summary,#pointsApp .fat-settlement-help > summary { display:flex; justify-content:space-between; align-items:center; min-height:48px; list-style:none; cursor:pointer; color:var(--secondary); font-size:12px; }
+#pointsApp .fat-record-disclosure > summary::-webkit-details-marker,#pointsApp .fat-settlement-help > summary::-webkit-details-marker { display:none; }
+#pointsApp .fat-record-disclosure[open] > summary span,#pointsApp .fat-settlement-help[open] > summary span { transform:rotate(90deg); }
+#pointsApp #fatSettlementSection .fat-ledger-head,#pointsApp #fatSettlementSection .fat-settlement-row > summary { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 72px; align-items:center; gap:8px; }
+#pointsApp .fat-ledger-head { padding:10px 0; font-size:10px; color:var(--secondary); }
+#pointsApp .fat-ledger-head span:last-child { text-align:right; }
+#pointsApp .fat-settlement-row { border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp .fat-settlement-row > summary { min-height:72px; padding:12px 0; list-style:none; cursor:pointer; font-size:12px; color:var(--ink); }
+#pointsApp .fat-settlement-row > summary::-webkit-details-marker { display:none; }
+#pointsApp .fat-settlement-row small { display:block; margin-top:5px; color:var(--secondary); font-size:10px; }
+#pointsApp .fat-settlement-row strong { text-align:right; font-size:18px; white-space:nowrap; font-weight:650; }
+#pointsApp .fat-settlement-row .reward { color:var(--ui-accent,#567c67); }
+#pointsApp .fat-settlement-row .deduction { color:#a16e62; }
+#pointsApp .fat-row-change { font-size:11px; color:var(--secondary); line-height:1.5; }
+#pointsApp .fat-settlement-next { margin:0 0 15px; font-size:11px; color:var(--secondary); line-height:1.6; }
+#pointsApp .fat-settlement-help { border-top:1px solid var(--ui-line,#567c6718); }
+#pointsApp .fat-settlement-forecast { padding:16px; margin-bottom:16px; border-radius:16px; background:var(--ui-wash,#edf5ef); }
+#pointsApp .fat-settlement-forecast > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; list-style:none; cursor:pointer; font-size:12px; }
+#pointsApp .fat-settlement-forecast small { display:block; margin-top:5px; font-size:11px; color:var(--secondary); }
+#pointsApp .fat-settlement-forecast strong { color:var(--ui-accent,#567c67); font-size:21px; white-space:nowrap; }
+#pointsApp .fat-settlement-forecast p { font-size:11px; color:var(--secondary); line-height:1.6; }
+
+#pointsApp .fat-chart-takeaway { margin:2px 0 15px; color:var(--ui-accent,#567c67); font-size:17px; font-weight:650; line-height:1.5; }
+#pointsApp .fat-chart-takeaway.gain { color:#a16e62; }
+#pointsApp .fat-chart-endpoints { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
+#pointsApp .fat-chart-endpoints > div { min-width:0; }
+#pointsApp .fat-chart-endpoints > div:last-child { text-align:right; }
+#pointsApp .fat-chart-endpoints span { display:block; color:var(--secondary); font-size:10px; margin-bottom:5px; }
+#pointsApp .fat-chart-endpoints strong { color:var(--ink); font-size:12px; font-weight:600; line-height:1.5; }
+#pointsApp .fat-chart-reading { margin:10px 0 0; color:var(--secondary); font-size:11px; text-align:center; line-height:1.6; }
+#pointsApp .fat-chart-wrap { height:180px; }
+
+/* Compact overview; visible close action stays reachable while scrolling. */
+#pointsApp .overview.fat-mode .overview-shell { max-height:min(70dvh,480px)!important; }
+#pointsApp .overview.fat-mode .overview-header { min-height:60px; margin-bottom:12px; padding-bottom:10px; }
+#pointsApp .fat-overview-close { position:absolute; right:16px; top:12px; z-index:5; min-width:44px; min-height:44px; border:0; background:transparent; color:var(--ui-accent,#567c67); font-size:13px; font-weight:600; border-radius:12px; }
+#pointsApp .fat-overview-close:focus-visible { outline:2px solid var(--ui-accent,#567c67); }
+#pointsApp .fat-overview-toolbar { margin-bottom:12px; gap:6px; }
+#pointsApp #fatTrendSection .trend-card { padding:14px 15px; }
+#pointsApp .fat-chart-takeaway { margin-bottom:10px; font-size:16px; }
+#pointsApp .fat-chart-wrap { height:150px; }
+#pointsApp .fat-chart-reading { margin-top:6px; font-size:10px; }
+#pointsApp #fatChartCaption { margin-top:6px; }
+#pointsApp .fat-stat-details { margin-top:10px; padding-top:4px; }
+#pointsApp .fat-record-disclosure { margin-top:8px; }
+#pointsApp .fat-record-disclosure > summary { min-height:40px; }
+#pointsApp .fat-week-context .fat-week-title { font-size:11px; color:var(--secondary); }
+#pointsApp .fat-week-context .fat-week-result { margin:8px 0; }
+#pointsApp .fat-week-context .fat-week-result strong { font-size:18px; }
+
+#pointsApp .overview.fat-mode .overview-grabber-hitbox { min-height:28px; margin-bottom:0; }
+#pointsApp .overview.fat-mode .overview-subtitle { display:none; }
+#pointsApp .overview.fat-mode .fat-chart-wrap { height:130px; }

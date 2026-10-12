@@ -1,55 +1,114 @@
-/* Scope is /points/. Supabase, auth, writes and version checks never enter caches. */
-const BUILD='20261011.6';
-const PREFIX='points-shell-'+encodeURIComponent(new URL(self.registration.scope).pathname)+'-';
-const CACHE=PREFIX+BUILD;
-const SHELL=new URL('index.html',self.registration.scope).href;
-const validShell=async response=>{
-  if(!response.ok)return false;
-  const html=await response.clone().text();
-  const version=html.match(/content="(\d{8}\.\d+)" name="points-build"/)?.[1];
-  if(!version || !html.includes('id="pointsApp"'))return false;
-  const [day,revision]=version.split('.').map(Number),[currentDay,currentRevision]=BUILD.split('.').map(Number);
-  return day>currentDay || day===currentDay && revision>=currentRevision;
-};
-self.addEventListener('install',event=>{
-  event.waitUntil((async()=>{
-    const response=await fetch(SHELL,{cache:'reload'});
-    const html=await response.clone().text();
-    // During a CDN rollout, refuse to cache an HTML version different from this worker.
-    if(!response.ok || !html.includes('content="20261011.6" name="points-build"'))throw Error('Incomplete release');
-    await (await caches.open(CACHE)).put(SHELL,response);
-    await self.skipWaiting();
-  })());
-});
-self.addEventListener('activate',event=>{
-  event.waitUntil((async()=>{
-    for(const key of await caches.keys())if(key.startsWith(PREFIX) && key!==CACHE)await caches.delete(key);
-    await self.clients.claim();
-  })());
+/* Versioned public assets only. Account/API requests never enter caches. */
+const BUILD='20261012.1';
+const bakedRelease=()=>JSON.parse('{"schema":2,"build":"20261012.1","updatedAt":"2026-10-12T00:52:28.155Z","shell":{"url":"assets/shell.8903fed6e6679d32f5195f17eb462da32cb54d8d6269db1a8b98c1ef5465eeab.html","sha256":"8903fed6e6679d32f5195f17eb462da32cb54d8d6269db1a8b98c1ef5465eeab","bytes":73017},"assets":[{"url":"assets/base-0.6acf480a01ea897f92d37c1628df6ec2160a3982d5e571dc46bc336b20a042a6.css","sha256":"6acf480a01ea897f92d37c1628df6ec2160a3982d5e571dc46bc336b20a042a6","bytes":140391},{"url":"assets/fat-loss.2478677a1da980b8c3a920ba12c6b81f8301b0323b70e2b0c419d9fd8655ffd3.css","sha256":"2478677a1da980b8c3a920ba12c6b81f8301b0323b70e2b0c419d9fd8655ffd3","bytes":17558},{"url":"assets/fat-rewards.d3530582f2c4d14beb300e6941c15cb10acd27a0cd446d972206fa8ee73118c9.css","sha256":"d3530582f2c4d14beb300e6941c15cb10acd27a0cd446d972206fa8ee73118c9","bytes":15047},{"url":"assets/ui-theme.54b28765a8c67221303ad4cc4d4d1dbe21faf7680c05f644e49f2d8bfba931af.css","sha256":"54b28765a8c67221303ad4cc4d4d1dbe21faf7680c05f644e49f2d8bfba931af","bytes":27469},{"url":"assets/kitchen.eb755288217d553606ffb3e2b087662087fb3ac9b0fb119f132c61a0208dcab6.css","sha256":"eb755288217d553606ffb3e2b087662087fb3ac9b0fb119f132c61a0208dcab6","bytes":21054},{"url":"assets/web-push.1f1701da9d0da20484c15dd65acfb70ead5f8e4e2703fd0cba427badcdcfaa37.css","sha256":"1f1701da9d0da20484c15dd65acfb70ead5f8e4e2703fd0cba427badcdcfaa37","bytes":243},{"url":"assets/device-access.70f01acde84e7275a7ecf3da54642d2510da28eb217358e92a53d3a254f17b7c.css","sha256":"70f01acde84e7275a7ecf3da54642d2510da28eb217358e92a53d3a254f17b7c","bytes":3264},{"url":"assets/notifications.ffc13d489e1d846192582b6ea0d526e4196fc4e32b37f5dd9869ed142374efa9.css","sha256":"ffc13d489e1d846192582b6ea0d526e4196fc4e32b37f5dd9869ed142374efa9","bytes":2403},{"url":"assets/kitchen-refined.0180294c80eb17bf14e9ef200f99c81b48dd2723876b0b8d4e574f1fc27dbfea.css","sha256":"0180294c80eb17bf14e9ef200f99c81b48dd2723876b0b8d4e574f1fc27dbfea","bytes":28078},{"url":"assets/runtime.6a3f4522d396742c21f2041cb0609d7d1d77fef70eff1d008e433bddaac92766.js","sha256":"6a3f4522d396742c21f2041cb0609d7d1d77fef70eff1d008e433bddaac92766","bytes":7126},{"url":"assets/sdk.6ad64025ae473efe44c6f36e8f0f69bdb06855e856ba8ebc8fe470dba6e6ddd9.js","sha256":"6ad64025ae473efe44c6f36e8f0f69bdb06855e856ba8ebc8fe470dba6e6ddd9","bytes":218048},{"url":"assets/gestures.51a2886b3f475010479fff90773c99f6b78900502348b90c94039d45cf587180.js","sha256":"51a2886b3f475010479fff90773c99f6b78900502348b90c94039d45cf587180","bytes":4176},{"url":"assets/kitchen-catalog.ff61cfc9fcdf9f9d7b88ad673de339ee14e89ffbb5c5faac7a250a1c19ae6414.js","sha256":"ff61cfc9fcdf9f9d7b88ad673de339ee14e89ffbb5c5faac7a250a1c19ae6414","bytes":23150},{"url":"assets/kitchen-api.ded1619ea4be33aa3fadb6873fa061e622fe65bbf34f78d9d0a6ff137dd897a6.js","sha256":"ded1619ea4be33aa3fadb6873fa061e622fe65bbf34f78d9d0a6ff137dd897a6","bytes":1339},{"url":"assets/kitchen.b3e1db30e3161d26bf82949c4182971b8b638601bcb6e227debee72952de7ac3.js","sha256":"b3e1db30e3161d26bf82949c4182971b8b638601bcb6e227debee72952de7ac3","bytes":57867},{"url":"assets/fat.0585ba02b7ebaee84e0347aeeafc8af31d991f5786c3c3291cf1d8c86fe5364c.js","sha256":"0585ba02b7ebaee84e0347aeeafc8af31d991f5786c3c3291cf1d8c86fe5364c","bytes":53779},{"url":"assets/rewards.2691fcd24f62f399199cc5cd5107b00b579b3e34aec585792ff36f8367636ed9.js","sha256":"2691fcd24f62f399199cc5cd5107b00b579b3e34aec585792ff36f8367636ed9","bytes":28539},{"url":"assets/access.bf3ac11ba577369ab7f0bd5df459e54bb8a248ddf203726bb532e643b30993ea.js","sha256":"bf3ac11ba577369ab7f0bd5df459e54bb8a248ddf203726bb532e643b30993ea","bytes":13936},{"url":"assets/push.f7c34d67adb87a7e89774741f82953483dd1f7534d830fbed0f865297305fe80.js","sha256":"f7c34d67adb87a7e89774741f82953483dd1f7534d830fbed0f865297305fe80","bytes":17179},{"url":"assets/notifications.aeb1b1847d7dcbc0dff71ff2bc973259400b8fc8ecde4bb251cd5c623034457d.js","sha256":"aeb1b1847d7dcbc0dff71ff2bc973259400b8fc8ecde4bb251cd5c623034457d","bytes":12173},{"url":"assets/app.f0478ab729104e42859723142e987f849c9a4909ca3f52a61b8c66b8197b4fde.js","sha256":"f0478ab729104e42859723142e987f849c9a4909ca3f52a61b8c66b8197b4fde","bytes":232327},{"url":"assets/theme.fefa2e1ff48b776851ae5c2bc22cf7aae4ce1573b8f360781f1e910716c92dd7.js","sha256":"fefa2e1ff48b776851ae5c2bc22cf7aae4ce1573b8f360781f1e910716c92dd7","bytes":6285}]}');
+const SCOPE=new URL(self.registration.scope),SHELL=new URL('index.html',SCOPE).href;
+const PREFIX='points-release-v2-'+encodeURIComponent(SCOPE.pathname)+'-';
+const ASSETS='points-assets-v2-'+encodeURIComponent(SCOPE.pathname);
+const CONTROL='points-control-v2-'+encodeURIComponent(SCOPE.pathname);
+const IMAGES='points-images-v2-'+encodeURIComponent(SCOPE.pathname);
+const POINTER=new URL('__points_ready__',SCOPE).href,META=new URL('__points_manifest__',SCOPE).href;
+const compare=(a,b)=>{const x=a.split('.').map(Number),y=b.split('.').map(Number);return x[0]-y[0]||x[1]-y[1];};
+const jsonResponse=value=>new Response(JSON.stringify(value),{headers:{'Content-Type':'application/json'}});
+const digest=async bytes=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+function validate(release){
+ if(release?.schema!==2||!/^\d{8}\.\d+$/.test(release.build)||!Array.isArray(release.assets)||release.assets.length>80)throw Error('Invalid release');
+ const files=[...release.assets,release.shell],urls=new Set();let total=0;
+ for(const file of files){
+  if(!file||!/^[a-f0-9]{64}$/.test(file.sha256)||!Number.isInteger(file.bytes)||file.bytes<1||file.bytes>2000000)throw Error('Invalid asset');
+  if(!/^assets\/[a-z0-9-]+\.[a-f0-9]{64}\.(?:js|css|html)$/.test(file.url)||!file.url.includes('.'+file.sha256+'.')||urls.has(file.url))throw Error('Invalid asset URL');
+  urls.add(file.url);total+=file.bytes;
+ }
+ if(total>8000000||!release.shell.url.endsWith('.html')||release.assets.some(f=>!/\.(?:js|css)$/.test(f.url)))throw Error('Invalid release size');
+ return release;
+}
+async function request(url,timeout=30000){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
+ try{const response=await fetch(url,{cache:'no-store',credentials:'same-origin',signal:controller.signal});if(!response.ok)throw Error('HTTP '+response.status);const bytes=await response.arrayBuffer(),headers=new Headers(response.headers);headers.delete('Content-Encoding');headers.delete('Content-Length');return new Response(bytes,{status:response.status,headers});}finally{clearTimeout(timer);}
+}
+async function ready(build){
+ const cache=await caches.open(PREFIX+build),meta=await cache.match(META),shell=await cache.match(SHELL);
+ if(!meta||!shell)return null;return {release:validate(await meta.json()),shell};
+}
+async function latest(){
+ const pointer=await (await caches.open(CONTROL)).match(POINTER);
+ const build=pointer?(await pointer.json()).build:BUILD;
+ // Installing and active workers can publish concurrently; complete cache metadata is authoritative.
+ const builds=[...new Set([build,BUILD,...(await caches.keys()).filter(name=>name.startsWith(PREFIX)).map(name=>name.slice(PREFIX.length))])]
+  .filter(value=>/^\d{8}\.\d+$/.test(value)).sort((a,b)=>compare(b,a));
+ for(const candidate of builds){const complete=await ready(candidate);if(complete)return complete;}
+ return null;
+}
+let preparing=new Map(),publish=Promise.resolve();
+async function prepare(input){
+ const release=validate(input);
+ if(preparing.has(release.build))return preparing.get(release.build);
+ const job=(async()=>{
+  const bank=await caches.open(ASSETS),files=[...release.assets,release.shell];let downloaded=0,reused=0;
+  // Each hash is verified before use; interrupted downloads remain reusable but never become an active release.
+  let index=0;
+  async function download(){
+   while(index<files.length){
+    const file=files[index++],url=new URL(file.url,SCOPE).href;
+    let response=await bank.match(url),bytes=response?await response.clone().arrayBuffer():null;
+    if(bytes&&(bytes.byteLength!==file.bytes||await digest(bytes)!==file.sha256)){response=null;bytes=null;}
+    if(response){reused++;continue;}
+    response=await request(url);bytes=await response.clone().arrayBuffer();
+    if(bytes.byteLength!==file.bytes||await digest(bytes)!==file.sha256)throw Error('Asset integrity mismatch');
+    await bank.put(url,response);downloaded++;
+   }
+  }
+  await Promise.all([download(),download(),download()]);
+  const shell=await bank.match(new URL(release.shell.url,SCOPE).href),html=await shell.clone().text();
+  if(!html.includes(`content="${release.build}" name="points-build"`)||!html.includes('id="pointsApp"'))throw Error('Shell mismatch');
+  const cache=await caches.open(PREFIX+release.build);
+  await cache.put(SHELL,shell);await cache.put(META,jsonResponse(release));
+  // Serialize pointer commits; a late response must never roll an already prepared release back.
+  const commit=publish.catch(()=>{}).then(async()=>{
+   const control=await caches.open(CONTROL),previous=await control.match(POINTER);
+   if(!previous||compare(release.build,(await previous.json()).build)>=0)await control.put(POINTER,jsonResponse({build:release.build}));
+  });publish=commit;await commit;
+  return {build:release.build,downloaded,reused};
+ })();preparing.set(release.build,job);
+ try{return await job;}finally{preparing.delete(release.build);}
+}
+self.addEventListener('install',event=>event.waitUntil((async()=>{await prepare(bakedRelease());await self.skipWaiting();})()));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+ // Retain previous release/asset caches for open clients and rollback. Never delete unrelated or legacy storage here.
+ await self.clients.claim();
+ for(const client of await self.clients.matchAll({type:'window'}))client.postMessage({type:'points:release-ready',build:BUILD});
+})()));
+self.addEventListener('message',event=>{
+ const port=event.ports?.[0];if(!port)return;
+ if(event.data?.type==='points:ping'){port.postMessage({ok:true,protocol:2});return;}
+ if(event.data?.type!=='points:prepare-release')return;
+ event.waitUntil(prepare(event.data.release).then(result=>port.postMessage({ok:true,...result}),error=>port.postMessage({ok:false,error:error.message})));
 });
 self.addEventListener('fetch',event=>{
-  const request=event.request,url=new URL(request.url),scope=new URL(self.registration.scope);
-  if(request.method!=='GET' || url.origin!==scope.origin || !url.pathname.startsWith(scope.pathname))return;
-  const relative=url.pathname.slice(scope.pathname.length);
-  const navigation=request.mode==='navigate' && (relative==='' || relative==='index.html');
-  const image=/^(?:images\/kitchen\/[a-z0-9-]+\.jpg|ICON\/[a-zA-Z0-9_-]+\.png)$/.test(relative);
-  if(!navigation && !image)return;
-  event.respondWith((async()=>{
-    const cache=await caches.open(CACHE),key=navigation?SHELL:request;
-    const cached=await cache.match(key);
-    // Explicit update reloads reach the network; ordinary launches use the ready shell.
-    if(cached && !(navigation && url.searchParams.has('__app_refresh')))return cached;
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
-    try {
-      const response=await fetch(request,{signal:controller.signal});
-      const valid=response.ok && (!navigation || await validShell(response));
-      if(valid)await cache.put(key,response.clone());
-      if(!valid && cached)return cached;
-      if(!response.ok && cached)return cached;
-      return response;
-    } catch(error) {if(cached)return cached;throw error;}
-    finally {clearTimeout(timer);}
-  })());
+ const requestInfo=event.request,url=new URL(requestInfo.url);
+ if(requestInfo.method!=='GET'||url.origin!==SCOPE.origin||!url.pathname.startsWith(SCOPE.pathname))return;
+ const relative=url.pathname.slice(SCOPE.pathname.length);
+ const navigation=requestInfo.mode==='navigate'&&(relative===''||relative==='index.html');
+ const asset=/^assets\/[a-z0-9-]+\.([a-f0-9]{64})\.(?:js|css|html)$/.exec(relative);
+ const image=/^(?:images\/kitchen\/[a-z0-9-]+\.jpg|ICON\/[a-zA-Z0-9_-]+\.png)$/.test(relative);
+ if(!navigation&&!asset&&!image)return;
+ event.respondWith((async()=>{
+  if(navigation){
+   const target=url.searchParams.get('__points_target');
+   let selected=await latest();
+   if(target&&/^\d{8}\.\d+$/.test(target)&&(!selected||compare(selected.release.build,target)<0))selected=await ready(target);
+   if(selected)return selected.shell;
+   // Legacy refresh URLs also use a fully prepared release, avoiding a second network download.
+   try{const manifest=await (await request(new URL('version.json?check='+Date.now(),SCOPE),10000)).json();await prepare(manifest);selected=await latest();if(selected)return selected.shell;}catch(_){}
+   selected=await latest();if(selected)return selected.shell;
+   throw Error('No complete offline release');
+  }
+  const cache=await caches.open(asset?ASSETS:IMAGES),key=asset?new URL(relative,SCOPE).href:requestInfo;
+  const cached=await cache.match(key);if(cached)return cached;
+  if(image){const legacy=await caches.match(requestInfo);if(legacy){await cache.put(key,legacy.clone());return legacy;}}
+  const response=await request(requestInfo.url);
+  if(asset&&await digest(await response.clone().arrayBuffer())!==asset[1])throw Error('Asset integrity mismatch');
+  await cache.put(key,response.clone());return response;
+ })());
 });
 
 // Every push is visible, including malformed messages (required by Safari).
