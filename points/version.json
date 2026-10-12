@@ -1,10 +1,10 @@
 {
   "schema": 2,
-  "build": "20261012.5",
-  "updatedAt": "2026-10-12T04:18:19.163Z",
+  "build": "20261012.6",
+  "updatedAt": "2026-10-12T05:16:00.418Z",
   "shell": {
-    "url": "assets/shell.c2474d558f677eb773861316b0d11401c16ce1cc0863eebcec235a3b28d5c70b.html",
-    "sha256": "c2474d558f677eb773861316b0d11401c16ce1cc0863eebcec235a3b28d5c70b",
+    "url": "assets/shell.b0acdd475fc498fea921eeaf6b4d6a7f58ecf881535aebd8e7b51752055a309f.html",
+    "sha256": "b0acdd475fc498fea921eeaf6b4d6a7f58ecf881535aebd8e7b51752055a309f",
     "bytes": 73476
   },
   "assets": [
@@ -24,9 +24,9 @@
       "bytes": 15047
     },
     {
-      "url": "assets/ui-theme.ce0e71b2cf5327af14e90dc60e4641e45351c039ffa47c2626bff578c9da8911.css",
-      "sha256": "ce0e71b2cf5327af14e90dc60e4641e45351c039ffa47c2626bff578c9da8911",
-      "bytes": 36448
+      "url": "assets/ui-theme.7c3c3fa7497c7b8b58c74b871171d084808863abb70ca8cd5c7b9d4a96ebc526.css",
+      "sha256": "7c3c3fa7497c7b8b58c74b871171d084808863abb70ca8cd5c7b9d4a96ebc526",
+      "bytes": 31169
     },
     {
       "url": "assets/kitchen.eb755288217d553606ffb3e2b087662087fb3ac9b0fb119f132c61a0208dcab6.css",
