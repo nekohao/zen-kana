@@ -1,10 +1,31 @@
-# Local preview captures and delivery archives; never runtime dependencies.
+# Local outputs; keep review evidence on disk, not in the repository.
 /tests/*.png
-/*-delivery-*.zip
+/tests/*.jpg
+/tests/*.webp
+/tests/*.html
+*.zip
+*.log
+*.pyc
+__pycache__/
+.cache/
+tmp/
+reports/
+.env
+.env.*
+*.secrets.json
 
-# Superseded release notes remain available in Git history.
-/EDITION-20261011.2.md
-/EDITION-20261011.3.md
-/EDITION-20261011.4.md
-/EDITION-20261011.5.md
-/EDITION-20261011.6.md
+# Root reports and obsolete local generators are not project entries.
+/*-20*.md
+/EDITION-*.md
+/build-notifications-sql.mjs
+/web-push/generate-secrets.mjs
+
+# One maintained preview; other historical local copies are not submitted.
+/tests/preview-server.mjs
+/tests/release-preview.mjs
+/tests/ui-consistency-preview.mjs
+/tests/preview-fixture.js
+
+# Build resources are admitted only by explicit manifest paths.
+/assets/*
+!/assets/.gitattributes

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import {createHash} from 'node:crypto';
-import {bundle} from '../build.mjs';
+import {bundle} from '../scripts/build.mjs';
 const release=JSON.parse(await fs.readFile(new URL('../version.json',import.meta.url),'utf8'));
 const result=await bundle(release);let checks=0;
 for(const [file,text] of [...result.files,['index.html',result.html],['sw.js',result.worker]]){

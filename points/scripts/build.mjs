@@ -4,7 +4,8 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {gzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
-const root=path.dirname(fileURLToPath(import.meta.url));
+import {execFileSync} from 'node:child_process';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const modules=[['runtime','app-runtime.js',true],['sdk','vendor/supabase-2.117.2.js',true],
  ['gestures','home-gestures.js'],['kitchen-catalog','kitchen-recipes.js'],['kitchen-api','kitchen-api.js'],
  ['kitchen','kitchen.js'],['family','family.js'],['fat','fat-loss.js'],['rewards','fat-rewards.js'],['access','device-access.js',true],
@@ -18,7 +19,7 @@ export async function bundle({build,updatedAt,sdkSource,overrides={}}={}) {
  updatedAt ||= now.toISOString();
  if(!/^\d{8}\.\d+$/.test(build)||!Number.isFinite(Date.parse(updatedAt)))throw Error('Invalid release metadata');
  const displayTime=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(updatedAt));
- const read=async file=>(overrides[file]??await fs.readFile(path.join(root,file),'utf8')).replace(/\r\n?/g,'\n');
+ const read=async file=>(overrides[file]??await fs.readFile(path.join(root,file.startsWith('vendor/')?file:'src/'+file),'utf8')).replace(/\r\n?/g,'\n');
  const safe=text=>text.replace(/<\/script/gi,'<\\/script');
  const files=new Map(),assets=[];
  const asset=(id,type,content)=>{
@@ -55,8 +56,22 @@ async function writeBatches(file,text){
  await fs.mkdir(path.dirname(path.join(root,file)),{recursive:true});const handle=await fs.open(path.join(root,file),'w');
  try{const lines=text.split('\n');for(let i=0;i<lines.length;i+=200)await handle.write(lines.slice(i,i+200).join('\n')+(i+200<lines.length?'\n':''));}finally{await handle.close();}
 }
+async function retainCommittedRelease(next){
+ let committed;
+ try{committed=JSON.parse(execFileSync('git',['show','HEAD:points/version.json'],{cwd:root,encoding:'utf8'}));}catch(_){return;}
+ if(committed.build===next.build)return;
+ const ledger=JSON.parse(await readLedger());
+ const candidates=[committed,...ledger.releases.filter(r=>r.build!==committed.build&&r.build!==next.build)];
+ const number=r=>{const [day,revision]=r.build.split('.');return BigInt(day)*1000000n+BigInt(revision);};
+ candidates.sort((a,b)=>number(a)>number(b)?-1:1);
+ const cutoff=Date.parse(next.updatedAt)-30*86400000;
+ ledger.releases=candidates.filter((r,index)=>index<2||Date.parse(r.updatedAt)>=cutoff);
+ await writeBatches('scripts/retained-releases.json',JSON.stringify(ledger,null,2)+'\n');
+}
+async function readLedger(){return fs.readFile(path.join(root,'scripts/retained-releases.json'),'utf8');}
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const result=await bundle({build:process.argv[2],updatedAt:process.argv[3]});
+ await retainCommittedRelease(result.release);
  for(const [file,content] of result.files)await writeBatches(file,content);
  await writeBatches('index.html',result.html);await writeBatches('sw.js',result.worker);
  await writeBatches('version.json',JSON.stringify(result.release,null,2)+'\n');

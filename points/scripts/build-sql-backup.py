@@ -4,7 +4,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 BACKUP = ROOT / 'sql-backup'
 def write_batches(path, text):
     lines = text.splitlines(keepends=True)

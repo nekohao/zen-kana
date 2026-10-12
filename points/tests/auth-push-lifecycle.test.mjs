@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
-const source=await fs.readFile(new URL('../app.js',import.meta.url),'utf8');
+const source=await fs.readFile(new URL('../src/app.js',import.meta.url),'utf8');
 const authSource=source.slice(source.indexOf('      let authReadVersion ='),source.indexOf('      async function login()'));
 const eventStart=source.indexOf('      db.auth.onAuthStateChange((_event, session) =>');
 const eventSource=source.slice(eventStart,source.indexOf('      // -------------------- Boot',eventStart));

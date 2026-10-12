@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
-const code=await fs.readFile('points/updates.js','utf8');
+const code=await fs.readFile('points/src/updates.js','utf8');
 let checks=0;
 const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 function setup({version='20261011.8',fail=false,offline=false,hidden=false,prepareError=false,stored=null,ready=true}={}){

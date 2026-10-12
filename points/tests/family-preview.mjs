@@ -4,7 +4,7 @@ import fs from './database-source.mjs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createFamilyDatabase} from './family-db.mjs';
-import {bundle} from '../build.mjs';
+import {bundle} from '../scripts/build.mjs';
 import {createFatDatabase} from './fat-db.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const port=Number(process.env.POINTS_PREVIEW_PORT||4178);
@@ -24,7 +24,7 @@ await fat.db.exec(await fs.readFile(path.join(root,'fat-settlement-increment-202
 await fat.db.exec(`INSERT INTO public.points_fat_reward_weeks(week_start,cutoff_at,current_days,previous_days,current_mean_jin,previous_mean_jin,change_jin,eligible,calculated_delta,applied_delta,balance_after)
  VALUES(date_trunc('week',clock_timestamp() AT TIME ZONE 'Asia/Shanghai')::date-7,clock_timestamp()-interval '1 day',4,3,157,160,-3,true,3,3,10) ON CONFLICT(week_start) DO NOTHING;`);
 const release=JSON.parse(await fs.readFile(path.join(root,'version.json'),'utf8'));
-const preview=await bundle({...release,sdkSource:await fs.readFile(path.join(root,'tests/preview-fixture.js'),'utf8')});
+const preview=await bundle({...release,sdkSource:await fs.readFile(path.join(root,'tests/fixtures/browser-sdk.js'),'utf8')});
 preview.html=preview.html.replaceAll("SUPABASE_URL+'/functions/v1/points-web-push'","'/__demo/push-config'");
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp','.webmanifest':'application/manifest+json'};
 const server=http.createServer(async(req,res)=>{
@@ -73,7 +73,7 @@ const server=http.createServer(async(req,res)=>{
     const pwa=preview.html.replace('<html lang="zh-CN">','<html lang="zh-CN" class="ios-pwa">')
       .replaceAll('env(safe-area-inset-bottom,0px)','34px').replaceAll('env(safe-area-inset-bottom, 0px)','34px');
     const realSdkHtml=relative==='real-sdk.html'?(await fs.readFile(path.join(root,'index.html'),'utf8')).replaceAll('https://zrzplqwauuruyssgcwqt.supabase.co',`http://127.0.0.1:${port}/__sdk`):null;
-    const bytes=realSdkHtml || (relative==='index.html'?preview.html:relative==='pwa.html'?pwa:await fs.readFile(sdk?path.join(root,'tests/preview-fixture.js'):file));
+    const bytes=realSdkHtml || (relative==='index.html'?preview.html:relative==='pwa.html'?pwa:await fs.readFile(sdk?path.join(root,'tests/fixtures/browser-sdk.js'):file));
     res.setHeader('Content-Type',mime[path.extname(file)] || 'application/octet-stream');res.end(bytes);
   }catch(e){
     if(req.url==='/__demo/rpc'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({data:null,error:{code:e.code || 'P0001',message:e.message}}));}

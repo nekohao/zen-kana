@@ -7,7 +7,7 @@ const {PGlite}=await import(pathToFileURL(process.env.TEMP+'/zen-kana-preview-ru
 const original=JSON.parse(await fs.readFile(new URL('../sql-backup/online-confirmed.json',import.meta.url),'utf8'));
 const current=JSON.parse(await fs.readFile(new URL('../sql-backup/current-schema.json',import.meta.url),'utf8'));
 const increment=await fs.readFile(new URL('../schema-increment.sql',import.meta.url),'utf8');
-const baseline=execFileSync('python',['-c',"import runpy,json,sys; renderer=runpy.run_path('points/build-sql-backup.py'); print(renderer['render'](json.load(sys.stdin)),end='')"],{input:JSON.stringify(original),encoding:'utf8',maxBuffer:4000000});
+const baseline=execFileSync('python',['-X','utf8','-c',"import runpy,json,sys; renderer=runpy.run_path('points/scripts/build-sql-backup.py'); print(renderer['render'](json.load(sys.stdin)),end='')"],{input:JSON.stringify(original),encoding:'utf8',maxBuffer:4000000});
 const db=new PGlite();let checks=0;const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 try{
  await db.exec('CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE ROLE supabase_admin;CREATE SCHEMA auth;CREATE TABLE auth.users(id uuid PRIMARY KEY);CREATE SCHEMA extensions;');

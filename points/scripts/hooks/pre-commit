@@ -1,0 +1,5 @@
+#!/bin/sh
+node points/scripts/check-repo.mjs --staged --if-points-staged || exit 1
+if git diff --cached --name-only | grep -q '^points/'; then
+  python points/scripts/build-sql-backup.py --check || exit 1
+fi

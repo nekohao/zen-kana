@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
-const code=await fs.readFile(new URL('../web-push.js',import.meta.url),'utf8');
+const code=await fs.readFile(new URL('../src/web-push.js',import.meta.url),'utf8');
 let checks=0;const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 const flush=async()=>{for(let i=0;i<6;i++)await new Promise(resolve=>setImmediate(resolve));};
 const key='B'+'A'.repeat(86),scope='https://example.test/points/',endpoint='https://web.push.apple.com/test';

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
-const source=await fs.readFile(new URL('../device-access.js',import.meta.url),'utf8');
+const source=await fs.readFile(new URL('../src/device-access.js',import.meta.url),'utf8');
 let checks=0;const check=(a,b)=>{assert.deepEqual(a,b);checks++;};
 const flush=async()=>{for(let i=0;i<12;i++)await new Promise(resolve=>setImmediate(resolve));};
 function setup({stored=null,session=null,cachedAdmin=null,launch=false,receipt={ok:true,deviceId:'device-1'},readAuth=null}={}) {

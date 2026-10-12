@@ -1,21 +1,22 @@
 # points 项目入口
 
-处理 points 相关任务时先阅读本文件；数据库工作再阅读 `points/AGENTS.md`。
+处理 points 任务先阅读本文件和 points/AGENTS.md，再从 points/README.md 定位源码与工具。
 
 ## 基本边界
 
 1. 除非用户同意，否则不得修改代码和电脑上的任何文件。
 2. 生成代码超过 600 行必须分批写入；points 大文件每批最多 200 行。
 3. 删除或修改任何非明确授权文件必须先申请正式权限。
+4. 开始前核对源码、版本和已有改动；只处理当次授权范围，不混入其他任务的暂存或未提交工作。
 
 ## 基本架构
 
-- `points/`：小世界移动端 PWA，包含积分商城、转盘、小家庭、减脂奖励、设备接入和推送。
-- `index.source.html`：页面与基础样式源码；`app.js`：主业务与模块装配。
-- `family.js`：小家庭统一任务；`kitchen*.js`：菜谱及旧订单接口；`fat*.js`：减脂模块；各模块 CSS 和 `ui-theme.css`：展示样式。
-- `app-runtime.js`、`startup.js`：请求保护与启动；`updates.js`、`sw.source.js`：版本更新与缓存。
-- `build.mjs`：生成 `index.html`、`sw.js`、`version.json` 和 `assets/` 哈希资源；改源码后构建，不手工改产物。
-- `schema-full.sql`：最新全量结构；`schema-increment.sql`：当前升级增量；`sql-backup/`：生成基线的结构数据。项目只保留这两个 SQL 文件，数据库变更同步更新。
-- `tests/`：本地验证与演示预览；演示数据不代表线上数据。
+- points/：小世界 PWA，包含分数、转盘、减脂、小家庭、设备接入与推送。
+- points/src/：页面、业务模块与样式源码。index.source.html 和 app.js 是页面与装配入口；family.js 是统一家庭任务，kitchen*.js 保留菜谱与历史接口，fat*.js 是减脂与奖励。
+- points/src/app-runtime.js、startup.js：请求与启动保护；updates.js、sw.source.js：更新与缓存。
+- points/scripts/：构建、SQL 生成、仓库检查及提交钩子；node points/scripts/build.mjs 生成发布产物。
+- points/index.html、sw.js、version.json、assets/：生成的发布文件，不手工编辑。
+- points/schema-full.sql、schema-increment.sql：仅有的全量与当前增量 SQL；sql-backup/ 是维护结构数据。
+- points/docs/：两份当前文档；tests/ 是本地验证、演示预览与测试夹具。
 
-开始修改前核对当前源码、版本与已有工作区改动。以用户当次需求决定范围，不预设产品或审美要求。
+新增内容归入既有职责目录。不得新增根目录模块、日期报告或额外 SQL；提交前执行仓库、资源及相关业务检查。详细规则见 points/AGENTS.md。

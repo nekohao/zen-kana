@@ -1,10 +1,10 @@
 // Isolated browser regression tests. No real Supabase requests or writes.
-// node points/stability.test.mjs [path-to-playwright] [path-to-Chrome]
+// node points/tests/stability.test.mjs [path-to-playwright] [path-to-Chrome]
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {fileURLToPath, pathToFileURL} from "node:url";
-const root = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const {chromium} = await import(process.argv[2] ? pathToFileURL(process.argv[2]).href : "playwright");
 const fixture = `(() => {
   const isAdmin = new URLSearchParams(location.search).get('role') === 'admin';
