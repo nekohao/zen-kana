@@ -16,9 +16,9 @@ try{
  await reject(()=>write('admin','create',{type:'dishes',note:'修改'},id),'22023');
  await reject(()=>write('guest','review',{id:first.id,version:first.version,qualified:true}),'42501');
  let t=await write('guest','submit',{id:first.id,version:first.version});check(t.status,'review');check(t.attempt,1);
- const before=(await db.query('SELECT score FROM members WHERE id=1')).rows[0].score;
+ const before=Number((await db.query('SELECT score FROM members WHERE id=1')).rows[0].score);
  t=await write('admin','review',{id:t.id,version:t.version,qualified:false,comment:'锅底还有油'});
- check(t.status,'rework');check((await db.query('SELECT score FROM members WHERE id=1')).rows[0].score,before);
+ check(t.status,'rework');check(Number((await db.query('SELECT score FROM members WHERE id=1')).rows[0].score),before);
  await reject(()=>write('admin','review',{id:t.id,version:t.version,qualified:true}),'42501');
  t=await write('guest','submit',{id:t.id,version:t.version});check(t.attempt,2);
  await reject(()=>write('admin','review',{id:t.id,version:2,qualified:true}),'40001');
@@ -34,13 +34,34 @@ try{
  const types=await write('admin','price',{type:'dishes',version:1,points:3});
  check(types.find(t=>t.code==='dishes').points,3);check((await rpc('guest','points_family_get_task',{p_task_id:old.id})).points,1,'existing score frozen');
  await reject(()=>write('admin','price',{type:'dishes',version:1,points:4}),'40001');
- for(const points of [0,-1,1001,1.5])await reject(()=>write('admin','price',{type:'dishes',version:2,points}),'22023');
+ for(const points of [0,-1,1001,0.3,0.7,1.25])await reject(()=>write('admin','price',{type:'dishes',version:2,points}),'22023');
  const self=await write('guest','create',{type:'dishes',note:'自主登记'});check(self.origin,'guest');check(self.status,'review');check(self.points,3);
  const current=(await rpc('admin','points_family_get_types')).find(t=>t.code==='cooking');
  await write('admin','price',{type:'cooking',version:current.version,points:5});
  const meal=await write('admin','create',{type:'cooking',items:[{slug:'tomato-eggs',note:'少盐'}]});check(meal.items[0].name,'番茄炒蛋');
  await reject(()=>write('admin','cancel',{id:self.id,version:self.version}),'42501');
  check((await write('admin','cancel',{id:meal.id,version:meal.version})).status,'cancelled');
+ await reject(()=>db.query("UPDATE points_family_types SET points=0.3 WHERE code='dishes'"),'23514');
+ await reject(()=>db.query('UPDATE points_family_tasks SET points=0.3 WHERE id=$1',[first.id]),'23514');
+ const balance=Number((await db.query('SELECT score FROM members WHERE id=1')).rows[0].score);
+ let priceVersion=2;
+ for(const points of [0.5,1,1.5,999.5,1000]){
+  const prices=await write('admin','price',{type:'dishes',version:priceVersion++,points});
+  check(prices.find(x=>x.code==='dishes').points,points,'half-point multiple accepted');
+ }
+ await write('admin','price',{type:'dishes',version:priceVersion++,points:0.5});
+ let half=await write('guest','create',{type:'dishes',note:'半分家务'});check(half.points,0.5,'fraction frozen on task');
+ await write('admin','price',{type:'dishes',version:priceVersion++,points:1.5});
+ half=await write('admin','review',{id:half.id,version:half.version,qualified:false});
+ check(Number((await db.query('SELECT score FROM members WHERE id=1')).rows[0].score),balance,'half-point rework awards nothing');
+ half=await write('guest','submit',{id:half.id,version:half.version});
+ const halfOperation=crypto.randomUUID(),halfPayload={id:half.id,version:half.version,qualified:true};
+ half=await write('admin','review',halfPayload,halfOperation);check(half.score_after,balance+0.5,'exact half-point settlement');
+ check((await write('admin','review',halfPayload,halfOperation)).score_after,balance+0.5,'half-point retry idempotent');
+ let next=await write('guest','create',{type:'dishes'});check(next.points,1.5,'latest fractional price');
+ next=await write('admin','review',{id:next.id,version:next.version,qualified:true});check(next.score_after,balance+2,'two fractional awards accumulate exactly');
+ check(Number((await db.query('SELECT l.delta FROM score_logs l JOIN points_family_tasks t ON t.score_log_id=l.id WHERE t.id=$1',[half.id])).rows[0].delta),0.5,'exact score log');
+ await write('admin','price',{type:'dishes',version:priceVersion++,points:3});
  await reapply();check((await rpc('guest','points_family_get_task',{p_task_id:t.id})).score_after,before+1,'migration rerun keeps results');
  check((await rpc('guest','points_family_get_types')).find(t=>t.code==='dishes').points,3,'migration rerun keeps settings');
  await reject(()=>db.transaction(async tx=>{await tx.exec('SET LOCAL ROLE anon');await tx.query('SELECT * FROM points_family_tasks');}),'42501');

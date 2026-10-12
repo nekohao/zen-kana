@@ -49,7 +49,7 @@ const server=http.createServer(async(req,res)=>{
       else if(name.startsWith('points_fat_'))data=await fat.rpc(role==='admin'?'admin':'guest',name,args);
       else if(name.startsWith('points_family_') || /^points_kitchen_v[23]_/.test(name) || ['points_kitchen_get_state','points_kitchen_get_order','points_kitchen_get_reviews'].includes(name))data=await rpc(role==='admin'?'admin':'guest',name,args,deviceToken);
       else if(name==='points_is_admin')data=role==='admin';
-      else if(name==='points_get_state')data=(await db.query('SELECT score FROM members')).rows;
+      else if(name==='points_get_state')data=(await db.query('SELECT score FROM members')).rows.map(row=>({...row,score:Number(row.score)}));
       else if(name==='points_get_wheel_state')data=[{spin_chances:0,cash_balance:0}];
       else if(name==='points_shop_get_state_v2')data={inventory:{},weekly_counts:{},weekly_feature:{code:'mystery_box',discount_claimed:false}};
       else if(name==='points_fat_get_state')data=[{configured:true,delta_jin:-3.2,recorded_at:new Date().toISOString(),record_count:10}];

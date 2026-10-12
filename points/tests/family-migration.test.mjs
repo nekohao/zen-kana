@@ -16,7 +16,7 @@ try{
  await assert.rejects(()=>db.query("UPDATE points_kitchen_orders SET status='rated' WHERE id=$1",[oldComplete.id]),e=>e.code==='40001');checks++;
  check((await db.query("SELECT has_function_privilege('anon','public.points_kitchen_v3_guest_save(jsonb,text,date,text,bigint,integer,boolean,uuid)','EXECUTE') permitted")).rows[0].permitted,false);
  await rpc('admin','points_family_write',{p_action:'price',p_payload:{type:'cooking',points:4,version:1},p_operation_id:crypto.randomUUID()});
- check((await db.query('SELECT points FROM points_family_tasks ORDER BY id')).rows.map(t=>t.points),[4,4]);
+ check((await db.query('SELECT points FROM points_family_tasks ORDER BY id')).rows.map(t=>Number(t.points)),[4,4]);
  await reapply();check((await db.query('SELECT count(*)::integer n FROM points_family_tasks')).rows[0].n,2);
  console.log(checks+' legacy migration, recipe preservation, fixed-score configuration and old writer protection checks passed.');
 }finally{await db.close();}
