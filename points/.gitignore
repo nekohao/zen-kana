@@ -1,0 +1,10 @@
+# Local preview captures and delivery archives; never runtime dependencies.
+/tests/*.png
+/*-delivery-*.zip
+
+# Superseded release notes remain available in Git history.
+/EDITION-20261011.2.md
+/EDITION-20261011.3.md
+/EDITION-20261011.4.md
+/EDITION-20261011.5.md
+/EDITION-20261011.6.md
