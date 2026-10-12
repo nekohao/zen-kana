@@ -3596,7 +3596,7 @@ CREATE OR REPLACE FUNCTION public.points_notice_worker_claim()
  SET search_path TO ''
 AS $function$
 DECLARE b points_notice.batches; s points_push.subscriptions; a text; prefs points_notice.preferences;
-  now_local timestamp:=clock_timestamp() AT TIME ZONE 'Asia/Shanghai'; list jsonb; ids bigint[]; title text; body text; route text; result jsonb:='[]';
+  now_local timestamp:=clock_timestamp() AT TIME ZONE 'Asia/Shanghai'; list jsonb; ids bigint[]; title text; body text; route text; family_only boolean; subjects text; result jsonb:='[]';
 BEGIN
   IF NOT EXISTS(SELECT 1 FROM points_push.config WHERE id AND enabled) THEN RETURN result; END IF;
   UPDATE points_notice.batches SET status='dead' WHERE status IN ('pending','retry','sending') AND (expires_at<clock_timestamp() OR attempts>=5 AND lease_until<clock_timestamp());
@@ -3606,20 +3606,36 @@ BEGIN
     a:=s.audience||':'||coalesce(s.user_id,s.access_device_id);
     INSERT INTO points_notice.preferences(actor) VALUES(a) ON CONFLICT DO NOTHING;
     SELECT * INTO prefs FROM points_notice.preferences WHERE actor=a FOR UPDATE;
-    SELECT array_agg(e.id),jsonb_agg(jsonb_build_object('title',e.title,'category',e.category,'route',e.route) ORDER BY e.id DESC) INTO ids,list
+    SELECT array_agg(e.id),jsonb_agg(jsonb_build_object('title',CASE WHEN ft.id IS NULL THEN e.title WHEN ft.status='review' THEN '宝宝' ELSE '哥哥' END,'body',CASE WHEN ft.id IS NULL THEN e.body ELSE CASE ft.status WHEN 'pending' THEN '请'||ft.title||'，完成后提交验收。' WHEN 'review' THEN ft.title||'已完成，等你验收。' WHEN 'rework' THEN ft.title||'需要返工，请查看评价。' WHEN 'settled' THEN ft.title||'已通过，积分 +'||ft.points||'。' ELSE ft.title||'任务已取消。' END END,'category',e.category,'route',e.route,'group',e.group_key,'subject',ft.title,'status',ft.status) ORDER BY e.id DESC) INTO ids,list
       FROM points_notice.batch_items x JOIN points_notice.events e ON e.id=x.event_id LEFT JOIN points_notice.receipts r ON r.event_id=e.id AND r.actor=a
+      LEFT JOIN public.points_family_tasks ft ON e.group_key='family:'||ft.id
       WHERE x.batch_id=b.id AND e.active AND e.push_allowed AND e.category=ANY(prefs.categories) AND r.presented_at IS NULL;
     IF ids IS NULL THEN UPDATE points_notice.batches SET status='dead' WHERE id=b.id;CONTINUE; END IF;
     IF prefs.quiet AND (now_local::time>='22:30'::time OR now_local::time<'08:00'::time) AND NOT (b.priority=1 AND prefs.night_important) THEN
       UPDATE points_notice.batches SET available_at=((now_local::date+CASE WHEN now_local::time>='22:30'::time THEN 1 ELSE 0 END)+time '08:00') AT TIME ZONE 'Asia/Shanghai' WHERE id=b.id;CONTINUE;
     END IF;
     IF b.priority=0 AND s.last_regular_at>clock_timestamp()-interval '2 minutes' THEN UPDATE points_notice.batches SET available_at=s.last_regular_at+interval '2 minutes' WHERE id=b.id;CONTINUE; END IF;
-    title:=CASE WHEN cardinality(ids)=1 THEN list->0->>'title' ELSE '小世界有 '||cardinality(ids)||' 项更新' END;
-    body:=CASE WHEN cardinality(ids)=1 THEN '点开查看详情。' ELSE '消息已合并，点开消息中心查看全部明细。' END;
-    route:=CASE WHEN cardinality(ids)=1 THEN list->0->>'route' ELSE 'messages' END;
+    SELECT bool_and(coalesce(x->>'group','')~'^family:[0-9]+$') INTO family_only FROM jsonb_array_elements(list)x;
+    IF cardinality(ids)=1 THEN
+      title:=list->0->>'title';body:=list->0->>'body';route:=list->0->>'route';
+    ELSIF family_only THEN
+      route:='kitchen';
+      SELECT string_agg(left(x->>'subject',20),'、' ORDER BY n) INTO subjects FROM jsonb_array_elements(list) WITH ORDINALITY AS e(x,n) WHERE n<=2;
+      IF (SELECT bool_and(x->>'status'='review') FROM jsonb_array_elements(list)x) THEN
+        title:='宝宝';body:=subjects||CASE WHEN cardinality(ids)>2 THEN '等 '||cardinality(ids)||' 件家务' ELSE '' END||'待验收。';
+      ELSIF (SELECT bool_and(x->>'status'='pending') FROM jsonb_array_elements(list)x) THEN
+        title:='哥哥';body:=subjects||CASE WHEN cardinality(ids)>2 THEN '等 '||cardinality(ids)||' 件家务' ELSE '' END||'待完成。';
+      ELSE
+        title:='小家庭';body:=(list->0->>'body')||'另有 '||(cardinality(ids)-1)||' 项家事更新。';
+      END IF;
+    ELSE
+      title:='小世界';body:=(list->0->>'body')||'另有 '||(cardinality(ids)-1)||' 项更新。';
+      route:=CASE WHEN (SELECT count(DISTINCT x->>'route') FROM jsonb_array_elements(list)x)=1 THEN list->0->>'route' ELSE 'messages' END;
+    END IF;
+    body:=left(body,160);
     UPDATE points_notice.batches SET status='sending',attempts=attempts+1,lease=gen_random_uuid(),lease_until=clock_timestamp()+interval '90 seconds' WHERE id=b.id RETURNING * INTO b;
     IF b.priority=0 THEN UPDATE points_push.subscriptions SET last_regular_at=clock_timestamp() WHERE id=s.id; END IF;
-    result:=result||jsonb_build_array(jsonb_build_object('id',b.id,'lease',b.lease,'subscription',s.subscription,'payload',jsonb_build_object('title',title,'body',body,'route',route,'priority',b.priority,'tag',CASE WHEN b.priority=0 THEN 'points-updates' ELSE 'points-batch-'||b.id END)));
+    result:=result||jsonb_build_array(jsonb_build_object('id',b.id,'lease',b.lease,'subscription',s.subscription,'payload',jsonb_build_object('title',title,'body',body,'route',route,'priority',b.priority,'tag',CASE WHEN family_only AND cardinality(ids)=1 THEN 'points-family-'||split_part(list->0->>'group',':',2) WHEN family_only THEN 'points-family-updates' WHEN b.priority=0 THEN 'points-updates' ELSE 'points-batch-'||b.id END)));
   END LOOP;
   RETURN result;
 END $function$;
@@ -6272,10 +6288,9 @@ DECLARE recipient text; headline text; grouped text:='family:'||NEW.id; BEGIN
  IF TG_OP='UPDATE' AND NEW.status IS NOT DISTINCT FROM OLD.status THEN RETURN NEW; END IF;
  UPDATE points_notice.events SET active=false WHERE group_key=grouped;
  recipient:=CASE WHEN NEW.status='review' THEN 'admin' ELSE 'guest' END;
- headline:=CASE NEW.status WHEN 'pending' THEN '哥哥发来了家务请求' WHEN 'review' THEN '宝宝完成了家务，等待验收'
- WHEN 'rework' THEN '这项家务需要返工' WHEN 'settled' THEN '家务合格，积分已结算' ELSE '家务请求已取消' END;
+ headline:=CASE WHEN NEW.status='review' THEN '宝宝' ELSE '哥哥' END;
  PERFORM points_notice.emit(grouped||':'||NEW.version,recipient,'kitchen',headline,
- NEW.title||CASE WHEN NEW.status='settled' THEN ' · +'||NEW.points||' 分' ELSE '' END||CASE WHEN NEW.comment<>'' THEN ' · '||NEW.comment ELSE '' END,
+ CASE NEW.status WHEN 'pending' THEN '请'||NEW.title||'，完成后提交验收。' WHEN 'review' THEN NEW.title||'已完成，等你验收。' WHEN 'rework' THEN NEW.title||'需要返工，请查看评价。' WHEN 'settled' THEN NEW.title||'已通过，积分 +'||NEW.points||'。' ELSE NEW.title||'任务已取消。' END,
  'kitchen',grouped,CASE WHEN NEW.status='settled' THEN 0 ELSE 1 END,true,NEW.status IN ('pending','review','rework'));
  RETURN NEW;
 END $function$;

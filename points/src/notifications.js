@@ -10,7 +10,7 @@
     const prefs=document.createElement('section');prefs.id='pointsNoticeSettings';
     prefs.innerHTML=`<div class="settings-label">提醒偏好</div><div class="settings-group">${Object.entries(labels).map(([k,v])=>`<label class="settings-row static"><span>${v}</span><input type="checkbox" data-notice-category="${k}" checked aria-label="${v}推送"></label>`).join('')}<label class="settings-row static"><span>夜间静默 · 22:30–08:00</span><input type="checkbox" id="pointsNoticeQuiet" checked></label><label class="settings-row static"><span>夜间允许重要待办</span><input type="checkbox" id="pointsNoticeNight"></label></div><p class="points-push-help">新动态会在对应模块显示红点。关闭某类推送不会关闭红点；夜间静默按北京时间。</p><p id="pointsNoticePrefsStatus" class="points-push-message" role="status"></p>`;
     q('pointsPushSettings')?.after(prefs);
-    let items=[],identity='',epoch=0,loading=null,prefsLoaded=false,prefsBusy=false,preference=null,pendingRoute=null;
+    let items=[],identity='',epoch=0,loading=null,prefsLoaded=false,prefsBusy=false,preference=null,pendingRoute=null,pendingTask=null;
     const pendingAcks=new Set(),hosts=new Map();
     const allowed=()=>window.PointsDeviceAccess?.verified===true;
     const currentIdentity=()=>state.isAdmin?'admin:'+state.session?.user?.id:window.PointsDeviceAccess?.credential() || 'guest';
@@ -114,25 +114,27 @@
       }catch(_){if(version===epoch){if(preference)setPreferences(preference);q('pointsNoticePrefsStatus').textContent='未能保存，请重试。';}}
       finally{prefsBusy=false;prefs.querySelectorAll('input').forEach(c=>c.disabled=false);}
     }
-    function route(value) {
+    function route(value,taskId=null) {
       if(value==='messages')value=routeOf(items.find(i=>i.active&&i.unread)||{}) || 'score';
       if(!routes.includes(value))return;
-      if(!allowed()||state.wheelSpinning||state.wheelRequestInFlight){pendingRoute=value;return;}
+      if(!allowed()||state.wheelSpinning||state.wheelRequestInFlight){pendingRoute=value;pendingTask=taskId;return;}
+      pendingRoute=null;pendingTask=null;
       navigate(value);
+      if(value==='kitchen'&&/^[1-9][0-9]*$/.test(String(taskId||'')))window.dispatchEvent(new CustomEvent('points:open-family-task',{detail:{id:String(taskId)}}));
     }
     function wake() {
       if(!allowed()){reset();return;}
-      void load().then(()=>{if(pendingRoute){const r=pendingRoute;pendingRoute=null;route(r);}});
+      void load().then(()=>{if(pendingRoute){const r=pendingRoute,t=pendingTask;pendingRoute=null;pendingTask=null;route(r,t);}});
     }
     prefs.addEventListener('change',()=>void savePreferences());els.settingsBtn.addEventListener('click',()=>void load());
     window.addEventListener('points:access-ready',wake);window.addEventListener('points:access-locked',wake);
     window.addEventListener('online',wake);document.addEventListener('visibilitychange',()=>{if(!document.hidden)wake();});
     let frame=0;
-    const mutation=new MutationObserver(()=>{if(!frame)frame=requestAnimationFrame(()=>{frame=0;render();if(pendingRoute&&allowed()&&!state.wheelSpinning&&!state.wheelRequestInFlight){const r=pendingRoute;pendingRoute=null;route(r);}});});
+    const mutation=new MutationObserver(()=>{if(!frame)frame=requestAnimationFrame(()=>{frame=0;render();if(pendingRoute&&allowed()&&!state.wheelSpinning&&!state.wheelRequestInFlight){const r=pendingRoute,t=pendingTask;pendingRoute=null;pendingTask=null;route(r,t);}});});
     mutation.observe(q('pointsApp'),{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','aria-selected','data-points-synced','data-updates-view']});
     const timer=setInterval(()=>{void load();for(const host of hosts.values())host.querySelectorAll('[data-update-id]').forEach(row=>{observer.unobserve(row);observer.observe(row);});},15000);
-    navigator.serviceWorker?.addEventListener('message',e=>{if(e.data?.type==='points:open-notification'){try{const u=new URL(e.data.url,location.href);if(u.origin===location.origin&&u.pathname.startsWith(new URL('./',document.baseURI).pathname))route(u.searchParams.get('open'));}catch(_){}}else if(e.data?.type==='points:open-kitchen')route('kitchen');});
-    const initial=new URL(location.href),requested=initial.searchParams.get('open');if(requested){pendingRoute=requested;initial.searchParams.delete('open');history.replaceState(history.state,'',initial.href);}
+    navigator.serviceWorker?.addEventListener('message',e=>{if(e.data?.type==='points:open-notification'){try{const u=new URL(e.data.url,location.href);if(u.origin===location.origin&&u.pathname.startsWith(new URL('./',document.baseURI).pathname))route(u.searchParams.get('open'),u.searchParams.get('family_task'));}catch(_){}}else if(e.data?.type==='points:open-kitchen')route('kitchen');});
+    const initial=new URL(location.href),requested=initial.searchParams.get('open');if(requested){pendingRoute=requested;pendingTask=initial.searchParams.get('family_task');initial.searchParams.delete('open');initial.searchParams.delete('family_task');history.replaceState(history.state,'',initial.href);}
     return {roleChanged:wake,refresh:load,stop(){clearInterval(timer);observer.disconnect();mutation.disconnect();}};
   }
 })();

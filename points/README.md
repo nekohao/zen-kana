@@ -23,6 +23,7 @@
 - 暂存检查：node points/scripts/check-repo.mjs --staged
 - SQL 生成与检查：python points/scripts/build-sql-backup.py；同命令加 --check
 - 资源校验：node points/tests/release-artifacts.test.mjs
+- 通知内容与跳转验证：node points/tests/notification-presentation.test.mjs
 - 本地预览：node points/tests/family-preview.mjs
 
 本地提交钩子使用 points/scripts/hooks；GitHub 检查复核目录、文档、SQL 和构建资源。

@@ -121,8 +121,10 @@ self.addEventListener('push',event=>{
       const candidate=new URL(payload.url,self.registration.scope),scope=new URL(self.registration.scope);
       if(candidate.origin===scope.origin && candidate.pathname.startsWith(scope.pathname))target=candidate;
     } catch(_){}
+    const taskId=String(payload.tag||'').match(/^points-family-([1-9][0-9]*)$/)?.[1];
+    if(taskId&&target.searchParams.get('open')==='kitchen')target.searchParams.set('family_task',taskId);
     await self.registration.showNotification(String(payload.title || '小世界').slice(0,80),{
-      body:String(payload.body || '有新的消息，点开小世界查看。').slice(0,160),
+      body:String(payload.body || '你有一条新提醒。').slice(0,160),
       icon:new URL('ICON/icon-192.png',self.registration.scope).href,
       tag:String(payload.tag || 'points-updates').slice(0,64),data:{url:target.href}
     });

@@ -64,5 +64,12 @@ try{
  await admin.locator('#kitchenContent [data-family-action="recipe"][data-value="tomato-eggs"]').click();check(await admin.getByText('食材与调料',{exact:true}).count(),1);
  await admin.getByRole('button',{name:'关闭家庭窗口'}).click();
  for(const p of [admin,guest])for(const size of [{width:320,height:640},{width:430,height:932}]){await p.setViewportSize(size);check(await p.locator('#kitchenPage').evaluate(e=>e.scrollWidth<=e.clientWidth+1),true,'family page fits');}
+ await admin.goto('http://127.0.0.1:4178/preview/index.html?role=admin&open=kitchen&family_task='+taskId);
+ await admin.getByText('积分已到账',{exact:true}).waitFor();check(await admin.locator('#kitchenLayer').getAttribute('aria-hidden'),'false','cold notification opens current settled task');
+ check(new URL(admin.url()).searchParams.has('family_task'),false,'consumed task link removed');
+ await admin.getByRole('button',{name:'关闭家庭窗口'}).click();
+ await admin.locator('.app-nav [data-value="world"]').click();
+ await admin.evaluate(id=>navigator.serviceWorker.dispatchEvent(new MessageEvent('message',{data:{type:'points:open-notification',url:location.origin+'/preview/index.html?open=kitchen&family_task='+id}})),taskId);
+ await admin.getByText('积分已到账',{exact:true}).waitFor();checks++;
  check(errors,[],'no client exceptions');console.log(`${checks} unified family UI, self-registration, rework, settlement, score editing and responsive checks passed.`);
 }finally{await browser.close();}

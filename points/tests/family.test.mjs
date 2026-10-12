@@ -29,7 +29,7 @@ try{
  await reject(()=>write('guest','submit',{id:t.id,version:t.version}),'42501');
  check(t.events.map(e=>e.action),['create','submit','rework','submit','qualified'],'all review rounds retained');
  check((await db.query("SELECT count(*)::integer n FROM points_notice.events WHERE event_key LIKE 'score_logs:%' AND body LIKE '%家务结算%'")).rows[0].n,0,'no duplicate score notice');
- check((await rpc('guest','points_notifications_get')).items.some(e=>e.title==='家务合格，积分已结算'),true,'settlement notice');
+ check((await rpc('guest','points_notifications_get')).items.some(e=>e.title==='哥哥'&&e.body==='洗碗已通过，积分 +1。'),true,'settlement notice');
  const old=await write('admin','create',{type:'dishes'});
  const types=await write('admin','price',{type:'dishes',version:1,points:3});
  check(types.find(t=>t.code==='dishes').points,3);check((await rpc('guest','points_family_get_task',{p_task_id:old.id})).points,1,'existing score frozen');

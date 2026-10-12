@@ -15,7 +15,7 @@ try{
  const roles=objects.flatMap(o=>[o.owner,...[...(o.acl||'').matchAll(/(?:\{|,)([^=]+)=/g)].map(m=>m[1])]);
  for(const role of new Set(roles.filter(Boolean)))if(!(await db.query('SELECT 1 FROM pg_roles WHERE rolname=$1',[role])).rows.length)await db.exec('CREATE ROLE "'+role.replaceAll('"','""')+'";');
  await db.exec(baseline);await db.exec(increment);
- for(const f of current.functions.filter(f=>f.name.startsWith('points_family_')||f.name==='business_event'||f.name==='points_fat_reward_snapshot'||/score|points_get_logs|points_get_state|points_redeem|points_shop_(get_state|purchase|activate_lucky100|set_equipped)|legacy_write|points_kitchen_admin_review/.test(f.name))){
+ for(const f of current.functions.filter(f=>f.name.startsWith('points_family_')||f.name==='business_event'||f.name==='points_notice_worker_claim'||f.name==='points_fat_reward_snapshot'||/score|points_get_logs|points_get_state|points_redeem|points_shop_(get_state|purchase|activate_lucky100|set_equipped)|legacy_write|points_kitchen_admin_review/.test(f.name))){
   const actual=(await db.query('SELECT pg_get_functiondef(p.oid) definition FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname=$1 AND p.proname=$2 AND pg_get_function_identity_arguments(p.oid)=$3',[f.schema,f.name,f.identity_arguments])).rows[0].definition;
   check(actual.trim().replace(/;$/,'').replace(/\r\r\n|\r\n|\r/g,'\n'),f.definition.trim().replace(/;$/,'').replace(/\r\r\n|\r\n|\r/g,'\n'),f.name+' latest definition installed');
  }
