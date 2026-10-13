@@ -6379,6 +6379,23 @@ END $function$;
 
 ALTER FUNCTION "public"."points_family_write"(p_action text, p_payload jsonb, p_operation_id uuid) OWNER TO "postgres";
 
+CREATE OR REPLACE FUNCTION public.points_family_get_day(p_date date, p_before bigint DEFAULT NULL::bigint)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE a text:=public.points_family_actor(); tasks jsonb; BEGIN
+ IF p_date IS NULL THEN RAISE EXCEPTION 'Date required' USING errcode='22023'; END IF;
+ SELECT coalesce(jsonb_agg(public.points_family_snapshot(t.id) ORDER BY t.id DESC),'[]') INTO tasks FROM
+ (SELECT id FROM public.points_family_tasks WHERE task_date=p_date AND (p_before IS NULL OR id<p_before) ORDER BY id DESC LIMIT 30)t;
+ RETURN jsonb_build_object('admin',a LIKE 'admin:%','types',public.points_family_get_types(),'date',p_date,'tasks',tasks,
+ 'more',EXISTS(SELECT 1 FROM public.points_family_tasks WHERE task_date=p_date
+ AND id<(SELECT min((x->>'id')::bigint) FROM jsonb_array_elements(tasks)x)));
+END $function$;
+
+ALTER FUNCTION "public"."points_family_get_day"(p_date date, p_before bigint) OWNER TO "postgres";
+
 ALTER TABLE "points_access"."attempts" ADD CONSTRAINT "attempts_pkey" PRIMARY KEY (minute);
 
 ALTER TABLE "points_access"."attempts" ENABLE ROW LEVEL SECURITY;
@@ -8438,6 +8455,14 @@ GRANT EXECUTE ON FUNCTION "public"."points_family_write"(p_action text, p_payloa
 GRANT EXECUTE ON FUNCTION "public"."points_family_write"(p_action text, p_payload jsonb, p_operation_id uuid) TO "anon";
 
 GRANT EXECUTE ON FUNCTION "public"."points_family_write"(p_action text, p_payload jsonb, p_operation_id uuid) TO "authenticated";
+
+REVOKE ALL ON FUNCTION "public"."points_family_get_day"(p_date date, p_before bigint) FROM PUBLIC, "anon", "authenticated", "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_family_get_day"(p_date date, p_before bigint) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_family_get_day"(p_date date, p_before bigint) TO "anon";
+
+GRANT EXECUTE ON FUNCTION "public"."points_family_get_day"(p_date date, p_before bigint) TO "authenticated";
 
 REVOKE ALL ON SCHEMA "points_access" FROM PUBLIC, "postgres";
 

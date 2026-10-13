@@ -1613,5 +1613,23 @@ BEGIN
   RETURN result;
 END $function$;
 
+-- Read one household day, including ongoing work; mutation and settlement rules are unchanged.
+CREATE OR REPLACE FUNCTION public.points_family_get_day(p_date date, p_before bigint DEFAULT NULL::bigint)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE a text:=public.points_family_actor(); tasks jsonb; BEGIN
+ IF p_date IS NULL THEN RAISE EXCEPTION 'Date required' USING errcode='22023'; END IF;
+ SELECT coalesce(jsonb_agg(public.points_family_snapshot(t.id) ORDER BY t.id DESC),'[]') INTO tasks FROM
+ (SELECT id FROM public.points_family_tasks WHERE task_date=p_date AND (p_before IS NULL OR id<p_before) ORDER BY id DESC LIMIT 30)t;
+ RETURN jsonb_build_object('admin',a LIKE 'admin:%','types',public.points_family_get_types(),'date',p_date,'tasks',tasks,
+ 'more',EXISTS(SELECT 1 FROM public.points_family_tasks WHERE task_date=p_date
+ AND id<(SELECT min((x->>'id')::bigint) FROM jsonb_array_elements(tasks)x)));
+END $function$;
+REVOKE ALL ON FUNCTION public.points_family_get_day(date,bigint) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.points_family_get_day(date,bigint) TO anon,authenticated;
+
 NOTIFY pgrst,'reload schema';
 COMMIT;

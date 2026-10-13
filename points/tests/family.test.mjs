@@ -65,5 +65,25 @@ try{
  await reapply();check((await rpc('guest','points_family_get_task',{p_task_id:t.id})).score_after,before+1,'migration rerun keeps results');
  check((await rpc('guest','points_family_get_types')).find(t=>t.code==='dishes').points,3,'migration rerun keeps settings');
  await reject(()=>db.transaction(async tx=>{await tx.exec('SET LOCAL ROLE anon');await tx.query('SELECT * FROM points_family_tasks');}),'42501');
+ const day='2026-02-28',states=['pending','review','rework','settled','cancelled'];
+ for(let i=0;i<35;i++)await db.query("INSERT INTO points_family_tasks(member_id,type_code,title,points,origin,status,task_date) VALUES(1,'dishes',$1,1,'admin',$2,$3)",['日期分页 '+i,states[i%states.length],day]);
+ await db.query("INSERT INTO points_family_tasks(member_id,type_code,title,points,origin,status,task_date) VALUES(1,'dishes','其他日期',1,'admin','pending','2026-03-01')");
+ await reject(()=>call('guest','points_family_get_day',{p_date:day}),'42501');
+ await reject(()=>rpc('admin','points_family_get_day',{p_date:null}),'22023');
+ const daily=await rpc('guest','points_family_get_day',{p_date:day});
+ check(daily.date,day);check(daily.tasks.length,30,'daily first page');check(daily.more,true);
+ check([...new Set(daily.tasks.map(x=>x.status))].sort(),states.sort(),'daily includes every task status');
+ const older=await rpc('guest','points_family_get_day',{p_date:day,p_before:daily.tasks.at(-1).id});
+ check(older.tasks.length,5,'daily next page');check(older.more,false);
+ check(new Set([...daily.tasks,...older.tasks].map(x=>x.id)).size,35,'no repeated or missing daily tasks');
+ check([...daily.tasks,...older.tasks].every(x=>x.task_date===day),true,'date filter excludes other days');
+ check((await rpc('admin','points_family_get_day',{p_date:'2026-02-27'})).tasks,[],'empty day');
+ const across=await write('admin','create',{type:'dishes'});
+ await db.query('UPDATE points_family_tasks SET task_date=$1 WHERE id=$2',[day,across.id]);
+ let submitted=await write('guest','submit',{id:across.id,version:across.version});
+ submitted=await write('admin','review',{id:submitted.id,version:submitted.version,qualified:true});
+ check(submitted.task_date,day,'later review keeps original household day');
+ check((await rpc('admin','points_family_get_day',{p_date:day})).tasks.some(x=>x.id===across.id),true,'later settlement remains in original day');
+ await reapply();check((await rpc('guest','points_family_get_day',{p_date:day})).tasks.length,30,'repeatable daily reader migration');
  console.log(`${checks} family permissions, rework, score freezing, retries, notifications and repeatable migration checks passed.`);
 }finally{await db.close();}

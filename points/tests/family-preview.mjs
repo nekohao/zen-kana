@@ -15,6 +15,13 @@ const demoToken='e'.repeat(64),demoDevice='00000000-0000-0000-0000-000000000003'
 await call('admin','points_family_write',{p_action:'price',p_payload:{type:'cooking',version:1,points:3},p_operation_id:crypto.randomUUID()});
 await call('admin','points_family_write',{p_action:'create',p_payload:{type:'cooking',note:'少盐，今晚一起吃饭。',items:[{slug:'tomato-eggs',note:''},{slug:'cola-wings',note:''}]},p_operation_id:crypto.randomUUID()});
 await call('guest','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'碗筷和锅都洗好了。'},p_operation_id:crypto.randomUUID()},demoToken);
+// Daily browsing fixtures include an older task beyond the first legacy page.
+const previousDayTask=await call('admin','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'昨天的家事演示'},p_operation_id:crypto.randomUUID()});
+await db.query("UPDATE points_family_tasks SET status='cancelled',task_date=(clock_timestamp() AT TIME ZONE 'Asia/Shanghai')::date-1 WHERE id=$1",[previousDayTask.id]);
+for(let i=0;i<31;i++){
+ const fixture=await call('admin','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'本地日期分页演示 '+i},p_operation_id:crypto.randomUUID()});
+ await db.query("UPDATE points_family_tasks SET status='cancelled' WHERE id=$1",[fixture.id]);
+}
 await db.exec(`INSERT INTO score_logs(member_id,delta,reason,operator_id)VALUES(1,5,'完成今日约定','00000000-0000-0000-0000-000000000001'),(1,-2,'积分调整','00000000-0000-0000-0000-000000000001');`);
 await context('service','points_notice_worker_claim');
 await db.query("SELECT points_notice.emit('preview:withdrawal','admin','withdrawal','宝宝发来了提现申请','申请 ¥30，请实际兑现后再标记完成。','withdrawals','preview-withdrawal',1,false,true)");

@@ -2501,6 +2501,21 @@
       ],
       "security_definer": true,
       "identity_arguments": "p_action text, p_payload jsonb, p_operation_id uuid"
+    },
+    {
+      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres}",
+      "name": "points_family_get_day",
+      "owner": "postgres",
+      "result": "jsonb",
+      "schema": "public",
+      "comment": null,
+      "arguments": "p_date date, p_before bigint DEFAULT NULL::bigint",
+      "definition": "CREATE OR REPLACE FUNCTION public.points_family_get_day(p_date date, p_before bigint DEFAULT NULL::bigint)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE a text:=public.points_family_actor(); tasks jsonb; BEGIN\n IF p_date IS NULL THEN RAISE EXCEPTION 'Date required' USING errcode='22023'; END IF;\n SELECT coalesce(jsonb_agg(public.points_family_snapshot(t.id) ORDER BY t.id DESC),'[]') INTO tasks FROM\n (SELECT id FROM public.points_family_tasks WHERE task_date=p_date AND (p_before IS NULL OR id<p_before) ORDER BY id DESC LIMIT 30)t;\n RETURN jsonb_build_object('admin',a LIKE 'admin:%','types',public.points_family_get_types(),'date',p_date,'tasks',tasks,\n 'more',EXISTS(SELECT 1 FROM public.points_family_tasks WHERE task_date=p_date\n AND id<(SELECT min((x->>'id')::bigint) FROM jsonb_array_elements(tasks)x)));\nEND $function$\n",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "security_definer": true,
+      "identity_arguments": "p_date date, p_before bigint"
     }
   ],
   "relations": [
