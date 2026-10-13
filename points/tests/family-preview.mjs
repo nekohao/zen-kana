@@ -25,8 +25,17 @@ for(let i=0;i<31;i++){
 await db.exec(`INSERT INTO score_logs(member_id,delta,reason,operator_id)VALUES(1,5,'完成今日约定','00000000-0000-0000-0000-000000000001'),(1,-2,'积分调整','00000000-0000-0000-0000-000000000001');`);
 await context('service','points_notice_worker_claim');
 await db.query("SELECT points_notice.emit('preview:withdrawal','admin','withdrawal','宝宝发来了提现申请','申请 ¥30，请实际兑现后再标记完成。','withdrawals','preview-withdrawal',1,false,true)");
+await db.exec("INSERT INTO points_withdrawals(amount,cash_before,cash_after) VALUES(30,30,0);");
 const fat=await createFatDatabase({seed:true});
 await fat.db.exec(await fs.readFile(path.join(root,'fat-settlement-increment-20261011.sql'),'utf8'));
+await fat.db.exec("INSERT INTO points_fat_reward_requests(status,serviced_at) VALUES('pending_service',NULL),('pending_confirmation',clock_timestamp());");
+// Mirror disposable services so the actual todo RPC sees the same preview state.
+async function syncServices(){
+ const rows=(await fat.db.query('SELECT * FROM points_fat_reward_requests')).rows;
+ for(const row of rows)await db.query(`INSERT INTO points_fat_reward_requests(id,status,requested_at,serviced_at,resolved_at,requested_by) OVERRIDING SYSTEM VALUE VALUES($1,$2,$3,$4,$5,$6)
+ ON CONFLICT(id) DO UPDATE SET status=excluded.status,serviced_at=excluded.serviced_at,resolved_at=excluded.resolved_at`,[row.id,row.status,row.requested_at,row.serviced_at,row.resolved_at,row.requested_by]);
+}
+await syncServices();
 // Deterministic history: the UI regression must also run before Sunday's settlement.
 await fat.db.exec(`INSERT INTO public.points_fat_reward_weeks(week_start,cutoff_at,current_days,previous_days,current_mean_jin,previous_mean_jin,change_jin,eligible,calculated_delta,applied_delta,balance_after)
  VALUES(date_trunc('week',clock_timestamp() AT TIME ZONE 'Asia/Shanghai')::date-7,clock_timestamp()-interval '1 day',4,3,157,160,-3,true,3,3,10) ON CONFLICT(week_start) DO NOTHING;`);
@@ -50,14 +59,17 @@ const server=http.createServer(async(req,res)=>{
       await context(role==='admin'?'admin':'guest',name,deviceToken);
       await db.query('SELECT public.points_access_check_request()');let data;
       if(/^points_(access|push|notifications)_[a-z_]+$/.test(name)){
+        if(name==='points_notifications_get_todos')await syncServices();
         const entries=Object.entries(args);if(entries.some(([key])=>!/^p_[a-z_]+$/.test(key)))throw Error('Invalid argument');
         const result=await db.query(`SELECT public.${name}(${entries.map(([key],i)=>`${key}=>$${i+1}`).join(',')}) AS result`,entries.map(([,value])=>value!==null&&typeof value==='object'&&!Array.isArray(value)?JSON.stringify(value):value));data=result.rows[0].result;
       }
-      else if(name.startsWith('points_fat_'))data=await fat.rpc(role==='admin'?'admin':'guest',name,args);
+      else if(name.startsWith('points_fat_')){data=await fat.rpc(role==='admin'?'admin':'guest',name,args);await syncServices();}
       else if(name.startsWith('points_family_') || /^points_kitchen_v[23]_/.test(name) || ['points_kitchen_get_state','points_kitchen_get_order','points_kitchen_get_reviews'].includes(name))data=await rpc(role==='admin'?'admin':'guest',name,args,deviceToken);
       else if(name==='points_is_admin')data=role==='admin';
       else if(name==='points_get_state')data=(await db.query('SELECT score FROM members')).rows.map(row=>({...row,score:Number(row.score)}));
       else if(name==='points_get_wheel_state')data=[{spin_chances:0,cash_balance:0}];
+      else if(name==='points_get_withdrawals')data=(await db.query('SELECT * FROM points_withdrawals WHERE hidden_at IS NULL ORDER BY id DESC')).rows;
+      else if(name==='points_admin_settle_withdrawal')data=await rpc(role,name,args,deviceToken);
       else if(name==='points_shop_get_state_v2')data={inventory:{},weekly_counts:{},weekly_feature:{code:'mystery_box',discount_claimed:false}};
       else if(name==='points_fat_get_state')data=[{configured:true,delta_jin:-3.2,recorded_at:new Date().toISOString(),record_count:10}];
       else if(name==='points_fat_get_logs')data=Array.from({length:10},(_,i)=>({id:String(i+1),delta_jin:-i*.3,created_at:new Date(Date.now()-(9-i)*86400000).toISOString()}));

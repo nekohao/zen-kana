@@ -681,6 +681,6 @@
       rewards = window.PointsFatRewards.attach({db,state,els,ui,isAdmin:()=>verifiedAdmin,openSettlement:()=>{ui.openOverviewSheet();chooseSection("settlement");},formatChange:value=>value===null || value===undefined?"暂无对比":Number(value)===0?"均重持平":`均重${Number(value)<0?"下降":"上升"} ${number(value)} ${unitName()}`});
     } catch (_) { window.PointsRuntime?.report("rewards"); }
     syncUnits(); adminRendered(); renderHome();
-    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:()=>rewards?.openServices(),openSettlement:()=>rewards?.openSettlement() };
+    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight,openServices:id=>rewards?.openServices(id),openSettlement:()=>rewards?.openSettlement() };
   }
 })();

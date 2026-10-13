@@ -1483,6 +1483,7 @@ BEGIN
  SELECT * INTO op FROM public.points_family_operations WHERE operation_id=p_operation_id;
  IF FOUND THEN
   IF op.actor<>a OR op.kind<>p_action OR op.arguments<>p_payload THEN RAISE EXCEPTION 'Operation conflict' USING errcode='22023'; END IF;
+  IF op.result->>'removed'='true' AND p_action<>'cancel' THEN RAISE EXCEPTION 'Task removed' USING errcode='P0002'; END IF;
   RETURN op.result;
  END IF;
  IF p_action='create' THEN
@@ -1499,7 +1500,7 @@ BEGIN
   IF NOT FOUND OR ty.version IS DISTINCT FROM expected THEN RAISE EXCEPTION 'Price changed' USING errcode='40001'; END IF;
   IF p_payload->>'points' IS NULL OR (p_payload->>'points')!~'^[0-9]+([.][0-9]+)?$' OR (p_payload->>'points')::numeric NOT BETWEEN 0.5 AND 1000 OR mod((p_payload->>'points')::numeric,0.5)<>0 THEN RAISE EXCEPTION 'Invalid points' USING errcode='22023'; END IF;
   UPDATE public.points_family_types SET points=(p_payload->>'points')::numeric,version=version+1,updated_at=clock_timestamp() WHERE code=ty.code;
-  UPDATE public.points_family_tasks SET points=(p_payload->>'points')::numeric,version=version+1 WHERE type_code=ty.code AND points IS NULL AND legacy_order_id IS NOT NULL;
+  UPDATE public.points_family_tasks SET points=(p_payload->>'points')::numeric,version=version+1 WHERE type_code=ty.code AND points IS NULL AND EXISTS(SELECT 1 FROM public.points_family_events e WHERE e.task_id=points_family_tasks.id AND e.action='imported');
   result:=public.points_family_get_types();
  ELSE
   SELECT * INTO t FROM public.points_family_tasks WHERE points_family_tasks.id=v_id FOR UPDATE;
@@ -1521,6 +1522,18 @@ BEGIN
     version=version+1,comment=v_comment,reviewed_at=clock_timestamp(),updated_at=clock_timestamp(),score_after=t.score_after,score_log_id=t.score_log_id
     WHERE points_family_tasks.id=v_id RETURNING * INTO t;
   ELSIF p_action='cancel' THEN
+   IF NOT administrator THEN
+    IF t.origin<>'guest' OR t.legacy_order_id IS NOT NULL OR EXISTS(SELECT 1 FROM public.points_family_events e WHERE e.task_id=t.id AND e.action='imported') OR t.status NOT IN ('review','rework') OR t.score_log_id IS NOT NULL THEN RAISE EXCEPTION 'Cannot withdraw task' USING errcode='42501'; END IF;
+    result:=jsonb_build_object('id',t.id::text,'removed',true);
+    DELETE FROM points_notice.batch_items WHERE event_id IN (SELECT id FROM points_notice.events WHERE group_key='family:'||t.id);
+    DELETE FROM points_notice.receipts WHERE event_id IN (SELECT id FROM points_notice.events WHERE group_key='family:'||t.id);
+    DELETE FROM points_notice.events WHERE group_key='family:'||t.id;
+    UPDATE public.points_family_operations SET task_id=NULL,arguments=jsonb_build_object('id',t.id),result=jsonb_build_object('id',t.id::text,'removed',true) WHERE task_id=t.id;
+    DELETE FROM public.points_family_events WHERE task_id=t.id;
+    DELETE FROM public.points_family_tasks WHERE id=t.id;
+    INSERT INTO public.points_family_operations(operation_id,actor,kind,arguments,result) VALUES(p_operation_id,a,p_action,p_payload,result);
+    RETURN result;
+   END IF;
    IF NOT administrator OR t.status<>'pending' OR t.attempt<>0 THEN RAISE EXCEPTION 'Cannot cancel submitted task' USING errcode='42501'; END IF;
    UPDATE public.points_family_tasks SET status='cancelled',version=version+1,updated_at=clock_timestamp() WHERE points_family_tasks.id=v_id RETURNING * INTO t;
   ELSE RAISE EXCEPTION 'Invalid action' USING errcode='22023'; END IF;
@@ -1630,6 +1643,54 @@ DECLARE a text:=public.points_family_actor(); tasks jsonb; BEGIN
 END $function$;
 REVOKE ALL ON FUNCTION public.points_family_get_day(date,bigint) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.points_family_get_day(date,bigint) TO anon,authenticated;
+
+-- Actionable inbox: business state is authoritative; receipts never dismiss a todo.
+CREATE OR REPLACE FUNCTION public.points_notifications_get_todos(p_before text DEFAULT NULL::text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE actor text:=points_notice.actor(); administrator boolean:=actor LIKE 'admin:%';
+ cursor_data jsonb:=p_before::jsonb; entries jsonb; total bigint; BEGIN
+ WITH todos AS (
+  SELECT 'family:'||t.id AS key,t.id::text AS target,'kitchen'::text AS route,'家事'::text AS category,
+   t.title AS title,CASE t.status WHEN 'review' THEN '待验收' WHEN 'rework' THEN '需返工' ELSE '待完成' END AS status,
+   CASE t.status WHEN 'review' THEN '宝宝已提交，等你验收' WHEN 'rework' THEN coalesce(nullif(t.comment,''),'完成返工后重新提交') ELSE coalesce(nullif(t.note,''),'完成后提交哥哥验收') END AS body,t.updated_at AS at
+  FROM public.points_family_tasks t
+  WHERE CASE WHEN administrator THEN t.status='review' ELSE t.status IN ('pending','rework') END
+  UNION ALL
+  SELECT 'withdrawal:'||w.id,w.id::text,'withdrawals','提现','提现 ¥'||w.amount,'待兑现','确认实际兑现后完成申请',w.requested_at
+  FROM public.points_withdrawals w WHERE administrator AND w.status='pending' AND w.hidden_at IS NULL
+  UNION ALL
+  SELECT 'service:'||s.id,s.id::text,'services','服务','服务请求',CASE WHEN administrator THEN '待确认' ELSE '待服务' END,
+   CASE WHEN administrator THEN '宝宝已服务，等你确认' ELSE '哥哥发来的服务请求' END,coalesce(s.serviced_at,s.requested_at)
+  FROM public.points_fat_reward_requests s WHERE s.status=CASE WHEN administrator THEN 'pending_confirmation' ELSE 'pending_service' END
+ ), page AS (
+  SELECT * FROM todos WHERE p_before IS NULL OR (at,key)<((cursor_data->>'at')::timestamptz,cursor_data->>'id')
+  ORDER BY at DESC,key DESC LIMIT 31
+ )
+ SELECT (SELECT count(*) FROM todos),coalesce(jsonb_agg(jsonb_build_object('id',key,'target',target,'route',route,'category',category,'title',title,'status',status,'body',body,'at',at) ORDER BY at DESC,key DESC),'[]') INTO total,entries FROM page;
+ RETURN jsonb_build_object('admin',administrator,'total',total,'items',
+  (SELECT coalesce(jsonb_agg(x ORDER BY n),'[]') FROM jsonb_array_elements(entries) WITH ORDINALITY e(x,n) WHERE n<=30),
+  'more',jsonb_array_length(entries)>30,'cursor',CASE WHEN jsonb_array_length(entries)>30 THEN jsonb_build_object('at',entries->29->>'at','id',entries->29->>'id')::text END);
+END $function$;
+REVOKE ALL ON FUNCTION public.points_notifications_get_todos(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.points_notifications_get_todos(text) TO anon,authenticated;
+
+-- The family snapshot already contains the imported menu. Preserve imported provenance in events.
+-- No score balance or score log is removed or recalculated by this cleanup.
+UPDATE public.points_family_tasks SET legacy_order_id=NULL WHERE legacy_order_id IS NOT NULL;
+DELETE FROM points_notice.batch_items WHERE event_id IN (SELECT id FROM points_notice.events WHERE group_key LIKE 'kitchen:%');
+DELETE FROM points_notice.receipts WHERE event_id IN (SELECT id FROM points_notice.events WHERE group_key LIKE 'kitchen:%');
+DELETE FROM points_notice.events WHERE group_key LIKE 'kitchen:%';
+DELETE FROM points_push.jobs WHERE event_key LIKE 'kitchen:%';
+DELETE FROM points_kitchen_v2.receipts;
+DELETE FROM public.points_kitchen_drafts;
+DELETE FROM public.points_kitchen_reviews;
+DELETE FROM public.points_kitchen_versions;
+DELETE FROM public.points_kitchen_operations;
+DELETE FROM public.points_kitchen_orders;
 
 NOTIFY pgrst,'reload schema';
 COMMIT;

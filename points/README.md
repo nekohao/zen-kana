@@ -24,6 +24,8 @@
 - SQL 生成与检查：python points/scripts/build-sql-backup.py；同命令加 --check
 - 资源校验：node points/tests/release-artifacts.test.mjs
 - 通知内容与跳转验证：node points/tests/notification-presentation.test.mjs
+- 待办分页、权限与撤回验证：node points/tests/todos.test.mjs
+- 通知中心界面验证：points/tests/todos-ui.test.mjs（本地预览与 Playwright）
 - 本地预览：node points/tests/family-preview.mjs
 
 本地提交钩子使用 points/scripts/hooks；GitHub 检查复核目录、文档、SQL 和构建资源。

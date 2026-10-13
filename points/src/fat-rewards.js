@@ -16,6 +16,7 @@
     let data = null, error = "", lastRead = 0, generation = 0, inflight = null, busy = false;
     let roleKey = role(), page = "shop", shopView = "products", confirmation = null, previousFocus = null;
     let services = [], more = false, paging = false;
+    let focusedService=null;
     let drag = null, suppressClickUntil = 0;
     const operations = new Map();
     const diamond = '<svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M11 9h26l8 12-21 24L3 21 11 9Z"/><path d="m11 9 7 12 6-12 6 12 7-12M3 21h42M18 21l6 24 6-24"/></svg>';
@@ -75,10 +76,15 @@
     }
     async function open(next) {
       if (!active() || roleKey === "verifying" || (next === "shop" && !admin())) return;
-      previousFocus = document.activeElement; page = next; shopView = "products"; confirmation = null;
+      previousFocus = document.activeElement; page = next; shopView = "products"; confirmation = null;focusedService=null;
       resetDrag(); sheet.scrollTop = 0;
       ui.setLayer(layer, true); render(); focusPanel();
       await refresh(true);
+    }
+    async function openService(id){
+      await open('services');if(!id||!layer.classList.contains('open'))return;const version=generation;
+      while(!services.some(r=>String(r.id)===String(id))&&more){const before=services.length;await loadMore();if(version!==generation||services.length===before)return;}
+      if(version!==generation)return;focusedService=String(id);render();focusPanel();
     }
     function describeError(e) {
       const text = `${e?.code || ""} ${e?.message || ""}`;
@@ -149,6 +155,7 @@
         if (op) clearOperation(op);
         ui.showToast({buy:"兑换成功，口一次已放入背包", use:"已发起请求，等待宝宝进行服务", serviced:"已进行服务，等待哥哥确认", confirm:"已确认，本次服务兑换完毕", return:"已退回背包，下次可再次使用"}[action]);
         ui.vibrate(12);
+        window.dispatchEvent(new Event('points:todos-changed'));
       } catch (e) {
         // Definitive business errors did not commit. Ambiguous network errors retain the UUID, even across reloads.
         if (op && e?.code && !/^(08|PGRST00|APP_)/.test(e.code)) clearOperation(op);
@@ -241,6 +248,7 @@
         body.innerHTML = `${navigation}<section class="fat-reward-product"><div class="fat-reward-product-top"><div class="fat-reward-product-art">${diamond}</div><div class="fat-reward-product-copy"><h3>口一次</h3><p>兑换后存入背包</p></div></div><div class="fat-reward-product-bottom"><strong>◇ 1 <span>颗钻石</span></strong>${actionButton("buy", hasRetry("buy") ? "重试兑换" : canBuy ? "兑换" : "钻石不足", !canBuy)}</div></section>`;
       } else {
         body.dataset.updatesView = 'services';
+        if(focusedService){const request=services.find(r=>String(r.id)===focusedService);q('fatRewardTitle').textContent='服务详情';body.innerHTML=`${navigation}${request?serviceCard(request):'<p class="fat-reward-empty">这条服务请求已不存在，请查看最新列表。</p>'}${actionButton('services','返回服务列表')}`;return;}
         const pendingRows = services.filter(r => ["pending_service","pending_confirmation"].includes(r.status));
         const historyRows = services.filter(r => !["pending_service","pending_confirmation"].includes(r.status));
         body.innerHTML = `${navigation}<p class="fat-reward-caption">待服务 ${escape(data.pending_service)} 次 · 待确认 ${escape(data.pending_confirmation)} 次</p>${pendingRows.map(serviceCard).join("") || '<p class="fat-reward-empty">暂无待处理请求</p>'}${historyRows.length ? `<details class="fat-reward-service-history"><summary>历史记录 · ${historyRows.length}</summary>${historyRows.map(serviceCard).join("")}</details>` : ""}${more ? actionButton("more", paging ? "正在加载…" : "查看更早请求", paging) : ""}`;
@@ -260,7 +268,7 @@
       const action = button.dataset.fatRewardAction, id = button.dataset.requestId;
       if (action === "refresh") { void refresh(true); return; }
       if (["products","inventory"].includes(action) && !admin()) return;
-      if (["products","inventory","services"].includes(action)) { page = action === "services" ? "services" : "shop"; if (page === "shop") shopView = action; confirmation = null; sheet.scrollTop = 0; render(); }
+      if (["products","inventory","services"].includes(action)) { focusedService=null;page = action === "services" ? "services" : "shop"; if (page === "shop") shopView = action; confirmation = null; sheet.scrollTop = 0; render(); }
       else if (action === "more") void loadMore();
       else if (action === "cancel") { confirmation = null; render(); }
       else if (action === "submit" && confirmation) void mutate(confirmation.action, confirmation.id);
@@ -321,6 +329,6 @@
       lastResume = Date.now(); void refresh(true);
     };
     document.addEventListener("visibilitychange", resume); window.addEventListener("focus", resume); window.addEventListener("pageshow", resume);
-    render(); return {refresh, render, roleChanged,openServices:()=>open('services'),openSettlement:()=>openSettlement?.()};
+    render(); return {refresh, render, roleChanged,openServices:openService,openSettlement:()=>openSettlement?.()};
   }
 })();

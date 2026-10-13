@@ -2446,6 +2446,7 @@
           state.overviewLoadedAt = 0;
           vibrate(18);
           showToast("✅ 已确认兑现，游客会在历史中看到到账提醒");
+          window.dispatchEvent(new CustomEvent("points:todos-changed"));
           await loadOverviewData(true);
         } catch (err) {
           if (runtime.unknownWrite(err)) { showToast(runtime.uncertainMessage); return; }
@@ -4083,16 +4084,16 @@
       }
       if(window.PointsNotifications) {
         try {
-        const notices=window.PointsNotifications.attach({db,state,els,ui:{setLayer,closeAllLayers,closeOverviewSheet},navigate:route=>{
+        const notices=window.PointsNotifications.attach({db,state,els,ui:{setLayer,closeAllLayers,closeOverviewSheet},navigate:(route,targetId=null)=>{
           closeAllLayers();closeOverviewSheet();
           document.querySelector('.app-nav [data-value="'+(route==='kitchen'?'kitchen':'world')+'"]')?.click();
           if(route==='kitchen'){document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.click();return;}
           if(route==='devices'){els.settingsBtn.click();document.getElementById('pointsAccessDevices')?.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
-          if(route==='services'){switchMetric('fat');void notificationFat?.openServices();return;}
+          if(route==='services'){switchMetric('fat');void notificationFat?.openServices(targetId);return;}
           if(route==='fat'){switchMetric('fat');void notificationFat?.openSettlement();return;}
           if(route==='assets'){void openShop('inventory');return;}
           switchMetric(['wheel','withdrawals'].includes(route)?'wheel':'score');
-          setTimeout(()=>{openOverviewSheet();void loadOverviewData(true);},220);
+          setTimeout(()=>{openOverviewSheet();void loadOverviewData(true).then(()=>{if(route==='withdrawals'&&targetId)openSettlementPrompt(targetId);});},220);
         }});
         const previousNoticeAuth=refreshAuthState;
         refreshAuthState=async(...args)=>{await previousNoticeAuth(...args);notices.roleChanged();};

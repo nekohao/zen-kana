@@ -18,3 +18,37 @@
 #pointsNoticeSettings input:before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:white;box-shadow:0 1px 3px #58465b26;transition:transform .18s}
 #pointsNoticeSettings input:checked{background:#ad6e94}#pointsNoticeSettings input:checked:before{transform:translateX(14px)}
 #pointsNoticeSettings input:focus-visible{outline:2px solid #a65d83;outline-offset:3px}#pointsNoticeSettings input:disabled{opacity:.5}#pointsNoticeSettings .settings-row{gap:10px}
+
+#pointsApp .points-top-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+#pointsApp .points-todo-button{position:relative;flex:0 0 auto}
+#pointsApp .points-todo-count{position:absolute;top:-3px;right:-4px;min-width:16px;height:16px;padding:0 4px;display:grid;place-items:center;border-radius:9px;background:#bb786d;color:#fff;font-size:10px;line-height:1;font-weight:600;box-shadow:0 0 0 2px var(--bg-0,#faf8f6);font-variant-numeric:tabular-nums}
+#pointsApp .points-todo-count[hidden]{display:none}
+#pointsApp .modal-layer.points-todo-layer.ui-themed.ui-surface{align-items:flex-end!important;padding:0!important}
+#pointsApp .modal-layer.points-todo-layer.ui-themed.ui-surface .points-todo-panel.ui-panel{width:min(100%,600px)!important;height:min(78dvh,720px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 24px);display:flex;flex-direction:column;overflow:hidden;border-radius:28px 28px 0 0!important;background:var(--ui-surface,#fcfbf8)!important;padding:0!important;transform:translateY(100%)!important}
+#pointsApp .modal-layer.points-todo-layer.ui-themed.ui-surface.open .points-todo-panel.ui-panel{transform:translateY(0)!important}
+#pointsApp .points-todo-panel>header{display:flex;justify-content:space-between;align-items:center;padding:24px 22px 20px;border-bottom:1px solid var(--ui-line,#e9e3d9);flex:0 0 auto;gap:12px}
+#pointsApp .points-todo-panel>header p{font-size:11px;line-height:1.5;color:var(--ui-muted,#9a8b77);margin:0 0 6px}
+#pointsApp .points-todo-panel h2{font-size:23px;line-height:1.4;letter-spacing:-.035em;font-weight:650;margin:0;color:var(--ui-ink,#4d4438)}
+#pointsApp #pointsTodoTotal{font-size:11px;letter-spacing:0;font-weight:500;margin-left:7px;color:var(--ui-muted,#9a8b77)}
+#pointsApp .points-todo-panel>header button{width:44px;height:44px;border:0;border-radius:50%;background:var(--ui-wash,#f1ece3);color:var(--ui-muted,#9a8b77);font-size:24px;flex:0 0 auto}
+#pointsApp .points-todo-body{overflow:auto;overscroll-behavior:contain;min-height:0;flex:1 1 auto;padding:8px 20px;scrollbar-width:none}
+#pointsApp .points-todo-row{display:flex;align-items:center;gap:13px;padding:19px 0;width:100%;border:0;border-bottom:1px solid var(--ui-line,#e9e3d9);background:none;color:var(--ui-ink,#4d4438);text-align:left}
+#pointsApp .points-todo-symbol{display:grid;place-items:center;width:40px;height:44px;border-radius:14px;background:var(--ui-wash,#f1ece3);color:var(--ui-accent,#92714e);font-size:24px;flex:0 0 auto}
+#pointsApp .points-todo-copy{flex:1;min-width:0}
+#pointsApp .points-todo-copy>span{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#pointsApp .points-todo-copy strong{font-size:15px;font-weight:600;overflow-wrap:anywhere}
+#pointsApp .points-todo-copy small{font-size:10px;color:var(--ui-accent,#92714e);white-space:nowrap;background:var(--ui-wash,#f1ece3);padding:4px 7px;border-radius:7px}
+#pointsApp .points-todo-copy p{font-size:12px;line-height:1.6;color:var(--ui-muted,#9a8b77);margin:7px 0;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#pointsApp .points-todo-copy time{font-size:10px;color:var(--ui-muted,#9a8b77)}
+#pointsApp .points-todo-row>span:last-child{color:var(--ui-muted,#9a8b77);font-size:20px}
+#pointsApp .points-todo-panel>footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--ui-line,#e9e3d9);padding:8px 22px max(12px,env(safe-area-inset-bottom,0px));flex:0 0 auto}
+#pointsApp .points-todo-panel>footer span{font-size:10px;color:var(--ui-muted,#9a8b77)}
+#pointsApp .points-todo-panel>footer button,#pointsApp .points-todo-more{min-height:44px;padding:8px 12px;border:0;background:none;color:var(--ui-accent,#92714e);font-size:12px}
+#pointsApp .points-todo-more{display:block;width:100%;text-align:center}
+#pointsApp .points-todo-empty{display:grid;place-items:center;gap:10px;padding:56px 12px;text-align:center;color:var(--ui-muted,#9a8b77)}
+#pointsApp .points-todo-empty svg{width:36px;height:36px;margin-bottom:10px;color:var(--ui-accent,#92714e)}
+#pointsApp .points-todo-empty strong{font-size:16px;font-weight:550;color:var(--ui-ink,#4d4438)}
+#pointsApp .points-todo-empty p{font-size:12px;line-height:1.6;margin:0}
+#pointsApp .points-todo-error{font-size:12px;line-height:1.7;color:#986b42;background:#faf0df;border-radius:12px;padding:12px}
+@media(min-width:700px){#pointsApp .modal-layer.points-todo-layer.ui-themed.ui-surface{align-items:center!important;padding:24px!important}#pointsApp .modal-layer.points-todo-layer.ui-themed.ui-surface .points-todo-panel.ui-panel{border-radius:28px!important}}
+@media(max-width:350px){#pointsApp .points-top-actions{gap:5px}#pointsApp .points-todo-panel>header{padding-inline:16px}#pointsApp .points-todo-body{padding-inline:16px}#pointsApp .points-todo-copy strong{font-size:14px}}
