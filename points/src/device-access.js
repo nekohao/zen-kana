@@ -50,7 +50,7 @@
       render();say(message);
       // Keep a stored credential for retry; revocation is checked server-side.
       if(wasAllowed)ui.closeAllLayers();
-      app.inert=false;const critical=q('kitchenCritical');if(critical)critical.hidden=true;
+      app.inert=false;
       window.dispatchEvent(new Event('points:access-locked'));
     }
     function unlock(){

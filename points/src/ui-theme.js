@@ -7,16 +7,23 @@
     const fixedThemes={
       score:["changeLayer","redeemLayer","shopItemLayer","shopWeeklyGiftLayer","shopMysteryOpenLayer","adminInventoryLayer","adminInventoryAdjustLayer","adminGrantNoticeLayer","shopRevealLayer"],
       wheel:["wheelProbabilityLayer","wheelProbabilityHistoryLayer","wheelToolLayer","wheelPreviewLayer","wheelAdjustLayer","wheelDecisionLayer","wheelResultLayer","wheelWithdrawLayer","settleWithdrawalLayer"],
-      fat:["fatWeightLayer","fatRewardLayer"], kitchen:["kitchenLayer"]
+      fat:["fatWeightLayer","fatRewardLayer"], kitchen:["kitchenLayer"],
+      shared:["settingsLayer","loginLayer","versionInfoLayer","releaseNotesLayer","pointsMessagesLayer"]
     };
     const themeById=new Map(Object.entries(fixedThemes).flatMap(([theme,ids])=>ids.map(id=>[id,theme])));
-    const layers=new Set(); let theme="score", queued=0, blurBase=null;
+    const layers=new Set(); let theme="score", queued=0, blurBase=null, shownPage=app.dataset.page;
     const sync=()=>{
       queued=0;
       const selected=switcher.querySelector('[data-metric][aria-selected="true"]')?.dataset.metric;
       if (app.dataset.page === "kitchen") theme="kitchen";
       else if (["score","wheel","fat"].includes(selected)) theme=selected;
       if (app.dataset.uiTheme!==theme) app.dataset.uiTheme=theme;
+      if (shownPage!==app.dataset.page) {
+        shownPage=app.dataset.page;
+        for (const surface of app.querySelectorAll(':scope > .home,:scope > .family-page')) {
+          surface.classList.toggle('page-entering',surface.classList.contains('home')?shownPage==='world':shownPage==='kitchen');
+        }
+      }
       for (const layer of layers) {
         const next=themeById.get(layer.id)||theme;
         if (layer.dataset.uiTheme!==next) layer.dataset.uiTheme=next;

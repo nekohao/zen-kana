@@ -12,7 +12,7 @@
     function blocked() {
       return app.dataset.page==='kitchen' || app.inert || state.overviewMode!=='closed'
         || state.wheelSpinning || state.wheelRequestInFlight
-        || !!document.querySelector('.modal-layer.open,.kitchen-critical-layer:not([hidden])');
+        || !!document.querySelector('.modal-layer.open');
     }
     function clearFeedback() {
       card.classList.remove('swipe-dragging','swipe-ready');

@@ -16,6 +16,8 @@
 
 发布地址和运行资源路径保持不变。index.html、sw.js、version.json 由构建生成，不手工修改。
 
+家庭入口由 src/family.js 装配，src/kitchen-recipes.js 提供菜谱；kitchen.css 和 kitchen-refined.css 仍提供家庭页使用的布局与控件样式。旧点菜前端脚本已移除，历史 SQL、迁移夹具与已发布兼容资源继续保留。
+
 ## 常用命令
 
 - 构建：node points/scripts/build.mjs
@@ -27,6 +29,7 @@
 - 待办分页、权限与撤回验证：node points/tests/todos.test.mjs
 - 通知中心界面验证：points/tests/todos-ui.test.mjs（本地预览与 Playwright）
 - 本地预览：node points/tests/family-preview.mjs
+- 公共框架验证：points/tests/shared-shell.test.mjs（本地预览与 Playwright，检查两页及三个主题的设置、通知中心与导航一致性）
 
 本地提交钩子使用 points/scripts/hooks；GitHub 检查复核目录、文档、SQL 和构建资源。
 

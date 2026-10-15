@@ -1,5 +1,4 @@
 /* Kitchen v2: a quiet table, a readable recipe book, distinct task controls. */
-#pointsApp[data-page="kitchen"]{background:#f7f5f1}
 #pointsApp :is(#kitchenPage,.kitchen-layer){--kitchen-accent:#806b52;--kitchen-muted:#706c65;--kitchen-line:#e7e1d8;--ui-accent:#806b52;--ui-muted:#77777e;--ui-soft:#e9e3db;color:#242427;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
 #pointsApp>#kitchenPage{background:#f7f5f1;padding:calc(env(safe-area-inset-top,0px) + 24px) 22px 24px;scrollbar-width:none}
 #kitchenPage::-webkit-scrollbar{display:none}
@@ -195,15 +194,12 @@
 #kitchenPage .kitchen-day-line>div{display:flex;align-items:center;justify-content:space-between;flex:1;gap:12px;min-width:0}
 #kitchenPage .kitchen-day-dish strong{font-size:15px;color:#45454c;font-weight:550}
 #kitchenPage .kitchen-day-dish p{font-size:13px;color:#85858c;line-height:1.7;padding-left:66px;overflow-wrap:anywhere}
-#pointsApp[data-page="kitchen"]>.app-nav{background:#f9f9fbdd;border-top:1px solid #dedee533;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
-#pointsApp[data-page="kitchen"]>.app-nav button[aria-current="page"]{color:#806b52}
 #pointsApp :is(#kitchenPage,.kitchen-layer) .kitchen-dish-fallback{background:#eae6e0;color:#a18c72;font-size:18px;overflow:hidden}
 @keyframes kitchen-content-in{from{opacity:.6;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media(min-width:700px){#pointsApp .modal-layer.kitchen-layer.ui-themed.ui-surface{align-items:center!important;padding:24px!important}#pointsApp .modal-layer.kitchen-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{border-radius:28px!important;max-height:88dvh!important}#pointsApp .modal-layer.kitchen-layer[data-dialog="order"] .kitchen-panel.ui-panel{max-height:80dvh!important}}
 @media(max-width:350px){#pointsApp>#kitchenPage{padding-left:16px;padding-right:16px}#kitchenPage .kitchen-header h1{font-size:27px}.kitchen-featured{padding:19px 18px 0}.kitchen-feature-action{margin-inline:-18px;padding-inline:18px}#pointsApp .kitchen-layer .kitchen-panel-body{padding:18px 16px}#pointsApp .kitchen-layer .kitchen-panel-foot{padding-inline:16px}.kitchen-row-title{font-size:14px}.kitchen-rating-stage h3{font-size:23px}}
 @media(max-height:680px){#pointsApp .kitchen-layer .kitchen-rating-stage .kitchen-recipe-image{width:100px;height:76px}.kitchen-rating-stage h3{font-size:23px}#pointsApp .kitchen-layer .kitchen-star-input{margin-top:12px}}
 @media(prefers-reduced-motion:reduce){#pointsApp :is(#kitchenPage,.kitchen-layer) *,#kitchenPage>.kitchen-tabs:before{transition:none!important;animation:none!important}}
-@media(prefers-reduced-transparency:reduce){#pointsApp[data-page="kitchen"]>.app-nav{background:#f9f9fb;-webkit-backdrop-filter:none;backdrop-filter:none}}
 @media(prefers-contrast:more){#pointsApp :is(#kitchenPage,.kitchen-layer) :is(.kitchen-caption,.kitchen-recipe-meta,.kitchen-row-names,.kitchen-row-copy small,.kitchen-month-summary span){color:#5f5f67!important}}
 #pointsApp .modal-layer.kitchen-layer.ui-themed.ui-surface{top:var(--kitchen-viewport-top,0px)!important;bottom:auto!important;height:var(--kitchen-viewport-height,100dvh)!important}
 #pointsApp .modal-layer.kitchen-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{max-height:calc(var(--kitchen-viewport-height,100dvh) - env(safe-area-inset-top,0px) - 14px)!important}

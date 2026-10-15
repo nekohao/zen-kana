@@ -7,8 +7,8 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const modules=[['runtime','app-runtime.js',true],['sdk','vendor/supabase-2.117.2.js',true],
- ['gestures','home-gestures.js'],['kitchen-catalog','kitchen-recipes.js'],['kitchen-api','kitchen-api.js'],
- ['kitchen','kitchen.js'],['family','family.js'],['fat','fat-loss.js'],['rewards','fat-rewards.js'],['access','device-access.js',true],
+ ['gestures','home-gestures.js'],['kitchen-catalog','kitchen-recipes.js'],
+ ['family','family.js'],['fat','fat-loss.js'],['rewards','fat-rewards.js'],['access','device-access.js',true],
  ['push','web-push.js'],['notifications','notifications.js'],['app','app.js',true],['theme','ui-theme.js']];
 const styles=['fat-loss.css','fat-rewards.css','ui-theme.css','kitchen.css','web-push.css','device-access.css','notifications.css','kitchen-refined.css','family.css'];
 const hash=text=>createHash('sha256').update(text).digest('hex');

@@ -1,6 +1,4 @@
 /* One household, one task list. Scoped away from points, wheel and fat loss. */
-#pointsApp .family-page .family-eyebrow{margin:0 0 7px;font-size:11px;letter-spacing:.09em;color:#8b7d69}
-#pointsApp .family-page .kitchen-header h1{font-size:30px;font-weight:650}
 .family-action-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 20px}
 .family-action-bar>div{display:grid;gap:5px}.family-action-bar span{font-size:12px;color:#82786b}.family-action-bar strong{font-size:18px;font-weight:600;color:#3d3830}
 .family-action-bar .kitchen-button{font-size:13px!important;min-height:44px!important;padding:10px 14px!important}
@@ -34,7 +32,6 @@
 .family-price-list{border:1px solid #e8e2d8;border-radius:18px;overflow:hidden;background:#fff}.family-price-row{display:flex;gap:12px;width:100%;align-items:center;padding:17px 15px;background:transparent;border:0;text-align:left;font-size:14px;color:#625746}.family-price-row+.family-price-row{border-top:1px solid #ede7dd}.family-price-row>span:first-child{flex:1}.family-price-row strong{font-size:14px;color:#816948}
 .family-dish-link{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;padding:9px 0;border:0;background:transparent;color:#6e5d48;text-align:left;font-size:14px}.family-dish-link small{font-size:11px;color:#9c8e79}
 .family-layer .family-recipe-hero{width:100%;height:auto;aspect-ratio:1.5;object-fit:cover;border-radius:20px}
-.family-legacy-row{display:flex;justify-content:space-between;gap:12px;width:100%;padding:16px 0;border:0;border-bottom:1px solid #e9e3d9;background:transparent;text-align:left;color:#72624e;font-size:13px}
 #pointsApp .family-layer[data-dialog='create'] .kitchen-panel.ui-panel,#pointsApp .family-layer[data-dialog='review'] .kitchen-panel.ui-panel{height:auto;max-height:85dvh}
 #pointsApp .family-layer .kitchen-panel-foot>.kitchen-button{width:100%}
 #pointsApp .family-layer .kitchen-panel-head h2{flex:1;text-align:center}

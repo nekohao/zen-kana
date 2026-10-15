@@ -373,13 +373,7 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
 #pointsApp :is(#settingsSheet,#redeemLayer,#overview) .surface-close:focus-visible { outline:2px solid var(--ui-accent); }
 
 /* Household presentation is scoped to its page and dialogs. */
-body:has(#pointsApp[data-page="kitchen"]) .background { background:#f7f5f1; }
-body:has(#pointsApp[data-page="kitchen"]) :is(.background::after,.ambient,.cute-doodle) { display:none; }
-#pointsApp[data-page="kitchen"],#pointsApp #kitchenLayer { --ink:#302f2c; --secondary:#706d67; --tertiary:#88847d; --ui-line:rgba(66,57,44,.10); --ui-ease:cubic-bezier(.22,.8,.24,1); --ui-shadow:0 20px 60px rgba(42,35,25,.10); }
-#pointsApp[data-page="kitchen"] > .app-nav { background:#fbfaf7; border-top:1px solid #e8e3da; }
-#pointsApp[data-page="kitchen"] > .app-nav button { color:#827d73; gap:3px; font-size:11px; }
-#pointsApp[data-page="kitchen"] > .app-nav button[aria-current='page'] { color:var(--ui-accent); }
-#pointsApp[data-page="kitchen"] > .app-nav button svg { width:21px; height:21px; stroke-width:1.6; }
+#pointsApp #kitchenLayer { --ink:#302f2c; --secondary:#706d67; --tertiary:#88847d; --ui-line:rgba(66,57,44,.10); --ui-ease:cubic-bezier(.22,.8,.24,1); --ui-shadow:0 20px 60px rgba(42,35,25,.10); }
 #pointsApp .modal-layer.ui-themed.ui-surface[data-ui-theme="kitchen"] .ui-panel { --ui-glass:#fcfbf8; --ui-glass-end:#f8f6f1; --ui-surface:#fcfbf8; --ui-surface-end:#f8f6f1; }
 #pointsApp .modal-layer.ui-themed.ui-surface[data-ui-theme="kitchen"] .ui-panel:not(.alert) { border-radius:30px 30px 0 0!important; transition:transform .28s var(--ui-ease)!important; }
 #pointsApp .modal-layer.ui-themed.ui-surface[data-ui-theme="kitchen"] :is(.settings-sheet-header,.unified-sheet-header) { background:#fcfbf8!important; border-bottom-color:var(--ui-line)!important; }
@@ -401,4 +395,61 @@ body:has(#pointsApp[data-page="kitchen"]) :is(.background::after,.ambient,.cute-
 
 @media (prefers-reduced-motion:reduce) {
  #pointsApp .modal-layer.ui-themed.ui-surface[data-ui-theme="kitchen"] .ui-panel:not(.alert) { transition:none!important; }
+}
+
+/* App controls have one appearance across pages and metric themes. */
+#pointsApp .modal-layer[data-ui-theme="shared"] {
+  --ink:#303039; --secondary:#73717b; --tertiary:#92909a;
+  --ui-accent:#806579; --ui-muted:#73717b; --ui-ink:#303039;
+  --ui-wash:#f1edf2; --ui-soft:#e5dce6;
+  --ui-surface:#fcfbfd; --ui-surface-end:#f5f3f7;
+  --ui-glass:rgba(252,251,253,.94); --ui-glass-end:rgba(245,243,247,.94);
+  --ui-border:rgba(255,255,255,.88); --ui-line:rgba(52,48,65,.08);
+  --ui-shadow:0 18px 48px rgba(34,32,47,.10),inset 0 1px 0 rgba(255,255,255,.65);
+  --ui-ease:cubic-bezier(.18,.84,.24,1);
+}
+#pointsApp :is(.home,.family-page) :is(.topbar,.kitchen-header) {
+  min-height:52px; display:flex; align-items:center; justify-content:space-between; gap:12px; color:#303039;
+}
+#pointsApp :is(.home,.family-page) .app-brand { display:flex; align-items:center; gap:10px; min-width:0; }
+#pointsApp :is(.home,.family-page) .app-brand-copy { min-width:0; }
+#pointsApp :is(.home,.family-page) .app-brand-title {
+  margin:0; color:#303039; font-size:16px; font-weight:650; line-height:1.4; letter-spacing:-.02em;
+}
+#pointsApp :is(.home,.family-page) .app-brand-caption {
+  margin:2px 0 0; color:#73717b; font-size:10px; line-height:1.5; white-space:nowrap;
+}
+#pointsApp :is(.topbar,.kitchen-header) .icon-button {
+  display:flex; align-items:center; justify-content:center; width:44px; height:44px;
+  padding:0; flex:0 0 auto; border:0; border-radius:14px;
+  color:#73717b; background:rgba(255,255,255,.65); box-shadow:none;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+#pointsApp :is(.topbar,.kitchen-header) .icon-button svg { width:21px; height:21px; stroke-width:1.65; }
+#pointsApp > #kitchenPage.family-page { background:transparent; padding:calc(var(--safe-top) + 16px) 24px 24px; }
+#pointsApp .family-page .kitchen-header { max-width:392px; margin:0 auto 18px; }
+#pointsApp .family-page .family-greeting { margin:0 0 14px; color:#73717b; font-size:12px; line-height:1.6; }
+#pointsApp > .app-nav {
+  background:rgba(248,248,250,.96); border-top:1px solid rgba(52,48,65,.07);
+  -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
+}
+#pointsApp > .app-nav button { color:#92909a; gap:4px; font-size:11px; }
+#pointsApp > .app-nav button[aria-current="page"] { color:#806579; font-weight:650; }
+#pointsApp > .app-nav button svg { width:23px; height:23px; stroke-width:1.7; }
+#pointsApp > :is(.home,.family-page).page-entering { animation:points-page-enter .18s ease-out; }
+@keyframes points-page-enter { from { opacity:.55; } to { opacity:1; } }
+@media(max-width:350px) {
+  #pointsApp > #kitchenPage.family-page { padding-left:20px; padding-right:20px; }
+  #pointsApp :is(.home,.family-page) .app-brand-title { font-size:14px; }
+  #pointsApp :is(.home,.family-page) .app-brand-caption { font-size:9px; }
+}
+@media(max-height:700px) {
+  #pointsApp > #kitchenPage.family-page { padding-top:calc(var(--safe-top) + 8px); }
+  #pointsApp :is(.home,.family-page) :is(.topbar,.kitchen-header) { min-height:44px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #pointsApp > :is(.home,.family-page).page-entering { animation:none; }
+}
+@media(prefers-reduced-transparency:reduce) {
+  #pointsApp > .app-nav { background:#f8f8fa; -webkit-backdrop-filter:none; backdrop-filter:none; }
 }

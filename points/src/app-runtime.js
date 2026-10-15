@@ -9,7 +9,7 @@
     const message = issues.has("startup") ? "应用加载失败，请重新加载"
       : issues.has("fat") ? "减脂模块加载失败，请重新加载"
       : issues.has("rewards") ? "钻石商城加载失败，请重新加载"
-      : issues.has("kitchen") ? "厨房模块加载失败，请重新加载"
+      : issues.has("kitchen") ? "小家庭模块加载失败，请重新加载"
       : issues.has("update") ? "新版本已准备好，请在操作完成后重新加载"
       : [...issues.values()].includes("uncertain") ? "操作结果待确认，请先核对历史记录"
       : issues.size ? "网络不稳定，部分数据尚未同步" : "";

@@ -6,7 +6,7 @@ import {execFileSync} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
 import {bundle} from '../scripts/build.mjs';
 const {chromium}=await import(pathToFileURL(process.argv[2]));
-const moduleFiles=['app-runtime.js','vendor/supabase-2.117.2.js','home-gestures.js','kitchen-recipes.js','kitchen-api.js','kitchen.js','fat-loss.js','fat-rewards.js','device-access.js','web-push.js','notifications.js','app.js','ui-theme.js'];
+const moduleFiles=['app-runtime.js','vendor/supabase-2.117.2.js','home-gestures.js','kitchen-recipes.js','family.js','fat-loss.js','fat-rewards.js','device-access.js','web-push.js','notifications.js','app.js','ui-theme.js'];
 const cssFiles=['fat-loss.css','fat-rewards.css','ui-theme.css','kitchen.css','web-push.css','device-access.css','notifications.css','kitchen-refined.css'];
 const overrides=Object.fromEntries([...moduleFiles.map(f=>[f,'window.Loaded=(window.Loaded||0)+1;']),...cssFiles.map(f=>[f,'body{font-family:system-ui;}'])]);
 overrides['app.js']='window.BusinessMarker="preserved";window.PointsStartup.ready(()=>{});';

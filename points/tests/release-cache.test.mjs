@@ -8,7 +8,7 @@ const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 const stamp='2026-10-11T14:00:00.000Z';
 const a=await bundle({build:'20261011.701',updatedAt:stamp});
 const b=await bundle({build:'20261011.702',updatedAt:stamp,overrides:{'kitchen.css':await fs.readFile('points/src/kitchen.css','utf8')+'\n/* isolated test change */\n'}});
-check(a.release.assets.length,24,'independent CSS/JS modules');
+check(a.release.assets.length,22,'independent CSS/JS modules without retired kitchen scripts');
 const changed=b.release.assets.filter(f=>!a.release.assets.some(x=>x.url===f.url));
 check(changed.length,1,'one CSS change alters one asset');
 check(changed[0].url.startsWith('assets/kitchen.'),true,'only kitchen CSS affected');
@@ -20,7 +20,7 @@ for(const result of [a,b])for(const [url,body] of result.files){
  if(url.endsWith('.js'))new vm.Script(body);
 }
 const order=[...a.html.matchAll(/data-points-asset="([^"]+)"/g)].map(m=>m[1]);
-check(order,['startup','runtime','sdk','gestures','kitchen-catalog','kitchen-api','kitchen','family','fat','rewards','access','push','notifications','app','theme'],'business execution order unchanged');
+check(order,['startup','runtime','sdk','gestures','kitchen-catalog','family','fat','rewards','access','push','notifications','app','theme'],'active module execution order');
 const scope='https://example.test/points/',shell=scope+'index.html';
 const buckets=new Map(),networkFiles=new Map([...a.files,...b.files]),requests=[],handlers={};
 let offline=false,badAsset=null;
@@ -39,7 +39,7 @@ async function lifecycle(type){let work;handlers[type]({waitUntil:p=>work=p});aw
 async function prepare(release){let work,answer;handlers.message({data:{type:'points:prepare-release',release},ports:[{postMessage:response=>answer=response}],waitUntil:p=>work=p});await work;return answer;}
 async function navigate(query=''){let result;handlers.fetch({request:{url:shell+query,method:'GET',mode:'navigate'},respondWith:p=>result=p});return result?await result:null;}
 await lifecycle('install');await lifecycle('activate');
-check(requests.length,25,'initial prepare downloads shell and assets once');
+check(requests.length,a.release.assets.length+1,'initial prepare downloads shell and assets once');
 check((await (await navigate()).text()).includes('20261011.701'),true,'initial ready shell');
 const before=requests.length;
 badAsset=changed[0].url;
