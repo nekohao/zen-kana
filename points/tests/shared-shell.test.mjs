@@ -26,6 +26,11 @@ async function navigation(p){return p.locator('.app-nav').evaluate(el=>{
  const s=getComputedStyle(el),r=el.getBoundingClientRect();
  return {y:r.y,height:r.height,background:s.backgroundColor,border:s.borderTop,icons:[...el.querySelectorAll('svg')].map(e=>{const r=e.getBoundingClientRect();return [r.width,r.height,getComputedStyle(e).strokeWidth];})};
 });}
+async function switches(p){return p.locator('#pointsApp').evaluate(app=>{
+ const e=app.querySelector(app.dataset.page==='kitchen'?'.family-page > .kitchen-tabs':'#metricSwitch');
+ const r=e.getBoundingClientRect();
+ return {x:r.x,y:r.y,width:r.width,height:r.height,buttons:[...new Set([...e.querySelectorAll('button')].map(b=>{const r=b.getBoundingClientRect();return JSON.stringify({y:r.y,height:r.height});}))]};
+});}
 async function common(p,id){
  await p.locator('#'+id+'[data-ui-theme="shared"]').waitFor();await settle(p);
  return p.locator('#'+id).evaluate(layer=>{
@@ -57,7 +62,7 @@ try{
   check(await p.locator('#settingsLayer').count(),1,'one settings instance');
   check(await p.locator('#pointsMessagesLayer').count(),1,'one notification center');
   for(const size of [{width:320,height:640},{width:390,height:844},{width:430,height:932},{width:1200,height:900}]){
-   await p.setViewportSize(size);let reference=null,top=null,nav=null;
+   await p.setViewportSize(size);let reference=null,top=null,nav=null,tabs=null;
    for(const metric of ['score','wheel','fat']){
     await p.locator('[data-metric="'+metric+'"]').click();
     await p.locator('#pointsApp[data-ui-theme="'+metric+'"]').waitFor();await settle(p);
@@ -65,10 +70,17 @@ try{
     check(current,reference,role+' '+size.width+' '+metric+' shared windows');
     const h=await header(p);top??=h;check(h,top,'metric does not restyle app controls');
     nav??=await navigation(p);check(await navigation(p),nav,'metric does not restyle navigation');
+    tabs??=await switches(p);check(await switches(p),tabs,'metric switches stay anchored');
    }
    await p.locator('.app-nav [data-value="kitchen"]').click();await settle(p);
    check(await header(p),top,role+' '+size.width+' aligned header');
    check(await navigation(p),nav,'same navigation in family');
+   check(await switches(p),tabs,role+' '+size.width+' aligned section switches');
+   check(await p.locator('#familyGreeting').count(),0,'no greeting spacer above section switches');
+   for(const view of ['catalog','orders']){
+    await p.locator('[data-kitchen-action="tab"][data-value="'+view+'"]').click();
+    check(await switches(p),tabs,'family sections keep switches aligned');
+   }
    check(await windows(p),reference,'same windows in family');
    check(await p.locator('#pointsApp').evaluate(e=>e.scrollWidth<=e.clientWidth+1),true,'no page overflow');
    if(process.env.POINTS_QA_DIR&&role==='guest'&&size.width===390){

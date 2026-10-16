@@ -14,15 +14,20 @@
  function attach({db,state,els,ui}) {
   const app=document.getElementById('pointsApp'),q=id=>document.getElementById(id);
   app.dataset.page='world';
-  app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" class="family-page" hidden aria-label="小家庭"><header class="kitchen-header"><div class="app-brand"><img alt="" aria-hidden="true" class="app-brand-icon" src="./ICON/apple-touch-icon.png"/><div class="app-brand-copy"><h1 class="app-brand-title">小家庭</h1><p class="app-brand-caption">一起照顾我们的日常</p></div></div><button class="icon-button pressable" data-family-action="settings" aria-label="设置" type="button">${els.settingsBtn.innerHTML}</button></header><p id="familyGreeting" class="family-greeting"></p><nav class="kitchen-tabs" role="tablist" aria-label="家庭内容">${[['orders','家事'],['catalog','菜谱'],['overview','记录']].map(([v,l])=>`<button role="tab" data-kitchen-action="tab" data-value="${v}" aria-selected="${v==='orders'}">${l}</button>`).join('')}</nav><div id="familyError" class="family-error" role="status" hidden></div><div id="kitchenContent"></div></section>
+  app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" class="family-page" hidden aria-label="小家庭"><header class="kitchen-header"><div class="app-brand"><img alt="" aria-hidden="true" class="app-brand-icon" src="./ICON/apple-touch-icon.png"/><div class="app-brand-copy"><h1 class="app-brand-title">小家庭</h1><p class="app-brand-caption">一起照顾我们的日常</p></div></div><button class="icon-button pressable" data-family-action="settings" aria-label="设置" type="button">${els.settingsBtn.innerHTML}</button></header><nav class="kitchen-tabs" role="tablist" aria-label="家庭内容">${[['orders','家事'],['catalog','菜谱']].map(([v,l])=>`<button role="tab" data-kitchen-action="tab" data-value="${v}" aria-selected="${v==='orders'}">${l}</button>`).join('')}</nav><div id="familyError" class="family-error" role="status" hidden></div><div id="kitchenContent"></div><div class="family-overview-dock"><button id="familyOverviewBtn" class="overview-button pressable" data-family-action="records" aria-haspopup="dialog" aria-controls="familyRecordsLayer" type="button"><span>总览</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div></section>
   <nav class="app-nav" aria-label="主导航"><button data-kitchen-action="page" data-value="world" aria-current="page">${worldIcon}<span>小世界</span></button><button data-kitchen-action="page" data-value="kitchen">${homeIcon}<span>小家庭</span></button></nav>
+  <div id="familyRecordsLayer" class="modal-layer kitchen-layer family-records-layer" aria-hidden="true"><section class="kitchen-panel" role="dialog" aria-modal="true" aria-labelledby="familyRecordsTitle" tabindex="-1"><div class="family-records-handle" role="button" tabindex="0" aria-label="下拉关闭家庭记录"><span></span></div><header class="kitchen-panel-head"><h2 id="familyRecordsTitle">家庭记录</h2><button data-family-action="close-records" aria-label="关闭家庭记录" type="button">×</button></header><div id="familyRecordsBody" class="kitchen-panel-body"></div></section></div>
   <div id="kitchenLayer" class="modal-layer kitchen-layer family-layer" aria-hidden="true"><section class="kitchen-panel" role="dialog" aria-modal="true" aria-labelledby="familyTitle" tabindex="-1"><header class="kitchen-panel-head"><button data-family-action="back" aria-label="返回上一页" hidden>‹</button><h2 id="familyTitle"></h2><button data-family-action="close" aria-label="关闭家庭窗口">×</button></header><div class="kitchen-panel-body" id="familyBody"></div><footer class="kitchen-panel-foot" id="familyFoot" hidden></footer></section></div>`);
   const setting=document.createElement('section');setting.id='familyScoreSettings';
   setting.innerHTML='<div class="settings-label">小家庭</div><div class="settings-group"><button id="familyScoreSettingsBtn" class="settings-row pressable" type="button"><span id="familyScoreSettingsLabel">家务分值表</span><span class="chevron">›</span></button></div>';
   q('fatUnitSettings')?.after(setting);if(!setting.isConnected)q('settingsSheet').querySelector('.settings-sheet-content').append(setting);
   const page=q('kitchenPage'),content=q('kitchenContent'),layer=q('kitchenLayer'),body=q('familyBody'),foot=q('familyFoot');
+  const recordsLayer=q('familyRecordsLayer'),recordsBody=q('familyRecordsBody'),dock=q('familyOverviewBtn');
   let role='waiting',epoch=0,ready=false,available=false,types=[],tasks=[],more=false,tab='orders',loading=null,busy=false,error='',modal=null,stack=[],focus=null;
   let recordDay=today(),dayLoading=false,dayApi=null,swipe=null,suppressPickerClickUntil=0;
+  let recordTasks=[],recordMore=false,recordError='',recordEpoch=0,recordLoading=null,recordFocus=null;
+  let catalogQuery='',dockSwipe=null,suppressDockClickUntil=0,recordsDrag=null,homeSignature='';
+  const tabScroll={orders:0,catalog:0};
   const admin=()=>role.startsWith('admin:');
   const btn=(a,label,v='',primary=false,disabled=false)=>`<button class="kitchen-button${primary?' primary':''}" data-family-action="${a}" data-value="${esc(v)}" type="button"${disabled||busy?' disabled':''}>${label}</button>`;
   const empty=(title,copy)=>`<div class="family-empty">${homeIcon}<h3>${esc(title)}</h3><p>${esc(copy)}</p></div>`;
@@ -38,16 +43,16 @@
   }
 
   async function rpc(name,args={}){const r=await db.rpc(name,args);if(r.error)throw r.error;return r.data;}
-  async function readDay(token,append){
+  async function readDay(token,append,day){
    if(dayApi!==false)try{
-    const result=await rpc('points_family_get_day',{p_date:recordDay,p_before:append?tasks.at(-1)?.id:null});dayApi=true;return result;
+    const result=await rpc('points_family_get_day',{p_date:day,p_before:append?recordTasks.at(-1)?.id:null});dayApi=true;return result;
    }catch(e){if(!/PGRST202|42883/.test(e.code||''))throw e;dayApi=false;window.PointsRuntime?.clear('points_family_get_day');}
    // Older deployments remain complete: exhaust both existing state partitions before filtering.
    const rows=[];let result;
    for(const history of [false,true]){
     let before=null;
     do{
-     if(token!==epoch)return null;
+     if(token!==recordEpoch)return null;
      result=await rpc('points_family_get_state',{p_history:history,p_before:before});
      if(!Array.isArray(result.tasks)||result.admin!==admin())throw Error('Invalid family state');
      rows.push(...result.tasks);const next=result.tasks.at(-1)?.id;
@@ -55,39 +60,64 @@
      before=result.more?next:null;
     }while(before);
    }
-   return {...result,tasks:[...new Map(rows.map(t=>[t.id,t])).values()].filter(t=>t.task_date===recordDay).sort((a,b)=>BigInt(b.id)>BigInt(a.id)?1:-1),more:false};
+   return {...result,tasks:[...new Map(rows.map(t=>[t.id,t])).values()].filter(t=>t.task_date===day).sort((a,b)=>BigInt(b.id)>BigInt(a.id)?1:-1),more:false};
   }
-  async function refresh({append=false}={}){
+  async function refresh({append=false,feedback=false}={}){
    if(!ready||role==='waiting'||role==='verifying'||busy)return false;
-   if(loading)return loading;const token=epoch;content.dataset.pointsSynced='false';dayLoading=tab==='overview';if(dayLoading)render();
+   if(loading)return loading;const token=epoch;if(!available)content.dataset.pointsSynced='false';setSyncing(true);
    const work=(async()=>{try{
-    const result=tab==='overview'?await readDay(token,append):await rpc('points_family_get_state',{p_history:false,p_before:append?tasks.at(-1)?.id:null});
+    const result=await rpc('points_family_get_state',{p_history:false,p_before:append?tasks.at(-1)?.id:null});
     if(token!==epoch)return false;if(result.admin!==admin()||!Array.isArray(result.tasks))throw Error('Invalid family state');
-    types=result.types;tasks=append?[...tasks,...result.tasks]:result.tasks;more=result.more;available=true;error='';content.dataset.pointsSynced='true';render();return true;
-   }catch(e){if(token!==epoch)return false;available=false;error=/PGRST202|42883/.test(e.code||'')?'小家庭尚未配置，菜谱和原餐次记录仍可查看。请哥哥安装本次家庭升级。':describe(e);render();return false;}
-   finally{if(loading===work)loading=null;if(token===epoch){dayLoading=false;render();}}})();loading=work;return work;
+    types=result.types;tasks=append?[...new Map([...tasks,...result.tasks].map(t=>[t.id,t])).values()]:result.tasks;more=result.more;available=true;error='';content.dataset.pointsSynced='true';render();if(feedback)ui.showToast('家事已刷新');return true;
+   }catch(e){if(token!==epoch)return false;error=/PGRST202|42883/.test(e.code||'')?'小家庭尚未配置，菜谱仍可查看。请哥哥安装家庭升级。':'家事同步失败，已保留当前内容，请再次点击家事重试。';render();if(feedback)ui.showToast('同步失败，请再次点击家事重试');return false;}
+   finally{if(loading===work){loading=null;setSyncing(false);}}})();loading=work;return work;
+  }
+  function setSyncing(value){const b=page.querySelector('[data-kitchen-action="tab"][data-value="orders"]');b.setAttribute('aria-busy',String(value));b.textContent=value?'家事 · 同步中':'家事';}
+  function switchTab(value,feedback=false){
+   if(busy||!['orders','catalog'].includes(value))return;
+   if(tab===value&&!feedback)return;
+   if(tab!==value){tabScroll[tab]=content.scrollTop;tab=value;render();content.scrollTop=tabScroll[tab];}
+   if(value==='orders')return refresh({feedback});
   }
   function render(){
    q('familyError').hidden=!error;q('familyError').textContent=error;
    page.querySelectorAll('[role="tab"]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.value===tab)));
    q('familyScoreSettingsLabel').textContent=admin()?'管理家务分值':'家务分值表';
-   const work=tasks.filter(t=>admin()?t.status==='review':['pending','rework'].includes(t.status));
-   q('familyGreeting').textContent=tab==='catalog'?'挑几道想吃的菜':tab==='overview'?'每一份用心，都记在这里':work.length?`${work.length} 件家事${admin()?'等你验收':'等你照顾'}`:'把小日子，慢慢过好';
-   if(tab==='catalog')return renderRecipes();
-   const ranked=tab==='overview'?tasks:[...tasks].sort((a,b)=>{const rank=t=>admin()?(t.status==='review'?0:t.status==='rework'?1:2):(t.status==='rework'?0:t.status==='pending'?1:2);return rank(a)-rank(b)||Number(b.id)-Number(a.id);});
-   content.innerHTML=`${tab==='orders'?`<div class="family-action-bar"><div><span>今天的小事</span><strong>${tasks.length} 件进行中</strong></div>${btn('create',admin()?'发起家事':'我做完了','','true',!available)}</div>`:dateNavigation()}
-   <div class="family-task-list" aria-busy="${dayLoading}">${dayLoading?'<p class="family-day-loading" role="status">正在读取这一天的家事…</p>':ranked.map(card).join('')||empty(tab==='overview'?(error?'这一天的记录暂未读取':'这一天没有家事记录'):'家里暂时没有待办',tab==='overview'?(error?'请同步重试。':'按家事日期归档，提交与验收时间保留在详情中。'):admin()?'发起一件小事，一起照顾这个家。':'做完家务或饭菜，可以主动记下来。')}</div>
-   ${more&&!dayLoading?btn('more',tab==='overview'?'查看更多当天记录':'查看更多家事'):''}<div id="kitchenUpdatesSlot"></div><div class="family-bottom-tools">${btn('types','家务分值表')}${btn('refresh','同步家事')}</div>${pendingHtml()}`;
+   if(tab==='catalog'){if(!q('familySearch'))renderRecipes();return;}
+   const scroll=content.scrollTop,ranked=[...tasks].sort((a,b)=>{const rank=t=>admin()?(t.status==='review'?0:t.status==='rework'?1:2):(t.status==='rework'?0:t.status==='pending'?1:2);return rank(a)-rank(b)||Number(b.id)-Number(a.id);});
+   // Keep unchanged cards and the independently rendered update slot in place during sync.
+   const signature=JSON.stringify([available,admin(),ranked,more,pendingHtml()]);if(signature===homeSignature&&content.querySelector('.family-action-bar'))return;homeSignature=signature;
+   content.innerHTML=`<div class="family-action-bar"><div><span>今天的小事</span><strong>${tasks.length} 件进行中</strong></div>${btn('create',admin()?'发起家事':'我做完了','',true,!available)}</div>
+   <div class="family-task-list">${ranked.map(card).join('')||empty('家里暂时没有待办',admin()?'发起一件小事，一起照顾这个家。':'做完家务或饭菜，可以主动记下来。')}</div>
+   ${more?btn('more','查看更多家事'):''}<div id="kitchenUpdatesSlot"></div>${pendingHtml()}`;
+   content.scrollTop=scroll;
   }
-  function dateNavigation(){return `<nav class="family-day-nav" aria-label="家事记录日期"><button data-family-action="day-step" data-value="-1" aria-label="前一天">‹<span>前一天</span></button><button class="family-day-current" data-family-action="calendar" aria-label="选择记录日期"><strong>${esc(dayLabel(recordDay))}</strong><span aria-hidden="true">▾</span></button><button data-family-action="day-step" data-value="1" aria-label="后一天"${recordDay>=today()?' disabled':''}><span>后一天</span>›</button></nav>${recordDay!==today()?`<button class="family-today" data-family-action="today">回到今天</button>`:''}<p class="family-day-caption">${dayLoading?'正在同步':`${tasks.length}${more?'＋':''} 件家事 · 按家事日期归档`}</p>`;}
-  function selectDay(value){if(!validDay(value)||value>today())return;recordDay=value;epoch++;loading=null;tasks=[];more=false;dayLoading=true;page.scrollTop=0;render();void refresh();}
+  function dateNavigation(){return `<nav class="family-day-nav" aria-label="家事记录日期"><button data-family-action="day-step" data-value="-1" aria-label="前一天">‹<span>前一天</span></button><button class="family-day-current" data-family-action="calendar" aria-label="选择记录日期"><strong>${esc(dayLabel(recordDay))}</strong><span aria-hidden="true">▾</span></button><button data-family-action="day-step" data-value="1" aria-label="后一天"${recordDay>=today()?' disabled':''}><span>后一天</span>›</button></nav>${recordDay!==today()?`<button class="family-today" data-family-action="today">回到今天</button>`:''}<p class="family-day-caption" role="status">${dayLoading?'正在同步':`${recordTasks.length}${recordMore?'＋':''} 件家事 · 按家事日期归档`}</p>`;}
+  function renderRecords(){
+   const scroll=recordsBody.scrollTop;recordsBody.dataset.pointsSynced=String(!dayLoading&&!recordError);
+   recordsBody.innerHTML=`${dateNavigation()}${recordError?`<p class="family-error" role="alert">${esc(recordError)}</p>${btn('records-retry','重新读取记录')}`:''}<div class="family-task-list" aria-busy="${dayLoading}">${recordTasks.map(card).join('')||(!dayLoading&&!recordError?empty('这一天没有家事记录','按家事日期归档，提交与验收时间保留在详情中。'):'')}${dayLoading?'<p class="family-day-loading" role="status">正在读取这一天的家事…</p>':''}</div>${recordMore?btn('record-more',dayLoading?'正在读取…':'查看更多当天记录','',false,dayLoading):''}`;
+   recordsBody.scrollTop=scroll;
+  }
+  async function refreshRecords({append=false}={}){
+   if(!ready||['waiting','verifying'].includes(role)||busy||!recordsLayer.classList.contains('open'))return false;
+   if(recordLoading)return recordLoading;const token=recordEpoch,day=recordDay;dayLoading=true;recordError='';renderRecords();
+   const work=(async()=>{try{
+    const result=await readDay(token,append,day);if(token!==recordEpoch)return false;
+    if(!result||result.admin!==admin()||!Array.isArray(result.tasks))throw Error('Invalid family day');
+    recordTasks=append?[...new Map([...recordTasks,...result.tasks].map(t=>[t.id,t])).values()]:result.tasks;recordMore=result.more;return true;
+   }catch(e){if(token===recordEpoch)recordError='这一天的记录暂未读取，请重试。';return false;}
+   finally{if(recordLoading===work)recordLoading=null;if(token===recordEpoch){dayLoading=false;renderRecords();}}})();recordLoading=work;return work;
+  }
+  function selectDay(value){if(!validDay(value)||value>today())return;recordDay=value;recordEpoch++;recordLoading=null;recordTasks=[];recordMore=false;recordError='';recordsBody.scrollTop=0;void refreshRecords();}
+  function openRecords(){if(busy)return;recordFocus=document.activeElement;close();ui.closeAllLayers();ui.closeOverviewSheet();ui.setLayer(recordsLayer,true);selectDay(today());recordsLayer.querySelector('[role="dialog"]').focus({preventScroll:true});}
+  function closeRecords(){if(busy||modal)return;recordEpoch++;recordLoading=null;dayLoading=false;ui.setLayer(recordsLayer,false);if(recordFocus?.isConnected)recordFocus.focus({preventScroll:true});}
   function card(t){return `<button class="family-task-card" data-family-action="task" data-value="${t.id}"><span class="family-task-symbol ${esc(t.type_code)}" aria-hidden="true">${icons[t.type_code]||'◌'}</span><span class="family-task-copy"><span class="family-task-heading"><strong>${esc(t.title)}</strong>${badge(t)}</span><small>${esc(t.origin==='guest'?'宝宝自主登记':'哥哥发起')} · ${esc(stamp(t.created_at))}</small>${t.status==='rework'?`<p>${esc(t.comment||'请重新完成后，再提交哥哥验收。')}</p>`:t.note?`<p>${esc(t.note)}</p>`:''}<span class="family-task-points">${t.points===null?'待设置分值':t.status==='settled'?`已获得 +${t.points} 分`:`合格后 +${t.points} 分`}${t.attempt>1?` · 第 ${t.attempt} 次提交`:''}</span></span><span class="family-chevron">›</span></button>`;}
   function pendingHtml(){try{return Object.keys(localStorage).filter(k=>k.startsWith('points_family_operation:'+role+':')).map(k=>`<div class="family-error">有一次操作结果待确认。${btn('retry','核对上次操作',k)}</div>`).join('');}catch(_){return '';}}
-  function navigate(next){if(busy||state.wheelSpinning||state.wheelRequestInFlight)return;close();ui.closeAllLayers();ui.closeOverviewSheet();app.dataset.page=next;page.hidden=next!=='kitchen';app.querySelectorAll('.app-nav button').forEach(b=>{if(b.dataset.value===next)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});if(next==='kitchen')void refresh();}
-  function show(next,push=false){if(modal)modal.scroll=body.scrollTop;if(push&&modal)stack.push(modal);else stack=[];if(!modal)focus=document.activeElement;modal=next;ui.setLayer(layer,true);renderDialog();body.scrollTop=0;layer.querySelector('[role="dialog"]').focus({preventScroll:true});}
-  function close(){if(busy)return;modal=null;stack=[];ui.setLayer(layer,false);if(focus?.isConnected)focus.focus({preventScroll:true});}
+  function navigate(next){if(busy||state.wheelSpinning||state.wheelRequestInFlight)return;close();closeRecords();ui.closeAllLayers();ui.closeOverviewSheet();app.dataset.page=next;page.hidden=next!=='kitchen';app.querySelectorAll('.app-nav button').forEach(b=>{if(b.dataset.value===next)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});if(next==='kitchen')void refresh();}
+  function show(next,push=false){if(modal)modal.scroll=body.scrollTop;if(push&&modal)stack.push(modal);else stack=[];if(!modal)focus=document.activeElement;modal=next;recordsLayer.querySelector('[role=dialog]').inert=true;ui.setLayer(layer,true);renderDialog();body.scrollTop=0;layer.querySelector('[role="dialog"]').focus({preventScroll:true});}
+  function close(){if(busy)return;modal=null;stack=[];ui.setLayer(layer,false);recordsLayer.querySelector('[role=dialog]').inert=false;if(focus?.isConnected)focus.focus({preventScroll:true});else if(recordsLayer.classList.contains('open'))recordsLayer.querySelector('[role=dialog]').focus({preventScroll:true});}
   function renderDialog(){
-   if(!modal)return;layer.dataset.dialog=modal.kind;foot.hidden=true;foot.innerHTML='';layer.querySelector('[data-family-action="close"]').disabled=busy;layer.querySelector('[data-family-action="back"]').hidden=!stack.length;
+   if(!modal)return;layer.dataset.dialog=modal.kind;foot.hidden=true;foot.innerHTML='';layer.querySelector('[data-family-action="close"]').disabled=busy;layer.querySelector('[data-family-action="back"]').hidden=!stack.length&&!recordsLayer.classList.contains('open');
    q('familyTitle').textContent={create:admin()?'发起一件家事':'记录做完的家事',picker:'选几道想吃的菜',selected:'这次的菜单',calendar:'选择记录日期',task:'这件家事',review:'验收这件家事',types:'家务分值表',price:'调整家务分值',recipe:'菜谱详情',confirm:'确认操作',loading:'正在读取'}[modal.kind]||'小家庭';
    if(modal.kind==='create')renderCreate();else if(modal.kind==='picker')renderPicker();else if(modal.kind==='selected')renderSelected();else if(modal.kind==='calendar')renderCalendar();else if(modal.kind==='task')renderTask();else if(modal.kind==='review')renderReview();else if(modal.kind==='types')renderTypes();else if(modal.kind==='price')renderPrice();else if(modal.kind==='recipe')renderRecipe();
    else if(modal.kind==='confirm'){body.innerHTML=`<p class="family-copy">${esc(modal.text)}</p>`;foot.hidden=false;foot.innerHTML=`<div class="kitchen-confirm-actions">${btn('back','暂不处理')}${btn('confirm',modal.label,'',true)}</div>`;}
@@ -127,7 +157,7 @@
   function renderReview(){const t=modal.task;body.innerHTML=`<div class="family-detail-head"><div><h3>${esc(t.title)}</h3><p>第 ${t.attempt} 次提交 · ${esc(stamp(t.submitted_at))}</p></div><strong>+${t.points} 分</strong></div>${t.note?`<section class="family-record"><span>原要求 / 说明</span><p>${esc(t.note)}</p></section>`:''}<div class="family-verdict" role="group" aria-label="验收结果">${[['yes','合格'],['no','不合格']].map(([v,l])=>`<button data-family-action="verdict" data-value="${v}" aria-pressed="${modal.verdict===v}" class="${modal.verdict===v?'selected':''}">${l}</button>`).join('')}</div><label class="family-field">文字评价（可选）<textarea id="familyComment" maxlength="1000" placeholder="告诉宝宝哪里做得好，或需要怎样返工">${esc(modal.comment)}</textarea></label><p class="family-hint">${modal.verdict==='no'?'不合格不扣分，宝宝返工后可以再次提交。':'合格后自动结算这项任务的固定分值，只结算一次。'}</p>`;foot.hidden=false;foot.innerHTML=btn('save-review',modal.verdict==='no'?'退回返工':`合格并结算 ${t.points} 分`,'',true,!modal.verdict);}
   function renderTypes(){body.innerHTML=`<p class="family-copy">${admin()?'这里的分值用于新发起或自主登记的任务。已有任务保持原分值。':'这是哥哥设置的最新分值，已发起任务按当时的分值结算。'}</p><div class="family-price-list">${types.map(t=>`<${admin()?'button':'div'} class="family-price-row"${admin()?` data-family-action="price" data-value="${t.code}"`:''}><span>${esc(t.label)}</span><strong>${t.points===null?'待设置':`${t.points} 分`}</strong>${admin()?'<span class="family-chevron">›</span>':''}</${admin()?'button':'div'}>`).join('')}</div><p class="family-hint">后续确认完整家务分值表时，更新这里即可。</p>`;}
   function renderPrice(){body.innerHTML=`<div class="family-detail-head"><h3>${esc(modal.type.label)}</h3></div><label class="family-field">每次合格获得的分数<input id="familyPriceInput" type="number" inputmode="decimal" min="0.5" max="1000" step="0.5" value="${modal.points??''}" placeholder="例如 0.5、1、1.5"/></label><p class="family-hint">新任务使用最新分值；已发起任务不会随之改变。尚未设置分值的原餐次会补齐本次设置。</p>`;foot.hidden=false;foot.innerHTML=btn('save-price','保存分值','',true);}
-  function renderRecipes(){content.innerHTML=`<input id="familySearch" class="kitchen-search" aria-label="搜索菜谱" placeholder="找一道想吃的菜"/><div class="kitchen-dish-grid" id="familyRecipes">${recipeRows(window.PointsKitchenRecipes||[])}</div>`;}
+  function renderRecipes(){homeSignature='';content.innerHTML=`<input id="familySearch" class="kitchen-search" aria-label="搜索菜谱" placeholder="找一道想吃的菜" value="${esc(catalogQuery)}"/><div class="kitchen-dish-grid" id="familyRecipes">${recipeRows((window.PointsKitchenRecipes||[]).filter(d=>[d.name,...(d.aliases||[])].some(t=>t.includes(catalogQuery.trim()))))}</div>`;}
   function recipeRows(list){return list.map(d=>`<article class="kitchen-dish-card"><button class="kitchen-dish-open" data-family-action="recipe" data-value="${d.slug}"><img class="kitchen-dish-image" src="${d.image}" width="180" height="120" loading="lazy" alt="${esc(d.name)}"/><span class="kitchen-dish-copy"><strong>${esc(d.name)}</strong><small class="kitchen-recipe-meta">${esc(d.category)} · ${d.servings||2} 人份</small></span></button></article>`).join('');}
   function renderRecipe(){const d=modal.recipe;body.innerHTML=`${d.image?`<img class="kitchen-recipe-image family-recipe-hero" src="${d.image}" alt="${esc(d.name)}"/>`:''}<h3 class="kitchen-recipe-title">${esc(d.name)}</h3><p class="family-copy">${esc(d.description||'这道菜按自己的口味准备。')}</p>${d.ingredients?.length?`<section class="family-record"><span>食材与调料</span><dl class="kitchen-ingredients">${d.ingredients.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join('')}</dl></section><ol class="kitchen-steps">${d.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}${d.tips?.length?`<section class="family-record"><span>好吃的关键</span>${d.tips.map(t=>`<p>${esc(t)}</p>`).join('')}</section>`:''}`;}
   const renderRecipeDetail=renderRecipe;
@@ -146,7 +176,7 @@
     if(action==='price'){types=result;modal={kind:'types'};}else{tasks=[result,...tasks.filter(t=>t.id!==result.id)];modal={kind:'task',task:result};if(result.status==='settled'){state.score=result.score_after;state.overviewLoadedAt=0;ui.renderScore();await ui.refreshScore();}}
     if(token!==epoch)return;busy=false;renderDialog();ui.showToast(action==='price'?'分值已保存':result.status==='settled'?`合格，已结算 +${result.points} 分`:result.status==='rework'?'已退回返工，积分不变':'家事已保存');window.dispatchEvent(new Event('points:todos-changed'));await refresh();
    }catch(e){if(token===epoch){if(e.code&&!/^(08|PGRST00|APP_)/.test(e.code))localStorage.removeItem(key);error=e.message==='Unresolved operation'?'请先核对上次提交，再提交新的内容。':describe(e);if(modal)modal.error=error;renderDialog();}}
-   finally{if(token===epoch){busy=false;render();renderDialog();}}
+   finally{if(token===epoch){busy=false;render();renderDialog();if(recordsLayer.classList.contains('open')){recordEpoch++;recordLoading=null;void refreshRecords();}}}
   }
   function savedDraft(){try{return JSON.parse(sessionStorage.getItem('points_family_draft:'+role)||'null');}catch(_){return null;}}
   function preserve(){const draft=modal?.kind==='create'?modal:[...stack].reverse().find(m=>m.kind==='create');if(draft)try{sessionStorage.setItem('points_family_draft:'+role,JSON.stringify(draft));}catch(_){}}
@@ -155,7 +185,11 @@
    if(performance.now()<suppressPickerClickUntil&&e.target.closest('#familyPickerGrid'))return;
    const b=e.target.closest('[data-family-action],[data-kitchen-action]');if(!b||b.disabled||busy)return;const a=b.dataset.familyAction||b.dataset.kitchenAction,v=b.dataset.value;
    if(a==='page')return navigate(v);
-   if(a==='tab'){tab=v;epoch++;loading=null;tasks=[];render();return refresh();}
+   if(a==='tab')return switchTab(v,true);
+   if(a==='records'){if(performance.now()<suppressDockClickUntil)return;return openRecords();}
+   if(a==='close-records')return closeRecords();
+   if(a==='records-retry')return refreshRecords();
+   if(a==='record-more')return refreshRecords({append:true});
    if(a==='day-step')return selectDay(shiftDay(recordDay,Number(v)));
    if(a==='today')return selectDay(today());
    if(a==='calendar')return show({kind:'calendar',month:recordDay.slice(0,7)});
@@ -198,22 +232,42 @@
    if(e.target.id==='familyNote'&&modal?.kind==='create'){modal.note=e.target.value;preserve();}
    if(e.target.id==='familyComment'&&modal?.kind==='review')modal.comment=e.target.value;
    if(e.target.id==='familyPriceInput'&&modal?.kind==='price')modal.points=e.target.value;
-   if(e.target.id==='familySearch')q('familyRecipes').innerHTML=recipeRows((window.PointsKitchenRecipes||[]).filter(d=>[d.name,...(d.aliases||[])].some(t=>t.includes(e.target.value.trim()))));
+   if(e.target.id==='familySearch'){catalogQuery=e.target.value;q('familyRecipes').innerHTML=recipeRows((window.PointsKitchenRecipes||[]).filter(d=>[d.name,...(d.aliases||[])].some(t=>t.includes(e.target.value.trim()))));}
   });
   body.addEventListener('error',e=>{if(e.target.matches?.('.family-food-image')){const fallback=document.createElement('span');fallback.className='family-food-fallback';fallback.textContent='♨';fallback.setAttribute('aria-hidden','true');e.target.replaceWith(fallback);}},true);
   body.addEventListener('pointerdown',e=>{if(modal?.kind==='picker'&&e.target.closest('#familyPickerGrid')&&e.isPrimary!==false&&e.button===0)swipe={id:e.pointerId,x:e.clientX,y:e.clientY};});
   body.addEventListener('pointermove',e=>{const s=swipe;if(!s||s.id!==e.pointerId||modal?.kind!=='picker')return;const dx=e.clientX-s.x,dy=e.clientY-s.y;if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.5){e.preventDefault();q('familyPickerGrid').setPointerCapture?.(e.pointerId);}},{passive:false});
   body.addEventListener('pointerup',e=>{const s=swipe;swipe=null;if(!s||s.id!==e.pointerId||modal?.kind!=='picker')return;const dx=e.clientX-s.x,dy=e.clientY-s.y;if(Math.abs(dx)>=60&&Math.abs(dx)>Math.abs(dy)*1.5){suppressPickerClickUntil=performance.now()+250;modal.browser.page+=dx<0?1:-1;renderPickerPage();}});
   body.addEventListener('pointercancel',()=>{swipe=null;});
+  const dockBlocked=()=>busy||state.wheelSpinning||state.wheelRequestInFlight||!!app.querySelector('.modal-layer.open,.overview.open');
+  dock.addEventListener('pointerdown',e=>{if(dockBlocked()||e.isPrimary===false||e.button!==0)return;dockSwipe={id:e.pointerId,x:e.clientX,y:e.clientY};dock.setPointerCapture?.(e.pointerId);});
+  dock.addEventListener('pointermove',e=>{const s=dockSwipe;if(s?.id!==e.pointerId)return;const dx=e.clientX-s.x,dy=e.clientY-s.y;if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.5)e.preventDefault();},{passive:false});
+  dock.addEventListener('pointerup',e=>{const s=dockSwipe;dockSwipe=null;if(!s||s.id!==e.pointerId)return;const dx=e.clientX-s.x,dy=e.clientY-s.y;if(Math.max(Math.abs(dx),Math.abs(dy))>12)suppressDockClickUntil=performance.now()+350;if(!dockBlocked()&&Math.abs(dx)>=48&&Math.abs(dx)>Math.abs(dy)*1.5)void switchTab(dx<0?'catalog':'orders');});
+  dock.addEventListener('pointercancel',()=>{dockSwipe=null;suppressDockClickUntil=performance.now()+350;});
+  dock.addEventListener('lostpointercapture',()=>{dockSwipe=null;});
+  dock.addEventListener('keydown',e=>{if(!dockBlocked()&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();void switchTab(e.key==='ArrowRight'?'catalog':'orders');}});
+  recordsLayer.addEventListener('click',e=>{if(e.target===recordsLayer)closeRecords();});
+  const recordHandle=recordsLayer.querySelector('.family-records-handle'),recordPanel=recordsLayer.querySelector('[role="dialog"]');
+  const resetRecordDrag=()=>{recordsDrag=null;recordPanel.style.transform='';recordsLayer.classList.remove('dragging');};
+  recordHandle.addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();closeRecords();}});
+  recordHandle.addEventListener('pointerdown',e=>{if(busy||modal||e.button!==0||e.isPrimary===false)return;recordsDrag={id:e.pointerId,x:e.clientX,y:e.clientY};recordHandle.setPointerCapture?.(e.pointerId);});
+  recordHandle.addEventListener('pointermove',e=>{const s=recordsDrag;if(s?.id!==e.pointerId)return;const dy=e.clientY-s.y;if(dy>8&&dy>Math.abs(e.clientX-s.x)){e.preventDefault();recordsLayer.classList.add('dragging');recordPanel.style.transform=`translateY(${dy}px)`;}},{passive:false});
+  recordHandle.addEventListener('pointerup',e=>{const s=recordsDrag;resetRecordDrag();if(s?.id===e.pointerId&&e.clientY-s.y>76&&e.clientY-s.y>Math.abs(e.clientX-s.x))closeRecords();});
+  recordHandle.addEventListener('pointercancel',resetRecordDrag);
+  recordHandle.addEventListener('lostpointercapture',resetRecordDrag);
   body.addEventListener('keydown',e=>{if(modal?.kind==='picker'&&e.target.id==='familyPickerGrid'&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();modal.browser.page+=e.key==='ArrowRight'?1:-1;renderPickerPage();}});
   layer.addEventListener('click',e=>{if(e.target===layer)close();});
   q('familyScoreSettingsBtn').addEventListener('click',async()=>{ui.setLayer(els.settingsLayer,false);try{types=await rpc('points_family_get_types');show({kind:'types'});}catch(e){ui.showToast(available?describe(e):'小家庭分值表尚未配置。');}});
-  document.addEventListener('keydown',e=>{if(!layer.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close();}if(e.key==='Tab'){const items=[...layer.querySelectorAll('button:not(:disabled),input,textarea,summary')].filter(x=>x.getClientRects().length);if(!items.length)return;const n=items.indexOf(document.activeElement);if(e.shiftKey&&n<=0||!e.shiftKey&&(n<0||n===items.length-1)){e.preventDefault();items[e.shiftKey?items.length-1:0].focus();}}},true);
+  document.addEventListener('keydown',e=>{
+   const active=layer.classList.contains('open')?layer:recordsLayer.classList.contains('open')?recordsLayer:null;if(!active)return;
+   if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(active===layer)close();else closeRecords();}
+   if(e.key==='Tab'){const items=[...active.querySelectorAll('button:not(:disabled),input,textarea,summary,[tabindex="0"]')].filter(x=>x.getClientRects().length);if(!items.length)return;const n=items.indexOf(document.activeElement);if(e.shiftKey&&n<=0||!e.shiftKey&&(n<0||n===items.length-1)){e.preventDefault();items[e.shiftKey?items.length-1:0].focus();}}
+  },true);
   const fit=()=>{if(window.visualViewport){layer.style.setProperty('--kitchen-viewport-height',visualViewport.height+'px');layer.style.setProperty('--kitchen-viewport-top',visualViewport.offsetTop+'px');}};window.visualViewport?.addEventListener('resize',fit);window.visualViewport?.addEventListener('scroll',fit);fit();
   window.addEventListener('points:open-family-task',e=>{const id=String(e.detail?.id||'');if(!/^[1-9][0-9]*$/.test(id))return;preserve();void refresh().then(ok=>{if(ok)return openTask(id);}).catch(()=>ui.showToast('暂时无法读取这件家事，请重试。'));});
   window.addEventListener('points:before-update',preserve);
   window.addEventListener('points:access-ready',()=>void refresh());window.addEventListener('online',()=>void refresh());document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refresh();});
-  function roleChanged(authReady=false){ready=ready||authReady;const next=!ready?'waiting':state.session?state.isAdmin?'admin:'+state.session.user.id:'verifying':'guest';if(next===role)return;preserve();role=next;epoch++;loading=null;busy=false;modal=null;stack=[];tasks=[];types=[];available=false;ui.setLayer(layer,false);render();if(!['waiting','verifying'].includes(role))void refresh();}
+  function roleChanged(authReady=false){ready=ready||authReady;const next=!ready?'waiting':state.session?state.isAdmin?'admin:'+state.session.user.id:'verifying':'guest';if(next===role)return;preserve();role=next;epoch++;loading=null;busy=false;modal=null;stack=[];tasks=[];types=[];available=false;error='';catalogQuery='';content.innerHTML='';setSyncing(false);recordEpoch++;recordLoading=null;recordTasks=[];recordMore=false;recordError='';dayLoading=false;ui.setLayer(recordsLayer,false);recordsLayer.querySelector('[role=dialog]').inert=false;ui.setLayer(layer,false);render();if(!['waiting','verifying'].includes(role))void refresh();}
   render();return {refresh,roleChanged};
  }
  window.PointsKitchen={attach};

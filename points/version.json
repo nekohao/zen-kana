@@ -1,10 +1,10 @@
 {
   "schema": 2,
-  "build": "20261015.1",
-  "updatedAt": "2026-10-15T15:26:07.576Z",
+  "build": "20261016.4",
+  "updatedAt": "2026-10-16T11:45:55.907Z",
   "shell": {
-    "url": "assets/shell.b224e440afd0bde9835a5ac8916e4a205822c15f6cbaf460cb87b64edffe7e79.html",
-    "sha256": "b224e440afd0bde9835a5ac8916e4a205822c15f6cbaf460cb87b64edffe7e79",
+    "url": "assets/shell.ac50f0e413ff97caaf5aafe6717985547987a61cadeb2c24bc9022157c97705c.html",
+    "sha256": "ac50f0e413ff97caaf5aafe6717985547987a61cadeb2c24bc9022157c97705c",
     "bytes": 72916
   },
   "assets": [
@@ -24,9 +24,9 @@
       "bytes": 15047
     },
     {
-      "url": "assets/ui-theme.e8dd8e3587d3fb573012b72544d021c8ad1704f0aec9440b7ed67ab883bd3e14.css",
-      "sha256": "e8dd8e3587d3fb573012b72544d021c8ad1704f0aec9440b7ed67ab883bd3e14",
-      "bytes": 33846
+      "url": "assets/ui-theme.a99e4d5b9c0a1af913e77d901557ab22f927e9abb2912961550061797491dae8.css",
+      "sha256": "a99e4d5b9c0a1af913e77d901557ab22f927e9abb2912961550061797491dae8",
+      "bytes": 33890
     },
     {
       "url": "assets/kitchen.eb755288217d553606ffb3e2b087662087fb3ac9b0fb119f132c61a0208dcab6.css",
@@ -54,9 +54,9 @@
       "bytes": 27749
     },
     {
-      "url": "assets/family.fcd99bc7c306206f8926cd1e66e1e34540dbb028ec3b0291ecb21c575c73817c.css",
-      "sha256": "fcd99bc7c306206f8926cd1e66e1e34540dbb028ec3b0291ecb21c575c73817c",
-      "bytes": 17743
+      "url": "assets/family.0ff46e05fc920f14355d150f5c2834c6e14908391cce6d6f659daae30e48fa20.css",
+      "sha256": "0ff46e05fc920f14355d150f5c2834c6e14908391cce6d6f659daae30e48fa20",
+      "bytes": 20717
     },
     {
       "url": "assets/runtime.48b4f69fdddc3118d9dc01b1710b64419893d69c6d1733c610087a0fbed798df.js",
@@ -79,9 +79,9 @@
       "bytes": 23150
     },
     {
-      "url": "assets/family.89597d24cefeedd773866ff9fd170352d06a7af526fb295b2cfafeb228243741.js",
-      "sha256": "89597d24cefeedd773866ff9fd170352d06a7af526fb295b2cfafeb228243741",
-      "bytes": 39992
+      "url": "assets/family.904cdcd442dcd1561bd8993b97c6fac6518ba0461182c8948d42af8af4b5cc03.js",
+      "sha256": "904cdcd442dcd1561bd8993b97c6fac6518ba0461182c8948d42af8af4b5cc03",
+      "bytes": 47280
     },
     {
       "url": "assets/fat.212d43a3aa421e9d6aaf0dcd7330a959c932b8155de8b224ef8a4babc5afa966.js",
@@ -114,9 +114,9 @@
       "bytes": 232503
     },
     {
-      "url": "assets/theme.1031e1400cec56e15d5ef4c858ddc3a89a1cb476920db950ad0870ac8332d6c3.js",
-      "sha256": "1031e1400cec56e15d5ef4c858ddc3a89a1cb476920db950ad0870ac8332d6c3",
-      "bytes": 6739
+      "url": "assets/theme.195311d4fe2aa6f0bb30c9c010fda5419a9d7385474ac4b3d29d7c70278add4c.js",
+      "sha256": "195311d4fe2aa6f0bb30c9c010fda5419a9d7385474ac4b3d29d7c70278add4c",
+      "bytes": 6760
     }
   ]
 }

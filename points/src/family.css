@@ -1,4 +1,28 @@
 /* One household, one task list. Scoped away from points, wheel and fat loss. */
+#pointsApp .family-page > .kitchen-tabs{width:100%;max-width:392px;height:40px;margin:0 auto 24px;padding:3px;border:1px solid rgba(52,48,65,.025);border-radius:13px;background:rgba(52,48,65,.055)}
+#pointsApp .family-page > .kitchen-tabs:before{inset:3px auto 3px 3px;width:calc((100% - 6px)/2);border-radius:10px}
+#pointsApp .family-page > .kitchen-tabs button{height:32px;min-height:32px;font-size:12px;font-weight:600}
+#pointsApp > #kitchenPage.family-page{display:flex;flex-direction:column;overflow:hidden;padding-bottom:14px}
+#pointsApp .family-page > .kitchen-header{width:100%;flex-shrink:0}
+#pointsApp .family-page > .kitchen-tabs{flex-shrink:0}
+#pointsApp .family-page > #kitchenContent{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;width:100%;max-width:392px;margin:0 auto;scrollbar-width:none}
+#pointsApp .family-page > #kitchenContent::-webkit-scrollbar{display:none}
+#pointsApp .family-page > .family-error{flex-shrink:0;width:100%;max-width:392px;margin:0 auto 10px}
+#pointsApp .family-overview-dock{flex-shrink:0;width:100%;max-width:392px;margin:10px auto 0}
+#pointsApp .family-page .overview-button{width:100%;min-height:48px;padding:12px 16px;justify-content:space-between;gap:8px;border:1px solid var(--ui-line)!important;border-radius:16px!important;background:rgba(255,255,255,.65)!important;box-shadow:none!important;color:var(--secondary)!important;font-size:14px;font-weight:550;letter-spacing:0;touch-action:pan-y;-webkit-backdrop-filter:none;backdrop-filter:none}
+#pointsApp .family-page .overview-button::before{content:none}
+#pointsApp .family-page .overview-button svg{width:14px;height:14px;stroke-width:1.8;opacity:.65}
+#pointsApp .family-page [data-value='orders'][aria-busy='true']{cursor:progress}
+#pointsApp .family-records-layer{z-index:179!important;align-items:flex-end!important;padding:0!important}
+#pointsApp .modal-layer.family-records-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{width:min(calc(100% - 32px),580px)!important;height:min(78dvh,740px);max-height:calc(100dvh - var(--safe-top) - 16px)!important;border-radius:28px 28px 0 0!important;padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(100%);transition:transform .32s var(--ui-ease)!important}
+#pointsApp .modal-layer.family-records-layer.open .kitchen-panel.ui-panel{transform:translateY(0)}
+#pointsApp .modal-layer.family-records-layer.dragging .kitchen-panel.ui-panel{transition:none!important}
+#pointsApp .family-records-layer .kitchen-panel-head{padding-top:0}
+#pointsApp .family-records-layer .kitchen-panel-body{min-height:0;overscroll-behavior:contain}
+#pointsApp .family-records-handle{min-height:28px;display:grid;place-items:center;flex-shrink:0;touch-action:none;cursor:grab}
+#pointsApp .family-records-handle>span{width:38px;height:5px;border-radius:5px;background:rgba(80,80,90,.22)}
+@media(max-height:600px){#pointsApp .family-page .overview-button{min-height:44px;padding-top:10px;padding-bottom:10px}}
+@media(prefers-reduced-motion:reduce){#pointsApp .modal-layer.family-records-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{transition:none!important}}
 .family-action-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 20px}
 .family-action-bar>div{display:grid;gap:5px}.family-action-bar span{font-size:12px;color:#82786b}.family-action-bar strong{font-size:18px;font-weight:600;color:#3d3830}
 .family-action-bar .kitchen-button{font-size:13px!important;min-height:44px!important;padding:10px 14px!important}
@@ -11,8 +35,7 @@
 .family-task-copy small{font-size:11px;color:#847c71}.family-task-copy p{margin:0;font-size:13px;line-height:1.6;color:#746c60;overflow-wrap:anywhere}
 .family-task-points{font-size:12px;color:#8b7353;font-variant-numeric:tabular-nums}.family-task-copy:has(.settled) .family-task-points{color:#56735f}
 .family-status{font-size:11px;white-space:nowrap;border-radius:8px;padding:4px 7px;background:#f3f1ec;color:#817868}.family-status.review{background:#eaf0ec;color:#4c6e57}.family-status.rework{background:#faf0df;color:#8a6a38}
-.family-chevron{align-self:center;color:#b4ac9f;font-size:22px}.family-bottom-tools{display:flex;justify-content:space-between;margin:20px 0 0}
-.family-bottom-tools .kitchen-button{background:transparent!important;border:0!important;padding-inline:0!important;font-size:12px!important;color:#7f7566!important}
+.family-chevron{align-self:center;color:#b4ac9f;font-size:22px}
 .family-empty{text-align:center;padding:38px 16px}.family-empty>svg{width:34px;height:34px;color:#a59175}.family-empty h3{font-size:18px;font-weight:600}.family-empty p{font-size:13px;line-height:1.7;color:#847c71}
 .family-error{margin:10px 0;padding:12px 14px;border-radius:13px;background:#fbefdf;color:#885d35;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
 .family-layer .family-copy{margin:0 0 18px;font-size:14px;line-height:1.7;color:#776d60}
@@ -96,15 +119,15 @@
 #pointsApp .family-layer .family-picked-images .family-food-image,#pointsApp .family-layer .family-picked-images .family-food-fallback{width:30px;height:34px;border:2px solid #fcfbf8;border-radius:9px;margin-right:-8px}
 #pointsApp .family-layer .family-picker-footer .kitchen-button{min-height:46px;flex:0 0 auto;font-size:13px;padding:10px 18px}
 #pointsApp .family-layer .family-selected-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-#pointsApp .family-page .family-day-nav{display:grid;grid-template-columns:62px minmax(0,1fr) 62px;align-items:center;gap:2px;padding:8px 0;background:#f3eee6;border-radius:16px}
-#pointsApp .family-page .family-day-nav button{display:flex;align-items:center;justify-content:center;gap:3px;min-height:46px;border:0;background:none;color:#8e7b62;padding:4px 2px;font-size:21px}
-#pointsApp .family-page .family-day-nav button>span{font-size:11px}
-#pointsApp .family-page .family-day-nav button:disabled{opacity:.3}
-#pointsApp .family-page .family-day-current{flex-wrap:wrap;column-gap:5px}
-#pointsApp .family-page .family-day-current strong{font-size:13px;font-weight:600;color:#625440;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-#pointsApp .family-page .family-day-caption{font-size:11px;color:#9a8a74;text-align:center;margin:14px 0 20px}
-#pointsApp .family-page .family-day-loading{padding:36px 12px;text-align:center;font-size:13px;color:#9a8a74}
-#pointsApp .family-page .family-today{display:block;margin:8px auto 0;padding:4px 12px;min-height:36px;border:0;background:none;color:#947b5b;font-size:12px}
+#pointsApp .family-records-layer .family-day-nav{display:grid;grid-template-columns:62px minmax(0,1fr) 62px;align-items:center;gap:2px;padding:8px 0;background:#f3eee6;border-radius:16px}
+#pointsApp .family-records-layer .family-day-nav button{display:flex;align-items:center;justify-content:center;gap:3px;min-height:46px;border:0;background:none;color:#8e7b62;padding:4px 2px;font-size:21px}
+#pointsApp .family-records-layer .family-day-nav button>span{font-size:11px}
+#pointsApp .family-records-layer .family-day-nav button:disabled{opacity:.3}
+#pointsApp .family-records-layer .family-day-current{flex-wrap:wrap;column-gap:5px}
+#pointsApp .family-records-layer .family-day-current strong{font-size:13px;font-weight:600;color:#625440;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#pointsApp .family-records-layer .family-day-caption{font-size:11px;color:#9a8a74;text-align:center;margin:14px 0 20px}
+#pointsApp .family-records-layer .family-day-loading{padding:36px 12px;text-align:center;font-size:13px;color:#9a8a74}
+#pointsApp .family-records-layer .family-today{display:block;margin:8px auto 0;padding:4px 12px;min-height:36px;border:0;background:none;color:#947b5b;font-size:12px}
 #pointsApp .family-layer .family-calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;color:#6d5e4b}
 #pointsApp .family-layer .family-calendar-head strong{font-size:18px;font-weight:600}
 #pointsApp .family-layer .family-calendar-head button{width:44px;height:44px;border:0;border-radius:50%;background:#f1ece3;color:#8b7353;font-size:24px}
@@ -114,6 +137,6 @@
 #pointsApp .family-layer .family-calendar-grid .is-today{box-shadow:inset 0 0 0 1px #b5a287}
 #pointsApp .family-layer .family-calendar-grid .selected{background:#806b52;color:#fff}
 #pointsApp .family-layer .family-calendar-grid button:disabled,#pointsApp .family-layer .family-calendar-head button:disabled{opacity:.25}
-@media(max-width:350px){#pointsApp .family-layer[data-dialog='picker'] .kitchen-panel-body{padding-inline:14px;gap:8px}#pointsApp .family-layer[data-dialog='picker'] .kitchen-panel-foot{padding-inline:14px}#pointsApp .family-layer .family-picker-grid{gap:8px}#pointsApp .family-layer .family-picker-categories button{padding-inline:7px;font-size:11px}#pointsApp .family-page .family-day-nav{grid-template-columns:54px minmax(0,1fr) 54px}#pointsApp .family-page .family-day-current strong{font-size:11px}#pointsApp .family-layer .family-picked-images .family-food-image{width:24px}}
+@media(max-width:350px){#pointsApp .family-layer[data-dialog='picker'] .kitchen-panel-body{padding-inline:14px;gap:8px}#pointsApp .family-layer[data-dialog='picker'] .kitchen-panel-foot{padding-inline:14px}#pointsApp .family-layer .family-picker-grid{gap:8px}#pointsApp .family-layer .family-picker-categories button{padding-inline:7px;font-size:11px}#pointsApp .family-records-layer .family-day-nav{grid-template-columns:54px minmax(0,1fr) 54px}#pointsApp .family-records-layer .family-day-current strong{font-size:11px}#pointsApp .family-layer .family-picked-images .family-food-image{width:24px}}
 @media(max-height:600px){#pointsApp .family-layer[data-dialog='picker'] .kitchen-panel-body{gap:6px;padding-top:8px}#pointsApp .family-layer .family-picker-recipe>span:not(.family-food-fallback){padding-top:5px}#pointsApp .family-layer .family-picker-recipe strong{font-size:12px;-webkit-line-clamp:1}#pointsApp .family-layer .family-picker-select{min-height:34px}#pointsApp .family-layer .family-picker-pages small{display:none}}
 @media(prefers-reduced-motion:reduce){#pointsApp .family-layer .family-picker-card{transition:none}}

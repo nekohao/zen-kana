@@ -426,9 +426,10 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
   -webkit-backdrop-filter:none; backdrop-filter:none;
 }
 #pointsApp :is(.topbar,.kitchen-header) .icon-button svg { width:21px; height:21px; stroke-width:1.65; }
-#pointsApp > #kitchenPage.family-page { background:transparent; padding:calc(var(--safe-top) + 16px) 24px 24px; }
-#pointsApp .family-page .kitchen-header { max-width:392px; margin:0 auto 18px; }
-#pointsApp .family-page .family-greeting { margin:0 0 14px; color:#73717b; font-size:12px; line-height:1.6; }
+#pointsApp > #kitchenPage.family-page { background:transparent; padding:calc(var(--safe-top) + 16px) 24px 14px; }
+#pointsApp .family-page .kitchen-header { max-width:392px; margin:0 auto 10px; }
+#pointsApp > .home:has(> #metricSwitch) { grid-template-rows:auto 40px minmax(0,1fr) auto; row-gap:10px; }
+#pointsApp .home > #metricSwitch { margin:0; }
 #pointsApp > .app-nav {
   background:rgba(248,248,250,.96); border-top:1px solid rgba(52,48,65,.07);
   -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
