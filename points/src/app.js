@@ -426,14 +426,8 @@
         if (!sheet) return;
         const viewportHeight = Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
         const maxHeight = Math.max(250, Math.min(viewportHeight - 120, Math.round(viewportHeight * 0.72)));
-        sheet.style.height = "auto";
-        sheet.style.maxHeight = "none";
-        sheet.style.overflowY = "visible";
-        const naturalHeight = Math.ceil(sheet.scrollHeight);
-        const targetHeight = Math.min(naturalHeight, maxHeight);
-        sheet.style.height = `${targetHeight}px`;
+        // CSS sizes the content without dismantling the live scroll container.
         sheet.style.maxHeight = `${maxHeight}px`;
-        sheet.style.overflowY = naturalHeight > maxHeight ? "auto" : "hidden";
       }
 
       let settingsFitRaf = 0;

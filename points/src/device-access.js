@@ -127,7 +127,7 @@
       devicesVersion++;q('pointsAccessDeviceList').hidden=true;
       q('pointsAccessDevices').setAttribute('aria-expanded','false');
       q('pointsAccessDeviceList').replaceChildren();
-      window.dispatchEvent(new Event('resize'));
+      q('pointsAccessDeviceList').setAttribute('aria-busy','false');
     }
     async function toggleDevices(){
       const list=q('pointsAccessDeviceList'),button=q('pointsAccessDevices');
@@ -135,7 +135,7 @@
       if(!state.isAdmin)return;
       const version=++devicesVersion,user=state.session?.user?.id;
       list.hidden=false;list.textContent='正在读取设备…';button.setAttribute('aria-expanded','true');
-      q('pointsAccessSettingsMessage').textContent='';window.dispatchEvent(new Event('resize'));
+      list.setAttribute('aria-busy','true');q('pointsAccessSettingsMessage').textContent='';
       try{
         const rows=await rpc('points_access_admin_devices');
         if(version!==devicesVersion||!state.isAdmin||state.session?.user?.id!==user)return;
@@ -152,7 +152,7 @@
         }
         window.dispatchEvent(new Event('points:devices-viewed'));
       }catch(_){if(version===devicesVersion)list.textContent='设备读取失败，请收起后重新展开重试。';}
-      finally{if(version===devicesVersion)window.dispatchEvent(new Event('resize'));}
+      finally{if(version===devicesVersion)list.setAttribute('aria-busy','false');}
     }
     q('pointsAccessDevices').addEventListener('click',()=>void toggleDevices());
     els.settingsBtn?.addEventListener('click',collapseDevices);

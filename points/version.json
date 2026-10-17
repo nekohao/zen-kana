@@ -1,11 +1,11 @@
 {
   "schema": 2,
-  "build": "20261017.1",
-  "updatedAt": "2026-10-17T13:35:43.502Z",
+  "build": "20261017.2",
+  "updatedAt": "2026-10-17T14:01:20.395Z",
   "shell": {
-    "url": "assets/shell.feff02e916f47dd7a0eb025e75f5c262663af8899f395fcfbc146db8484a98b5.html",
-    "sha256": "feff02e916f47dd7a0eb025e75f5c262663af8899f395fcfbc146db8484a98b5",
-    "bytes": 72570
+    "url": "assets/shell.74ab8f1d170b1ce64157b8a3d4fad66b6dcc7c769f8b88d45df2dc9601f41dc3.html",
+    "sha256": "74ab8f1d170b1ce64157b8a3d4fad66b6dcc7c769f8b88d45df2dc9601f41dc3",
+    "bytes": 72576
   },
   "assets": [
     {
@@ -39,9 +39,9 @@
       "bytes": 243
     },
     {
-      "url": "assets/device-access.12208f40ea543c1a59ad88fe4c0b2688e913003685e4f33078c7204153a11f3c.css",
-      "sha256": "12208f40ea543c1a59ad88fe4c0b2688e913003685e4f33078c7204153a11f3c",
-      "bytes": 3547
+      "url": "assets/device-access.2f06de69f7f1324288b88ce16963b2751400d234b0821b8c689ec7245bba71f3.css",
+      "sha256": "2f06de69f7f1324288b88ce16963b2751400d234b0821b8c689ec7245bba71f3",
+      "bytes": 3674
     },
     {
       "url": "assets/notifications.436560be1014bff8c04a73a772358ba9ca62e373e6d87226b71a8ff397d1b666.css",
@@ -89,9 +89,9 @@
       "bytes": 29412
     },
     {
-      "url": "assets/access.a4739e34e13edb163ca2dc8e18b09cd49ac652cab5a2b221e783fceefd4cf7b7.js",
-      "sha256": "a4739e34e13edb163ca2dc8e18b09cd49ac652cab5a2b221e783fceefd4cf7b7",
-      "bytes": 14813
+      "url": "assets/access.479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a.js",
+      "sha256": "479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a",
+      "bytes": 14826
     },
     {
       "url": "assets/push.f7c34d67adb87a7e89774741f82953483dd1f7534d830fbed0f865297305fe80.js",
@@ -104,9 +104,9 @@
       "bytes": 20268
     },
     {
-      "url": "assets/app.1eff441aa2bd0ff7b1f5dc8dae6581d983d8bb8ab6d969ff580cd62566448539.js",
-      "sha256": "1eff441aa2bd0ff7b1f5dc8dae6581d983d8bb8ab6d969ff580cd62566448539",
-      "bytes": 232417
+      "url": "assets/app.65d4f0fdaee9dbbdb34af5f802601de9e7af5b8a4267693eb2f55d95d8cf5080.js",
+      "sha256": "65d4f0fdaee9dbbdb34af5f802601de9e7af5b8a4267693eb2f55d95d8cf5080",
+      "bytes": 232122
     },
     {
       "url": "assets/theme.195311d4fe2aa6f0bb30c9c010fda5419a9d7385474ac4b3d29d7c70278add4c.js",

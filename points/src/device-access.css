@@ -29,4 +29,5 @@
 .points-access-device time { color:var(--secondary); font-size:11px; font-variant-numeric:tabular-nums; }
 #pointsAccessDevices[aria-expanded="true"] .chevron { transform:rotate(90deg); }
 #pointsAccessDeviceList[hidden] { display:none!important; }
-#pointsAccessDeviceList { padding-bottom:10px; font-size:12px; }
+#pointsAccessDeviceList { min-height:68px; box-sizing:border-box; padding-bottom:10px; font-size:12px; overflow-anchor:none; }
+#pointsAccessDeviceList[aria-busy="true"] { padding:12px 16px; }

@@ -107,4 +107,6 @@ const late=setup({session:adminSession,devices:'slow'});await late.api.start();
 late.ids.get('pointsAccessDeviceList').hidden=true;late.ids.get('pointsAccessDevices').listeners.click();await flush();
 late.ids.get('pointsAccessDevices').listeners.click();late.resolveDevices({data:deviceRows,error:null});await flush();
 check(late.ids.get('pointsAccessDeviceList').hidden,true);check(late.ids.get('pointsAccessDeviceList').children.length,0);
+check(list.events.includes('resize'),false);check(late.events.includes('resize'),false);
+check(deviceList.getAttribute('aria-busy'),'false');check(late.ids.get('pointsAccessDeviceList').getAttribute('aria-busy'),'false');
 console.log(`${checks} cold/instant/warm/offline/revoked/stale-response/admin recovery checks passed.`);
