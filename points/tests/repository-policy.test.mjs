@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import {validatePaths,obsoleteSourceReferences} from '../scripts/check-repo.mjs';
+import {validatePaths,obsoleteSourceReferences,validateSqlPair} from '../scripts/check-repo.mjs';
 const current=JSON.parse(await fs.readFile(new URL('../version.json',import.meta.url),'utf8'));
 const retained=JSON.parse(await fs.readFile(new URL('../scripts/retained-releases.json',import.meta.url),'utf8'));
 const base=['.gitignore','AGENTS.md','README.md','index.html','sw.js','version.json','manifest.webmanifest','schema-full.sql','schema-increment.sql','scripts/build.mjs','scripts/build-sql-backup.py','scripts/check-repo.mjs','scripts/retained-releases.json','src/index.source.html','src/sw.source.js','docs/DEVELOPMENT.md','docs/PRODUCT.md'].map(n=>'points/'+n);
@@ -14,4 +14,8 @@ assert.ok(validatePaths(base.filter(n=>!n.endsWith('schema-increment.sql')),curr
 assert.deepEqual(obsoleteSourceReferences("new URL('../"+"app.js',import.meta.url)",['app.js']),['app.js']);checks++;
 assert.deepEqual(obsoleteSourceReferences("new URL('../src/app.js',import.meta.url)",['app.js']),[]);checks++;
 assert.deepEqual(obsoleteSourceReferences("git show f8d3825:points/ui-theme.css",['ui-theme.css']),[]);checks++;
-console.log(checks+' repository allowlist, documents, SQL, screenshots, secrets and asset registration checks passed.');
+assert.deepEqual(validateSqlPair(['points/src/app.js']),[]);checks++;
+assert.deepEqual(validateSqlPair(['points/schema-full.sql','points/schema-increment.sql']),[]);checks++;
+assert.equal(validateSqlPair(['points/schema-full.sql']).length,1);checks++;
+assert.equal(validateSqlPair(['points/schema-increment.sql']).length,1);checks++;
+console.log(checks+' repository allowlist, paired SQL changes, screenshots, secrets and asset registration checks passed.');

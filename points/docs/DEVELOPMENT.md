@@ -14,11 +14,13 @@
 - 资源验证：node points/tests/release-artifacts.test.mjs
 - 缓存与更新：node points/tests/release-cache.test.mjs；node points/tests/release-update.test.mjs
 - 本地预览：node points/tests/family-preview.mjs
-- SQL 生成：python points/scripts/build-sql-backup.py
+- 两个 SQL 同时生成：python points/scripts/build-sql-backup.py
 - SQL 同步检查：python points/scripts/build-sql-backup.py --check
 - SQL 恢复与升级：node points/tests/sql-backup.test.mjs；node points/tests/sql-entrypoints.test.mjs
 
 浏览器测试接收 Playwright 模块路径和 Chrome 可执行文件路径，使用隔离 localhost 与演示数据，不连接生产数据库。历史迁移测试只从 database-fixtures.json 读取冻结输入，当前两个 SQL 始终读取真实文件。
+
+每次数据库改动：把 current-schema.json 的 increment.base_commit 指向本次改动前的维护版本，更新完整结构及 increment.data_sql，再生成两个 SQL。生成器覆盖上次增量，只输出与基线不同的定义和本次必要数据操作；不得追加历史升级。未支持的结构变更先扩展差异渲染器。测试从该基线验证升级及重复执行，历史升级从 Git 读取。两个 SQL 与结构数据必须同批提交、一起 push；纯前端修改保留现有 SQL，不伪造新增量。全量头部记录增量基线及 SHA-256，使仅数据迁移或增量范围修正也同步更新两个入口。
 
 ## 发布资源与兼容
 

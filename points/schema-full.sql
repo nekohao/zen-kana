@@ -12,6 +12,10 @@
 
 -- Source PostgreSQL: 17.6
 
+-- Current change baseline (see schema-increment.sql): 7e408fbd6921987e3f86dc2d2d1cf547c73ddbf7
+
+-- Current increment SHA-256: 4d4091a68ccfa7f8991b41794e84e360b1cd1b924a56b2d2b7d63755a29e64f5
+
 SET check_function_bodies = false;
 
 

@@ -16,7 +16,7 @@
 - points/src/app-runtime.js、startup.js：请求与启动保护；updates.js、sw.source.js：更新与缓存。
 - points/scripts/：构建、SQL 生成、仓库检查及提交钩子；node points/scripts/build.mjs 生成发布产物。
 - points/index.html、sw.js、version.json、assets/：生成的发布文件，不手工编辑。
-- points/schema-full.sql、schema-increment.sql：仅有的全量与当前增量 SQL；sql-backup/ 是维护结构数据。
+- points/schema-full.sql 是最新完整 SQL；schema-increment.sql 每次数据库改动先清空旧内容，只放本次差异；两个入口随数据库改动一起提交和 push。sql-backup/ 是维护结构数据。
 - points/docs/：两份当前文档；tests/ 是本地验证、演示预览与测试夹具。
 
 新增内容归入既有职责目录。不得新增根目录模块、日期报告或额外 SQL；提交前执行仓库、资源及相关业务检查。详细规则见 points/AGENTS.md。

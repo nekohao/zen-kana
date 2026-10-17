@@ -33,6 +33,9 @@ export function validatePaths(files,release,compatibility){
  return [...new Set(errors)];
 }
 function git(args){return execFileSync('git',args,{cwd:root,encoding:'utf8',maxBuffer:4000000});}
+export function validateSqlPair(changed){
+ return changed.includes('points/schema-full.sql')!==changed.includes('points/schema-increment.sql')?['Update and push both SQL entry points in the same commit.']:[];
+}
 export function obsoleteSourceReferences(text,sources){
  const references=sources.filter(name=>["new URL('../"+name+"'",'new URL("../'+name+'"',"'points/"+name+"'",'"points/'+name+'"'].some(fragment=>text.includes(fragment)));
  if(/from ['"]\.\.\/build\.mjs['"]/.test(text))references.push('build.mjs');
@@ -48,8 +51,10 @@ export function checkRepository({staged=false}={}){
   const obsolete=obsoleteSourceReferences(read(file),sources);
   if(obsolete.length)errors.push('Update moved source references in '+file+': '+obsolete.join(', '));
  }
- const expected=execFileSync('python',['-X','utf8','-c',"import runpy,json,sys; tool=runpy.run_path('points/scripts/build-sql-backup.py'); print(tool['render'](json.load(sys.stdin)),end='')"],{cwd:root,input:read('points/sql-backup/current-schema.json'),encoding:'utf8',maxBuffer:4000000});
- if(expected.replace(/\r\n?/g,'\n')!==read('points/schema-full.sql').replace(/\r\n?/g,'\n'))errors.push('Full SQL and maintained metadata differ in the '+(staged?'staged':'committed')+' tree.');
+ const expected=JSON.parse(execFileSync('python',['-X','utf8','-c',"import runpy,json,sys; tool=runpy.run_path('points/scripts/build-sql-backup.py'); data=json.load(sys.stdin); print(json.dumps([tool['render'](data),tool['render_increment'](data)]))"],{cwd:root,input:read('points/sql-backup/current-schema.json'),encoding:'utf8',maxBuffer:4000000}));
+ for(const [index,name] of ['schema-full.sql','schema-increment.sql'].entries())if(expected[index].replace(/\r\n?/g,'\n')!==read('points/'+name).replace(/\r\n?/g,'\n'))errors.push(name+' and maintained metadata differ in the '+(staged?'staged':'committed')+' tree.');
+ const changed=git(staged?['diff','--cached','--name-only']:['diff-tree','--root','--no-commit-id','--name-only','-r','HEAD']).trim().split(/\r?\n/);
+ errors.push(...validateSqlPair(changed));
  return errors;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){

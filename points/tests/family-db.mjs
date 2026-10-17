@@ -1,4 +1,4 @@
-import fs from './database-source.mjs';
+import fs,{readIncrementBase} from './database-source.mjs';
 import {createNotificationsDatabase} from './notifications-db.mjs';
 export const demoToken='e'.repeat(64);
 export async function createFamilyDatabase({beforeMigration}={}){
@@ -9,7 +9,10 @@ export async function createFamilyDatabase({beforeMigration}={}){
   await base.call('guest','points_access_redeem',{p_code:code.code,p_device_id:'00000000-0000-0000-0000-000000000003',p_device_token:demoToken,p_label:'本地测试设备'});
   if(beforeMigration)await beforeMigration(base);
   const migration=await fs.readFile(new URL('../schema-increment.sql',import.meta.url),'utf8');
-  await base.context('service','points_family_get_state');await base.db.exec(migration);
+  await base.context('service','points_family_get_state');
+  // Restore the preceding release from Git; never pad the delivered increment for old fixtures.
+  await base.db.exec((await readIncrementBase()).sql);
+  await base.db.exec(migration);
   return {...base,rpc:(role,name,args={})=>base.call(role,name,args,role==='guest'?demoToken:null),reapply:()=>base.db.exec(migration)};
  }catch(error){await base.db.close();throw error;}
 }

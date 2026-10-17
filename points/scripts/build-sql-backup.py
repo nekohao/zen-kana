@@ -2,6 +2,8 @@
 import json
 import re
 import sys
+import subprocess
+import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,6 +25,77 @@ def qualified(obj):
 
 def normalized(text):
     return text.replace('\r\r\n', '\n').replace('\r\n', '\n').replace('\r', '\n')
+
+def increment_base(data):
+    config = data.get('increment', {})
+    commit = config.get('base_commit', '')
+    if not re.fullmatch(r'[0-9a-f]{40}', commit):
+        raise ValueError('increment.base_commit must name the reviewed pre-change Git commit.')
+    try:
+        raw = subprocess.check_output(['git', 'show', commit + ':points/sql-backup/current-schema.json'], cwd=ROOT.parent)
+    except subprocess.CalledProcessError as error:
+        raise ValueError('Increment base unavailable; fetch Git history, never fall back to the oldest export.') from error
+    return json.loads(raw)
+
+def function_key(fn):
+    return (fn['schema'], fn['name'], fn['identity_arguments'])
+
+def render_increment(data):
+    base = increment_base(data)
+    # Refuse unsupported changes rather than silently ship an incomplete/cumulative upgrade.
+    for key in set(base) | set(data):
+        if key not in ('functions', 'increment') and base.get(key) != data.get(key):
+            raise ValueError('Review and extend the increment renderer for changed section: ' + key)
+    previous = {function_key(fn): fn for fn in base['functions']}
+    current = {function_key(fn): fn for fn in data['functions']}
+    if previous.keys() != current.keys():
+        raise ValueError('Review and extend the increment renderer for added/removed function signatures.')
+    changed = [fn for key, fn in current.items() if fn != previous[key]]
+    for fn in changed:
+        old = previous[function_key(fn)]
+        unsupported = [key for key in set(fn) | set(old) if key not in ('definition', 'owner', 'acl', 'comment') and fn.get(key) != old.get(key)]
+        if unsupported:
+            raise ValueError('Review function metadata changes for ' + fn['name'] + ': ' + ', '.join(unsupported))
+    statements = data['increment'].get('data_sql')
+    if not isinstance(statements, list) or not all(isinstance(sql, str) and sql.strip() for sql in statements):
+        raise ValueError('increment.data_sql must explicitly list this change\'s data operations (or []).')
+    out = ['-- CURRENT CHANGE ONLY; previous increments are replaced, never appended.',
+           '-- BASE_COMMIT: ' + data['increment']['base_commit'],
+           '-- Requires the maintained database at that commit (or this increment already applied).',
+           '-- Historical upgrades belong in Git history, not in this execution file.', 'BEGIN;']
+    guards = []
+    for fn in changed:
+        old = previous[function_key(fn)]
+        if normalized(fn['definition']) != normalized(old['definition']):
+            hashes = []
+            for version in (old, fn):
+                parts = normalized(version['definition']).split('$function$')
+                if len(parts) != 3:
+                    raise ValueError('Review increment guard for function body delimiter: ' + fn['name'])
+                hashes.append(hashlib.md5(parts[1].encode('utf-8')).hexdigest())
+            guards += [" IF NOT EXISTS (SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace",
+                       "  WHERE n.nspname=" + lit(fn['schema']) + " AND p.proname=" + lit(fn['name']),
+                       "  AND pg_get_function_identity_arguments(p.oid)=" + lit(fn['identity_arguments']),
+                       "  AND md5(replace(replace(prosrc,E'\\r\\n',E'\\n'),E'\\r',E'\\n')) IN (" + ','.join(map(lit, hashes)) + ")) THEN",
+                       '  RAISE EXCEPTION ' + lit('Database baseline differs for ' + fn['name'] + '; apply/verify preceding changes first') + ';', ' END IF;']
+    if guards:
+        out += ['DO $baseline$\nBEGIN\n' + '\n'.join(guards) + '\nEND\n$baseline$;']
+    for fn in changed:
+        old = previous[function_key(fn)]
+        target = qualified(fn) + '(' + fn['identity_arguments'] + ')'
+        if normalized(fn['definition']) != normalized(old['definition']):
+            out.append(normalized(fn['definition']).strip().rstrip(';') + ';')
+        if fn['owner'] != old['owner']:
+            out.append(f'ALTER FUNCTION {target} OWNER TO {q(fn["owner"])};')
+        if fn['acl'] != old['acl']:
+            if fn['acl'] is None:
+                raise ValueError('Review explicit ACL reset for ' + fn['name'])
+            out += acl_sql('f', target, fn['acl'], fn['owner'])
+        if fn['comment'] != old['comment']:
+            out.append(f'COMMENT ON FUNCTION {target} IS ' + ('NULL' if fn['comment'] is None else lit(fn['comment'])) + ';')
+    out += [sql.strip().rstrip(';') + ';' for sql in statements]
+    out += ["NOTIFY pgrst,'reload schema';", 'COMMIT;']
+    return '\n\n'.join(out) + '\n'
 
 def acl_sql(kind, target, acl, owner, column=None):
     # The export retains ACLs verbatim as well as rendering grants. NULL means PG defaults.
@@ -59,6 +132,9 @@ def render(data):
            '-- Maintained latest application schema, independent of deployment status.',
            '-- Source PostgreSQL: ' + data['postgres_version'],
            'SET check_function_bodies = false;', '']
+    if data.get('increment'):
+        out.insert(7, '-- Current change baseline (see schema-increment.sql): ' + data['increment']['base_commit'])
+        out.insert(8, '-- Current increment SHA-256: ' + hashlib.sha256(render_increment(data).encode('utf-8')).hexdigest())
     for schema in data['schemas']:
         target = q(schema['name'])
         out += [f'CREATE SCHEMA IF NOT EXISTS {target};', f'ALTER SCHEMA {target} OWNER TO {q(schema["owner"])};']
@@ -160,18 +236,22 @@ def main():
     # The maintained current schema is authoritative. Never revert it to an old online export.
     data = json.loads((BACKUP / 'current-schema.json').read_text(encoding='utf-8'))
     expected = render(data)
+    increment = render_increment(data)
     sql_files = {str(p.relative_to(ROOT)).replace('\\', '/') for p in ROOT.rglob('*.sql')}
     if sql_files != {'schema-full.sql', 'schema-increment.sql'}:
         raise ValueError('Only schema-full.sql and schema-increment.sql may remain: ' + ', '.join(sorted(sql_files)))
     if sys.argv[1:] == ['--check']:
         if (ROOT / 'schema-full.sql').read_text(encoding='utf-8') != expected:
             raise ValueError('Full SQL is stale; update maintained metadata and regenerate.')
-        print('Two SQL entry points and full-schema synchronization verified.')
+        if (ROOT / 'schema-increment.sql').read_text(encoding='utf-8') != increment:
+            raise ValueError('Increment SQL differs from this change; regenerate, do not append historical upgrades.')
+        print('Full SQL and current-change-only increment synchronized; Git baseline verified.')
         return
     if sys.argv[1:]:
-        raise ValueError('Usage: python points/build-sql-backup.py [--check]')
+        raise ValueError('Usage: python points/scripts/build-sql-backup.py [--check]')
     write_batches(ROOT / 'schema-full.sql', expected)
-    print(f'Latest full SQL: {len(data["relations"])} relations, {len(data["functions"])} functions.')
+    write_batches(ROOT / 'schema-increment.sql', increment)
+    print(f'Latest full SQL: {len(data["relations"])} relations, {len(data["functions"])} functions; current increment: {len(increment.splitlines())} lines.')
 
 if __name__ == '__main__':
     main()

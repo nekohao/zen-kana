@@ -12,7 +12,7 @@
 | assets/、images/、ICON/、vendor/ | 发布资源、图标和固定依赖 |
 | sql-backup/ | 当前结构数据与原始只读参考 |
 | schema-full.sql | 最新完整结构与逻辑基线 |
-| schema-increment.sql | 现有数据库的当前升级入口 |
+| schema-increment.sql | 清空上次内容后，仅包含本次数据库改动的执行入口 |
 
 发布地址和运行资源路径保持不变。index.html、sw.js、version.json 由构建生成，不手工修改。
 
@@ -33,6 +33,6 @@
 
 本地提交钩子使用 points/scripts/hooks；GitHub 检查复核目录、文档、SQL 和构建资源。
 
-数据库变更必须同步两个 SQL 和 current-schema.json。全量用于结构核对或具备平台依赖的新环境恢复，不能当作已有数据库的重复升级脚本。“最新”表示与代码一致，不代表线上已执行。
+数据库变更必须同步两个 SQL 和 current-schema.json，并在同次提交一起 push。每次新数据库改动覆盖上次增量，只保留本次 SQL；基线由 current-schema.json 的 increment.base_commit 标明，必要的数据迁移由 increment.data_sql 维护。生成命令同时生成全量和本次差异，--check 同时校验两个入口。全量用于结构核对或具备平台依赖的新环境恢复，不能当作已有数据库的重复升级脚本。“最新”表示与代码一致，不代表线上已执行。
 
 截图、压缩包、调试日志和旧版本报告只留本地或 Git 历史。旧文件不能因“看起来多”就删除；兼容资源按登记与保留窗口审核。

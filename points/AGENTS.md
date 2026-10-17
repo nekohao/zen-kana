@@ -29,10 +29,12 @@
 
 ## SQL 两个固定入口
 
-- schema-full.sql 始终代表最新完整结构与逻辑；schema-increment.sql 是当前可重复执行升级。不得新增日期或模块命名 SQL。
-- 数据库修改同步更新当前增量、sql-backup/current-schema.json 和全量 SQL，验证后一起提交。纯前端修改保留增量，不清空、不伪造变更。
-- 增量注明起始结构，并保留升级至当前版本所需依赖。全量不是现有数据库重复升级脚本，不维护 pending/applied 部署状态。
-- 使用 python points/scripts/build-sql-backup.py 生成，并用 --check 检查仅有两个 SQL 且全量与结构数据一致。
+- schema-full.sql 始终代表最新完整结构与逻辑；schema-increment.sql 只包含本次数据库改动，不是从最早导出累计升级的脚本。不得新增日期或模块命名 SQL。
+- 每次有新的数据库改动，先清空上次增量内容，再写本次需要执行的 SQL；完整 SQL、当前结构数据同时更新。纯前端修改不生成新增量。
+- 在 current-schema.json 的 increment 中明确本次起始 Git 提交和必要数据迁移；以改动前的维护版本为基线，不默认使用 online-confirmed.json。缺少前置版本时单独说明，禁止为了兼容旧版本把历史升级重新塞入本次增量。
+- 使用 python points/scripts/build-sql-backup.py 同时生成两个 SQL；--check 必须检查全量和本次差异都与结构数据一致，拒绝无关历史定义。表结构等新类型变更需扩展差异渲染器，不退回累计脚本。
+- 两个 SQL 必须在同一次提交一起 push；提交检查验证成对更新，交付时给出本次增量内容及基线。完整结构未变时，全量头部同步本次增量指纹，不伪造结构变化。
+- 历史升级只从 Git 历史读取用于回归，不复制为第三个 SQL，不为让旧测试通过扩大交付增量。全量不用于已有数据库重复升级，不维护 pending/applied 部署状态。
 - online-confirmed.json 保留原始只读参考，不伪装成已部署最新版，不用旧导出覆盖当前维护基线。
 - 历史定义集中在 tests/database-fixtures.json，只有测试与只读导出使用；不把它作为第三份部署 SQL，不运行已过期通知构建或密钥工具。
 - 结构基线不含业务数据、密钥配置、平台安装或调度配置；仅外部改库或需核实线上差异时索取新导出。

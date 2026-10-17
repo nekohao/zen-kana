@@ -11196,5 +11196,11 @@
   ],
   "initialization_sql": [
     "INSERT INTO public.points_family_types(code,label,points,position) VALUES\n ('dishes','洗碗',1,1),('cooking','做饭',NULL,2),('floor','扫地 / 拖地',NULL,3),('laundry','洗衣 / 晾衣',NULL,4),\n ('tidying','整理房间',NULL,5),('trash','倒垃圾',NULL,6) ON CONFLICT(code) DO NOTHING;"
-  ]
+  ],
+  "increment": {
+    "base_commit": "7e408fbd6921987e3f86dc2d2d1cf547c73ddbf7",
+    "data_sql": [
+      "-- Retire recipes; preserve only dish names/notes on existing household tasks.\n-- Balances, task status, reviews and score logs remain untouched.\nUPDATE public.points_family_tasks t SET items=(\n SELECT coalesce(jsonb_agg(jsonb_build_object('slug',d->>'slug','name',d->>'name',\n 'request_note',coalesce(d->>'request_note','')) ORDER BY n),'[]')\n FROM jsonb_array_elements(t.items) WITH ORDINALITY x(d,n)\n) WHERE jsonb_array_length(t.items)>0;\nUPDATE public.points_family_operations o SET result=jsonb_set(o.result,'{items}',(\n SELECT coalesce(jsonb_agg(jsonb_build_object('slug',d->>'slug','name',d->>'name',\n 'request_note',coalesce(d->>'request_note','')) ORDER BY n),'[]')\n FROM jsonb_array_elements(o.result->'items') WITH ORDINALITY x(d,n)\n)) WHERE jsonb_typeof(o.result->'items')='array';\nDELETE FROM public.points_kitchen_dishes;"
+    ]
+  }
 }

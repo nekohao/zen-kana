@@ -1,20 +1,30 @@
-// Upgrade the original structural reference with the actual current increment.
+// Upgrade the explicitly selected preceding release with only the current change.
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
+import {readIncrementBase} from './database-source.mjs';
 const {PGlite}=await import(pathToFileURL(process.env.TEMP+'/zen-kana-preview-runtime/node_modules/@electric-sql/pglite/dist/index.js'));
-const original=JSON.parse(await fs.readFile(new URL('../sql-backup/online-confirmed.json',import.meta.url),'utf8'));
+const original=(await readIncrementBase()).schema;
 const current=JSON.parse(await fs.readFile(new URL('../sql-backup/current-schema.json',import.meta.url),'utf8'));
 const increment=await fs.readFile(new URL('../schema-increment.sql',import.meta.url),'utf8');
 const baseline=execFileSync('python',['-X','utf8','-c',"import runpy,json,sys; renderer=runpy.run_path('points/scripts/build-sql-backup.py'); print(renderer['render'](json.load(sys.stdin)),end='')"],{input:JSON.stringify(original),encoding:'utf8',maxBuffer:4000000});
 const db=new PGlite();let checks=0;const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 try{
+ const changed=current.functions.filter(f=>JSON.stringify(f)!==JSON.stringify(original.functions.find(o=>o.schema===f.schema&&o.name===f.name&&o.identity_arguments===f.identity_arguments)));
+ const definitions=[...increment.matchAll(/CREATE OR REPLACE FUNCTION\s+"?([\w]+)"?\."?([\w]+)"?\(/g)].map(m=>m[1]+'.'+m[2]).sort();
+ check(definitions,changed.map(f=>f.schema+'.'+f.name).sort(),'increment includes exactly changed functions, no historical definitions');
+ check(/CREATE TABLE|CREATE SCHEMA|points_fat_reward_snapshot/.test(increment),false,'recipe change does not replay historical setup or reward upgrades');
  await db.exec('CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE ROLE supabase_admin;CREATE SCHEMA auth;CREATE TABLE auth.users(id uuid PRIMARY KEY);CREATE SCHEMA extensions;');
  const objects=[...current.schemas,...current.relations,...current.functions,...current.default_privileges];
  const roles=objects.flatMap(o=>[o.owner,...[...(o.acl||'').matchAll(/(?:\{|,)([^=]+)=/g)].map(m=>m[1])]);
  for(const role of new Set(roles.filter(Boolean)))if(!(await db.query('SELECT 1 FROM pg_roles WHERE rolname=$1',[role])).rows.length)await db.exec('CREATE ROLE "'+role.replaceAll('"','""')+'";');
- await db.exec(baseline);await db.exec(increment);
+ await db.exec(baseline);
+ const snapshot=original.functions.find(f=>f.name==='points_family_snapshot');
+ await db.exec(snapshot.definition.replace('AS $function$','AS $function$\n-- unexpected database change'));
+ await assert.rejects(db.exec(increment),/Database baseline differs for points_family_snapshot/);checks++;
+ await db.exec('ROLLBACK;');await db.exec(snapshot.definition);
+ await db.exec(increment);
  for(const f of current.functions.filter(f=>f.name.startsWith('points_family_')||f.name==='points_notifications_get_todos'||f.name==='business_event'||f.name==='points_notice_worker_claim'||f.name==='points_fat_reward_snapshot'||/score|points_get_logs|points_get_state|points_redeem|points_shop_(get_state|purchase|activate_lucky100|set_equipped)|legacy_write|points_kitchen_admin_review/.test(f.name))){
   const actual=(await db.query('SELECT pg_get_functiondef(p.oid) definition FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname=$1 AND p.proname=$2 AND pg_get_function_identity_arguments(p.oid)=$3',[f.schema,f.name,f.identity_arguments])).rows[0].definition;
   check(actual.trim().replace(/;$/,'').replace(/\r\r\n|\r\n|\r/g,'\n'),f.definition.trim().replace(/;$/,'').replace(/\r\r\n|\r\n|\r/g,'\n'),f.name+' latest definition installed');
@@ -50,5 +60,5 @@ try{
  check(Number((await db.query("SELECT delta FROM public.score_logs WHERE reason='重置到初始值 5' ORDER BY id DESC LIMIT 1")).rows[0].delta),-1.5,'reset log does not round');
  await db.exec(increment);
  check(Number((await db.query("SELECT points FROM public.points_family_types WHERE code='dishes'")).rows[0].points),0.5,'rerun preserves configured half-point value');
- console.log(checks+' original-to-current increment, exact function definitions, repeatability and permissions checks passed.');
+ console.log(checks+' preceding-release-to-current delta, exact changed scope, definitions, repeatability and permissions checks passed.');
 }finally{await db.close();}

@@ -14,8 +14,7 @@ try{
   for(const object of objects){const index=base[key].findIndex(old=>old.schema===object.schema&&old.name===object.name&&old.identity_arguments===object.identity_arguments);if(index<0)base[key].push(object);else base[key][index]=object;}
  }
  for(const f of base.functions.filter(f=>f.schema==='public'&&/^points_kitchen_(v[23]_)?(admin_save|admin_review|guest_save|guest_resolve)$/.test(f.name))){f.acl=fresh.functions.find(x=>x.schema===f.schema&&x.name===f.name&&x.identity_arguments===f.identity_arguments).acl;}
- const migration=await fs.readFile(new URL('schema-increment.sql',root),'utf8');
- base.initialization_sql=[migration.slice(migration.indexOf('INSERT INTO public.points_family_types('),migration.indexOf('DO NOTHING;',migration.indexOf('INSERT INTO public.points_family_types('))+11)];
+ // Existing initialization remains in maintained metadata, not in every new increment.
  const oldMeal=base.relations.find(r=>r.name==='points_kitchen_orders');
  oldMeal.triggers=(oldMeal.triggers||[]).filter(t=>t.name!=='points_family_guard_legacy').concat(fresh.relations.find(r=>r.name==='points_kitchen_orders').triggers.filter(t=>t.name==='points_family_guard_legacy'));
  const notice=base.functions.find(f=>f.schema==='points_notice'&&f.name==='business_event');
