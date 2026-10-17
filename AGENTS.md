@@ -12,7 +12,7 @@
 ## 基本架构
 
 - points/：小世界 PWA，包含分数、转盘、减脂、小家庭、设备接入与推送。
-- points/src/：页面、业务模块与样式源码。index.source.html 和 app.js 是页面与装配入口；family.js 是统一家庭任务，kitchen*.js 保留菜谱与历史接口，fat*.js 是减脂与奖励。
+- points/src/：页面、业务模块与样式源码。index.source.html 和 app.js 是页面与装配入口；family.js 是统一家庭任务，kitchen*.css 提供家庭布局与控件样式，fat*.js 是减脂与奖励。
 - points/src/app-runtime.js、startup.js：请求与启动保护；updates.js、sw.source.js：更新与缓存。
 - points/scripts/：构建、SQL 生成、仓库检查及提交钩子；node points/scripts/build.mjs 生成发布产物。
 - points/index.html、sw.js、version.json、assets/：生成的发布文件，不手工编辑。

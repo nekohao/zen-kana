@@ -9,14 +9,14 @@
 | docs/DEVELOPMENT.md | 当前开发、验证、发布与稳定性要求 |
 | docs/PRODUCT.md | 当前小世界、家庭、减脂与权限规则 |
 | tests/ | 可复现回归测试、数据库夹具与唯一家庭预览 |
-| assets/、images/、ICON/、vendor/ | 发布资源、菜图、图标和固定依赖 |
+| assets/、images/、ICON/、vendor/ | 发布资源、图标和固定依赖 |
 | sql-backup/ | 当前结构数据与原始只读参考 |
 | schema-full.sql | 最新完整结构与逻辑基线 |
 | schema-increment.sql | 现有数据库的当前升级入口 |
 
 发布地址和运行资源路径保持不变。index.html、sw.js、version.json 由构建生成，不手工修改。
 
-家庭入口由 src/family.js 装配，src/kitchen-recipes.js 提供菜谱；kitchen.css 和 kitchen-refined.css 仍提供家庭页使用的布局与控件样式。旧点菜前端脚本已移除，历史 SQL、迁移夹具与已发布兼容资源继续保留。
+家庭入口由 src/family.js 装配，直接展示家事；做饭通过文字说明记录。菜谱、选菜、菜图和做法已移除，kitchen.css 和 kitchen-refined.css 继续提供家庭布局与控件样式。旧版本哈希资源与历史迁移夹具仅用于兼容及回归。当前增量清除数据库菜谱与旧任务做法快照，保留菜名、要求和积分记录。
 
 ## 常用命令
 

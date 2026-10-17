@@ -13,7 +13,7 @@ const {db,call,context}=await createFamilyDatabase();const rpc=(role,name,args,t
 const demoToken='e'.repeat(64),demoDevice='00000000-0000-0000-0000-000000000003';
 // Demo scores exist only in this disposable preview.
 await call('admin','points_family_write',{p_action:'price',p_payload:{type:'cooking',version:1,points:3},p_operation_id:crypto.randomUUID()});
-await call('admin','points_family_write',{p_action:'create',p_payload:{type:'cooking',note:'少盐，今晚一起吃饭。',items:[{slug:'tomato-eggs',note:''},{slug:'cola-wings',note:''}]},p_operation_id:crypto.randomUUID()});
+await call('admin','points_family_write',{p_action:'create',p_payload:{type:'cooking',note:'少盐，今晚一起吃饭。'},p_operation_id:crypto.randomUUID()});
 await call('guest','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'碗筷和锅都洗好了。'},p_operation_id:crypto.randomUUID()},demoToken);
 // Daily browsing fixtures include an older task beyond the first legacy page.
 const previousDayTask=await call('admin','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'昨天的家事演示'},p_operation_id:crypto.randomUUID()});

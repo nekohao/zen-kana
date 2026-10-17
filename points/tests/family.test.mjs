@@ -38,7 +38,8 @@ try{
  const self=await write('guest','create',{type:'dishes',note:'自主登记'});check(self.origin,'guest');check(self.status,'review');check(self.points,3);
  const current=(await rpc('admin','points_family_get_types')).find(t=>t.code==='cooking');
  await write('admin','price',{type:'cooking',version:current.version,points:5});
- const meal=await write('admin','create',{type:'cooking',items:[{slug:'tomato-eggs',note:'少盐'}]});check(meal.items[0].name,'番茄炒蛋');
+ await reject(()=>write('admin','create',{type:'cooking',items:[{slug:'tomato-eggs'}]}),'22023');
+ const meal=await write('admin','create',{type:'cooking',note:'番茄炒蛋，少盐'});check(meal.items,[],'cooking uses a text note');
  await reject(()=>write('admin','cancel',{id:self.id,version:self.version}),'42501');
  check((await write('admin','cancel',{id:meal.id,version:meal.version})).status,'cancelled');
  await reject(()=>db.query("UPDATE points_family_types SET points=0.3 WHERE code='dishes'"),'23514');

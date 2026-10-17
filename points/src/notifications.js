@@ -91,7 +91,7 @@
         ['[data-metric="score"]',has('score','assets')],['[data-metric="wheel"]',has('wheel','withdrawals')],
         ['[data-metric="fat"]',has('fat','services')],['#redeemRewardBtn,[data-shop-view="inventory"]',has('assets')],
         ['.app-nav [data-value="world"]',has('score','wheel','withdrawals','assets','fat','services','devices')],
-        ['.app-nav [data-value="kitchen"],[data-kitchen-action="tab"][data-value="orders"]',has('kitchen')],
+        ['.app-nav [data-value="kitchen"]',has('kitchen')],
         ['[data-fat-section="settlement"]',has('fat')],['#fatDiamondShopBtn',has('services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
         ['#pointsAccessDevices',has('devices')],['#settingsBtn,[data-family-action="settings"]',has('devices')],
         ['#overviewBtn',has(state.activeMetric==='wheel'?'wheel':state.activeMetric==='fat'?'fat':'score',state.activeMetric==='wheel'?'withdrawals':'')]
@@ -133,12 +133,12 @@
       mount('assets',q('shopInventoryPanel'),['assets']);
       const kitchen=q('kitchenUpdatesSlot')||q('kitchenContent');
       if(kitchen?.id==='kitchenUpdatesSlot')kitchen.dataset.pointsSynced=q('kitchenContent')?.dataset.pointsSynced;
-      mount('kitchen',kitchen,['kitchen'],document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.getAttribute('aria-selected')==='true');
+      mount('kitchen',kitchen,['kitchen']);
       const reward=q('fatRewardBody');
       const settlement=q('fatSettlementUpdatesSlot');
       mount('fat-settlement',settlement,['fat']);
       mount('rewards',reward,['services'],reward?.dataset.updatesView==='services');
-      mount('devices',q('pointsAccessDeviceList'),['devices']);badges();
+      badges();
     }
     async function acknowledge(row) {
       if(!allowed()||!visible(row)||Number(row.dataset.updateEpoch)!==epoch)return;
@@ -151,6 +151,13 @@
         item.unread=false;item.presented=true;badges();
       }catch(_){}finally{if(version===epoch)pendingAcks.delete(item.id);}
     }
+    window.addEventListener('points:devices-viewed',async()=>{
+      await load();const version=epoch,ids=items.filter(i=>i.active&&i.unread&&routeOf(i)==='devices').map(i=>i.id);
+      if(!allowed()||!ids.length)return;
+      try{await rpc('points_notifications_ack',{p_ids:ids,p_read:true});
+        if(version===epoch&&allowed()){items.filter(i=>ids.includes(i.id)).forEach(i=>{i.unread=false;i.presented=true;});badges();}
+      }catch(_){}
+    });
     function setPreferences(p) {
       prefs.querySelectorAll('[data-notice-category]').forEach(c=>c.checked=p.categories.includes(c.dataset.noticeCategory));
       q('pointsNoticeQuiet').checked=p.quiet;q('pointsNoticeNight').checked=p.nightImportant;

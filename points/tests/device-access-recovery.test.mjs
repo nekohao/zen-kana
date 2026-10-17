@@ -4,18 +4,18 @@ import vm from 'node:vm';
 const source=await fs.readFile(new URL('../src/device-access.js',import.meta.url),'utf8');
 let checks=0;const check=(a,b)=>{assert.deepEqual(a,b);checks++;};
 const flush=async()=>{for(let i=0;i<12;i++)await new Promise(resolve=>setImmediate(resolve));};
-function setup({stored=null,session=null,cachedAdmin=null,launch=false,receipt={ok:true,deviceId:'device-1'},readAuth=null}={}) {
-  let record=structuredClone(stored),reads=0,unlocks=0,opened=0,resolveReceipt;
+function setup({stored=null,session=null,cachedAdmin=null,launch=false,receipt={ok:true,deviceId:'device-1'},readAuth=null,devices=[]}={}) {
+  let record=structuredClone(stored),reads=0,unlocks=0,opened=0,resolveReceipt,resolveDevices;
   const ids=new Map(),events=[];
   class Element {
     set id(value){this._id=value;ids.set(value,this);}get id(){return this._id;}
     hidden=false;disabled=false;value='';textContent='';inert=false;style={};listeners={};children=[];
     classList={values:new Set(),toggle(name,on){on?this.values.add(name):this.values.delete(name);},contains(name){return this.values.has(name);}};
     set innerHTML(text){for(const match of text.matchAll(/id="([^"]+)"/g))ids.set(match[1],new Element());}
-    setAttribute(){}append(el){this.children.push(el);}addEventListener(name,fn){this.listeners[name]=fn;}
+    attributes={};setAttribute(k,v){this.attributes[k]=v;}getAttribute(k){return this.attributes[k];}append(...els){this.children.push(...els);}addEventListener(name,fn){this.listeners[name]=fn;}
     querySelector(){return null;}focus(){}replaceChildren(){this.children=[];}
   }
-  for(const id of ['pointsApp','loginLayer','emailInput','adminSettings'])ids.set(id,new Element());
+  for(const id of ['pointsApp','loginLayer','emailInput','adminSettings','settingsBtn'])ids.set(id,new Element());
   const state={session:null,isAdmin:false};
   const storage=new Map(cachedAdmin?[['points-access-admin-v1',cachedAdmin]]:[]);
   if(launch)storage.set('points-access-launch-v1','guest');
@@ -31,6 +31,7 @@ function setup({stored=null,session=null,cachedAdmin=null,launch=false,receipt={
   const window={dispatchEvent:e=>events.push(e.type),addEventListener:(name,fn)=>listeners[name]=fn};
   const db={auth:{getSession:async()=>({data:{session},error:null}),signOut:async()=>({})},rpc:async name=>{
     reads++;
+    if(name==='points_access_admin_devices')return devices==='slow'?new Promise(resolve=>{resolveDevices=resolve;}):{data:devices,error:null};
     if(name==='points_access_get_device'){
       if(receipt==='slow')return new Promise(resolve=>{resolveReceipt=resolve;});
       if(receipt?.error)return {data:null,error:receipt.error};
@@ -40,10 +41,10 @@ function setup({stored=null,session=null,cachedAdmin=null,launch=false,receipt={
   }};
   vm.runInNewContext(source,{window,document:{getElementById:id=>ids.get(id),createElement:()=>new Element(),body:{style:{}},addEventListener(){}},
     indexedDB,crypto,Event,navigator:{userAgent:'Desktop'},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},setInterval:()=>0,clearInterval(){},console});
-  const api=window.PointsDeviceAccess.attach({db,state,els:{adminSettings:ids.get('adminSettings'),loginLayer:ids.get('loginLayer'),emailInput:ids.get('emailInput')},
+  const api=window.PointsDeviceAccess.attach({db,state,els:{settingsBtn:ids.get('settingsBtn'),adminSettings:ids.get('adminSettings'),loginLayer:ids.get('loginLayer'),emailInput:ids.get('emailInput')},
     ui:{closeAllLayers:()=>opened++,setLayer(){},renderAdminState(){}},apiOrigin:'https://backend.test',
     readAuth:async()=>{if(readAuth)await readAuth(state);else {state.session=session;state.isAdmin=!!session;}},onUnlocked:()=>unlocks++});
-  return {api,access:window.PointsDeviceAccess,ids,state,events,listeners,storage,get record(){return record;},get reads(){return reads;},get unlocks(){return unlocks;},get closed(){return opened;},resolve:value=>resolveReceipt(value)};
+  return {api,access:window.PointsDeviceAccess,ids,state,events,listeners,storage,get record(){return record;},get reads(){return reads;},get unlocks(){return unlocks;},get closed(){return opened;},resolve:value=>resolveReceipt(value),resolveDevices:value=>resolveDevices(value)};
 }
 const credential={id:'device-1',token:'a'.repeat(64),authorized:true};
 const fresh=setup();check(fresh.ids.get('pointsAccessGate').hidden,true);
@@ -93,4 +94,17 @@ let finishAdmin;
 const admin=setup({session:adminSession,cachedAdmin:'admin-1',readAuth:()=>new Promise(resolve=>finishAdmin=resolve)});
 const adminStart=admin.api.start();await flush();check(admin.access.verified,true);check(admin.state.isAdmin,true);check(admin.ids.get('pointsAccessGate').hidden,true);
 finishAdmin();await adminStart;check(admin.reads,0);
+const deviceRows=[{label:'宝宝的 iPhone',verifiedAt:'2026-10-17T06:30:00Z',revoked:false},{label:'旧设备',verifiedAt:'2026-01-01T00:00:00Z',revoked:true}];
+const list=setup({session:adminSession,devices:deviceRows});await list.api.start();
+const listButton=list.ids.get('pointsAccessDevices'),deviceList=list.ids.get('pointsAccessDeviceList');deviceList.hidden=true;
+listButton.listeners.click();await flush();
+check(deviceList.hidden,false);check(listButton.getAttribute('aria-expanded'),'true');
+check(deviceList.children.length,1);check(deviceList.children[0].children[0].textContent,'宝宝的 iPhone');
+check(deviceList.children[0].children[1].textContent.includes('2026/10/17 14:30'),true);
+listButton.listeners.click();check(deviceList.hidden,true);check(listButton.getAttribute('aria-expanded'),'false');
+listButton.listeners.click();await flush();list.ids.get('settingsBtn').listeners.click();check(deviceList.hidden,true);
+const late=setup({session:adminSession,devices:'slow'});await late.api.start();
+late.ids.get('pointsAccessDeviceList').hidden=true;late.ids.get('pointsAccessDevices').listeners.click();await flush();
+late.ids.get('pointsAccessDevices').listeners.click();late.resolveDevices({data:deviceRows,error:null});await flush();
+check(late.ids.get('pointsAccessDeviceList').hidden,true);check(late.ids.get('pointsAccessDeviceList').children.length,0);
 console.log(`${checks} cold/instant/warm/offline/revoked/stale-response/admin recovery checks passed.`);

@@ -6304,6 +6304,7 @@ CREATE OR REPLACE FUNCTION public.points_family_snapshot(p_id bigint)
  SET search_path TO ''
 AS $function$
  SELECT to_jsonb(t)-'member_id'-'score_log_id' || jsonb_build_object('id',t.id::text,
+ 'items',(SELECT coalesce(jsonb_agg(jsonb_build_object('slug',d->>'slug','name',d->>'name','request_note',coalesce(d->>'request_note','')) ORDER BY n),'[]') FROM jsonb_array_elements(t.items) WITH ORDINALITY x(d,n)),
  'events',(SELECT coalesce(jsonb_agg(jsonb_build_object('version',e.version,'attempt',e.attempt,'action',e.action,'comment',e.comment,'at',e.created_at) ORDER BY e.version),'[]')
  FROM public.points_family_events e WHERE e.task_id=t.id)) FROM public.points_family_tasks t WHERE t.id=p_id
 $function$;
@@ -6333,7 +6334,7 @@ BEGIN
   SELECT * INTO ty FROM public.points_family_types WHERE code=p_payload->>'type' AND active FOR SHARE;
   IF NOT FOUND OR ty.points IS NULL THEN RAISE EXCEPTION 'Points not configured' USING errcode='22023'; END IF;
   IF char_length(coalesce(p_payload->>'note',''))>500 THEN RAISE EXCEPTION 'Note too long' USING errcode='22023'; END IF;
-  IF ty.code='cooking' AND jsonb_array_length(coalesce(p_payload->'items','[]'))>0 THEN v_items:=points_kitchen_v2.items(p_payload->'items',true); END IF;
+  IF jsonb_array_length(coalesce(p_payload->'items','[]'))>0 THEN RAISE EXCEPTION 'Recipes retired; use the task note' USING errcode='22023'; END IF;
   INSERT INTO public.points_family_tasks(member_id,type_code,title,points,origin,note,items,status,attempt,submitted_at)
    VALUES(member,ty.code,ty.label,ty.points,CASE WHEN administrator THEN 'admin' ELSE 'guest' END,coalesce(p_payload->>'note',''),v_items,
     CASE WHEN administrator THEN 'pending' ELSE 'review' END,CASE WHEN administrator THEN 0 ELSE 1 END,CASE WHEN NOT administrator THEN clock_timestamp() END) RETURNING * INTO t;

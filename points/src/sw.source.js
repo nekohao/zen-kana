@@ -73,7 +73,10 @@ async function prepare(input){
 }
 self.addEventListener('install',event=>event.waitUntil((async()=>{await prepare(bakedRelease());await self.skipWaiting();})()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
- // Retain previous release/asset caches for open clients and rollback. Never delete unrelated or legacy storage here.
+ // Retain previous release/asset caches for open clients and rollback.
+ // Remove only the retired recipe photographs from this app's image cache.
+ const images=await caches.open(IMAGES);
+ for(const request of await images.keys())if(new URL(request.url).pathname.startsWith(SCOPE.pathname+'images/kitchen/'))await images.delete(request);
  await self.clients.claim();
  for(const client of await self.clients.matchAll({type:'window'}))client.postMessage({type:'points:release-ready',build:BUILD});
 })()));
@@ -89,7 +92,7 @@ self.addEventListener('fetch',event=>{
  const relative=url.pathname.slice(SCOPE.pathname.length);
  const navigation=requestInfo.mode==='navigate'&&(relative===''||relative==='index.html');
  const asset=/^assets\/[a-z0-9-]+\.([a-f0-9]{64})\.(?:js|css|html)$/.exec(relative);
- const image=/^(?:images\/kitchen\/[a-z0-9-]+\.jpg|ICON\/[a-zA-Z0-9_-]+\.png)$/.test(relative);
+ const image=/^ICON\/[a-zA-Z0-9_-]+\.png$/.test(relative);
  if(!navigation&&!asset&&!image)return;
  event.respondWith((async()=>{
   if(navigation){

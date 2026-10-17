@@ -27,7 +27,7 @@ async function navigation(p){return p.locator('.app-nav').evaluate(el=>{
  return {y:r.y,height:r.height,background:s.backgroundColor,border:s.borderTop,icons:[...el.querySelectorAll('svg')].map(e=>{const r=e.getBoundingClientRect();return [r.width,r.height,getComputedStyle(e).strokeWidth];})};
 });}
 async function switches(p){return p.locator('#pointsApp').evaluate(app=>{
- const e=app.querySelector(app.dataset.page==='kitchen'?'.family-page > .kitchen-tabs':'#metricSwitch');
+ const e=app.querySelector('#metricSwitch');
  const r=e.getBoundingClientRect();
  return {x:r.x,y:r.y,width:r.width,height:r.height,buttons:[...new Set([...e.querySelectorAll('button')].map(b=>{const r=b.getBoundingClientRect();return JSON.stringify({y:r.y,height:r.height});}))]};
 });}
@@ -75,12 +75,7 @@ try{
    await p.locator('.app-nav [data-value="kitchen"]').click();await settle(p);
    check(await header(p),top,role+' '+size.width+' aligned header');
    check(await navigation(p),nav,'same navigation in family');
-   check(await switches(p),tabs,role+' '+size.width+' aligned section switches');
-   check(await p.locator('#familyGreeting').count(),0,'no greeting spacer above section switches');
-   for(const view of ['catalog','orders']){
-    await p.locator('[data-kitchen-action="tab"][data-value="'+view+'"]').click();
-    check(await switches(p),tabs,'family sections keep switches aligned');
-   }
+   check(await p.locator('#kitchenPage .kitchen-tabs,[data-kitchen-action="tab"]').count(),0,'household has no module switcher');
    check(await windows(p),reference,'same windows in family');
    check(await p.locator('#pointsApp').evaluate(e=>e.scrollWidth<=e.clientWidth+1),true,'no page overflow');
    if(process.env.POINTS_QA_DIR&&role==='guest'&&size.width===390){
@@ -111,6 +106,21 @@ try{
   }
   check(await p.locator('.app-nav').count(),1,'repeated switches do not duplicate navigation');
   check(await p.locator('[data-todo-action="open"]:visible').count(),1,'one active notification entry');
+  if(role==='admin'){
+   await p.locator('header [aria-label="设置"]:visible').click();
+   const devices=p.locator('#pointsAccessDevices'),list=p.locator('#pointsAccessDeviceList');
+   check(await devices.getAttribute('aria-expanded'),'false','devices initially collapsed');
+   await devices.click();await list.locator('time').waitFor();
+   check(await devices.getAttribute('aria-expanded'),'true','devices expanded');
+   check(await list.locator('.points-module-updates,button').count(),0,'device list has no activity or actions');
+   check((await list.locator('time').innerText()).includes('接入'),true,'device entry includes access time');
+   await devices.click();check(await list.isVisible(),false,'second click collapses devices');
+   await devices.click();await list.locator('time').waitFor();
+   await p.getByRole('button',{name:'关闭设置',exact:true}).click();
+   await p.locator('header [aria-label="设置"]:visible').click();
+   check(await list.isVisible(),false,'settings reopening collapses devices');
+   await p.getByRole('button',{name:'关闭设置',exact:true}).click();
+  }
   await p.close();
  }
  const failed=await browser.newPage({viewport:{width:390,height:844}});

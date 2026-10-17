@@ -4087,7 +4087,7 @@
         const notices=window.PointsNotifications.attach({db,state,els,ui:{setLayer,closeAllLayers,closeOverviewSheet},navigate:(route,targetId=null)=>{
           closeAllLayers();closeOverviewSheet();
           document.querySelector('.app-nav [data-value="'+(route==='kitchen'?'kitchen':'world')+'"]')?.click();
-          if(route==='kitchen'){document.querySelector('[data-kitchen-action="tab"][data-value="orders"]')?.click();return;}
+          if(route==='kitchen')return;
           if(route==='devices'){els.settingsBtn.click();document.getElementById('pointsAccessDevices')?.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
           if(route==='services'){switchMetric('fat');void notificationFat?.openServices(targetId);return;}
           if(route==='fat'){switchMetric('fat');void notificationFat?.openSettlement();return;}

@@ -9,7 +9,7 @@
 
 - 根目录仅保留 README.md、AGENTS.md、.gitignore、两个 SQL 及 index.html、sw.js、version.json、manifest.webmanifest 四个发布入口。
 - 运行源码放 src/，工具放 scripts/，回归测试与唯一维护预览放 tests/；资源分别放 assets/、images/、ICON/、vendor/，结构数据放 sql-backup/。
-- 文档仅维护 README.md 导航、AGENTS.md 规则、docs/DEVELOPMENT.md 开发发布、docs/PRODUCT.md 当前产品规则。vendor 与菜图目录各保留自身说明。
+- 文档仅维护 README.md 导航、AGENTS.md 规则、docs/DEVELOPMENT.md 开发发布、docs/PRODUCT.md 当前产品规则。vendor 保留自身依赖说明。
 - 不新增日期版本报告、重复模块说明、交付日志或一次性预览副本。变更说明写 Git 提交，过期规则删除；需要历史时查 Git。
 - 新文件必须有明确用途，放对应目录并更新导航；不能用改后缀或新增目录来绕过入库检查。
 

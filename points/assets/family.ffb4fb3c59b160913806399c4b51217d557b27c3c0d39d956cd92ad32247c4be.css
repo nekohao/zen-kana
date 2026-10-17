@@ -1,0 +1,78 @@
+
+#pointsApp > #kitchenPage.family-page{display:flex;flex-direction:column;overflow:hidden;padding-bottom:14px}
+#pointsApp .family-page > .kitchen-header{width:100%;flex-shrink:0}
+#pointsApp .family-page > #kitchenContent{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;width:100%;max-width:392px;margin:0 auto;scrollbar-width:none}
+#pointsApp .family-page > #kitchenContent::-webkit-scrollbar{display:none}
+#pointsApp .family-page > .family-error{flex-shrink:0;width:100%;max-width:392px;margin:0 auto 10px}
+#pointsApp .family-overview-dock{flex-shrink:0;width:100%;max-width:392px;margin:10px auto 0}
+#pointsApp .family-page .overview-button{width:100%;min-height:48px;padding:12px 16px;justify-content:space-between;gap:8px;border:1px solid var(--ui-line)!important;border-radius:16px!important;background:rgba(255,255,255,.65)!important;box-shadow:none!important;color:var(--secondary)!important;font-size:14px;font-weight:550;letter-spacing:0;touch-action:pan-y;-webkit-backdrop-filter:none;backdrop-filter:none}
+#pointsApp .family-page .overview-button::before{content:none}
+#pointsApp .family-page .overview-button svg{width:14px;height:14px;stroke-width:1.8;opacity:.65}
+#pointsApp .family-records-layer{z-index:179!important;align-items:flex-end!important;padding:0!important}
+#pointsApp .modal-layer.family-records-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{width:min(calc(100% - 32px),580px)!important;height:min(78dvh,740px);max-height:calc(100dvh - var(--safe-top) - 16px)!important;border-radius:28px 28px 0 0!important;padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(100%);transition:transform .32s var(--ui-ease)!important}
+#pointsApp .modal-layer.family-records-layer.open .kitchen-panel.ui-panel{transform:translateY(0)}
+#pointsApp .modal-layer.family-records-layer.dragging .kitchen-panel.ui-panel{transition:none!important}
+#pointsApp .family-records-layer .kitchen-panel-head{padding-top:0}
+#pointsApp .family-records-layer .kitchen-panel-body{min-height:0;overscroll-behavior:contain}
+#pointsApp .family-records-handle{min-height:28px;display:grid;place-items:center;flex-shrink:0;touch-action:none;cursor:grab}
+#pointsApp .family-records-handle>span{width:38px;height:5px;border-radius:5px;background:rgba(80,80,90,.22)}
+@media(max-height:600px){#pointsApp .family-page .overview-button{min-height:44px;padding-top:10px;padding-bottom:10px}}
+@media(prefers-reduced-motion:reduce){#pointsApp .modal-layer.family-records-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{transition:none!important}}
+.family-action-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 20px}
+.family-action-bar>div{display:grid;gap:5px}.family-action-bar span{font-size:12px;color:#82786b}.family-action-bar strong{font-size:18px;font-weight:600;color:#3d3830}
+.family-action-bar .kitchen-button{font-size:13px!important;min-height:44px!important;padding:10px 14px!important}
+.family-task-list{display:grid;gap:12px}
+.family-task-card{display:flex;align-items:flex-start;width:100%;gap:13px;padding:18px 15px;border:1px solid #e9e3d9;border-radius:20px;background:#fff;text-align:left;color:#39352f;transition:transform .14s ease}
+.family-task-card:active{transform:scale(.985)}
+.family-task-symbol{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;background:#f3efe7;color:#8b7353;border-radius:14px;font-size:26px;line-height:1}
+.family-task-symbol.cooking{background:#f4e9df;color:#986b4f}.family-task-symbol.dishes{background:#eaf0ec;color:#5d7965}
+.family-task-copy{flex:1;min-width:0;display:grid;gap:7px}.family-task-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.family-task-heading strong{font-size:16px;font-weight:600}
+.family-task-copy small{font-size:11px;color:#847c71}.family-task-copy p{margin:0;font-size:13px;line-height:1.6;color:#746c60;overflow-wrap:anywhere}
+.family-task-points{font-size:12px;color:#8b7353;font-variant-numeric:tabular-nums}.family-task-copy:has(.settled) .family-task-points{color:#56735f}
+.family-status{font-size:11px;white-space:nowrap;border-radius:8px;padding:4px 7px;background:#f3f1ec;color:#817868}.family-status.review{background:#eaf0ec;color:#4c6e57}.family-status.rework{background:#faf0df;color:#8a6a38}
+.family-chevron{align-self:center;color:#b4ac9f;font-size:22px}
+.family-empty{text-align:center;padding:38px 16px}.family-empty>svg{width:34px;height:34px;color:#a59175}.family-empty h3{font-size:18px;font-weight:600}.family-empty p{font-size:13px;line-height:1.7;color:#847c71}
+.family-error{margin:10px 0;padding:12px 14px;border-radius:13px;background:#fbefdf;color:#885d35;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.family-layer .family-copy{margin:0 0 18px;font-size:14px;line-height:1.7;color:#776d60}
+.family-type-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+.family-type{display:grid;grid-template-columns:30px 1fr;align-items:center;gap:5px 9px;padding:14px 12px;border:1px solid #e8e2d8;border-radius:15px;background:#fff;text-align:left;color:#75644d;font-size:13px}
+.family-type>span{grid-row:span 2;font-size:24px;text-align:center}.family-type strong{font-size:13px;font-weight:600}.family-type small{font-size:12px;color:#8d806f}
+.family-type.selected{border-color:#aa9477;background:#f5f0e8;box-shadow:inset 0 0 0 1px #aa9477}.family-type:disabled{opacity:.45;cursor:default}
+.family-field{display:grid;gap:9px;margin:20px 0;color:#6d6253;font-size:13px}
+.family-field textarea,.family-field input{width:100%;min-width:0;border:1px solid #e3dccf;background:#fff;color:#403a32;border-radius:14px;font:16px/1.65 system-ui;padding:12px 14px;outline-offset:2px}
+.family-field textarea{min-height:110px;resize:vertical}.family-field input{height:52px}.family-field :focus{outline:2px solid #b8a78d}
+.family-hint{font-size:12px;color:#887c6a;line-height:1.75;margin:14px 0}
+.family-detail-head{display:flex;align-items:center;gap:12px;margin:0 0 18px}.family-detail-head>div{flex:1}.family-detail-head h3{margin:0 0 7px;font-size:22px;font-weight:600;color:#3d352b}.family-detail-head>strong{font-size:19px;color:#846d4e;white-space:nowrap}.family-detail-head p{font-size:12px;color:#8b7f6c;margin:6px 0}
+.family-record{padding:15px 16px;border:1px solid #e8e2d8;border-radius:16px;margin:16px 0;background:#fff}.family-record>span{font-size:12px;color:#958571}.family-record p{font-size:14px;line-height:1.7;color:#655a4c;margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.family-record.family-rework{background:#fbf3e6;border-color:#efe0c7}
+.family-verdict{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.family-verdict button{min-height:48px;border:1px solid #ded7cc;background:#fff;color:#756a5a;border-radius:14px;font-size:14px;font-weight:600}.family-verdict .selected{background:#ecefe8;color:#4f6954;border-color:#7c957f}.family-verdict [data-value='no'].selected{background:#f8eddb;border-color:#ba9b69;color:#8b6b39}
+.family-timeline{border-top:1px solid #e9e3d9;margin-top:24px}.family-timeline summary{min-height:48px;display:flex;align-items:center;color:#827563;font-size:12px;cursor:pointer}.family-timeline>div{padding:13px 0 13px 16px;border-left:2px solid #e9e2d7;margin-left:4px}.family-timeline strong{display:block;font-size:13px;font-weight:600;color:#6b5f4e}.family-timeline time{display:block;font-size:11px;color:#9a8c76;margin-top:5px}.family-timeline p{font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.family-price-list{border:1px solid #e8e2d8;border-radius:18px;overflow:hidden;background:#fff}.family-price-row{display:flex;gap:12px;width:100%;align-items:center;padding:17px 15px;background:transparent;border:0;text-align:left;font-size:14px;color:#625746}.family-price-row+.family-price-row{border-top:1px solid #ede7dd}.family-price-row>span:first-child{flex:1}.family-price-row strong{font-size:14px;color:#816948}
+#pointsApp .family-layer[data-dialog='create'] .kitchen-panel.ui-panel,#pointsApp .family-layer[data-dialog='review'] .kitchen-panel.ui-panel{height:auto;max-height:85dvh}
+#pointsApp .family-layer .kitchen-panel-foot>.kitchen-button{width:100%}
+#pointsApp .family-layer .kitchen-panel-head h2{flex:1;text-align:center}
+#pointsApp .family-layer .kitchen-panel-head>button{width:44px;min-height:44px;border-radius:13px}
+@media(max-width:350px){.family-task-card{padding:15px 12px;gap:10px}.family-task-heading{align-items:flex-start;flex-wrap:wrap}.family-task-symbol{width:36px;height:36px}.family-type{padding:12px 9px;gap:4px 6px}.family-type strong{font-size:12px}.family-detail-head h3{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.family-task-card{transition:none}}
+#pointsApp .modal-layer.kitchen-layer.family-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{height:auto!important;min-height:0;max-height:min(85dvh,calc(var(--kitchen-viewport-height,100dvh) - 20px))!important;background:#fcfbf8!important}
+#pointsApp .kitchen-layer.family-layer .kitchen-panel-body{flex:0 1 auto}
+#pointsApp .kitchen-layer.family-layer .kitchen-panel-head,#pointsApp .kitchen-layer.family-layer .kitchen-panel-foot{background:#fcfbf8;border-color:#e8e2d8}
+#pointsApp .family-records-layer .family-day-nav{display:grid;grid-template-columns:62px minmax(0,1fr) 62px;align-items:center;gap:2px;padding:8px 0;background:#f3eee6;border-radius:16px}
+#pointsApp .family-records-layer .family-day-nav button{display:flex;align-items:center;justify-content:center;gap:3px;min-height:46px;border:0;background:none;color:#8e7b62;padding:4px 2px;font-size:21px}
+#pointsApp .family-records-layer .family-day-nav button>span{font-size:11px}
+#pointsApp .family-records-layer .family-day-nav button:disabled{opacity:.3}
+#pointsApp .family-records-layer .family-day-current{flex-wrap:wrap;column-gap:5px}
+#pointsApp .family-records-layer .family-day-current strong{font-size:13px;font-weight:600;color:#625440;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#pointsApp .family-records-layer .family-day-caption{font-size:11px;color:#9a8a74;text-align:center;margin:14px 0 20px}
+#pointsApp .family-records-layer .family-day-loading{padding:36px 12px;text-align:center;font-size:13px;color:#9a8a74}
+#pointsApp .family-records-layer .family-today{display:block;margin:8px auto 0;padding:4px 12px;min-height:36px;border:0;background:none;color:#947b5b;font-size:12px}
+#pointsApp .family-layer .family-calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;color:#6d5e4b}
+#pointsApp .family-layer .family-calendar-head strong{font-size:18px;font-weight:600}
+#pointsApp .family-layer .family-calendar-head button{width:44px;height:44px;border:0;border-radius:50%;background:#f1ece3;color:#8b7353;font-size:24px}
+#pointsApp .family-layer .family-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px 0}
+#pointsApp .family-layer .family-calendar-week{font-size:11px;text-align:center;color:#a1927e;margin-bottom:8px}
+#pointsApp .family-layer .family-calendar-grid button{min-height:44px;border:0;border-radius:14px;background:none;color:#77634b;font-size:14px;font-variant-numeric:tabular-nums}
+#pointsApp .family-layer .family-calendar-grid .is-today{box-shadow:inset 0 0 0 1px #b5a287}
+#pointsApp .family-layer .family-calendar-grid .selected{background:#806b52;color:#fff}
+#pointsApp .family-layer .family-calendar-grid button:disabled,#pointsApp .family-layer .family-calendar-head button:disabled{opacity:.25}
+@media(max-width:350px){#pointsApp .family-records-layer .family-day-nav{grid-template-columns:54px minmax(0,1fr) 54px}#pointsApp .family-records-layer .family-day-current strong{font-size:11px}}

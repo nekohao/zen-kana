@@ -32,7 +32,7 @@
     const settings=document.createElement('section');settings.id='pointsAccessSettings';
     settings.innerHTML=`<div class="settings-label">游客设备接入</div><div class="settings-group"><button class="settings-row pressable" id="pointsAccessCreateCode" type="button"><span>生成一次性验证码</span><span class="chevron">›</span></button>
       <div class="points-access-code-result" id="pointsAccessCodeResult" hidden><strong id="pointsAccessGeneratedCode"></strong><p id="pointsAccessExpires"></p><button id="pointsAccessCopyCode" type="button">复制验证码</button></div>
-      <button class="settings-row pressable" id="pointsAccessDevices" type="button"><span>查看已验证设备</span><span class="chevron">›</span></button><div id="pointsAccessDeviceList" hidden></div></div><p class="points-access-settings-message" id="pointsAccessSettingsMessage" role="status"></p>`;
+      <button class="settings-row pressable" id="pointsAccessDevices" type="button" aria-expanded="false" aria-controls="pointsAccessDeviceList"><span>查看已验证设备</span><span class="chevron">›</span></button><div id="pointsAccessDeviceList" hidden></div></div><p class="points-access-settings-message" id="pointsAccessSettingsMessage" role="status"></p>`;
     els.adminSettings.append(settings);
     let device=null,busy=false,checking=null,identity=null,codeTimer=0,restoring=true,revision=0;
     function key(){return state.isAdmin?'admin:'+state.session?.user?.id:state.session?'unavailable':device?.id?'guest:'+device.id:'locked';}
@@ -122,23 +122,42 @@
       finally{button.disabled=false;}
     });
     q('pointsAccessCopyCode').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(q('pointsAccessGeneratedCode').textContent);q('pointsAccessSettingsMessage').textContent='验证码已复制。';}catch(_){q('pointsAccessSettingsMessage').textContent='请长按上面的验证码复制。';}});
-    async function listDevices(){
-      const list=q('pointsAccessDeviceList');
-      list.dataset.pointsSynced='false';
-      try{
-        const rows=await rpc('points_access_admin_devices');list.replaceChildren();list.hidden=false;
-        if(!rows.length)list.textContent='还没有已验证的游客设备。';
-        for(const row of rows){
-          const card=document.createElement('div');card.className='points-access-device';
-          const label=document.createElement('span');label.textContent=`${row.label} · ${row.revoked?'已撤销':new Date(row.verifiedAt).toLocaleDateString('zh-CN')+'验证'}`;card.append(label);
-          if(!row.revoked){const button=document.createElement('button');button.type='button';button.textContent='撤销';button.addEventListener('click',async()=>{button.disabled=true;try{await rpc('points_access_admin_revoke',{p_device_id:row.id});await listDevices();}catch(_){button.disabled=false;q('pointsAccessSettingsMessage').textContent='撤销未确认，请刷新设备列表后核对。';}});card.append(button);}
-          list.append(card);
-        }
-        list.dataset.pointsSynced='true';
-      }catch(_){q('pointsAccessSettingsMessage').textContent='读取失败，请检查网络或增量 SQL。';}
+    let devicesVersion=0;
+    function collapseDevices(){
+      devicesVersion++;q('pointsAccessDeviceList').hidden=true;
+      q('pointsAccessDevices').setAttribute('aria-expanded','false');
+      q('pointsAccessDeviceList').replaceChildren();
+      window.dispatchEvent(new Event('resize'));
     }
-    q('pointsAccessDevices').addEventListener('click',()=>void listDevices());
+    async function toggleDevices(){
+      const list=q('pointsAccessDeviceList'),button=q('pointsAccessDevices');
+      if(!list.hidden){collapseDevices();return;}
+      if(!state.isAdmin)return;
+      const version=++devicesVersion,user=state.session?.user?.id;
+      list.hidden=false;list.textContent='正在读取设备…';button.setAttribute('aria-expanded','true');
+      q('pointsAccessSettingsMessage').textContent='';window.dispatchEvent(new Event('resize'));
+      try{
+        const rows=await rpc('points_access_admin_devices');
+        if(version!==devicesVersion||!state.isAdmin||state.session?.user?.id!==user)return;
+        const active=rows.filter(row=>!row.revoked);list.replaceChildren();
+        if(!active.length)list.textContent='还没有已验证的游客设备。';
+        for(const row of active){
+          const card=document.createElement('div');card.className='points-access-device';
+          const label=document.createElement('strong');label.textContent=row.label;
+          const time=document.createElement('time');time.dateTime=row.verifiedAt;
+          time.textContent=Number.isFinite(Date.parse(row.verifiedAt))?new Intl.DateTimeFormat('zh-CN',{
+            timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false
+          }).format(new Date(row.verifiedAt))+' 接入':'接入时间待同步';
+          card.append(label,time);list.append(card);
+        }
+        window.dispatchEvent(new Event('points:devices-viewed'));
+      }catch(_){if(version===devicesVersion)list.textContent='设备读取失败，请收起后重新展开重试。';}
+      finally{if(version===devicesVersion)window.dispatchEvent(new Event('resize'));}
+    }
+    q('pointsAccessDevices').addEventListener('click',()=>void toggleDevices());
+    els.settingsBtn?.addEventListener('click',collapseDevices);
     function authChanged(){
+      if(!state.isAdmin)collapseDevices();
       if(state.authResolved===false)return;
       if(state.isAdmin){try{localStorage.setItem(adminKey,state.session.user.id);}catch(_){}unlock();return;}
       if(state.session || identity?.startsWith('admin:')){try{localStorage.removeItem(adminKey);}catch(_){} }

@@ -17,7 +17,7 @@ try{
   check(await admin.locator('.points-todo-panel').evaluate(e=>{const r=e.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&e.scrollWidth<=e.clientWidth+1;}),true,'popup fits '+size.width);
  }
  await admin.setViewportSize({width:390,height:844});
- await admin.screenshot({path:fileURLToPath(new URL('./notification-center.png',import.meta.url))});
+ if(process.env.POINTS_QA_DIR)await admin.screenshot({path:process.env.POINTS_QA_DIR+'/notification-center.png'});
  const familyId=await admin.locator('[data-todo-id^="family:"]').first().getAttribute('data-todo-id');
  await admin.locator('[data-todo-id="'+familyId+'"]').click();await admin.getByText('宝宝已提交完成，等待哥哥验收',{exact:true}).waitFor();checks++;
  await admin.getByRole('button',{name:'关闭家庭窗口'}).click();await open(admin);

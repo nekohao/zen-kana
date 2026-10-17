@@ -6,7 +6,7 @@ const browser=await chromium.launch({headless:true,executablePath:process.argv[3
 const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 async function page(role){const p=await browser.newPage({viewport:{width:390,height:844}});await p.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());await p.goto(`http://127.0.0.1:4178/preview/index.html?role=${role}&demo=1`);await p.locator('.app-nav [data-value="kitchen"]').click();await p.locator('.family-task-card').first().waitFor();return p;}
 async function scores(p){await p.locator('header [aria-label="设置"]:visible').click();await p.locator('#familyScoreSettingsBtn').click();await p.locator('.family-price-list').waitFor();}
-async function fresh(p){await p.locator('[data-kitchen-action="tab"][data-value="orders"]').click();await p.locator('#kitchenPage [data-value="orders"][aria-busy="false"]').waitFor();await p.locator('#kitchenContent[data-points-synced="true"]').waitFor();}
+async function fresh(p){await p.locator('.app-nav [data-value="kitchen"]').click();await p.locator('#kitchenContent[aria-busy="false"]').waitFor();await p.locator('#kitchenContent[data-points-synced="true"]').waitFor();}
 const unique='UI自主登记 '+Date.now();
 try{
  const admin=await page('admin'),guest=await page('guest'),errors=[];
@@ -57,53 +57,11 @@ try{
  await admin.reload();await admin.waitForFunction(expected=>Number(document.querySelector('#scoreValue').textContent)===expected,halfBefore+0.5);checks++;
  await admin.locator('.app-nav [data-value="kitchen"]').click();await admin.locator('.family-task-card').first().waitFor();
  await admin.locator('[data-family-action="create"]').click();await admin.locator('[data-family-action="choose-type"][data-value="cooking"]').click();
- await admin.locator('#familyNote').fill('选菜前的备注');
- await admin.locator('[data-family-action="open-picker"]').click();
- check(await admin.locator('.family-picker-card').count(),4,'four picture cards per page');
- check(await admin.locator('.family-picker-card .family-food-image').count(),4,'selection uses food photos');
- await admin.locator('[data-family-action="dish-category"][data-value="蔬菜"]').click();
- await admin.locator('[data-family-action="dish-page"][data-value="1"]').click();
- const secondPage=await admin.locator('#familyPickerPages').innerText();
- await admin.locator('#familyPickerGrid .family-picker-recipe').first().click();
- await admin.getByRole('button',{name:'返回上一页',exact:true}).click();
- check(await admin.locator('#familyPickerPages').innerText(),secondPage,'detail back keeps category and page');
- await admin.locator('#familyPickerSearch').fill('西红柿炒鸡蛋');
- check(await admin.locator('.family-picker-card').count(),1,'alias search across categories');
- await admin.locator('[data-family-action="pick"][data-value="tomato-eggs"]').click();
- await admin.locator('[data-family-action="selected-menu"]').click();
- check(await admin.locator('.family-menu-row').count(),1,'selected menu');
- await admin.locator('[data-family-action="remove-dish"][data-value="tomato-eggs"]').click();
- await admin.getByRole('button',{name:'返回上一页',exact:true}).click();
- check(await admin.locator('[data-family-action="pick"][data-value="tomato-eggs"]').getAttribute('aria-pressed'),'false','removal syncs picker');
- await admin.locator('[data-family-action="recipe"][data-value="tomato-eggs"]').click();
- await admin.locator('[data-family-action="recipe-pick"]').click();
- await admin.getByRole('button',{name:'返回上一页',exact:true}).click();
- check(await admin.locator('[data-family-action="pick"][data-value="tomato-eggs"]').getAttribute('aria-pressed'),'true','selection from recipe syncs');
- await admin.locator('#familyPickerSearch').fill('');
- await admin.locator('[data-family-action="dish-category"][data-value="全部"]').click();
- const gridBox=await admin.locator('#familyPickerGrid').boundingBox();
- await admin.mouse.move(gridBox.x+gridBox.width-15,gridBox.y+30);await admin.mouse.down();
- await admin.mouse.move(gridBox.x+15,gridBox.y+30,{steps:12});await admin.mouse.up();
- check((await admin.locator('#familyPickerPages').innerText()).includes('第 2 /'),true,'horizontal swipe changes page');
- await admin.locator('#familyPickerGrid').focus();await admin.keyboard.press('ArrowLeft');
- check((await admin.locator('#familyPickerPages').innerText()).includes('第 1 /'),true,'keyboard changes page');
- for(const size of [{width:320,height:640},{width:390,height:844},{width:430,height:932},{width:390,height:568}]){
-  await admin.setViewportSize(size);
-  check(await admin.locator('#familyBody').evaluate(e=>e.scrollHeight<=e.clientHeight+1),true,'picture browser has no vertical list scroll');
-  const photos=await admin.locator('.family-picker-card img').evaluateAll(images=>images.map(e=>{const r=e.getBoundingClientRect();return {width:r.width,height:r.height};}));
-  check(photos.every(r=>r.width>70&&r.height>20),true,'each photo remains visible '+JSON.stringify({size,photos}));
-  check(await admin.locator('#kitchenLayer').evaluate(e=>e.scrollWidth<=e.clientWidth+1),true,'picker fits width');
- }
- await admin.setViewportSize({width:390,height:844});
- await admin.evaluate(()=>document.activeElement?.blur());
- await admin.screenshot({path:new URL('./family-picker.png',import.meta.url).pathname.replace(/^\/([A-Z]:)/,'$1')});
- await admin.locator('[data-family-action="finish-picking"]').click();
- check(await admin.locator('.family-menu-row img').count(),1,'draft has selected thumbnail');
- check(await admin.locator('#familyNote').inputValue(),'选菜前的备注','browsing preserves note');
  const mealNote=unique+' UI做饭请求';
- await admin.locator('#familyNote').fill(mealNote);await admin.locator('[data-family-action="save-create"]').click();await admin.getByText('这次的饭菜',{exact:true}).waitFor();checks++;
- check(await admin.getByRole('button',{name:'番茄炒蛋 查看菜谱',exact:true}).count(),1,'recipe choice retained');
- check(await admin.locator('.family-dish-link img').count(),1,'task retains thumbnail');
+ check(await admin.locator('[data-family-action="open-picker"],.family-picker-grid').count(),0,'cooking uses notes without a recipe picker');
+ await admin.locator('#familyNote').fill(mealNote);await admin.locator('[data-family-action="save-create"]').click();
+ await admin.getByText('完成后提交哥哥验收，合格才结算',{exact:true}).waitFor();
+ check(await admin.locator('#familyBody img').count(),0,'task has no food images');
  await admin.getByRole('button',{name:'关闭家庭窗口'}).click();
  await admin.locator('#familyOverviewBtn').click();
  const records=admin.locator('#familyRecordsLayer');
@@ -168,7 +126,7 @@ try{
  await admin.unroute('**/__demo/rpc');
  await admin.getByRole('button',{name:'关闭家庭记录',exact:true}).click();
  check(await admin.locator('#kitchenPage [data-family-action="types"],#kitchenPage [data-family-action="refresh"]').count(),0,'no duplicate settings or refresh buttons');
- check(await admin.locator('#kitchenPage [role="tab"]').count(),2,'two family tabs');
+ check(await admin.locator('#kitchenPage [role="tab"]').count(),0,'no family tabs');
  await admin.setViewportSize({width:320,height:640});
  await fresh(admin);await admin.locator('#kitchenContent').evaluate(e=>e.scrollTop=150);
  const homeScroll=await admin.locator('#kitchenContent').evaluate(e=>e.scrollTop),rowsBefore=await admin.locator('#kitchenContent .family-task-card').count();
@@ -178,11 +136,11 @@ try{
   reads++;await new Promise(resolve=>setTimeout(resolve,350));
   return failRefresh?r.fulfill({json:{data:null,error:{code:'08006',message:'Local simulated offline'}}}):r.continue();
  });
- const orders=admin.locator('#kitchenPage [data-value="orders"]');
+ const orders=admin.locator('.app-nav [data-value="kitchen"]');
  await orders.evaluate(e=>{e.click();e.click();e.click();});
- await orders.filter({hasText:'家事 · 同步中'}).waitFor();
+ await admin.locator('#kitchenContent[aria-busy="true"]').waitFor();
  check(await admin.locator('#kitchenContent .family-task-card').count(),rowsBefore,'refresh retains list while pending');
- await admin.locator('#kitchenPage [data-value="orders"][aria-busy="false"]').waitFor();
+ await admin.locator('#kitchenContent[aria-busy="false"]').waitFor();
  check(reads,1,'repeated refresh clicks share one read');
  check(await admin.locator('#kitchenContent').evaluate(e=>e.scrollTop),homeScroll,'refresh preserves home scroll');
  failRefresh=true;await orders.click();await admin.locator('#familyError').filter({hasText:'同步失败'}).waitFor();
@@ -194,14 +152,8 @@ try{
  check(await admin.locator('#familyOverviewBtn').boundingBox(),worldDock,'family overview aligns with world overview');
  const dock=admin.locator('#familyOverviewBtn'),dockBox=await dock.boundingBox();
  async function gesture(dx,dy=0){const x=dockBox.x+dockBox.width/2,y=dockBox.y+dockBox.height/2;await admin.mouse.move(x,y);await admin.mouse.down();await admin.mouse.move(x+dx,y+dy,{steps:10});await admin.mouse.up();}
- await gesture(-85);
- check(await admin.locator('#kitchenPage [data-value="catalog"]').getAttribute('aria-selected'),'true','left swipe changes to recipes');
- check(await records.getAttribute('aria-hidden'),'true','swipe does not open records');
- await gesture(85);
- check(await orders.getAttribute('aria-selected'),'true','right swipe returns to chores');
- await gesture(0,-30);
- check(await records.getAttribute('aria-hidden'),'true','vertical motion does not open records');
- await admin.waitForTimeout(400);await dock.click();
+ check(await admin.locator('#kitchenPage .kitchen-tabs').count(),0,'retired module switches absent');
+ await dock.click();
  await admin.locator('#familyRecordsBody[data-points-synced="true"]').waitFor();
  check((await records.locator('.family-day-current').innerText()).includes('· 今天'),true,'reopening resets historical day to today');
  await admin.keyboard.press('Escape');check(await records.getAttribute('aria-hidden'),'true','Escape closes sheet');
@@ -215,15 +167,7 @@ try{
  await admin.mouse.move(handle.x+handle.width/2,handle.y+10);await admin.mouse.down();await admin.mouse.move(handle.x+handle.width/2,handle.y+105,{steps:12});await admin.mouse.up();
  check(await records.getAttribute('aria-hidden'),'true','handle downward drag closes sheet');
  await admin.setViewportSize({width:390,height:844});
- await admin.locator('[data-kitchen-action="tab"][data-value="catalog"]').click();check(await admin.locator('.kitchen-dish-card').count(),21,'recipe catalogue retained');
- await admin.locator('#kitchenContent [data-family-action="recipe"][data-value="tomato-eggs"]').click();check(await admin.getByText('食材与调料',{exact:true}).count(),1);
- await admin.getByRole('button',{name:'关闭家庭窗口'}).click();
- await dock.click();await records.getByRole('button',{name:'关闭家庭记录',exact:true}).click();
- check(await dock.evaluate(e=>e===document.activeElement),true,'overview restores focus after earlier recipe dialog');
- await fresh(admin);let boundaryReads=0;
- const trackRead=request=>{if(request.postDataJSON()?.name==='points_family_get_state')boundaryReads++;};
- admin.on('request',trackRead);await dock.focus();await dock.press('ArrowLeft');await admin.waitForTimeout(100);admin.off('request',trackRead);
- check(boundaryReads,0,'swipe boundary does not trigger an unintended refresh');
+ check(await admin.locator('.kitchen-dish-card,[data-family-action="recipe"]').count(),0,'recipe catalogue absent');
  for(const p of [admin,guest])for(const size of [{width:320,height:640},{width:430,height:932}]){await p.setViewportSize(size);check(await p.locator('#kitchenPage').evaluate(e=>e.scrollWidth<=e.clientWidth+1),true,'family page fits');}
  await admin.goto('http://127.0.0.1:4178/preview/index.html?role=admin&open=kitchen&family_task='+taskId);
  await admin.getByText('积分已到账',{exact:true}).waitFor();check(await admin.locator('#kitchenLayer').getAttribute('aria-hidden'),'false','cold notification opens current settled task');

@@ -16,6 +16,8 @@ try{
  const rows=(await db.query('SELECT * FROM points_family_tasks ORDER BY id')).rows;
  check(rows.length,2);check(rows.map(t=>t.status),['pending','review']);check(rows.map(t=>t.points),[null,null]);
  check(rows[0].items[0].name,'番茄炒蛋');check(rows[0].note,'迁移保留');
+ check(Object.keys(rows[0].items[0]).sort(),['name','request_note','slug']);
+ check((await db.query('SELECT count(*)::integer n FROM points_kitchen_dishes')).rows[0].n,0);
  check(rows.map(t=>t.legacy_order_id),[null,null]);
  check((await db.query('SELECT count(*)::integer n FROM points_kitchen_orders')).rows[0].n,0);
  for(const table of ['points_kitchen_reviews','points_kitchen_drafts','points_kitchen_versions','points_kitchen_operations','points_kitchen_v2.receipts'])check((await db.query('SELECT count(*)::integer n FROM '+table)).rows[0].n,0);
@@ -28,5 +30,15 @@ try{
  check((await db.query('SELECT points FROM points_family_tasks ORDER BY id')).rows.map(t=>Number(t.points)),[4,4]);
  await reapply();check((await db.query('SELECT count(*)::integer n FROM points_family_tasks')).rows[0].n,2);
  check((await db.query('SELECT * FROM score_logs ORDER BY id')).rows.map(l=>({...l,delta:Number(l.delta)})),logsBefore);
+ const dirty=[{slug:'tomato-eggs',name:'番茄炒蛋',request_note:'少盐',image:'old.jpg',ingredients:[['蛋','3']],steps:['旧做法'],tips:['旧提示']}];
+ await db.query('UPDATE points_family_tasks SET items=$1::jsonb WHERE id=$2',[JSON.stringify(dirty),rows[0].id]);
+ const snapshot=await rpc('guest','points_family_get_task',{p_task_id:rows[0].id});
+ check(Object.keys(snapshot.items[0]).sort(),['name','request_note','slug']);
+ const retry=crypto.randomUUID();
+ await db.query("INSERT INTO points_family_operations(operation_id,actor,kind,arguments,task_id,result) VALUES($1,'guest','create','{}',$2,$3::jsonb)",[retry,rows[0].id,JSON.stringify({id:String(rows[0].id),items:dirty})]);
+ await reapply();
+ check(Object.keys((await db.query('SELECT items FROM points_family_tasks WHERE id=$1',[rows[0].id])).rows[0].items[0]).sort(),['name','request_note','slug']);
+ check(Object.keys((await db.query('SELECT result FROM points_family_operations WHERE operation_id=$1',[retry])).rows[0].result.items[0]).sort(),['name','request_note','slug']);
+ check(Number((await db.query('SELECT score FROM members WHERE id=1')).rows[0].score),balanceBefore);
  console.log(checks+' legacy migration, recipe preservation, fixed-score configuration and old writer protection checks passed.');
 }finally{await db.close();}

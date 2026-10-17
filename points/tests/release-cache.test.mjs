@@ -8,7 +8,7 @@ const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 const stamp='2026-10-11T14:00:00.000Z';
 const a=await bundle({build:'20261011.701',updatedAt:stamp});
 const b=await bundle({build:'20261011.702',updatedAt:stamp,overrides:{'kitchen.css':await fs.readFile('points/src/kitchen.css','utf8')+'\n/* isolated test change */\n'}});
-check(a.release.assets.length,22,'independent CSS/JS modules without retired kitchen scripts');
+check(a.release.assets.length,21,'independent CSS/JS modules without retired kitchen scripts');
 const changed=b.release.assets.filter(f=>!a.release.assets.some(x=>x.url===f.url));
 check(changed.length,1,'one CSS change alters one asset');
 check(changed[0].url.startsWith('assets/kitchen.'),true,'only kitchen CSS affected');
@@ -20,14 +20,15 @@ for(const result of [a,b])for(const [url,body] of result.files){
  if(url.endsWith('.js'))new vm.Script(body);
 }
 const order=[...a.html.matchAll(/data-points-asset="([^"]+)"/g)].map(m=>m[1]);
-check(order,['startup','runtime','sdk','gestures','kitchen-catalog','family','fat','rewards','access','push','notifications','app','theme'],'active module execution order');
+check(order,['startup','runtime','sdk','gestures','family','fat','rewards','access','push','notifications','app','theme'],'active module execution order');
 const scope='https://example.test/points/',shell=scope+'index.html';
 const buckets=new Map(),networkFiles=new Map([...a.files,...b.files]),requests=[],handlers={};
 let offline=false,badAsset=null;
 const cacheStorage={
  async open(name){if(!buckets.has(name))buckets.set(name,new Map());const entries=buckets.get(name);return {
   match:async key=>entries.get(typeof key==='string'?key:key.url)?.clone(),
-  put:async(key,response)=>entries.set(typeof key==='string'?key:key.url,response.clone())
+  put:async(key,response)=>entries.set(typeof key==='string'?key:key.url,response.clone()),
+  keys:async()=>[...entries.keys()].map(url=>({url})),delete:async key=>entries.delete(typeof key==='string'?key:key.url)
  };},keys:async()=>[...buckets.keys()],delete:async key=>buckets.delete(key),
  async match(key){for(const name of buckets.keys()){const value=await (await this.open(name)).match(key);if(value)return value;}}
 };
@@ -38,7 +39,11 @@ const context=vm.createContext({URL,Response,Headers,AbortController,setTimeout,
 async function lifecycle(type){let work;handlers[type]({waitUntil:p=>work=p});await work;}
 async function prepare(release){let work,answer;handlers.message({data:{type:'points:prepare-release',release},ports:[{postMessage:response=>answer=response}],waitUntil:p=>work=p});await work;return answer;}
 async function navigate(query=''){let result;handlers.fetch({request:{url:shell+query,method:'GET',mode:'navigate'},respondWith:p=>result=p});return result?await result:null;}
+const photos=await cacheStorage.open('points-images-v2-'+encodeURIComponent('/points/'));
+await photos.put(scope+'images/kitchen/old.jpg',new Response('old recipe'));await photos.put(scope+'ICON/icon-192.png',new Response('icon'));
 await lifecycle('install');await lifecycle('activate');
+check(await photos.match(scope+'images/kitchen/old.jpg'),undefined,'retired food cache removed');
+check(!!await photos.match(scope+'ICON/icon-192.png'),true,'icons retained');
 check(requests.length,a.release.assets.length+1,'initial prepare downloads shell and assets once');
 check((await (await navigate()).text()).includes('20261011.701'),true,'initial ready shell');
 const before=requests.length;
