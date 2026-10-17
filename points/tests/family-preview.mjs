@@ -18,6 +18,8 @@ await call('guest','points_family_write',{p_action:'create',p_payload:{type:'dis
 // Daily browsing fixtures include an older task beyond the first legacy page.
 const previousDayTask=await call('admin','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'昨天的家事演示'},p_operation_id:crypto.randomUUID()});
 await db.query("UPDATE points_family_tasks SET status='cancelled',task_date=(clock_timestamp() AT TIME ZONE 'Asia/Shanghai')::date-1 WHERE id=$1",[previousDayTask.id]);
+const overdue=await call('admin','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'昨天未完成的家事'},p_operation_id:crypto.randomUUID()});
+await db.query("UPDATE points_family_tasks SET task_date=(clock_timestamp() AT TIME ZONE 'Asia/Shanghai')::date-1 WHERE id=$1",[overdue.id]);
 for(let i=0;i<31;i++){
  const fixture=await call('admin','points_family_write',{p_action:'create',p_payload:{type:'dishes',note:'本地日期分页演示 '+i},p_operation_id:crypto.randomUUID()});
  await db.query("UPDATE points_family_tasks SET status='cancelled' WHERE id=$1",[fixture.id]);

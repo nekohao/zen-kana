@@ -7,7 +7,7 @@
     const fixedThemes={
       score:["changeLayer","redeemLayer","shopItemLayer","shopWeeklyGiftLayer","shopMysteryOpenLayer","adminInventoryLayer","adminInventoryAdjustLayer","adminGrantNoticeLayer","shopRevealLayer"],
       wheel:["wheelProbabilityLayer","wheelProbabilityHistoryLayer","wheelToolLayer","wheelPreviewLayer","wheelAdjustLayer","wheelDecisionLayer","wheelResultLayer","wheelWithdrawLayer","settleWithdrawalLayer"],
-      fat:["fatWeightLayer","fatRewardLayer"], kitchen:["kitchenLayer","familyRecordsLayer"],
+      fat:["fatWeightLayer","fatRewardLayer"], kitchen:["kitchenLayer"],
       shared:["settingsLayer","loginLayer","versionInfoLayer","releaseNotesLayer","pointsMessagesLayer"]
     };
     const themeById=new Map(Object.entries(fixedThemes).flatMap(([theme,ids])=>ids.map(id=>[id,theme])));

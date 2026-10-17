@@ -1,11 +1,11 @@
 {
   "schema": 2,
-  "build": "20261017.3",
-  "updatedAt": "2026-10-17T14:23:15.648Z",
+  "build": "20261017.4",
+  "updatedAt": "2026-10-17T14:42:17.586Z",
   "shell": {
-    "url": "assets/shell.3d97f1baab7abcecf0c07d048c73a926e8eedc3a2da4c836bd3ccb9ac908d19e.html",
-    "sha256": "3d97f1baab7abcecf0c07d048c73a926e8eedc3a2da4c836bd3ccb9ac908d19e",
-    "bytes": 72543
+    "url": "assets/shell.64fe6e30391dcc1a301c06223ece718abdbbdbdb68c62fba2d702f55bfe47644.html",
+    "sha256": "64fe6e30391dcc1a301c06223ece718abdbbdbdb68c62fba2d702f55bfe47644",
+    "bytes": 72579
   },
   "assets": [
     {
@@ -54,9 +54,9 @@
       "bytes": 17914
     },
     {
-      "url": "assets/family.2d0da1c641db75649bdf4877d6f055990e58b7414021555f6d84083ce8e08150.css",
-      "sha256": "2d0da1c641db75649bdf4877d6f055990e58b7414021555f6d84083ce8e08150",
-      "bytes": 11950
+      "url": "assets/family.84b00308de92e1b66b7bc5f6cb8b42ebfd863ee697947a7373ba16fdd4b894ee.css",
+      "sha256": "84b00308de92e1b66b7bc5f6cb8b42ebfd863ee697947a7373ba16fdd4b894ee",
+      "bytes": 8145
     },
     {
       "url": "assets/runtime.48b4f69fdddc3118d9dc01b1710b64419893d69c6d1733c610087a0fbed798df.js",
@@ -74,9 +74,9 @@
       "bytes": 4138
     },
     {
-      "url": "assets/family.6cc05422933d261f08bb0db9ad2cc2c12d49c751ab6b23729d0dff98d30ad759.js",
-      "sha256": "6cc05422933d261f08bb0db9ad2cc2c12d49c751ab6b23729d0dff98d30ad759",
-      "bytes": 35111
+      "url": "assets/family.a68be461f84e096af2176540bd9310d50ecfa9549b6b65fca14f13c80600dbb8.js",
+      "sha256": "a68be461f84e096af2176540bd9310d50ecfa9549b6b65fca14f13c80600dbb8",
+      "bytes": 28997
     },
     {
       "url": "assets/fat.212d43a3aa421e9d6aaf0dcd7330a959c932b8155de8b224ef8a4babc5afa966.js",
@@ -109,9 +109,9 @@
       "bytes": 232122
     },
     {
-      "url": "assets/theme.195311d4fe2aa6f0bb30c9c010fda5419a9d7385474ac4b3d29d7c70278add4c.js",
-      "sha256": "195311d4fe2aa6f0bb30c9c010fda5419a9d7385474ac4b3d29d7c70278add4c",
-      "bytes": 6760
+      "url": "assets/theme.1031e1400cec56e15d5ef4c858ddc3a89a1cb476920db950ad0870ac8332d6c3.js",
+      "sha256": "1031e1400cec56e15d5ef4c858ddc3a89a1cb476920db950ad0870ac8332d6c3",
+      "bytes": 6739
     }
   ]
 }
