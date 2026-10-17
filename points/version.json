@@ -1,11 +1,11 @@
 {
   "schema": 2,
-  "build": "20261017.2",
-  "updatedAt": "2026-10-17T14:01:20.395Z",
+  "build": "20261017.3",
+  "updatedAt": "2026-10-17T14:23:15.648Z",
   "shell": {
-    "url": "assets/shell.74ab8f1d170b1ce64157b8a3d4fad66b6dcc7c769f8b88d45df2dc9601f41dc3.html",
-    "sha256": "74ab8f1d170b1ce64157b8a3d4fad66b6dcc7c769f8b88d45df2dc9601f41dc3",
-    "bytes": 72576
+    "url": "assets/shell.3d97f1baab7abcecf0c07d048c73a926e8eedc3a2da4c836bd3ccb9ac908d19e.html",
+    "sha256": "3d97f1baab7abcecf0c07d048c73a926e8eedc3a2da4c836bd3ccb9ac908d19e",
+    "bytes": 72543
   },
   "assets": [
     {
@@ -54,9 +54,9 @@
       "bytes": 17914
     },
     {
-      "url": "assets/family.ffb4fb3c59b160913806399c4b51217d557b27c3c0d39d956cd92ad32247c4be.css",
-      "sha256": "ffb4fb3c59b160913806399c4b51217d557b27c3c0d39d956cd92ad32247c4be",
-      "bytes": 11726
+      "url": "assets/family.2d0da1c641db75649bdf4877d6f055990e58b7414021555f6d84083ce8e08150.css",
+      "sha256": "2d0da1c641db75649bdf4877d6f055990e58b7414021555f6d84083ce8e08150",
+      "bytes": 11950
     },
     {
       "url": "assets/runtime.48b4f69fdddc3118d9dc01b1710b64419893d69c6d1733c610087a0fbed798df.js",
@@ -74,9 +74,9 @@
       "bytes": 4138
     },
     {
-      "url": "assets/family.9491c0f0b765b6dd303a72af6241b0970d7aaf8dfe07539b916d780a15cf1923.js",
-      "sha256": "9491c0f0b765b6dd303a72af6241b0970d7aaf8dfe07539b916d780a15cf1923",
-      "bytes": 34790
+      "url": "assets/family.6cc05422933d261f08bb0db9ad2cc2c12d49c751ab6b23729d0dff98d30ad759.js",
+      "sha256": "6cc05422933d261f08bb0db9ad2cc2c12d49c751ab6b23729d0dff98d30ad759",
+      "bytes": 35111
     },
     {
       "url": "assets/fat.212d43a3aa421e9d6aaf0dcd7330a959c932b8155de8b224ef8a4babc5afa966.js",

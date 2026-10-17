@@ -14,7 +14,7 @@
  function attach({db,state,els,ui}) {
   const app=document.getElementById('pointsApp'),q=id=>document.getElementById(id);
   app.dataset.page='world';
-  app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" class="family-page" hidden aria-label="小家庭"><header class="kitchen-header"><div class="app-brand"><img alt="" aria-hidden="true" class="app-brand-icon" src="./ICON/apple-touch-icon.png"/><div class="app-brand-copy"><h1 class="app-brand-title">小家庭</h1><p class="app-brand-caption">一起照顾我们的日常</p></div></div><button class="icon-button pressable" data-family-action="settings" aria-label="设置" type="button">${els.settingsBtn.innerHTML}</button></header><div id="familyError" class="family-error" role="status" hidden></div><div id="kitchenContent"></div><div class="family-overview-dock"><button id="familyOverviewBtn" class="overview-button pressable" data-family-action="records" aria-haspopup="dialog" aria-controls="familyRecordsLayer" type="button"><span>总览</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div></section>
+  app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" class="family-page" hidden aria-label="小家庭"><header class="kitchen-header"><div class="app-brand"><img alt="" aria-hidden="true" class="app-brand-icon" src="./ICON/apple-touch-icon.png"/><div class="app-brand-copy"><h1 class="app-brand-title">小家庭</h1><p class="app-brand-caption">一起照顾我们的日常</p></div></div><button class="icon-button pressable" data-family-action="settings" aria-label="设置" type="button">${els.settingsBtn.innerHTML}</button></header><div id="familyError" class="family-error" role="status" hidden></div><div id="kitchenContent"></div><div class="family-overview-dock"><div class="family-primary-actions"><button id="familyCreateBtn" class="kitchen-button primary pressable" data-family-action="create" type="button" disabled>我做完了</button></div><button id="familyOverviewBtn" class="overview-button pressable" data-family-action="records" aria-haspopup="dialog" aria-controls="familyRecordsLayer" type="button"><span>总览</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div></section>
   <nav class="app-nav" aria-label="主导航"><button data-kitchen-action="page" data-value="world" aria-current="page">${worldIcon}<span>小世界</span></button><button data-kitchen-action="page" data-value="kitchen">${homeIcon}<span>小家庭</span></button></nav>
   <div id="familyRecordsLayer" class="modal-layer kitchen-layer family-records-layer" aria-hidden="true"><section class="kitchen-panel" role="dialog" aria-modal="true" aria-labelledby="familyRecordsTitle" tabindex="-1"><div class="family-records-handle" role="button" tabindex="0" aria-label="下拉关闭家庭记录"><span></span></div><header class="kitchen-panel-head"><h2 id="familyRecordsTitle">家庭记录</h2><button data-family-action="close-records" aria-label="关闭家庭记录" type="button">×</button></header><div id="familyRecordsBody" class="kitchen-panel-body"></div></section></div>
   <div id="kitchenLayer" class="modal-layer kitchen-layer family-layer" aria-hidden="true"><section class="kitchen-panel" role="dialog" aria-modal="true" aria-labelledby="familyTitle" tabindex="-1"><header class="kitchen-panel-head"><button data-family-action="back" aria-label="返回上一页" hidden>‹</button><h2 id="familyTitle"></h2><button data-family-action="close" aria-label="关闭家庭窗口">×</button></header><div class="kitchen-panel-body" id="familyBody"></div><footer class="kitchen-panel-foot" id="familyFoot" hidden></footer></section></div>`);
@@ -22,7 +22,7 @@
   setting.innerHTML='<div class="settings-label">小家庭</div><div class="settings-group"><button id="familyScoreSettingsBtn" class="settings-row pressable" type="button"><span id="familyScoreSettingsLabel">家务分值表</span><span class="chevron">›</span></button></div>';
   q('fatUnitSettings')?.after(setting);if(!setting.isConnected)q('settingsSheet').querySelector('.settings-sheet-content').append(setting);
   const page=q('kitchenPage'),content=q('kitchenContent'),layer=q('kitchenLayer'),body=q('familyBody'),foot=q('familyFoot');
-  const recordsLayer=q('familyRecordsLayer'),recordsBody=q('familyRecordsBody'),dock=q('familyOverviewBtn');
+  const recordsLayer=q('familyRecordsLayer'),recordsBody=q('familyRecordsBody'),dock=q('familyOverviewBtn'),createButton=q('familyCreateBtn');
   let role='waiting',epoch=0,ready=false,available=false,types=[],tasks=[],more=false,loading=null,busy=false,error='',modal=null,stack=[],focus=null;
   let recordDay=today(),dayLoading=false,dayApi=null;
   let recordTasks=[],recordMore=false,recordError='',recordEpoch=0,recordLoading=null,recordFocus=null;
@@ -72,13 +72,15 @@
    finally{if(loading===work){loading=null;setSyncing(false);}}})();loading=work;return work;
   }
   function setSyncing(value){content.setAttribute('aria-busy',String(value));}
+  function renderHomeAction(){createButton.textContent=admin()?'发起家事':'我做完了';createButton.disabled=busy||!available;}
   function render(){
+   renderHomeAction();
    q('familyError').hidden=!error;q('familyError').textContent=error;
    q('familyScoreSettingsLabel').textContent=admin()?'管理家务分值':'家务分值表';
    const scroll=content.scrollTop,ranked=[...tasks].sort((a,b)=>{const rank=t=>admin()?(t.status==='review'?0:t.status==='rework'?1:2):(t.status==='rework'?0:t.status==='pending'?1:2);return rank(a)-rank(b)||Number(b.id)-Number(a.id);});
    // Keep unchanged cards and the independently rendered update slot in place during sync.
    const signature=JSON.stringify([available,admin(),ranked,more,pendingHtml()]);if(signature===homeSignature&&content.querySelector('.family-action-bar'))return;homeSignature=signature;
-   content.innerHTML=`<div class="family-action-bar"><div><span>今天的小事</span><strong>${tasks.length} 件进行中</strong></div>${btn('create',admin()?'发起家事':'我做完了','',true,!available)}</div>
+   content.innerHTML=`<div class="family-action-bar"><div><span>今天的小事</span><strong>${tasks.length} 件进行中</strong></div></div>
    <div class="family-task-list">${ranked.map(card).join('')||empty('家里暂时没有待办',admin()?'发起一件小事，一起照顾这个家。':'做完家务或饭菜，可以主动记下来。')}</div>
    ${more?btn('more','查看更多家事'):''}<div id="kitchenUpdatesSlot"></div>${pendingHtml()}`;
    content.scrollTop=scroll;
@@ -136,7 +138,7 @@
   async function openTask(id){const token=epoch;show({kind:'loading'});const target=modal;try{const t=await rpc('points_family_get_task',{p_task_id:id});if(token!==epoch||modal!==target)return;modal={kind:'task',task:t};renderDialog();}catch(e){if(token===epoch&&modal===target){modal.error=describe(e);renderDialog();}}}
   function operationKey(action){return 'points_family_operation:'+role+':'+action;}
   async function mutate(action,payload,retry=null){
-   if(busy||!available)return;const token=++epoch;loading=null;busy=true;let op=retry,key=operationKey(action);
+   if(busy||!available)return;const token=++epoch;loading=null;busy=true;renderHomeAction();let op=retry,key=operationKey(action);
    try{
     if(!op){try{op=JSON.parse(localStorage.getItem(key)||'null');}catch(_){}if(op&&(op.action!==action||JSON.stringify(op.payload)!==JSON.stringify(payload)))throw Error('Unresolved operation');}
     op ||= {action,payload,uuid:crypto.randomUUID()};localStorage.setItem(key,JSON.stringify(op));renderDialog();

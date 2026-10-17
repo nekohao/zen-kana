@@ -4,13 +4,35 @@ import {pathToFileURL} from 'node:url';
 const {chromium}=await import(pathToFileURL(process.argv[2]));
 const browser=await chromium.launch({headless:true,executablePath:process.argv[3]});let checks=0;
 const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
-async function page(role){const p=await browser.newPage({viewport:{width:390,height:844}});await p.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());await p.goto(`http://127.0.0.1:4178/preview/index.html?role=${role}&demo=1`);await p.locator('.app-nav [data-value="kitchen"]').click();await p.locator('.family-task-card').first().waitFor();return p;}
+const origin='http://127.0.0.1:'+Number(process.env.POINTS_PREVIEW_PORT||4178);
+async function page(role){const p=await browser.newPage({viewport:{width:390,height:844}});await p.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());await p.goto(`${origin}/preview/index.html?role=${role}&demo=1`);await p.locator('.app-nav [data-value="kitchen"]').click();await p.locator('.family-task-card').first().waitFor();return p;}
 async function scores(p){await p.locator('header [aria-label="设置"]:visible').click();await p.locator('#familyScoreSettingsBtn').click();await p.locator('.family-price-list').waitFor();}
 async function fresh(p){await p.locator('.app-nav [data-value="kitchen"]').click();await p.locator('#kitchenContent[aria-busy="false"]').waitFor();await p.locator('#kitchenContent[data-points-synced="true"]').waitFor();}
 const unique='UI自主登记 '+Date.now();
 try{
  const admin=await page('admin'),guest=await page('guest'),errors=[];
  admin.on('pageerror',e=>errors.push(e.message));guest.on('pageerror',e=>errors.push(e.message));
+ for(const [p,label] of [[admin,'发起家事'],[guest,'我做完了']]){
+  const main=p.locator('#familyCreateBtn'),content=p.locator('#kitchenContent');
+  check(await main.innerText(),label,'role-specific bottom action');
+  check(await p.locator('#kitchenContent [data-family-action="create"]').count(),0,'no duplicate action in list');
+  for(const size of [{width:320,height:568},{width:390,height:844},{width:430,height:932},{width:844,height:390},{width:1200,height:900}]){
+   await p.setViewportSize(size);
+   await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   const layout=()=>p.locator('#kitchenPage').evaluate(page=>{
+    const box=s=>page.querySelector(s).getBoundingClientRect(),main=box('#familyCreateBtn'),list=box('#kitchenContent'),overview=box('#familyOverviewBtn'),nav=document.querySelector('.app-nav').getBoundingClientRect();
+    return {action:[main.x,main.y,main.width,main.height],ordered:list.bottom<=main.top&&main.bottom<overview.top&&overview.bottom<=nav.top,inside:main.left>=0&&main.right<=innerWidth&&list.height>40};
+   });
+   const before=await layout();check(before.ordered,true,label+' list, action, overview, navigation order');check(before.inside,true,'small screen preserves usable list and visible actions');check(before.action[3],48,'main action matches world button height');
+   await content.evaluate(e=>{e.scrollTop=e.scrollHeight;});
+   check((await layout()).action,before.action,'list scrolling leaves main action fixed');
+   if(size.width===320)check(await content.evaluate(e=>e.scrollTop>0),true,'long list really scrolls');
+  }
+  await p.setViewportSize({width:390,height:844});
+  await content.evaluate(e=>{e.scrollTop=0;});
+  await main.click();check(await p.locator('#familyTitle').innerText(),label==='发起家事'?'发起一件家事':'记录做完的家事','bottom action opens existing form');
+  await p.getByRole('button',{name:'关闭家庭窗口',exact:true}).click();
+ }
  check(await admin.locator('[role="tab"]').filter({hasText:'做饭'}).count(),0,'no cooking/chore split');
  check(await admin.locator('.family-task-card').filter({hasText:'做饭'}).count()>0,true,'cooking shares list');
  await guest.locator('[data-family-action="create"]').click();
@@ -169,7 +191,7 @@ try{
  await admin.setViewportSize({width:390,height:844});
  check(await admin.locator('.kitchen-dish-card,[data-family-action="recipe"]').count(),0,'recipe catalogue absent');
  for(const p of [admin,guest])for(const size of [{width:320,height:640},{width:430,height:932}]){await p.setViewportSize(size);check(await p.locator('#kitchenPage').evaluate(e=>e.scrollWidth<=e.clientWidth+1),true,'family page fits');}
- await admin.goto('http://127.0.0.1:4178/preview/index.html?role=admin&open=kitchen&family_task='+taskId);
+ await admin.goto(origin+'/preview/index.html?role=admin&open=kitchen&family_task='+taskId);
  await admin.getByText('积分已到账',{exact:true}).waitFor();check(await admin.locator('#kitchenLayer').getAttribute('aria-hidden'),'false','cold notification opens current settled task');
  check(new URL(admin.url()).searchParams.has('family_task'),false,'consumed task link removed');
  await admin.getByRole('button',{name:'关闭家庭窗口'}).click();
