@@ -29,6 +29,7 @@
 - 待办分页、权限与撤回验证：node points/tests/todos.test.mjs
 - 通知中心界面验证：points/tests/todos-ui.test.mjs（本地预览与 Playwright）
 - 本地预览：node points/tests/family-preview.mjs
+- 家庭日期手势验证：points/tests/family-gestures.test.mjs（本地预览与 Playwright，检查滑动切日、日期显示和误点击）
 - 公共框架验证：points/tests/shared-shell.test.mjs（本地预览与 Playwright，检查两页及三个主题的设置、通知中心与导航一致性）
 - 设备列表滚动验证：points/tests/device-list-ui.test.mjs（本地预览与 Playwright，逐帧检查展开、收起、延迟和失败时的位置）
 

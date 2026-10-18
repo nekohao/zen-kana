@@ -1,0 +1,59 @@
+
+#pointsApp > #kitchenPage.family-page{display:flex;flex-direction:column;overflow:hidden;padding-bottom:14px}
+#pointsApp .family-page > .kitchen-header{width:100%;flex-shrink:0}
+#pointsApp .family-page > #kitchenContent{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;width:100%;max-width:392px;margin:0 auto;scrollbar-width:none}
+#pointsApp .family-page > #kitchenContent::-webkit-scrollbar{display:none}
+#pointsApp .family-page > .family-error{flex-shrink:0;width:100%;max-width:392px;margin:0 auto 10px}
+#pointsApp .family-day-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;width:100%;max-width:392px;margin:0 auto 16px}
+#pointsApp .family-day-copy{min-width:0;display:grid;gap:5px}
+#pointsApp .family-day-copy>span{font-size:12px;color:#82786b;font-variant-numeric:tabular-nums}
+#pointsApp .family-day-copy>strong{font-size:18px;font-weight:600;color:#3d3830}
+#pointsApp .family-day-nav{display:flex;align-items:center;flex-shrink:0;gap:2px}
+#pointsApp .family-day-nav button{min-width:44px;height:44px;padding:4px;border:0;border-radius:12px;background:transparent;color:#806b52;font-size:25px}
+#pointsApp .family-day-nav [data-family-action="today"]{font-size:13px;font-weight:600}
+#pointsApp .family-day-nav [aria-pressed="true"]{background:#eee7dc}
+#pointsApp .family-day-nav button:disabled{opacity:.3}
+#pointsApp .family-day-loading{padding:30px 12px;text-align:center;font-size:13px;color:#9a8a74}
+#pointsApp .family-home-footer{flex-shrink:0;width:100%;max-width:392px;margin:10px auto 0}
+#pointsApp #kitchenPage .family-primary-actions{width:100%;max-width:360px;margin:0 auto}
+#pointsApp #kitchenPage .family-primary-actions>.kitchen-button{display:flex;align-items:center;justify-content:center;width:100%;height:48px;min-height:48px;border-radius:15px;padding:12px 17px;font-size:14px;font-weight:600}
+#pointsApp #familyCreateBtn{position:relative;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+#pointsApp .family-swipe-hint{position:absolute;right:12px;font-size:10px;font-weight:450;opacity:.65;transform:translateX(var(--family-swipe-x,0px));transition:transform .16s ease}
+#pointsApp .family-swipe-dragging .family-swipe-hint{transition:none}
+#pointsApp .family-swipe-ready .family-swipe-hint{opacity:1}
+.family-task-list{display:grid;gap:12px}
+.family-task-card{display:flex;align-items:flex-start;width:100%;gap:13px;padding:18px 15px;border:1px solid #e9e3d9;border-radius:20px;background:#fff;text-align:left;color:#39352f;transition:transform .14s ease}
+.family-task-card:active{transform:scale(.985)}
+.family-task-symbol{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;background:#f3efe7;color:#8b7353;border-radius:14px;font-size:26px;line-height:1}
+.family-task-symbol.cooking{background:#f4e9df;color:#986b4f}.family-task-symbol.dishes{background:#eaf0ec;color:#5d7965}
+.family-task-copy{flex:1;min-width:0;display:grid;gap:7px}.family-task-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.family-task-heading strong{font-size:16px;font-weight:600}
+.family-task-copy small{font-size:11px;color:#847c71}.family-task-copy p{margin:0;font-size:13px;line-height:1.6;color:#746c60;overflow-wrap:anywhere}
+.family-task-points{font-size:12px;color:#8b7353;font-variant-numeric:tabular-nums}.family-task-copy:has(.settled) .family-task-points{color:#56735f}
+.family-status{font-size:11px;white-space:nowrap;border-radius:8px;padding:4px 7px;background:#f3f1ec;color:#817868}.family-status.review{background:#eaf0ec;color:#4c6e57}.family-status.rework{background:#faf0df;color:#8a6a38}
+.family-chevron{align-self:center;color:#b4ac9f;font-size:22px}
+.family-empty{text-align:center;padding:38px 16px}.family-empty>svg{width:34px;height:34px;color:#a59175}.family-empty h3{font-size:18px;font-weight:600}.family-empty p{font-size:13px;line-height:1.7;color:#847c71}
+.family-error{margin:10px 0;padding:12px 14px;border-radius:13px;background:#fbefdf;color:#885d35;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.family-layer .family-copy{margin:0 0 18px;font-size:14px;line-height:1.7;color:#776d60}
+.family-type-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+.family-type{display:grid;grid-template-columns:30px 1fr;align-items:center;gap:5px 9px;padding:14px 12px;border:1px solid #e8e2d8;border-radius:15px;background:#fff;text-align:left;color:#75644d;font-size:13px}
+.family-type>span{grid-row:span 2;font-size:24px;text-align:center}.family-type strong{font-size:13px;font-weight:600}.family-type small{font-size:12px;color:#8d806f}
+.family-type.selected{border-color:#aa9477;background:#f5f0e8;box-shadow:inset 0 0 0 1px #aa9477}.family-type:disabled{opacity:.45;cursor:default}
+.family-field{display:grid;gap:9px;margin:20px 0;color:#6d6253;font-size:13px}
+.family-field textarea,.family-field input{width:100%;min-width:0;border:1px solid #e3dccf;background:#fff;color:#403a32;border-radius:14px;font:16px/1.65 system-ui;padding:12px 14px;outline-offset:2px}
+.family-field textarea{min-height:110px;resize:vertical}.family-field input{height:52px}.family-field :focus{outline:2px solid #b8a78d}
+.family-hint{font-size:12px;color:#887c6a;line-height:1.75;margin:14px 0}
+.family-detail-head{display:flex;align-items:center;gap:12px;margin:0 0 18px}.family-detail-head>div{flex:1}.family-detail-head h3{margin:0 0 7px;font-size:22px;font-weight:600;color:#3d352b}.family-detail-head>strong{font-size:19px;color:#846d4e;white-space:nowrap}.family-detail-head p{font-size:12px;color:#8b7f6c;margin:6px 0}
+.family-record{padding:15px 16px;border:1px solid #e8e2d8;border-radius:16px;margin:16px 0;background:#fff}.family-record>span{font-size:12px;color:#958571}.family-record p{font-size:14px;line-height:1.7;color:#655a4c;margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.family-record.family-rework{background:#fbf3e6;border-color:#efe0c7}
+.family-verdict{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.family-verdict button{min-height:48px;border:1px solid #ded7cc;background:#fff;color:#756a5a;border-radius:14px;font-size:14px;font-weight:600}.family-verdict .selected{background:#ecefe8;color:#4f6954;border-color:#7c957f}.family-verdict [data-value='no'].selected{background:#f8eddb;border-color:#ba9b69;color:#8b6b39}
+.family-timeline{border-top:1px solid #e9e3d9;margin-top:24px}.family-timeline summary{min-height:48px;display:flex;align-items:center;color:#827563;font-size:12px;cursor:pointer}.family-timeline>div{padding:13px 0 13px 16px;border-left:2px solid #e9e2d7;margin-left:4px}.family-timeline strong{display:block;font-size:13px;font-weight:600;color:#6b5f4e}.family-timeline time{display:block;font-size:11px;color:#9a8c76;margin-top:5px}.family-timeline p{font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.family-price-list{border:1px solid #e8e2d8;border-radius:18px;overflow:hidden;background:#fff}.family-price-row{display:flex;gap:12px;width:100%;align-items:center;padding:17px 15px;background:transparent;border:0;text-align:left;font-size:14px;color:#625746}.family-price-row+.family-price-row{border-top:1px solid #ede7dd}.family-price-row>span:first-child{flex:1}.family-price-row strong{font-size:14px;color:#816948}
+#pointsApp .family-layer[data-dialog='create'] .kitchen-panel.ui-panel,#pointsApp .family-layer[data-dialog='review'] .kitchen-panel.ui-panel{height:auto;max-height:85dvh}
+#pointsApp .family-layer .kitchen-panel-foot>.kitchen-button{width:100%}
+#pointsApp .family-layer .kitchen-panel-head h2{flex:1;text-align:center}
+#pointsApp .family-layer .kitchen-panel-head>button{width:44px;min-height:44px;border-radius:13px}
+@media(max-width:350px){.family-task-card{padding:15px 12px;gap:10px}.family-task-heading{align-items:flex-start;flex-wrap:wrap}.family-task-symbol{width:36px;height:36px}.family-type{padding:12px 9px;gap:4px 6px}.family-type strong{font-size:12px}.family-detail-head h3{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.family-task-card,#pointsApp .family-swipe-hint{transition:none}}
+#pointsApp .modal-layer.kitchen-layer.family-layer.ui-themed.ui-surface .kitchen-panel.ui-panel{height:auto!important;min-height:0;max-height:min(85dvh,calc(var(--kitchen-viewport-height,100dvh) - 20px))!important;background:#fcfbf8!important}
+#pointsApp .kitchen-layer.family-layer .kitchen-panel-body{flex:0 1 auto}
+#pointsApp .kitchen-layer.family-layer .kitchen-panel-head,#pointsApp .kitchen-layer.family-layer .kitchen-panel-foot{background:#fcfbf8;border-color:#e8e2d8}

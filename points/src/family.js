@@ -13,7 +13,7 @@
  function attach({db,state,els,ui}) {
   const app=document.getElementById('pointsApp'),q=id=>document.getElementById(id);
   app.dataset.page='world';
-  app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" class="family-page" hidden aria-label="小家庭"><header class="kitchen-header"><div class="app-brand"><img alt="" aria-hidden="true" class="app-brand-icon" src="./ICON/apple-touch-icon.png"/><div class="app-brand-copy"><h1 class="app-brand-title">小家庭</h1><p class="app-brand-caption">一起照顾我们的日常</p></div></div><button class="icon-button pressable" data-family-action="settings" aria-label="设置" type="button">${els.settingsBtn.innerHTML}</button></header><div id="familyDayHeader" class="family-day-header"><div class="family-day-copy"><span id="familyDayTitle">今天的小事</span><strong id="familyDayCount" aria-live="polite">正在读取…</strong></div><nav class="family-day-nav" aria-label="家事日期"><button data-family-action="day-step" data-value="-1" aria-label="前一天" type="button">‹</button><button data-family-action="today" aria-label="回到今天" type="button">今天</button><button data-family-action="day-step" data-value="1" aria-label="后一天" type="button">›</button></nav></div><div id="familyError" class="family-error" role="status" hidden></div><div id="kitchenContent"></div><div class="family-home-footer"><div class="family-primary-actions"><button id="familyCreateBtn" class="kitchen-button primary pressable" data-family-action="create" type="button" disabled>我做完了</button></div></div></section>
+  app.insertAdjacentHTML('beforeend',`<section id="kitchenPage" class="family-page" hidden aria-label="小家庭"><header class="kitchen-header"><div class="app-brand"><img alt="" aria-hidden="true" class="app-brand-icon" src="./ICON/apple-touch-icon.png"/><div class="app-brand-copy"><h1 class="app-brand-title">小家庭</h1><p class="app-brand-caption">一起照顾我们的日常</p></div></div><button class="icon-button pressable" data-family-action="settings" aria-label="设置" type="button">${els.settingsBtn.innerHTML}</button></header><div id="familyDayHeader" class="family-day-header"><div class="family-day-copy"><span id="familyDayTitle">今天的小事</span><strong id="familyDayCount" aria-live="polite">正在读取…</strong></div><nav class="family-day-nav" aria-label="家事日期"><button data-family-action="day-step" data-value="-1" aria-label="前一天" type="button">‹</button><button data-family-action="today" aria-label="回到今天" type="button">今天</button><button data-family-action="day-step" data-value="1" aria-label="后一天" type="button">›</button></nav></div><div id="familyError" class="family-error" role="status" hidden></div><div id="kitchenContent"></div><div class="family-home-footer"><div class="family-primary-actions"><button id="familyCreateBtn" class="kitchen-button primary pressable" data-family-action="create" type="button" disabled><span class="family-action-label">我做完了</span><span class="family-swipe-hint" aria-hidden="true">左右滑动切日</span></button></div></div></section>
   <nav class="app-nav" aria-label="主导航"><button data-kitchen-action="page" data-value="world" aria-current="page">${worldIcon}<span>小世界</span></button><button data-kitchen-action="page" data-value="kitchen">${homeIcon}<span>小家庭</span></button></nav>
   <div id="kitchenLayer" class="modal-layer kitchen-layer family-layer" aria-hidden="true"><section class="kitchen-panel" role="dialog" aria-modal="true" aria-labelledby="familyTitle" tabindex="-1"><header class="kitchen-panel-head"><button data-family-action="back" aria-label="返回上一页" hidden>‹</button><h2 id="familyTitle"></h2><button data-family-action="close" aria-label="关闭家庭窗口">×</button></header><div class="kitchen-panel-body" id="familyBody"></div><footer class="kitchen-panel-foot" id="familyFoot" hidden></footer></section></div>`);
   const setting=document.createElement('section');setting.id='familyScoreSettings';
@@ -72,9 +72,9 @@
   }
   function setSyncing(value){content.setAttribute('aria-busy',String(value));}
   function renderHomeAction(){
-   createButton.textContent=admin()?'发起家事':'我做完了';createButton.disabled=busy||!available;
+   const label=admin()?'发起家事':'我做完了';createButton.querySelector('.family-action-label').textContent=label;createButton.setAttribute('aria-label',label);createButton.setAttribute('aria-description','点击'+label+'；向右滑查看前一天，向左滑查看后一天。');createButton.disabled=busy||!available;
    page.querySelectorAll('[data-family-action="day-step"]').forEach(b=>{b.disabled=busy||!ready||role==='verifying'||b.dataset.value==='1'&&recordDay>=today();});
-   const current=page.querySelector('[data-family-action="today"]');current.disabled=busy||!ready||role==='verifying';current.setAttribute('aria-pressed',String(recordDay===today()));
+   const current=page.querySelector('[data-family-action="today"]');current.disabled=busy||!ready||role==='verifying';current.setAttribute('aria-pressed',String(recordDay===today()));current.textContent=recordDay===today()?'今天':recordDay.slice(5).replace('-','.');current.title=recordDay+' · 点击回到今天';current.setAttribute('aria-description','当前选择 '+recordDay+'，点击回到今天。');
   }
   function render(){
    renderHomeAction();q('familyDayHeader').dataset.date=recordDay;
@@ -162,6 +162,45 @@
    if(a==='save-review')return mutate('review',{id:modal.task.id,version:modal.task.version,qualified:modal.verdict==='yes',comment:modal.comment});
    if(a==='retry'){const op=JSON.parse(localStorage.getItem(v)||'null');if(op)return mutate(op.action,op.payload,op);}
   }
+  // Keep the shortcut local to the primary action; the task list still scrolls normally.
+  let dayDrag=null,suppressCreateUntil=0;
+  const swipeBlocked=()=>busy||!available||app.inert||app.dataset.page!=='kitchen'||!!app.querySelector('.modal-layer.open');
+  const swipeHint=createButton.querySelector('.family-swipe-hint');
+  function resetDaySwipe(){
+   const previous=dayDrag;dayDrag=null;createButton.classList.remove('family-swipe-dragging','family-swipe-ready');
+   createButton.style.removeProperty('--family-swipe-x');swipeHint.textContent='左右滑动切日';
+   if(previous)try{createButton.releasePointerCapture(previous.id);}catch(_){}
+  }
+  createButton.addEventListener('pointerdown',e=>{
+   if(swipeBlocked()||dayDrag||e.button!==0||e.isPrimary===false)return;
+   suppressCreateUntil=0;
+   dayDrag={id:e.pointerId,x:e.clientX,y:e.clientY,day:recordDay,version:epoch,axis:null,moved:false,threshold:Math.max(64,createButton.getBoundingClientRect().width*.2)};
+   try{createButton.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  createButton.addEventListener('pointermove',e=>{
+   const d=dayDrag;if(!d||d.id!==e.pointerId)return;
+   if(swipeBlocked()||d.day!==recordDay||d.version!==epoch){suppressCreateUntil=performance.now()+400;resetDaySwipe();return;}
+   const dx=e.clientX-d.x,dy=e.clientY-d.y;
+   if(!d.axis){if(Math.hypot(dx,dy)<10)return;d.moved=true;d.axis=Math.abs(dx)>Math.abs(dy)*1.5?'x':'y';}
+   if(d.axis!=='x')return;e.preventDefault();
+   const target=shiftDay(d.day,dx<0?1:-1),allowed=target<=today(),ready=allowed&&Math.abs(dx)>=d.threshold&&Math.abs(dx)>Math.abs(dy)*1.5;
+   createButton.classList.add('family-swipe-dragging');createButton.classList.toggle('family-swipe-ready',ready);
+   createButton.style.setProperty('--family-swipe-x',Math.max(-14,Math.min(14,dx*.1))+'px');
+   swipeHint.textContent=!allowed?'已是今天':ready?(dx<0?'松开看后一天':'松开看前一天'):'左右滑动切日';
+  },{passive:false});
+  const endDaySwipe=e=>{
+   const d=dayDrag;if(!d||d.id!==e.pointerId)return;
+   const dx=e.clientX-d.x,dy=e.clientY-d.y,target=shiftDay(d.day,dx<0?1:-1);
+   const commit=e.type==='pointerup'&&!swipeBlocked()&&d.day===recordDay&&d.version===epoch&&d.axis==='x'&&Math.abs(dx)>=d.threshold&&Math.abs(dx)>Math.abs(dy)*1.5&&target<=today();
+   if(d.moved||Math.hypot(dx,dy)>=10||e.type==='pointercancel')suppressCreateUntil=performance.now()+400;
+   resetDaySwipe();if(commit){navigator.vibrate?.(8);selectDay(target);}
+  };
+  createButton.addEventListener('pointerup',endDaySwipe);createButton.addEventListener('pointercancel',endDaySwipe);
+  createButton.addEventListener('lostpointercapture',()=>{if(dayDrag){suppressCreateUntil=performance.now()+400;resetDaySwipe();}});
+  createButton.addEventListener('click',e=>{
+   if(e.detail!==0&&performance.now()<suppressCreateUntil){suppressCreateUntil=0;e.preventDefault();e.stopImmediatePropagation();}
+  },true);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&dayDrag){suppressCreateUntil=performance.now()+400;resetDaySwipe();}});
   app.addEventListener('click',e=>void act(e).catch(issue=>{if(modal){modal.error=describe(issue);renderDialog();}else{error=describe(issue);render();}}));
   app.addEventListener('input',e=>{
    if(e.target.id==='familyNote'&&modal?.kind==='create'){modal.note=e.target.value;preserve();}

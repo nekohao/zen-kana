@@ -14,7 +14,7 @@ try{
  admin.on('pageerror',e=>errors.push(e.message));guest.on('pageerror',e=>errors.push(e.message));
  for(const [p,label] of [[admin,'发起家事'],[guest,'我做完了']]){
   const main=p.locator('#familyCreateBtn'),content=p.locator('#kitchenContent');
-  check(await main.innerText(),label,'role-specific bottom action');
+  check(await main.getAttribute('aria-label'),label,'role-specific bottom action');
   check(await p.locator('#kitchenContent [data-family-action="create"]').count(),0,'no duplicate action in list');
   for(const size of [{width:320,height:568},{width:390,height:844},{width:430,height:932},{width:844,height:390},{width:1200,height:900}]){
    await p.setViewportSize(size);
@@ -99,6 +99,7 @@ try{
  check(await content.evaluate(e=>e.scrollTop),scroll,'detail close keeps main-list scroll');
  await admin.getByRole('button',{name:'前一天',exact:true}).click();await admin.locator('#kitchenContent[data-points-synced="true"][aria-busy="false"]').waitFor();
  const yesterday=await header.getAttribute('data-date');
+ check(await admin.locator('[data-family-action="today"]').innerText(),yesterday.slice(5).replace('-','.'),'center date follows selected historical day');
  check(yesterday<day,true,'previous day selected');
  check((await admin.locator('#familyDayTitle').innerText()).includes(yesterday.replaceAll('-','.')),true,'historical title identifies selected date');
  check(await content.locator('.family-task-card').count(),2,'historical cancelled and pending tasks both retained');
