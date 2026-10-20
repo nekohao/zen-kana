@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8f5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mediterranean">
+  <meta name="description" content="Mediterranean · 从一餐开始，好好吃饭。分类选菜、现有食材匹配、采购与分步烹饪。">
+  <title>Mediterranean · 地中海</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preload" href="assets/fonts/PinyonScript-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <script src="recipes.js" defer></script>
+  <script src="core.js" defer></script>
+  <script src="views.js" defer></script>
+  <script src="assets/vendor/supabase-2.118.0.js" defer></script>
+  <script src="cloud-config.js" defer></script>
+  <script src="cloud.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="app-shell">
+    <header class="topbar"><a class="mobile-brand" href="#home" aria-label="Mediterranean 首页"><span class="brand-emblem" aria-hidden="true"></span><span>Mediterranean</span></a><button class="icon-button" data-action="settings" aria-label="打开设置"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h4m4 0h8M4 17h8m4 0h4"/><circle cx="10" cy="7" r="2"/><circle cx="14" cy="17" r="2"/></svg></button></header>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <nav id="mobile-nav" class="tabbar" aria-label="主导航"></nav>
+  <div id="overlay-root"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="update-notice" class="update-notice" hidden><span>新版本已准备好</span><button data-action="update-app">更新</button><button data-action="dismiss-update" aria-label="稍后更新">稍后</button></div>
+  <noscript><p class="noscript">请启用 JavaScript 以使用菜谱、收藏与采购功能。</p></noscript>
+</body>
+</html>
