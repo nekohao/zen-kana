@@ -152,14 +152,12 @@
     import: () => document.getElementById('backup-input')?.click(),
     'confirm-import': () => { if (!M.ui.pendingImport) return; M.state = M.cloud.preserveSharedState(M.ui.pendingImport); M.ui.pendingImport = null; M.save(); M.applyTheme(); M.closeSheet(); M.refresh(); M.toast('已恢复备份'); },
     'install-help': () => M.sheet('放到 iPhone 主屏幕', '<div class="note-box"><strong>用 Safari 打开已发布的网址</strong>点击分享按钮，选择“添加到主屏幕”，保留“作为网页 App 打开”，再点击添加。</div><p class="small-note">首次联网打开后，等待设置中的离线状态变为就绪。此后可以从桌面图标打开。</p><p class="small-note">如果 Safari 和主屏幕应用的数据没有共享，可使用导出与导入备份迁移。</p>'),
-    'update-app': () => { if (M.ui.cook) return M.toast('先完成或离开烹饪，再更新'); M.ui.reloadForUpdate = true; if (M.ui.registration?.waiting) M.ui.registration.waiting.postMessage({ type: 'SKIP_WAITING' }); else location.reload(); },
-    'dismiss-update': () => document.getElementById('update-notice').hidden = true,
   };
   document.addEventListener('click', event => {
     if (event.target.id === 'modal-backdrop') return M.closeSheet();
     const el = event.target.closest('[data-action]');
     if (!el || el.disabled) return;
-    if (!M.cloud.canEnter() && !['access-mode', 'cloud-login', 'cloud-join', 'export', 'update-app', 'dismiss-update'].includes(el.dataset.action)) return;
+    if (!M.cloud.canEnter() && !['access-mode', 'cloud-login', 'cloud-join', 'export'].includes(el.dataset.action)) return;
     const action = actions[el.dataset.action]; if (action) { event.preventDefault(); Promise.resolve(action(el)).catch(() => M.toast('这次操作没有完成，请重试')); }
   });
   document.addEventListener('submit', event => {
@@ -208,9 +206,31 @@
   document.addEventListener('error', event => { if (event.target instanceof HTMLImageElement) { const img = event.target; img.style.opacity = '.15'; img.parentElement?.classList.add('image-fallback'); } }, true);
   M.ui.route = location.hash || '#home'; M.render();
   M.cloud?.start();
-  const offlineStatus = async () => { try { const names = await caches.keys(); const name = names.find(x => x.startsWith('mediterranean:' + new URL('./', location.href).href + ':')); if (!name) return; const cache = await caches.open(name); const requests = await cache.keys(); M.ui.offline.images = requests.filter(x => /assets\/recipes\/\d+\.webp/.test(x.url)).length; M.ui.offline.ready = M.ui.offline.images === M.recipes.length; } catch {} };
+  const offlineStatus = async () => { try { const names = await caches.keys(); const name = names.filter(x => x.startsWith('mediterranean:' + new URL('./', location.href).href + ':')).at(-1); if (!name) return; const cache = await caches.open(name); const requests = await cache.keys(); M.ui.offline.images = requests.filter(x => /assets\/recipes\/\d+\.webp/.test(x.url)).length; M.ui.offline.ready = M.ui.offline.images === M.recipes.length; } catch {} };
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-    navigator.serviceWorker.register('./sw.js').then(registration => { M.ui.registration = registration; if (registration.waiting) document.getElementById('update-notice').hidden = false; registration.addEventListener('updatefound', () => { const worker = registration.installing; worker?.addEventListener('statechange', () => { if (worker.state === 'installed' && navigator.serviceWorker.controller) document.getElementById('update-notice').hidden = false; if (worker.state === 'installed') offlineStatus(); }); }); return navigator.serviceWorker.ready; }).then(offlineStatus).catch(() => { M.ui.offline.error = true; });
-    navigator.serviceWorker.addEventListener('controllerchange', () => { if (M.ui.reloadForUpdate) location.reload(); else offlineStatus(); });
+    // The worker activates and refreshes open pages automatically, including cooking mode.
+    navigator.serviceWorker.addEventListener('controllerchange', offlineStatus);
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data?.type === 'APP_UPDATED') location.reload();
+    });
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(registration => {
+      M.ui.registration = registration;
+      const activateWaiting = () => registration.waiting?.postMessage({ type: 'SKIP_WAITING' });
+      const watch = worker => {
+        if (!worker) return;
+        worker.addEventListener('statechange', () => {
+          if (worker.state === 'installed') { activateWaiting(); offlineStatus(); }
+        });
+      };
+      registration.addEventListener('updatefound', () => watch(registration.installing));
+      watch(registration.installing); activateWaiting();
+      const check = () => {
+        if (navigator.onLine && !document.hidden) registration.update().catch(() => {});
+      };
+      window.addEventListener('online', check);
+      document.addEventListener('visibilitychange', check);
+      setInterval(check, 60000);
+      return navigator.serviceWorker.ready;
+    }).then(offlineStatus).catch(() => { M.ui.offline.error = true; });
   }
 })();
