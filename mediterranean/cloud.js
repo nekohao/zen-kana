@@ -3,6 +3,7 @@
   'use strict';
   const M = window.Med, e = M.esc, KEY = 'mediterranean.cloud.v1', AUTH = 'mediterranean.auth.v1';
   const C = M.cloud = { kitchen: null, account: null, authorized: false, outbox: new Map(), busy: false, applying: false, message: '', epoch: 0, mode: 'invite' };
+  const account = user => ({ id: user.id, email: user.email, emailAdmin: user.is_anonymous === false && Boolean(user.email?.trim() && user.email_confirmed_at) });
   const snapshot = () => new Map(M.state.pantry.map(name => [name, M.state.priority.includes(name)]));
   C.baseline = snapshot();
   try {
@@ -17,16 +18,20 @@
       for (const op of saved.outbox || []) if (typeof op.name === 'string' && op.name.length <= 80 && typeof op.available === 'boolean' && typeof op.priority === 'boolean' && /^[a-f0-9-]{36}$/i.test(op.operationId)) C.outbox.set(op.name, op);
       // Local receipt controls immediate display only; server RLS checks every request.
       if (saved.version === 2 && saved.authorized && session?.refresh_token && session.user?.id === saved.kitchen.userId) {
-        C.account = { id: session.user.id, email: session.user.email }; C.authorized = true;
+        C.account = account(session.user); C.authorized = true;
       }
     }
   } catch { /* Preserve personal data even when session restoration fails. */ }
   const remember = () => localStorage.setItem(KEY, JSON.stringify({ version: 2, authorized: C.authorized, kitchen: C.kitchen, outbox: [...C.outbox.values()] }));
   const operation = (name, available, priority) => ({ name, available, priority: available && priority, operationId: crypto.randomUUID() });
   C.canEnter = () => C.authorized && Boolean(C.kitchen && C.account);
+  // This controls visibility only; all permissions are enforced by the database.
+  C.isAdmin = () => C.canEnter() && C.account.emailAdmin;
   document.body.classList.toggle('access-locked', !C.canEnter());
   C.status = () => !navigator.onLine ? (C.outbox.size ? `离线 · 待同步 ${C.outbox.size} 项` : '离线可用') : C.message ? '连接待恢复' : C.busy ? '正在同步' : C.outbox.size ? `待同步 ${C.outbox.size} 项` : '已同步';
   C.paint = () => {
+    document.querySelectorAll('[data-cloud-admin]').forEach(n => { n.hidden = !C.isAdmin(); });
+    document.querySelectorAll('[data-cloud-role]').forEach(n => { n.textContent = C.isAdmin() ? '管理员' : '已授权设备'; });
     document.querySelectorAll('[data-cloud-status]').forEach(n => { n.textContent = C.status(); });
     document.querySelectorAll('[data-cloud-error]').forEach(n => { n.textContent = C.message; n.hidden = !C.message; });
     const left = Math.max(0, Math.ceil(((C.invite?.deadline || 0) - Date.now()) / 1000));
@@ -42,7 +47,8 @@
     if (/Email not confirmed|email_not_confirmed/i.test(text)) return '管理员账号尚未确认，请在控制台确认账号。';
     if (/PGRST20[25]|schema cache|does not exist|Not configured/i.test(text)) return '共享库存需要完成本次数据库升级，请联系管理员。';
     if (/Invalid invitation/i.test(text)) return '邀请码无效或已过期，请向管理员获取新码。';
-    if (/ADMIN_ONLY/i.test(text)) return '请使用管理员账号登录，家人请使用邀请码。';
+    if (/ADMIN_ONLY|42501|ACCESS_REQUIRED|PGRST116/.test(text) && C.account?.emailAdmin) return '邮箱已登录，请先在数据库执行 supabase-email-admin.sql，修正管理员权限。';
+    if (/ADMIN_ONLY/i.test(text)) return '邀请码设备不能生成邀请码，请使用邮箱密码登录。';
     if (/42501|ACCESS_REQUIRED|PGRST116/.test(text)) return '这台设备需要重新授权，请输入新的邀请码。';
     if (/ACCOUNT_CHANGED|KITCHEN_CHANGED/.test(text)) return '本机仍有原库存记录，请先导出备份后联系管理员。';
     return navigator.onLine ? '暂时无法连接，请稍后重试。' : '首次验证需要联网，请连接网络后重试。';
@@ -61,7 +67,7 @@
     const user = result.data.session?.user;
     if (!user) throw { code: 'ACCESS_REQUIRED' };
     if (C.kitchen?.userId && C.kitchen.userId !== user.id && C.outbox.size) throw { code: 'ACCOUNT_CHANGED' };
-    C.account = { id: user.id, email: user.email }; return user;
+    C.account = account(user); return user;
   };
   const getAccess = async () => {
     const result = await client().rpc('med_get_access');
@@ -162,7 +168,7 @@
   };
   C.show = () => {
     if (!C.canEnter()) { M.render(); return; }
-    const admin = C.kitchen.role === 'admin', formatted = C.invite?.code.match(/.{1,4}/g)?.join(' ');
+    const admin = C.isAdmin(), formatted = C.invite?.code.match(/.{1,4}/g)?.join(' ');
     M.sheet('共享库存', `<div class="family-heading"><strong>我们的厨房</strong><span data-cloud-status>${e(C.status())}</span></div><p class="panel-subtitle">食材与优先使用会同步给家人。</p>${admin ? `<section class="invite-panel"><div class="section-heading"><h2>邀请家人</h2><span class="quiet-tag">管理员</span></div>${formatted ? `<input class="family-code" id="family-invite" readonly value="${e(formatted)}" aria-label="本次邀请码"><div class="invite-meta"><span data-invite-remaining></span><button class="text-link" data-action="cloud-copy">复制邀请码</button></div>` : '<p class="small-note">生成后 10 分钟有效，已验证设备持续可用。</p>'}<button class="secondary-button block-button" data-action="cloud-invite">${formatted ? '重新生成邀请码' : '生成邀请码'}</button>${formatted ? '<p class="small-note">重新生成后，上一枚邀请码立即失效。</p>' : ''}</section>` : '<p class="small-note">此设备已授权，下次打开会直接进入。</p>'}<div class="settings-group family-manage"><button class="settings-row" data-action="cloud-sync"><span>重新同步</span>${M.icon('download')}</button>${M.state.localPantry ? '<button class="settings-row" data-action="cloud-local-backup"><span>查看原本机食材副本</span>' + M.icon('pantry') + '</button>' : ''}<button class="settings-row" data-action="cloud-logout"><span>退出此设备</span>${M.icon('back')}</button></div><p class="family-error" role="status" data-cloud-error ${C.message ? '' : 'hidden'}>${e(C.message)}</p>`, 'cloud'); C.paint();
   };
   const perform = async fn => {
@@ -222,10 +228,10 @@
   C.showLocalBackup = () => {
     const b = M.state.localPantry;
     if (!b) return;
-    M.sheet('原本机食材副本', `<p class="panel-subtitle">${b.pantry.length} 种食材，原记录完整保留。</p><div class="pantry-chips">${b.pantry.map(n => `<span class="ingredient-chip">${e(M.ingredientLabel(n))}</span>`).join('')}</div><button class="secondary-button block-button" data-action="export">导出备份</button>${C.kitchen?.role === 'admin' && b.pantry.length ? '<button class="primary-button block-button" data-action="cloud-merge-local" style="margin-top:12px">将副本食材补充到共享库存</button>' : ''}`);
+    M.sheet('原本机食材副本', `<p class="panel-subtitle">${b.pantry.length} 种食材，原记录完整保留。</p><div class="pantry-chips">${b.pantry.map(n => `<span class="ingredient-chip">${e(M.ingredientLabel(n))}</span>`).join('')}</div><button class="secondary-button block-button" data-action="export">导出备份</button>${C.isAdmin() && b.pantry.length ? '<button class="primary-button block-button" data-action="cloud-merge-local" style="margin-top:12px">将副本食材补充到共享库存</button>' : ''}`);
   };
   C.mergeLocal = () => {
-    if (!C.canEnter() || C.kitchen.role !== 'admin' || !M.state.localPantry) return;
+    if (!C.isAdmin() || !M.state.localPantry) return;
     M.state.pantry = M.uniqueIngredients([...M.state.pantry, ...M.state.localPantry.pantry]);
     M.state.priority = M.uniqueIngredients([...M.state.priority, ...M.state.localPantry.priority]);
     M.save(); M.closeSheet(); M.refresh(); M.toast('已补充，原副本仍保留');
@@ -236,7 +242,7 @@
     try { await authenticated(); const access = await getAccess(); if (C.epoch !== epoch || C.actionBusy) return; accept(access); M.render(); await C.sync(); }
     catch (error) {
       if (C.epoch !== epoch || C.actionBusy) return;
-      if (/ACCESS_REQUIRED|42501|PGRST116|refresh_token_not_found/.test(String(error?.code))) { C.message = ''; lock(); }
+      if (/ACCESS_REQUIRED|42501|PGRST116|refresh_token_not_found/.test(String(error?.code))) { C.message = C.account?.emailAdmin ? friendly(error) : ''; lock(); }
       else { C.message = friendly(error); C.paint(); }
     }
   };

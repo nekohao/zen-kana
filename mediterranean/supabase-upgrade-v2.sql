@@ -57,11 +57,21 @@ begin
     select user_id, kitchen_id from public.med_kitchen_members where kitchen_id = chosen_kitchen on conflict do nothing;
 end $$;
 
+-- Email accounts administer the one kitchen; anonymous invite devices remain members.
+-- Read authoritative auth records, never caller-supplied email or user metadata.
+create or replace function public.med_is_admin()
+returns boolean language sql stable security definer set search_path = '' as $$
+  select exists (
+    select 1 from auth.users u where u.id = auth.uid()
+      and u.is_anonymous = false and nullif(btrim(u.email), '') is not null
+      and u.email_confirmed_at is not null
+  );
+$$;
 create or replace function public.med_is_member(p_kitchen uuid)
 returns boolean language sql stable security definer set search_path = '' as $$
   select auth.uid() is not null and exists (
     select 1 from mediterranean_private.app_settings s where s.kitchen_id = p_kitchen
-      and (s.admin_id = auth.uid() or exists (
+      and (public.med_is_admin() or exists (
         select 1 from public.med_kitchen_members m join mediterranean_private.devices d
           on d.user_id = m.user_id and d.kitchen_id = m.kitchen_id
         where m.kitchen_id = p_kitchen and m.user_id = auth.uid() and d.enabled
@@ -76,7 +86,7 @@ begin
   if not found then raise exception 'Not configured'; end if;
   if not public.med_is_member(s.kitchen_id) then raise exception 'Access required' using errcode = '42501'; end if;
   select name into kitchen_name from public.med_kitchens where id = s.kitchen_id;
-  return jsonb_build_object('id', s.kitchen_id, 'name', kitchen_name, 'role', case when auth.uid() = s.admin_id then 'admin' else 'member' end);
+  return jsonb_build_object('id', s.kitchen_id, 'name', kitchen_name, 'role', case when public.med_is_admin() then 'admin' else 'member' end);
 end;
 $$;
 create or replace function public.med_issue_invite()
@@ -85,7 +95,7 @@ declare s mediterranean_private.app_settings; code text; deadline timestamptz;
 begin
   select * into s from mediterranean_private.app_settings where singleton for update;
   if not found then raise exception 'Not configured'; end if;
-  if auth.uid() is null or auth.uid() <> s.admin_id then raise exception 'ADMIN_ONLY' using errcode = '42501'; end if;
+  if not public.med_is_admin() then raise exception 'ADMIN_ONLY' using errcode = '42501'; end if;
   code := upper(encode(extensions.gen_random_bytes(8), 'hex'));
   deadline := clock_timestamp() + interval '10 minutes';
   insert into mediterranean_private.short_invites(kitchen_id, code_hash, expires_at)
@@ -164,7 +174,7 @@ $$;
 -- Retire old creation/leave RPCs, including the previous permanent invitation path.
 revoke all on function public.med_create_kitchen(text, jsonb), public.med_leave_kitchen(uuid) from public, anon, authenticated;
 revoke all on function public.med_get_access(), public.med_issue_invite(), public.med_join_kitchen(text),
-  public.med_canonical_ingredient(text), public.med_apply_inventory(uuid, jsonb), public.med_is_member(uuid) from public, anon, authenticated;
+  public.med_canonical_ingredient(text), public.med_apply_inventory(uuid, jsonb), public.med_is_member(uuid), public.med_is_admin() from public, anon, authenticated;
 grant execute on function public.med_get_access(), public.med_issue_invite(), public.med_join_kitchen(text),
-  public.med_apply_inventory(uuid, jsonb), public.med_is_member(uuid) to authenticated;
+  public.med_apply_inventory(uuid, jsonb), public.med_is_member(uuid), public.med_is_admin() to authenticated;
 commit;
