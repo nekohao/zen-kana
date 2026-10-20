@@ -6,12 +6,14 @@
   const e = M.esc;
   M.viewHome = () => {
     const resume = Object.entries(M.state.progress).find(([id]) => M.getRecipe(id));
+    const suggested = M.state.priority.length ? M.matches().filter(x => x.match.priority && x.match.mainAvailable).slice(0, 2) : [];
     return `<div class="page-header"><div><h1>今天，想吃什么？</h1><p>简单食材，好好吃饭。</p></div></div>
+      ${resume ? `<a class="home-shortcut resume-link" href="#recipe/${resume[0]}">${M.icon('play')}<span><strong>继续烹饪</strong><small>${e(M.getRecipe(resume[0]).title)}</small></span>${M.icon('chevron', 'class="arrow"')}</a>` : ''}
       ${M.searchBox('', '搜索菜名或食材', 'home')}
       <div class="section-heading"><h2>按菜品选</h2><a class="text-link" href="#browse">全部 ${M.recipes.length} 道 ${M.icon('chevron')}</a></div>
-      <div class="category-grid">${M.categories.map(c => `<a class="category-card" href="${M.url('browse', { category: c.id })}" aria-label="${c.name}，${M.recipes.filter(r => r.category === c.id).length}道菜"><div class="category-copy"><span class="category-name">${c.name}</span><span class="category-description">${c.subtitle}</span><span class="category-count">${M.recipes.filter(r => r.category === c.id).length} 道 ${M.icon('chevron')}</span></div><div class="category-photo">${M.photo(M.getRecipe(c.cover), '', true)}</div></a>`).join('')}</div>
-      <a class="pantry-invitation" href="${M.state.pantry.length ? '#browse?match=1' : '#pantry'}"><span class="invitation-icon">${M.icon('pantry')}</span><span><strong>${M.state.pantry.length ? '现在能做什么' : '看看家里有什么'}</strong>${M.state.pantry.length ? `<small>${M.state.pantry.length} 种食材 · ${M.matches().filter(x => x.match.ready).length} 道食材已齐</small>` : ''}</span>${M.icon('chevron', 'class="arrow"')}</a>
-      ${resume ? `<a class="home-shortcut resume-link" href="#recipe/${resume[0]}">${M.icon('play')}<span><strong>继续烹饪</strong><small>${e(M.getRecipe(resume[0]).title)}</small></span>${M.icon('chevron', 'class="arrow"')}</a>` : ''}`;
+      <div class="category-grid">${M.categories.map(c => `<a class="category-card" href="${M.url('browse', { category: c.id })}" aria-label="${c.name}，${M.recipes.filter(r => r.category === c.id).length}道菜"><div class="category-copy"><span class="category-name">${c.name}</span><span class="category-count">${M.recipes.filter(r => r.category === c.id).length} 道 ${M.icon('chevron')}</span></div><div class="category-photo">${M.photo(M.getRecipe(c.cover), '', true)}</div></a>`).join('')}</div>
+      <a class="pantry-invitation" href="${M.state.pantry.length ? '#browse?match=1' : '#pantry'}"><span class="invitation-icon">${M.icon('pantry')}</span><span><strong>${M.state.pantry.length ? '用家里的食材做一餐' : '看看家里有什么'}</strong>${M.state.pantry.length ? `<small>${M.matches().filter(x => !x.match.missingMain.length).length} 道主料已齐</small>` : ''}</span>${M.icon('chevron', 'class="arrow"')}</a>
+      ${suggested.length ? '<div class="section-heading"><h2>这些食材，先用起来</h2></div><div class="recipe-grid">' + suggested.map(x => M.card(x.recipe, x.match)).join('') + '</div>' : ''}`;
   };
   M.filteredRecipes = options => {
     let list = M.recipes;
@@ -58,23 +60,33 @@
       <section class="content-section"><h2>开始做菜 <small>${r.steps.length} 步</small></h2><ol class="step-list">${plan.slice(1).map(step => `<li><div>${e(step.text)}${annotations(step)}</div></li>`).join('')}</ol></section>
       <div class="detail-actions sticky-cook"><button class="primary-button" data-action="cook" data-id="${r.id}">${M.icon('play')}${progress ? '继续烹饪' : '开始烹饪'}</button></div></div></div>`;
   };
-  const commonNames = ['鸡蛋', '番茄', '菠菜', '黄瓜', '鸡胸肉', '鸡腿肉', '虾仁', '北豆腐', '西兰花', '南瓜', '洋葱', '鲜香菇', '全麦面包', '熟鹰嘴豆', '橄榄油', '盐', '蒜', '黑胡椒'];
+  const commonNames = ['鸡蛋', '番茄', '菠菜', '黄瓜', '鸡胸肉', '鸡腿肉', '虾仁', '北豆腐', '西兰花', '南瓜', '洋葱', '鲜香菇'];
   M.catalogList = () => {
-    let list = M.data.ingredients;
-    if (M.ui.pantryQuery) list = list.filter(i => M.normalize(i.name).includes(M.normalize(M.ui.pantryQuery)));
-    else if (M.ui.filterGroup === '常用') list = commonNames.map(name => list.find(i => i.name === name)).filter(Boolean);
-    else list = list.filter(i => i.group === M.ui.filterGroup);
-    return list;
+    if (M.ui.pantryQuery) return M.ingredients.filter(i => M.searchIngredient(i.name, M.ui.pantryQuery));
+    if (M.ui.filterGroup === '常用') return commonNames.map(name => M.ingredients.find(i => i.name === name)).filter(Boolean);
+    return M.ingredients.filter(i => i.group === M.ui.filterGroup);
   };
+  M.catalogChoice = i => `<button class="ingredient-chip ${M.state.pantry.includes(i.name) ? 'selected' : ''}" data-action="pantry-toggle" data-name="${e(i.name)}" aria-pressed="${M.state.pantry.includes(i.name)}">${M.icon(M.state.pantry.includes(i.name) ? 'check' : 'plus')}${e(M.ingredientLabel(i.name))}</button>`;
   M.viewPantryCatalog = () => {
     const list = M.catalogList();
-    return `<div class="pantry-chips">${list.map(i => `<button class="ingredient-chip ${M.state.pantry.includes(i.name) ? 'selected' : ''}" data-action="pantry-toggle" data-name="${e(i.name)}" aria-pressed="${M.state.pantry.includes(i.name)}">${M.icon(M.state.pantry.includes(i.name) ? 'check' : 'plus')}${e(i.name)}</button>`).join('')}</div>${!list.length ? `<p class="small-note">暂时没找到这个名称，可添加自定义食材。</p>` : ''}${M.ui.pantryQuery && !M.data.ingredients.some(i => M.normalize(i.name) === M.normalize(M.ui.pantryQuery)) ? `<button class="secondary-button block-button" style="margin-top:15px" data-action="pantry-custom">添加“${e(M.ui.pantryQuery)}”</button>` : ''}`;
+    const groups = M.ui.pantryQuery ? list.map(i => ({ name: i.name, items: [i] })) : M.groupCatalog(list);
+    return `<div class="pantry-chips">${groups.map(g => g.items.length > 1 ? `<button class="ingredient-chip family-choice" data-action="pantry-family" data-name="${e(g.name)}"><span>${e(g.name)}</span><small>${g.items.filter(i => M.state.pantry.includes(i.name)).length || ''}</small>${M.icon('chevron')}</button>` : M.catalogChoice(g.items[0])).join('')}</div>${!list.length ? '<p class="small-note">目录里暂时没有，可添加自定义食材。</p><button class="secondary-button block-button" data-action="pantry-custom">添加“' + e(M.ui.pantryQuery) + '”</button>' : ''}`;
+  };
+  M.viewPantryAdd = () => {
+    const groups = [['常用', '常用'], ['蔬菜水果', '蔬果'], ['肉鱼蛋奶', '肉鱼蛋奶'], ['谷物主食', '主食'], ['豆类坚果', '豆类坚果'], ['调味与香草', '调味']];
+    return `${M.searchBox(M.ui.pantryQuery, '搜索食材，如番茄、豆腐', 'pantry')}<div class="filter-row catalog-tabs" aria-label="食材分类">${groups.map(([id, label]) => `<button class="chip ${M.ui.filterGroup === id ? 'active' : ''}" data-action="pantry-group" data-group="${id}" aria-pressed="${M.ui.filterGroup === id}">${label}</button>`).join('')}</div><div data-pantry-catalog>${M.viewPantryCatalog()}</div>`;
+  };
+  M.inventoryGroups = () => M.groupCatalog(M.state.pantry.map(name => ({ name, group: M.ingredientGroup(name) })));
+  M.inventoryRow = g => {
+    const priority = g.items.some(i => M.state.priority.includes(i.name));
+    return `<div class="inventory-row"><div class="inventory-copy"><strong>${e(g.items.length > 1 ? g.name : M.ingredientLabel(g.items[0].name))}</strong>${g.items.length > 1 ? `<small>${g.items.map(i => e(M.ingredientLabel(i.name))).join(' · ')}</small>` : ''}</div>${priority ? '<span class="priority-tag">优先用</span>' : ''}<button class="icon-button" data-action="pantry-manage" data-name="${e(g.name)}" aria-label="管理${e(g.name)}">${M.icon('more')}</button></div>`;
   };
   M.viewPantry = () => {
-    const groups = ['常用', '蔬菜水果', '肉鱼蛋奶', '谷物主食', '豆类坚果', '调味与香草'];
-    const matches = M.state.pantry.length ? M.matches() : [];
-    const relevant = matches.filter(x => x.recipe.ingredients.some(i => !i.seasoning && !i.optional && M.hasIngredient(i)));
-    return `${M.header('我的食材', '', M.state.pantry.length ? `<a class="text-link" href="#browse?match=1">去选菜 ${M.icon('chevron')}</a>` : '')}<div class="pantry-layout"><section class="panel"><h2 style="margin-bottom:15px">添加食材</h2>${M.searchBox(M.ui.pantryQuery, '搜索食材，如番茄、鸡蛋', 'pantry')}<div class="filter-row">${groups.map(g => `<button class="chip ${M.ui.filterGroup === g ? 'active' : ''}" data-action="pantry-group" data-group="${g}">${g === '调味与香草' ? '调味' : g === '蔬菜水果' ? '蔬果' : g === '肉鱼蛋奶' ? '肉鱼蛋奶' : g === '谷物主食' ? '主食' : g === '豆类坚果' ? '豆类坚果' : g}</button>`).join('')}</div><div id="pantry-catalog">${M.viewPantryCatalog()}</div></section><section class="panel"><div class="section-heading"><h2>家里有</h2><span class="count-label">${M.state.pantry.length} 种</span></div>${M.state.pantry.length ? M.state.pantry.map(name => `<div class="pantry-row"><span>${e(name)}</span><button class="priority-button ${M.state.priority.includes(name) ? 'on' : ''}" data-action="priority" data-name="${e(name)}" aria-pressed="${M.state.priority.includes(name)}">${M.state.priority.includes(name) ? '优先使用中' : '优先用掉'}</button><button class="icon-button" data-action="pantry-remove" data-name="${e(name)}" aria-label="标记${e(name)}已用完">${M.icon('close')}</button></div>`).join('') : '<p class="panel-subtitle" style="margin:25px 0">还没有添加食材</p>'}</section></div><section class="pantry-recommendation"><div class="section-heading"><h2>更适合现在做的</h2>${relevant.length ? `<span class="count-label">${relevant.filter(x => x.match.ready).length} 道食材已齐</span>` : ''}</div>${relevant.length ? `<div class="recipe-grid">${relevant.slice(0, 4).map(x => M.card(x.recipe, x.match)).join('')}</div><a class="load-more" href="#browse?match=1">查看更多匹配菜谱</a>` : M.empty('leaf', M.state.pantry.length ? '再添加几样主食材试试' : '先记下几样食材', M.state.pantry.length ? '只有调味料时，暂时还不足以帮你选出一餐。' : '添加后，就能看到食材已齐或还缺几样的菜。', '<a class="secondary-button" href="#home">也可以直接去选菜</a>')}</section>`;
+    const inventory = M.inventoryGroups(), priority = inventory.filter(g => g.items.some(i => M.state.priority.includes(i.name)));
+    const normal = inventory.filter(g => !priority.includes(g));
+    const groups = [...new Set(normal.map(g => g.items[0].group))];
+    const relevant = M.state.pantry.length ? M.matches().filter(x => x.match.mainAvailable > 0).slice(0, 2) : [];
+    return `${M.header('家里的食材', '', '<button class="primary-button compact-button" data-action="pantry-add">' + M.icon('plus') + '添加</button>')}${M.cloud?.pantryStatus() || ''}${M.ui.pantryUndo ? '<button class="inventory-undo" data-action="pantry-undo">已标记用完 · 撤销</button>' : ''}${inventory.length ? `<div class="inventory-overview"><span><strong>${inventory.length}</strong> 项食材</span><a href="#browse?match=1">去选菜 ${M.icon('arrow')}</a></div>${priority.length ? '<section class="inventory-section priority-section"><div class="section-heading"><h2>优先用掉</h2><span class="count-label">' + priority.length + ' 项</span></div>' + priority.map(M.inventoryRow).join('') + '</section>' : ''}${groups.map(group => group === '调味与香草' ? `<details class="inventory-section seasoning-section"><summary><span>常备调味</span><small>${normal.filter(g => g.items[0].group === group).length} 项</small>${M.icon('chevron')}</summary>${normal.filter(g => g.items[0].group === group).map(M.inventoryRow).join('')}</details>` : `<section class="inventory-section"><div class="section-heading"><h2>${e(group)}</h2></div>${normal.filter(g => g.items[0].group === group).map(M.inventoryRow).join('')}</section>`).join('')}` : '<div class="pantry-first-note"><span>' + M.icon('pantry') + '</span><h2>记下家里已有的食材</h2><p>选几样常用的，就能开始帮你选菜。</p></div><section class="pantry-inline-add">' + M.viewPantryAdd() + '</section>'}${relevant.length ? '<section class="pantry-recommendation"><div class="section-heading"><h2>现在可以考虑做</h2><a class="text-link" href="#browse?match=1">更多 ' + M.icon('chevron') + '</a></div><div class="recipe-grid">' + relevant.map(x => M.card(x.recipe, x.match)).join('') + '</div></section>' : ''}`;
   };
   M.shoppingGroups = () => {
     const groups = new Map();
@@ -82,14 +94,18 @@
     return [...groups.values()];
   };
   M.viewShopping = () => {
-    const count = M.state.shopping.length;
-    const done = M.state.shopping.filter(x => x.done).length;
-    const grouped = M.shoppingGroups();
-    const groups = [...new Set(grouped.map(x => x.group))];
+    const count = M.state.shopping.length, done = M.state.shopping.filter(x => x.done).length;
+    const grouped = M.shoppingGroups(), groups = [...new Set(grouped.map(x => x.group))];
     const actions = `<span class="header-actions"><button class="icon-button" data-action="shopping-custom" aria-label="添加采购食材">${M.icon('plus')}</button><button class="icon-button" data-action="shopping-menu" aria-label="清单管理">${M.icon('more')}</button></span>`;
-    return `${M.header('采购清单', '', actions)}${count ? `<div class="shopping-toolbar"><div class="shopping-progress">已买 ${done} / ${count} 项<div class="progress-track"><span style="width:${done / count * 100}%"></span></div></div></div><div class="shopping-groups">${groups.map(group => `<section class="shopping-group"><h2>${e(group)}<small>${grouped.filter(x => x.group === group).length} 种</small></h2>${grouped.filter(x => x.group === group).map(x => { const checked = x.items.every(i => i.done); const key = encodeURIComponent(x.group + '|' + x.name); return `<div class="shopping-row ${checked ? 'done' : ''}"><input type="checkbox" data-shopping="${key}" aria-label="${e(x.name)}已买" ${checked ? 'checked' : ''}><div class="shopping-item-copy"><span class="shopping-item-name">${e(x.name)}</span>${x.items.map(i => `<span class="shopping-item-amount">${e(i.raw)}</span>${i.recipeId ? `<a class="shopping-item-source" href="#recipe/${i.recipeId}">${e(M.getRecipe(i.recipeId).title)}</a>` : ''}`).join('')}</div><button class="icon-button" data-action="shopping-remove" data-key="${key}" aria-label="删除${e(x.name)}">${M.icon('close')}</button></div>`; }).join('')}</section>`).join('')}</div>` : M.empty('shopping', '先选一道想吃的菜', '菜谱里的缺料可以直接加入清单。')}`;
+    const itemRow = x => {
+      const checked = x.items.every(i => i.done), key = encodeURIComponent(x.group + '|' + x.name);
+      const details = x.items.map(i => `<span class="shopping-item-amount">${e(i.raw)}</span>${i.recipeId ? `<a class="shopping-item-source" href="#recipe/${i.recipeId}">${e(M.getRecipe(i.recipeId).title)}</a>` : ''}`).join('');
+      return `<div class="shopping-row ${checked ? 'done' : ''}"><input type="checkbox" data-shopping="${key}" aria-label="${e(x.name)}已买" ${checked ? 'checked' : ''}><div class="shopping-item-copy"><span class="shopping-item-name">${e(M.ingredientLabel(x.name))}</span>${x.items.length > 1 ? `<details class="shopping-sources"><summary>${x.items.length} 项用量明细</summary>${details}</details>` : details}</div><button class="icon-button" data-action="shopping-remove" data-key="${key}" aria-label="删除${e(x.name)}">${M.icon('close')}</button></div>`;
+    };
+    return `${M.header('采购清单', '', actions)}${count ? `<div class="shopping-toolbar"><div class="shopping-progress">已买 ${done} / ${count} 项<div class="progress-track"><span style="width:${done / count * 100}%"></span></div></div></div>${done ? '<button class="primary-button block-button shopping-stock-button" data-action="shopping-to-pantry">' + M.icon('pantry') + '将已购食材入库</button>' : ''}<div class="shopping-groups">${groups.map(group => `<section class="shopping-group"><h2>${e(group)}<small>${grouped.filter(x => x.group === group).length} 种</small></h2>${grouped.filter(x => x.group === group).map(itemRow).join('')}</section>`).join('')}</div>` : M.empty('shopping', '先选一道想吃的菜', '菜谱里的缺料可以直接加入清单。')}`;
   };
   M.render = () => {
+    if (M.cloud && !M.cloud.canEnter()) return M.cloud.renderGate();
     const route = M.route();
     const main = document.getElementById('main');
     main.dataset.view = route.path;

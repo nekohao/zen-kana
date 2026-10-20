@@ -352,3 +352,94 @@ body{padding-bottom:0;overscroll-behavior-y:none}
 .ingredient-disclosure-body{padding-top:10px}
 .stock-entry{display:inline-flex;align-items:center;min-height:36px;margin-bottom:8px;color:var(--green);font-size:12px}
 .ingredient-disclosure>summary:focus-visible{outline:3px solid #7c9b6f;outline-offset:3px;border-radius:8px}
+
+/* Anchored phone chrome with one shared bottom inset for every floating control. */
+:root{--nav-height:60px;--nav-bottom:max(6px,calc(var(--safe-bottom) - 12px));--top-height:calc(72px + env(safe-area-inset-top,0px))}
+html{scroll-padding-top:calc(var(--top-height) + 16px)}
+.app-shell{padding-bottom:calc(var(--nav-height) + var(--nav-bottom) + 24px)}
+.topbar{position:sticky;top:0;z-index:40;height:var(--top-height);margin-inline:-22px;padding:env(safe-area-inset-top,0px) 22px 0;margin-bottom:18px;background:var(--bg);border-bottom:0}
+.topbar:after{content:"";position:absolute;bottom:0;left:22px;right:22px;height:1px;background:linear-gradient(90deg,transparent,var(--line) 9%,var(--green) 50%,var(--line) 91%,transparent);opacity:.4}
+.tabbar{height:calc(var(--nav-height) + var(--nav-bottom));min-height:0;padding:0 12px var(--nav-bottom)}
+.tabbar .nav-link{min-height:var(--nav-height);padding:4px 0 3px;gap:4px}
+.tabbar .nav-link.active:before{top:5px}
+.detail-content>.detail-actions.sticky-cook{bottom:calc(var(--nav-height) + var(--nav-bottom) + 8px)}
+.toast{bottom:calc(var(--nav-height) + var(--nav-bottom) + 13px)}
+@media(max-width:370px){.topbar{margin-inline:-17px;padding-inline:17px}.topbar:after{left:17px;right:17px}}
+.cloud-status-entry{display:flex;align-items:center;gap:8px;width:100%;padding:0 2px 16px;color:var(--green);font-size:12px;text-align:left}
+.cloud-status-entry small{margin-left:auto;color:var(--muted);font-size:10px}
+.cloud-status-entry svg{width:14px;height:14px}
+.cloud-dot{width:5px;height:5px;background:var(--green);border-radius:50%;flex:none}
+.family-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.family-heading strong{font-size:18px}.family-heading>span{font-size:11px;color:var(--muted)}
+.family-label{display:block;font-size:12px;color:var(--muted);margin:20px 0 8px}
+.family-input,.family-code{display:block;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);padding:13px 12px;color:var(--ink);font:inherit;font-size:16px;min-height:48px;margin-bottom:12px}
+.family-code{font-size:12px;font-family:ui-monospace,monospace;letter-spacing:.3px;text-align:center}
+.family-divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:11px;margin-top:27px}
+.family-divider:before,.family-divider:after{content:"";height:1px;background:var(--line);flex:1}
+.family-manage{margin-top:20px}.family-error{font-size:12px;line-height:1.75;color:var(--missing);padding:12px;background:var(--missing-soft);border-radius:10px;margin-top:15px}
+.settings-row>small{font-size:11px;color:var(--muted);margin-left:auto;margin-right:8px}
+
+/* Shared kitchen: quieter inventory, readable quantities, and a single entry screen. */
+.access-locked .topbar,.access-locked .tabbar,.access-locked #update-notice{display:none}
+.access-locked .app-shell{padding-bottom:0}
+.access-screen{min-height:100dvh;padding:calc(32px + env(safe-area-inset-top,0px)) 0 calc(24px + var(--safe-bottom));display:flex;flex-direction:column;justify-content:center}
+.access-brand{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--green);font-family:"Mediterranean Script",cursive;font-size:43px;line-height:1.4}
+.access-brand .brand-emblem{width:27px;height:36px}
+.access-welcome{padding:36px 0 28px;text-align:center}
+.access-welcome .eyebrow{display:block;font-size:10px;letter-spacing:2.2px;margin-bottom:15px}
+.access-welcome h1{font-size:29px;letter-spacing:-.6px;font-weight:650}
+.access-welcome p{font-size:14px;color:var(--muted);margin-top:12px}
+.access-card{padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:20px}
+.access-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--surface-2);border-radius:12px}
+.access-tabs button{min-height:42px;border-radius:9px;font-size:14px;color:var(--muted)}
+.access-tabs button[aria-pressed=true]{background:var(--surface);color:var(--green);box-shadow:0 2px 8px #1725180a;font-weight:600}
+.access-card .family-label{margin-top:24px;font-size:13px}
+.access-card .family-input{background:var(--bg);margin-bottom:20px}
+.access-card .primary-button{min-height:50px}
+.access-note,.access-footnote{font-size:12px;line-height:1.8;color:var(--muted);text-align:center;margin-top:18px}
+.access-footnote{margin-top:24px}.access-backup{justify-content:center;margin-top:10px}
+.invite-input{font-family:ui-monospace,monospace;letter-spacing:1px}
+.invite-panel{padding:18px;border-radius:16px;background:var(--surface);border:1px solid var(--line);margin-top:24px}
+.invite-panel .section-heading{margin:0 0 14px}.invite-panel .family-code{font-size:17px;letter-spacing:1px;user-select:all}
+.invite-meta{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:12px;gap:8px}
+.quiet-tag,.priority-tag{display:inline-flex;align-items:center;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--green-soft);color:var(--green);white-space:nowrap}
+.priority-tag{background:var(--warm);color:var(--amber)}
+.compact-button{min-height:42px;padding:9px 13px;font-size:14px;border-radius:12px;flex:none}
+.inventory-overview{display:flex;align-items:center;justify-content:space-between;border-block:1px solid var(--line);padding:17px 0 18px;font-size:14px;color:var(--muted);gap:12px}
+.inventory-overview strong{font-size:26px;font-weight:600;color:var(--ink);margin-right:3px;font-variant-numeric:tabular-nums}
+.inventory-overview a{display:flex;align-items:center;gap:7px;color:var(--green);min-height:44px}
+.inventory-overview a svg{width:17px;height:17px}
+.inventory-section{margin-top:25px}.inventory-section .section-heading{margin:0 0 6px}
+.inventory-section .section-heading h2{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:.5px}
+.inventory-row{display:flex;align-items:center;gap:10px;min-height:65px;border-bottom:1px solid var(--line)}
+.inventory-copy{min-width:0;flex:1;padding:13px 0}.inventory-copy strong{font-size:16px;font-weight:500;line-height:1.6;display:block}
+.inventory-copy small{display:block;font-size:12px;color:var(--muted);line-height:1.7;margin-top:3px}
+.inventory-row .icon-button{width:44px;height:44px;color:var(--muted);margin-right:-8px}
+.priority-section{background:var(--warm);border-radius:16px;padding:17px 15px 5px}.priority-section .inventory-row:last-child{border-bottom:0}
+.priority-section .section-heading h2{color:var(--amber)}.priority-section .priority-tag{display:none}
+.seasoning-section>summary{display:flex;align-items:center;gap:10px;list-style:none;min-height:50px;cursor:pointer;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line)}
+.seasoning-section>summary::-webkit-details-marker{display:none}.seasoning-section>summary small{margin-left:auto;font-size:12px}
+.seasoning-section>summary svg{width:15px;height:15px;transform:rotate(90deg)}.seasoning-section[open]>summary svg{transform:rotate(-90deg)}
+.inventory-undo{display:block;padding:13px 0;min-height:44px;font-size:14px;color:var(--green)}
+.pantry-first-note{padding:27px 0 24px}.pantry-first-note>span{display:grid;place-items:center;width:44px;height:44px;background:var(--green-soft);color:var(--green);border-radius:13px;margin-bottom:16px}
+.pantry-first-note h2{font-size:20px;font-weight:600}.pantry-first-note p{font-size:14px;color:var(--muted);margin-top:8px}
+.pantry-inline-add{padding-top:4px}.catalog-tabs{flex-wrap:nowrap;overflow-x:auto;margin:15px -1px 20px;padding:0 1px 7px;scrollbar-width:none;overscroll-behavior-x:contain}
+.catalog-tabs::-webkit-scrollbar{display:none}.catalog-tabs .chip{flex:none;border:0;background:transparent;font-size:13px;min-height:44px;padding-inline:12px}
+.catalog-tabs .chip.active{background:var(--green);color:var(--bg)}
+.ingredient-chip{font-size:14px;min-height:44px;padding:10px 13px;border-radius:12px;gap:7px;line-height:1.5}
+.pantry-chips{gap:9px}.ingredient-chip svg{width:15px;height:15px}
+.family-choice small{font-size:12px;color:var(--green)}.family-choice>svg{width:12px;height:12px;margin-left:2px;color:var(--muted)}
+.family-choices{display:grid;grid-template-columns:1fr}.family-choices .ingredient-chip{justify-content:flex-start;min-height:50px}
+.family-choices+.text-link{margin-top:20px}.pantry-manage-row{display:flex;flex-wrap:wrap;gap:10px;padding:14px 0 22px;border-bottom:1px solid var(--line)}
+.pantry-manage-row:last-child{border-bottom:0}.pantry-manage-row strong{width:100%;font-size:17px;font-weight:550;margin-bottom:3px}
+.pantry-manage-row .text-link{font-size:14px;min-height:44px;padding-inline:10px}.is-priority{color:var(--amber);background:var(--warm)}
+.recipe-card h3{font-size:14px;line-height:1.55}.recipe-meta{font-size:12px}.match-label{font-size:12px;padding:4px 7px;line-height:1.6}
+.ingredient-status-row .ingredient-text,.ingredient-row{font-size:14px}.stock-badge,.optional-badge,.stock-summary{font-size:12px}
+.step-list li{font-size:15px;line-height:1.9}.step-note,.step-checkpoint{font-size:13px}.small-note{font-size:13px}
+.shopping-item-name{font-size:16px}.shopping-item-amount{font-size:14px}.shopping-item-source{font-size:12px}
+.shopping-group h2{font-size:14px}.shopping-row{gap:12px;align-items:flex-start;padding-block:5px}.shopping-row>input{margin-top:18px}
+.shopping-row>.icon-button{margin-top:6px;min-width:44px;min-height:44px}.shopping-sources summary{font-size:13px;min-height:36px;padding-top:6px;color:var(--muted);cursor:pointer}
+.shopping-stock-button{margin-bottom:20px}.shopping-sources[open]{padding-bottom:8px}.settings-row{font-size:15px;min-height:56px}
+.settings-row>small{font-size:12px}.tabbar .nav-link{font-size:11px}.resume-link{margin:0 0 21px;padding:14px 0;border-bottom:1px solid var(--line);border-top:0}
+.resume-link strong{font-size:14px}.resume-link small{font-size:12px}.update-notice{top:auto;bottom:calc(var(--nav-height) + var(--nav-bottom) + 14px);white-space:normal;width:calc(100% - 34px);max-width:446px;justify-content:space-between;padding:10px 14px}
+@media(max-width:370px){.access-brand{font-size:37px}.access-card{padding:17px}.access-welcome h1{font-size:27px}.ingredient-chip{padding-inline:11px}.inventory-copy strong{font-size:15px}}

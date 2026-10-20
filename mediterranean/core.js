@@ -5,20 +5,48 @@
   if (!data) return;
   const M = window.Med = { data, recipes: data.recipes, categories: data.categories };
   const KEY = 'mediterranean.v1';
-  const defaults = () => ({ version: 1, favorites: [], pantry: [], priority: [], shopping: [], progress: {}, recent: [], theme: 'system', timer: null });
+  const defaults = () => ({ version: 1, favorites: [], pantry: [], priority: [], localPantry: null, shopping: [], progress: {}, recent: [], theme: 'system', timer: null });
   const validIds = new Set(M.recipes.map(r => r.id));
   M.esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   M.normalize = value => String(value).trim().toLowerCase().replace(/\s+/g, '').replace(/西红柿/g, '番茄').replace(/马铃薯/g, '土豆');
+  const catalog = window.MEDITERRANEAN_INGREDIENTS;
+  const ingredientAliases = catalog.aliases;
+  M.canonicalIngredient = value => { const name = String(value).trim(); return ingredientAliases[name] || name; };
+  M.uniqueIngredients = names => [...new Set(names.map(M.canonicalIngredient).filter(Boolean))];
+  M.ingredientLabel = name => name === '甜椒' ? '甜椒（彩椒）' : name;
+  M.searchIngredient = (name, query) => {
+    const canonical = M.canonicalIngredient(name);
+    const family = catalog.families.find(f => f.members.includes(canonical));
+    return [canonical, ...(catalog.searchTerms[canonical] || []), family?.name || '', ...(family?.terms || []), ...Object.keys(ingredientAliases).filter(alias => ingredientAliases[alias] === canonical)].some(term => M.normalize(term).includes(M.normalize(query)));
+  };
+  const catalogGroups = { '干百里香': '调味与香草', '土豆': '蔬菜水果', '四季豆': '蔬菜水果' };
+  M.ingredients = [...new Map(data.ingredients.map(i => { const name = M.canonicalIngredient(i.name); return [name, { ...i, name, group: catalogGroups[name] || i.group }]; })).values()];
+  M.ingredientGroup = (name, fallback = '其他') => M.ingredients.find(i => i.name === M.canonicalIngredient(name))?.group || fallback;
+  M.catalogFamilies = catalog.families;
+  M.groupCatalog = list => {
+    const grouped = new Map();
+    for (const item of list) {
+      const family = catalog.families.find(f => f.members.includes(item.name));
+      const key = family?.name || item.name;
+      if (!grouped.has(key)) grouped.set(key, { name: key, family, items: [] });
+      grouped.get(key).items.push(item);
+    }
+    return [...grouped.values()];
+  };
   M.validate = input => {
     if (!input || input.version !== 1 || typeof input !== 'object') throw Error('不是有效的 Mediterranean 备份');
     const out = defaults();
     const strings = v => Array.isArray(v) ? [...new Set(v.filter(x => typeof x === 'string' && x.length < 100))].slice(0, 500) : [];
     out.favorites = strings(input.favorites).filter(x => validIds.has(x));
     out.recent = strings(input.recent).filter(x => validIds.has(x)).slice(0, 10);
-    out.pantry = strings(input.pantry).map(x => x.trim()).filter(Boolean);
-    out.priority = strings(input.priority).filter(x => out.pantry.includes(x));
+    out.pantry = M.uniqueIngredients(strings(input.pantry));
+    out.priority = M.uniqueIngredients(strings(input.priority)).filter(x => out.pantry.includes(x));
+    if (input.localPantry && typeof input.localPantry === 'object') {
+      const pantry = M.uniqueIngredients(strings(input.localPantry.pantry));
+      out.localPantry = { pantry, priority: M.uniqueIngredients(strings(input.localPantry.priority)).filter(x => pantry.includes(x)) };
+    }
     out.theme = ['system', 'light', 'dark'].includes(input.theme) ? input.theme : 'system';
-    if (Array.isArray(input.shopping)) out.shopping = input.shopping.filter(x => x && typeof x.key === 'string' && x.key.length < 200 && typeof x.name === 'string' && x.name.length < 100 && typeof x.raw === 'string' && x.raw.length < 300 && (x.recipeId == null || validIds.has(x.recipeId))).slice(0, 1500).map(x => ({ key: x.key, name: x.name, raw: x.raw, group: typeof x.group === 'string' ? x.group.slice(0, 40) : '其他', recipeId: x.recipeId || null, done: Boolean(x.done) }));
+    if (Array.isArray(input.shopping)) out.shopping = input.shopping.filter(x => x && typeof x.key === 'string' && x.key.length < 200 && typeof x.name === 'string' && x.name.length < 100 && typeof x.raw === 'string' && x.raw.length < 300 && (x.recipeId == null || validIds.has(x.recipeId))).slice(0, 1500).map(x => ({ key: x.key, name: M.canonicalIngredient(x.name), raw: x.raw, group: typeof x.group === 'string' ? x.group.slice(0, 40) : '其他', recipeId: x.recipeId || null, done: Boolean(x.done) }));
     for (const [id, p] of Object.entries(input.progress || {})) if (validIds.has(id) && p && Number.isInteger(p.step) && p.step >= 0 && p.step < 100) out.progress[id] = { step: p.step };
     if (input.timer && validIds.has(input.timer.recipeId) && Number.isFinite(input.timer.deadline) && input.timer.deadline > Date.now() - 86400000 && input.timer.deadline < Date.now() + 86400000) out.timer = { recipeId: input.timer.recipeId, deadline: input.timer.deadline, step: Number(input.timer.step) || 0 };
     return out;
@@ -27,15 +55,19 @@
   catch { M.state = defaults(); }
   M.ui = { pageSize: 16, limit: 16, limits: {}, filterGroup: '常用', pantryQuery: '', prepared: {}, ingredientCollapsed: {}, positions: {}, route: '', lastBrowse: '#home', cook: null, modal: null, offline: { ready: false, images: 0 }, focusReturn: null };
   M.save = () => {
+    M.state.pantry = M.uniqueIngredients(M.state.pantry);
+    M.state.priority = M.uniqueIngredients(M.state.priority).filter(name => M.state.pantry.includes(name));
+    M.state.shopping.forEach(item => { item.name = M.canonicalIngredient(item.name); item.group = M.ingredientGroup(item.name, item.group); });
     try { localStorage.setItem(KEY, JSON.stringify(M.state)); }
     catch { if (!M.ui.storageWarned) { M.ui.storageWarned = true; M.toast('本机存储不可用，建议导出备份'); } }
     M.updateNav?.();
+    M.cloud?.localChanged();
   };
   M.getRecipe = id => M.recipes.find(r => r.id === String(id));
   M.getCategory = id => M.categories.find(c => c.id === id);
   M.isFavorite = id => M.state.favorites.includes(String(id));
   M.hasIngredient = ing => {
-    const available = value => value === '水' || M.state.pantry.some(x => M.normalize(x) === M.normalize(value));
+    const available = value => value === '水' || M.state.pantry.some(x => M.normalize(M.canonicalIngredient(x)) === M.normalize(M.canonicalIngredient(value)));
     return ing.all ? ing.options.every(available) : ing.options.some(available);
   };
   M.match = r => {
@@ -46,10 +78,10 @@
     const mainAvailable = main.length - missingMain.length;
     const mainCoverage = main.length ? mainAvailable / main.length : 0;
     const coverage = required.length ? (required.length - missing.length) / required.length : 0;
-    const priority = required.filter(i => i.options.some(x => M.state.priority.includes(x))).length;
+    const priority = required.filter(i => i.options.some(x => M.state.priority.includes(M.canonicalIngredient(x)))).length;
     return { missing, missingMain, priority, mainAvailable, mainCoverage, coverage, ready: missing.length === 0, total: required.length };
   };
-  M.compareMatches = (a, b) => Number(b.ready) - Number(a.ready) || b.mainCoverage - a.mainCoverage || b.coverage - a.coverage || b.priority - a.priority || a.missingMain.length - b.missingMain.length || a.missing.length - b.missing.length;
+  M.compareMatches = (a, b) => Number(b.ready) - Number(a.ready) || b.mainCoverage - a.mainCoverage || b.priority - a.priority || b.coverage - a.coverage || a.missingMain.length - b.missingMain.length || a.missing.length - b.missing.length;
   M.matches = () => M.recipes.map(r => ({ recipe: r, match: M.match(r) })).sort((a, b) => M.compareMatches(a.match, b.match) || Number(a.recipe.id) - Number(b.recipe.id));
   M.ingredientTerms = ingredient => {
     const terms = ingredient.options.flatMap(name => [name, name.replace(/^(?:原味|无糖|低脂|熟|干|生)+/g, '')]);
@@ -72,7 +104,8 @@
     return plan.map(step => ({ ...step, ingredients: r.ingredients.filter(i => !i.seasoning && M.ingredientTerms(i).some(term => step.text.includes(term))).slice(0, 4) }));
   };
   M.matchLabel = match => {
-    if (match.ready) return '食材已齐';
+    if (match.ready) return '食材已登记齐全';
+    if (!match.missingMain.length) return `主料齐 · 缺 ${match.missing.length} 味调料`;
     const missing = match.missingMain.length ? match.missingMain : match.missing;
     return '缺 ' + missing.slice(0, 2).map(i => i.name).join('、') + (match.missing.length > Math.min(missing.length, 2) ? '等' : '');
   };

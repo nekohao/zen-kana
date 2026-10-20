@@ -1,7 +1,7 @@
 /* Change this version whenever any deployed file changes. */
 const PREFIX = 'mediterranean:' + self.registration.scope + ':';
-const VERSION = PREFIX + 'v1.3.0';
-const CORE = ['./', './index.html', './styles.css', './recipes.js', './core.js', './views.js', './app.js', './manifest.webmanifest', './asset-manifest.json', './assets/icon.svg', './assets/brand-mark.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/apple-touch-icon.png', './assets/fonts/PinyonScript-Regular.ttf'];
+const VERSION = PREFIX + 'v2.0.0';
+const CORE = ['./', './index.html', './styles.css', './recipes.js', './ingredients.js', './core.js', './views.js', './app.js', './cloud-config.js', './cloud.js', './assets/vendor/supabase-2.118.0.js', './manifest.webmanifest', './asset-manifest.json', './assets/icon.svg', './assets/brand-mark.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/apple-touch-icon.png', './assets/fonts/PinyonScript-Regular.ttf'];
 self.addEventListener('install', event => event.waitUntil((async () => {
   const response = await fetch('./asset-manifest.json', { cache: 'no-store' });
   if (!response.ok) throw new Error('Image manifest unavailable');
