@@ -7,6 +7,11 @@
   const dayKey = new Intl.DateTimeFormat("sv-SE", {timeZone:zone, year:"numeric", month:"2-digit", day:"2-digit"});
   const dayLabel = new Intl.DateTimeFormat("zh-CN", {timeZone:zone, year:"numeric", month:"long", day:"numeric"});
   const clockLabel = new Intl.DateTimeFormat("zh-CN", {timeZone:zone, hour:"2-digit", minute:"2-digit", hourCycle:"h23"});
+  const shiftDay = (day, count) => {
+    const date = new Date(day + "T00:00:00Z");
+    date.setUTCDate(date.getUTCDate()+count);
+    return date.toISOString().slice(0,10);
+  };
   const weekLabel = date => date.slice(5).split("-").map(Number).join("/");
 
   function attach({ db, state, els, ui }) {
@@ -22,7 +27,9 @@
           <div class="score-lens fat-lens"><div class="fat-value-stack" aria-live="polite">
             <span class="fat-value-label" id="fatValueLabel">体重变化</span>
             <strong class="fat-value" id="fatValue">—</strong><span class="fat-value-unit" id="fatValueUnit">公斤</span>
-            <span class="fat-home-comparison" id="fatHomeComparison" hidden></span>
+            <div class="fat-home-comparison" id="fatHomeComparison" hidden>
+              <span id="fatHomeCompareValue"></span><small id="fatHomeCompareNote" hidden></small>
+            </div>
           </div></div>
         </div>
         <div class="fat-home-actions"><button class="fat-record-button pressable" id="fatRecordBtn" hidden type="button">记录体重</button></div>
@@ -43,10 +50,12 @@
                 <div class="fat-week-detail" aria-live="polite">
                   <span id="fatChartReference"></span>
                   <strong id="fatWeekValue"></strong>
+                  <span id="fatWeekChange"></span>
                   <span id="fatWeekDates"></span>
                 </div>
                 <div class="fat-chart-wrap">
                   <canvas id="fatTrendCanvas" aria-hidden="true"></canvas>
+                  <div class="fat-point-notes" id="fatPointNotes" aria-hidden="true"></div>
                   <div class="fat-week-labels" role="group" aria-label="选择一周">${[0,1,2,3].map(index => `<button type="button" class="fat-week-button" data-fat-week="${index}" aria-pressed="false"></button>`).join("")}</div>
                 </div>
               </div>
@@ -89,6 +98,7 @@
     const sectionButtons = [...overview.querySelectorAll("[data-fat-section]")];
     const weekButtons = [...overview.querySelectorAll("[data-fat-week]")];
     let snapshot = null, weeks = [], logs = [], readError = false, logsError = false;
+    let previousLow = null, previousLowPending = false;
     let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
     let verifiedAdmin = false, verifiedUser = null, mode = null, saving = false;
     let selectedWeek = null, recordLimit = 40, trend = null;
@@ -193,7 +203,28 @@
           snapshot = {configured:data.configured, delta:hasDelta(data.delta_jin) ? Number(data.delta_jin) : null, recordedAt:data.recorded_at};
           weeks = data.weeks.map(week => ({start:week.start, end:week.end, days:Number(week.days), mean:hasDelta(week.mean) ? Number(week.mean) : null}));
           readError = false; initialized = true;
-          return true;
+          const previous = weeks[2];
+          previousLow = null;
+          if (snapshot.delta !== null && previous.mean === null && previous.days > 0) {
+            previousLowPending = true;
+            renderHome();
+            try {
+              const {data:records,error:historyError} = await db.rpc("points_fat_get_logs", {
+                p_from:previous.start+"T00:00:00+08:00",
+                p_to:shiftDay(previous.end,1)+"T00:00:00+08:00",
+                p_limit:10000
+              });
+              if (!historyError && Array.isArray(records) && version === readVersion) {
+                previousLow = records.reduce((low,record) => {
+                  if (!hasDelta(record.delta_jin)) return low;
+                  return Math.min(low ?? Infinity,Number(record.delta_jin));
+                },null);
+              }
+            } catch (_) {
+              // A failed comparison read must not hide the current weight.
+            } finally { previousLowPending = false; }
+          }
+          return version === readVersion;
         } catch (_) {
           if (version === readVersion) {
             readError = true; initialized = true;
@@ -234,7 +265,7 @@
       q("fatRecordBtn").hidden = !verifiedAdmin;
       q("fatRecordBtn").disabled = saving || !snapshot?.configured || readError;
       if (!isActive) return;
-      const delta = snapshot?.delta, hasRecord = hasDelta(delta), previous = weeks[2]?.mean;
+      const delta = snapshot?.delta, hasRecord = hasDelta(delta), previous = weeks[2];
       q("fatValueLabel").textContent = !hasRecord ? "较起始体重" : delta < 0 ? "较起始体重轻" : delta > 0 ? "较起始体重重" : "与起始体重持平";
       q("fatValue").textContent = hasRecord ? number(delta) : "—";
       q("fatValue").style.fontSize = q("fatValue").textContent.length > 5 ? "clamp(34px,10vw,44px)" : "";
@@ -242,7 +273,13 @@
       q("fatValue").parentElement.classList.toggle("gain",Number(delta)>0);
       const comparison = q("fatHomeComparison");
       comparison.hidden = !hasRecord;
-      comparison.textContent = previous == null ? "上周数据不足" : comparisonText(delta - previous,"上周均重");
+      const value = q("fatHomeCompareValue"), note = q("fatHomeCompareNote");
+      note.hidden = !previous?.days || previous.mean !== null;
+      note.textContent = "不足 3 天 · 未算均重";
+      if (!hasRecord || !previous?.days) value.textContent = "上周无记录";
+      else if (previous.mean !== null) value.textContent = comparisonText(delta-previous.mean,"上周均重");
+      else if (previousLow !== null) value.textContent = comparisonText(delta-previousLow,"上周最低");
+      else value.textContent = previousLowPending ? "正在读取上周最低" : "上周最低暂未同步";
       q("fatHomeMeta").textContent = !initialized ? "正在同步体重…" : readError ? "同步失败 · 点击圆盘重试" :
         !snapshot?.configured ? (verifiedAdmin ? "请在设置中填写起始体重" : "等待设置起始体重") :
           !hasRecord ? "暂无体重记录" : "最近记录 · " + stamp(snapshot.recordedAt);
@@ -284,28 +321,39 @@
       ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
       void refresh({silent:false});
     }
-    function weeklyLows() {
-      const days = new Map();
-      const first = weeks[0].start, last = weeks[3].end, now = Date.now();
+    function trendWeeks() {
+      const oldest = weeks[0].start;
+      const previousWeek = {start:shiftDay(oldest,-7),end:shiftDay(oldest,-1)};
+      const periods = [previousWeek,...weeks];
+      const days = new Map(), now = Date.now();
       for (const record of logs) {
         const time = new Date(record.at);
         if (time.getTime() > now) continue;
         const day = dayKey.format(time);
-        if (day < first || day > last) continue;
+        if (day < previousWeek.start || day > weeks[3].end) continue;
         days.set(day,Math.min(days.get(day) ?? Infinity,record.delta));
       }
-      return weeks.map(week => {
-        let low = null;
-        for (const [day,delta] of days) {
-          if (day >= week.start && day <= week.end && (low === null || delta < low)) {
-            low = delta;
-          }
-        }
-        return low;
+      const stats = periods.map((period,index) => {
+        const values = [...days].filter(([day]) => day >= period.start && day <= period.end).map(([,delta]) => delta);
+        const low = values.length ? Math.min(...values) : null;
+        // The week before the visible chart is only available from the readings.
+        const mean = index ? period.mean : values.length >= 3 ? values.reduce((sum,value) => sum+value,0)/values.length : null;
+        return {low,mean};
+      });
+      return weeks.map((week,index) => {
+        const current = stats[index+1], previous = stats[index];
+        const reference = previous.mean ?? previous.low;
+        return {
+          low:current.low,
+          change:current.low === null || reference === null ? null : current.low-reference,
+          basis:previous.mean !== null ? "上周均重" : "上周最低"
+        };
       });
     }
-    function signedWeight(delta) {
-      return (delta < 0 ? "−" : delta > 0 ? "+" : "") + number(delta);
+    const pointFormat = new Intl.NumberFormat("zh-CN", {minimumFractionDigits:1, maximumFractionDigits:1});
+    function signedWeight(delta, compact=false) {
+      const value = compact ? pointFormat.format(Math.abs(displayWeight(delta))) : number(delta);
+      return (Number(value) === 0 ? "" : delta < 0 ? "−" : "+") + value;
     }
     function renderWeeks() {
       const failure = readError || logsError;
@@ -316,10 +364,10 @@
       q("fatProgressRetry").hidden = !failure;
       q("fatChart").hidden = !ready;
       if (!ready) return;
-      const lows = weeklyLows();
-      const latestWeek = lows.findLastIndex(value => value !== null);
+      const metrics = trendWeeks();
+      const latestWeek = metrics.findLastIndex(metric => metric.low !== null);
       const index = selectedWeek ?? (latestWeek < 0 ? 3 : latestWeek);
-      const week = weeks[index], low = lows[index];
+      const week = weeks[index], {low,change,basis} = metrics[index];
       q("fatChartReference").textContent = low === null ? "" : "较起始体重";
       q("fatWeekValue").textContent = low === null ? "无记录" : signedWeight(low);
       if (low !== null) {
@@ -327,17 +375,20 @@
         unitLabel.textContent = unitName();
         q("fatWeekValue").append(unitLabel);
       }
+      q("fatWeekChange").textContent = low === null ? "" : change === null ? "上周无记录" :
+        "较"+basis+" "+signedWeight(change)+" "+unitName();
       q("fatWeekDates").textContent = weekLabel(week.start) + "–" + weekLabel(week.end) +
         (index === 3 ? " · 本周" : "") + (low === null ? "" : " · 记录 " + week.days + " 天");
       weekButtons.forEach((button,i) => {
-        const period = weeks[i], value = lows[i];
+        const period = weeks[i], {low:value,change,basis} = metrics[i];
         button.textContent = i === 3 ? "本周" : weekLabel(period.start);
         button.classList.toggle("no-record",value === null);
         button.setAttribute("aria-pressed",String(index === i));
         button.setAttribute("aria-label",weekLabel(period.start) + "至" + weekLabel(period.end) + "，" +
-          (value === null ? "无记录" : "最低体重" + comparisonText(value,"起始体重")));
+          (value === null ? "无记录" : "最低体重" + comparisonText(value,"起始体重") +
+            (change === null ? "，上周无记录" : "，" + comparisonText(change,basis))));
       });
-      trend = {lows,index};
+      trend = {metrics,index};
       laterDraw();
     }
     function drawTrend() {
@@ -348,10 +399,12 @@
       canvas.width = Math.round(width*dpr);
       canvas.height = Math.round(height*dpr);
       const ctx = canvas.getContext("2d");
-      if (!ctx || trend.lows.every(value => value === null)) return;
+      const notes = q("fatPointNotes");
+      notes.replaceChildren();
+      if (!ctx || trend.metrics.every(metric => metric.low === null)) return;
       ctx.setTransform(dpr,0,0,dpr,0,0);
 
-      const values = trend.lows.map(value => value === null ? null : displayWeight(value));
+      const values = trend.metrics.map(({low}) => low === null ? null : displayWeight(low));
       const measured = values.filter(value => value !== null);
       const min = Math.min(...measured), max = Math.max(...measured);
       const interval = Math.max((max-min)/2, unit === "kg" ? 0.2 : 0.4);
@@ -363,7 +416,7 @@
       const left = plotInset();
       const plotWidth = width - left;
       const x = index => left + (index+0.5)*plotWidth/4;
-      const y = value => 10 + (top-value)*(height-20)/(top-bottom);
+      const y = value => 42 + (top-value)*(height-52)/(top-bottom);
 
       ctx.font = "11px system-ui";
       ctx.textBaseline = "middle";
@@ -400,6 +453,19 @@
         ctx.fillStyle = selected ? "#305a46" : "#fff";
         ctx.beginPath(); ctx.arc(x(index),y(value),selected ? 4 : 3,0,Math.PI*2);
         ctx.fill(); ctx.stroke();
+        const {low,change} = trend.metrics[index];
+        const note = document.createElement("div");
+        note.className = "fat-point-note";
+        note.classList.toggle("selected",selected);
+        // Give each label its own column so adjacent weeks also fit on narrow screens.
+        note.style.left = left+index*plotWidth/4+"px";
+        note.style.width = plotWidth/4+"px";
+        note.style.top = y(value)-10+"px";
+        const start = document.createElement("span"), last = document.createElement("span");
+        start.textContent = "起始 " + signedWeight(low,true);
+        last.textContent = "上周 " + (change === null ? "—" : signedWeight(change,true));
+        note.append(start,last);
+        notes.append(note);
       });
     }
     function renderRecords() {
