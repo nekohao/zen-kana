@@ -316,11 +316,6 @@
       renderOverview();
       scroller.scrollTop = scrollBySection[section];
     }
-    function activate() {
-      state.activeMetric = "fat";
-      ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
-      void refresh({silent:false});
-    }
     function trendWeeks() {
       const oldest = weeks[0].start;
       const previousWeek = {start:shiftDay(oldest,-7),end:shiftDay(oldest,-1)};
@@ -702,6 +697,6 @@
     window.addEventListener("resize",resizeOverview,{passive:true});
     window.visualViewport?.addEventListener("resize",resizeOverview,{passive:true});
     syncUnits(); adminRendered(); renderHome();
-    return { activate, refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight };
+    return { refresh, renderHome, renderOverview, adminRendered, draw:laterDraw, chooseSection, loadLogs, peekHeight };
   }
 })();

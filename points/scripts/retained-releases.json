@@ -3,6 +3,220 @@
   "releases": [
     {
       "schema": 2,
+      "build": "20261114.5",
+      "updatedAt": "11/14/2026 14:47:53",
+      "shell": {
+        "url": "assets/shell.2a339b9ea685b6d6630335422b0d5a926d32e966e899095d34ad8b1a27f39bf1.html",
+        "sha256": "2a339b9ea685b6d6630335422b0d5a926d32e966e899095d34ad8b1a27f39bf1",
+        "bytes": 72133
+      },
+      "assets": [
+        {
+          "url": "assets/base-0.ad60b5967ee477c8cdb343a6f24c31d523424b80e481dd3668ff189b22dd5c32.css",
+          "sha256": "ad60b5967ee477c8cdb343a6f24c31d523424b80e481dd3668ff189b22dd5c32",
+          "bytes": 139864
+        },
+        {
+          "url": "assets/fat-loss.bd8d147828c261cdc3e4f98f73ffa06bdb6ee2f3fe337a0b4f1b658e424ce332.css",
+          "sha256": "bd8d147828c261cdc3e4f98f73ffa06bdb6ee2f3fe337a0b4f1b658e424ce332",
+          "bytes": 8955
+        },
+        {
+          "url": "assets/ui-theme.57ffa1957c1a7cc94667596ff0bc0d1b97bb4a3abb0cdb54549b3c820b4328d3.css",
+          "sha256": "57ffa1957c1a7cc94667596ff0bc0d1b97bb4a3abb0cdb54549b3c820b4328d3",
+          "bytes": 34839
+        },
+        {
+          "url": "assets/kitchen.eab0628b6cf54140865e4731398a4049cd61c82349af2fa5aaccc8390df60769.css",
+          "sha256": "eab0628b6cf54140865e4731398a4049cd61c82349af2fa5aaccc8390df60769",
+          "bytes": 15256
+        },
+        {
+          "url": "assets/web-push.1f1701da9d0da20484c15dd65acfb70ead5f8e4e2703fd0cba427badcdcfaa37.css",
+          "sha256": "1f1701da9d0da20484c15dd65acfb70ead5f8e4e2703fd0cba427badcdcfaa37",
+          "bytes": 243
+        },
+        {
+          "url": "assets/device-access.2f06de69f7f1324288b88ce16963b2751400d234b0821b8c689ec7245bba71f3.css",
+          "sha256": "2f06de69f7f1324288b88ce16963b2751400d234b0821b8c689ec7245bba71f3",
+          "bytes": 3674
+        },
+        {
+          "url": "assets/notifications.436560be1014bff8c04a73a772358ba9ca62e373e6d87226b71a8ff397d1b666.css",
+          "sha256": "436560be1014bff8c04a73a772358ba9ca62e373e6d87226b71a8ff397d1b666",
+          "bytes": 7264
+        },
+        {
+          "url": "assets/kitchen-refined.ce3fdd7753249d750d4ee758dbc6645904534191fc4d0233b8c70252d919d6b5.css",
+          "sha256": "ce3fdd7753249d750d4ee758dbc6645904534191fc4d0233b8c70252d919d6b5",
+          "bytes": 17914
+        },
+        {
+          "url": "assets/family.d1410d5af668472cbb3044e5613fd4c6008edb23fe9b388c7cfe038f54bbf54b.css",
+          "sha256": "d1410d5af668472cbb3044e5613fd4c6008edb23fe9b388c7cfe038f54bbf54b",
+          "bytes": 8596
+        },
+        {
+          "url": "assets/runtime.9ff3d36c86a76f26dddf2817fb4367741e4cf97d5086177d017a39b17d49bfa7.js",
+          "sha256": "9ff3d36c86a76f26dddf2817fb4367741e4cf97d5086177d017a39b17d49bfa7",
+          "bytes": 7014
+        },
+        {
+          "url": "assets/sdk.6ad64025ae473efe44c6f36e8f0f69bdb06855e856ba8ebc8fe470dba6e6ddd9.js",
+          "sha256": "6ad64025ae473efe44c6f36e8f0f69bdb06855e856ba8ebc8fe470dba6e6ddd9",
+          "bytes": 218048
+        },
+        {
+          "url": "assets/gestures.047b6eeb90a1a471e0d68c5e9f2ef2c270355c26b6e9c08abd5d3a636c6f12bb.js",
+          "sha256": "047b6eeb90a1a471e0d68c5e9f2ef2c270355c26b6e9c08abd5d3a636c6f12bb",
+          "bytes": 4138
+        },
+        {
+          "url": "assets/family.03a05f3291f0c4c06e1fde7607db8ed072f36366dc505dd8d8ceff650afbb6a8.js",
+          "sha256": "03a05f3291f0c4c06e1fde7607db8ed072f36366dc505dd8d8ceff650afbb6a8",
+          "bytes": 32633
+        },
+        {
+          "url": "assets/fat.a24fe838b6347acebd700783584925431f29a5dff4b1eb4585b3ff37ce01e5a7.js",
+          "sha256": "a24fe838b6347acebd700783584925431f29a5dff4b1eb4585b3ff37ce01e5a7",
+          "bytes": 43087
+        },
+        {
+          "url": "assets/access.479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a.js",
+          "sha256": "479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a",
+          "bytes": 14826
+        },
+        {
+          "url": "assets/push.f7c34d67adb87a7e89774741f82953483dd1f7534d830fbed0f865297305fe80.js",
+          "sha256": "f7c34d67adb87a7e89774741f82953483dd1f7534d830fbed0f865297305fe80",
+          "bytes": 17179
+        },
+        {
+          "url": "assets/notifications.9a1ef80eecf71274cdbd74b39691433adb6cd26810cf9d3621d2067fec0a3b76.js",
+          "sha256": "9a1ef80eecf71274cdbd74b39691433adb6cd26810cf9d3621d2067fec0a3b76",
+          "bytes": 19555
+        },
+        {
+          "url": "assets/app.f286ecc253828204b1c32aafce3c47ac8dc548b025aef44b4b045dfb64603b8a.js",
+          "sha256": "f286ecc253828204b1c32aafce3c47ac8dc548b025aef44b4b045dfb64603b8a",
+          "bytes": 231563
+        },
+        {
+          "url": "assets/theme.7a2eb085133dcadf3020b8aa94162937e1a78acdea17f2df9a500ac19f12a8c1.js",
+          "sha256": "7a2eb085133dcadf3020b8aa94162937e1a78acdea17f2df9a500ac19f12a8c1",
+          "bytes": 6722
+        }
+      ]
+    },
+    {
+      "schema": 2,
+      "build": "20261114.4",
+      "updatedAt": "11/14/2026 14:28:06",
+      "shell": {
+        "url": "assets/shell.d5c94ee32f09618c1c1edfa2a087ed6d8b4e8a216158eec05f992560a3e7d98d.html",
+        "sha256": "d5c94ee32f09618c1c1edfa2a087ed6d8b4e8a216158eec05f992560a3e7d98d",
+        "bytes": 72133
+      },
+      "assets": [
+        {
+          "url": "assets/base-0.6acf480a01ea897f92d37c1628df6ec2160a3982d5e571dc46bc336b20a042a6.css",
+          "sha256": "6acf480a01ea897f92d37c1628df6ec2160a3982d5e571dc46bc336b20a042a6",
+          "bytes": 140391
+        },
+        {
+          "url": "assets/fat-loss.bd8d147828c261cdc3e4f98f73ffa06bdb6ee2f3fe337a0b4f1b658e424ce332.css",
+          "sha256": "bd8d147828c261cdc3e4f98f73ffa06bdb6ee2f3fe337a0b4f1b658e424ce332",
+          "bytes": 8955
+        },
+        {
+          "url": "assets/ui-theme.f2eb9f96ba30205556175ebb1d224f94e142f6a53fec8681324bd330d4ab1746.css",
+          "sha256": "f2eb9f96ba30205556175ebb1d224f94e142f6a53fec8681324bd330d4ab1746",
+          "bytes": 32383
+        },
+        {
+          "url": "assets/kitchen.eab0628b6cf54140865e4731398a4049cd61c82349af2fa5aaccc8390df60769.css",
+          "sha256": "eab0628b6cf54140865e4731398a4049cd61c82349af2fa5aaccc8390df60769",
+          "bytes": 15256
+        },
+        {
+          "url": "assets/web-push.1f1701da9d0da20484c15dd65acfb70ead5f8e4e2703fd0cba427badcdcfaa37.css",
+          "sha256": "1f1701da9d0da20484c15dd65acfb70ead5f8e4e2703fd0cba427badcdcfaa37",
+          "bytes": 243
+        },
+        {
+          "url": "assets/device-access.2f06de69f7f1324288b88ce16963b2751400d234b0821b8c689ec7245bba71f3.css",
+          "sha256": "2f06de69f7f1324288b88ce16963b2751400d234b0821b8c689ec7245bba71f3",
+          "bytes": 3674
+        },
+        {
+          "url": "assets/notifications.436560be1014bff8c04a73a772358ba9ca62e373e6d87226b71a8ff397d1b666.css",
+          "sha256": "436560be1014bff8c04a73a772358ba9ca62e373e6d87226b71a8ff397d1b666",
+          "bytes": 7264
+        },
+        {
+          "url": "assets/kitchen-refined.ce3fdd7753249d750d4ee758dbc6645904534191fc4d0233b8c70252d919d6b5.css",
+          "sha256": "ce3fdd7753249d750d4ee758dbc6645904534191fc4d0233b8c70252d919d6b5",
+          "bytes": 17914
+        },
+        {
+          "url": "assets/family.d1410d5af668472cbb3044e5613fd4c6008edb23fe9b388c7cfe038f54bbf54b.css",
+          "sha256": "d1410d5af668472cbb3044e5613fd4c6008edb23fe9b388c7cfe038f54bbf54b",
+          "bytes": 8596
+        },
+        {
+          "url": "assets/runtime.9ff3d36c86a76f26dddf2817fb4367741e4cf97d5086177d017a39b17d49bfa7.js",
+          "sha256": "9ff3d36c86a76f26dddf2817fb4367741e4cf97d5086177d017a39b17d49bfa7",
+          "bytes": 7014
+        },
+        {
+          "url": "assets/sdk.6ad64025ae473efe44c6f36e8f0f69bdb06855e856ba8ebc8fe470dba6e6ddd9.js",
+          "sha256": "6ad64025ae473efe44c6f36e8f0f69bdb06855e856ba8ebc8fe470dba6e6ddd9",
+          "bytes": 218048
+        },
+        {
+          "url": "assets/gestures.047b6eeb90a1a471e0d68c5e9f2ef2c270355c26b6e9c08abd5d3a636c6f12bb.js",
+          "sha256": "047b6eeb90a1a471e0d68c5e9f2ef2c270355c26b6e9c08abd5d3a636c6f12bb",
+          "bytes": 4138
+        },
+        {
+          "url": "assets/family.03a05f3291f0c4c06e1fde7607db8ed072f36366dc505dd8d8ceff650afbb6a8.js",
+          "sha256": "03a05f3291f0c4c06e1fde7607db8ed072f36366dc505dd8d8ceff650afbb6a8",
+          "bytes": 32633
+        },
+        {
+          "url": "assets/fat.b96ca467a055798e66aa9c1e27433c76d16f73ce30f223cbfb4acd412581578f.js",
+          "sha256": "b96ca467a055798e66aa9c1e27433c76d16f73ce30f223cbfb4acd412581578f",
+          "bytes": 43263
+        },
+        {
+          "url": "assets/access.479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a.js",
+          "sha256": "479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a",
+          "bytes": 14826
+        },
+        {
+          "url": "assets/push.f7c34d67adb87a7e89774741f82953483dd1f7534d830fbed0f865297305fe80.js",
+          "sha256": "f7c34d67adb87a7e89774741f82953483dd1f7534d830fbed0f865297305fe80",
+          "bytes": 17179
+        },
+        {
+          "url": "assets/notifications.9a1ef80eecf71274cdbd74b39691433adb6cd26810cf9d3621d2067fec0a3b76.js",
+          "sha256": "9a1ef80eecf71274cdbd74b39691433adb6cd26810cf9d3621d2067fec0a3b76",
+          "bytes": 19555
+        },
+        {
+          "url": "assets/app.e7bef0adab6a22734d83530d9941170bb8815c6636f1ba8a84563903b9fbea40.js",
+          "sha256": "e7bef0adab6a22734d83530d9941170bb8815c6636f1ba8a84563903b9fbea40",
+          "bytes": 231852
+        },
+        {
+          "url": "assets/theme.7a2eb085133dcadf3020b8aa94162937e1a78acdea17f2df9a500ac19f12a8c1.js",
+          "sha256": "7a2eb085133dcadf3020b8aa94162937e1a78acdea17f2df9a500ac19f12a8c1",
+          "bytes": 6722
+        }
+      ]
+    },
+    {
+      "schema": 2,
       "build": "20261114.3",
       "updatedAt": "2026-11-14T14:16:43.478Z",
       "shell": {
