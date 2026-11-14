@@ -590,53 +590,58 @@
       }
 
 
-      let metricSwitchTimer = 0;
-      let metricSwitchInTimer = 0;
-      let metricSwitchToken = 0;
+      const worldApp = document.getElementById("pointsApp");
+      const reducedMetricMotion = matchMedia("(prefers-reduced-motion: reduce)");
+      let metricTransition = null;
+      let requestedMetric = state.activeMetric;
+      let refreshFatMetric = null;
 
-      function previewMetricSwitch(nextMetric) {
-        const wheel = nextMetric === "wheel";
-        els.metricSwitch.classList.remove("gift-active");
-        els.metricSwitch.classList.toggle("wheel-active", wheel);
-        els.metricSwitch.querySelectorAll("[data-metric]").forEach(btn => {
-          const active = btn.dataset.metric === nextMetric;
-          btn.classList.toggle("active", active);
-          btn.setAttribute("aria-selected", String(active));
-        });
+      function applyMetric(nextMetric) {
+        state.activeMetric = nextMetric;
+        worldApp.dataset.uiTheme = nextMetric;
+        renderPrimaryMetric();
+        renderOverviewContentMode();
+        if (nextMetric === "fat") void refreshFatMetric({silent:false});
       }
 
       function switchMetric(nextMetric) {
-        if (!["score", "wheel"].includes(nextMetric)) return;
-        if (nextMetric === state.activeMetric && !els.home?.classList.contains("metric-fading-out")) return;
+        if (!["score", "wheel", "fat"].includes(nextMetric) || nextMetric === requestedMetric) return;
+        if (nextMetric === "fat" && !refreshFatMetric) return;
         if (state.wheelSpinning || state.wheelRequestInFlight) {
           showToast("🎠 转盘还在转呀，等它停稳一下 ♡");
           return;
         }
 
-        const token = ++metricSwitchToken;
-        clearTimeout(metricSwitchTimer);
-        clearTimeout(metricSwitchInTimer);
-        const home = els.home;
-        home?.classList.remove("metric-switching", "metric-to-score", "metric-fading-in", "metric-fading-out");
-        previewMetricSwitch(nextMetric);
-        void home?.offsetWidth;
-        home?.classList.add("metric-fading-out");
+        requestedMetric = nextMetric;
+        metricTransition?.skipTransition();
+        if (nextMetric === state.activeMetric) return;
+        const animate = !reducedMetricMotion.matches && !document.hidden &&
+          state.overviewMode === "closed" && worldApp.dataset.page !== "kitchen";
+        if (!animate || !document.startViewTransition) {
+          applyMetric(nextMetric);
+          return;
+        }
 
-        metricSwitchTimer = window.setTimeout(() => {
-          if (token !== metricSwitchToken) return;
-          state.activeMetric = nextMetric;
-          renderPrimaryMetric({ animate: false });
-          renderOverviewContentMode();
-          home?.classList.remove("metric-fading-out");
-          void home?.offsetWidth;
-          home?.classList.add("metric-fading-in");
-          metricSwitchInTimer = window.setTimeout(() => {
-            if (token !== metricSwitchToken) return;
-            home?.classList.remove("metric-fading-in");
-          }, 300);
-        }, 155);
+        document.documentElement.classList.add("world-metric-transition");
+        const transition = document.startViewTransition(() => {
+          // A skipped transition still runs its callback.
+          if (requestedMetric === nextMetric) applyMetric(nextMetric);
+        });
+        metricTransition = transition;
+        transition.ready.catch(() => {});
+        transition.finished.finally(() => {
+          if (metricTransition !== transition) return;
+          metricTransition = null;
+          document.documentElement.classList.remove("world-metric-transition");
+        }).catch(() => {});
       }
 
+      reducedMetricMotion.addEventListener("change", () => {
+        if (reducedMetricMotion.matches) metricTransition?.skipTransition();
+      });
+      document.addEventListener("pointerdown", event => {
+        if (!els.metricSwitch.contains(event.target)) metricTransition?.skipTransition();
+      }, {capture:true, passive:true});
 
       function renderOverviewSectionMode() {
         if (state.activeMetric !== "score") return;
@@ -4002,8 +4007,6 @@
           db, state, els,
           ui: {
             setLayer, showToast, vibrate, setBusy,
-            renderPrimaryMetric: (...args) => renderPrimaryMetric(...args),
-            renderOverviewContentMode: () => renderOverviewContentMode(),
             openOverviewSheet: () => openOverviewSheet(),
             closeOverviewSheet: () => closeOverviewSheet(),
             setOverviewMode: mode => setOverviewMode(mode)
@@ -4024,14 +4027,7 @@
           if (state.activeMetric === "fat" && !state.overviewSection) fatModule.chooseSection("trend",false);
           originalExpandOverview();
         };
-        const originalSwitchMetric = switchMetric;
-        switchMetric = nextMetric => {
-          if (nextMetric !== "fat") return originalSwitchMetric(nextMetric);
-          if (state.wheelSpinning || state.wheelRequestInFlight) return showToast("转盘正在处理，请稍后再切换");
-          ++metricSwitchToken; clearTimeout(metricSwitchTimer); clearTimeout(metricSwitchInTimer);
-          els.home?.classList.remove("metric-fading-out","metric-fading-in");
-          fatModule.activate();
-        };
+        refreshFatMetric = fatModule.refresh;
         const originalLoadAppState = loadAppState;
         loadAppState = async options => {
           void fatModule.refresh({silent:options?.silent ?? true});

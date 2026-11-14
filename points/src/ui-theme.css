@@ -351,6 +351,54 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
 
 #pointsApp .home .score-lens-wrap { animation:none!important; }
 
+/* Crossfade only the module. The navigation and the rest of the page stay live. */
+html.world-metric-transition { view-transition-name:none; }
+.world-metric-transition #pointsApp .home:not(.fat-active) #metricEyebrow,
+.world-metric-transition #pointsApp .home.fat-active #fatHomeMeta {
+  view-transition-name:world-metric-caption;
+}
+.world-metric-transition #pointsApp .home:not(.fat-active) #scoreRefreshBtn,
+.world-metric-transition #pointsApp .home.fat-active #fatRefreshBtn {
+  view-transition-name:world-metric-dial;
+}
+.world-metric-transition #pointsApp .home:not(.admin-mode):not(.wheel-active):not(.fat-active) #redeemRewardBtn,
+.world-metric-transition #pointsApp .home.admin-mode:not(.wheel-active):not(.fat-active) .admin-controls:not(.hidden) .minus,
+.world-metric-transition #pointsApp .home.wheel-active:not(.fat-active) #spinWheelActionBtn,
+.world-metric-transition #pointsApp .home.fat-active #fatRecordBtn {
+  view-transition-name:world-metric-action;
+}
+.world-metric-transition #pointsApp .home.admin-mode:not(.wheel-active):not(.fat-active) .admin-controls:not(.hidden) .plus,
+.world-metric-transition #pointsApp .home.wheel-active:not(.fat-active) #adjustWheelChancesBtn {
+  view-transition-name:world-metric-secondary;
+}
+.world-metric-transition #pointsApp .home :is(#redeemRewardBtn,.score-button,.wheel-side-button,#fatRecordBtn):active {
+  transform:none;
+}
+html.world-metric-transition::view-transition { pointer-events:none; }
+html.world-metric-transition::view-transition-group(*) {
+  animation-duration:380ms;
+  animation-timing-function:cubic-bezier(.2,.72,.24,1);
+}
+html.world-metric-transition::view-transition-image-pair(*) { isolation:isolate; }
+html.world-metric-transition::view-transition-old(world-metric-secondary) {
+  animation:world-action-fold 260ms cubic-bezier(.25,.7,.25,1) both;
+}
+html.world-metric-transition::view-transition-new(world-metric-secondary) {
+  animation:world-action-unfold 340ms cubic-bezier(.2,.72,.24,1) both;
+}
+@keyframes world-action-fold {
+  0% { opacity:1; transform:translateX(0) scaleX(1); }
+  75%, 100% { opacity:0; transform:translateX(-12px) scaleX(.86); }
+}
+@keyframes world-action-unfold {
+  0%, 14% { opacity:0; transform:translateX(-12px) scaleX(.86); }
+  100% { opacity:1; transform:translateX(0) scaleX(1); }
+}
+@media (prefers-reduced-motion:reduce) {
+  #pointsApp #metricSwitch .metric-switch-thumb,
+  #pointsApp #metricSwitch .metric-option { transition:none!important; }
+}
+
 /* Explicit close controls only on the audited sheets. */
 #pointsApp :is(#settingsSheet,#redeemLayer,#overview) .surface-close { position:absolute; top:12px; right:16px; z-index:15; min-width:44px; min-height:44px; padding:8px; border:0; border-radius:12px; background:transparent; color:var(--ui-accent,#806b52); font-size:13px; font-weight:600; }
 #pointsApp #overview:has(#fatOverviewCloseBtn:not([hidden])) .surface-close { display:none; }

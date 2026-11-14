@@ -574,15 +574,6 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
     .home.metric-switching .score-lens::after,
     .home.metric-switching .reward-message,
     .home.metric-switching .metric-action-slot > *{animation:none!important;filter:none!important;transform:none!important;}
-.home.metric-fading-out .reward-line-primary,
-    .home.metric-fading-out .reward-line-secondary,
-    .home.metric-fading-out .score,
-    .home.metric-fading-out .metric-action-slot{opacity:0!important;}
-.home.metric-fading-in .reward-line-primary,
-    .home.metric-fading-in .reward-line-secondary,
-    .home.metric-fading-in .score,
-    .home.metric-fading-in .metric-action-slot{animation:metricQuietFadeIn .28s cubic-bezier(.22,.61,.36,1) both!important;}
-@keyframes metricQuietFadeIn{from{opacity:0;}to{opacity:1;}}
 #settingsLayer{background:rgba(45,54,70,.075)!important;}
 #settingsLayer .settings-sheet{width:min(calc(100% - 12px), 620px)!important;background:linear-gradient(145deg,
           rgba(255,255,255,.16),
@@ -1105,8 +1096,8 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
 .wheel-prize.wish-target{color:#fff7d4!important;text-shadow:0 0 5px rgba(255,229,147,.95),0 0 11px rgba(217,173,80,.72);transform:translate(-50%,-50%) scale(1.18)!important;}
 .wheel-prize.wish-target:after{content:"✦";position:absolute;left:50%;top:-9px;transform:translateX(-50%);font-size:7px;color:#fff0a4;text-shadow:0 0 6px rgba(255,220,102,.9);}
 @media (max-width:370px){
-  
-  
+
+
   .wheel-actions.admin-wheel-actions{width:min(90vw,334px)!important;gap:7px!important;}
 }
 #wheelProbabilityLayer .unified-sheet-header{margin-bottom:14px;}
@@ -1200,7 +1191,7 @@ textarea.field{min-height:102px;resize:none;line-height:1.45;}
   .wheel-probability-legend-item span{font-size:8px;}
   .wheel-probability-legend-item strong{font-size:10px;}
   .wheel-probability-step-value small{font-size:7.8px;}
-  
+
 }
 #wheelProbabilityLayer{padding:0 0 12px!important;align-items:center!important;justify-content:center!important;background:rgba(45,54,70,.075)!important;}
 #wheelProbabilityLayer.open{-webkit-backdrop-filter:blur(8px)!important;backdrop-filter:blur(8px)!important;}
