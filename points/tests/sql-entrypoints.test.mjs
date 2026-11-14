@@ -14,17 +14,42 @@ try{
  const changed=current.functions.filter(f=>JSON.stringify(f)!==JSON.stringify(original.functions.find(o=>o.schema===f.schema&&o.name===f.name&&o.identity_arguments===f.identity_arguments)));
  const definitions=[...increment.matchAll(/CREATE OR REPLACE FUNCTION\s+"?([\w]+)"?\."?([\w]+)"?\(/g)].map(m=>m[1]+'.'+m[2]).sort();
  check(definitions,changed.map(f=>f.schema+'.'+f.name).sort(),'increment includes exactly changed functions, no historical definitions');
- check(/CREATE TABLE|CREATE SCHEMA|points_fat_reward_snapshot/.test(increment),false,'recipe change does not replay historical setup or reward upgrades');
+ check(/CREATE TABLE|CREATE SCHEMA/.test(increment),false,'increment does not replay historical setup');
  await db.exec('CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE ROLE supabase_admin;CREATE SCHEMA auth;CREATE TABLE auth.users(id uuid PRIMARY KEY);CREATE SCHEMA extensions;');
  const objects=[...current.schemas,...current.relations,...current.functions,...current.default_privileges];
  const roles=objects.flatMap(o=>[o.owner,...[...(o.acl||'').matchAll(/(?:\{|,)([^=]+)=/g)].map(m=>m[1])]);
  for(const role of new Set(roles.filter(Boolean)))if(!(await db.query('SELECT 1 FROM pg_roles WHERE rolname=$1',[role])).rows.length)await db.exec('CREATE ROLE "'+role.replaceAll('"','""')+'";');
  await db.exec(baseline);
- const snapshot=original.functions.find(f=>f.name==='points_family_snapshot');
+ const snapshot=original.functions.find(f=>f.name==='points_notifications_get_todos');
  await db.exec(snapshot.definition.replace('AS $function$','AS $function$\n-- unexpected database change'));
- await assert.rejects(db.exec(increment),/Database baseline differs for points_family_snapshot/);checks++;
+ await assert.rejects(db.exec(increment),/Database baseline differs for points_notifications_get_todos/);checks++;
  await db.exec('ROLLBACK;');await db.exec(snapshot.definition);
+ const scalar=async sql=>Object.values((await db.query(sql)).rows[0])[0];
+ await db.exec(`INSERT INTO points_fat_settings(id,starting_weight_jin) VALUES(1,162) ON CONFLICT(id) DO UPDATE SET starting_weight_jin=162;
+  ALTER TABLE points_fat_records ALTER COLUMN bowel_status DROP NOT NULL;
+  WITH week AS (SELECT date_trunc('week',now() AT TIME ZONE 'Asia/Shanghai')::date monday)
+  INSERT INTO points_fat_records(weight_jin,created_at,bowel_status)
+  SELECT weight,((monday+day)::timestamp+time '00:05') AT TIME ZONE 'Asia/Shanghai',status
+  FROM week CROSS JOIN (VALUES (-14,160,'after'),(-13,159,'after'),(-7,158,'after'),(-7,156,'after'),
+    (-6,159,NULL),(-1,157,'after'),(-2,140,'before')) samples(day,weight,status);
+  INSERT INTO points_notice.events(event_key,audience,category,title,body,route,group_key)
+  VALUES('cleanup:service','admin','service','service','old','services','service:1'),
+        ('keep:score','guest','score','score','keep','score','score');
+  INSERT INTO points_notice.receipts(event_id,actor)
+  SELECT id,'admin:test' FROM points_notice.events WHERE event_key='cleanup:service';`);
  await db.exec(increment);
+ check(await scalar("SELECT to_regclass('public.points_fat_reward_state')"),null,'reward state deleted');
+ check(await scalar("SELECT to_regprocedure('public.points_fat_reward_get_state(bigint)')"),null,'reward RPC deleted');
+ check(await scalar("SELECT count(*)::int FROM points_fat_records"),6,'only before readings deleted');
+ check(await scalar("SELECT count(*)::int FROM points_notice.events WHERE event_key='keep:score'"),1,'other notices preserved');
+ check(await scalar("SELECT count(*)::int FROM points_notice.events WHERE event_key='cleanup:service'"),0,'reward notice and receipt deleted');
+ const progress=await scalar("SELECT points_fat_get_progress()");
+ check(progress.delta_jin,-5,'latest survives cleanup');
+ check(progress.weeks.map(w=>w.days),[0,2,3,0],'Beijing dates and distinct day count');
+ check(progress.weeks.map(w=>w.mean===null?null:Number(w.mean.toFixed(6))),[null,null,-4.666667,null],'weekly minimum per day and threshold');
+ await db.exec("SET ROLE anon");
+ check(await scalar("SELECT points_fat_get_progress() ? 'starting_weight_jin'"),false,'progress exposes only differences');
+ await db.exec("RESET ROLE");
  for(const f of current.functions.filter(f=>f.name.startsWith('points_family_')||f.name==='points_notifications_get_todos'||f.name==='business_event'||f.name==='points_notice_worker_claim'||f.name==='points_fat_reward_snapshot'||/score|points_get_logs|points_get_state|points_redeem|points_shop_(get_state|purchase|activate_lucky100|set_equipped)|legacy_write|points_kitchen_admin_review/.test(f.name))){
   const actual=(await db.query('SELECT pg_get_functiondef(p.oid) definition FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname=$1 AND p.proname=$2 AND pg_get_function_identity_arguments(p.oid)=$3',[f.schema,f.name,f.identity_arguments])).rows[0].definition;
   check(actual.trim().replace(/;$/,'').replace(/\r\r\n|\r\n|\r/g,'\n'),f.definition.trim().replace(/;$/,'').replace(/\r\r\n|\r\n|\r/g,'\n'),f.name+' latest definition installed');
@@ -61,4 +86,4 @@ try{
  await db.exec(increment);
  check(Number((await db.query("SELECT points FROM public.points_family_types WHERE code='dishes'")).rows[0].points),0.5,'rerun preserves configured half-point value');
  console.log(checks+' preceding-release-to-current delta, exact changed scope, definitions, repeatability and permissions checks passed.');
-}finally{await db.close();}
+}catch(error){console.error(error.message,error.code);process.exitCode=1;}finally{await db.close();}

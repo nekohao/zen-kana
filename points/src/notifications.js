@@ -5,8 +5,8 @@
   function attach({db,state,els,ui,navigate}) {
     const q=id=>document.getElementById(id);
     const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const labels={score:'积分变动',kitchen:'家庭消息',withdrawal:'提现进展',assets:'道具与机会',fat:'减脂结算',service:'服务进展',security:'设备安全'};
-    const routes=['score','wheel','withdrawals','assets','fat','services','devices','kitchen'];
+    const labels={score:'积分变动',kitchen:'家庭消息',withdrawal:'提现进展',assets:'道具与机会',security:'设备安全'};
+    const routes=['score','wheel','withdrawals','assets','devices','kitchen'];
     const bell='<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>';
     for(const setting of [els.settingsBtn,document.querySelector('[data-family-action="settings"]')].filter(Boolean)){
       const actions=document.createElement('div');actions.className='points-top-actions';setting.before(actions);
@@ -89,12 +89,11 @@
       const has=(...args)=>items.some(i=>i.active&&i.unread&&args.includes(routeOf(i)));
       const specs=[
         ['[data-metric="score"]',has('score','assets')],['[data-metric="wheel"]',has('wheel','withdrawals')],
-        ['[data-metric="fat"]',has('fat','services')],['#redeemRewardBtn,[data-shop-view="inventory"]',has('assets')],
-        ['.app-nav [data-value="world"]',has('score','wheel','withdrawals','assets','fat','services','devices')],
+        ['#redeemRewardBtn,[data-shop-view="inventory"]',has('assets')],
+        ['.app-nav [data-value="world"]',has('score','wheel','withdrawals','assets','devices')],
         ['.app-nav [data-value="kitchen"]',has('kitchen')],
-        ['[data-fat-section="settlement"]',has('fat')],['#fatDiamondShopBtn',has('services')],['#fatServicesBtn,#fatServiceNotice,[data-fat-reward-action="services"]',has('services')],
         ['#pointsAccessDevices',has('devices')],['#settingsBtn,[data-family-action="settings"]',has('devices')],
-        ['#overviewBtn',has(state.activeMetric==='wheel'?'wheel':state.activeMetric==='fat'?'fat':'score',state.activeMetric==='wheel'?'withdrawals':'')]
+        ['#overviewBtn',has(state.activeMetric==='wheel'?'wheel':state.activeMetric==='fat'?'':'score',state.activeMetric==='wheel'?'withdrawals':'')]
       ];
       for(const [selector,on] of specs)document.querySelectorAll(selector).forEach(el=>{
         if(!el.classList.contains('points-dot-anchor'))el.classList.add('points-dot-anchor');
@@ -122,7 +121,7 @@
         host.dataset.signature=signature;
         const rowsHtml=shown.map(i=>`<article class="points-context-update" data-update-id="${escape(i.id)}" data-update-epoch="${epoch}"><div><strong>${escape(i.title)}</strong><time>${escape(new Date(i.at).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}))}</time></div><p>${escape(i.body)}</p></article>`).join('');
         const wasOpen=host.querySelector('details')?.open;
-        host.innerHTML=key==='kitchen'?`<details class="kitchen-updates"${wasOpen?' open':''}><summary><span>最近动态 · ${shown.length} 条</span><strong>${escape(shown[0].title)}</strong><span aria-hidden="true">⌄</span></summary><div class="kitchen-updates-list">${rowsHtml}</div></details>`:parent.id==='fatSettlementUpdatesSlot'?`<details class="fat-context-updates"${wasOpen?' open':''}><summary>最近动态 · ${shown.length} 条</summary>${rowsHtml}</details>`:`<p class="points-updates-heading">最近动态</p>${rowsHtml}`;
+        host.innerHTML=key==='kitchen'?`<details class="kitchen-updates"${wasOpen?' open':''}><summary><span>最近动态 · ${shown.length} 条</span><strong>${escape(shown[0].title)}</strong><span aria-hidden="true">⌄</span></summary><div class="kitchen-updates-list">${rowsHtml}</div></details>`:`<p class="points-updates-heading">最近动态</p>${rowsHtml}`;
         host.querySelectorAll('[data-update-id]').forEach(row=>observer.observe(row));
       }
     }
@@ -134,10 +133,6 @@
       const kitchen=q('kitchenUpdatesSlot')||q('kitchenContent');
       if(kitchen?.id==='kitchenUpdatesSlot')kitchen.dataset.pointsSynced=q('kitchenContent')?.dataset.pointsSynced;
       mount('kitchen',kitchen,['kitchen']);
-      const reward=q('fatRewardBody');
-      const settlement=q('fatSettlementUpdatesSlot');
-      mount('fat-settlement',settlement,['fat']);
-      mount('rewards',reward,['services'],reward?.dataset.updatesView==='services');
       badges();
     }
     async function acknowledge(row) {

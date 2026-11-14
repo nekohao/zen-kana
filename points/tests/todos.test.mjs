@@ -44,15 +44,15 @@ try{
  await db.query("UPDATE points_family_events SET action='imported' WHERE task_id=$1",[imported.id]);
  await reject(()=>write('guest','cancel',{id:imported.id,version:imported.version}),'42501');
  for(let i=0;i<65;i++)await db.query("INSERT INTO points_family_tasks(member_id,type_code,title,points,origin,status,updated_at) VALUES(1,'dishes',$1,1,'guest','review','2026-10-13 00:00:00+00')",['分页家事 '+i]);
- await db.exec("INSERT INTO points_withdrawals(amount,cash_before,cash_after) VALUES(30,30,0); INSERT INTO points_fat_reward_requests(status) VALUES('pending_service'),('pending_confirmation'),('completed');");
+ await db.exec("INSERT INTO points_withdrawals(amount,cash_before,cash_after) VALUES(30,30,0);");
  const ids=[];let cursor=null,first,total;
  do{const page=await rpc('admin','points_notifications_get_todos',{p_before:cursor});first??=page;total=page.total;ids.push(...page.items.map(t=>t.id));cursor=page.more?page.cursor:null;}while(cursor);
  check(first.items.length,30,'first page size');check(ids.length,total,'reads all >50 todos');check(new Set(ids).size,total,'no repeats on tied timestamps');
  check(first.items.some(t=>t.route==='withdrawals'&&t.target),true,'withdrawal target');
- check(first.items.some(t=>t.route==='services'&&t.status==='待确认'),true,'admin service confirmation only');
+ check(first.items.some(t=>t.route==='services'),false,'retired services absent');
  const guest=await rpc('guest','points_notifications_get_todos');
  check(guest.items.some(t=>t.route==='withdrawals'),false,'no passive withdrawal todo for guest');
- check(guest.items.filter(t=>t.route==='services').map(t=>t.status),['待服务']);
+ check(guest.items.filter(t=>t.route==='services').map(t=>t.status),[]);
  const w=first.items.find(t=>t.route==='withdrawals');await rpc('admin','points_admin_settle_withdrawal',{p_withdrawal_id:Number(w.target)});
  check((await rpc('admin','points_notifications_get_todos')).total,total-1,'actual handling removes todo');
  const lastScore=await balance();await reapply();check(await balance(),lastScore,'repeat cleanup preserves score');

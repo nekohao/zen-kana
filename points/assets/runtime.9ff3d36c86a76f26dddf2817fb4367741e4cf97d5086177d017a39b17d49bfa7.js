@@ -9,12 +9,11 @@ if(window.PointsStartup.canStart()){try{
   function updateNotice() {
     const message = issues.has("startup") ? "应用加载失败，请重新加载"
       : issues.has("fat") ? "减脂模块加载失败，请重新加载"
-      : issues.has("rewards") ? "钻石商城加载失败，请重新加载"
-      : issues.has("kitchen") ? "厨房模块加载失败，请重新加载"
+      : issues.has("kitchen") ? "小家庭模块加载失败，请重新加载"
       : issues.has("update") ? "新版本已准备好，请在操作完成后重新加载"
       : [...issues.values()].includes("uncertain") ? "操作结果待确认，请先核对历史记录"
       : issues.size ? "网络不稳定，部分数据尚未同步" : "";
-    notice?.show(message, issues.has("startup") || issues.has("fat") || issues.has("rewards") || issues.has("kitchen") || issues.has("update"));
+    notice?.show(message, issues.has("startup") || issues.has("fat") || issues.has("kitchen") || issues.has("update"));
   }
   function report(key, uncertain = false) { issues.set(key, uncertain ? "uncertain" : true); updateNotice(); }
   function clear(key) { issues.delete(key); updateNotice(); }
@@ -66,7 +65,7 @@ if(window.PointsStartup.canStart()){try{
         return Promise.resolve({data:null,error:{code:'42501',message:'POINTS_DEVICE_REQUIRED'}});
       // Inbox receipts/preferences do not change business state or invalidate auth reads.
       const auxiliary=/^points_notifications_(get|get_todos|ack|preferences)$/.test(name);
-      const read = auxiliary || /^(points_get_|points_admin_get_|points_family_get_|points_fat_get_|points_fat_v2_get_|points_fat_admin_get_|points_shop_get_|points_fat_reward_get_|points_kitchen_get_|points_kitchen_v[23]_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
+      const read = auxiliary || /^(points_get_|points_admin_get_|points_family_get_|points_fat_get_|points_fat_admin_get_|points_shop_get_|points_kitchen_get_|points_kitchen_v[23]_get_|points_access_get_|points_push_get_)/.test(name) || ['points_is_admin','points_access_admin_devices'].includes(name);
       const epoch = clientEpoch, revision = readEpoch;
       const key = `${epoch}:${revision}:${name}:${JSON.stringify(args)}`;
       if (read && pendingReads.has(key)) return pendingReads.get(key);

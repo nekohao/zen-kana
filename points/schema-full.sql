@@ -12,9 +12,9 @@
 
 -- Source PostgreSQL: 17.6
 
--- Current change baseline (see schema-increment.sql): 7e408fbd6921987e3f86dc2d2d1cf547c73ddbf7
+-- Current change baseline (see schema-increment.sql): ea3087cdf43bd277deffda0c3bea9440efff16d3
 
--- Current increment SHA-256: 4d4091a68ccfa7f8991b41794e84e360b1cd1b924a56b2d2b7d63755a29e64f5
+-- Current increment SHA-256: 62e60bbc5458cd730956b1f109f4a85f7b9513c659adc610c315ee8410cb0d66
 
 SET check_function_bodies = false;
 
@@ -109,7 +109,7 @@ CREATE TABLE "points_notice"."events" (
 
 CREATE TABLE "points_notice"."preferences" (
   "actor" text NOT NULL,
-  "categories" text[] DEFAULT ARRAY['score'::text, 'kitchen'::text, 'withdrawal'::text, 'assets'::text, 'fat'::text, 'service'::text, 'security'::text] NOT NULL,
+  "categories" text[] DEFAULT ARRAY['score'::text, 'kitchen'::text, 'withdrawal'::text, 'assets'::text, 'security'::text] NOT NULL,
   "quiet" boolean DEFAULT true NOT NULL,
   "night_important" boolean DEFAULT false NOT NULL,
   "last_regular_at" timestamp with time zone,
@@ -202,66 +202,7 @@ CREATE TABLE "public"."points_fat_records" (
   "id" bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   "weight_jin" numeric(6,2) NOT NULL,
   "created_at" timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
-  "recorded_by" uuid,
-  "bowel_status" text NOT NULL
-);
-
-CREATE TABLE "public"."points_fat_reward_operations" (
-  "operation_id" uuid NOT NULL,
-  "kind" text NOT NULL,
-  "request_id" bigint,
-  "diamond_delta" bigint NOT NULL,
-  "created_at" timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
-  "created_by" uuid
-);
-
-CREATE TABLE "public"."points_fat_reward_requests" (
-  "id" bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-  "status" text DEFAULT 'pending_service'::text NOT NULL,
-  "requested_at" timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
-  "serviced_at" timestamp with time zone,
-  "resolved_at" timestamp with time zone,
-  "requested_by" uuid
-);
-
-CREATE TABLE "public"."points_fat_reward_state" (
-  "id" smallint DEFAULT 1 NOT NULL,
-  "diamonds" bigint DEFAULT 0 NOT NULL,
-  "backpack" bigint DEFAULT 0 NOT NULL,
-  "started_at" timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
-  "next_week" date NOT NULL,
-  "updated_at" timestamp with time zone DEFAULT clock_timestamp() NOT NULL
-);
-
-CREATE TABLE "public"."points_fat_reward_week_series" (
-  "week_start" date NOT NULL,
-  "bowel_status" text NOT NULL,
-  "current_days" integer NOT NULL,
-  "previous_days" integer NOT NULL,
-  "current_mean_jin" numeric,
-  "previous_mean_jin" numeric,
-  "comparison_basis" text NOT NULL,
-  "change_jin" numeric,
-  "eligible" boolean NOT NULL,
-  "calculated_delta" bigint NOT NULL
-);
-
-CREATE TABLE "public"."points_fat_reward_weeks" (
-  "week_start" date NOT NULL,
-  "cutoff_at" timestamp with time zone NOT NULL,
-  "current_days" integer NOT NULL,
-  "previous_days" integer NOT NULL,
-  "current_mean_jin" numeric,
-  "previous_mean_jin" numeric,
-  "change_jin" numeric,
-  "eligible" boolean NOT NULL,
-  "calculated_delta" bigint NOT NULL,
-  "applied_delta" bigint NOT NULL,
-  "balance_after" bigint NOT NULL,
-  "settled_at" timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
-  "comparison_basis" text DEFAULT 'previous_week'::text NOT NULL,
-  "bowel_status" text,
-  "rule_version" smallint DEFAULT 1 NOT NULL
+  "recorded_by" uuid
 );
 
 CREATE TABLE "public"."points_fat_settings" (
@@ -269,13 +210,6 @@ CREATE TABLE "public"."points_fat_settings" (
   "starting_weight_jin" numeric(6,2),
   "updated_at" timestamp with time zone DEFAULT now() NOT NULL,
   "updated_by" uuid
-);
-
-CREATE TABLE "public"."points_fat_status_migration" (
-  "id" smallint NOT NULL,
-  "history_status" text,
-  "last_legacy_id" bigint NOT NULL,
-  "applied_at" timestamp with time zone DEFAULT clock_timestamp() NOT NULL
 );
 
 CREATE TABLE "public"."points_kitchen_dishes" (
@@ -1016,16 +950,6 @@ BEGIN
     ELSIF j->>'status'='settled' AND old_j->>'status' IS DISTINCT FROM 'settled' THEN
       UPDATE points_notice.events SET active=false WHERE group_key=group_name;
       PERFORM points_notice.emit(key||':settled','guest','withdrawal','提现已标记兑现','哥哥已标记兑现 ¥'||(j->>'amount')||'，请实际查收。','withdrawals',group_name,1);
-    END IF;
-  ELSIF TG_TABLE_NAME='points_fat_reward_weeks' AND TG_OP='INSERT' THEN
-    PERFORM points_notice.emit(key,'admin','fat','减脂周结算已完成',CASE WHEN (j->>'eligible')::boolean THEN '本周钻石奖扣 '||(j->>'applied_delta')||'，余额 '||(j->>'balance_after')||'。' ELSE '本周记录条件未满足，没有奖扣。' END,'fat','fat:'||(j->>'week_start'),0,(j->>'eligible')::boolean);
-  ELSIF TG_TABLE_NAME='points_fat_reward_requests' THEN
-    group_name:='service:'||(j->>'id');
-    IF TG_OP='INSERT' OR j->>'status' IS DISTINCT FROM old_j->>'status' THEN
-      UPDATE points_notice.events SET active=false WHERE group_key=group_name;
-      a:=CASE WHEN j->>'status'='pending_confirmation' THEN 'admin' ELSE 'guest' END;
-      title:=CASE j->>'status' WHEN 'pending_service' THEN '有新的服务请求' WHEN 'pending_confirmation' THEN '服务请求等待确认' WHEN 'returned' THEN '服务请求已退回' ELSE '服务请求已确认' END;
-      PERFORM points_notice.emit(key||':'||(j->>'status'),a,'service',title,'点开查看请求状态和详情。','services',group_name,1,true,j->>'status' IN ('pending_service','pending_confirmation'));
     END IF;
   ELSIF TG_TABLE_NAME='points_kitchen_orders' THEN
     group_name:='kitchen:'||(j->>'id');
@@ -2420,6 +2344,46 @@ $function$;
 
 ALTER FUNCTION "public"."points_fat_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) OWNER TO "postgres";
 
+CREATE OR REPLACE FUNCTION public.points_fat_get_progress()
+ RETURNS jsonb
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+  WITH bounds AS (
+    SELECT date_trunc('week', now() AT TIME ZONE 'Asia/Shanghai')::date AS monday
+  ), daily AS (
+    SELECT (r.created_at AT TIME ZONE 'Asia/Shanghai')::date AS day,
+           min(r.weight_jin) AS lightest
+    FROM public.points_fat_records r CROSS JOIN bounds b
+    WHERE r.created_at >= ((b.monday - 21)::timestamp AT TIME ZONE 'Asia/Shanghai')
+      AND r.created_at <= now()
+    GROUP BY 1
+  ), weekly AS (
+    SELECT b.monday - offsets.days AS start_date, count(d.day) AS days, avg(d.lightest) AS mean
+    FROM bounds b CROSS JOIN (VALUES (21),(14),(7),(0)) AS offsets(days)
+    LEFT JOIN daily d ON d.day BETWEEN b.monday - offsets.days AND b.monday - offsets.days + 6
+    GROUP BY 1
+  )
+  SELECT jsonb_build_object(
+    'configured', s.starting_weight_jin IS NOT NULL,
+    'delta_jin', latest.weight_jin - s.starting_weight_jin,
+    'recorded_at', latest.created_at,
+    'weeks', (SELECT jsonb_agg(jsonb_build_object('start', w.start_date, 'end', w.start_date + 6,
+      'days', w.days, 'mean', CASE WHEN w.days >= 3 THEN w.mean - s.starting_weight_jin END)
+      ORDER BY w.start_date) FROM weekly w)
+  )
+  FROM public.points_fat_settings s
+  LEFT JOIN LATERAL (
+    SELECT r.weight_jin, r.created_at FROM public.points_fat_records r
+    WHERE r.created_at <= now()
+    ORDER BY r.created_at DESC, r.id DESC LIMIT 1
+  ) latest ON true
+  WHERE s.id = 1;
+$function$;
+
+ALTER FUNCTION "public"."points_fat_get_progress"() OWNER TO "postgres";
+
 CREATE OR REPLACE FUNCTION public.points_fat_get_state()
  RETURNS TABLE(configured boolean, delta_jin numeric, recorded_at timestamp with time zone, updated_at timestamp with time zone, record_count bigint)
  LANGUAGE sql
@@ -2443,409 +2407,6 @@ AS $function$
 $function$;
 
 ALTER FUNCTION "public"."points_fat_get_state"() OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_admin_exchange(p_kind text, p_operation_id uuid)
- RETURNS jsonb
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE s record; o record; v_request bigint;
-BEGIN
-  IF NOT coalesce(public.points_is_admin(), false) THEN
-    RAISE EXCEPTION 'Admin permission required' USING errcode = '42501';
-  END IF;
-  IF p_kind IS NULL OR p_kind NOT IN ('buy','use') OR p_operation_id IS NULL THEN
-    RAISE EXCEPTION 'Invalid operation' USING errcode = '22023';
-  END IF;
-  PERFORM public.points_fat_reward_settle_due();
-  SELECT * INTO STRICT s FROM public.points_fat_reward_state WHERE id = 1 FOR UPDATE;
-  SELECT * INTO o FROM public.points_fat_reward_operations WHERE operation_id = p_operation_id;
-  IF FOUND THEN
-    IF o.kind <> p_kind OR o.created_by IS DISTINCT FROM auth.uid() THEN
-      RAISE EXCEPTION 'Operation conflict' USING errcode = '22023';
-    END IF;
-    RETURN public.points_fat_reward_snapshot();
-  END IF;
-  IF p_kind = 'buy' THEN
-    IF s.diamonds < 1 THEN RAISE EXCEPTION 'Insufficient diamonds' USING errcode = 'P0001'; END IF;
-    UPDATE public.points_fat_reward_state
-      SET diamonds = diamonds - 1, backpack = backpack + 1, updated_at = clock_timestamp() WHERE id = 1;
-  ELSE
-    IF s.backpack < 1 THEN RAISE EXCEPTION 'Empty backpack' USING errcode = 'P0001'; END IF;
-    INSERT INTO public.points_fat_reward_requests(requested_by)
-      VALUES (auth.uid()) RETURNING id INTO v_request;
-    UPDATE public.points_fat_reward_state
-      SET backpack = backpack - 1, updated_at = clock_timestamp() WHERE id = 1;
-  END IF;
-  INSERT INTO public.points_fat_reward_operations(operation_id, kind, request_id, diamond_delta, created_by)
-    VALUES (p_operation_id, p_kind, v_request, CASE WHEN p_kind = 'buy' THEN -1 ELSE 0 END, auth.uid());
-  RETURN public.points_fat_reward_snapshot();
-END;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_admin_exchange"(p_kind text, p_operation_id uuid) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_admin_resolve(p_request_id bigint, p_confirm boolean)
- RETURNS jsonb
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE r record; v_status text;
-BEGIN
-  IF NOT coalesce(public.points_is_admin(), false) THEN
-    RAISE EXCEPTION 'Admin permission required' USING errcode = '42501';
-  END IF;
-  IF p_confirm IS NULL THEN RAISE EXCEPTION 'Invalid confirmation' USING errcode = '22023'; END IF;
-  PERFORM public.points_fat_reward_settle_due();
-  PERFORM id FROM public.points_fat_reward_state WHERE id = 1 FOR UPDATE;
-  SELECT * INTO r FROM public.points_fat_reward_requests WHERE id = p_request_id FOR UPDATE;
-  IF NOT FOUND THEN RAISE EXCEPTION 'Request not found' USING errcode = 'P0002'; END IF;
-  v_status := CASE WHEN p_confirm THEN 'completed' ELSE 'returned' END;
-  IF r.status = v_status THEN RETURN public.points_fat_reward_snapshot(); END IF;
-  IF r.status <> 'pending_confirmation' THEN
-    RAISE EXCEPTION 'Request is not awaiting confirmation' USING errcode = 'P0001';
-  END IF;
-  UPDATE public.points_fat_reward_requests SET status = v_status, resolved_at = clock_timestamp()
-    WHERE id = p_request_id;
-  IF NOT p_confirm THEN
-    UPDATE public.points_fat_reward_state SET backpack = backpack + 1, updated_at = clock_timestamp() WHERE id = 1;
-  END IF;
-  RETURN public.points_fat_reward_snapshot();
-END;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_admin_resolve"(p_request_id bigint, p_confirm boolean) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_cutoff(p_week date)
- RETURNS timestamp with time zone
- LANGUAGE sql
- IMMUTABLE
- SET search_path TO ''
-AS $function$
-  SELECT (p_week + 6 + time '12:00') AT TIME ZONE 'Asia/Shanghai';
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_cutoff"(p_week date) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_delta(p_change numeric, p_days integer, p_previous_days integer)
- RETURNS bigint
- LANGUAGE sql
- IMMUTABLE
- SET search_path TO ''
-AS $function$
-  SELECT CASE WHEN p_change IS NULL OR p_days < 3 OR p_previous_days < 3 THEN 0
-    WHEN p_change < 0 THEN floor(-p_change)::bigint
-    WHEN p_change > 0 THEN -greatest(1, floor(p_change)::bigint)
-    ELSE 0 END;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_delta"(p_change numeric, p_days integer, p_previous_days integer) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_get_state(p_before bigint DEFAULT NULL::bigint)
- RETURNS jsonb
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-BEGIN
-  PERFORM public.points_fat_reward_settle_due();
-  RETURN public.points_fat_reward_snapshot(p_before);
-END;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_get_state"(p_before bigint) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_guest_serviced(p_request_id bigint)
- RETURNS jsonb
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE r record;
-BEGIN
-  IF auth.uid() IS NOT NULL THEN
-    RAISE EXCEPTION 'Guest access required' USING errcode = '42501';
-  END IF;
-  PERFORM public.points_fat_reward_settle_due();
-  PERFORM id FROM public.points_fat_reward_state WHERE id = 1 FOR UPDATE;
-  SELECT * INTO r FROM public.points_fat_reward_requests WHERE id = p_request_id FOR UPDATE;
-  IF NOT FOUND THEN RAISE EXCEPTION 'Request not found' USING errcode = 'P0002'; END IF;
-  IF r.status = 'pending_service' THEN
-    UPDATE public.points_fat_reward_requests SET status = 'pending_confirmation',
-      serviced_at = clock_timestamp() WHERE id = p_request_id;
-  END IF;
-  RETURN public.points_fat_reward_snapshot();
-END;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_guest_serviced"(p_request_id bigint) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_reference(p_week date)
- RETURNS TABLE(days integer, mean_jin numeric, basis text)
- LANGUAGE plpgsql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE v_first_week date;
-BEGIN
-  SELECT least(
-    (SELECT date_trunc('week', r.created_at AT TIME ZONE 'Asia/Shanghai')::date
-      FROM public.points_fat_records r ORDER BY r.created_at, r.id LIMIT 1),
-    (SELECT min(w.week_start) FROM public.points_fat_reward_weeks w WHERE w.current_days > 0)
-  ) INTO v_first_week;
-  IF p_week = v_first_week THEN
-    RETURN QUERY SELECT 0, s.starting_weight_jin, 'starting_weight'::text
-      FROM public.points_fat_settings s WHERE s.id = 1;
-    RETURN;
-  END IF;
-  RETURN QUERY SELECT w.current_days, w.current_mean_jin, 'previous_week'::text
-    FROM public.points_fat_reward_weeks w WHERE w.week_start = p_week - 7;
-  IF NOT FOUND THEN
-    RETURN QUERY SELECT s.days, s.mean_jin, 'previous_week'::text
-      FROM public.points_fat_reward_sample(p_week - 7) s;
-  END IF;
-END;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_reference"(p_week date) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_sample(p_week date)
- RETURNS TABLE(days integer, mean_jin numeric)
- LANGUAGE sql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-  SELECT count(*)::integer, avg(d.weight_jin) FROM (
-    SELECT DISTINCT ON ((r.created_at AT TIME ZONE 'Asia/Shanghai')::date) r.weight_jin
-    FROM public.points_fat_records r
-    WHERE r.created_at >= (p_week::timestamp AT TIME ZONE 'Asia/Shanghai')
-      AND r.created_at < public.points_fat_reward_cutoff(p_week)
-    ORDER BY (r.created_at AT TIME ZONE 'Asia/Shanghai')::date, r.created_at, r.id
-  ) d;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_reward_sample"(p_week date) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_settle_due()
- RETURNS integer
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE s public.points_fat_reward_state%ROWTYPE; chosen record; v_count integer:=0; v_applied bigint;
-BEGIN
-  SELECT * INTO s FROM public.points_fat_reward_state WHERE id=1;
-  IF public.points_fat_reward_cutoff(s.next_week)>clock_timestamp() THEN RETURN 0; END IF;
-  -- Same lock order as recording/deleting: settings, then reward wallet.
-  PERFORM id FROM public.points_fat_settings WHERE id=1 FOR UPDATE;
-  SELECT * INTO STRICT s FROM public.points_fat_reward_state WHERE id=1 FOR UPDATE;
-  WHILE public.points_fat_reward_cutoff(s.next_week)<=clock_timestamp() LOOP
-    IF NOT EXISTS(SELECT 1 FROM public.points_fat_reward_weeks WHERE week_start=s.next_week) THEN
-      SELECT * INTO chosen FROM public.points_fat_v2_reward_analysis(s.next_week)
-        ORDER BY eligible DESC,current_days DESC,(bowel_status='after') DESC LIMIT 1;
-      v_applied:=greatest(-s.diamonds,chosen.calculated_delta);
-      s.diamonds:=s.diamonds+v_applied;
-      INSERT INTO public.points_fat_reward_weeks(week_start,cutoff_at,current_days,previous_days,current_mean_jin,
-        previous_mean_jin,comparison_basis,change_jin,eligible,calculated_delta,applied_delta,balance_after,bowel_status,rule_version)
-      VALUES(s.next_week,public.points_fat_reward_cutoff(s.next_week),chosen.current_days,chosen.previous_days,
-        chosen.current_mean_jin,chosen.previous_mean_jin,chosen.comparison_basis,chosen.change_jin,chosen.eligible,
-        chosen.calculated_delta,v_applied,s.diamonds,CASE WHEN chosen.eligible THEN chosen.bowel_status ELSE NULL END,2);
-      INSERT INTO public.points_fat_reward_week_series SELECT s.next_week,a.* FROM public.points_fat_v2_reward_analysis(s.next_week) a;
-      v_count:=v_count+1;
-    END IF;
-    s.next_week:=s.next_week+7;
-  END LOOP;
-  UPDATE public.points_fat_reward_state SET diamonds=s.diamonds,next_week=s.next_week,updated_at=clock_timestamp() WHERE id=1;
-  RETURN v_count;
-END $function$;
-
-ALTER FUNCTION "public"."points_fat_reward_settle_due"() OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_reward_snapshot(p_before bigint DEFAULT NULL::bigint)
- RETURNS jsonb
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE v_admin boolean:=coalesce(public.points_is_admin(),false); v_result jsonb; v_services jsonb; v_more boolean;
-  s record; chosen record; v_series jsonb; v_preview jsonb;
-  v_week date:=date_trunc('week',clock_timestamp() AT TIME ZONE 'Asia/Shanghai')::date;
-BEGIN
-  SELECT coalesce(jsonb_agg(jsonb_build_object('id',t.id::text,'status',t.status,'requested_at',t.requested_at,
-    'serviced_at',t.serviced_at,'resolved_at',t.resolved_at) ORDER BY t.id DESC),'[]'::jsonb) INTO v_services
-    FROM(SELECT * FROM public.points_fat_reward_requests WHERE p_before IS NULL OR id<p_before ORDER BY id DESC LIMIT 30) t;
-  SELECT EXISTS(SELECT 1 FROM public.points_fat_reward_requests WHERE (p_before IS NULL OR id<p_before) AND id<
-    (SELECT min(x.id) FROM(SELECT id FROM public.points_fat_reward_requests WHERE p_before IS NULL OR id<p_before ORDER BY id DESC LIMIT 30) x)) INTO v_more;
-  v_result:=jsonb_build_object('admin',v_admin,'services',v_services,'more',v_more,
-    'pending_service',(SELECT count(*) FROM public.points_fat_reward_requests WHERE status='pending_service'),
-    'pending_confirmation',(SELECT count(*) FROM public.points_fat_reward_requests WHERE status='pending_confirmation'));
-  -- Shared read-only settlement data; privileged mutations retain their original checks.
-  SELECT * INTO s FROM public.points_fat_reward_state WHERE id=1;
-  SELECT * INTO chosen FROM public.points_fat_reward_weeks WHERE week_start=v_week;
-  IF FOUND THEN
-    v_preview:=jsonb_build_object('week',v_week,'current_days',chosen.current_days,'previous_days',chosen.previous_days,
-      'comparison_basis',chosen.comparison_basis,'reference_available',chosen.previous_mean_jin IS NOT NULL,
-      'change_jin',chosen.change_jin,'eligible',chosen.eligible,'calculated_delta',chosen.calculated_delta,
-      'applied_delta',chosen.applied_delta,'balance_after',chosen.balance_after,
-      'settled',true,'bowel_status',chosen.bowel_status,'rule_version',chosen.rule_version);
-  ELSE
-    SELECT * INTO chosen FROM public.points_fat_v2_reward_analysis(v_week)
-      ORDER BY eligible DESC,current_days DESC,(bowel_status='after') DESC LIMIT 1;
-    v_preview:=jsonb_build_object('week',v_week,'current_days',chosen.current_days,'previous_days',chosen.previous_days,
-      'comparison_basis',chosen.comparison_basis,'reference_available',chosen.previous_mean_jin IS NOT NULL,
-      'change_jin',chosen.change_jin,'eligible',chosen.eligible,'calculated_delta',chosen.calculated_delta,
-      'settled',false,'bowel_status',CASE WHEN chosen.eligible THEN chosen.bowel_status ELSE NULL END,'rule_version',2);
-  END IF;
-  SELECT coalesce(jsonb_agg(jsonb_build_object('bowel_status',a.bowel_status,'current_days',a.current_days,
-    'previous_days',a.previous_days,'comparison_basis',a.comparison_basis,'reference_available',a.previous_mean_jin IS NOT NULL,
-    'change_jin',a.change_jin,'eligible',a.eligible,'calculated_delta',a.calculated_delta) ORDER BY a.bowel_status),'[]'::jsonb)
-    INTO v_series FROM public.points_fat_v2_reward_analysis(v_week) a;
-  IF (v_preview->>'settled')::boolean AND (v_preview->>'rule_version')::integer=1 THEN v_series:='[]'::jsonb; END IF;
-  RETURN v_result||jsonb_build_object('settlement_readable',true,'status_rules',2,'diamonds',s.diamonds,'backpack',s.backpack,
-    'next_cutoff',public.points_fat_reward_cutoff(s.next_week),'preview',v_preview||jsonb_build_object('series',v_series),
-    'weeks',(SELECT coalesce(jsonb_agg(jsonb_build_object('week',t.week_start,'cutoff',t.cutoff_at,
-      'current_days',t.current_days,'previous_days',t.previous_days,'comparison_basis',t.comparison_basis,
-      'change_jin',t.change_jin,'eligible',t.eligible,'calculated_delta',t.calculated_delta,
-      'applied_delta',t.applied_delta,'balance_after',t.balance_after,'bowel_status',t.bowel_status,'rule_version',t.rule_version)
-      ORDER BY t.week_start DESC),'[]'::jsonb) FROM(SELECT * FROM public.points_fat_reward_weeks ORDER BY week_start DESC LIMIT 8)t));
-END $function$;
-
-ALTER FUNCTION "public"."points_fat_reward_snapshot"(p_before bigint) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_v2_admin_record_weight(p_weight_jin numeric, p_bowel_status text)
- RETURNS TABLE(id bigint, delta_jin numeric, created_at timestamp with time zone, bowel_status text)
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE v_start numeric; v_id bigint; v_at timestamptz;
-BEGIN
-  IF NOT coalesce(public.points_is_admin(),false) THEN
-    RAISE EXCEPTION 'Admin permission required' USING errcode='42501';
-  END IF;
-  IF p_bowel_status IS NULL OR p_bowel_status NOT IN ('before','after') THEN
-    RAISE EXCEPTION 'Invalid bowel status' USING errcode='22023';
-  END IF;
-  IF p_weight_jin IS NULL OR p_weight_jin<=0 OR p_weight_jin>=10000 OR p_weight_jin<>round(p_weight_jin,2) THEN
-    RAISE EXCEPTION 'Invalid weight' USING errcode='22023';
-  END IF;
-  SELECT s.starting_weight_jin INTO v_start FROM public.points_fat_settings s WHERE s.id=1 FOR UPDATE;
-  IF v_start IS NULL THEN RAISE EXCEPTION 'Starting weight required' USING errcode='55000'; END IF;
-  v_at:=clock_timestamp();
-  INSERT INTO public.points_fat_records AS r(weight_jin,created_at,recorded_by,bowel_status)
-    VALUES(p_weight_jin,v_at,auth.uid(),p_bowel_status) RETURNING r.id INTO v_id;
-  RETURN QUERY SELECT v_id,round(p_weight_jin-v_start,2),v_at,p_bowel_status;
-END $function$;
-
-ALTER FUNCTION "public"."points_fat_v2_admin_record_weight"(p_weight_jin numeric, p_bowel_status text) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_v2_get_logs(p_from timestamp with time zone DEFAULT NULL::timestamp with time zone, p_to timestamp with time zone DEFAULT NULL::timestamp with time zone, p_limit integer DEFAULT 10000)
- RETURNS TABLE(id bigint, delta_jin numeric, created_at timestamp with time zone, bowel_status text)
- LANGUAGE sql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-  SELECT r.id,round(r.weight_jin-s.starting_weight_jin,2),r.created_at,r.bowel_status
-  FROM public.points_fat_records r JOIN public.points_fat_settings s ON s.id=1
-  WHERE s.starting_weight_jin IS NOT NULL AND (p_from IS NULL OR r.created_at>=p_from)
-    AND (p_to IS NULL OR r.created_at<p_to)
-  ORDER BY r.created_at DESC,r.id DESC LIMIT least(greatest(coalesce(p_limit,10000),1),10000);
-$function$;
-
-ALTER FUNCTION "public"."points_fat_v2_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_v2_get_state(p_bowel_status text DEFAULT 'after'::text)
- RETURNS TABLE(configured boolean, delta_jin numeric, recorded_at timestamp with time zone, updated_at timestamp with time zone, record_count bigint, bowel_status text)
- LANGUAGE plpgsql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-BEGIN
-  IF p_bowel_status IS NULL OR p_bowel_status NOT IN ('before','after','unmarked') THEN
-    RAISE EXCEPTION 'Invalid bowel status' USING errcode='22023';
-  END IF;
-  RETURN QUERY SELECT s.starting_weight_jin IS NOT NULL,
-    round(r.weight_jin-s.starting_weight_jin,2),r.created_at,greatest(s.updated_at,r.created_at),
-    (SELECT count(*) FROM public.points_fat_records x WHERE
-      x.bowel_status=p_bowel_status OR p_bowel_status='unmarked' AND x.bowel_status IS NULL),p_bowel_status
-  FROM public.points_fat_settings s LEFT JOIN LATERAL(
-    SELECT x.weight_jin,x.created_at FROM public.points_fat_records x WHERE
-      x.bowel_status=p_bowel_status OR p_bowel_status='unmarked' AND x.bowel_status IS NULL
-    ORDER BY x.created_at DESC,x.id DESC LIMIT 1
-  ) r ON true WHERE s.id=1;
-END $function$;
-
-ALTER FUNCTION "public"."points_fat_v2_get_state"(p_bowel_status text) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_v2_reward_analysis(p_week date)
- RETURNS TABLE(bowel_status text, current_days integer, previous_days integer, current_mean_jin numeric, previous_mean_jin numeric, comparison_basis text, change_jin numeric, eligible boolean, calculated_delta bigint)
- LANGUAGE plpgsql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE v_status text; c record; p record; v_change numeric; v_eligible boolean;
-BEGIN
-  FOREACH v_status IN ARRAY ARRAY['before','after'] LOOP
-    RETURN QUERY SELECT w.bowel_status,w.current_days,w.previous_days,w.current_mean_jin,w.previous_mean_jin,
-      w.comparison_basis,w.change_jin,w.eligible,w.calculated_delta
-      FROM public.points_fat_reward_week_series w WHERE w.week_start=p_week AND w.bowel_status=v_status;
-    IF FOUND THEN CONTINUE; END IF;
-    SELECT * INTO c FROM public.points_fat_v2_reward_sample(p_week,v_status);
-    SELECT * INTO p FROM public.points_fat_v2_reward_reference(p_week,v_status);
-    v_change:=c.mean_jin-p.mean_jin;
-    v_eligible:=v_change IS NOT NULL AND c.days>=3 AND (p.basis='starting_weight' OR p.days>=3);
-    RETURN QUERY SELECT v_status,c.days,coalesce(p.days,0),c.mean_jin,p.mean_jin,coalesce(p.basis,'previous_week'),
-      v_change,coalesce(v_eligible,false),public.points_fat_reward_delta(v_change,c.days,CASE WHEN p.basis='starting_weight' THEN 3 ELSE coalesce(p.days,0) END);
-  END LOOP;
-END $function$;
-
-ALTER FUNCTION "public"."points_fat_v2_reward_analysis"(p_week date) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_v2_reward_reference(p_week date, p_status text)
- RETURNS TABLE(days integer, mean_jin numeric, basis text)
- LANGUAGE plpgsql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-DECLARE v_first date;
-BEGIN
-  SELECT min(date_trunc('week',created_at AT TIME ZONE 'Asia/Shanghai')::date) INTO v_first
-    FROM public.points_fat_records WHERE bowel_status=p_status
-      AND created_at<public.points_fat_reward_cutoff(date_trunc('week',created_at AT TIME ZONE 'Asia/Shanghai')::date);
-  -- A deleted first record must not reset the category's established first week.
-  SELECT least(v_first,min(week_start)) INTO v_first FROM public.points_fat_reward_week_series
-    WHERE bowel_status=p_status AND current_days>0;
-  IF p_week=v_first THEN
-    RETURN QUERY SELECT 0,s.starting_weight_jin,'starting_weight'::text FROM public.points_fat_settings s WHERE id=1;
-    RETURN;
-  END IF;
-  RETURN QUERY SELECT w.current_days,w.current_mean_jin,'previous_week'::text
-    FROM public.points_fat_reward_week_series w WHERE week_start=p_week-7 AND bowel_status=p_status;
-  IF NOT FOUND THEN
-    RETURN QUERY SELECT s.days,s.mean_jin,'previous_week'::text FROM public.points_fat_v2_reward_sample(p_week-7,p_status) s;
-  END IF;
-END $function$;
-
-ALTER FUNCTION "public"."points_fat_v2_reward_reference"(p_week date, p_status text) OWNER TO "postgres";
-
-CREATE OR REPLACE FUNCTION public.points_fat_v2_reward_sample(p_week date, p_status text)
- RETURNS TABLE(days integer, mean_jin numeric)
- LANGUAGE sql
- STABLE SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-  SELECT count(*)::integer,avg(d.weight_jin) FROM(
-    SELECT DISTINCT ON((r.created_at AT TIME ZONE 'Asia/Shanghai')::date) r.weight_jin
-    FROM public.points_fat_records r WHERE r.bowel_status=p_status
-      AND r.created_at>=(p_week::timestamp AT TIME ZONE 'Asia/Shanghai')
-      AND r.created_at<public.points_fat_reward_cutoff(p_week)
-    ORDER BY (r.created_at AT TIME ZONE 'Asia/Shanghai')::date,r.created_at,r.id
-  ) d;
-$function$;
-
-ALTER FUNCTION "public"."points_fat_v2_reward_sample"(p_week date, p_status text) OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION public.points_get_logs(p_from timestamp with time zone DEFAULT NULL::timestamp with time zone, p_to timestamp with time zone DEFAULT NULL::timestamp with time zone, p_limit integer DEFAULT 10000)
  RETURNS TABLE(id bigint, delta numeric, reason text, created_at timestamp with time zone, score_before numeric, score_after numeric, action text)
@@ -3728,7 +3289,7 @@ CREATE OR REPLACE FUNCTION public.points_notifications_preferences(p_categories 
  SET search_path TO ''
 AS $function$
 DECLARE a text:=points_notice.actor(); p points_notice.preferences; BEGIN
-  IF p_categories IS NOT NULL AND NOT p_categories<@ARRAY['score','kitchen','withdrawal','assets','fat','service','security'] THEN RAISE EXCEPTION 'Invalid categories' USING errcode='22023'; END IF;
+  IF p_categories IS NOT NULL AND NOT p_categories<@ARRAY['score','kitchen','withdrawal','assets','security'] THEN RAISE EXCEPTION 'Invalid categories' USING errcode='22023'; END IF;
   INSERT INTO points_notice.preferences(actor) VALUES(a) ON CONFLICT DO NOTHING;
   UPDATE points_notice.preferences SET categories=coalesce(p_categories,categories),quiet=coalesce(p_quiet,quiet),night_important=coalesce(p_night_important,night_important) WHERE actor=a RETURNING * INTO p;
   RETURN jsonb_build_object('categories',p.categories,'quiet',p.quiet,'nightImportant',p.night_important);
@@ -6431,10 +5992,6 @@ DECLARE actor text:=points_notice.actor(); administrator boolean:=actor LIKE 'ad
   UNION ALL
   SELECT 'withdrawal:'||w.id,w.id::text,'withdrawals','提现','提现 ¥'||w.amount,'待兑现','确认实际兑现后完成申请',w.requested_at
   FROM public.points_withdrawals w WHERE administrator AND w.status='pending' AND w.hidden_at IS NULL
-  UNION ALL
-  SELECT 'service:'||s.id,s.id::text,'services','服务','服务请求',CASE WHEN administrator THEN '待确认' ELSE '待服务' END,
-   CASE WHEN administrator THEN '宝宝已服务，等你确认' ELSE '哥哥发来的服务请求' END,coalesce(s.serviced_at,s.requested_at)
-  FROM public.points_fat_reward_requests s WHERE s.status=CASE WHEN administrator THEN 'pending_confirmation' ELSE 'pending_service' END
  ), page AS (
   SELECT * FROM todos WHERE p_before IS NULL OR (at,key)<((cursor_data->>'at')::timestamptz,cursor_data->>'id')
   ORDER BY at DESC,key DESC LIMIT 31
@@ -6695,11 +6252,7 @@ GRANT SELECT, UPDATE, USAGE ON SEQUENCE "public"."members_id_seq" TO "postgres";
 
 ALTER TABLE "public"."points_fat_records" ADD CONSTRAINT "points_fat_record_weight_check" CHECK (weight_jin > 0::numeric AND weight_jin < 10000::numeric);
 
-ALTER TABLE "public"."points_fat_records" ADD CONSTRAINT "points_fat_records_bowel_status_check" CHECK (bowel_status = ANY (ARRAY['before'::text, 'after'::text]));
-
 ALTER TABLE "public"."points_fat_records" ADD CONSTRAINT "points_fat_records_pkey" PRIMARY KEY (id);
-
-CREATE INDEX points_fat_records_status_time_idx ON public.points_fat_records USING btree (bowel_status, created_at, id);
 
 CREATE INDEX points_fat_records_time_idx ON public.points_fat_records USING btree (created_at DESC, id DESC);
 
@@ -6719,96 +6272,6 @@ REVOKE ALL ON SEQUENCE "public"."points_fat_records_id_seq" FROM PUBLIC, "postgr
 
 GRANT SELECT, UPDATE, USAGE ON SEQUENCE "public"."points_fat_records_id_seq" TO "postgres";
 
-ALTER TABLE "public"."points_fat_reward_operations" ADD CONSTRAINT "points_fat_reward_operations_kind_check" CHECK (kind = ANY (ARRAY['buy'::text, 'use'::text]));
-
-ALTER TABLE "public"."points_fat_reward_operations" ADD CONSTRAINT "points_fat_reward_operations_pkey" PRIMARY KEY (operation_id);
-
-ALTER TABLE "public"."points_fat_reward_operations" ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE "public"."points_fat_reward_operations" OWNER TO "postgres";
-
-REVOKE ALL ON TABLE "public"."points_fat_reward_operations" FROM PUBLIC, "postgres", "service_role";
-
-GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_operations" TO "postgres";
-
-GRANT TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_operations" TO "service_role";
-
-ALTER TABLE "public"."points_fat_reward_requests" ADD CONSTRAINT "points_fat_reward_requests_pkey" PRIMARY KEY (id);
-
-ALTER TABLE "public"."points_fat_reward_requests" ADD CONSTRAINT "points_fat_reward_requests_status_check" CHECK (status = ANY (ARRAY['pending_service'::text, 'pending_confirmation'::text, 'completed'::text, 'returned'::text]));
-
-CREATE INDEX points_fat_reward_requests_pending_idx ON public.points_fat_reward_requests USING btree (status, id DESC) WHERE (status = ANY (ARRAY['pending_service'::text, 'pending_confirmation'::text]));
-
-CREATE TRIGGER points_notice_event AFTER INSERT OR UPDATE ON points_fat_reward_requests FOR EACH ROW EXECUTE FUNCTION points_notice.business_event();
-
-ALTER TABLE "public"."points_fat_reward_requests" ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE "public"."points_fat_reward_requests" OWNER TO "postgres";
-
-REVOKE ALL ON TABLE "public"."points_fat_reward_requests" FROM PUBLIC, "postgres", "service_role";
-
-GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_requests" TO "postgres";
-
-GRANT TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_requests" TO "service_role";
-
-ALTER SEQUENCE "public"."points_fat_reward_requests_id_seq" OWNER TO "postgres";
-
-REVOKE ALL ON SEQUENCE "public"."points_fat_reward_requests_id_seq" FROM PUBLIC, "postgres";
-
-GRANT SELECT, UPDATE, USAGE ON SEQUENCE "public"."points_fat_reward_requests_id_seq" TO "postgres";
-
-ALTER TABLE "public"."points_fat_reward_state" ADD CONSTRAINT "points_fat_reward_state_backpack_check" CHECK (backpack >= 0);
-
-ALTER TABLE "public"."points_fat_reward_state" ADD CONSTRAINT "points_fat_reward_state_diamonds_check" CHECK (diamonds >= 0);
-
-ALTER TABLE "public"."points_fat_reward_state" ADD CONSTRAINT "points_fat_reward_state_id_check" CHECK (id = 1);
-
-ALTER TABLE "public"."points_fat_reward_state" ADD CONSTRAINT "points_fat_reward_state_pkey" PRIMARY KEY (id);
-
-ALTER TABLE "public"."points_fat_reward_state" ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE "public"."points_fat_reward_state" OWNER TO "postgres";
-
-REVOKE ALL ON TABLE "public"."points_fat_reward_state" FROM PUBLIC, "postgres", "service_role";
-
-GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_state" TO "postgres";
-
-GRANT TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_state" TO "service_role";
-
-ALTER TABLE "public"."points_fat_reward_week_series" ADD CONSTRAINT "points_fat_reward_week_series_bowel_status_check" CHECK (bowel_status = ANY (ARRAY['before'::text, 'after'::text]));
-
-ALTER TABLE "public"."points_fat_reward_week_series" ADD CONSTRAINT "points_fat_reward_week_series_pkey" PRIMARY KEY (week_start, bowel_status);
-
-ALTER TABLE "public"."points_fat_reward_week_series" ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE "public"."points_fat_reward_week_series" OWNER TO "postgres";
-
-REVOKE ALL ON TABLE "public"."points_fat_reward_week_series" FROM PUBLIC, "postgres", "service_role";
-
-GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_week_series" TO "postgres";
-
-GRANT TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_week_series" TO "service_role";
-
-ALTER TABLE "public"."points_fat_reward_weeks" ADD CONSTRAINT "points_fat_reward_weeks_balance_after_check" CHECK (balance_after >= 0);
-
-ALTER TABLE "public"."points_fat_reward_weeks" ADD CONSTRAINT "points_fat_reward_weeks_bowel_status_check" CHECK (bowel_status = ANY (ARRAY['before'::text, 'after'::text]));
-
-ALTER TABLE "public"."points_fat_reward_weeks" ADD CONSTRAINT "points_fat_reward_weeks_comparison_basis_check" CHECK (comparison_basis = ANY (ARRAY['previous_week'::text, 'starting_weight'::text]));
-
-ALTER TABLE "public"."points_fat_reward_weeks" ADD CONSTRAINT "points_fat_reward_weeks_pkey" PRIMARY KEY (week_start);
-
-CREATE TRIGGER points_notice_event AFTER INSERT OR UPDATE ON points_fat_reward_weeks FOR EACH ROW EXECUTE FUNCTION points_notice.business_event();
-
-ALTER TABLE "public"."points_fat_reward_weeks" ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE "public"."points_fat_reward_weeks" OWNER TO "postgres";
-
-REVOKE ALL ON TABLE "public"."points_fat_reward_weeks" FROM PUBLIC, "postgres", "service_role";
-
-GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_weeks" TO "postgres";
-
-GRANT TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_reward_weeks" TO "service_role";
-
 ALTER TABLE "public"."points_fat_settings" ADD CONSTRAINT "points_fat_settings_id_check" CHECK (id = 1);
 
 ALTER TABLE "public"."points_fat_settings" ADD CONSTRAINT "points_fat_settings_pkey" PRIMARY KEY (id);
@@ -6824,22 +6287,6 @@ REVOKE ALL ON TABLE "public"."points_fat_settings" FROM PUBLIC, "postgres", "ser
 GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_settings" TO "postgres";
 
 GRANT TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_settings" TO "service_role";
-
-ALTER TABLE "public"."points_fat_status_migration" ADD CONSTRAINT "points_fat_status_migration_history_status_check" CHECK (history_status = ANY (ARRAY['before'::text, 'after'::text]));
-
-ALTER TABLE "public"."points_fat_status_migration" ADD CONSTRAINT "points_fat_status_migration_id_check" CHECK (id = 1);
-
-ALTER TABLE "public"."points_fat_status_migration" ADD CONSTRAINT "points_fat_status_migration_pkey" PRIMARY KEY (id);
-
-ALTER TABLE "public"."points_fat_status_migration" ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE "public"."points_fat_status_migration" OWNER TO "postgres";
-
-REVOKE ALL ON TABLE "public"."points_fat_status_migration" FROM PUBLIC, "postgres", "service_role";
-
-GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_status_migration" TO "postgres";
-
-GRANT TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_status_migration" TO "service_role";
 
 ALTER TABLE "public"."points_kitchen_dishes" ADD CONSTRAINT "points_kitchen_dishes_pkey" PRIMARY KEY (slug);
 
@@ -7491,14 +6938,6 @@ ALTER TABLE "public"."autosar_user_settings" ADD CONSTRAINT "autosar_user_settin
 
 ALTER TABLE "public"."points_fat_records" ADD CONSTRAINT "points_fat_records_recorded_by_fkey" FOREIGN KEY (recorded_by) REFERENCES auth.users(id) ON DELETE SET NULL;
 
-ALTER TABLE "public"."points_fat_reward_operations" ADD CONSTRAINT "points_fat_reward_operations_created_by_fkey" FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
-ALTER TABLE "public"."points_fat_reward_operations" ADD CONSTRAINT "points_fat_reward_operations_request_id_fkey" FOREIGN KEY (request_id) REFERENCES points_fat_reward_requests(id);
-
-ALTER TABLE "public"."points_fat_reward_requests" ADD CONSTRAINT "points_fat_reward_requests_requested_by_fkey" FOREIGN KEY (requested_by) REFERENCES auth.users(id) ON DELETE SET NULL;
-
-ALTER TABLE "public"."points_fat_reward_week_series" ADD CONSTRAINT "points_fat_reward_week_series_week_start_fkey" FOREIGN KEY (week_start) REFERENCES points_fat_reward_weeks(week_start);
-
 ALTER TABLE "public"."points_fat_settings" ADD CONSTRAINT "points_fat_settings_updated_by_fkey" FOREIGN KEY (updated_by) REFERENCES auth.users(id) ON DELETE SET NULL;
 
 ALTER TABLE "public"."points_kitchen_drafts" ADD CONSTRAINT "points_kitchen_drafts_order_id_fkey" FOREIGN KEY (order_id) REFERENCES points_kitchen_orders(id);
@@ -7835,6 +7274,14 @@ GRANT EXECUTE ON FUNCTION "public"."points_fat_get_logs"(p_from timestamp with t
 
 GRANT EXECUTE ON FUNCTION "public"."points_fat_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) TO "authenticated";
 
+REVOKE ALL ON FUNCTION "public"."points_fat_get_progress"() FROM PUBLIC, "anon", "authenticated", "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_get_progress"() TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_get_progress"() TO "anon";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_get_progress"() TO "authenticated";
+
 REVOKE ALL ON FUNCTION "public"."points_fat_get_state"() FROM PUBLIC, "anon", "authenticated", "postgres";
 
 GRANT EXECUTE ON FUNCTION "public"."points_fat_get_state"() TO "postgres";
@@ -7842,90 +7289,6 @@ GRANT EXECUTE ON FUNCTION "public"."points_fat_get_state"() TO "postgres";
 GRANT EXECUTE ON FUNCTION "public"."points_fat_get_state"() TO "anon";
 
 GRANT EXECUTE ON FUNCTION "public"."points_fat_get_state"() TO "authenticated";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_admin_exchange"(p_kind text, p_operation_id uuid) FROM PUBLIC, "authenticated", "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_admin_exchange"(p_kind text, p_operation_id uuid) TO "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_admin_exchange"(p_kind text, p_operation_id uuid) TO "authenticated";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_admin_resolve"(p_request_id bigint, p_confirm boolean) FROM PUBLIC, "authenticated", "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_admin_resolve"(p_request_id bigint, p_confirm boolean) TO "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_admin_resolve"(p_request_id bigint, p_confirm boolean) TO "authenticated";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_cutoff"(p_week date) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_cutoff"(p_week date) TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_delta"(p_change numeric, p_days integer, p_previous_days integer) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_delta"(p_change numeric, p_days integer, p_previous_days integer) TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_get_state"(p_before bigint) FROM PUBLIC, "anon", "authenticated", "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_get_state"(p_before bigint) TO "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_get_state"(p_before bigint) TO "anon";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_get_state"(p_before bigint) TO "authenticated";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_guest_serviced"(p_request_id bigint) FROM PUBLIC, "anon", "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_guest_serviced"(p_request_id bigint) TO "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_guest_serviced"(p_request_id bigint) TO "anon";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_reference"(p_week date) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_reference"(p_week date) TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_sample"(p_week date) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_sample"(p_week date) TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_settle_due"() FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_settle_due"() TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_reward_snapshot"(p_before bigint) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_reward_snapshot"(p_before bigint) TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_v2_admin_record_weight"(p_weight_jin numeric, p_bowel_status text) FROM PUBLIC, "authenticated", "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_admin_record_weight"(p_weight_jin numeric, p_bowel_status text) TO "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_admin_record_weight"(p_weight_jin numeric, p_bowel_status text) TO "authenticated";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_v2_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) FROM PUBLIC, "anon", "authenticated", "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) TO "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) TO "anon";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) TO "authenticated";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_v2_get_state"(p_bowel_status text) FROM PUBLIC, "anon", "authenticated", "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_get_state"(p_bowel_status text) TO "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_get_state"(p_bowel_status text) TO "anon";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_get_state"(p_bowel_status text) TO "authenticated";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_v2_reward_analysis"(p_week date) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_reward_analysis"(p_week date) TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_v2_reward_reference"(p_week date, p_status text) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_reward_reference"(p_week date, p_status text) TO "postgres";
-
-REVOKE ALL ON FUNCTION "public"."points_fat_v2_reward_sample"(p_week date, p_status text) FROM PUBLIC, "postgres";
-
-GRANT EXECUTE ON FUNCTION "public"."points_fat_v2_reward_sample"(p_week date, p_status text) TO "postgres";
 
 REVOKE ALL ON FUNCTION "public"."points_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) FROM PUBLIC, "anon", "authenticated", "postgres";
 

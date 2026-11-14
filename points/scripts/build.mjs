@@ -8,9 +8,9 @@ import {execFileSync} from 'node:child_process';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const modules=[['runtime','app-runtime.js',true],['sdk','vendor/supabase-2.117.2.js',true],
  ['gestures','home-gestures.js'],
- ['family','family.js'],['fat','fat-loss.js'],['rewards','fat-rewards.js'],['access','device-access.js',true],
+ ['family','family.js'],['fat','fat-loss.js'],['access','device-access.js',true],
  ['push','web-push.js'],['notifications','notifications.js'],['app','app.js',true],['theme','ui-theme.js']];
-const styles=['fat-loss.css','fat-rewards.css','ui-theme.css','kitchen.css','web-push.css','device-access.css','notifications.css','kitchen-refined.css','family.css'];
+const styles=['fat-loss.css','ui-theme.css','kitchen.css','web-push.css','device-access.css','notifications.css','kitchen-refined.css','family.css'];
 const hash=text=>createHash('sha256').update(text).digest('hex');
 export async function bundle({build,updatedAt,sdkSource,overrides={}}={}) {
  const previous=JSON.parse(await fs.readFile(path.join(root,'version.json'),'utf8').catch(()=>'{}'));

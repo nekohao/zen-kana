@@ -5,7 +5,6 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createFamilyDatabase} from './family-db.mjs';
 import {bundle} from '../scripts/build.mjs';
-import {createFatDatabase} from './fat-db.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const port=Number(process.env.POINTS_PREVIEW_PORT||4178);
 const {db,call,context}=await createFamilyDatabase();const rpc=(role,name,args,token)=>call(role,name,args,token);let apiQueue=Promise.resolve();
@@ -28,19 +27,13 @@ await db.exec(`INSERT INTO score_logs(member_id,delta,reason,operator_id)VALUES(
 await context('service','points_notice_worker_claim');
 await db.query("SELECT points_notice.emit('preview:withdrawal','admin','withdrawal','宝宝发来了提现申请','申请 ¥30，请实际兑现后再标记完成。','withdrawals','preview-withdrawal',1,false,true)");
 await db.exec("INSERT INTO points_withdrawals(amount,cash_before,cash_after) VALUES(30,30,0);");
-const fat=await createFatDatabase({seed:true});
-await fat.db.exec(await fs.readFile(path.join(root,'fat-settlement-increment-20261011.sql'),'utf8'));
-await fat.db.exec("INSERT INTO points_fat_reward_requests(status,serviced_at) VALUES('pending_service',NULL),('pending_confirmation',clock_timestamp());");
-// Mirror disposable services so the actual todo RPC sees the same preview state.
-async function syncServices(){
- const rows=(await fat.db.query('SELECT * FROM points_fat_reward_requests')).rows;
- for(const row of rows)await db.query(`INSERT INTO points_fat_reward_requests(id,status,requested_at,serviced_at,resolved_at,requested_by) OVERRIDING SYSTEM VALUE VALUES($1,$2,$3,$4,$5,$6)
- ON CONFLICT(id) DO UPDATE SET status=excluded.status,serviced_at=excluded.serviced_at,resolved_at=excluded.resolved_at`,[row.id,row.status,row.requested_at,row.serviced_at,row.resolved_at,row.requested_by]);
-}
-await syncServices();
-// Deterministic history: the UI regression must also run before Sunday's settlement.
-await fat.db.exec(`INSERT INTO public.points_fat_reward_weeks(week_start,cutoff_at,current_days,previous_days,current_mean_jin,previous_mean_jin,change_jin,eligible,calculated_delta,applied_delta,balance_after)
- VALUES(date_trunc('week',clock_timestamp() AT TIME ZONE 'Asia/Shanghai')::date-7,clock_timestamp()-interval '1 day',4,3,157,160,-3,true,3,3,10) ON CONFLICT(week_start) DO NOTHING;`);
+await db.exec("INSERT INTO points_fat_settings(id,starting_weight_jin) VALUES(1,162) ON CONFLICT(id) DO UPDATE SET starting_weight_jin=162;");
+await db.exec(`WITH week AS (SELECT date_trunc('week',now() AT TIME ZONE 'Asia/Shanghai')::date AS monday)
+ INSERT INTO points_fat_records(weight_jin,created_at)
+ SELECT weight,((monday+day)::timestamp+time '08:10') AT TIME ZONE 'Asia/Shanghai' FROM week
+ CROSS JOIN (VALUES (-21,161.8),(-19,161.3),(-17,161.1),(-14,160.1),(-12,159.9),(-10,159.5),
+   (-7,159.5),(-6,159),(-6,159.8),(-5,158.7),(-4,158.8)) AS samples(day,weight)
+ UNION ALL SELECT 157.2,now() - interval '1 minute';`);
 const release=JSON.parse(await fs.readFile(path.join(root,'version.json'),'utf8'));
 const preview=await bundle({...release,sdkSource:await fs.readFile(path.join(root,'tests/fixtures/browser-sdk.js'),'utf8')});
 preview.html=preview.html.replaceAll("SUPABASE_URL+'/functions/v1/points-web-push'","'/__demo/push-config'");
@@ -55,17 +48,22 @@ const server=http.createServer(async(req,res)=>{
       let body='';for await(const chunk of req){body+=chunk;if(body.length>100000)throw Error('Request too large');}
       const parsed=JSON.parse(body);
       const {role,name,args,legacy}=sdkRpc?{role:'guest',name:url.pathname.split('/').at(-1),args:parsed,legacy:false}:parsed;
-      if(legacy && (name.startsWith('points_kitchen_v2_') || name.startsWith('points_fat_v2_'))){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({data:null,error:{code:'PGRST202',message:'Could not find function'}}));return;}
+      if(legacy && (name.startsWith('points_kitchen_v2_'))){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({data:null,error:{code:'PGRST202',message:'Could not find function'}}));return;}
       const run=apiQueue.catch(()=>{}).then(async()=>{
       const deviceToken=req.headers['x-client-info']?.match(/;points-device=([a-f0-9]{64})/)?.[1];
       await context(role==='admin'?'admin':'guest',name,deviceToken);
       await db.query('SELECT public.points_access_check_request()');let data;
       if(/^points_(access|push|notifications)_[a-z_]+$/.test(name)){
-        if(name==='points_notifications_get_todos')await syncServices();
         const entries=Object.entries(args);if(entries.some(([key])=>!/^p_[a-z_]+$/.test(key)))throw Error('Invalid argument');
         const result=await db.query(`SELECT public.${name}(${entries.map(([key],i)=>`${key}=>$${i+1}`).join(',')}) AS result`,entries.map(([,value])=>value!==null&&typeof value==='object'&&!Array.isArray(value)?JSON.stringify(value):value));data=result.rows[0].result;
       }
-      else if(name.startsWith('points_fat_')){data=await fat.rpc(role==='admin'?'admin':'guest',name,args);await syncServices();}
+      else if(/^points_fat_[a-z_]+$/.test(name)){
+        const entries=Object.entries(args);
+        if(entries.some(([key])=>!/^p_[a-z_]+$/.test(key)))throw Error('Invalid argument');
+        const placeholders=entries.map(([key],i)=>`${key}=>$${i+1}`).join(',');
+        const {rows}=await db.query(`SELECT * FROM public.${name}(${placeholders})`,entries.map(([,value])=>value));
+        data=['points_fat_get_progress','points_fat_admin_delete_record'].includes(name)?Object.values(rows[0]||{})[0]:rows;
+      }
       else if(name.startsWith('points_family_') || /^points_kitchen_v[23]_/.test(name) || ['points_kitchen_get_state','points_kitchen_get_order','points_kitchen_get_reviews'].includes(name))data=await rpc(role==='admin'?'admin':'guest',name,args,deviceToken);
       else if(name==='points_is_admin')data=role==='admin';
       else if(name==='points_get_state')data=(await db.query('SELECT score FROM members')).rows.map(row=>({...row,score:Number(row.score)}));
@@ -73,9 +71,6 @@ const server=http.createServer(async(req,res)=>{
       else if(name==='points_get_withdrawals')data=(await db.query('SELECT * FROM points_withdrawals WHERE hidden_at IS NULL ORDER BY id DESC')).rows;
       else if(name==='points_admin_settle_withdrawal')data=await rpc(role,name,args,deviceToken);
       else if(name==='points_shop_get_state_v2')data={inventory:{},weekly_counts:{},weekly_feature:{code:'mystery_box',discount_claimed:false}};
-      else if(name==='points_fat_get_state')data=[{configured:true,delta_jin:-3.2,recorded_at:new Date().toISOString(),record_count:10}];
-      else if(name==='points_fat_get_logs')data=Array.from({length:10},(_,i)=>({id:String(i+1),delta_jin:-i*.3,created_at:new Date(Date.now()-(9-i)*86400000).toISOString()}));
-      else if(name==='points_fat_reward_get_state')data={admin:role==='admin',diamonds:0,backpack:0,services:[],pending_service:0,pending_confirmation:0,weeks:[],preview:null};
       else if(name==='points_preview_wheel')data=[{prize_amount:30,roll:42}];
       else data=[];
       return data;});apiQueue=run;const data=await run;
@@ -102,4 +97,4 @@ const server=http.createServer(async(req,res)=>{
   }
 });
 server.listen(port,'127.0.0.1',()=>console.log(`Preview: http://127.0.0.1:${port}/preview/index.html?role=guest`));
-process.on('SIGINT',async()=>{server.close();await db.close();await fat.db.close();process.exit();});
+process.on('SIGINT',async()=>{server.close();await db.close();process.exit();});

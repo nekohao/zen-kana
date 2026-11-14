@@ -1,0 +1,78 @@
+#metricSwitch { grid-template-columns: repeat(3,minmax(0,1fr))!important; }
+#metricSwitch .metric-switch-thumb { width:calc((100% - 8px)/3)!important; }
+#metricSwitch.fat-switch-active .metric-switch-thumb { transform:translate3d(200%,0,0)!important; background:linear-gradient(145deg,#ffffffcf,#dcefe6a3)!important; }
+#metricSwitch.fat-switch-active .metric-option.active { color:#567c69!important; }
+.fat-home-content { display:none; flex-direction:column; align-items:center; width:100%; }
+.home.fat-active .hero > :not(.metric-switch):not(.fat-home-content) { display:none!important; }
+.home.fat-active .fat-home-content { display:flex; }
+.home.fat-active .fat-lens { background:radial-gradient(circle at 34% 24%,#ffffffc7,transparent 48%),#eaf4ec99!important; box-shadow:0 24px 58px #73978321,inset 0 2px 4px #ffffffe6!important; }
+.home.fat-active .fat-lens::after { display:none!important; }
+.fat-value-stack { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.fat-value-label { font-size:15px; color:#638171; font-weight:650; }
+.fat-value { font-size:clamp(50px,17vw,76px); line-height:1; font-weight:730; letter-spacing:-2px; color:#557a65; font-variant-numeric:tabular-nums; }
+.fat-value-unit { font-size:14px; font-weight:600; color:#7b9284; }
+.fat-value-stack.gain .fat-value { color:#b67e62; }
+.fat-home-content .reward-line-primary { color:#597967!important; }
+.fat-home-content .reward-line-secondary { color:#829487!important; }
+.fat-home-actions { height:104px; min-height:104px; margin-top:14px; display:grid; place-items:center; }
+.fat-record-button { width:min(78vw,258px); height:50px; border:1px solid #ffffffd6; border-radius:17px; color:#5e7f6d; background:linear-gradient(135deg,#ffffffa3,#dfefdfa0); box-shadow:0 10px 26px #73978317,inset 0 1px #ffffffb8; font-size:14px; font-weight:710; }
+.fat-record-button:disabled { opacity:.45; pointer-events:none; }
+.fat-field-label { display:block; margin:15px 0 6px; text-align:left; color:var(--secondary); font-size:12px; font-weight:650; }
+.fat-input-wrap { display:flex; align-items:center; gap:8px; padding:0 13px; height:50px; border:1px solid var(--glass-border); border-radius:15px; background:#ffffff40; }
+.fat-input-wrap input { width:100%; min-width:0; border:0; outline:0; background:transparent; font-size:20px; font-weight:650; color:var(--ink); }
+.fat-input-wrap span { flex:0 0 auto; color:var(--secondary); font-size:13px; }
+.fat-form-error { margin-top:9px; color:#b36661; font-size:12px; line-height:1.4; }
+.fat-form-note { margin-top:10px; color:var(--tertiary); font-size:11px; line-height:1.45; }
+#fatWeightLayer .alert { max-height:calc(100dvh - 40px); overflow-y:auto!important; }
+#fatWeightLayer .alert-button.primary-action { color:#587b68!important; background:#e0ede647!important; }
+.fat-unit-switch { grid-template-columns:repeat(2,minmax(0,1fr)); width:120px; height:32px; flex-shrink:0; padding:3px; gap:2px; margin:0; border:1px solid #ffffff99; background:#ffffff38; }
+.fat-unit-switch .segment { min-height:0; height:100%; padding:0 6px; font-size:12px; line-height:1; color:var(--ui-muted,#6a8577); }
+.fat-unit-switch .segment.active { background:#ffffffa3; color:var(--ui-accent,#557a65); box-shadow:0 2px 6px #63817112; }
+.fat-unit-switch .segment:disabled { opacity:.55; }
+.fat-delete-button { padding:4px 10px; border:1px solid #b3666126; border-radius:9px; background:#b366610a; color:#b36661; font-size:11px; }
+.fat-delete-button:disabled { opacity:.45; pointer-events:none; }
+@media (max-height:700px) { .fat-home-actions { height:78px; min-height:78px; } }
+@media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
+#pointsApp .fat-overview-close { position:absolute; right:16px; top:12px; z-index:5; min-width:44px; min-height:44px; border:0; background:transparent; color:var(--ui-accent,#567c67); font-size:13px; font-weight:600; border-radius:12px; }
+#pointsApp .fat-overview-close:focus-visible { outline:2px solid var(--ui-accent,#567c67); }
+
+#pointsApp .home .fat-home-content .reward-message { justify-content:center; }
+#pointsApp .home.fat-active .fat-value-stack { gap:7px; }
+#pointsApp .home.fat-active .fat-value { font-size:clamp(48px,16vw,69px); }
+#pointsApp .fat-home-comparison {
+  margin-top:5px; color:#4d6e5c; font-size:12px; line-height:1.4; font-weight:600;
+}
+#pointsApp .overview.fat-mode .overview-shell { max-height:min(75dvh,530px)!important; }
+#pointsApp .overview.fat-mode .overview-header { min-height:48px; margin-bottom:10px; padding-bottom:8px; }
+#pointsApp .overview.fat-mode .overview-grabber-hitbox { min-height:26px; margin-bottom:0; }
+#pointsApp .overview.fat-mode .overview-subtitle { display:none; }
+#pointsApp #fatContentSwitch { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); margin:0 0 14px; }
+#pointsApp #fatContentSwitch .overview-content-choice { min-height:36px; }
+.fat-trend-card { padding:17px 15px 13px; background:#ffffffbf; border:1px solid #e1ebe4; border-radius:21px; }
+.fat-trend-card h2 { margin:0; color:#294639; font-size:17px; font-weight:650; }
+.fat-chart-reference { margin:5px 0 9px; color:#536e60; font-size:12px; }
+.fat-chart-wrap { height:clamp(92px,19dvh,152px); }
+.fat-chart-wrap canvas { display:block; width:100%; height:100%; cursor:pointer; }
+.fat-week-labels { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+.fat-week-button {
+  color:#4e6b5c; min-height:44px; padding:3px 1px; border:0; border-radius:12px; background:none;
+  font-size:12px; font-variant-numeric:tabular-nums; cursor:pointer;
+}
+.fat-week-button small { display:block; margin-top:2px; font-size:10px; }
+.fat-week-button.insufficient { color:#646e68; }
+.fat-week-button[aria-pressed="true"] { background:#edf5ef; color:#2c5540; font-weight:650; }
+.fat-week-detail { display:grid; gap:4px; margin-top:12px; padding-top:11px; border-top:1px solid #e5ede7; }
+.fat-week-detail strong { color:#315442; font-size:15px; font-weight:650; }
+.fat-week-detail span,.fat-overview-status { color:#526c5e; font-size:12px; }
+.fat-overview-status { margin:8px 0; }
+.fat-record-day { margin:0 0 10px; padding:10px 13px; border:1px solid #e1ebe4; border-radius:16px; background:#ffffffb3; }
+.fat-record-day h3 { margin:2px 0 7px; font-size:12px; font-weight:650; color:#345442; }
+.fat-record-line {
+  display:flex; align-items:center; gap:12px; min-height:40px; border-top:1px solid #e5ede7;
+  color:#345442; font-size:13px; font-variant-numeric:tabular-nums;
+}
+.fat-record-line time { color:#546e60; }
+.fat-record-line > span { margin-left:auto; }
+.fat-record-line .fat-delete-button { min-height:34px; }
+.fat-record-more { min-height:42px; border:0; border-radius:12px; padding:0 14px; background:#ecf4ee; color:#365f47; font-size:13px; }
+.fat-week-button:focus-visible,.fat-delete-button:focus-visible,.fat-record-more:focus-visible { outline:2px solid #527661; outline-offset:2px; }

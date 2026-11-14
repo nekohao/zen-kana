@@ -40,17 +40,57 @@ def increment_base(data):
 def function_key(fn):
     return (fn['schema'], fn['name'], fn['identity_arguments'])
 
+def relation_changes(base, data):
+    previous = {(r['schema'], r['name']): r for r in base['relations']}
+    current = {(r['schema'], r['name']): r for r in data['relations']}
+    removed = [r for key, r in previous.items() if key not in current]
+    tables = [r for r in removed if r['kind'] == 'r']
+    owned = {(seq['schema'], seq['name']) for seq in base['sequences']
+             if any(o['kind'] == 'i' and (seq['schema'], o['table']) in
+                    {(t['schema'], t['name']) for t in tables} for o in seq.get('ownership') or [])}
+    if (current.keys() - previous.keys()
+        or any(r['kind'] != 'r' and (r['schema'], r['name']) not in owned for r in removed)
+        or data['sequences'] != [seq for seq in base['sequences'] if (seq['schema'], seq['name']) not in owned]):
+        raise ValueError('Review unsupported relation or sequence changes.')
+    statements = []
+    for key, rel in current.items():
+        old = previous[key]
+        if rel == old:
+            continue
+        names = {c['name'] for c in rel['columns']}
+        dropped = {c['name'] for c in old['columns']} - names
+        expected = {**old, 'columns': [c for c in old['columns'] if c['name'] in names]}
+        for field in ('constraints', 'indexes'):
+            if dropped and old.get(field):
+                expected[field] = [item for item in old[field] if not any(
+                    re.search(r'\b' + re.escape(name) + r'\b', item['definition']) for name in dropped)]
+        if len(expected['columns']) != len(rel['columns']):
+            raise ValueError('Review added columns in ' + rel['name'])
+        for column, previous_column in zip(rel['columns'], expected['columns']):
+            if column.get('default') != previous_column.get('default'):
+                action = 'DROP DEFAULT' if column['default'] is None else 'SET DEFAULT ' + column['default']
+                statements.append(f'ALTER TABLE {qualified(rel)} ALTER COLUMN {q(column["name"])} {action};')
+        expected['columns'] = [{**c, 'default': n['default']} for n, c in zip(rel['columns'], expected['columns'])]
+        if expected != rel:
+            raise ValueError('Review unsupported relation change in ' + rel['name'])
+        for name in sorted(dropped):
+            statements.append(f'ALTER TABLE {qualified(rel)} DROP COLUMN IF EXISTS {q(name)};')
+    if tables:
+        statements.append('DROP TABLE IF EXISTS ' + ', '.join(map(qualified, tables)) + ';')
+    return statements
+
 def render_increment(data):
     base = increment_base(data)
     # Refuse unsupported changes rather than silently ship an incomplete/cumulative upgrade.
     for key in set(base) | set(data):
-        if key not in ('functions', 'increment') and base.get(key) != data.get(key):
+        if key not in ('functions', 'relations', 'sequences', 'increment') and base.get(key) != data.get(key):
             raise ValueError('Review and extend the increment renderer for changed section: ' + key)
+    relations = relation_changes(base, data)
     previous = {function_key(fn): fn for fn in base['functions']}
     current = {function_key(fn): fn for fn in data['functions']}
-    if previous.keys() != current.keys():
-        raise ValueError('Review and extend the increment renderer for added/removed function signatures.')
-    changed = [fn for key, fn in current.items() if fn != previous[key]]
+    removed = [fn for key, fn in previous.items() if key not in current]
+    added = [fn for key, fn in current.items() if key not in previous]
+    changed = [fn for key, fn in current.items() if key in previous and fn != previous[key]]
     for fn in changed:
         old = previous[function_key(fn)]
         unsupported = [key for key in set(fn) | set(old) if key not in ('definition', 'owner', 'acl', 'comment') and fn.get(key) != old.get(key)]
@@ -80,6 +120,14 @@ def render_increment(data):
                        '  RAISE EXCEPTION ' + lit('Database baseline differs for ' + fn['name'] + '; apply/verify preceding changes first') + ';', ' END IF;']
     if guards:
         out += ['DO $baseline$\nBEGIN\n' + '\n'.join(guards) + '\nEND\n$baseline$;']
+    for fn in added:
+        target = qualified(fn) + '(' + fn['identity_arguments'] + ')'
+        out += [normalized(fn['definition']).strip().rstrip(';') + ';',
+                f'ALTER FUNCTION {target} OWNER TO {q(fn["owner"])};']
+        if fn['acl'] is not None:
+            out += acl_sql('f', target, fn['acl'], fn['owner'])
+        if fn['comment'] is not None:
+            out.append(f'COMMENT ON FUNCTION {target} IS {lit(fn["comment"])};')
     for fn in changed:
         old = previous[function_key(fn)]
         target = qualified(fn) + '(' + fn['identity_arguments'] + ')'
@@ -94,6 +142,10 @@ def render_increment(data):
         if fn['comment'] != old['comment']:
             out.append(f'COMMENT ON FUNCTION {target} IS ' + ('NULL' if fn['comment'] is None else lit(fn['comment'])) + ';')
     out += [sql.strip().rstrip(';') + ';' for sql in statements]
+    if removed:
+        targets = [qualified(fn) + '(' + fn['identity_arguments'] + ')' for fn in removed]
+        out.append('DROP FUNCTION IF EXISTS ' + ',\n  '.join(targets) + ';')
+    out += relations
     out += ["NOTIFY pgrst,'reload schema';", 'COMMIT;']
     return '\n\n'.join(out) + '\n'
 
