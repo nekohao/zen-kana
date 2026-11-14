@@ -1,10 +1,10 @@
 {
   "schema": 2,
-  "build": "20261114.1",
-  "updatedAt": "2026-11-14T03:19:18.866Z",
+  "build": "20261114.2",
+  "updatedAt": "2026-11-14T13:00:50.149Z",
   "shell": {
-    "url": "assets/shell.6b361a4577603408262314dfd1bb8ccfbef45d54fd70be9587fc0c144d1927d6.html",
-    "sha256": "6b361a4577603408262314dfd1bb8ccfbef45d54fd70be9587fc0c144d1927d6",
+    "url": "assets/shell.a42c3b47287d1ddeb93197fa2a8756f12e6a3863c3ee61bfebb92fb9bbe45365.html",
+    "sha256": "a42c3b47287d1ddeb93197fa2a8756f12e6a3863c3ee61bfebb92fb9bbe45365",
     "bytes": 72133
   },
   "assets": [
@@ -14,9 +14,9 @@
       "bytes": 140391
     },
     {
-      "url": "assets/fat-loss.2d81bfa7516695c505d101690e4b533567149db75d7690ad87d2610df269c717.css",
-      "sha256": "2d81bfa7516695c505d101690e4b533567149db75d7690ad87d2610df269c717",
-      "bytes": 6928
+      "url": "assets/fat-loss.e282bb3fe344dae328f6d41b7ae2a5c3cc5b85b565bca9bf1dceedfc0058f5f9.css",
+      "sha256": "e282bb3fe344dae328f6d41b7ae2a5c3cc5b85b565bca9bf1dceedfc0058f5f9",
+      "bytes": 8183
     },
     {
       "url": "assets/ui-theme.f2eb9f96ba30205556175ebb1d224f94e142f6a53fec8681324bd330d4ab1746.css",
@@ -74,9 +74,9 @@
       "bytes": 32633
     },
     {
-      "url": "assets/fat.b9063c71dc0de34d74fa4b27a359b4a7b4e912ba294d5b34de830294d08ce132.js",
-      "sha256": "b9063c71dc0de34d74fa4b27a359b4a7b4e912ba294d5b34de830294d08ce132",
-      "bytes": 36569
+      "url": "assets/fat.c3c6d8dc009bf523eda2d189b529598fb79ff2032d8254833adec8b32eea8af7.js",
+      "sha256": "c3c6d8dc009bf523eda2d189b529598fb79ff2032d8254833adec8b32eea8af7",
+      "bytes": 39176
     },
     {
       "url": "assets/access.479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a.js",
@@ -94,9 +94,9 @@
       "bytes": 19555
     },
     {
-      "url": "assets/app.aaf41ef312300a11cef7828da23d8373cfd315f16228aecbc366218bf74f26b0.js",
-      "sha256": "aaf41ef312300a11cef7828da23d8373cfd315f16228aecbc366218bf74f26b0",
-      "bytes": 231891
+      "url": "assets/app.e7bef0adab6a22734d83530d9941170bb8815c6636f1ba8a84563903b9fbea40.js",
+      "sha256": "e7bef0adab6a22734d83530d9941170bb8815c6636f1ba8a84563903b9fbea40",
+      "bytes": 231852
     },
     {
       "url": "assets/theme.7a2eb085133dcadf3020b8aa94162937e1a78acdea17f2df9a500ac19f12a8c1.js",

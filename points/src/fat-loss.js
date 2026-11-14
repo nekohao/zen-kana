@@ -29,33 +29,36 @@
       </div>`);
     els.overviewShell.insertAdjacentHTML("beforeend", `
       <div class="fat-overview" id="fatOverviewContent" hidden>
-        <div class="overview-content-switch" id="fatContentSwitch" role="group" aria-label="减脂总览内容">
-          <button class="overview-content-choice pressable" data-fat-section="trend" type="button" aria-controls="fatTrendSection">趋势</button>
-          <button class="overview-content-choice pressable" data-fat-section="records" type="button" aria-controls="fatRecordsSection">记录</button>
+        <div class="fat-overview-switch" role="group" aria-label="减脂总览内容">
+          <button data-fat-section="trend" type="button" aria-controls="fatTrendSection">趋势</button>
+          <button data-fat-section="records" type="button" aria-controls="fatRecordsSection">记录</button>
         </div>
-        <section id="fatTrendSection" aria-labelledby="fatTrendTitle">
-          <div class="fat-trend-card">
-            <h2 id="fatTrendTitle">近 4 周均重</h2>
-            <p class="fat-chart-reference" id="fatChartReference"></p>
-            <p class="fat-overview-status" id="fatOverviewStatus" role="status"></p>
-            <button class="fat-record-more" id="fatProgressRetry" type="button" hidden>重试</button>
-            <div id="fatChart" hidden>
-              <div class="fat-chart-wrap"><canvas id="fatTrendCanvas" aria-hidden="true"></canvas></div>
-              <div class="fat-week-labels" role="group" aria-label="选择一周">
-                ${[0,1,2,3].map(index => `<button type="button" class="fat-week-button" data-fat-week="${index}" aria-pressed="false"></button>`).join("")}
-              </div>
-              <div class="fat-week-detail" aria-live="polite">
-                <strong id="fatWeekValue"></strong><span id="fatWeekDates"></span>
+        <div class="fat-overview-scroll">
+          <section id="fatTrendSection" aria-labelledby="fatTrendTitle">
+            <div class="fat-trend-card">
+              <h2 id="fatTrendTitle">近 4 周最低体重</h2>
+              <p class="fat-overview-status" id="fatOverviewStatus" role="status"></p>
+              <button class="fat-record-more" id="fatProgressRetry" type="button" hidden>重试</button>
+              <div id="fatChart" hidden>
+                <div class="fat-week-detail" aria-live="polite">
+                  <span id="fatChartReference"></span>
+                  <strong id="fatWeekValue"></strong>
+                  <span id="fatWeekDates"></span>
+                </div>
+                <div class="fat-chart-wrap">
+                  <canvas id="fatTrendCanvas" aria-hidden="true"></canvas>
+                  <div class="fat-week-labels" role="group" aria-label="选择一周">${[0,1,2,3].map(index => `<button type="button" class="fat-week-button" data-fat-week="${index}" aria-pressed="false"></button>`).join("")}</div>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-        <section id="fatRecordsSection" aria-label="每日体重记录" hidden>
-          <p class="fat-overview-status" id="fatRecordsStatus" role="status"></p>
-          <button class="fat-record-more" id="fatRecordsRetry" type="button" hidden>重试</button>
-          <div id="fatRecords"></div>
-          <button class="fat-record-more pressable" id="fatRecordsMore" type="button" hidden>查看更多记录</button>
-        </section>
+          </section>
+          <section id="fatRecordsSection" aria-label="每日体重记录" hidden>
+            <p class="fat-overview-status" id="fatRecordsStatus" role="status"></p>
+            <button class="fat-record-more" id="fatRecordsRetry" type="button" hidden>重试</button>
+            <div id="fatRecords"></div>
+            <button class="fat-record-more pressable" id="fatRecordsMore" type="button" hidden>查看更多记录</button>
+          </section>
+        </div>
       </div>`);
     const settings = document.createElement("div");
     settings.hidden = true;
@@ -82,10 +85,14 @@
     q("fatOverviewCloseBtn").addEventListener("pointerdown",event=>event.stopPropagation());
     q("fatOverviewCloseBtn").addEventListener("click",event=>{event.stopPropagation();ui.closeOverviewSheet();els.overviewBtn.focus({preventScroll:true});});
     const overview = q("fatOverviewContent"), dialog = q("fatWeightLayer");
+    const scroller = overview.querySelector(".fat-overview-scroll");
+    const sectionButtons = [...overview.querySelectorAll("[data-fat-section]")];
+    const weekButtons = [...overview.querySelectorAll("[data-fat-week]")];
     let snapshot = null, weeks = [], logs = [], readError = false, logsError = false;
     let readVersion = 0, logsVersion = 0, authVersion = 0, secretVersion = 0;
     let verifiedAdmin = false, verifiedUser = null, mode = null, saving = false;
-    let selectedWeek = 3, recordLimit = 40;
+    let selectedWeek = null, recordLimit = 40, trend = null;
+    const scrollBySection = {trend:0, records:0};
     let refreshPromise = null, logsPromise = null, authTimer = 0;
     let chartRaf = 0, initialized = false, overviewFresh = false;
     let unit = "kg", deleteTarget = null, startingLoaded = false, startingEditing = false;
@@ -250,91 +257,148 @@
       els.scoreOverviewContent.hidden = true; els.wheelOverviewContent.hidden = true;
       els.overviewTitle.textContent = "减脂总览";
       els.overviewSubtitle.textContent = "";
-      const records = state.overviewSection === "records";
-      q("fatTrendSection").hidden = records;
-      q("fatRecordsSection").hidden = !records;
-      overview.querySelectorAll("[data-fat-section]").forEach(button => {
-        const selected = button.dataset.fatSection === (records ? "records" : "trend");
-        button.classList.toggle("active",selected);
-        button.setAttribute("aria-pressed",String(selected));
+      const section = state.overviewSection === "records" ? "records" : "trend";
+      q("fatTrendSection").hidden = section !== "trend";
+      q("fatRecordsSection").hidden = section !== "records";
+      sectionButtons.forEach(button => {
+        button.setAttribute("aria-pressed",String(button.dataset.fatSection === section));
       });
-      if (state.overviewMode !== "closed") {
-        if (records) renderRecords();
-        else { renderWeeks(); laterDraw(); }
-      }
+      if (state.overviewMode === "closed") return;
+      if (section === "records") renderRecords();
+      else renderWeeks();
     }
     function peekHeight() {
       return els.overviewShell.getBoundingClientRect().height || 340;
     }
     function chooseSection(section) {
-      if (!active() || !["trend","records"].includes(section)) return;
+      if (!active() || state.overviewMode === "closed") return;
+      const previous = state.overviewSection;
+      if (previous === section) return;
+      if (previous) scrollBySection[previous] = scroller.scrollTop;
       state.overviewSection = section;
-      ui.setOverviewMode("full");
-      els.overviewShell.scrollTop = 0;
       renderOverview();
-      if (section === "records") void loadLogs();
+      scroller.scrollTop = scrollBySection[section];
     }
     function activate() {
       state.activeMetric = "fat";
       ui.renderPrimaryMetric(); ui.renderOverviewContentMode();
       void refresh({silent:false});
     }
-    function renderWeeks() {
-      q("fatChartReference").textContent = "较起始体重 · " + unitName();
-      q("fatOverviewStatus").textContent = readError ? "同步失败" : !initialized ? "正在同步…" : "";
-      q("fatOverviewStatus").hidden = !q("fatOverviewStatus").textContent;
-      q("fatProgressRetry").hidden = !readError;
-      q("fatChart").hidden = weeks.length !== 4;
-      if (weeks.length !== 4) return;
-      overview.querySelectorAll("[data-fat-week]").forEach((button,index) => {
-        const week = weeks[index];
-        const label = document.createElement("span");
-        label.textContent = weekLabel(week.start);
-        button.replaceChildren(label);
-        if (week.mean === null) {
-          const missing = document.createElement("small"); missing.textContent = "不足";
-          button.append(missing);
+    function weeklyLows() {
+      const days = new Map();
+      const first = weeks[0].start, last = weeks[3].end, now = Date.now();
+      for (const record of logs) {
+        const time = new Date(record.at);
+        if (time.getTime() > now) continue;
+        const day = dayKey.format(time);
+        if (day < first || day > last) continue;
+        days.set(day,Math.min(days.get(day) ?? Infinity,record.delta));
+      }
+      return weeks.map(week => {
+        let low = null;
+        for (const [day,delta] of days) {
+          if (day >= week.start && day <= week.end && (low === null || delta < low)) {
+            low = delta;
+          }
         }
-        button.classList.toggle("insufficient",week.mean === null);
-        button.setAttribute("aria-pressed",String(index === selectedWeek));
-        button.setAttribute("aria-label",weekLabel(week.start) + "至" + weekLabel(week.end) + "，" +
-          (week.mean === null ? "数据不足" : comparisonText(week.mean,"起始体重")) + "，记录 " + week.days + " 天");
+        return low;
       });
-      const week = weeks[selectedWeek];
-      q("fatWeekValue").textContent = week.mean === null ? "数据不足" : comparisonText(week.mean,"起始体重");
+    }
+    function signedWeight(delta) {
+      return (delta < 0 ? "−" : delta > 0 ? "+" : "") + number(delta);
+    }
+    function renderWeeks() {
+      const failure = readError || logsError;
+      const ready = weeks.length === 4 && overviewFresh;
+      const status = q("fatOverviewStatus");
+      status.textContent = failure ? "同步失败" : !ready ? "正在同步…" : "";
+      status.hidden = !status.textContent;
+      q("fatProgressRetry").hidden = !failure;
+      q("fatChart").hidden = !ready;
+      if (!ready) return;
+      const lows = weeklyLows();
+      const latestWeek = lows.findLastIndex(value => value !== null);
+      const index = selectedWeek ?? (latestWeek < 0 ? 3 : latestWeek);
+      const week = weeks[index], low = lows[index];
+      q("fatChartReference").textContent = low === null ? "" : "较起始体重";
+      q("fatWeekValue").textContent = low === null ? "无记录" : signedWeight(low);
+      if (low !== null) {
+        const unitLabel = document.createElement("small");
+        unitLabel.textContent = unitName();
+        q("fatWeekValue").append(unitLabel);
+      }
       q("fatWeekDates").textContent = weekLabel(week.start) + "–" + weekLabel(week.end) +
-        (selectedWeek === 3 ? " · 本周进行中" : "") + " · " + (week.mean === null ? week.days + "/3 天" : "记录 " + week.days + " 天");
+        (index === 3 ? " · 本周" : "") + (low === null ? "" : " · 记录 " + week.days + " 天");
+      weekButtons.forEach((button,i) => {
+        const period = weeks[i], value = lows[i];
+        button.textContent = i === 3 ? "本周" : weekLabel(period.start);
+        button.classList.toggle("no-record",value === null);
+        button.setAttribute("aria-pressed",String(index === i));
+        button.setAttribute("aria-label",weekLabel(period.start) + "至" + weekLabel(period.end) + "，" +
+          (value === null ? "无记录" : "最低体重" + comparisonText(value,"起始体重")));
+      });
+      trend = {lows,index};
+      laterDraw();
     }
     function drawTrend() {
-      if (!active() || state.overviewMode === "closed" || state.overviewSection === "records" || weeks.length !== 4) return;
+      if (!active() || state.overviewMode === "closed" || state.overviewSection === "records" || !trend) return;
       const canvas = q("fatTrendCanvas"), {width,height} = canvas.getBoundingClientRect();
-      if (width <= 0 || height <= 0) return;
+      if (!width || !height) return;
       const dpr = Math.min(window.devicePixelRatio || 1,3);
-      canvas.width = Math.round(width*dpr); canvas.height = Math.round(height*dpr);
+      canvas.width = Math.round(width*dpr);
+      canvas.height = Math.round(height*dpr);
       const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      if (!ctx || trend.lows.every(value => value === null)) return;
       ctx.setTransform(dpr,0,0,dpr,0,0);
-      const values = weeks.map(week => week.mean === null ? null : displayWeight(week.mean));
+
+      const values = trend.lows.map(value => value === null ? null : displayWeight(value));
       const measured = values.filter(value => value !== null);
-      const min = Math.min(0,...measured), max = Math.max(0,...measured);
-      const spread = Math.max(unit === "kg" ? 0.2 : 0.4,max - min);
-      const low = min - spread*0.13, high = max + spread*0.13;
-      const x = index => (index + 0.5)*width/4;
-      const y = value => 12 + (high - value)*(height - 24)/(high - low);
-      const y0 = y(0);
-      ctx.strokeStyle = "#d7e3db"; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(width,y0); ctx.stroke();
-      ctx.font = "11px system-ui"; ctx.fillStyle = "#607267";
-      ctx.fillText("0",4,y0 > 20 ? y0 - 5 : y0 + 14);
-      ctx.strokeStyle = "#527661"; ctx.lineWidth = 2; ctx.lineCap = "round";
-      for (let i=1; i<values.length; i++) {
-        if (values[i-1] === null || values[i] === null) continue;
-        ctx.beginPath(); ctx.moveTo(x(i-1),y(values[i-1])); ctx.lineTo(x(i),y(values[i])); ctx.stroke();
+      const min = Math.min(...measured), max = Math.max(...measured);
+      const interval = Math.max((max-min)/2, unit === "kg" ? 0.2 : 0.4);
+      const power = 10 ** Math.floor(Math.log10(interval));
+      const step = [1,2,2.5,5,10].find(value => value*power >= interval)*power;
+      const middle = Math.round((max+min)/2/step)*step;
+      const axis = Array.from({length:3},(_,i) => middle+(1-i)*step);
+      const top = Math.max(axis[0],max+step*0.24), bottom = Math.min(axis[2],min-step*0.24);
+      const left = plotInset();
+      const plotWidth = width - left;
+      const x = index => left + (index+0.5)*plotWidth/4;
+      const y = value => 10 + (top-value)*(height-20)/(top-bottom);
+
+      ctx.font = "11px system-ui";
+      ctx.textBaseline = "middle";
+      for (const tick of axis) {
+        const py = y(tick), value = Math.round(tick*1000)/1000;
+        ctx.strokeStyle = "#e3e9e5";
+        ctx.beginPath(); ctx.moveTo(left,py); ctx.lineTo(width,py); ctx.stroke();
+        ctx.fillStyle = "#55695e";
+        ctx.fillText((value < 0 ? "−" : value > 0 ? "+" : "") + Math.abs(value),0,py);
       }
+      const selectedX = x(trend.index);
+      if (values[trend.index] !== null) {
+        ctx.strokeStyle = "#acc2b5";
+        ctx.setLineDash([2,4]);
+        ctx.beginPath(); ctx.moveTo(selectedX,y(values[trend.index])); ctx.lineTo(selectedX,height); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.strokeStyle = "#305a46";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i=0; i<values.length; i++) {
+        if (values[i] === null) continue;
+        if (i === 0 || values[i-1] === null) ctx.moveTo(x(i),y(values[i]));
+        else ctx.lineTo(x(i),y(values[i]));
+      }
+      ctx.stroke();
       values.forEach((value,index) => {
         if (value === null) return;
-        ctx.beginPath(); ctx.arc(x(index),y(value),index === selectedWeek ? 5 : 3.5,0,Math.PI*2);
-        ctx.fillStyle = index === selectedWeek ? "#527661" : "#fff";
+        const selected = index === trend.index;
+        if (selected) {
+          ctx.fillStyle = "#e0ece3";
+          ctx.beginPath(); ctx.arc(x(index),y(value),8,0,Math.PI*2); ctx.fill();
+        }
+        ctx.fillStyle = selected ? "#305a46" : "#fff";
+        ctx.beginPath(); ctx.arc(x(index),y(value),selected ? 4 : 3,0,Math.PI*2);
         ctx.fill(); ctx.stroke();
       });
     }
@@ -373,7 +437,7 @@
       readVersion++; logsVersion++; overviewFresh = false;
       await Promise.all([refreshPromise,logsPromise].filter(Boolean));
       const results = await Promise.all([
-        refresh(), state.overviewSection === "records" ? loadLogs(true) : true
+        refresh(), state.overviewMode !== "closed" ? loadLogs(true) : true
       ]);
       return results.every(Boolean);
     }
@@ -526,7 +590,7 @@
       q("fatRefreshBtn").classList.add("refreshing");
       try {
         const synced=await refresh({silent:false});
-        if (state.overviewSection === "records") await loadLogs(true);
+        if (state.overviewMode !== "closed") await loadLogs(true);
         if (synced) ui.showToast("已同步减脂记录");
       } finally { q("fatRefreshBtn").classList.remove("refreshing"); }
     }
@@ -535,18 +599,34 @@
     els.overviewBtn.addEventListener("click",event=>{
       if (!active()) return;
       event.stopImmediatePropagation(); ui.vibrate(8);
-      selectedWeek=3; recordLimit=40;
-      ui.openOverviewSheet(); chooseSection("trend"); void refresh();
+      selectedWeek=null; recordLimit=40;
+      scrollBySection.trend=0; scrollBySection.records=0;
+      ui.openOverviewSheet(); ui.setOverviewMode("full");
+      chooseSection("trend");
+      void Promise.all([refresh(),loadLogs(true)]);
     },true);
-    overview.addEventListener("click",event=>{ const btn=event.target.closest("[data-fat-section]"); if (btn) { ui.vibrate(6); chooseSection(btn.dataset.fatSection); } });
-    function selectWeek(index) { selectedWeek=index; renderWeeks(); laterDraw(); }
-    overview.querySelectorAll("[data-fat-week]").forEach((button,index) => button.addEventListener("click",() => selectWeek(index)));
+    sectionButtons.forEach(button => button.addEventListener("click",() => {
+      if (button.getAttribute("aria-pressed") === "true") return;
+      ui.vibrate(6);
+      chooseSection(button.dataset.fatSection);
+      void loadLogs();
+    }));
+    function plotInset() {
+      return weekButtons[0].parentElement.offsetLeft;
+    }
+    function selectWeek(index) {
+      if (selectedWeek === index) return;
+      selectedWeek=index;
+      renderWeeks();
+    }
+    weekButtons.forEach((button,index) => button.addEventListener("click",() => selectWeek(index)));
     q("fatTrendCanvas").addEventListener("click",event => {
-      const rect=event.currentTarget.getBoundingClientRect();
-      if (!rect.width) return;
-      selectWeek(Math.max(0,Math.min(3,Math.floor((event.clientX-rect.left)*4/rect.width))));
+      const {left,width} = event.currentTarget.getBoundingClientRect();
+      const inset = plotInset();
+      if (width <= inset || event.clientX < left+inset) return;
+      selectWeek(Math.min(3,Math.floor((event.clientX-left-inset)*4/(width-inset))));
     });
-    q("fatProgressRetry").addEventListener("click",() => void refresh());
+    q("fatProgressRetry").addEventListener("click",() => void Promise.all([refresh(),loadLogs(true)]));
     q("fatRecordsRetry").addEventListener("click",() => void loadLogs(true));
     q("fatRecordsMore").addEventListener("click",() => { recordLimit+=40; renderRecords(); });
     function resizeOverview() {

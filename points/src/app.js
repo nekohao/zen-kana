@@ -4035,7 +4035,7 @@
         const originalLoadAppState = loadAppState;
         loadAppState = async options => {
           void fatModule.refresh({silent:options?.silent ?? true});
-          if (state.activeMetric === "fat" && state.overviewMode !== "closed" && state.overviewSection === "records") void fatModule.loadLogs(true);
+          if (state.activeMetric === "fat" && state.overviewMode !== "closed") void fatModule.loadLogs(true);
           return originalLoadAppState(options);
         };
         } catch (error) {

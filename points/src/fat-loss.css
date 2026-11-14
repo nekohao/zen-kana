@@ -42,29 +42,68 @@
 #pointsApp .fat-home-comparison {
   margin-top:5px; color:#4d6e5c; font-size:12px; line-height:1.4; font-weight:600;
 }
-#pointsApp .overview.fat-mode .overview-shell { max-height:min(75dvh,530px)!important; }
-#pointsApp .overview.fat-mode .overview-header { min-height:48px; margin-bottom:10px; padding-bottom:8px; }
+#pointsApp .overview.fat-mode .overview-shell {
+  display:flex; flex-direction:column; overflow:hidden;
+  height:min(78dvh,552px); max-height:min(78dvh,552px)!important;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+#pointsApp .overview.fat-mode .overview-header {
+  flex:none; min-height:48px; margin-bottom:0; padding-bottom:10px;
+}
 #pointsApp .overview.fat-mode .overview-grabber-hitbox { min-height:26px; margin-bottom:0; }
 #pointsApp .overview.fat-mode .overview-subtitle { display:none; }
-#pointsApp #fatContentSwitch { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); margin:0 0 14px; }
-#pointsApp #fatContentSwitch .overview-content-choice { min-height:36px; }
-.fat-trend-card { padding:17px 15px 13px; background:#ffffffbf; border:1px solid #e1ebe4; border-radius:21px; }
-.fat-trend-card h2 { margin:0; color:#294639; font-size:17px; font-weight:650; }
-.fat-chart-reference { margin:5px 0 9px; color:#536e60; font-size:12px; }
-.fat-chart-wrap { height:clamp(92px,19dvh,152px); }
-.fat-chart-wrap canvas { display:block; width:100%; height:100%; cursor:pointer; }
-.fat-week-labels { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
-.fat-week-button {
-  color:#4e6b5c; min-height:44px; padding:3px 1px; border:0; border-radius:12px; background:none;
-  font-size:12px; font-variant-numeric:tabular-nums; cursor:pointer;
+.fat-overview { display:flex; flex-direction:column; flex:1; min-height:0; }
+.fat-overview-switch {
+  align-self:center; flex:none; display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  width:min(100%,224px); margin:10px 0 12px; padding:3px;
+  border:1px solid #dfe7e2; border-radius:15px; background:#ecf1ed;
 }
-.fat-week-button small { display:block; margin-top:2px; font-size:10px; }
-.fat-week-button.insufficient { color:#646e68; }
-.fat-week-button[aria-pressed="true"] { background:#edf5ef; color:#2c5540; font-weight:650; }
-.fat-week-detail { display:grid; gap:4px; margin-top:12px; padding-top:11px; border-top:1px solid #e5ede7; }
-.fat-week-detail strong { color:#315442; font-size:15px; font-weight:650; }
-.fat-week-detail span,.fat-overview-status { color:#526c5e; font-size:12px; }
-.fat-overview-status { margin:8px 0; }
+.fat-overview-switch button {
+  display:block; min-height:44px; padding:0 12px; border:0; border-radius:11px;
+  background:transparent; color:#53645a;
+  font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; touch-action:manipulation;
+}
+.fat-overview-switch button[aria-pressed="true"] {
+  color:#244f3b; background:#fff; box-shadow:0 1px 3px #15271c16;
+}
+.fat-overview-scroll {
+  min-height:0; flex:1; overflow:auto; overscroll-behavior:contain;
+  touch-action:pan-y; scrollbar-width:thin; padding-bottom:14px;
+}
+.fat-trend-card {
+  padding:clamp(12px,2.25dvh,20px) clamp(12px,3.6vw,22px) 8px;
+  background:#fdfefd; border:1px solid #e0e9e2; border-radius:22px;
+}
+.fat-trend-card h2 { margin:0; color:#243f32; font-size:15px; font-weight:650; }
+.fat-week-detail {
+  display:grid; grid-template-columns:1fr auto; align-items:end; column-gap:6px;
+  margin:12px 0 9px; min-height:63px;
+}
+#fatChartReference { grid-column:1/-1; margin-bottom:3px; }
+#fatWeekValue {
+  color:#264a38; font-size:clamp(24px,8vw,36px); font-weight:630;
+  line-height:1.05; letter-spacing:-.04em; font-variant-numeric:tabular-nums;
+}
+#fatWeekValue small { margin-left:4px; font-size:12px; font-weight:560; letter-spacing:0; }
+#fatWeekDates { grid-column:1/-1; margin-top:5px; }
+.fat-week-detail span,.fat-overview-status { color:#55695e; font-size:12px; }
+.fat-chart-wrap { position:relative; --axis-space:37px; }
+.fat-chart-wrap canvas { display:block; width:100%; height:clamp(96px,22dvh,186px); }
+.fat-week-labels {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  margin-left:var(--axis-space);
+}
+.fat-week-button {
+  color:#4d6457; min-height:44px; padding:3px 0; border:0; border-radius:10px; background:none;
+  font-size:12px; font-variant-numeric:tabular-nums; cursor:pointer; touch-action:manipulation;
+}
+.fat-week-button.no-record { color:#6b766f; }
+.fat-week-button[aria-pressed="true"] { background:#edf4ee; color:#244f3b; font-weight:650; }
+.fat-overview-status { margin:10px 0; }
+@media (max-height:680px) {
+  .fat-trend-card { padding-top:10px; }
+  .fat-week-detail { margin-top:8px; min-height:59px; }
+}
 .fat-record-day { margin:0 0 10px; padding:10px 13px; border:1px solid #e1ebe4; border-radius:16px; background:#ffffffb3; }
 .fat-record-day h3 { margin:2px 0 7px; font-size:12px; font-weight:650; color:#345442; }
 .fat-record-line {
@@ -75,4 +114,4 @@
 .fat-record-line > span { margin-left:auto; }
 .fat-record-line .fat-delete-button { min-height:34px; }
 .fat-record-more { min-height:42px; border:0; border-radius:12px; padding:0 14px; background:#ecf4ee; color:#365f47; font-size:13px; }
-.fat-week-button:focus-visible,.fat-delete-button:focus-visible,.fat-record-more:focus-visible { outline:2px solid #527661; outline-offset:2px; }
+.fat-overview-switch button:focus-visible,.fat-week-button:focus-visible,.fat-delete-button:focus-visible,.fat-record-more:focus-visible { outline:2px solid #527661; outline-offset:2px; }
