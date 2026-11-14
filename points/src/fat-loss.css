@@ -99,9 +99,13 @@
 }
 .fat-point-note span {
   max-width:100%; overflow:hidden; text-overflow:ellipsis;
-  padding:0 1px; background:#fdfefd;
+  background:#fdfefd;
 }
 .fat-point-note.selected { color:#244f3b; font-weight:650; }
+@media (max-width:360px) {
+  .fat-chart-wrap { --axis-space:16px; margin-inline:-7px; }
+  .fat-point-note { font-size:9px; }
+}
 .fat-week-labels {
   display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
   margin-left:var(--axis-space);
