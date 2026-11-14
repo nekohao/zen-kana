@@ -462,8 +462,8 @@
         note.style.width = plotWidth/4+"px";
         note.style.top = y(value)-10+"px";
         const start = document.createElement("span"), last = document.createElement("span");
-        start.textContent = "起始 " + signedWeight(low,true);
-        last.textContent = "上周 " + (change === null ? "—" : signedWeight(change,true));
+        start.textContent = "较起始：" + signedWeight(low,true);
+        last.textContent = "较上周：" + (change === null ? "—" : signedWeight(change,true));
         note.append(start,last);
         notes.append(note);
       });
