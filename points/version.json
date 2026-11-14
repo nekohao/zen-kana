@@ -1,10 +1,10 @@
 {
   "schema": 2,
-  "build": "20261114.2",
-  "updatedAt": "2026-11-14T13:00:50.149Z",
+  "build": "20261114.3",
+  "updatedAt": "2026-11-14T14:16:43.478Z",
   "shell": {
-    "url": "assets/shell.a42c3b47287d1ddeb93197fa2a8756f12e6a3863c3ee61bfebb92fb9bbe45365.html",
-    "sha256": "a42c3b47287d1ddeb93197fa2a8756f12e6a3863c3ee61bfebb92fb9bbe45365",
+    "url": "assets/shell.4109b16778dc134df147b9bd97c81a9bfbe4e1f48981cabdbf5dda444fa2a45f.html",
+    "sha256": "4109b16778dc134df147b9bd97c81a9bfbe4e1f48981cabdbf5dda444fa2a45f",
     "bytes": 72133
   },
   "assets": [
@@ -14,9 +14,9 @@
       "bytes": 140391
     },
     {
-      "url": "assets/fat-loss.e282bb3fe344dae328f6d41b7ae2a5c3cc5b85b565bca9bf1dceedfc0058f5f9.css",
-      "sha256": "e282bb3fe344dae328f6d41b7ae2a5c3cc5b85b565bca9bf1dceedfc0058f5f9",
-      "bytes": 8183
+      "url": "assets/fat-loss.b687f077b2e737ff6ccca0c4f9f695d9e1b9d9899429dd74d068ef702ef1b00b.css",
+      "sha256": "b687f077b2e737ff6ccca0c4f9f695d9e1b9d9899429dd74d068ef702ef1b00b",
+      "bytes": 8843
     },
     {
       "url": "assets/ui-theme.f2eb9f96ba30205556175ebb1d224f94e142f6a53fec8681324bd330d4ab1746.css",
@@ -74,9 +74,9 @@
       "bytes": 32633
     },
     {
-      "url": "assets/fat.c3c6d8dc009bf523eda2d189b529598fb79ff2032d8254833adec8b32eea8af7.js",
-      "sha256": "c3c6d8dc009bf523eda2d189b529598fb79ff2032d8254833adec8b32eea8af7",
-      "bytes": 39176
+      "url": "assets/fat.ec42f6051a0feea49561e052ec593c285799b2d5211d26733da5e66b4aa61854.js",
+      "sha256": "ec42f6051a0feea49561e052ec593c285799b2d5211d26733da5e66b4aa61854",
+      "bytes": 43253
     },
     {
       "url": "assets/access.479f224e1199cf621114bcc941b72f00c8f63bf8615a08df93d914e3f780032a.js",

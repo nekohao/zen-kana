@@ -1,0 +1,130 @@
+#metricSwitch { grid-template-columns: repeat(3,minmax(0,1fr))!important; }
+#metricSwitch .metric-switch-thumb { width:calc((100% - 8px)/3)!important; }
+#metricSwitch.fat-switch-active .metric-switch-thumb { transform:translate3d(200%,0,0)!important; background:linear-gradient(145deg,#ffffffcf,#dcefe6a3)!important; }
+#metricSwitch.fat-switch-active .metric-option.active { color:#567c69!important; }
+.fat-home-content { display:none; flex-direction:column; align-items:center; width:100%; }
+.home.fat-active .hero > :not(.metric-switch):not(.fat-home-content) { display:none!important; }
+.home.fat-active .fat-home-content { display:flex; }
+.home.fat-active .fat-lens { background:radial-gradient(circle at 34% 24%,#ffffffc7,transparent 48%),#eaf4ec99!important; box-shadow:0 24px 58px #73978321,inset 0 2px 4px #ffffffe6!important; }
+.home.fat-active .fat-lens::after { display:none!important; }
+.fat-value-stack { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.fat-value-label { font-size:15px; color:#638171; font-weight:650; }
+.fat-value { font-size:clamp(50px,17vw,76px); line-height:1; font-weight:730; letter-spacing:-2px; color:#557a65; font-variant-numeric:tabular-nums; }
+.fat-value-unit { font-size:14px; font-weight:600; color:#7b9284; }
+.fat-value-stack.gain .fat-value { color:#b67e62; }
+.fat-home-content .reward-line-primary { color:#597967!important; }
+.fat-home-content .reward-line-secondary { color:#829487!important; }
+.fat-home-actions { height:104px; min-height:104px; margin-top:14px; display:grid; place-items:center; }
+.fat-record-button { width:min(78vw,258px); height:50px; border:1px solid #ffffffd6; border-radius:17px; color:#5e7f6d; background:linear-gradient(135deg,#ffffffa3,#dfefdfa0); box-shadow:0 10px 26px #73978317,inset 0 1px #ffffffb8; font-size:14px; font-weight:710; }
+.fat-record-button:disabled { opacity:.45; pointer-events:none; }
+.fat-field-label { display:block; margin:15px 0 6px; text-align:left; color:var(--secondary); font-size:12px; font-weight:650; }
+.fat-input-wrap { display:flex; align-items:center; gap:8px; padding:0 13px; height:50px; border:1px solid var(--glass-border); border-radius:15px; background:#ffffff40; }
+.fat-input-wrap input { width:100%; min-width:0; border:0; outline:0; background:transparent; font-size:20px; font-weight:650; color:var(--ink); }
+.fat-input-wrap span { flex:0 0 auto; color:var(--secondary); font-size:13px; }
+.fat-form-error { margin-top:9px; color:#b36661; font-size:12px; line-height:1.4; }
+.fat-form-note { margin-top:10px; color:var(--tertiary); font-size:11px; line-height:1.45; }
+#fatWeightLayer .alert { max-height:calc(100dvh - 40px); overflow-y:auto!important; }
+#fatWeightLayer .alert-button.primary-action { color:#587b68!important; background:#e0ede647!important; }
+.fat-unit-switch { grid-template-columns:repeat(2,minmax(0,1fr)); width:120px; height:32px; flex-shrink:0; padding:3px; gap:2px; margin:0; border:1px solid #ffffff99; background:#ffffff38; }
+.fat-unit-switch .segment { min-height:0; height:100%; padding:0 6px; font-size:12px; line-height:1; color:var(--ui-muted,#6a8577); }
+.fat-unit-switch .segment.active { background:#ffffffa3; color:var(--ui-accent,#557a65); box-shadow:0 2px 6px #63817112; }
+.fat-unit-switch .segment:disabled { opacity:.55; }
+.fat-delete-button { padding:4px 10px; border:1px solid #b3666126; border-radius:9px; background:#b366610a; color:#b36661; font-size:11px; }
+.fat-delete-button:disabled { opacity:.45; pointer-events:none; }
+@media (max-height:700px) { .fat-home-actions { height:78px; min-height:78px; } }
+@media (prefers-reduced-motion:reduce) { .fat-home-content { animation:none!important; } }
+#pointsApp .fat-overview-close { position:absolute; right:16px; top:12px; z-index:5; min-width:44px; min-height:44px; border:0; background:transparent; color:var(--ui-accent,#567c67); font-size:13px; font-weight:600; border-radius:12px; }
+#pointsApp .fat-overview-close:focus-visible { outline:2px solid var(--ui-accent,#567c67); }
+
+#pointsApp .home .fat-home-content .reward-message { justify-content:center; }
+#pointsApp .home.fat-active .fat-value-stack { gap:7px; }
+#pointsApp .home.fat-active .fat-value { font-size:clamp(48px,16vw,69px); }
+#pointsApp .fat-home-comparison {
+  display:grid; gap:1px; margin-top:3px; color:#4d6e5c; font-size:12px; line-height:1.35; font-weight:600;
+}
+#fatHomeCompareNote { color:#54695e; font-size:10px; font-weight:500; }
+#pointsApp .overview.fat-mode .overview-shell {
+  display:flex; flex-direction:column; overflow:hidden;
+  height:min(78dvh,552px); max-height:min(78dvh,552px)!important;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+#pointsApp .overview.fat-mode .overview-header {
+  flex:none; min-height:48px; margin-bottom:0; padding-bottom:10px;
+}
+#pointsApp .overview.fat-mode .overview-grabber-hitbox { min-height:26px; margin-bottom:0; }
+#pointsApp .overview.fat-mode .overview-subtitle { display:none; }
+.fat-overview { display:flex; flex-direction:column; flex:1; min-height:0; }
+.fat-overview-switch {
+  align-self:center; flex:none; display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  width:min(100%,224px); margin:10px 0 12px; padding:3px;
+  border:1px solid #dfe7e2; border-radius:15px; background:#ecf1ed;
+}
+.fat-overview-switch button {
+  display:block; min-height:44px; padding:0 12px; border:0; border-radius:11px;
+  background:transparent; color:#53645a;
+  font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; touch-action:manipulation;
+}
+.fat-overview-switch button[aria-pressed="true"] {
+  color:#244f3b; background:#fff; box-shadow:0 1px 3px #15271c16;
+}
+.fat-overview-scroll {
+  min-height:0; flex:1; overflow:auto; overscroll-behavior:contain;
+  touch-action:pan-y; scrollbar-width:thin; padding-bottom:14px;
+}
+.fat-trend-card {
+  padding:clamp(12px,2.25dvh,20px) clamp(12px,3.6vw,22px) 8px;
+  background:#fdfefd; border:1px solid #e0e9e2; border-radius:22px;
+}
+.fat-trend-card h2 { margin:0; color:#243f32; font-size:15px; font-weight:650; }
+.fat-week-detail {
+  display:grid; grid-template-columns:1fr auto; align-items:end; column-gap:6px;
+  margin:12px 0 9px; min-height:63px;
+}
+#fatChartReference { grid-column:1/-1; margin-bottom:3px; }
+#fatWeekValue {
+  color:#264a38; font-size:clamp(24px,8vw,36px); font-weight:630;
+  line-height:1.05; letter-spacing:-.04em; font-variant-numeric:tabular-nums;
+}
+#fatWeekValue small { margin-left:4px; font-size:12px; font-weight:560; letter-spacing:0; }
+#fatWeekChange { align-self:end; text-align:right; font-variant-numeric:tabular-nums; }
+#fatWeekDates { grid-column:1/-1; margin-top:5px; }
+.fat-week-detail span,.fat-overview-status { color:#55695e; font-size:12px; }
+.fat-chart-wrap { position:relative; --axis-space:37px; }
+.fat-chart-wrap canvas { display:block; width:100%; height:clamp(142px,26dvh,204px); }
+.fat-point-notes { position:absolute; inset:0; pointer-events:none; }
+.fat-point-note {
+  position:absolute; display:grid; justify-items:center; gap:1px;
+  transform:translateY(-100%); color:#466154; font-size:10px; line-height:1.15;
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.fat-point-note span {
+  max-width:100%; overflow:hidden; text-overflow:ellipsis;
+  padding:0 1px; background:#fdfefd;
+}
+.fat-point-note.selected { color:#244f3b; font-weight:650; }
+.fat-week-labels {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  margin-left:var(--axis-space);
+}
+.fat-week-button {
+  color:#4d6457; min-height:44px; padding:3px 0; border:0; border-radius:10px; background:none;
+  font-size:12px; font-variant-numeric:tabular-nums; cursor:pointer; touch-action:manipulation;
+}
+.fat-week-button.no-record { color:#6b766f; }
+.fat-week-button[aria-pressed="true"] { background:#edf4ee; color:#244f3b; font-weight:650; }
+.fat-overview-status { margin:10px 0; }
+@media (max-height:680px) {
+  .fat-trend-card { padding-top:10px; }
+  .fat-week-detail { margin-top:8px; min-height:59px; }
+}
+.fat-record-day { margin:0 0 10px; padding:10px 13px; border:1px solid #e1ebe4; border-radius:16px; background:#ffffffb3; }
+.fat-record-day h3 { margin:2px 0 7px; font-size:12px; font-weight:650; color:#345442; }
+.fat-record-line {
+  display:flex; align-items:center; gap:12px; min-height:40px; border-top:1px solid #e5ede7;
+  color:#345442; font-size:13px; font-variant-numeric:tabular-nums;
+}
+.fat-record-line time { color:#546e60; }
+.fat-record-line > span { margin-left:auto; }
+.fat-record-line .fat-delete-button { min-height:34px; }
+.fat-record-more { min-height:42px; border:0; border-radius:12px; padding:0 14px; background:#ecf4ee; color:#365f47; font-size:13px; }
+.fat-overview-switch button:focus-visible,.fat-week-button:focus-visible,.fat-delete-button:focus-visible,.fat-record-more:focus-visible { outline:2px solid #527661; outline-offset:2px; }

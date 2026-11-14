@@ -40,8 +40,9 @@
 #pointsApp .home.fat-active .fat-value-stack { gap:7px; }
 #pointsApp .home.fat-active .fat-value { font-size:clamp(48px,16vw,69px); }
 #pointsApp .fat-home-comparison {
-  margin-top:5px; color:#4d6e5c; font-size:12px; line-height:1.4; font-weight:600;
+  display:grid; gap:1px; margin-top:3px; color:#4d6e5c; font-size:12px; line-height:1.35; font-weight:600;
 }
+#fatHomeCompareNote { color:#54695e; font-size:10px; font-weight:500; }
 #pointsApp .overview.fat-mode .overview-shell {
   display:flex; flex-direction:column; overflow:hidden;
   height:min(78dvh,552px); max-height:min(78dvh,552px)!important;
@@ -85,10 +86,22 @@
   line-height:1.05; letter-spacing:-.04em; font-variant-numeric:tabular-nums;
 }
 #fatWeekValue small { margin-left:4px; font-size:12px; font-weight:560; letter-spacing:0; }
+#fatWeekChange { align-self:end; text-align:right; font-variant-numeric:tabular-nums; }
 #fatWeekDates { grid-column:1/-1; margin-top:5px; }
 .fat-week-detail span,.fat-overview-status { color:#55695e; font-size:12px; }
 .fat-chart-wrap { position:relative; --axis-space:37px; }
-.fat-chart-wrap canvas { display:block; width:100%; height:clamp(96px,22dvh,186px); }
+.fat-chart-wrap canvas { display:block; width:100%; height:clamp(142px,26dvh,204px); }
+.fat-point-notes { position:absolute; inset:0; pointer-events:none; }
+.fat-point-note {
+  position:absolute; display:grid; justify-items:center; gap:1px;
+  transform:translateY(-100%); color:#466154; font-size:10px; line-height:1.15;
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.fat-point-note span {
+  max-width:100%; overflow:hidden; text-overflow:ellipsis;
+  padding:0 1px; background:#fdfefd;
+}
+.fat-point-note.selected { color:#244f3b; font-weight:650; }
 .fat-week-labels {
   display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
   margin-left:var(--axis-space);
