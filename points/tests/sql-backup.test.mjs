@@ -22,8 +22,8 @@ try {
     assert.equal(row.relforcerowsecurity,rel.force_row_security,rel.name+' forced RLS');
   }
   assert.equal((await db.query("SELECT count(*) AS n FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname=ANY($1)",[schema.schemas.map(s=>s.name).concat('auth')])).rows[0].n,schema.functions.length);
-  assert.equal((await db.query("SELECT has_function_privilege('anon','public.points_fat_reward_get_state(bigint)','EXECUTE') AS ok")).rows[0].ok,true);
-  assert.equal((await db.query("SELECT has_function_privilege('anon','public.points_fat_reward_snapshot(bigint)','EXECUTE') AS ok")).rows[0].ok,false);
+  assert.equal((await db.query("SELECT has_function_privilege('anon','public.points_fat_get_progress()','EXECUTE') AS ok")).rows[0].ok,true);
+  assert.equal((await db.query("SELECT has_function_privilege('anon','public.points_fat_admin_get_settings()','EXECUTE') AS ok")).rows[0].ok,false);
   assert.equal((await db.query("SELECT has_table_privilege('anon','public.points_fat_records','SELECT') AS ok")).rows[0].ok,false);
   console.log(`${schema.relations.length} relations / ${schema.functions.length} full definitions restored; RLS and guest grants verified.`);
 }catch(error){console.error(error.message,error.code);process.exitCode=1;}finally{await db.close();}

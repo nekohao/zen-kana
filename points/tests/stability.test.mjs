@@ -8,49 +8,15 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const {chromium} = await import(process.argv[2] ? pathToFileURL(process.argv[2]).href : "playwright");
 const fixture = `(() => {
   const isAdmin = new URLSearchParams(location.search).get('role') === 'admin';
-  const firstWeek = new URLSearchParams(location.search).has('first-week');
   const session = isAdmin ? {user:{id:'00000000-0000-0000-0000-000000000001',email:'local-preview@example.invalid'}} : null;
-  const stored = JSON.parse(localStorage.getItem('fat_reward_preview') || 'null');
-  const wallet = stored || {diamonds:3,backpack:0,services:[]};
-  const operationIds = new Set(JSON.parse(localStorage.getItem('fat_reward_preview_operations') || '[]'));
-  const save = () => {localStorage.setItem('fat_reward_preview',JSON.stringify(wallet));localStorage.setItem('fat_reward_preview_operations',JSON.stringify([...operationIds]));};
-  const rewardState = (before) => {
-    const sorted=wallet.services.slice().sort((a,b)=>Number(b.id)-Number(a.id)).filter(r=>!before || Number(r.id)<Number(before));
-    const result={admin:isAdmin,services:sorted.slice(0,30),more:sorted.length>30,pending_service:wallet.services.filter(r=>r.status==='pending_service').length,pending_confirmation:wallet.services.filter(r=>r.status==='pending_confirmation').length};
-    if(isAdmin) Object.assign(result,{diamonds:wallet.diamonds,backpack:wallet.backpack,next_cutoff:'2026-10-11T04:00:00Z',preview:{week:'2026-10-05',current_days:3,previous_days:7,change_jin:-1.2,eligible:true,calculated_delta:1,settled:false},weeks:[]});
-    if(isAdmin && firstWeek) Object.assign(result.preview,{previous_days:0,comparison_basis:'starting_weight',reference_available:true});
-    return structuredClone(result);
-  };
   const db={auth:{onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),getSession:async()=>({data:{session},error:null}),signOut:async()=>({error:null})},rpc:async(name,args={})=>{
     console.debug('fixture RPC',name);
     if(name==='points_is_admin') return {data:isAdmin,error:null};
     if(name==='points_get_state') return {data:[{score:100,updated_at:new Date().toISOString()}],error:null};
     if(name==='points_get_wheel_state') return {data:[{spin_chances:2,cash_balance:0}],error:null};
-    if(name==='points_fat_get_state') return {data:[{configured:true,delta_jin:-3.2,recorded_at:new Date().toISOString(),record_count:10}],error:null};
+    if(name==='points_fat_get_progress') return {data:{configured:true,delta_jin:-3.2,recorded_at:new Date().toISOString(),weeks:[{start:"2026-10-19",end:"2026-10-25",days:0},{start:"2026-10-26",end:"2026-11-01",days:0},{start:"2026-11-02",end:"2026-11-08",days:3,mean:-2},{start:"2026-11-09",end:"2026-11-15",days:1}]},error:null};
     if(name==='points_fat_get_logs') return {data:Array.from({length:10},(_,i)=>({id:i+1,delta_jin:-i*.3,created_at:new Date(Date.now()-(9-i)*86400000).toISOString()})),error:null};
     if(name==='points_fat_admin_get_settings') return {data:[{starting_weight_jin:160}],error:null};
-    if(name==='points_fat_reward_get_state') return {data:rewardState(args.p_before),error:null};
-    if(name==='points_fat_reward_admin_exchange') {
-      if(!isAdmin) return {error:{code:'42501',message:'Admin permission required'}};
-      if(!operationIds.has(args.p_operation_id)) {
-        if(args.p_kind==='buy') {if(wallet.diamonds<1) return {error:{code:'P0001',message:'Insufficient diamonds'}};wallet.diamonds--;wallet.backpack++;}
-        else {if(wallet.backpack<1) return {error:{code:'P0001',message:'Empty backpack'}};wallet.backpack--;wallet.services.push({id:String(wallet.services.length+1),status:'pending_service',requested_at:new Date().toISOString()});}
-        operationIds.add(args.p_operation_id);save();
-      }
-      const lossTest=new URLSearchParams(location.search).get('lose-response');
-      if(lossTest && !sessionStorage.getItem('fat_preview_response_lost:'+lossTest)) {sessionStorage.setItem('fat_preview_response_lost:'+lossTest,'1');return {error:{message:'Simulated lost response'}};}
-      return {data:rewardState(),error:null};
-    }
-    if(name==='points_fat_reward_guest_serviced') {
-      const r=wallet.services.find(r=>r.id===args.p_request_id);
-      if(r?.status==='pending_service') {r.status='pending_confirmation';r.serviced_at=new Date().toISOString();save();}
-      return {data:rewardState(),error:null};
-    }
-    if(name==='points_fat_reward_admin_resolve') {
-      const r=wallet.services.find(r=>r.id===args.p_request_id);
-      if(r?.status==='pending_confirmation') {r.status=args.p_confirm?'completed':'returned';r.resolved_at=new Date().toISOString();if(!args.p_confirm)wallet.backpack++;save();}
-      return {data:rewardState(),error:null};
-    }
     if(name==='points_shop_get_state_v2') return {data:{inventory:{},weekly:{},catalog:[]},error:null};
     return {data:[],error:null};
   }};
@@ -81,7 +47,7 @@ const hooks = `
     if(name==='points_fat_admin_get_settings') return {data:[{starting_weight_jin:window.__startingWeightJin}],error:null};
     if(name==='points_fat_admin_set_starting_weight') {window.__startingWeightJin=args.p_weight_jin;return {data:[],error:null};}
     const result=await original(name,args);
-    if(__modes[name]==='bad-date' && result.data?.[0]) result.data[0].recorded_at='invalid';
+    if(__modes[name]==='bad-date' && result.data) result.data.recorded_at='invalid';
     return result;
   };
   window.supabase.createClient=()=>db;
@@ -105,8 +71,7 @@ async function open(role="admin", config={}) {
       const states = {
         points_get_state:[{score:100,updated_at:new Date().toISOString()}],
         points_get_wheel_state:[{spin_chances:2,cash_balance:0}],
-        points_fat_get_state:[{configured:true,delta_jin:-3.2,record_count:1,recorded_at:new Date().toISOString()}],
-        points_fat_reward_get_state:{admin:false,services:[],pending_service:0,pending_confirmation:0},
+        points_fat_get_progress:{configured:true,delta_jin:-3.2,recorded_at:new Date().toISOString(),weeks:[{start:"2026-10-19",end:"2026-10-25",days:0},{start:"2026-10-26",end:"2026-11-01",days:0},{start:"2026-11-02",end:"2026-11-08",days:3,mean:-2},{start:"2026-11-09",end:"2026-11-15",days:1}]},
         points_shop_get_state_v2:{inventory:{},weekly:{},catalog:[]},
         points_is_admin:false
       };
@@ -196,7 +161,7 @@ try {
   check(await p.evaluate(()=>__counts.points_preview_wheel),1,'Repeated wheel submit makes one request');
   await p.locator('#wheelResultDoneBtn').click();
   await p.locator('[data-metric="fat"]').click();
-  await p.evaluate(()=>{__modes.points_fat_get_state="hang";});
+  await p.evaluate(()=>{__modes.points_fat_get_progress="hang";});
   await p.locator("#fatRefreshBtn").click();
   await until(p,()=>document.querySelector("#fatHomeMeta").textContent.includes("同步失败"));
   check(await p.locator("#fatRefreshBtn").evaluate(e=>e.classList.contains("refreshing")),false,"Timed-out refresh releases spinner");
@@ -205,7 +170,7 @@ try {
   await p.locator("#settingsBtn").click();
   check(await p.locator("#settingsLayer").evaluate(e=>e.classList.contains("open")),true,"Fat timeout does not disable settings");
   await p.keyboard.press("Escape");
-  await p.evaluate(()=>{delete __modes.points_fat_get_state;});
+  await p.evaluate(()=>{delete __modes.points_fat_get_progress;});
   await p.locator("#appRecovery button").click();
   await until(p,()=>document.querySelector("#appRecovery").style.display==="none");
   check(await p.locator("#appRecovery").isVisible(),false,"Explicit retry clears network failure");
@@ -226,19 +191,11 @@ try {
   await p.locator("#confirmChangeBtn").evaluate(e=>{e.click();e.dispatchEvent(new MouseEvent("click",{bubbles:true}));e.dispatchEvent(new MouseEvent("click",{bubbles:true}));});
   await until(p,()=>!document.querySelector("#changeLayer").classList.contains("open"));
   check(await p.evaluate(()=>__counts.points_change_score),1,"Repeated score submit makes one write");
-  await p.evaluate(()=>{__modes.points_fat_get_state="bad-date";});
+  await p.evaluate(()=>{__modes.points_fat_get_progress="bad-date";});
   await p.locator("[data-metric=fat]").click();await p.locator("#fatRefreshBtn").click();
   await until(p,()=>document.querySelector("#fatHomeMeta").textContent.includes("时间待同步"));
   check(await p.locator(".fat-home-content").isVisible(),true,"Malformed timestamp does not crash module");
-  await p.locator("#fatDiamondShopBtn").click();
-  await until(p,()=>document.querySelector("#fatRewardLayer").classList.contains("open"));
-  await p.evaluate(()=>{__modes.points_fat_reward_admin_exchange="hang";});
-  await p.locator('[data-fat-reward-action="buy"]').click();await p.locator('[data-fat-reward-action="submit"]').click();
-  await until(p,()=>document.querySelector("#fatRewardError").textContent.includes("网络异常"));
-  check(await p.evaluate(()=>Object.keys(localStorage).some(k=>k.includes("points_fat_operation")&&k.endsWith(":buy"))),true,"Unknown exchange outcome retains idempotency key");
-  await p.keyboard.press("Escape");
-  check(await p.locator("#fatRewardLayer").evaluate(e=>e.classList.contains("open")),false,"Mutation timeout unlocks reward sheet");
-  await p.evaluate(()=>{__signOut();});
+  await p.evaluate(()=>__signOut());
   await until(p,()=>document.querySelector('#adminSettings').hidden && document.querySelector('#fatRecordBtn').hidden);
   check(await p.locator('#adminSettings').evaluate(e=>e.hidden),true,'Auth sign-out immediately removes administrator UI');
   check(await p.locator('#fatWeightInput').inputValue(),'','Auth sign-out leaves no private starting-weight value');
@@ -263,11 +220,7 @@ try {
   check(await missing.locator("#appRecovery").innerText(),"减脂模块加载失败，请重新加载\n重新加载","Missing module has visible recovery");
   await missing.close();
 
-  const rewards = await open("admin",{missing:"fat-rewards.js"});
-  await until(rewards,()=>document.querySelector('[data-metric="fat"]'));
-  await rewards.locator('[data-metric="fat"]').click();
-  check(await rewards.locator(".fat-home-content").isVisible(),true,"Missing rewards does not remove fat module");
-  await rewards.close();
+
 
   const stalled = await open("guest",{blockSdk:true});
   await until(stalled,()=>document.querySelector("#appRecovery")?.textContent.includes("重试启动"));
@@ -340,7 +293,7 @@ try {
   const actualSdk = await open("guest",{realSdk:true});
   await until(actualSdk,()=>document.querySelector("#scoreValue").textContent==="100");
   await actualSdk.locator('[data-metric="fat"]').click();
-  await until(actualSdk,()=>document.querySelector("#fatHomeMeta").textContent.includes("共 1 次"));
+  await until(actualSdk,()=>document.querySelector("#fatHomeMeta").textContent.includes("最近记录"));
   check(await actualSdk.locator(".fat-home-content").isVisible(),true,"Real pinned SDK initializes and reads mocked REST endpoints");
   await actualSdk.close();
 

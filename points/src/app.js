@@ -3996,7 +3996,6 @@
 
 
       // Additive adapter: preserve the original implementations and extend their results.
-      let notificationFat=null;
       if (window.PointsFatLoss) {
         try {
         const fatModule = window.PointsFatLoss.attach({
@@ -4010,7 +4009,6 @@
             setOverviewMode: mode => setOverviewMode(mode)
           }
         });
-        notificationFat=fatModule;
         const originalPrimaryMetric = renderPrimaryMetric;
         renderPrimaryMetric = (...args) => { originalPrimaryMetric(...args); fatModule.renderHome(); };
         const originalAdminState = renderAdminState;
@@ -4037,7 +4035,7 @@
         const originalLoadAppState = loadAppState;
         loadAppState = async options => {
           void fatModule.refresh({silent:options?.silent ?? true});
-          if (state.activeMetric === "fat" && state.overviewMode !== "closed") void fatModule.loadLogs(true);
+          if (state.activeMetric === "fat" && state.overviewMode !== "closed" && state.overviewSection === "records") void fatModule.loadLogs(true);
           return originalLoadAppState(options);
         };
         } catch (error) {
@@ -4083,8 +4081,6 @@
           document.querySelector('.app-nav [data-value="'+(route==='kitchen'?'kitchen':'world')+'"]')?.click();
           if(route==='kitchen')return;
           if(route==='devices'){els.settingsBtn.click();document.getElementById('pointsAccessDevices')?.click();setTimeout(()=>document.getElementById('pointsAccessSettings')?.scrollIntoView({block:'start',behavior:'smooth'}),100);return;}
-          if(route==='services'){switchMetric('fat');void notificationFat?.openServices(targetId);return;}
-          if(route==='fat'){switchMetric('fat');void notificationFat?.openSettlement();return;}
           if(route==='assets'){void openShop('inventory');return;}
           switchMetric(['wheel','withdrawals'].includes(route)?'wheel':'score');
           setTimeout(()=>{openOverviewSheet();void loadOverviewData(true).then(()=>{if(route==='withdrawals'&&targetId)openSettlementPrompt(targetId);});},220);

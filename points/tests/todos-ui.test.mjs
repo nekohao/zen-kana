@@ -26,14 +26,7 @@ try{
  check(await admin.locator('#settleWithdrawalMessage').innerText().then(t=>t.includes('¥30')),true,'opens selected withdrawal');
  await admin.locator('#settleWithdrawalConfirmBtn').click();await admin.locator('#settleWithdrawalLayer').waitFor({state:'hidden'});await open(admin);
  check(await admin.locator('[data-todo-id^="withdrawal:"]').count(),0,'handled withdrawal disappears');
- await admin.locator('[data-todo-id^="service:"]').click();await admin.locator('#fatRewardLayer.open').waitFor();
- await admin.getByRole('button',{name:'返回服务列表',exact:true}).waitFor();
- check(await admin.locator('.fat-reward-service-card').count(),1,'specific service only');
- await admin.getByRole('button',{name:'确认完成',exact:true}).click();
- await admin.locator('[data-fat-reward-action="submit"]').click();
- await admin.locator('.fat-reward-status').filter({hasText:'已完成'}).waitFor();
- await admin.getByRole('button',{name:'关闭钻石窗口',exact:true}).click();await open(admin);
- check(await admin.locator('[data-todo-id^="service:"]').count(),0,'handled service disappears');
+ check(await admin.locator('[data-todo-id^="service:"]').count(),0,'retired services absent');
  await admin.locator('[data-todo-action="close"]').click();
  await guest.locator('.app-nav [data-value="kitchen"]').click();await guest.locator('.family-task-card').first().waitFor();
  check(await guest.getByRole('button',{name:'原餐次记录',exact:true}).count(),0,'old history entry removed');
@@ -45,8 +38,6 @@ try{
  await guest.locator('#kitchenContent[data-points-synced="true"]').waitFor();
  check(await guest.locator('.family-task-card').filter({hasText:note}).count(),0,'withdrawn absent from list');
  check((await rpc(guest,'points_get_state'))[0].score,before,'score unchanged');
- await open(guest);await guest.locator('[data-todo-id^="service:"]').click();await guest.getByRole('button',{name:'已进行服务',exact:true}).waitFor();checks++;
- await guest.getByRole('button',{name:'关闭钻石窗口',exact:true}).click();
  // Distinguish installation/network failures from a truly empty inbox.
  await admin.route('**/__demo/rpc',r=>r.request().postDataJSON().name==='points_notifications_get_todos'?r.fulfill({json:{data:{admin:true,items:[],total:0,more:false,cursor:null},error:null}}):r.continue());
  await open(admin);await admin.getByText('暂时没有需要处理的事情',{exact:true}).waitFor();checks++;

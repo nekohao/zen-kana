@@ -1,6 +1,6 @@
 -- CURRENT CHANGE ONLY; previous increments are replaced, never appended.
 
--- BASE_COMMIT: 7e408fbd6921987e3f86dc2d2d1cf547c73ddbf7
+-- BASE_COMMIT: ea3087cdf43bd277deffda0c3bea9440efff16d3
 
 -- Requires the maintained database at that commit (or this increment already applied).
 
@@ -11,125 +11,217 @@ BEGIN;
 DO $baseline$
 BEGIN
  IF NOT EXISTS (SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
-  WHERE n.nspname='public' AND p.proname='points_family_snapshot'
-  AND pg_get_function_identity_arguments(p.oid)='p_id bigint'
-  AND md5(replace(replace(prosrc,E'\r\n',E'\n'),E'\r',E'\n')) IN ('7c59deefff2b58453e507d346672f7a2','3bc8ee36a68c25ed0403192da6096cbf')) THEN
-  RAISE EXCEPTION 'Database baseline differs for points_family_snapshot; apply/verify preceding changes first';
+  WHERE n.nspname='points_notice' AND p.proname='business_event'
+  AND pg_get_function_identity_arguments(p.oid)=''
+  AND md5(replace(replace(prosrc,E'\r\n',E'\n'),E'\r',E'\n')) IN ('ec09b0a0466d7a1005abd7ed93657d65','9ab52f3f7b6045e0dfd20d4b015c8103')) THEN
+  RAISE EXCEPTION 'Database baseline differs for business_event; apply/verify preceding changes first';
  END IF;
  IF NOT EXISTS (SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
-  WHERE n.nspname='public' AND p.proname='points_family_write'
-  AND pg_get_function_identity_arguments(p.oid)='p_action text, p_payload jsonb, p_operation_id uuid'
-  AND md5(replace(replace(prosrc,E'\r\n',E'\n'),E'\r',E'\n')) IN ('1d55d14c327ed58a18afdfadfb06098b','6856487480aac0913bcd8c360757dbd9')) THEN
-  RAISE EXCEPTION 'Database baseline differs for points_family_write; apply/verify preceding changes first';
+  WHERE n.nspname='public' AND p.proname='points_notifications_preferences'
+  AND pg_get_function_identity_arguments(p.oid)='p_categories text[], p_quiet boolean, p_night_important boolean'
+  AND md5(replace(replace(prosrc,E'\r\n',E'\n'),E'\r',E'\n')) IN ('22bababfdbe3dbceb841aa5bd0905b2d','58ab22cec4c8f88723a6de71d831baf1')) THEN
+  RAISE EXCEPTION 'Database baseline differs for points_notifications_preferences; apply/verify preceding changes first';
+ END IF;
+ IF NOT EXISTS (SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+  WHERE n.nspname='public' AND p.proname='points_notifications_get_todos'
+  AND pg_get_function_identity_arguments(p.oid)='p_before text'
+  AND md5(replace(replace(prosrc,E'\r\n',E'\n'),E'\r',E'\n')) IN ('638efb7bd4ffcb858522294db20826af','ae9933470f74e50344ae1ac0f176b04c')) THEN
+  RAISE EXCEPTION 'Database baseline differs for points_notifications_get_todos; apply/verify preceding changes first';
  END IF;
 END
 $baseline$;
 
-CREATE OR REPLACE FUNCTION public.points_family_snapshot(p_id bigint)
+CREATE OR REPLACE FUNCTION public.points_fat_get_progress()
  RETURNS jsonb
  LANGUAGE sql
  STABLE SECURITY DEFINER
  SET search_path TO ''
 AS $function$
- SELECT to_jsonb(t)-'member_id'-'score_log_id' || jsonb_build_object('id',t.id::text,
- 'items',(SELECT coalesce(jsonb_agg(jsonb_build_object('slug',d->>'slug','name',d->>'name','request_note',coalesce(d->>'request_note','')) ORDER BY n),'[]') FROM jsonb_array_elements(t.items) WITH ORDINALITY x(d,n)),
- 'events',(SELECT coalesce(jsonb_agg(jsonb_build_object('version',e.version,'attempt',e.attempt,'action',e.action,'comment',e.comment,'at',e.created_at) ORDER BY e.version),'[]')
- FROM public.points_family_events e WHERE e.task_id=t.id)) FROM public.points_family_tasks t WHERE t.id=p_id
+  WITH bounds AS (
+    SELECT date_trunc('week', now() AT TIME ZONE 'Asia/Shanghai')::date AS monday
+  ), daily AS (
+    SELECT (r.created_at AT TIME ZONE 'Asia/Shanghai')::date AS day,
+           min(r.weight_jin) AS lightest
+    FROM public.points_fat_records r CROSS JOIN bounds b
+    WHERE r.created_at >= ((b.monday - 21)::timestamp AT TIME ZONE 'Asia/Shanghai')
+      AND r.created_at <= now()
+    GROUP BY 1
+  ), weekly AS (
+    SELECT b.monday - offsets.days AS start_date, count(d.day) AS days, avg(d.lightest) AS mean
+    FROM bounds b CROSS JOIN (VALUES (21),(14),(7),(0)) AS offsets(days)
+    LEFT JOIN daily d ON d.day BETWEEN b.monday - offsets.days AND b.monday - offsets.days + 6
+    GROUP BY 1
+  )
+  SELECT jsonb_build_object(
+    'configured', s.starting_weight_jin IS NOT NULL,
+    'delta_jin', latest.weight_jin - s.starting_weight_jin,
+    'recorded_at', latest.created_at,
+    'weeks', (SELECT jsonb_agg(jsonb_build_object('start', w.start_date, 'end', w.start_date + 6,
+      'days', w.days, 'mean', CASE WHEN w.days >= 3 THEN w.mean - s.starting_weight_jin END)
+      ORDER BY w.start_date) FROM weekly w)
+  )
+  FROM public.points_fat_settings s
+  LEFT JOIN LATERAL (
+    SELECT r.weight_jin, r.created_at FROM public.points_fat_records r
+    WHERE r.created_at <= now()
+    ORDER BY r.created_at DESC, r.id DESC LIMIT 1
+  ) latest ON true
+  WHERE s.id = 1;
 $function$;
 
-CREATE OR REPLACE FUNCTION public.points_family_write(p_action text, p_payload jsonb, p_operation_id uuid)
+ALTER FUNCTION "public"."points_fat_get_progress"() OWNER TO "postgres";
+
+REVOKE ALL ON FUNCTION "public"."points_fat_get_progress"() FROM PUBLIC, "anon", "authenticated", "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_get_progress"() TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_get_progress"() TO "anon";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_get_progress"() TO "authenticated";
+
+CREATE OR REPLACE FUNCTION points_notice.business_event()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE j jsonb:=to_jsonb(NEW); old_j jsonb:=CASE WHEN TG_OP='UPDATE' THEN to_jsonb(OLD) ELSE '{}'::jsonb END;
+  key text:=TG_TABLE_NAME||':'||coalesce(j->>'id',j->>'week_start'); title text; body text; a text; group_name text;
+BEGIN
+  IF TG_TABLE_NAME='score_logs' THEN
+    -- A meal review is described once by the order event, including its delta.
+    IF coalesce(j->>'reason','')~'^(厨房评价 · 订单|家务结算 · 任务) #[0-9]+$' THEN RETURN NEW; END IF;
+    PERFORM points_notice.emit(key,'guest','score',CASE WHEN (j->>'delta')::numeric>0 THEN '积分增加了' ELSE '积分有扣减' END,
+      CASE WHEN (j->>'delta')::numeric>0 THEN '+' ELSE '' END||(j->>'delta')||' 分 · '||coalesce(nullif(j->>'reason',''),'积分调整'),'score','score',0,j->>'operator_id' IS NOT NULL);
+  ELSIF TG_TABLE_NAME='points_shop_admin_inventory_logs' THEN
+    body:=CASE j->>'item_code' WHEN 'shield30' THEN '小幸运护盾' WHEN 'upgrade' THEN '奖励升级卡' WHEN 'double_pick' THEN '命运二选一' WHEN 'lucky100' THEN '百元幸运药水' WHEN 'restart' THEN '命运重启卡' WHEN 'wish' THEN '许愿卡' WHEN 'triple_challenge' THEN '三连挑战卡' WHEN 'no10' THEN '十元退散' WHEN 'return10' THEN '幸运返场卡' WHEN 'heartbeat' THEN '心跳翻倍卡' WHEN 'mystery_box' THEN '幸运盲盒' WHEN 'free_mystery_box' THEN '免费幸运盲盒' ELSE '道具' END;
+    PERFORM points_notice.emit(key,'guest','assets','道具数量已调整',body||' '||CASE WHEN (j->>'delta')::int>0 THEN '+' ELSE '' END||(j->>'delta')||' 个 · 现在 '||(j->>'quantity_after')||' 个。','assets','assets');
+  ELSIF TG_TABLE_NAME='points_wheel_logs' AND j->>'action'='admin_chance_adjust' THEN
+    PERFORM points_notice.emit(key,'guest','assets','正式转盘机会已调整','变化 '||(j->>'chance_delta')||' 次 · 现在 '||(j->>'chance_after')||' 次。','wheel','assets');
+  ELSIF TG_TABLE_NAME='points_withdrawals' THEN
+    group_name:='withdrawal:'||(j->>'id');
+    IF TG_OP='INSERT' THEN
+      PERFORM points_notice.emit(key||':requested','admin','withdrawal','宝宝发来了提现申请','申请 ¥'||(j->>'amount')||'，请实际兑现后再标记完成。','withdrawals',group_name,1,true,true);
+    ELSIF j->>'canceled_at' IS NOT NULL AND old_j->>'canceled_at' IS NULL THEN
+      UPDATE points_notice.events SET active=false WHERE group_key=group_name;
+      PERFORM points_notice.emit(key||':cancelled','guest','withdrawal','提现申请已取消','这笔 ¥'||(j->>'amount')||' 的申请已取消，请查看记录及余额。','withdrawals',group_name,1);
+    ELSIF j->>'status'='settled' AND old_j->>'status' IS DISTINCT FROM 'settled' THEN
+      UPDATE points_notice.events SET active=false WHERE group_key=group_name;
+      PERFORM points_notice.emit(key||':settled','guest','withdrawal','提现已标记兑现','哥哥已标记兑现 ¥'||(j->>'amount')||'，请实际查收。','withdrawals',group_name,1);
+    END IF;
+  ELSIF TG_TABLE_NAME='points_kitchen_orders' THEN
+    group_name:='kitchen:'||(j->>'id');
+    IF TG_OP='UPDATE' AND (j->>'status' IS DISTINCT FROM old_j->>'status' OR j->>'version' IS DISTINCT FROM old_j->>'version') THEN UPDATE points_notice.events SET active=false WHERE group_key=group_name; END IF;
+    IF TG_OP='INSERT' OR j->>'version' IS DISTINCT FROM old_j->>'version' OR j->>'status' IS DISTINCT FROM old_j->>'status' THEN
+      key:=key||':'||(j->>'version')||':'||(j->>'status');
+      IF j->>'status'='settled' THEN
+        PERFORM points_notice.emit(key,'guest','kitchen','这餐评价已完成','本单积分变化 '||coalesce(j->>'score_delta','0')||' 分，点开查看每道菜的评价。','kitchen',group_name);
+      ELSIF j->>'status' IN ('completed','rejected') THEN
+        PERFORM points_notice.emit(key,'admin','kitchen',CASE WHEN j->>'status'='completed' THEN '宝宝做好饭啦' ELSE '这餐有制作反馈' END,'点开厨房查看具体菜品和最新状态。','kitchen',group_name,1,true,j->>'status'='completed');
+      ELSE
+        title:=CASE WHEN j->>'status'='cancelled' THEN '点菜订单已取消' WHEN TG_OP='INSERT' THEN '哥哥发来了点菜请求' ELSE '点菜菜单已更新' END;
+        PERFORM points_notice.emit(key,'guest','kitchen',title,'点开厨房查看最新菜单。','kitchen',group_name,1,true,j->>'status'='pending');
+      END IF;
+    END IF;
+  ELSIF TG_TABLE_NAME='devices' AND (TG_OP='INSERT' OR old_j->>'revoked_at' IS NOT NULL AND j->>'revoked_at' IS NULL) THEN
+    PERFORM points_notice.emit('device:'||(j->>'id')||':'||(j->>'verified_at'),'admin','security','新的游客设备已接入','一台游客设备已通过验证码，点开设备管理查看。','devices','device:'||(j->>'id'),1);
+  END IF;
+  RETURN NEW;
+END $function$;
+
+CREATE OR REPLACE FUNCTION public.points_notifications_preferences(p_categories text[] DEFAULT NULL::text[], p_quiet boolean DEFAULT NULL::boolean, p_night_important boolean DEFAULT NULL::boolean)
  RETURNS jsonb
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-DECLARE a text:=public.points_family_actor(); administrator boolean:=a LIKE 'admin:%'; member bigint; t public.points_family_tasks;
- ty public.points_family_types; op public.points_family_operations; v_id bigint:=(p_payload->>'id')::bigint;
- expected integer:=(p_payload->>'version')::integer; v_items jsonb:='[]'; v_comment text:=coalesce(p_payload->>'comment',''); result jsonb;
-BEGIN
- IF p_operation_id IS NULL OR p_payload IS NULL OR jsonb_typeof(p_payload)<>'object' THEN RAISE EXCEPTION 'Invalid operation' USING errcode='22023'; END IF;
- IF (SELECT count(*) FROM public.members WHERE active)<>1 THEN RAISE EXCEPTION 'Score object changed' USING errcode='P0001'; END IF;
- SELECT m.id INTO member FROM public.members m WHERE active FOR UPDATE;
- SELECT * INTO op FROM public.points_family_operations WHERE operation_id=p_operation_id;
- IF FOUND THEN
-  IF op.actor<>a OR op.kind<>p_action OR op.arguments<>p_payload THEN RAISE EXCEPTION 'Operation conflict' USING errcode='22023'; END IF;
-  IF op.result->>'removed'='true' AND p_action<>'cancel' THEN RAISE EXCEPTION 'Task removed' USING errcode='P0002'; END IF;
-  RETURN op.result;
- END IF;
- IF p_action='create' THEN
-  SELECT * INTO ty FROM public.points_family_types WHERE code=p_payload->>'type' AND active FOR SHARE;
-  IF NOT FOUND OR ty.points IS NULL THEN RAISE EXCEPTION 'Points not configured' USING errcode='22023'; END IF;
-  IF char_length(coalesce(p_payload->>'note',''))>500 THEN RAISE EXCEPTION 'Note too long' USING errcode='22023'; END IF;
-  IF jsonb_array_length(coalesce(p_payload->'items','[]'))>0 THEN RAISE EXCEPTION 'Recipes retired; use the task note' USING errcode='22023'; END IF;
-  INSERT INTO public.points_family_tasks(member_id,type_code,title,points,origin,note,items,status,attempt,submitted_at)
-   VALUES(member,ty.code,ty.label,ty.points,CASE WHEN administrator THEN 'admin' ELSE 'guest' END,coalesce(p_payload->>'note',''),v_items,
-    CASE WHEN administrator THEN 'pending' ELSE 'review' END,CASE WHEN administrator THEN 0 ELSE 1 END,CASE WHEN NOT administrator THEN clock_timestamp() END) RETURNING * INTO t;
- ELSIF p_action='price' THEN
-  IF NOT administrator THEN RAISE EXCEPTION 'Admin required' USING errcode='42501'; END IF;
-  SELECT * INTO ty FROM public.points_family_types WHERE code=p_payload->>'type' FOR UPDATE;
-  IF NOT FOUND OR ty.version IS DISTINCT FROM expected THEN RAISE EXCEPTION 'Price changed' USING errcode='40001'; END IF;
-  IF p_payload->>'points' IS NULL OR (p_payload->>'points')!~'^[0-9]+([.][0-9]+)?$' OR (p_payload->>'points')::numeric NOT BETWEEN 0.5 AND 1000 OR mod((p_payload->>'points')::numeric,0.5)<>0 THEN RAISE EXCEPTION 'Invalid points' USING errcode='22023'; END IF;
-  UPDATE public.points_family_types SET points=(p_payload->>'points')::numeric,version=version+1,updated_at=clock_timestamp() WHERE code=ty.code;
-  UPDATE public.points_family_tasks SET points=(p_payload->>'points')::numeric,version=version+1 WHERE type_code=ty.code AND points IS NULL AND EXISTS(SELECT 1 FROM public.points_family_events e WHERE e.task_id=points_family_tasks.id AND e.action='imported');
-  result:=public.points_family_get_types();
- ELSE
-  SELECT * INTO t FROM public.points_family_tasks WHERE points_family_tasks.id=v_id FOR UPDATE;
-  IF NOT FOUND OR t.member_id<>member THEN RAISE EXCEPTION 'Task not found' USING errcode='P0002'; END IF;
-  IF t.version IS DISTINCT FROM expected THEN RAISE EXCEPTION 'Task changed' USING errcode='40001'; END IF;
-  IF p_action='submit' THEN
-   IF administrator OR t.status NOT IN ('pending','rework') THEN RAISE EXCEPTION 'Cannot submit' USING errcode='42501'; END IF;
-   UPDATE public.points_family_tasks SET status='review',attempt=attempt+1,version=version+1,submitted_at=clock_timestamp(),updated_at=clock_timestamp() WHERE points_family_tasks.id=v_id RETURNING * INTO t;
-  ELSIF p_action='review' THEN
-   IF NOT administrator OR t.status<>'review' THEN RAISE EXCEPTION 'Cannot review' USING errcode='42501'; END IF;
-   IF char_length(v_comment)>1000 OR jsonb_typeof(p_payload->'qualified') IS DISTINCT FROM 'boolean' THEN RAISE EXCEPTION 'Invalid review' USING errcode='22023'; END IF;
-   IF (p_payload->>'qualified')::boolean THEN
-    IF t.points IS NULL THEN RAISE EXCEPTION 'Points not configured' USING errcode='22023'; END IF;
-    UPDATE public.members SET score=score+t.points WHERE id=member RETURNING score INTO t.score_after;
-    INSERT INTO public.score_logs(member_id,delta,reason,operator_id)
-     VALUES(member,t.points,'家务结算 · 任务 #'||t.id,auth.uid()) RETURNING id INTO t.score_log_id;
-   END IF;
-   UPDATE public.points_family_tasks SET status=CASE WHEN (p_payload->>'qualified')::boolean THEN 'settled' ELSE 'rework' END,
-    version=version+1,comment=v_comment,reviewed_at=clock_timestamp(),updated_at=clock_timestamp(),score_after=t.score_after,score_log_id=t.score_log_id
-    WHERE points_family_tasks.id=v_id RETURNING * INTO t;
-  ELSIF p_action='cancel' THEN
-   IF NOT administrator THEN
-    IF t.origin<>'guest' OR t.legacy_order_id IS NOT NULL OR EXISTS(SELECT 1 FROM public.points_family_events e WHERE e.task_id=t.id AND e.action='imported') OR t.status NOT IN ('review','rework') OR t.score_log_id IS NOT NULL THEN RAISE EXCEPTION 'Cannot withdraw task' USING errcode='42501'; END IF;
-    result:=jsonb_build_object('id',t.id::text,'removed',true);
-    DELETE FROM points_notice.batch_items WHERE event_id IN (SELECT id FROM points_notice.events WHERE group_key='family:'||t.id);
-    DELETE FROM points_notice.receipts WHERE event_id IN (SELECT id FROM points_notice.events WHERE group_key='family:'||t.id);
-    DELETE FROM points_notice.events WHERE group_key='family:'||t.id;
-    UPDATE public.points_family_operations SET task_id=NULL,arguments=jsonb_build_object('id',t.id),result=jsonb_build_object('id',t.id::text,'removed',true) WHERE task_id=t.id;
-    DELETE FROM public.points_family_events WHERE task_id=t.id;
-    DELETE FROM public.points_family_tasks WHERE id=t.id;
-    INSERT INTO public.points_family_operations(operation_id,actor,kind,arguments,result) VALUES(p_operation_id,a,p_action,p_payload,result);
-    RETURN result;
-   END IF;
-   IF NOT administrator OR t.status<>'pending' OR t.attempt<>0 THEN RAISE EXCEPTION 'Cannot cancel submitted task' USING errcode='42501'; END IF;
-   UPDATE public.points_family_tasks SET status='cancelled',version=version+1,updated_at=clock_timestamp() WHERE points_family_tasks.id=v_id RETURNING * INTO t;
-  ELSE RAISE EXCEPTION 'Invalid action' USING errcode='22023'; END IF;
- END IF;
- IF p_action<>'price' THEN
-  INSERT INTO public.points_family_events(task_id,version,attempt,action,comment) VALUES(t.id,t.version,t.attempt,
-   CASE WHEN p_action='review' THEN CASE WHEN t.status='settled' THEN 'qualified' ELSE 'rework' END ELSE p_action END,v_comment);
-  result:=public.points_family_snapshot(t.id);
- END IF;
- INSERT INTO public.points_family_operations(operation_id,actor,kind,arguments,task_id,result) VALUES(p_operation_id,a,p_action,p_payload,t.id,result);
- RETURN result;
+DECLARE a text:=points_notice.actor(); p points_notice.preferences; BEGIN
+  IF p_categories IS NOT NULL AND NOT p_categories<@ARRAY['score','kitchen','withdrawal','assets','security'] THEN RAISE EXCEPTION 'Invalid categories' USING errcode='22023'; END IF;
+  INSERT INTO points_notice.preferences(actor) VALUES(a) ON CONFLICT DO NOTHING;
+  UPDATE points_notice.preferences SET categories=coalesce(p_categories,categories),quiet=coalesce(p_quiet,quiet),night_important=coalesce(p_night_important,night_important) WHERE actor=a RETURNING * INTO p;
+  RETURN jsonb_build_object('categories',p.categories,'quiet',p.quiet,'nightImportant',p.night_important);
 END $function$;
 
--- Retire recipes; preserve only dish names/notes on existing household tasks.
--- Balances, task status, reviews and score logs remain untouched.
-UPDATE public.points_family_tasks t SET items=(
- SELECT coalesce(jsonb_agg(jsonb_build_object('slug',d->>'slug','name',d->>'name',
- 'request_note',coalesce(d->>'request_note','')) ORDER BY n),'[]')
- FROM jsonb_array_elements(t.items) WITH ORDINALITY x(d,n)
-) WHERE jsonb_array_length(t.items)>0;
-UPDATE public.points_family_operations o SET result=jsonb_set(o.result,'{items}',(
- SELECT coalesce(jsonb_agg(jsonb_build_object('slug',d->>'slug','name',d->>'name',
- 'request_note',coalesce(d->>'request_note','')) ORDER BY n),'[]')
- FROM jsonb_array_elements(o.result->'items') WITH ORDINALITY x(d,n)
-)) WHERE jsonb_typeof(o.result->'items')='array';
-DELETE FROM public.points_kitchen_dishes;
+CREATE OR REPLACE FUNCTION public.points_notifications_get_todos(p_before text DEFAULT NULL::text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE actor text:=points_notice.actor(); administrator boolean:=actor LIKE 'admin:%';
+ cursor_data jsonb:=p_before::jsonb; entries jsonb; total bigint; BEGIN
+ WITH todos AS (
+  SELECT 'family:'||t.id AS key,t.id::text AS target,'kitchen'::text AS route,'家事'::text AS category,
+   t.title AS title,CASE t.status WHEN 'review' THEN '待验收' WHEN 'rework' THEN '需返工' ELSE '待完成' END AS status,
+   CASE t.status WHEN 'review' THEN '宝宝已提交，等你验收' WHEN 'rework' THEN coalesce(nullif(t.comment,''),'完成返工后重新提交') ELSE coalesce(nullif(t.note,''),'完成后提交哥哥验收') END AS body,t.updated_at AS at
+  FROM public.points_family_tasks t
+  WHERE CASE WHEN administrator THEN t.status='review' ELSE t.status IN ('pending','rework') END
+  UNION ALL
+  SELECT 'withdrawal:'||w.id,w.id::text,'withdrawals','提现','提现 ¥'||w.amount,'待兑现','确认实际兑现后完成申请',w.requested_at
+  FROM public.points_withdrawals w WHERE administrator AND w.status='pending' AND w.hidden_at IS NULL
+ ), page AS (
+  SELECT * FROM todos WHERE p_before IS NULL OR (at,key)<((cursor_data->>'at')::timestamptz,cursor_data->>'id')
+  ORDER BY at DESC,key DESC LIMIT 31
+ )
+ SELECT (SELECT count(*) FROM todos),coalesce(jsonb_agg(jsonb_build_object('id',key,'target',target,'route',route,'category',category,'title',title,'status',status,'body',body,'at',at) ORDER BY at DESC,key DESC),'[]') INTO total,entries FROM page;
+ RETURN jsonb_build_object('admin',administrator,'total',total,'items',
+  (SELECT coalesce(jsonb_agg(x ORDER BY n),'[]') FROM jsonb_array_elements(entries) WITH ORDINALITY e(x,n) WHERE n<=30),
+  'more',jsonb_array_length(entries)>30,'cursor',CASE WHEN jsonb_array_length(entries)>30 THEN jsonb_build_object('at',entries->29->>'at','id',entries->29->>'id')::text END);
+END $function$;
+
+DO $cleanup$
+DECLARE job bigint;
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_schema='public' AND table_name='points_fat_records' AND column_name='bowel_status') THEN
+    LOCK TABLE public.points_fat_records IN ACCESS EXCLUSIVE MODE;
+    DELETE FROM public.points_fat_records WHERE bowel_status='before';
+  END IF;
+  IF to_regclass('cron.job') IS NOT NULL THEN
+    FOR job IN SELECT jobid FROM cron.job
+      WHERE command ~* '\mpoints_fat_(v2_)?reward_[a-z_]+\M'
+    LOOP
+      PERFORM cron.unschedule(job);
+    END LOOP;
+  END IF;
+END
+$cleanup$;
+
+WITH retired AS (
+  SELECT id FROM points_notice.events WHERE category IN ('fat','service') AND route IN ('fat','services')
+), detached AS (
+  DELETE FROM points_notice.batch_items WHERE event_id IN (SELECT id FROM retired)
+), forgotten AS (
+  DELETE FROM points_notice.receipts WHERE event_id IN (SELECT id FROM retired)
+)
+DELETE FROM points_notice.events WHERE id IN (SELECT id FROM retired);
+
+UPDATE points_notice.preferences
+SET categories=array_remove(array_remove(categories,'fat'),'service')
+WHERE categories && ARRAY['fat','service'];
+
+DROP FUNCTION IF EXISTS "public"."points_fat_reward_admin_exchange"(p_kind text, p_operation_id uuid),
+  "public"."points_fat_reward_admin_resolve"(p_request_id bigint, p_confirm boolean),
+  "public"."points_fat_reward_cutoff"(p_week date),
+  "public"."points_fat_reward_delta"(p_change numeric, p_days integer, p_previous_days integer),
+  "public"."points_fat_reward_get_state"(p_before bigint),
+  "public"."points_fat_reward_guest_serviced"(p_request_id bigint),
+  "public"."points_fat_reward_reference"(p_week date),
+  "public"."points_fat_reward_sample"(p_week date),
+  "public"."points_fat_reward_settle_due"(),
+  "public"."points_fat_reward_snapshot"(p_before bigint),
+  "public"."points_fat_v2_admin_record_weight"(p_weight_jin numeric, p_bowel_status text),
+  "public"."points_fat_v2_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer),
+  "public"."points_fat_v2_get_state"(p_bowel_status text),
+  "public"."points_fat_v2_reward_analysis"(p_week date),
+  "public"."points_fat_v2_reward_reference"(p_week date, p_status text),
+  "public"."points_fat_v2_reward_sample"(p_week date, p_status text);
+
+ALTER TABLE "points_notice"."preferences" ALTER COLUMN "categories" SET DEFAULT ARRAY['score'::text, 'kitchen'::text, 'withdrawal'::text, 'assets'::text, 'security'::text];
+
+ALTER TABLE "public"."points_fat_records" DROP COLUMN IF EXISTS "bowel_status";
+
+DROP TABLE IF EXISTS "public"."points_fat_reward_operations", "public"."points_fat_reward_requests", "public"."points_fat_reward_state", "public"."points_fat_reward_week_series", "public"."points_fat_reward_weeks", "public"."points_fat_status_migration";
 
 NOTIFY pgrst,'reload schema';
 
