@@ -353,45 +353,109 @@ body:has(#pointsApp) .cute-doodle { opacity:.28; }
 
 /* Crossfade only the module. The navigation and the rest of the page stay live. */
 html.world-metric-transition { view-transition-name:none; }
-.world-metric-transition #pointsApp .home:not(.fat-active) #metricEyebrow,
-.world-metric-transition #pointsApp .home.fat-active #fatHomeMeta {
+.world-metric-transition #pointsApp .home:not(.fat-active) #metricEyebrow {
   view-transition-name:world-metric-caption;
 }
-.world-metric-transition #pointsApp .home:not(.fat-active) #scoreRefreshBtn,
-.world-metric-transition #pointsApp .home.fat-active #fatRefreshBtn {
+.world-metric-transition #pointsApp .home.fat-active #fatHomeMeta {
+  view-transition-name:world-metric-fat-caption;
+}
+.world-metric-transition #pointsApp .home:not(.fat-active) #scoreRefreshBtn .score-lens,
+.world-metric-transition #pointsApp .home.fat-active #fatRefreshBtn .fat-lens {
   view-transition-name:world-metric-dial;
 }
-.world-metric-transition #pointsApp .home:not(.admin-mode):not(.wheel-active):not(.fat-active) #redeemRewardBtn,
-.world-metric-transition #pointsApp .home.admin-mode:not(.wheel-active):not(.fat-active) .admin-controls:not(.hidden) .minus,
-.world-metric-transition #pointsApp .home.wheel-active:not(.fat-active) #spinWheelActionBtn,
-.world-metric-transition #pointsApp .home.fat-active #fatRecordBtn {
-  view-transition-name:world-metric-action;
+.world-metric-transition #pointsApp .home:not(.wheel-active):not(.fat-active) #scoreValue {
+  view-transition-name:world-metric-score;
 }
-.world-metric-transition #pointsApp .home.admin-mode:not(.wheel-active):not(.fat-active) .admin-controls:not(.hidden) .plus,
+.world-metric-transition #pointsApp .home.wheel-active:not(.fat-active) #wheelStage {
+  view-transition-name:world-metric-wheel;
+}
+.world-metric-transition #pointsApp .home.fat-active .fat-value-stack {
+  view-transition-name:world-metric-fat;
+}
+.world-metric-transition #pointsApp .home :is(.score-lens,#scoreValue,#wheelStage,.wheel-actions,.admin-controls,#redeemRewardBtn) {
+  transition:none!important;
+}
+.world-metric-transition #pointsApp .home:not(.admin-mode):not(.wheel-active):not(.fat-active) #redeemRewardBtn,
+.world-metric-transition #pointsApp .home.admin-mode:not(.wheel-active):not(.fat-active) .admin-controls:not(.hidden) .minus {
+  view-transition-name:world-metric-score-action;
+}
+.world-metric-transition #pointsApp .home.wheel-active:not(.fat-active) #spinWheelActionBtn {
+  view-transition-name:world-metric-wheel-action;
+}
+.world-metric-transition #pointsApp .home.fat-active #fatRecordBtn {
+  view-transition-name:world-metric-fat-action;
+}
+.world-metric-transition #pointsApp .home.admin-mode:not(.wheel-active):not(.fat-active) .admin-controls:not(.hidden) .plus {
+  view-transition-name:world-metric-score-secondary;
+}
 .world-metric-transition #pointsApp .home.wheel-active:not(.fat-active) #adjustWheelChancesBtn {
-  view-transition-name:world-metric-secondary;
+  view-transition-name:world-metric-wheel-secondary;
 }
 .world-metric-transition #pointsApp .home :is(#redeemRewardBtn,.score-button,.wheel-side-button,#fatRecordBtn):active {
   transform:none;
 }
 html.world-metric-transition::view-transition { pointer-events:none; }
 html.world-metric-transition::view-transition-group(*) {
-  animation-duration:380ms;
+  animation-duration:500ms;
   animation-timing-function:cubic-bezier(.2,.72,.24,1);
 }
 html.world-metric-transition::view-transition-image-pair(*) { isolation:isolate; }
-html.world-metric-transition::view-transition-old(world-metric-secondary) {
-  animation:world-action-fold 260ms cubic-bezier(.25,.7,.25,1) both;
+html.world-metric-transition::view-transition-old(world-metric-score),
+html.world-metric-transition::view-transition-old(world-metric-wheel),
+html.world-metric-transition::view-transition-old(world-metric-fat),
+html.world-metric-transition::view-transition-old(world-metric-caption),
+html.world-metric-transition::view-transition-old(world-metric-fat-caption) {
+  animation:world-face-out 500ms both;
+  mix-blend-mode:normal;
 }
-html.world-metric-transition::view-transition-new(world-metric-secondary) {
-  animation:world-action-unfold 340ms cubic-bezier(.2,.72,.24,1) both;
+html.world-metric-transition::view-transition-new(world-metric-score),
+html.world-metric-transition::view-transition-new(world-metric-wheel),
+html.world-metric-transition::view-transition-new(world-metric-fat),
+html.world-metric-transition::view-transition-new(world-metric-caption),
+html.world-metric-transition::view-transition-new(world-metric-fat-caption) {
+  animation:world-face-in 500ms both;
+  mix-blend-mode:normal;
+}
+@keyframes world-face-out {
+  from { opacity:1; transform:scale(1); }
+  42%, to { opacity:0; transform:scale(.98); }
+}
+@keyframes world-face-in {
+  0%, 44% { opacity:0; transform:scale(1.018); }
+  to { opacity:1; transform:scale(1); }
+}
+html.world-metric-transition::view-transition-old(world-metric-score-action),
+html.world-metric-transition::view-transition-old(world-metric-wheel-action),
+html.world-metric-transition::view-transition-old(world-metric-fat-action) {
+  animation:world-action-out 500ms both;
+}
+html.world-metric-transition::view-transition-new(world-metric-score-action),
+html.world-metric-transition::view-transition-new(world-metric-wheel-action),
+html.world-metric-transition::view-transition-new(world-metric-fat-action) {
+  animation:world-action-in 500ms both;
+}
+html.world-metric-transition::view-transition-old(world-metric-score-secondary),
+html.world-metric-transition::view-transition-old(world-metric-wheel-secondary) {
+  animation:world-action-fold 500ms both;
+}
+html.world-metric-transition::view-transition-new(world-metric-score-secondary),
+html.world-metric-transition::view-transition-new(world-metric-wheel-secondary) {
+  animation:world-action-unfold 500ms both;
+}
+@keyframes world-action-out {
+  from { opacity:1; transform:scale(.999); }
+  42%, to { opacity:0; transform:scale(.97); }
+}
+@keyframes world-action-in {
+  0%, 44% { opacity:0; transform:scale(.97); }
+  to { opacity:1; transform:scale(1); }
 }
 @keyframes world-action-fold {
   0% { opacity:1; transform:translateX(0) scaleX(1); }
-  75%, 100% { opacity:0; transform:translateX(-12px) scaleX(.86); }
+  42%, 100% { opacity:0; transform:translateX(-9px) scaleX(.94); }
 }
 @keyframes world-action-unfold {
-  0%, 14% { opacity:0; transform:translateX(-12px) scaleX(.86); }
+  0%, 44% { opacity:0; transform:translateX(-9px) scaleX(.94); }
   100% { opacity:1; transform:translateX(0) scaleX(1); }
 }
 @media (prefers-reduced-motion:reduce) {
