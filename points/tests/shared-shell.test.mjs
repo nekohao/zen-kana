@@ -9,7 +9,7 @@ const errors=[];let checks=0;
 const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 async function settle(p){await p.locator('#pointsApp').evaluate(el=>Promise.all(el.getAnimations({subtree:true}).filter(a=>a.effect.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{}))));}
 async function page(role){
- const p=await browser.newPage({viewport:{width:390,height:844}});
+ const p=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});
  p.on('pageerror',e=>errors.push(e.message));
  await p.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());
  await p.goto(origin+'/preview/index.html?role='+role+'&demo=1');
@@ -106,6 +106,31 @@ try{
   }
   check(await p.locator('.app-nav').count(),1,'repeated switches do not duplicate navigation');
   check(await p.locator('[data-todo-action="open"]:visible').count(),1,'one active notification entry');
+  await p.setViewportSize({width:320,height:640});
+  await p.locator('[data-metric="fat"]').tap();
+  await p.locator('#overviewBtn').tap();
+  const trend=p.locator('[data-fat-section="trend"]'), records=p.locator('[data-fat-section="records"]');
+  const content=p.locator('.fat-overview-scroll');
+  await p.locator('#fatChart:visible').waitFor();
+  check(await p.locator('[data-fat-week="3"]').getAttribute('aria-label').then(text=>text.includes('最低体重')),true,'one day is enough for the weekly low');
+  await records.tap();
+  await p.locator('.fat-record-line').first().waitFor();
+  const scroll=await content.evaluate(el=>{el.scrollTop=140;return el.scrollTop;});
+  check(scroll>0,true,'records scroll independently');
+  await settle(p);
+  const position=(await records.boundingBox()).y;
+  check(await records.evaluate(el=>{
+   const r=el.getBoundingClientRect();return r.height>=44 && document.elementFromPoint(r.x+r.width/2,r.bottom-1)===el;
+  }),true,'whole touch target works inside the switch');
+  await trend.focus();await trend.press('Enter');
+  check(await trend.getAttribute('aria-pressed'),'true','keyboard switches back to trend');
+  check((await records.boundingBox()).y,position,'switch stays in place across views');
+  await p.locator('[data-fat-week="2"]').tap();
+  check(await p.locator('#fatWeekValue').textContent(),'−1.65公斤','weekly lightest uses the lightest daily reading');
+  await records.tap();
+  check(await content.evaluate(el=>el.scrollTop),scroll,'switching back restores record scroll');
+  await p.getByRole('button',{name:'关闭减脂总览'}).tap();
+  await p.setViewportSize({width:390,height:844});
   if(role==='admin'){
    await p.locator('header [aria-label="设置"]:visible').click();
    const devices=p.locator('#pointsAccessDevices'),list=p.locator('#pointsAccessDeviceList');
