@@ -12,9 +12,9 @@
 
 -- Source PostgreSQL: 17.6
 
--- Current change baseline (see schema-increment.sql): ea3087cdf43bd277deffda0c3bea9440efff16d3
+-- Current change baseline (see schema-increment.sql): d33a2d44c41b6a5c68f24f6aa7ff0cef3eb3e0c7
 
--- Current increment SHA-256: 62e60bbc5458cd730956b1f109f4a85f7b9513c659adc610c315ee8410cb0d66
+-- Current increment SHA-256: f557ac223b16aa7a123957ae350bf497d50ce9dcdc857365e661fc18c5ec7d4d
 
 SET check_function_bodies = false;
 
@@ -196,6 +196,12 @@ CREATE TABLE "public"."members" (
   "score" numeric DEFAULT 0 NOT NULL,
   "active" boolean DEFAULT true NOT NULL,
   "created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE TABLE "public"."points_fat_record_operations" (
+  "operation_id" uuid NOT NULL,
+  "actor" uuid NOT NULL,
+  "record_id" bigint NOT NULL
 );
 
 CREATE TABLE "public"."points_fat_records" (
@@ -2219,8 +2225,8 @@ BEGIN
 
   RETURN QUERY
   SELECT s.starting_weight_jin, s.updated_at
-  FROM public.points_fat_settings s
-  WHERE s.id = 1;
+  FROM (VALUES (1)) AS initial(id)
+  LEFT JOIN public.points_fat_settings s ON s.id = initial.id;
 END;
 $function$;
 
@@ -2303,25 +2309,63 @@ BEGIN
       USING errcode = '22023';
   END IF;
 
-  PERFORM s.id
-  FROM public.points_fat_settings s
-  WHERE s.id = 1
-  FOR UPDATE;
-
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Fat settings not found'
-      USING errcode = '55000';
-  END IF;
-
-  UPDATE public.points_fat_settings
-  SET starting_weight_jin = p_weight_jin,
-      updated_at = pg_catalog.clock_timestamp(),
-      updated_by = auth.uid()
-  WHERE id = 1;
+  INSERT INTO public.points_fat_settings (id, starting_weight_jin, updated_at, updated_by)
+  VALUES (1, p_weight_jin, pg_catalog.clock_timestamp(), auth.uid())
+  ON CONFLICT (id) DO UPDATE SET
+    starting_weight_jin = EXCLUDED.starting_weight_jin,
+    updated_at = EXCLUDED.updated_at,
+    updated_by = EXCLUDED.updated_by;
 END;
 $function$;
 
 ALTER FUNCTION "public"."points_fat_admin_set_starting_weight"(p_weight_jin numeric) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION public.points_fat_admin_submit_weight(p_weight_jin numeric, p_operation_id uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_actor uuid := auth.uid();
+  v_owner uuid;
+  v_id bigint;
+  v_weight numeric;
+BEGIN
+  IF v_actor IS NULL OR NOT coalesce(public.points_is_admin(), false) THEN
+    RAISE EXCEPTION 'Admin permission required' USING errcode = '42501';
+  END IF;
+  IF p_operation_id IS NULL THEN
+    RAISE EXCEPTION 'Operation ID required' USING errcode = '22023';
+  END IF;
+
+  PERFORM pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended('points-fat-record:' || p_operation_id::text, 0)
+  );
+  SELECT o.actor, o.record_id, r.weight_jin
+    INTO v_owner, v_id, v_weight
+    FROM public.points_fat_record_operations o
+    LEFT JOIN public.points_fat_records r ON r.id = o.record_id
+    WHERE o.operation_id = p_operation_id;
+  IF FOUND THEN
+    IF v_owner <> v_actor THEN
+      RAISE EXCEPTION 'Operation owner mismatch' USING errcode = '42501';
+    END IF;
+    RETURN jsonb_build_object('id', v_id::text, 'removed', v_weight IS NULL,
+      'matched', p_weight_jin IS NULL OR p_weight_jin IS NOT DISTINCT FROM v_weight);
+  END IF;
+  IF p_weight_jin IS NULL THEN
+    RETURN jsonb_build_object('id', NULL);
+  END IF;
+
+  SELECT r.id INTO STRICT v_id FROM public.points_fat_admin_record_weight(p_weight_jin) r;
+  INSERT INTO public.points_fat_record_operations (operation_id, actor, record_id)
+  VALUES (p_operation_id, v_actor, v_id);
+  RETURN jsonb_build_object('id', v_id::text, 'removed', false, 'matched', true);
+END;
+$function$;
+
+ALTER FUNCTION "public"."points_fat_admin_submit_weight"(p_weight_jin numeric, p_operation_id uuid) OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION public.points_fat_get_logs(p_from timestamp with time zone DEFAULT NULL::timestamp with time zone, p_to timestamp with time zone DEFAULT NULL::timestamp with time zone, p_limit integer DEFAULT 10000)
  RETURNS TABLE(id bigint, delta_jin numeric, created_at timestamp with time zone)
@@ -2356,12 +2400,13 @@ AS $function$
     SELECT (r.created_at AT TIME ZONE 'Asia/Shanghai')::date AS day,
            min(r.weight_jin) AS lightest
     FROM public.points_fat_records r CROSS JOIN bounds b
-    WHERE r.created_at >= ((b.monday - 21)::timestamp AT TIME ZONE 'Asia/Shanghai')
+    WHERE r.created_at >= ((b.monday - 28)::timestamp AT TIME ZONE 'Asia/Shanghai')
       AND r.created_at <= now()
     GROUP BY 1
   ), weekly AS (
-    SELECT b.monday - offsets.days AS start_date, count(d.day) AS days, avg(d.lightest) AS mean
-    FROM bounds b CROSS JOIN (VALUES (21),(14),(7),(0)) AS offsets(days)
+    SELECT b.monday - offsets.days AS start_date, count(d.day) AS days,
+           min(d.lightest) AS low, CASE WHEN count(d.day) >= 3 THEN avg(d.lightest) END AS mean
+    FROM bounds b CROSS JOIN (VALUES (28),(21),(14),(7),(0)) AS offsets(days)
     LEFT JOIN daily d ON d.day BETWEEN b.monday - offsets.days AND b.monday - offsets.days + 6
     GROUP BY 1
   )
@@ -2370,16 +2415,18 @@ AS $function$
     'delta_jin', latest.weight_jin - s.starting_weight_jin,
     'recorded_at', latest.created_at,
     'weeks', (SELECT jsonb_agg(jsonb_build_object('start', w.start_date, 'end', w.start_date + 6,
-      'days', w.days, 'mean', CASE WHEN w.days >= 3 THEN w.mean - s.starting_weight_jin END)
-      ORDER BY w.start_date) FROM weekly w)
+      'days', w.days, 'low', w.low - s.starting_weight_jin, 'mean', w.mean - s.starting_weight_jin)
+      ORDER BY w.start_date) FROM weekly w WHERE w.start_date >= (SELECT monday - 21 FROM bounds)),
+    'previous_week', (SELECT jsonb_build_object('low', w.low - s.starting_weight_jin,
+      'mean', w.mean - s.starting_weight_jin) FROM weekly w WHERE w.start_date = (SELECT monday - 28 FROM bounds))
   )
-  FROM public.points_fat_settings s
+  FROM (VALUES (1)) AS initial(id)
+  LEFT JOIN public.points_fat_settings s ON s.id = initial.id
   LEFT JOIN LATERAL (
     SELECT r.weight_jin, r.created_at FROM public.points_fat_records r
     WHERE r.created_at <= now()
     ORDER BY r.created_at DESC, r.id DESC LIMIT 1
-  ) latest ON true
-  WHERE s.id = 1;
+  ) latest ON true;
 $function$;
 
 ALTER FUNCTION "public"."points_fat_get_progress"() OWNER TO "postgres";
@@ -6250,6 +6297,16 @@ REVOKE ALL ON SEQUENCE "public"."members_id_seq" FROM PUBLIC, "postgres";
 
 GRANT SELECT, UPDATE, USAGE ON SEQUENCE "public"."members_id_seq" TO "postgres";
 
+ALTER TABLE "public"."points_fat_record_operations" ADD CONSTRAINT "points_fat_record_operations_pkey" PRIMARY KEY (operation_id);
+
+ALTER TABLE "public"."points_fat_record_operations" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."points_fat_record_operations" OWNER TO "postgres";
+
+REVOKE ALL ON TABLE "public"."points_fat_record_operations" FROM PUBLIC, "anon", "authenticated", "postgres", "service_role";
+
+GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN ON TABLE "public"."points_fat_record_operations" TO "postgres";
+
 ALTER TABLE "public"."points_fat_records" ADD CONSTRAINT "points_fat_record_weight_check" CHECK (weight_jin > 0::numeric AND weight_jin < 10000::numeric);
 
 ALTER TABLE "public"."points_fat_records" ADD CONSTRAINT "points_fat_records_pkey" PRIMARY KEY (id);
@@ -7256,15 +7313,23 @@ GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_get_settings"() TO "postgre
 
 GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_get_settings"() TO "authenticated";
 
-REVOKE ALL ON FUNCTION "public"."points_fat_admin_record_weight"(p_weight_jin numeric) FROM PUBLIC, "postgres";
+REVOKE ALL ON FUNCTION "public"."points_fat_admin_record_weight"(p_weight_jin numeric) FROM PUBLIC, "anon", "authenticated", "postgres", "service_role";
 
 GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_record_weight"(p_weight_jin numeric) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_record_weight"(p_weight_jin numeric) TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."points_fat_admin_set_starting_weight"(p_weight_jin numeric) FROM PUBLIC, "authenticated", "postgres";
 
 GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_set_starting_weight"(p_weight_jin numeric) TO "postgres";
 
 GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_set_starting_weight"(p_weight_jin numeric) TO "authenticated";
+
+REVOKE ALL ON FUNCTION "public"."points_fat_admin_submit_weight"(p_weight_jin numeric, p_operation_id uuid) FROM PUBLIC, "anon", "authenticated", "postgres", "service_role";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_submit_weight"(p_weight_jin numeric, p_operation_id uuid) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."points_fat_admin_submit_weight"(p_weight_jin numeric, p_operation_id uuid) TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."points_fat_get_logs"(p_from timestamp with time zone, p_to timestamp with time zone, p_limit integer) FROM PUBLIC, "anon", "authenticated", "postgres";
 
