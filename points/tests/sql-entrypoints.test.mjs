@@ -11,44 +11,44 @@ const increment=await fs.readFile(new URL('../schema-increment.sql',import.meta.
 const baseline=execFileSync('python',['-X','utf8','-c',"import runpy,json,sys; renderer=runpy.run_path('points/scripts/build-sql-backup.py'); print(renderer['render'](json.load(sys.stdin)),end='')"],{input:JSON.stringify(original),encoding:'utf8',maxBuffer:4000000});
 const db=new PGlite();let checks=0;const check=(a,b,label)=>{assert.deepEqual(a,b,label);checks++;};
 try{
- const changed=current.functions.filter(f=>JSON.stringify(f)!==JSON.stringify(original.functions.find(o=>o.schema===f.schema&&o.name===f.name&&o.identity_arguments===f.identity_arguments)));
+ const changed=current.functions.filter(f=>f.definition!==original.functions.find(o=>o.schema===f.schema&&o.name===f.name&&o.identity_arguments===f.identity_arguments)?.definition);
  const definitions=[...increment.matchAll(/CREATE OR REPLACE FUNCTION\s+"?([\w]+)"?\."?([\w]+)"?\(/g)].map(m=>m[1]+'.'+m[2]).sort();
  check(definitions,changed.map(f=>f.schema+'.'+f.name).sort(),'increment includes exactly changed functions, no historical definitions');
- check(/CREATE TABLE|CREATE SCHEMA/.test(increment),false,'increment does not replay historical setup');
+ check([...increment.matchAll(/^CREATE (?:TABLE IF NOT EXISTS|SCHEMA) (.+?)(?= \(|;)/gm)].map(m=>m[1]),['"public"."points_fat_record_operations"'],'only the new receipt table is added');
+ check(/^\s*(DELETE FROM|TRUNCATE|DROP (TABLE|COLUMN|FUNCTION))\b/m.test(increment),false,'increment preserves existing records and schema');
  await db.exec('CREATE ROLE anon;CREATE ROLE authenticated;CREATE ROLE service_role;CREATE ROLE supabase_admin;CREATE SCHEMA auth;CREATE TABLE auth.users(id uuid PRIMARY KEY);CREATE SCHEMA extensions;');
  const objects=[...current.schemas,...current.relations,...current.functions,...current.default_privileges];
  const roles=objects.flatMap(o=>[o.owner,...[...(o.acl||'').matchAll(/(?:\{|,)([^=]+)=/g)].map(m=>m[1])]);
  for(const role of new Set(roles.filter(Boolean)))if(!(await db.query('SELECT 1 FROM pg_roles WHERE rolname=$1',[role])).rows.length)await db.exec('CREATE ROLE "'+role.replaceAll('"','""')+'";');
  await db.exec(baseline);
- const snapshot=original.functions.find(f=>f.name==='points_notifications_get_todos');
+ const snapshot=original.functions.find(f=>f.name==='points_fat_get_progress');
  await db.exec(snapshot.definition.replace('AS $function$','AS $function$\n-- unexpected database change'));
- await assert.rejects(db.exec(increment),/Database baseline differs for points_notifications_get_todos/);checks++;
+ await assert.rejects(db.exec(increment),/Database baseline differs for points_fat_get_progress/);checks++;
  await db.exec('ROLLBACK;');await db.exec(snapshot.definition);
  const scalar=async sql=>Object.values((await db.query(sql)).rows[0])[0];
- await db.exec(`INSERT INTO points_fat_settings(id,starting_weight_jin) VALUES(1,162) ON CONFLICT(id) DO UPDATE SET starting_weight_jin=162;
-  ALTER TABLE points_fat_records ALTER COLUMN bowel_status DROP NOT NULL;
+ await db.exec(`GRANT EXECUTE ON FUNCTION public.points_fat_admin_record_weight(numeric) TO authenticated;
+  INSERT INTO points_fat_settings(id,starting_weight_jin) VALUES(1,162) ON CONFLICT(id) DO UPDATE SET starting_weight_jin=162;
   WITH week AS (SELECT date_trunc('week',now() AT TIME ZONE 'Asia/Shanghai')::date monday)
-  INSERT INTO points_fat_records(weight_jin,created_at,bowel_status)
-  SELECT weight,((monday+day)::timestamp+time '00:05') AT TIME ZONE 'Asia/Shanghai',status
-  FROM week CROSS JOIN (VALUES (-14,160,'after'),(-13,159,'after'),(-7,158,'after'),(-7,156,'after'),
-    (-6,159,NULL),(-1,157,'after'),(-2,140,'before')) samples(day,weight,status);
+  INSERT INTO points_fat_records(weight_jin,created_at)
+  SELECT weight,((monday+day)::timestamp+time '00:05') AT TIME ZONE 'Asia/Shanghai'
+  FROM week CROSS JOIN (VALUES (-28,164),(-27,163),(-14,160),(-13,159),(-7,158),(-7,156),(-6,159),(-1,157)) samples(day,weight);
   INSERT INTO points_notice.events(event_key,audience,category,title,body,route,group_key)
-  VALUES('cleanup:service','admin','service','service','old','services','service:1'),
-        ('keep:score','guest','score','score','keep','score','score');
-  INSERT INTO points_notice.receipts(event_id,actor)
-  SELECT id,'admin:test' FROM points_notice.events WHERE event_key='cleanup:service';`);
+  VALUES('keep:score','guest','score','score','keep','score','score');`);
  await db.exec(increment);
  check(await scalar("SELECT to_regclass('public.points_fat_reward_state')"),null,'reward state deleted');
  check(await scalar("SELECT to_regprocedure('public.points_fat_reward_get_state(bigint)')"),null,'reward RPC deleted');
- check(await scalar("SELECT count(*)::int FROM points_fat_records"),6,'only before readings deleted');
+ check(await scalar("SELECT count(*)::int FROM points_fat_records"),8,'existing weights preserved');
  check(await scalar("SELECT count(*)::int FROM points_notice.events WHERE event_key='keep:score'"),1,'other notices preserved');
- check(await scalar("SELECT count(*)::int FROM points_notice.events WHERE event_key='cleanup:service'"),0,'reward notice and receipt deleted');
  const progress=await scalar("SELECT points_fat_get_progress()");
- check(progress.delta_jin,-5,'latest survives cleanup');
+ check(progress.delta_jin,-5,'latest weight preserved');
  check(progress.weeks.map(w=>w.days),[0,2,3,0],'Beijing dates and distinct day count');
  check(progress.weeks.map(w=>w.mean===null?null:Number(w.mean.toFixed(6))),[null,null,-4.666667,null],'weekly minimum per day and threshold');
+ check(progress.weeks.map(w=>w.low),[null,-3,-6,null],'weekly lows are available on weeks below the average threshold');
+ check(progress.previous_week,{low:1,mean:null},'week before trend supplies an independent comparison reference');
  await db.exec("SET ROLE anon");
  check(await scalar("SELECT points_fat_get_progress() ? 'starting_weight_jin'"),false,'progress exposes only differences');
+ await assert.rejects(scalar("SELECT points_fat_admin_submit_weight(156,gen_random_uuid())"),/permission denied for function/);checks++;
+ await assert.rejects(scalar("SELECT points_fat_admin_record_weight(156)"),/permission denied for function/);checks++;
  await db.exec("RESET ROLE");
  for(const f of current.functions.filter(f=>f.name.startsWith('points_family_')||f.name==='points_notifications_get_todos'||f.name==='business_event'||f.name==='points_notice_worker_claim'||f.name==='points_fat_reward_snapshot'||/score|points_get_logs|points_get_state|points_redeem|points_shop_(get_state|purchase|activate_lucky100|set_equipped)|legacy_write|points_kitchen_admin_review/.test(f.name))){
   const actual=(await db.query('SELECT pg_get_functiondef(p.oid) definition FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname=$1 AND p.proname=$2 AND pg_get_function_identity_arguments(p.oid)=$3',[f.schema,f.name,f.identity_arguments])).rows[0].definition;
@@ -63,6 +63,38 @@ try{
  const adminId='00000000-0000-0000-0000-000000000001';
  await db.query('INSERT INTO auth.users(id) VALUES($1)',[adminId]);
  await db.query("INSERT INTO public.profiles(user_id,role) VALUES($1,'admin')",[adminId]);
+ const viewerId='00000000-0000-0000-0000-000000000002';
+ await db.query('INSERT INTO auth.users(id) VALUES($1)',[viewerId]);
+ const auth=sub=>db.query("SELECT set_config('request.jwt.claims',$1,false)",[JSON.stringify({sub,role:'authenticated'})]);
+ const operation=crypto.randomUUID();
+ const submit=async (weight,id=operation)=>(await db.query('SELECT points_fat_admin_submit_weight($1,$2) AS receipt',[weight,id])).rows[0].receipt;
+ await db.exec('DELETE FROM points_fat_settings; SET ROLE authenticated;');
+ await auth(viewerId);
+ await assert.rejects(submit(156),/Admin permission required/);checks++;
+ await assert.rejects(scalar('SELECT points_fat_admin_record_weight(156)'),/Admin permission required/);checks++;
+ await auth(adminId);
+ await assert.rejects(scalar('SELECT * FROM points_fat_record_operations'),/permission denied for table/);checks++;
+ check((await scalar('SELECT points_fat_get_progress()')).configured,false,'fresh install reports unconfigured');
+ check(await scalar('SELECT starting_weight_jin FROM points_fat_admin_get_settings()'),null,'fresh settings can be opened');
+ await assert.rejects(submit(156),/Starting weight required/);checks++;
+ await scalar('SELECT points_fat_admin_set_starting_weight(162)');
+ check(Number(await scalar('SELECT starting_weight_jin FROM points_fat_admin_get_settings()')),162,'first admin setting creates singleton');
+ check(await submit(null),{id:null},'status before save is harmless');
+ const first=await submit(156);
+ check(await submit(156),first,'retry returns the original receipt');
+ check(await submit(null),first,'confirmation works without raw body weight');
+ check(await submit(155),{...first,matched:false},'different payload cannot create a second record');
+ check(Number(await scalar('SELECT delta_jin FROM points_fat_admin_record_weight(154)')),-8,'legacy client can still record');
+ await scalar(`SELECT points_fat_admin_delete_record(${first.id})`);
+ check(await submit(156),{...first,removed:true,matched:false},'retry does not restore deleted record');
+ const later=await submit(156,crypto.randomUUID());
+ check(later.id!==first.id,true,'separate weighings accept the same value');
+ await db.exec('RESET ROLE;');
+ check(await scalar('SELECT count(*)::int FROM points_fat_records'),10,'only independent saves create records');
+ await db.exec(increment);
+ await db.exec('SET ROLE authenticated;');
+ check(await submit(null),{...first,removed:true},'reapplying migration preserves receipts');
+ await db.exec('RESET ROLE;');
  await db.exec("INSERT INTO public.members(id,name,score) VALUES(1,'半分测试',10); INSERT INTO public.points_wheel_state(id) VALUES(1); INSERT INTO public.points_shop_inventory(item_code) VALUES('wish'); INSERT INTO public.points_shop_state(id) VALUES(1);");
  await db.query("SELECT set_config('request.jwt.claims',$1,false)",[JSON.stringify({sub:adminId,role:'authenticated'})]);
  const family=async(action,payload,operation=crypto.randomUUID())=>(await db.query('SELECT public.points_family_write($1,$2::jsonb,$3::uuid) result',[action,JSON.stringify(payload),operation])).rows[0].result;

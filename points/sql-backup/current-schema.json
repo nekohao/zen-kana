@@ -695,7 +695,7 @@
       "schema": "public",
       "comment": null,
       "arguments": "",
-      "definition": "CREATE OR REPLACE FUNCTION public.points_fat_admin_get_settings()\n RETURNS TABLE(starting_weight_jin numeric, updated_at timestamp with time zone)\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nBEGIN\r\n  IF NOT coalesce(public.points_is_admin(), false) THEN\r\n    RAISE EXCEPTION 'Admin permission required'\r\n      USING errcode = '42501';\r\n  END IF;\r\n\r\n  RETURN QUERY\r\n  SELECT s.starting_weight_jin, s.updated_at\r\n  FROM public.points_fat_settings s\r\n  WHERE s.id = 1;\r\nEND;\r\n$function$\n",
+      "definition": "CREATE OR REPLACE FUNCTION public.points_fat_admin_get_settings()\n RETURNS TABLE(starting_weight_jin numeric, updated_at timestamp with time zone)\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  IF NOT coalesce(public.points_is_admin(), false) THEN\n    RAISE EXCEPTION 'Admin permission required'\n      USING errcode = '42501';\n  END IF;\n\n  RETURN QUERY\n  SELECT s.starting_weight_jin, s.updated_at\n  FROM (VALUES (1)) AS initial(id)\n  LEFT JOIN public.points_fat_settings s ON s.id = initial.id;\nEND;\n$function$\n",
       "configuration": [
         "search_path=\"\""
       ],
@@ -703,7 +703,7 @@
       "identity_arguments": ""
     },
     {
-      "acl": "{postgres=X/postgres}",
+      "acl": "{postgres=X/postgres,anon=/postgres,authenticated=X/postgres,service_role=/postgres}",
       "name": "points_fat_admin_record_weight",
       "owner": "postgres",
       "result": "TABLE(id bigint, delta_jin numeric, created_at timestamp with time zone)",
@@ -725,12 +725,27 @@
       "schema": "public",
       "comment": null,
       "arguments": "p_weight_jin numeric",
-      "definition": "CREATE OR REPLACE FUNCTION public.points_fat_admin_set_starting_weight(p_weight_jin numeric)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nBEGIN\r\n  IF NOT coalesce(public.points_is_admin(), false) THEN\r\n    RAISE EXCEPTION 'Admin permission required'\r\n      USING errcode = '42501';\r\n  END IF;\r\n\r\n  IF p_weight_jin IS NULL\r\n    OR p_weight_jin <= 0\r\n    OR p_weight_jin >= 10000\r\n    OR p_weight_jin <> pg_catalog.round(p_weight_jin, 2)\r\n  THEN\r\n    RAISE EXCEPTION 'Invalid weight: positive, below 10000, maximum 2 decimals'\r\n      USING errcode = '22023';\r\n  END IF;\r\n\r\n  PERFORM s.id\r\n  FROM public.points_fat_settings s\r\n  WHERE s.id = 1\r\n  FOR UPDATE;\r\n\r\n  IF NOT FOUND THEN\r\n    RAISE EXCEPTION 'Fat settings not found'\r\n      USING errcode = '55000';\r\n  END IF;\r\n\r\n  UPDATE public.points_fat_settings\r\n  SET starting_weight_jin = p_weight_jin,\r\n      updated_at = pg_catalog.clock_timestamp(),\r\n      updated_by = auth.uid()\r\n  WHERE id = 1;\r\nEND;\r\n$function$\n",
+      "definition": "CREATE OR REPLACE FUNCTION public.points_fat_admin_set_starting_weight(p_weight_jin numeric)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n  IF NOT coalesce(public.points_is_admin(), false) THEN\n    RAISE EXCEPTION 'Admin permission required'\n      USING errcode = '42501';\n  END IF;\n\n  IF p_weight_jin IS NULL\n    OR p_weight_jin <= 0\n    OR p_weight_jin >= 10000\n    OR p_weight_jin <> pg_catalog.round(p_weight_jin, 2)\n  THEN\n    RAISE EXCEPTION 'Invalid weight: positive, below 10000, maximum 2 decimals'\n      USING errcode = '22023';\n  END IF;\n\n  INSERT INTO public.points_fat_settings (id, starting_weight_jin, updated_at, updated_by)\n  VALUES (1, p_weight_jin, pg_catalog.clock_timestamp(), auth.uid())\n  ON CONFLICT (id) DO UPDATE SET\n    starting_weight_jin = EXCLUDED.starting_weight_jin,\n    updated_at = EXCLUDED.updated_at,\n    updated_by = EXCLUDED.updated_by;\nEND;\n$function$\n",
       "configuration": [
         "search_path=\"\""
       ],
       "security_definer": true,
       "identity_arguments": "p_weight_jin numeric"
+    },
+    {
+      "acl": "{postgres=X/postgres,anon=/postgres,authenticated=X/postgres,service_role=/postgres}",
+      "name": "points_fat_admin_submit_weight",
+      "owner": "postgres",
+      "result": "jsonb",
+      "schema": "public",
+      "comment": null,
+      "arguments": "p_weight_jin numeric, p_operation_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION public.points_fat_admin_submit_weight(p_weight_jin numeric, p_operation_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_actor uuid := auth.uid();\n  v_owner uuid;\n  v_id bigint;\n  v_weight numeric;\nBEGIN\n  IF v_actor IS NULL OR NOT coalesce(public.points_is_admin(), false) THEN\n    RAISE EXCEPTION 'Admin permission required' USING errcode = '42501';\n  END IF;\n  IF p_operation_id IS NULL THEN\n    RAISE EXCEPTION 'Operation ID required' USING errcode = '22023';\n  END IF;\n\n  PERFORM pg_catalog.pg_advisory_xact_lock(\n    pg_catalog.hashtextextended('points-fat-record:' || p_operation_id::text, 0)\n  );\n  SELECT o.actor, o.record_id, r.weight_jin\n    INTO v_owner, v_id, v_weight\n    FROM public.points_fat_record_operations o\n    LEFT JOIN public.points_fat_records r ON r.id = o.record_id\n    WHERE o.operation_id = p_operation_id;\n  IF FOUND THEN\n    IF v_owner <> v_actor THEN\n      RAISE EXCEPTION 'Operation owner mismatch' USING errcode = '42501';\n    END IF;\n    RETURN jsonb_build_object('id', v_id::text, 'removed', v_weight IS NULL,\n      'matched', p_weight_jin IS NULL OR p_weight_jin IS NOT DISTINCT FROM v_weight);\n  END IF;\n  IF p_weight_jin IS NULL THEN\n    RETURN jsonb_build_object('id', NULL);\n  END IF;\n\n  SELECT r.id INTO STRICT v_id FROM public.points_fat_admin_record_weight(p_weight_jin) r;\n  INSERT INTO public.points_fat_record_operations (operation_id, actor, record_id)\n  VALUES (p_operation_id, v_actor, v_id);\n  RETURN jsonb_build_object('id', v_id::text, 'removed', false, 'matched', true);\nEND;\n$function$\n",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "security_definer": true,
+      "identity_arguments": "p_weight_jin numeric, p_operation_id uuid"
     },
     {
       "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres}",
@@ -755,7 +770,7 @@
       "schema": "public",
       "comment": null,
       "arguments": "",
-      "definition": "CREATE OR REPLACE FUNCTION public.points_fat_get_progress()\n RETURNS jsonb\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  WITH bounds AS (\n    SELECT date_trunc('week', now() AT TIME ZONE 'Asia/Shanghai')::date AS monday\n  ), daily AS (\n    SELECT (r.created_at AT TIME ZONE 'Asia/Shanghai')::date AS day,\n           min(r.weight_jin) AS lightest\n    FROM public.points_fat_records r CROSS JOIN bounds b\n    WHERE r.created_at >= ((b.monday - 21)::timestamp AT TIME ZONE 'Asia/Shanghai')\n      AND r.created_at <= now()\n    GROUP BY 1\n  ), weekly AS (\n    SELECT b.monday - offsets.days AS start_date, count(d.day) AS days, avg(d.lightest) AS mean\n    FROM bounds b CROSS JOIN (VALUES (21),(14),(7),(0)) AS offsets(days)\n    LEFT JOIN daily d ON d.day BETWEEN b.monday - offsets.days AND b.monday - offsets.days + 6\n    GROUP BY 1\n  )\n  SELECT jsonb_build_object(\n    'configured', s.starting_weight_jin IS NOT NULL,\n    'delta_jin', latest.weight_jin - s.starting_weight_jin,\n    'recorded_at', latest.created_at,\n    'weeks', (SELECT jsonb_agg(jsonb_build_object('start', w.start_date, 'end', w.start_date + 6,\n      'days', w.days, 'mean', CASE WHEN w.days >= 3 THEN w.mean - s.starting_weight_jin END)\n      ORDER BY w.start_date) FROM weekly w)\n  )\n  FROM public.points_fat_settings s\n  LEFT JOIN LATERAL (\n    SELECT r.weight_jin, r.created_at FROM public.points_fat_records r\n    WHERE r.created_at <= now()\n    ORDER BY r.created_at DESC, r.id DESC LIMIT 1\n  ) latest ON true\n  WHERE s.id = 1;\n$function$;\n",
+      "definition": "CREATE OR REPLACE FUNCTION public.points_fat_get_progress()\n RETURNS jsonb\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  WITH bounds AS (\n    SELECT date_trunc('week', now() AT TIME ZONE 'Asia/Shanghai')::date AS monday\n  ), daily AS (\n    SELECT (r.created_at AT TIME ZONE 'Asia/Shanghai')::date AS day,\n           min(r.weight_jin) AS lightest\n    FROM public.points_fat_records r CROSS JOIN bounds b\n    WHERE r.created_at >= ((b.monday - 28)::timestamp AT TIME ZONE 'Asia/Shanghai')\n      AND r.created_at <= now()\n    GROUP BY 1\n  ), weekly AS (\n    SELECT b.monday - offsets.days AS start_date, count(d.day) AS days,\n           min(d.lightest) AS low, CASE WHEN count(d.day) >= 3 THEN avg(d.lightest) END AS mean\n    FROM bounds b CROSS JOIN (VALUES (28),(21),(14),(7),(0)) AS offsets(days)\n    LEFT JOIN daily d ON d.day BETWEEN b.monday - offsets.days AND b.monday - offsets.days + 6\n    GROUP BY 1\n  )\n  SELECT jsonb_build_object(\n    'configured', s.starting_weight_jin IS NOT NULL,\n    'delta_jin', latest.weight_jin - s.starting_weight_jin,\n    'recorded_at', latest.created_at,\n    'weeks', (SELECT jsonb_agg(jsonb_build_object('start', w.start_date, 'end', w.start_date + 6,\n      'days', w.days, 'low', w.low - s.starting_weight_jin, 'mean', w.mean - s.starting_weight_jin)\n      ORDER BY w.start_date) FROM weekly w WHERE w.start_date >= (SELECT monday - 21 FROM bounds)),\n    'previous_week', (SELECT jsonb_build_object('low', w.low - s.starting_weight_jin,\n      'mean', w.mean - s.starting_weight_jin) FROM weekly w WHERE w.start_date = (SELECT monday - 28 FROM bounds))\n  )\n  FROM (VALUES (1)) AS initial(id)\n  LEFT JOIN public.points_fat_settings s ON s.id = initial.id\n  LEFT JOIN LATERAL (\n    SELECT r.weight_jin, r.created_at FROM public.points_fat_records r\n    WHERE r.created_at <= now()\n    ORDER BY r.created_at DESC, r.id DESC LIMIT 1\n  ) latest ON true;\n$function$;\n",
       "configuration": [
         "search_path=\"\""
       ],
@@ -4469,6 +4484,73 @@
       "triggers": null,
       "constraints": null,
       "row_security": false,
+      "partition_key": null,
+      "partition_bound": null,
+      "view_definition": null,
+      "parent_relations": null,
+      "force_row_security": false
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=/postgres,authenticated=/postgres,service_role=/postgres}",
+      "kind": "r",
+      "name": "points_fat_record_operations",
+      "owner": "postgres",
+      "rules": null,
+      "schema": "public",
+      "columns": [
+        {
+          "acl": null,
+          "name": "operation_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "position": 1,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "actor",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "position": 2,
+          "generated": ""
+        },
+        {
+          "acl": null,
+          "name": "record_id",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "position": 3,
+          "generated": ""
+        }
+      ],
+      "comment": null,
+      "indexes": [
+        {
+          "name": "points_fat_record_operations_pkey",
+          "ready": true,
+          "valid": true,
+          "definition": "CREATE UNIQUE INDEX points_fat_record_operations_pkey ON public.points_fat_record_operations USING btree (operation_id)"
+        }
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "points_fat_record_operations_pkey",
+          "type": "p",
+          "deferred": false,
+          "validated": true,
+          "deferrable": false,
+          "definition": "PRIMARY KEY (operation_id)"
+        }
+      ],
+      "row_security": true,
       "partition_key": null,
       "partition_bound": null,
       "view_definition": null,
@@ -10050,11 +10132,7 @@
     "INSERT INTO public.points_family_types(code,label,points,position) VALUES\n ('dishes','洗碗',1,1),('cooking','做饭',NULL,2),('floor','扫地 / 拖地',NULL,3),('laundry','洗衣 / 晾衣',NULL,4),\n ('tidying','整理房间',NULL,5),('trash','倒垃圾',NULL,6) ON CONFLICT(code) DO NOTHING;"
   ],
   "increment": {
-    "base_commit": "ea3087cdf43bd277deffda0c3bea9440efff16d3",
-    "data_sql": [
-      "DO $cleanup$\nDECLARE job bigint;\nBEGIN\n  IF EXISTS (SELECT 1 FROM information_schema.columns\n             WHERE table_schema='public' AND table_name='points_fat_records' AND column_name='bowel_status') THEN\n    LOCK TABLE public.points_fat_records IN ACCESS EXCLUSIVE MODE;\n    DELETE FROM public.points_fat_records WHERE bowel_status='before';\n  END IF;\n  IF to_regclass('cron.job') IS NOT NULL THEN\n    FOR job IN SELECT jobid FROM cron.job\n      WHERE command ~* '\\mpoints_fat_(v2_)?reward_[a-z_]+\\M'\n    LOOP\n      PERFORM cron.unschedule(job);\n    END LOOP;\n  END IF;\nEND\n$cleanup$",
-      "WITH retired AS (\n  SELECT id FROM points_notice.events WHERE category IN ('fat','service') AND route IN ('fat','services')\n), detached AS (\n  DELETE FROM points_notice.batch_items WHERE event_id IN (SELECT id FROM retired)\n), forgotten AS (\n  DELETE FROM points_notice.receipts WHERE event_id IN (SELECT id FROM retired)\n)\nDELETE FROM points_notice.events WHERE id IN (SELECT id FROM retired)",
-      "UPDATE points_notice.preferences\nSET categories=array_remove(array_remove(categories,'fat'),'service')\nWHERE categories && ARRAY['fat','service']"
-    ]
+    "base_commit": "d33a2d44c41b6a5c68f24f6aa7ff0cef3eb3e0c7",
+    "data_sql": []
   }
 }

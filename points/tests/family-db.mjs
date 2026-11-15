@@ -11,8 +11,8 @@ export async function createFamilyDatabase({beforeMigration}={}){
   const migration=await fs.readFile(new URL('../schema-increment.sql',import.meta.url),'utf8');
   await base.context('service','points_family_get_state');
   // Restore the preceding release from Git; never pad the delivered increment for old fixtures.
-  const {schema,sql}=await readIncrementBase();
-  if(schema.relations.some(r=>r.name==='points_fat_records'&&r.columns.some(c=>c.name==='bowel_status'))){
+  const {initialSchema,sql}=await readIncrementBase();
+  if(initialSchema.relations.some(r=>r.name==='points_fat_records'&&r.columns.some(c=>c.name==='bowel_status'))){
    const status=(await fs.readFile(new URL('../fat-status-increment-20261009.sql',import.meta.url),'utf8'))
     .replace(/^SELECT public.points_fat_v2_[^;]+;$/gm,'');
    await base.db.exec(status);

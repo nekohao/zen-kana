@@ -20,7 +20,7 @@ export async function readIncrementBase(){
    commit=cursor.increment?.base_commit;
    if(commit)cursor=JSON.parse(read('sql-backup/current-schema.json'));
   }
-  return {schema,sql:steps.join('\n')};
+  return {schema,initialSchema:cursor,sql:steps.join('\n')};
  })();
  return incrementBase;
 }

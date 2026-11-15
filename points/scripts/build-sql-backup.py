@@ -40,6 +40,40 @@ def increment_base(data):
 def function_key(fn):
     return (fn['schema'], fn['name'], fn['identity_arguments'])
 
+def create_table(rel, constraints=(), repeatable=False):
+    columns = []
+    for c in rel['columns']:
+        clause = q(c['name']) + ' ' + c['type']
+        if c['identity']:
+            clause += ' GENERATED ' + ('ALWAYS' if c['identity'] == 'a' else 'BY DEFAULT') + ' AS IDENTITY'
+        elif c['generated']:
+            clause += f' GENERATED ALWAYS AS ({c["default"]}) STORED'
+        elif c['default'] is not None:
+            clause += ' DEFAULT ' + c['default']
+        if c['not_null']:
+            clause += ' NOT NULL'
+        columns.append(clause)
+    columns += [f'CONSTRAINT {q(c["name"])} {c["definition"]}' for c in constraints]
+    clause = 'IF NOT EXISTS ' if repeatable else ''
+    return f'CREATE TABLE {clause}{qualified(rel)} (\n  ' + ',\n  '.join(columns) + '\n);'
+
+def new_table(rel):
+    constraints = rel.get('constraints') or []
+    indexes = {c['name'] for c in constraints if c['type'] in ('p', 'u')}
+    if (rel['kind'] != 'r' or any(rel.get(k) for k in (
+            'rules', 'policies', 'triggers', 'partition_key', 'partition_bound', 'parent_relations',
+            'view_definition', 'force_row_security', 'comment'))
+        or any(c['identity'] or c['acl'] for c in rel['columns'])
+        or any(c['type'] not in ('p', 'u', 'c') or not c['validated'] for c in constraints)
+        or any(i['name'] not in indexes for i in rel.get('indexes') or [])):
+        raise ValueError('Review new table definition for ' + rel['name'])
+    target = qualified(rel)
+    action = 'ENABLE' if rel['row_security'] else 'DISABLE'
+    return [create_table(rel, constraints, repeatable=True),
+            f'ALTER TABLE {target} {action} ROW LEVEL SECURITY;',
+            f'ALTER TABLE {target} OWNER TO {q(rel["owner"])};',
+            *acl_sql('r', target, rel['acl'], rel['owner'])]
+
 def relation_changes(base, data):
     previous = {(r['schema'], r['name']): r for r in base['relations']}
     current = {(r['schema'], r['name']): r for r in data['relations']}
@@ -48,13 +82,14 @@ def relation_changes(base, data):
     owned = {(seq['schema'], seq['name']) for seq in base['sequences']
              if any(o['kind'] == 'i' and (seq['schema'], o['table']) in
                     {(t['schema'], t['name']) for t in tables} for o in seq.get('ownership') or [])}
-    if (current.keys() - previous.keys()
-        or any(r['kind'] != 'r' and (r['schema'], r['name']) not in owned for r in removed)
+    if (any(r['kind'] != 'r' and (r['schema'], r['name']) not in owned for r in removed)
         or data['sequences'] != [seq for seq in base['sequences'] if (seq['schema'], seq['name']) not in owned]):
         raise ValueError('Review unsupported relation or sequence changes.')
     statements = []
     for key, rel in current.items():
-        old = previous[key]
+        old = previous.get(key)
+        if old is None:
+            continue
         if rel == old:
             continue
         names = {c['name'] for c in rel['columns']}
@@ -120,6 +155,10 @@ def render_increment(data):
                        '  RAISE EXCEPTION ' + lit('Database baseline differs for ' + fn['name'] + '; apply/verify preceding changes first') + ';', ' END IF;']
     if guards:
         out += ['DO $baseline$\nBEGIN\n' + '\n'.join(guards) + '\nEND\n$baseline$;']
+    existing = {(r['schema'], r['name']) for r in base['relations']}
+    for rel in data['relations']:
+        if (rel['schema'], rel['name']) not in existing:
+            out += new_table(rel)
     for fn in added:
         target = qualified(fn) + '(' + fn['identity_arguments'] + ')'
         out += [normalized(fn['definition']).strip().rstrip(';') + ';',
@@ -205,19 +244,7 @@ def render(data):
             continue
         if rel['kind'] not in ('r', 'p'):
             raise ValueError('Add an explicit renderer for relation kind ' + rel['kind'])
-        columns = []
-        for c in rel['columns']:
-            clause = q(c['name']) + ' ' + c['type']
-            if c['identity']:
-                clause += ' GENERATED ' + ('ALWAYS' if c['identity'] == 'a' else 'BY DEFAULT') + ' AS IDENTITY'
-            elif c['generated']:
-                clause += f' GENERATED ALWAYS AS ({c["default"]}) STORED'
-            elif c['default'] is not None:
-                clause += ' DEFAULT ' + c['default']
-            if c['not_null']:
-                clause += ' NOT NULL'
-            columns.append(clause)
-        out += [f'CREATE TABLE {qualified(rel)} (\n  ' + ',\n  '.join(columns) + '\n);']
+        out.append(create_table(rel))
     # Bodies are preserved in full; checks are deferred because definitions reference one another.
     for fn in data['functions']:
         out += [normalized(fn['definition']).strip().rstrip(';') + ';', f'ALTER FUNCTION {qualified(fn)}({fn["identity_arguments"]}) OWNER TO {q(fn["owner"])};']
