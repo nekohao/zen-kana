@@ -12,13 +12,23 @@ const modules=[['runtime','app-runtime.js',true],['sdk','vendor/supabase-2.117.2
  ['push','web-push.js'],['notifications','notifications.js'],['app','app.js',true],['theme','ui-theme.js']];
 const styles=['fat-loss.css','ui-theme.css','kitchen.css','web-push.css','device-access.css','notifications.css','kitchen-refined.css','family.css'];
 const hash=text=>createHash('sha256').update(text).digest('hex');
+const zonedTimestamp=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
+function releaseTime(timestamp){
+ if(zonedTimestamp.test(timestamp))return Date.parse(timestamp);
+ // Existing manifests stored Shanghai wall-clock time in the Windows en-US format.
+ const legacy=/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{2}:\d{2}:\d{2})$/.exec(timestamp);
+ if(!legacy)return NaN;
+ const [,month,day,year,time]=legacy;
+ return Date.parse(`${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}T${time}+08:00`);
+}
 export async function bundle({build,updatedAt,sdkSource,overrides={}}={}) {
  const previous=JSON.parse(await fs.readFile(path.join(root,'version.json'),'utf8').catch(()=>'{}'));
  const now=new Date(),day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(now).replaceAll('-','');
  build ||= previous.build?.startsWith(day+'.')?`${day}.${Number(previous.build.split('.')[1])+1}`:`${day}.1`;
  updatedAt ||= now.toISOString();
- if(!/^\d{8}\.\d+$/.test(build)||!Number.isFinite(Date.parse(updatedAt)))throw Error('Invalid release metadata');
- const displayTime=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(updatedAt));
+ const releaseDate=releaseTime(updatedAt);
+ if(!/^\d{8}\.\d+$/.test(build)||!Number.isFinite(releaseDate))throw Error('Invalid release metadata');
+ const displayTime=new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(releaseDate);
  const read=async file=>(overrides[file]??await fs.readFile(path.join(root,file.startsWith('vendor/')?file:'src/'+file),'utf8')).replace(/\r\n?/g,'\n');
  const safe=text=>text.replace(/<\/script/gi,'<\\/script');
  const files=new Map(),assets=[];
@@ -64,12 +74,13 @@ async function retainCommittedRelease(next){
  const candidates=[committed,...ledger.releases.filter(r=>r.build!==committed.build&&r.build!==next.build)];
  const number=r=>{const [day,revision]=r.build.split('.');return BigInt(day)*1000000n+BigInt(revision);};
  candidates.sort((a,b)=>number(a)>number(b)?-1:1);
- const cutoff=Date.parse(next.updatedAt)-30*86400000;
- ledger.releases=candidates.filter((r,index)=>index<2||Date.parse(r.updatedAt)>=cutoff);
+ const cutoff=releaseTime(next.updatedAt)-30*86400000;
+ ledger.releases=candidates.filter((r,index)=>index<2||releaseTime(r.updatedAt)>=cutoff);
  await writeBatches('scripts/retained-releases.json',JSON.stringify(ledger,null,2)+'\n');
 }
 async function readLedger(){return fs.readFile(path.join(root,'scripts/retained-releases.json'),'utf8');}
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
+ if(process.argv[3]&&!zonedTimestamp.test(process.argv[3]))throw Error('Release timestamp must be ISO 8601 with a time zone');
  const result=await bundle({build:process.argv[2],updatedAt:process.argv[3]});
  await retainCommittedRelease(result.release);
  for(const [file,content] of result.files)await writeBatches(file,content);
